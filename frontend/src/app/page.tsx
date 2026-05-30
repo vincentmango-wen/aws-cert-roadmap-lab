@@ -23,65 +23,63 @@ const learningCards = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16 sm:py-24">
-        <div className="rounded-3xl border border-sky-400/30 bg-slate-900 p-6 shadow-2xl shadow-sky-950/30 sm:p-10">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">
-            AWS Cert Roadmap Lab
-          </p>
+    <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16 sm:py-24">
+      <div className="rounded-3xl border border-sky-400/30 bg-slate-900 p-6 shadow-2xl shadow-sky-950/30 sm:p-10">
+        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">
+          AWS Cert Roadmap Lab
+        </p>
 
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            AWS資格学習を、用語・比較・問題・構成図で理解する
-          </h1>
+        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+          AWS資格学習を、用語・比較・問題・構成図で理解する
+        </h1>
 
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-            Cloud PractitionerからSolutions Architect Associateまで、
-            AWS初学者が試験対策と実務イメージをつなげて学べるポートフォリオ学習サイトです。
-          </p>
+        <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+          Cloud PractitionerからSolutions Architect Associateまで、
+          AWS初学者が試験対策と実務イメージをつなげて学べるポートフォリオ学習サイトです。
+        </p>
 
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <a
-              href="/questions"
-              className="rounded-full bg-sky-400 px-6 py-3 text-center text-sm font-semibold text-slate-950 transition hover:bg-sky-300"
-            >
-              模擬問題を解く
-            </a>
-            <a
-              href="/terms"
-              className="rounded-full border border-slate-600 px-6 py-3 text-center text-sm font-semibold text-white transition hover:border-sky-300 hover:text-sky-300"
-            >
-              用語集を見る
-            </a>
-          </div>
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+          <a
+            href="/questions"
+            className="rounded-full bg-sky-400 px-6 py-3 text-center text-sm font-semibold text-slate-950 transition hover:bg-sky-300"
+          >
+            模擬問題を解く
+          </a>
+          <a
+            href="/terms"
+            className="rounded-full border border-slate-600 px-6 py-3 text-center text-sm font-semibold text-white transition hover:border-sky-300 hover:text-sky-300"
+          >
+            用語集を見る
+          </a>
         </div>
+      </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {learningCards.map((card) => (
-            <a
-              key={card.href}
-              href={card.href}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-1 hover:border-sky-300 hover:bg-slate-900/80"
-            >
-              <h2 className="text-lg font-semibold text-white">{card.title}</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-400">
-                {card.description}
-              </p>
-            </a>
-          ))}
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {learningCards.map((card) => (
+          <a
+            key={card.href}
+            href={card.href}
+            className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-1 hover:border-sky-300 hover:bg-slate-900/80"
+          >
+            <h2 className="text-lg font-semibold text-white">{card.title}</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+              {card.description}
+            </p>
+          </a>
+        ))}
+      </div>
 
-        <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
-          <h2 className="text-2xl font-bold">Tailwind CSS確認ポイント</h2>
-          <ul className="mt-5 grid gap-3 text-sm leading-6 text-slate-300 sm:grid-cols-2">
-            <li>・背景色が濃いネイビーで表示される</li>
-            <li>・カードが角丸で表示される</li>
-            <li>・ボタンが水色で表示される</li>
-            <li>・PCではカードが横並びになる</li>
-            <li>・スマートフォンでは1カラムになる</li>
-            <li>・hover時にカードの枠線と位置が変化する</li>
-          </ul>
-        </section>
+      <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
+        <h2 className="text-2xl font-bold">共通レイアウト確認ポイント</h2>
+        <ul className="mt-5 grid gap-3 text-sm leading-6 text-slate-300 sm:grid-cols-2">
+          <li>・ページ上部にHeaderが表示される</li>
+          <li>・ページ本文がMain領域に表示される</li>
+          <li>・ページ下部にFooterが表示される</li>
+          <li>・PC幅ではナビゲーションが横並びになる</li>
+          <li>・スマートフォン幅ではメニューボタンが表示される</li>
+          <li>・以降のページで同じレイアウトを再利用できる</li>
+        </ul>
       </section>
-    </main>
+    </section>
   );
 }
