@@ -1,0 +1,123 @@
+# =========================================================
+# Environment variables
+# =========================================================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*.local
+
+# Keep example env files
+!.env.example
+!.env.*.example
+
+# =========================================================
+# Node.js / Package managers
+# =========================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package manager local files
+.pnpm-store/
+
+# =========================================================
+# Next.js
+# =========================================================
+.next/
+out/
+.vercel/
+
+# =========================================================
+# Build outputs
+# =========================================================
+dist/
+build/
+coverage/
+
+# =========================================================
+# TypeScript
+# =========================================================
+*.tsbuildinfo
+next-env.d.ts
+
+# =========================================================
+# Python
+# =========================================================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# =========================================================
+# Lambda package artifacts
+# =========================================================
+*.zip
+*.tar
+*.tar.gz
+
+# =========================================================
+# AWS / Credentials / Secrets
+# =========================================================
+.aws/
+aws-credentials.json
+credentials
+config
+
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Do not commit local SAM artifacts
+.aws-sam/
+
+# =========================================================
+# Logs
+# =========================================================
+logs/
+*.log
+
+# =========================================================
+# OS generated files
+# =========================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# =========================================================
+# Editor / IDE
+# =========================================================
+.vscode/
+.idea/
+
+# Allow shared VS Code recommendations if created later
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+# =========================================================
+# Temporary files
+# =========================================================
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
