@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16 sm:py-24">
-        <div className="max-w-3xl">
+        <div className="rounded-3xl border border-sky-400/30 bg-slate-900 p-6 shadow-2xl shadow-sky-950/30 sm:p-10">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">
             AWS Cert Roadmap Lab
           </p>
@@ -34,7 +34,7 @@ export default function Home() {
             AWS資格学習を、用語・比較・問題・構成図で理解する
           </h1>
 
-          <p className="mt-6 text-lg leading-8 text-slate-300">
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
             Cloud PractitionerからSolutions Architect Associateまで、
             AWS初学者が試験対策と実務イメージをつなげて学べるポートフォリオ学習サイトです。
           </p>
@@ -60,7 +60,7 @@ export default function Home() {
             <a
               key={card.href}
               href={card.href}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:border-sky-300 hover:bg-slate-900/80"
+              className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-1 hover:border-sky-300 hover:bg-slate-900/80"
             >
               <h2 className="text-lg font-semibold text-white">{card.title}</h2>
               <p className="mt-3 text-sm leading-6 text-slate-400">
@@ -71,14 +71,14 @@ export default function Home() {
         </div>
 
         <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
-          <h2 className="text-2xl font-bold">このサイトで学べること</h2>
+          <h2 className="text-2xl font-bold">Tailwind CSS確認ポイント</h2>
           <ul className="mt-5 grid gap-3 text-sm leading-6 text-slate-300 sm:grid-cols-2">
-            <li>・AWS Cloud Practitionerの主要サービス</li>
-            <li>・SAAにつながる基本構成パターン</li>
-            <li>・試験で混同しやすいサービス比較</li>
-            <li>・S3 + CloudFrontによる静的サイト公開</li>
-            <li>・API Gateway + Lambda + DynamoDBのサーバーレスAPI</li>
-            <li>・IAM、CloudWatch、AWS Budgetsを含む運用設計</li>
+            <li>・背景色が濃いネイビーで表示される</li>
+            <li>・カードが角丸で表示される</li>
+            <li>・ボタンが水色で表示される</li>
+            <li>・PCではカードが横並びになる</li>
+            <li>・スマートフォンでは1カラムになる</li>
+            <li>・hover時にカードの枠線と位置が変化する</li>
           </ul>
         </section>
       </section>
