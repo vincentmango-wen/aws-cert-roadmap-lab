@@ -73,15 +73,21 @@ export default async function QuestionDetailPage({
   params,
 }: QuestionDetailPageProps): Promise<React.JSX.Element> {
   const { questionId } = await params;
-  const question = getPublishedQuestions().find((question) => question.questionId === questionId);
+  const question = getPublishedQuestions().find(
+    (question) => question.questionId === questionId,
+  );
 
   if (!question) {
     notFound();
-  }  
+  }
+
+  const adjacentQuestionIds = getAdjacentQuestionIds(questionId);
 
   return (
     <QuestionPlayer
       question={question}
+      previousQuestionId={adjacentQuestionIds.previousQuestionId ?? undefined}
+      nextQuestionId={adjacentQuestionIds.nextQuestionId ?? undefined}
     />
   );
 }
