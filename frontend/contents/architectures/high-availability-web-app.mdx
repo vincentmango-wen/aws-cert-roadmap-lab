@@ -1,0 +1,73 @@
+
+---
+
+### ファイル：`frontend/contents/architectures/high-availability-web-app.mdx`
+
+- 種別：新規作成
+- 目的：ALB + Auto Scaling + RDS Multi-AZの高可用性構成を解説する
+
+```mdx
+---
+architectureId: "arc-004"
+slug: "high-availability-web-app"
+title: "ALB + Auto Scaling + RDS Multi-AZ 高可用性構成"
+description: "ALB、Auto Scaling、RDS Multi-AZを使った高可用性Webアプリ構成を解説します。"
+category: "High Availability"
+level: "intermediate"
+examScopes:
+  - "SAA-C03"
+services:
+  - "elb"
+  - "auto-scaling"
+  - "ec2"
+  - "rds"
+  - "cloudwatch"
+  - "iam"
+tags:
+  - "high-availability"
+  - "auto-scaling"
+  - "multi-az"
+  - "saa"
+mermaid: true
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# ALB + Auto Scaling + RDS Multi-AZ 高可用性構成
+
+## 概要
+
+複数AZにEC2を配置し、ALBでリクエストを分散し、Auto Scalingで台数を調整し、RDS Multi-AZでDB障害に備える構成です。
+
+本格的なWebアプリケーションの基本形であり、SAAで頻出する構成です。
+
+本プロジェクトのMVPでは低コストを優先するため採用しませんが、面接でAWS設計力を説明するときに重要な構成です。
+
+## 構成図
+
+```mermaid
+flowchart TD
+    User[ユーザー]
+    R53[Route 53]
+    ALB[Application Load Balancer]
+    ASG[Auto Scaling Group]
+    EC2A[EC2 App AZ-a]
+    EC2C[EC2 App AZ-c]
+    RDSA[(RDS Primary AZ-a)]
+    RDSC[(RDS Standby AZ-c)]
+    CW[CloudWatch]
+    SNS[SNS 任意]
+
+    User -->|DNS名前解決| R53
+    R53 --> ALB
+    User -->|HTTPS| ALB
+    ALB --> EC2A
+    ALB --> EC2C
+    ASG -.台数調整.-> EC2A
+    ASG -.台数調整.-> EC2C
+    EC2A -->|DB接続| RDSA
+    EC2C -->|DB接続| RDSA
+    RDSA -.同期レプリケーション.-> RDSC
+    CW -.メトリクス監視.-> ASG
+    CW -.アラーム通知.-> SNS

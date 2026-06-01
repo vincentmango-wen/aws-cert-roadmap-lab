@@ -1,0 +1,77 @@
+
+---
+
+### ファイル：`frontend/contents/architectures/three-tier-vpc.mdx`
+
+- 種別：新規作成
+- 目的：VPC内の3層Webアプリ構成を解説する
+
+```mdx
+---
+architectureId: "arc-003"
+slug: "three-tier-vpc"
+title: "VPC内3層Webアプリ構成"
+description: "Public Subnet、Private Subnet、Database層に分けたAWSの基本的な3層Webアプリ構成を解説します。"
+category: "Three Tier"
+level: "intermediate"
+examScopes:
+  - "SAA-C03"
+services:
+  - "vpc"
+  - "ec2"
+  - "elb"
+  - "rds"
+  - "iam"
+  - "cloudwatch"
+tags:
+  - "vpc"
+  - "three-tier"
+  - "network"
+  - "saa"
+mermaid: true
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# VPC内3層Webアプリ構成
+
+## 概要
+
+Webアプリを以下の3層に分けて配置する構成です。
+
+1. プレゼンテーション層
+2. アプリケーション層
+3. データベース層
+
+AWSでは、VPC、Subnet、Route Table、Security Group、ALB、EC2、RDSなどを組み合わせて実現します。
+
+本プロジェクトのMVPでは使いませんが、SAAでは非常に重要な基本構成です。
+
+## 構成図
+
+```mermaid
+flowchart TD
+    User[ユーザー]
+    IGW[Internet Gateway]
+    ALB[Application Load Balancer]
+    PublicSubnet[Public Subnet]
+    PrivateSubnetA[Private Subnet App AZ-a]
+    PrivateSubnetC[Private Subnet App AZ-c]
+    DBA[(RDS Primary)]
+    DBC[(RDS Standby)]
+    NAT[NAT Gateway]
+    CW[CloudWatch]
+
+    User -->|HTTPS| IGW
+    IGW --> ALB
+    ALB --> PublicSubnet
+    PublicSubnet -->|リクエスト転送| PrivateSubnetA
+    PublicSubnet -->|リクエスト転送| PrivateSubnetC
+    PrivateSubnetA -->|DB接続| DBA
+    PrivateSubnetC -->|DB接続| DBA
+    DBA -.同期レプリケーション.-> DBC
+    PrivateSubnetA -->|外部通信が必要な場合| NAT
+    PrivateSubnetC -->|外部通信が必要な場合| NAT
+    PrivateSubnetA -.ログ.-> CW
+    PrivateSubnetC -.ログ.-> CW

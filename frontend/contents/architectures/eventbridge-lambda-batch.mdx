@@ -1,0 +1,69 @@
+
+---
+
+### ファイル：`frontend/contents/architectures/eventbridge-lambda-batch.mdx`
+
+- 種別：新規作成
+- 目的：EventBridge + Lambdaによる定期バッチ構成を解説する
+
+```mdx
+---
+architectureId: "arc-005"
+slug: "eventbridge-lambda-batch"
+title: "EventBridge + Lambda バッチ処理構成"
+description: "EventBridge SchedulerとLambdaを使って、定期実行バッチをサーバーレスで実装する構成を解説します。"
+category: "Batch"
+level: "beginner"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "eventbridge"
+  - "lambda"
+  - "dynamodb"
+  - "cloudwatch"
+  - "sns"
+  - "iam"
+tags:
+  - "batch"
+  - "eventbridge"
+  - "lambda"
+  - "scheduler"
+mermaid: true
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# EventBridge + Lambda バッチ処理構成
+
+## 概要
+
+EventBridgeで決まった時刻にイベントを発生させ、Lambdaを実行するサーバーレスなバッチ処理構成です。
+
+毎日1問配信、定期レポート作成、古いデータの整理、集計処理などに使えます。
+
+本プロジェクトでは、将来的な「毎日1問配信」や「学習リマインド」に応用できます。
+
+## 構成図
+
+```mermaid
+flowchart TD
+    Scheduler[EventBridge Scheduler]
+    Lambda[AWS Lambda]
+    DDB[(DynamoDB)]
+    SNS[SNS 任意]
+    SES[SES 任意]
+    CW[CloudWatch Logs]
+    IAM[IAM Role]
+    Budget[AWS Budgets]
+
+    Scheduler -->|毎日決まった時刻に起動| Lambda
+    Lambda -->|問題データ取得| DDB
+    Lambda -->|通知 任意| SNS
+    Lambda -->|メール送信 任意| SES
+    Lambda -->|ログ出力| CW
+    IAM -.Lambda実行権限.-> Lambda
+    IAM -.DynamoDB読み取り権限.-> DDB
+    Budget -.課金監視.-> Scheduler
+    Budget -.課金監視.-> Lambda

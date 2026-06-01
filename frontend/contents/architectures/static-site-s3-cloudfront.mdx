@@ -1,0 +1,58 @@
+---
+architectureId: "arc-001"
+slug: "static-site-s3-cloudfront"
+title: "S3 + CloudFront 静的Webサイト構成"
+description: "S3に配置した静的サイトをCloudFrontで高速・安全に配信する基本構成を解説します。"
+category: "Static Hosting"
+level: "beginner"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "s3"
+  - "cloudfront"
+  - "iam"
+  - "acm"
+  - "route53"
+tags:
+  - "static-site"
+  - "cloudfront"
+  - "s3"
+  - "portfolio"
+mermaid: true
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# S3 + CloudFront 静的Webサイト構成
+
+## 概要
+
+S3に保存したHTML、CSS、JavaScript、画像ファイルを、CloudFront経由でユーザーに配信する構成です。
+
+この構成は、ブログ、学習サイト、ポートフォリオサイト、ドキュメントサイトなど、サーバー側で毎回処理を行わない静的コンテンツに向いています。
+
+本プロジェクトでは、AWS資格学習サイトのMVP公開構成として使います。
+
+## 構成図
+
+```mermaid
+flowchart TD
+    User[ユーザー]
+    R53[Route 53 任意]
+    ACM[ACM 証明書 任意]
+    CF[CloudFront]
+    OAC[Origin Access Control]
+    S3[(S3 静的ファイル)]
+    IAM[IAM]
+    Budget[AWS Budgets]
+
+    User -->|HTTPSアクセス| CF
+    R53 -.独自ドメイン利用時.-> CF
+    ACM -.TLS証明書.-> CF
+    CF -->|OAC経由で取得| S3
+    OAC -.S3直接公開防止.-> S3
+    IAM -.最小権限.-> S3
+    Budget -.課金監視.-> CF
+    Budget -.課金監視.-> S3

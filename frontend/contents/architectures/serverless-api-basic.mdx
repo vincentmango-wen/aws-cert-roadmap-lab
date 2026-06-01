@@ -1,0 +1,69 @@
+
+---
+
+### ファイル：`frontend/contents/architectures/serverless-api-basic.mdx`
+
+- 種別：新規作成
+- 目的：API Gateway + Lambda + DynamoDBのサーバーレスAPI構成を解説する
+
+```mdx
+---
+architectureId: "arc-002"
+slug: "serverless-api-basic"
+title: "API Gateway + Lambda + DynamoDB サーバーレスAPI構成"
+description: "API Gateway、Lambda、DynamoDBを組み合わせたサーバーレスAPIの基本構成を解説します。"
+category: "Serverless"
+level: "beginner"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "api-gateway"
+  - "lambda"
+  - "dynamodb"
+  - "cloudwatch"
+  - "iam"
+tags:
+  - "serverless"
+  - "api"
+  - "lambda"
+  - "dynamodb"
+mermaid: true
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# API Gateway + Lambda + DynamoDB サーバーレスAPI構成
+
+## 概要
+
+API GatewayをAPIの入口にし、Lambdaで処理を実行し、DynamoDBにデータを保存する構成です。
+
+本プロジェクトでは、問い合わせフォームの送信内容を保存するAPIとして利用します。
+
+常時起動サーバーを持たないため、小規模なWebアプリや個人開発のMVPと相性が良い構成です。
+
+## 構成図
+
+```mermaid
+flowchart TD
+    User[ユーザー]
+    Frontend[Frontend]
+    APIGW[API Gateway HTTP API]
+    Lambda[AWS Lambda]
+    DDB[(DynamoDB)]
+    CW[CloudWatch Logs]
+    IAM[IAM Role]
+    Budget[AWS Budgets]
+
+    User -->|フォーム入力| Frontend
+    Frontend -->|POST /contact| APIGW
+    APIGW -->|Lambda Invoke| Lambda
+    Lambda -->|PutItem| DDB
+    Lambda -->|ログ出力| CW
+    IAM -.実行権限.-> Lambda
+    IAM -.PutItemのみ許可.-> DDB
+    Budget -.課金監視.-> APIGW
+    Budget -.課金監視.-> Lambda
+    Budget -.課金監視.-> DDB
