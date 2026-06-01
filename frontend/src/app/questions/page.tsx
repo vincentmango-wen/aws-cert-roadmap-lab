@@ -9,12 +9,9 @@ import {
   QUESTION_DIFFICULTY_LABELS,
 } from "../../lib/questions";
 import type { Question } from "../../types/question";
+import { createPageMetadata, pageSeo } from "../../lib/seo";
 
-export const metadata: Metadata = {
-  title: "AWS模擬問題 | AWS資格ロードマップラボ",
-  description:
-    "AWS Cloud Practitioner / SAA の理解度を確認できる模擬問題ページです。まずはCLF-C02の基礎問題から始められます。",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.questions);
 
 const questions = getPublishedQuestions(rawQuestions as Question[]);
 const categorySummaries = getQuestionCategorySummaries(questions);

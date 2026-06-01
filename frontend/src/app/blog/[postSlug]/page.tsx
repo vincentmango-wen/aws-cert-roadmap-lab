@@ -2,19 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactElement } from "react";
+import { createPageMetadata, formatSlugForTitle } from "../../../lib/seo";
 import { blogPosts } from "../../../contents/blog/blogPosts";
 
-type BlogPostPageParams = {
+type BlogPostPageProps = {
+  params: Promise<{
+    postSlug: string;
+  }>;
+};
+
+type BlogPostStaticParams = {
   postSlug: string;
 };
 
-type BlogPostPageProps = {
-  params: Promise<BlogPostPageParams>;
-};
-
-export const dynamicParams = false;
-
-export function generateStaticParams(): BlogPostPageParams[] {
+export function generateStaticParams(): BlogPostStaticParams[] {
   return blogPosts
     .filter((post) => post.published)
     .map((post) => ({
@@ -26,22 +27,16 @@ export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const { postSlug } = await params;
+  const title = formatSlugForTitle(postSlug);
 
-  const post = blogPosts.find(
-    (blogPost) => blogPost.slug === postSlug && blogPost.published,
-  );
-
-  if (!post) {
-    return {
-      title: "記事が見つかりません | AWS資格ロードマップラボ",
-      description: "指定されたブログ記事は見つかりませんでした。",
-    };
-  }
-
-  return {
-    title: `${post.title} | AWS資格ロードマップラボ`,
-    description: post.description,
-  };
+  return createPageMetadata({
+    title,
+    description:
+      "AWS資格、AWS無料枠、サーバーレス構成、ポートフォリオ開発に関する初心者向け学習記事です。",
+    path: `/blog/${postSlug}`,
+    keywords: ["AWS", "AWS資格", "AWSブログ", "ポートフォリオ", title],
+    type: "article",
+  });
 }
 
 export default async function BlogPostPage({
@@ -92,7 +87,7 @@ export default async function BlogPostPage({
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
+              {post.tags.map((tag: string) => (
               <span
                 key={tag}
                 className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"

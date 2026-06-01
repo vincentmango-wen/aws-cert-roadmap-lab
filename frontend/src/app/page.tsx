@@ -1,4 +1,8 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { createPageMetadata, pageSeo } from "../lib/seo";
+
+export const metadata: Metadata = createPageMetadata(pageSeo.home);
 
 type FeatureCard = {
   title: string;

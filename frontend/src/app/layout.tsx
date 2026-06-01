@@ -1,18 +1,53 @@
 import type { Metadata } from "next";
-import { SiteLayout } from "@/components/layout/SiteLayout";
+import type { ReactNode } from "react";
+import { SiteLayout } from "../components/layout/SiteLayout";
+import { createAbsoluteUrl, siteConfig } from "../lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AWS資格ロードマップラボ",
-  description:
-    "AWS Cloud Practitioner / Solutions Architect Associate を学ぶ初学者向けのAWS資格学習サイトです。",
+  metadataBase: new URL(createAbsoluteUrl("/")),
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  generator: "Next.js",
+  openGraph: {
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: createAbsoluteUrl("/"),
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: createAbsoluteUrl(siteConfig.defaultOgImage),
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [createAbsoluteUrl(siteConfig.defaultOgImage)],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+type RootLayoutProps = {
+  children: ReactNode;
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: RootLayoutProps): React.JSX.Element {
   return (
     <html lang="ja">
       <body>

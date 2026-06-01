@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactElement } from "react";
 import Link from "next/link";
+import { createPageMetadata, pageSeo } from "../../lib/seo";
 
-export const metadata: Metadata = {
-  title: "プライバシーポリシー | AWS資格ロードマップラボ",
-  description:
-    "AWS資格ロードマップラボにおける個人情報、Cookie、アクセス解析、広告配信、問い合わせ情報の取り扱いについて説明します。",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.privacy);
 
 type PolicySection = {
   id: string;

@@ -6,15 +6,15 @@ import type { ChoiceId, Question } from "../../types/question";
 
 type QuestionPlayerProps = {
   question: Question;
-  previousQuestionId: string | null;
-  nextQuestionId: string | null;
+  previousQuestionId?: string;
+  nextQuestionId?: string;
 };
 
 export function QuestionPlayer({
   question,
   previousQuestionId,
   nextQuestionId,
-}: QuestionPlayerProps) {
+}: QuestionPlayerProps): React.JSX.Element {
   const [selectedChoiceId, setSelectedChoiceId] = useState<ChoiceId | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 

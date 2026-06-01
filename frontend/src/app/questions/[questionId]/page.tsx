@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { QuestionPlayer } from "../../../components/questions/QuestionPlayer";
+import { createPageMetadata } from "../../../lib/seo";
 import type { Question } from "../../../types/question";
 import rawQuestions from "../../../../contents/questions/clf-c02.json";
 
@@ -10,48 +11,77 @@ type QuestionDetailPageProps = {
   }>;
 };
 
+type QuestionStaticParams = {
+  questionId: string;
+};
+
 const questions = rawQuestions as Question[];
 
-export function generateStaticParams() {
-  return getPublishedQuestions().map((question) => ({
-    questionId: question.questionId,
-  }));
+export function generateStaticParams(): QuestionStaticParams[] {
+  return questions
+    .filter((question) => question.published)
+    .map((question) => ({
+      questionId: question.questionId,
+    }));
+}
+
+function truncateDescription(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength - 1)}…`;
 }
 
 export async function generateMetadata({
   params,
 }: QuestionDetailPageProps): Promise<Metadata> {
   const { questionId } = await params;
-  const question = getQuestionById(questionId);
+  const question = questions.find((item) => item.questionId === questionId);
 
   if (!question) {
-    return {
-      title: "模擬問題が見つかりません | AWS資格ロードマップラボ",
-      description: "指定された模擬問題は見つかりませんでした。",
-    };
+    return createPageMetadata({
+      title: "模擬問題が見つかりません",
+      description:
+        "指定された模擬問題は見つかりませんでした。模擬問題一覧からAWS Cloud Practitionerの問題を確認できます。",
+      path: `/questions/${questionId}`,
+      noIndex: true,
+    });
   }
 
-  return {
-    title: `AWS CLF模擬問題 ${question.questionId.toUpperCase()} | AWS資格ロードマップラボ`,
-    description: `${question.exam}の${question.category}カテゴリの模擬問題です。回答後に正誤判定と解説を確認できます。`,
-  };
+  return createPageMetadata({
+    title: `${question.questionId.toUpperCase()} | ${question.exam}模擬問題`,
+    description: truncateDescription(
+      `${question.category}分野のAWS模擬問題です。${question.question}`,
+      120,
+    ),
+    path: `/questions/${question.questionId}`,
+    keywords: [
+      question.exam,
+      question.category,
+      question.difficulty,
+      "AWS",
+      "模擬問題",
+      ...(question.relatedServices ?? []),
+      ...(question.tags ?? []),
+    ],
+    modifiedTime: question.updatedAt,
+  });
 }
 
-export default async function QuestionDetailPage({ params }: QuestionDetailPageProps) {
+export default async function QuestionDetailPage({
+  params,
+}: QuestionDetailPageProps): Promise<React.JSX.Element> {
   const { questionId } = await params;
-  const question = getQuestionById(questionId);
+  const question = getPublishedQuestions().find((question) => question.questionId === questionId);
 
   if (!question) {
     notFound();
-  }
-
-  const { previousQuestionId, nextQuestionId } = getAdjacentQuestionIds(question.questionId);
+  }  
 
   return (
     <QuestionPlayer
       question={question}
-      previousQuestionId={previousQuestionId}
-      nextQuestionId={nextQuestionId}
     />
   );
 }
