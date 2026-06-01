@@ -1,0 +1,20 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/about/page": "/about",
+  "/architectures/page": "/architectures",
+  "/blog/[postSlug]/page": "/blog/[postSlug]",
+  "/blog/page": "/blog",
+  "/comparisons/page": "/comparisons",
+  "/contact/page": "/contact",
+  "/disclaimer/page": "/disclaimer",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/privacy/page": "/privacy",
+  "/questions/[questionId]/page": "/questions/[questionId]",
+  "/questions/clf/page": "/questions/clf",
+  "/questions/page": "/questions",
+  "/roadmap/page": "/roadmap",
+  "/terms/[termId]/page": "/terms/[termId]",
+  "/terms/page": "/terms"
+}
