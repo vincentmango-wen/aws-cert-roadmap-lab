@@ -28,6 +28,7 @@ pnpm-debug.log*
 # Next.js
 # =========================================================
 .next/
+.next_backup_*/
 out/
 .vercel/
 
