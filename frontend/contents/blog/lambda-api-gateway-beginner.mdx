@@ -1,0 +1,179 @@
+---
+postId: "blog-004"
+slug: "lambda-api-gateway-beginner"
+title: "LambdaとAPI Gatewayを初心者向けに解説"
+description: "AWS LambdaとAmazon API Gatewayの役割、違い、連携方法、問い合わせフォームAPIでの使い方を初心者向けに解説します。"
+category: "Serverless"
+tags:
+  - "aws"
+  - "lambda"
+  - "api-gateway"
+  - "serverless"
+  - "backend"
+targetKeywords:
+  - "Lambda API Gateway 初心者"
+  - "AWS Lambda とは"
+  - "API Gateway とは"
+author: "fumi"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# LambdaとAPI Gatewayを初心者向けに解説
+
+## 結論
+
+Lambdaは処理を実行するサービスです。
+
+API Gatewayは、外部からAPIリクエストを受け取る入口です。
+
+この2つを組み合わせると、サーバーを常時起動せずにAPIを作れます。
+
+このサイトでは、問い合わせフォームの送信処理に使う想定です。
+
+## Lambdaとは
+
+AWS Lambdaは、コードを実行するサーバーレスサービスです。
+
+サーバーレスとは、サーバーが存在しないという意味ではありません。
+
+サーバーの管理をAWS側に任せられる、という意味です。
+
+利用者は、EC2のようにOSを管理したり、サーバーを起動し続けたりする必要がありません。
+
+## API Gatewayとは
+
+API Gatewayは、HTTPリクエストを受け取る入口です。
+
+フロントエンドから `POST /contact` のようなリクエストを送ると、API Gatewayがそれを受け取ります。
+
+その後、API GatewayがLambdaを呼び出します。
+
+つまり、API Gatewayは玄関、Lambdaは処理担当です。
+
+## 役割の違い
+
+| サービス | 役割 |
+|---|---|
+| API Gateway | APIのURLを公開する |
+| Lambda | 実際の処理を実行する |
+| DynamoDB | 処理結果やデータを保存する |
+| CloudWatch Logs | 実行ログを確認する |
+| IAM Role | Lambdaに必要な権限を与える |
+
+この役割分担を理解すると、サーバーレスAPIの全体像が分かります。
+
+## 問い合わせフォームでの使い方
+
+問い合わせフォームの流れは以下です。
+
+| 順番 | 処理 |
+|---|---|
+| 1 | ユーザーがフォームを入力する |
+| 2 | フロントエンドで入力チェックする |
+| 3 | API GatewayへPOSTリクエストを送る |
+| 4 | API GatewayがLambdaを呼び出す |
+| 5 | Lambdaが入力値を検証する |
+| 6 | LambdaがDynamoDBへ保存する |
+| 7 | Lambdaが成功レスポンスを返す |
+| 8 | 画面に送信完了メッセージを表示する |
+
+このように、フォーム送信だけなら大きなバックエンドサーバーは不要です。
+
+## Lambdaでやること
+
+Lambdaでは、主に以下を行います。
+
+| 処理 | 内容 |
+|---|---|
+| JSONパース | リクエスト本文を読み取る |
+| honeypot確認 | Bot投稿を除外する |
+| バリデーション | name、email、subject、messageを検証する |
+| ID生成 | contactIdを作る |
+| 日時生成 | createdAtを作る |
+| DynamoDB保存 | 問い合わせ内容を保存する |
+| レスポンス作成 | 成功またはエラーを返す |
+
+フロントエンドでも入力チェックしますが、それだけでは不十分です。
+
+APIは外部から直接呼び出される可能性があるため、Lambda側でも必ず検証します。
+
+## API Gatewayでやること
+
+API Gatewayでは、主に以下を設定します。
+
+| 設定 | 内容 |
+|---|---|
+| Route | `POST /contact` を作る |
+| Integration | Lambdaと接続する |
+| CORS | 許可するフロントエンドOriginを制限する |
+| Method | POST、OPTIONSを扱う |
+| Logs | 必要な範囲でログを確認する |
+
+MVPでは、認証は使いません。
+
+将来ログイン機能を入れる場合は、CognitoとJWT Authorizerを組み合わせます。
+
+## CORSとは
+
+CORSは、ブラウザが別のOriginへリクエストするときの制御です。
+
+たとえば、フロントエンドが `https://example.com` で、APIがAPI GatewayのURLなら、Originが異なります。
+
+そのため、API Gateway側で許可Originを設定します。
+
+本番では `*` を使わず、本番フロントエンドのURLだけを許可します。
+
+## IAMで必要な権限
+
+LambdaがDynamoDBに保存するには、DynamoDBへの権限が必要です。
+
+ただし、何でもできる権限を与えてはいけません。
+
+問い合わせLambdaに必要なのは、ContactsTableへの `dynamodb:PutItem` です。
+
+読み取りや削除が不要なら、付けません。
+
+この最小権限の考え方は、AWS資格でも実務でも重要です。
+
+## CloudWatch Logsで確認すること
+
+Lambdaを実行すると、CloudWatch Logsにログが出ます。
+
+ただし、問い合わせ本文やメールアドレス全文をログに出してはいけません。
+
+ログに出すなら、以下のような情報にします。
+
+| 出してよいログ | 理由 |
+|---|---|
+| contactId | 追跡に使える |
+| requestId | 障害調査に使える |
+| バリデーション失敗項目 | 原因確認に使える |
+| DynamoDB保存失敗 | 障害調査に使える |
+
+個人情報や秘密情報はログに出しません。
+
+## 試験で問われるポイント
+
+Cloud Practitionerでは、Lambdaはサーバーレスコンピューティング、API GatewayはAPI公開サービスとして理解します。
+
+SAAでは、サーバーレスAPI、認証、CORS、IAM、ログ、DynamoDB連携まで理解すると強いです。
+
+| 観点 | ポイント |
+|---|---|
+| コスト | Lambdaは実行回数と実行時間で課金 |
+| 可用性 | マネージドサービスを利用する |
+| セキュリティ | IAM Roleで最小権限 |
+| 運用 | CloudWatch Logsで確認 |
+| 拡張 | Cognito認証やDynamoDB連携に広げられる |
+
+## まとめ
+
+LambdaとAPI Gatewayを使うと、サーバーを常時起動せずにAPIを作れます。
+
+問い合わせフォームのような小さな動的処理には、サーバーレス構成が合います。
+
+重要なのは、API Gatewayを入口、Lambdaを処理担当、DynamoDBを保存先として分けて理解することです。
+
+この構成を作れると、AWS資格の知識を実装経験として説明しやすくなります。

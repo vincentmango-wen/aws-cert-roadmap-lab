@@ -3,7 +3,8 @@ export type BlogCategory =
   | "SAA"
   | "無料枠"
   | "サーバーレス"
-  | "ポートフォリオ";
+  | "ポートフォリオ"
+  | "AWS Services";
 
 export type BlogPostMeta = {
   postId: string;

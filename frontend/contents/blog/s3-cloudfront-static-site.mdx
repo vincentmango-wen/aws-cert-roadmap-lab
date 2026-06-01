@@ -1,0 +1,203 @@
+---
+postId: "blog-003"
+slug: "s3-cloudfront-static-site"
+title: "S3とCloudFrontで静的サイトを公開する方法"
+description: "Amazon S3とAmazon CloudFrontを使って、Next.jsの静的サイトを安全に公開する基本構成を初心者向けに解説します。"
+category: "Serverless"
+tags:
+  - "aws"
+  - "s3"
+  - "cloudfront"
+  - "static-site"
+  - "oac"
+targetKeywords:
+  - "S3 CloudFront 静的サイト"
+  - "Next.js S3 CloudFront"
+  - "CloudFront OAC S3"
+author: "fumi"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# S3とCloudFrontで静的サイトを公開する方法
+
+## 結論
+
+静的サイトをAWSで公開するなら、S3 + CloudFront構成が基本です。
+
+S3にHTML、CSS、JavaScript、画像を配置し、CloudFront経由でユーザーへ配信します。
+
+この構成では、S3を直接公開せず、CloudFrontからだけS3へアクセスできるようにします。
+
+そのために使うのが、CloudFront Origin Access Control、つまりOACです。
+
+## 構成の全体像
+
+全体の流れは次のとおりです。
+
+| 順番 | 処理 |
+|---|---|
+| 1 | ユーザーがブラウザでサイトにアクセスする |
+| 2 | CloudFrontがリクエストを受け取る |
+| 3 | CloudFrontにキャッシュがあればそのまま返す |
+| 4 | キャッシュがなければS3からファイルを取得する |
+| 5 | S3はCloudFrontからのアクセスだけ許可する |
+| 6 | ユーザーにWebページが表示される |
+
+この構成により、サーバーを起動せずにWebサイトを公開できます。
+
+## なぜS3だけで公開しないのか
+
+S3には静的Webサイトホスティング機能があります。
+
+ただし、このプロジェクトではS3を直接公開しない方針です。
+
+理由は、CloudFront経由にすることで、以下のメリットがあるからです。
+
+| 観点 | CloudFront経由にする理由 |
+|---|---|
+| セキュリティ | S3バケットを直接公開しない |
+| HTTPS | CloudFrontでHTTPS配信できる |
+| パフォーマンス | キャッシュにより表示が速くなる |
+| 運用 | キャッシュ制御や独自ドメイン設定を集約できる |
+| ポートフォリオ | CDNとオリジン分離の設計を説明できる |
+
+## 使用するAWSサービス
+
+### Amazon S3
+
+S3は、静的ファイルの保存先です。
+
+Next.jsで静的出力した場合、`out/` ディレクトリにHTMLやJavaScriptが生成されます。
+
+それをS3にアップロードします。
+
+S3側では、Public Access Blockを有効にしたままにします。
+
+### Amazon CloudFront
+
+CloudFrontは、ユーザーにファイルを配信する入口です。
+
+ブラウザはS3ではなくCloudFrontへアクセスします。
+
+CloudFrontはS3からファイルを取得し、ユーザーへ返します。
+
+### CloudFront OAC
+
+OACは、CloudFrontからS3へ安全にアクセスするための仕組みです。
+
+S3バケットポリシーで、特定のCloudFront Distributionからのアクセスだけ許可します。
+
+これにより、S3オブジェクトURLへ直接アクセスしても表示されない状態にできます。
+
+### IAM
+
+IAMは、S3やCloudFrontにアクセスする権限を制御します。
+
+GitHub Actionsでデプロイする場合は、S3へのアップロードとCloudFrontのInvalidationだけを許可するロールを作ります。
+
+## 実装ステップ
+
+### 1. Next.jsを静的出力にする
+
+`next.config.js` または `next.config.mjs` で、静的出力を有効にします。
+
+設定の目的は、S3にアップロードできるHTMLファイルを生成することです。
+
+このプロジェクトでは、`npm run build` 後に `out/` が生成される状態を目指します。
+
+### 2. S3バケットを作成する
+
+S3バケットは、静的ファイルの置き場です。
+
+設定方針は以下です。
+
+| 項目 | 方針 |
+|---|---|
+| Public Access | すべてブロック |
+| Static website hosting | 使わない |
+| 暗号化 | SSE-S3 |
+| バージョニング | MVPでは任意 |
+
+S3を直接公開しないことが重要です。
+
+### 3. CloudFront Distributionを作成する
+
+CloudFrontでは、オリジンにS3バケットを指定します。
+
+設定方針は以下です。
+
+| 項目 | 方針 |
+|---|---|
+| Origin | S3 bucket |
+| Origin access | OAC |
+| Viewer protocol policy | Redirect HTTP to HTTPS |
+| Allowed methods | GET, HEAD |
+| Default root object | index.html |
+| WAF | MVPでは使わない |
+
+### 4. S3 Bucket Policyを設定する
+
+S3 Bucket Policyでは、CloudFrontからの読み取りだけを許可します。
+
+許可する操作は `s3:GetObject` です。
+
+対象は、CloudFront DistributionのARNで絞ります。
+
+これにより、他の経路からS3オブジェクトを取得できない構成にします。
+
+### 5. CloudFront URLで確認する
+
+最後に、CloudFrontのドメインでサイトを確認します。
+
+S3の直接URLで表示できないことも確認します。
+
+ここでS3 URLから表示できてしまう場合は、バケットポリシーかPublic Access Blockを見直してください。
+
+## 試験で問われるポイント
+
+Cloud Practitionerでは、S3、CloudFront、IAM、料金、責任共有モデルが関連します。
+
+SAAでは、静的サイト配信、キャッシュ、オリジンアクセス制御、HTTPS、独自ドメイン、可用性が関連します。
+
+特に覚えるべきポイントは以下です。
+
+| ポイント | 内容 |
+|---|---|
+| S3 | オブジェクトストレージ |
+| CloudFront | CDN |
+| OAC | CloudFrontからS3への安全なアクセス制御 |
+| IAM | 権限管理 |
+| HTTPS | CloudFrontで配信 |
+| コスト | EC2を使わず固定費を抑えやすい |
+
+## よくある間違い
+
+### S3をパブリック公開してしまう
+
+学習中によくあるミスです。
+
+CloudFrontを使うなら、S3は直接公開しません。
+
+### CloudFrontのキャッシュを忘れる
+
+ファイルを更新しても、CloudFrontに古いキャッシュが残る場合があります。
+
+その場合はInvalidationを実行します。
+
+ただし、毎回すべてのパスを無効化すると運用上の無駄が増えます。
+
+### 画像ファイルを大きくしすぎる
+
+画像が大きいと、S3保存量とCloudFront転送量に影響します。
+
+初期MVPでは、画像枚数とサイズを抑える方針が安全です。
+
+## まとめ
+
+S3 + CloudFrontは、AWSで静的サイトを公開する基本構成です。
+
+重要なのは、S3を直接公開せず、CloudFront OACを使ってCloudFront経由のアクセスに限定することです。
+
+この構成を理解すると、Cloud Practitionerのサービス理解だけでなく、SAAで問われる配信・セキュリティ・コスト最適化の考え方にもつながります。
