@@ -1,0 +1,182 @@
+---
+comparisonId: "cmp-005"
+slug: "cloudwatch-vs-cloudtrail-vs-config"
+title: "CloudWatch・CloudTrail・AWS Configの違いを初心者向けに解説"
+description: "AWSの運用監視で重要なCloudWatch、CloudTrail、AWS Configの違い、試験ポイント、実務での使い分けを整理します。"
+category: "Monitoring"
+level: "beginner"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "cloudwatch"
+  - "cloudtrail"
+  - "config"
+tags:
+  - "monitoring"
+  - "security"
+  - "governance"
+  - "comparison"
+  - "clf"
+  - "saa"
+priority: "high"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# CloudWatch・CloudTrail・AWS Configの違い
+
+## 結論
+
+CloudWatch、CloudTrail、AWS Configは、AWS運用でよく混同されるサービスです。
+
+3つの違いは、何を見るかで整理できます。
+
+| サービス | 一言でいうと | 主な使いどころ |
+|---|---|---|
+| Amazon CloudWatch | メトリクス・ログ・アラームを見る | CPU使用率、Lambdaエラー、ログ確認 |
+| AWS CloudTrail | 誰が何を操作したかを見る | API操作履歴、監査、不審操作調査 |
+| AWS Config | リソース設定がどう変わったかを見る | 設定変更履歴、ルール評価、コンプライアンス確認 |
+
+迷ったら、まずはこう判断します。
+
+- システムの状態を見る：CloudWatch
+- 操作履歴を見る：CloudTrail
+- 設定変更を見る：AWS Config
+
+## 比較表
+
+| 項目 | CloudWatch | CloudTrail | AWS Config |
+|---|---|---|---|
+| 主な目的 | 監視 | 監査 | 構成管理 |
+| 見るもの | メトリクス、ログ、アラーム | API操作履歴 | リソース設定と変更履歴 |
+| 代表例 | Lambda Errors、API Gateway 5xx、ログ | IAMユーザーがS3バケットを変更した履歴 | S3 Public Access Blockが有効か |
+| 障害調査 | 得意 | 補助的に使う | 設定起因なら役立つ |
+| セキュリティ調査 | ログ次第 | 得意 | 設定違反確認に強い |
+| コンプライアンス | 一部対応 | 操作証跡 | ルール評価に強い |
+| このプロジェクトでの用途 | Lambdaログ、APIメトリクス、CloudFront確認 | 不審操作確認で任意利用 | 将来の設定チェック候補 |
+
+## 初学者向け説明
+
+### Amazon CloudWatch
+
+CloudWatchは、AWSリソースの状態を監視するサービスです。
+
+Lambdaの実行回数、エラー数、実行時間、API Gatewayの4xx/5xx、CloudFrontのリクエスト数などを確認できます。
+
+このプロジェクトでは、問い合わせAPIのLambdaログ確認に使います。
+
+### AWS CloudTrail
+
+CloudTrailは、AWSアカウント内で誰が何を操作したかを記録するサービスです。
+
+たとえば、IAMユーザーがS3バケットポリシーを変更した、Lambda関数を更新した、IAMロールを作成した、という操作履歴を確認できます。
+
+不審な操作や設定変更の原因調査で重要です。
+
+### AWS Config
+
+AWS Configは、AWSリソースの設定状態と変更履歴を記録し、ルールに基づいて評価するサービスです。
+
+たとえば、S3バケットが公開されていないか、CloudTrailが有効か、セキュリティグループが危険な開放になっていないかを確認する用途があります。
+
+MVPでは必須ではありませんが、将来のセキュリティ強化で検討できます。
+
+## 試験で問われるポイント
+
+### CLF-C02で問われやすいポイント
+
+- CloudWatchは監視、メトリクス、ログ、アラーム
+- CloudTrailはAPI操作履歴
+- AWS Configはリソース設定の記録と評価
+- 障害検知にはCloudWatch
+- 監査証跡にはCloudTrail
+- 設定準拠確認にはAWS Config
+
+### SAA-C03で問われやすいポイント
+
+- LambdaやAPI Gatewayのエラー調査にはCloudWatch Logsを使う
+- 誰がリソースを変更したか調べる場合はCloudTrailを使う
+- リソース設定がルールに準拠しているか確認する場合はAWS Configを使う
+- CloudWatch Alarmで異常時に通知できる
+- CloudTrailはセキュリティ調査や監査で重要
+- AWS Config Rulesで設定違反を検出できる
+
+## 実務での使い分け
+
+### CloudWatchを選ぶケース
+
+- Lambdaのエラーを確認したい
+- API Gatewayの5xxを確認したい
+- CloudFrontのリクエスト数を確認したい
+- CloudWatch Alarmで障害通知したい
+- アプリケーションログを確認したい
+
+このプロジェクトでは、Phase 2で問い合わせAPIを作った後、CloudWatch LogsでLambdaログを確認します。
+
+### CloudTrailを選ぶケース
+
+- 誰がIAM権限を変更したか確認したい
+- S3バケットポリシーの変更者を調べたい
+- 不審なAWS操作を追跡したい
+- アクセスキー漏えいが疑われるときに操作履歴を確認したい
+- 監査ログを残したい
+
+個人開発でも、課金事故や不審操作の調査で役立ちます。
+
+### AWS Configを選ぶケース
+
+- S3バケットが公開されていないか継続確認したい
+- セキュリティグループの危険な開放を検出したい
+- リソース設定の変更履歴を見たい
+- コンプライアンスルールに合っているか確認したい
+- チーム開発や本格運用で設定管理を強化したい
+
+MVPではコストと管理負荷を抑えるため、必須にはしません。
+
+## よくある間違い
+
+### 間違い1：CloudWatchで「誰が操作したか」まで全部分かると思う
+
+CloudWatchは主にメトリクスやログを見るサービスです。
+
+誰がAWSリソースを操作したかを調べる場合はCloudTrailを使います。
+
+### 間違い2：CloudTrailをアプリケーションログ確認に使う
+
+CloudTrailはAWS API操作履歴を確認するサービスです。
+
+Lambdaのアプリケーションログを見るならCloudWatch Logsを使います。
+
+### 間違い3：AWS Configを障害監視サービスとして覚える
+
+AWS Configは設定状態や変更履歴を管理するサービスです。
+
+CPU使用率やエラー数の監視はCloudWatchの役割です。
+
+### 間違い4：MVPから全部有効化する
+
+CloudWatch LogsはMVPでも必要です。
+
+ただし、AWS Configや細かい監視機能は、コストと管理負荷を見ながら段階的に導入します。
+
+## 関連用語
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS CloudTrail](/terms/cloudtrail)
+- [AWS Config](/terms/config)
+- [AWS IAM](/terms/iam)
+- [AWS Budgets](/terms/aws-budgets)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
+
+## まとめ
+
+CloudWatch、CloudTrail、AWS Configは、AWS運用で役割が違います。
+
+CloudWatchは状態監視、CloudTrailは操作履歴、AWS Configは設定管理です。
+
+この違いを説明できると、AWSの運用・監視・セキュリティ設計をかなり説明しやすくなります。
