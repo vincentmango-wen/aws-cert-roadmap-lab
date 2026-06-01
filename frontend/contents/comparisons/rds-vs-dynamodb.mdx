@@ -1,0 +1,183 @@
+---
+comparisonId: "cmp-002"
+slug: "rds-vs-dynamodb"
+title: "RDS・DynamoDBの違いを初心者向けに解説"
+description: "AWSの代表的なデータベースサービスであるRDSとDynamoDBの違い、試験ポイント、実務での使い分けを整理します。"
+category: "Database"
+level: "beginner"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "rds"
+  - "dynamodb"
+tags:
+  - "database"
+  - "comparison"
+  - "clf"
+  - "saa"
+priority: "high"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# RDS・DynamoDBの違い
+
+## 結論
+
+RDSとDynamoDBは、どちらもAWSのデータベースサービスです。
+
+ただし、データの持ち方と向いている用途が違います。
+
+| サービス | 一言でいうと | 主な使いどころ |
+|---|---|---|
+| Amazon RDS | マネージドなリレーショナルデータベース | SQL、表形式、複雑な検索、トランザクション |
+| Amazon DynamoDB | サーバーレスのNoSQLデータベース | 高速なキー検索、大量アクセス、シンプルなデータ構造 |
+
+迷ったら、まずはこう判断します。
+
+- SQLで複雑に検索したい：RDS
+- サーバーレスで低運用にしたい：DynamoDB
+- テーブル同士を結合したい：RDS
+- キーで高速に読み書きしたい：DynamoDB
+
+## 比較表
+
+| 項目 | RDS | DynamoDB |
+|---|---|---|
+| 正式名称 | Amazon Relational Database Service | Amazon DynamoDB |
+| 種類 | リレーショナルデータベース | NoSQLデータベース |
+| データ構造 | テーブル、行、列 | テーブル、アイテム、属性 |
+| 主な操作 | SQL | API、SDK、CLI |
+| サーバー管理 | AWSが多くを管理するがDBインスタンス設計は必要 | サーバーレスでインスタンス管理なし |
+| スケーリング | インスタンスサイズ、リードレプリカ、Auroraなどで対応 | 読み書きキャパシティやオンデマンドで対応 |
+| 複雑な検索 | 得意 | 設計次第。基本はキーアクセス中心 |
+| JOIN | 可能 | 基本的に使わない |
+| トランザクション | 得意 | 対応可能だが設計に注意 |
+| 固定費 | インスタンス起動時間などで発生しやすい | 小規模なら低コストにしやすい |
+| このプロジェクトでの用途 | MVPでは使わない | 問い合わせデータ保存で利用予定 |
+
+## 初学者向け説明
+
+### Amazon RDS
+
+RDSは、MySQL、PostgreSQL、MariaDB、Oracle、SQL ServerなどのリレーショナルデータベースをAWS上で使いやすくするサービスです。
+
+従来のWebアプリでよく使われる「表形式のDB」をAWSで運用するイメージです。
+
+ユーザー、注文、商品、決済など、複数テーブルの関係が重要なアプリに向いています。
+
+### Amazon DynamoDB
+
+DynamoDBは、AWSのサーバーレスNoSQLデータベースです。
+
+サーバーやDBインスタンスを管理せず、キーを使って高速にデータを読み書きできます。
+
+このプロジェクトでは、問い合わせフォームの保存先としてDynamoDBを使う設計です。
+
+問い合わせデータは複雑なJOINが不要で、1件ずつ保存・確認できればよいため、DynamoDBと相性が良いです。
+
+## 試験で問われるポイント
+
+### CLF-C02で問われやすいポイント
+
+- RDSはリレーショナルデータベースのマネージドサービス
+- DynamoDBはNoSQLデータベース
+- RDSはSQLを使う
+- DynamoDBはサーバーレスで低運用
+- DynamoDBはキーによる高速アクセスに向いている
+- RDSはMulti-AZで可用性を高められる
+
+### SAA-C03で問われやすいポイント
+
+- 複雑なSQLやJOINが必要ならRDSを選ぶ
+- 高スケールでシンプルなキーアクセスならDynamoDBを選ぶ
+- RDSの高可用性にはMulti-AZを使う
+- RDSの読み取り負荷分散にはRead Replicaを使う
+- DynamoDBではパーティションキー設計が重要
+- DynamoDBのScan多用は避け、Query中心の設計にする
+- サーバーレス構成ではDynamoDBが選ばれやすい
+
+## 実務での使い分け
+
+### RDSを選ぶケース
+
+- SQLで検索したい
+- テーブル同士の関連が多い
+- JOINが必要
+- トランザクション整合性を重視する
+- 既存アプリがMySQLやPostgreSQLを使っている
+- 管理画面や業務システムを作る
+
+例：
+
+- ECサイト
+- 予約システム
+- 社内管理システム
+- 会計システム
+- 注文管理システム
+
+### DynamoDBを選ぶケース
+
+- サーバーレス構成にしたい
+- アクセスパターンがシンプル
+- キーで高速に取得したい
+- 大量アクセスに備えたい
+- インフラ運用を減らしたい
+- Lambdaと組み合わせたい
+
+例：
+
+- 問い合わせ保存
+- セッション管理
+- ユーザー設定保存
+- 学習履歴保存
+- イベントログ保存
+- 通知設定保存
+
+## よくある間違い
+
+### 間違い1：DynamoDBをRDSの完全な代替だと思う
+
+DynamoDBはRDSの完全な置き換えではありません。
+
+JOINや複雑な検索が多い設計では、RDSの方が自然です。
+
+### 間違い2：RDSはサーバーレスだと思う
+
+RDSはマネージドサービスですが、DBインスタンスのサイズ、ストレージ、可用性などを考える必要があります。
+
+「マネージド」と「サーバーレス」は同じ意味ではありません。
+
+### 間違い3：DynamoDBでとりあえずScanすればよいと思う
+
+DynamoDBでScanを多用すると、データが増えたときにコストと性能の問題が出ます。
+
+DynamoDBでは、先にアクセスパターンを決めて、キー設計をします。
+
+### 間違い4：個人開発MVPで最初からRDSを使う
+
+RDSは強力ですが、固定費が発生しやすいです。
+
+このプロジェクトではコストを抑えるため、MVPでは問い合わせ保存にDynamoDBを使う方針です。
+
+## 関連用語
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
+
+## まとめ
+
+RDSとDynamoDBの違いは、SQL中心か、キーアクセス中心かで考えると整理しやすいです。
+
+RDSはリレーショナルDB、DynamoDBはサーバーレスNoSQLです。
+
+このプロジェクトでは、問い合わせ保存のようなシンプルな動的データにはDynamoDBを使います。
