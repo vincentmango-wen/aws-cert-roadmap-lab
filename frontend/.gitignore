@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.next_backup_*/
+/.next_broken_*/
 /.pnp
 .pnp.*
 .yarn/*
