@@ -252,7 +252,7 @@ export function QuestionPlayer({
                   <li key={serviceId}>
                     <Link
                       href={`/terms/${serviceId}`}
-                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                     >
                       {serviceId.toUpperCase()}
                     </Link>
@@ -272,7 +272,7 @@ export function QuestionPlayer({
                   <li key={termId}>
                     <Link
                       href={`/terms/${termId}`}
-                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                     >
                       {termId}
                     </Link>
