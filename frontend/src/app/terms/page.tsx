@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { createPageMetadata, pageSeo } from "../../lib/seo";
 import {
   TermsListClient,
   type TermSummary,
 } from "./TermsListClient";
+
+export const metadata: Metadata = createPageMetadata(pageSeo.terms);
 
 const terms: TermSummary[] = [
   {
@@ -336,12 +339,6 @@ const terms: TermSummary[] = [
       "ユーザー登録、ログイン、JWT発行などの認証機能を提供するサービス。",
   },
 ];
-
-export const metadata: Metadata = {
-  title: "AWS用語集 | AWS資格ロードマップラボ",
-  description:
-    "AWS Cloud PractitionerとSAAの学習に必要なAWS主要サービスを、カテゴリ・試験区分ごとに整理した用語集です。",
-};
 
 export default function TermsPage() {
   return <TermsListClient terms={terms} />;

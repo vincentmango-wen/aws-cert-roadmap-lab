@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { createPageMetadata, pageSeo } from "../../lib/seo";
+
+export const metadata: Metadata = createPageMetadata(pageSeo.roadmap);
 
 type RoadmapStep = {
   step: string;
@@ -181,12 +184,6 @@ const implementationMappings: ImplementationMapping[] = [
     awsServices: ["CloudWatch", "AWS Budgets"],
   },
 ];
-
-export const metadata: Metadata = {
-  title: "AWS学習ロードマップ | AWS資格ロードマップラボ",
-  description:
-    "AWS Cloud PractitionerからSolutions Architect Associateまで、AWS初学者が学ぶ順番と実装で理解するポイントを整理したロードマップです。",
-};
 
 export default function RoadmapPage() {
   return (

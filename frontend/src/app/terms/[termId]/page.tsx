@@ -1,9 +1,57 @@
 import type { Metadata } from "next";
+import termsData from "../../../../contents/terms/terms.json";
+import { createPageMetadata } from "../../../lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
-import termsData from "../../../../contents/terms/terms.json";
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { termId } = await params;
+  const term = getTermById(termId);
+
+  if (!term) {
+    return createPageMetadata({
+      title: "AWS用語が見つかりません",
+      description:
+        "指定されたAWS用語は見つかりませんでした。AWS用語集から主要サービスを確認できます。",
+      path: `/terms/${termId}`,
+      noIndex: true,
+    });
+  }
+
+  return createPageMetadata({
+    title: `${term.name}とは？`,
+    description:
+      term.oneLine ??
+      term.summary ??
+      `${term.name}の概要、用途、Cloud Practitioner / SAAの試験ポイントを初学者向けに解説します。`,
+    path: `/terms/${term.termId}`,
+    keywords: [
+      term.name,
+      term.shortName,
+      term.category,
+      "AWS",
+      "Cloud Practitioner",
+      "SAA",
+    ],
+    modifiedTime: term.updatedAt,
+  });
+}
+
+const terms = termsData as unknown as AwsTerm[];
+
+type TermStaticParams = {
+  termId: string;
+};
+
+export function generateStaticParams(): TermStaticParams[] {
+  return terms.map((term) => ({
+    termId: term.termId,
+  }));
+}
+
 
 type TermCategory =
   | "Compute"
@@ -47,7 +95,7 @@ type PageProps = {
   }>;
 };
 
-const terms = termsData as unknown as AwsTerm[];
+
 
 const levelLabels: Record<DifficultyLevel, string> = {
   beginner: "初級",
@@ -167,31 +215,6 @@ function EmptyMessage({ children }: { children: ReactNode }) {
 }
 
 export const dynamicParams = false;
-
-export function generateStaticParams(): Array<{ termId: string }> {
-  return terms.map((term) => ({
-    termId: term.termId,
-  }));
-}
-
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { termId } = await params;
-  const term = getTermById(termId);
-
-  if (!term) {
-    return {
-      title: "AWS用語が見つかりません | AWS資格ロードマップラボ",
-      description: "指定されたAWS用語は見つかりませんでした。",
-    };
-  }
-
-  return {
-    title: `${term.name}とは？用途・試験ポイントを解説 | AWS資格ロードマップラボ`,
-    description: term.oneLine,
-  };
-}
 
 export default async function TermDetailPage({ params }: PageProps) {
   const { termId } = await params;

@@ -6,12 +6,9 @@ import {
   awsServiceLabels,
   publishedArchitectures,
 } from "../../contents/architectures/architectures";
+import { createPageMetadata, pageSeo } from "../../lib/seo";
 
-export const metadata: Metadata = {
-  title: "AWS構成図ギャラリー | AWS資格ロードマップラボ",
-  description:
-    "SAAで理解したいAWS構成パターンを、サーバーレス、静的サイト、3層構成、高可用性、バッチ処理の観点で整理します。",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.architectures);
 
 export default function ArchitecturesPage() {
   const totalCount = publishedArchitectures.length;

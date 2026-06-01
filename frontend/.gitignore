@@ -4,6 +4,7 @@
 /node_modules
 /.next_backup_*/
 /.next_broken_*/
+/.next_stale_*/
 /.pnp
 .pnp.*
 .yarn/*

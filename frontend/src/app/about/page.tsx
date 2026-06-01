@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { createPageMetadata, pageSeo } from "../../lib/seo";
 
-export const metadata: Metadata = {
-  title: "運営者情報 | AWS資格ロードマップラボ",
-  description:
-    "AWS資格ロードマップラボの運営者情報ページです。サイトの目的、学習背景、使用技術、ポートフォリオとしての開発意図を紹介します。",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.about);
 
 const profileItems = [
   {

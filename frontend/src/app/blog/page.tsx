@@ -3,12 +3,9 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 import { BlogListClient } from "../../components/blog/BlogListClient";
 import { blogPosts } from "../../contents/blog/blogPosts";
+import { createPageMetadata, pageSeo } from "../../lib/seo";
 
-export const metadata: Metadata = {
-  title: "AWS学習ブログ | AWS資格ロードマップラボ",
-  description:
-    "AWS資格、サーバーレス、無料枠、ポートフォリオ作成に関する初心者向け学習記事をまとめています。",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.blog);
 
 export default function BlogPage(): ReactElement {
   const publishedPosts = blogPosts
