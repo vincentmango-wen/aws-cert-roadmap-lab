@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/questions/layout,_N_T_/questions/[questionId]/layout,_N_T_/questions/[questionId]/page,_N_T_/questions/clf-011"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/questions/$d$questionId/__PAGE__",
+    "/questions/$d$questionId",
+    "/questions",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/terms/layout,_N_T_/terms/[termId]/layout,_N_T_/terms/[termId]/page,_N_T_/terms/aws-config"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/terms/$d$termId/__PAGE__",
+    "/terms/$d$termId",
+    "/terms",
+    "/_index",
+    "/_head"
+  ]
+}

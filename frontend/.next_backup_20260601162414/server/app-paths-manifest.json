@@ -1,0 +1,14 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/architectures/page": "app/architectures/page.js",
+  "/comparisons/page": "app/comparisons/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/questions/[questionId]/page": "app/questions/[questionId]/page.js",
+  "/questions/clf/page": "app/questions/clf/page.js",
+  "/questions/page": "app/questions/page.js",
+  "/roadmap/page": "app/roadmap/page.js",
+  "/terms/[termId]/page": "app/terms/[termId]/page.js",
+  "/terms/page": "app/terms/page.js"
+}
