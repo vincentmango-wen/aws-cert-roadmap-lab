@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactElement } from "react";
-import { BlogListClient } from "../../components/blog/BlogListClient";
 import { blogPosts } from "../../contents/blog/blogPosts";
 import { createPageMetadata, pageSeo } from "../../lib/seo";
 
@@ -46,7 +45,7 @@ export default function BlogPage(): ReactElement {
                 {publishedPosts.length}
               </p>
               <p className="mt-1 text-sm font-medium text-slate-600">
-                公開予定記事
+                公開記事
               </p>
             </div>
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
@@ -66,7 +65,73 @@ export default function BlogPage(): ReactElement {
       </section>
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <BlogListClient posts={publishedPosts} />
+        <section>
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-950">
+                最新記事
+              </h2>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                AWS資格学習とポートフォリオ実装に役立つ記事を掲載しています。
+              </p>
+            </div>
+          </div>
+
+          {publishedPosts.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {publishedPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+                >
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                      {post.category}
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      {post.publishedAt}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-4 text-xl font-bold leading-8 text-slate-950 group-hover:text-blue-700">
+                    {post.title}
+                  </h3>
+
+                  <p className="mt-3 line-clamp-4 text-sm leading-7 text-slate-600">
+                    {post.description}
+                  </p>
+
+                  {post.tags.length > 0 ? (
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-slate-200 px-2.5 py-1 text-xs text-slate-500"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <p className="mt-6 text-sm font-semibold text-blue-700">
+                    記事を読む →
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center">
+              <h3 className="text-lg font-bold text-slate-950">
+                公開記事がありません
+              </h3>
+              <p className="mt-2 text-sm text-slate-600">
+                `published: true` の記事を追加してください。
+              </p>
+            </div>
+          )}
+        </section>
 
         <section className="mt-12 rounded-3xl bg-slate-950 p-8 text-white">
           <div className="max-w-3xl">

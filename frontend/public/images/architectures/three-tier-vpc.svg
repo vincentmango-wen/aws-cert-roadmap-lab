@@ -1,0 +1,114 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" rx="32" fill="#F8FAFC"/>
+
+  <text x="600" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#0F172A">
+    VPC内3層Webアプリ構成
+  </text>
+
+  <text x="600" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#475569">
+    Public Subnet、Private Subnet、Database Subnetを分離し、Web層・アプリ層・DB層を守る基本構成
+  </text>
+
+  <rect x="70" y="135" width="1060" height="540" rx="28" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="3"/>
+  <text x="105" y="174" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#0F172A">
+    VPC
+  </text>
+  <text x="105" y="202" font-family="Arial, sans-serif" font-size="15" fill="#64748B">
+    10.0.0.0/16
+  </text>
+
+  <rect x="120" y="245" width="260" height="340" rx="24" fill="#EFF6FF" stroke="#60A5FA" stroke-width="2"/>
+  <text x="250" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#1D4ED8">
+    Public Subnet
+  </text>
+  <text x="250" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Web入口 / Internet-facing
+  </text>
+
+  <rect x="470" y="245" width="260" height="340" rx="24" fill="#FFF7ED" stroke="#FB923C" stroke-width="2"/>
+  <text x="600" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#C2410C">
+    Private Subnet
+  </text>
+  <text x="600" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Application Layer
+  </text>
+
+  <rect x="820" y="245" width="260" height="340" rx="24" fill="#F0FDF4" stroke="#4ADE80" stroke-width="2"/>
+  <text x="950" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#15803D">
+    Database Subnet
+  </text>
+  <text x="950" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    DB Layer
+  </text>
+
+  <rect x="155" y="360" width="190" height="86" rx="18" fill="#FFFFFF" stroke="#2563EB" stroke-width="3"/>
+  <text x="250" y="396" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#1D4ED8">
+    ALB
+  </text>
+  <text x="250" y="424" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Load Balancer
+  </text>
+
+  <rect x="505" y="350" width="190" height="106" rx="18" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
+  <text x="600" y="391" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#C2410C">
+    EC2
+  </text>
+  <text x="600" y="419" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    App Server
+  </text>
+  <text x="600" y="443" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Private Only
+  </text>
+
+  <rect x="855" y="350" width="190" height="106" rx="18" fill="#FFFFFF" stroke="#22C55E" stroke-width="3"/>
+  <text x="950" y="391" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#15803D">
+    RDS
+  </text>
+  <text x="950" y="419" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Database
+  </text>
+  <text x="950" y="443" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Private Only
+  </text>
+
+  <circle cx="250" cy="175" r="34" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="250" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="29" font-weight="700" fill="#1D4ED8">IGW</text>
+  <text x="250" y="222" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Internet Gateway
+  </text>
+
+  <path d="M250 245V232" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+  <path d="M250 446H250" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M345 403H486" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+  <path d="M476 391L496 403L476 415" stroke="#EA580C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="420" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#C2410C">
+    HTTP/HTTPS
+  </text>
+
+  <path d="M695 403H836" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M826 391L846 403L826 415" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="770" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#15803D">
+    DB Access
+  </text>
+
+  <rect x="155" y="505" width="190" height="48" rx="14" fill="#DBEAFE"/>
+  <text x="250" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#1D4ED8">
+    Security Group
+  </text>
+
+  <rect x="505" y="505" width="190" height="48" rx="14" fill="#FFEDD5"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#C2410C">
+    App SG
+  </text>
+
+  <rect x="855" y="505" width="190" height="48" rx="14" fill="#DCFCE7"/>
+  <text x="950" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#15803D">
+    DB SG
+  </text>
+
+  <rect x="125" y="700" width="950" height="42" rx="21" fill="#E2E8F0"/>
+  <text x="600" y="727" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
+    ポイント：外部公開はALBのみ。アプリ層とDB層はPrivate Subnetに置き、ネットワークを分離する
+  </text>
+</svg>
