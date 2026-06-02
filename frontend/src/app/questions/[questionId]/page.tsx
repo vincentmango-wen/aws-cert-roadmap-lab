@@ -96,10 +96,6 @@ function getPublishedQuestions(): Question[] {
   return questions.filter((question) => question.published);
 }
 
-function getQuestionById(questionId: string): Question | undefined {
-  return getPublishedQuestions().find((question) => question.questionId === questionId);
-}
-
 function getAdjacentQuestionIds(questionId: string): {
   previousQuestionId: string | null;
   nextQuestionId: string | null;
