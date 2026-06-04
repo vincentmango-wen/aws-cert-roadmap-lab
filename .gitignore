@@ -39,6 +39,7 @@ dist/
 build/
 coverage/
 
+
 # =========================================================
 # TypeScript
 # =========================================================
@@ -81,6 +82,7 @@ config
 *.key
 *.p12
 *.pfx
+AWSCLIV2.pkg
 
 # Do not commit local SAM artifacts
 .aws-sam/
@@ -122,3 +124,4 @@ temp/
 *.tmp
 *.swp
 *.swo
+scripts/
