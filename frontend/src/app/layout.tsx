@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { SiteLayout } from "../components/layout/SiteLayout";
 import { createAbsoluteUrl, siteConfig } from "../lib/seo";
 import "./globals.css";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL(createAbsoluteUrl("/")),
@@ -52,6 +53,7 @@ export default function RootLayout({
     <html lang="ja">
       <body>
         <SiteLayout>{children}</SiteLayout>
+        <GoogleAnalytics />
       </body>
     </html>
   );
