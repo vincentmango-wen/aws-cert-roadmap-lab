@@ -1,0 +1,70 @@
+---
+postId: "blog-013"
+slug: "saa-s3-cloudfront-oac-design"
+title: "S3とCloudFront OACで安全に静的サイトを配信する設計"
+description: "S3を直接公開せずCloudFront OAC経由で配信する構成を、SAAとポートフォリオ観点で解説します。"
+category: "SAA対策"
+tags:
+  - "SAA-C03"
+  - "S3"
+  - "CloudFront"
+  - "OAC"
+  - "静的サイト"
+targetKeywords:
+  - "CloudFront OAC S3"
+  - "S3 静的サイト セキュリティ"
+  - "SAA CloudFront"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# S3とCloudFront OACで安全に静的サイトを配信する設計
+
+静的サイトをAWSで公開するなら、S3 + CloudFrontは基本構成です。ただし、S3バケットを直接公開する設計は避けます。
+
+## 結論
+
+S3は非公開にし、CloudFront OACを使ってCloudFrontからのみS3オブジェクトを取得できるようにします。ユーザーはCloudFront経由でHTTPSアクセスします。
+
+## なぜS3を直接公開しないのか
+
+S3バケットをパブリック公開すると、意図しないファイル公開やアクセス制御ミスにつながります。静的サイトの配信であっても、S3を直接公開するのではなくCloudFrontを入口にする方が安全です。
+
+## OACとは
+
+OACはOrigin Access Controlの略です。CloudFrontがS3オリジンにアクセスするための仕組みです。S3バケットポリシーで、特定のCloudFront Distributionからのアクセスだけを許可します。
+
+## 構成の流れ
+
+1. ユーザーが独自ドメインまたはCloudFrontドメインへアクセスする
+2. CloudFrontがリクエストを受ける
+3. キャッシュがあればCloudFrontから返す
+4. キャッシュがなければCloudFrontがS3から取得する
+5. S3はCloudFrontからのアクセスだけ許可する
+
+## SAAで問われるポイント
+
+- S3静的サイト配信にはCloudFrontを組み合わせる
+- S3は直接公開せずOACを使う
+- CloudFrontでHTTPS配信とキャッシュを扱う
+- 独自ドメインではACM証明書をCloudFrontに紐づける
+- キャッシュ更新にはInvalidationを使う
+
+## このプロジェクトでの役割
+
+このサイトではNext.jsの静的出力をS3へ配置し、CloudFrontで配信します。GitHub ActionsでS3 syncを実行し、デプロイ後にCloudFront Invalidationを実行します。
+
+これにより、低コスト、HTTPS配信、S3非公開、CI/CDをまとめてポートフォリオとして説明できます。
+
+## 関連用語
+
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Certificate Manager](/terms/acm)
+
+## 次に読む記事
+
+- [S3 + CloudFront 静的Webサイト構成](/architectures/static-site-s3-cloudfront)
+- [S3・EBS・EFSの違い](/comparisons/s3-vs-ebs-vs-efs)

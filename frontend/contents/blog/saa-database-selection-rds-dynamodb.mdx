@@ -1,0 +1,72 @@
+---
+postId: "blog-014"
+slug: "saa-database-selection-rds-dynamodb"
+title: "SAA向けにRDSとDynamoDBの選び方を整理する"
+description: "リレーショナルDBとNoSQLの違い、RDSとDynamoDBの使い分けをSAA対策として整理します。"
+category: "SAA対策"
+tags:
+  - "SAA-C03"
+  - "RDS"
+  - "DynamoDB"
+  - "Database"
+  - "NoSQL"
+targetKeywords:
+  - "RDS DynamoDB 違い"
+  - "SAA データベース 選び方"
+  - "AWS Database 初心者"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# SAA向けにRDSとDynamoDBの選び方を整理する
+
+SAAでは、要件に合ったデータベースを選ぶ問題がよく出ます。特にRDSとDynamoDBの違いは頻出です。
+
+## 結論
+
+リレーショナルデータ、SQL、複雑な結合、既存DB移行が重要ならRDS。スケーラブルなKey-Valueアクセス、サーバーレス、低運用負荷が重要ならDynamoDBを検討します。
+
+## RDSが向いているケース
+
+RDSはリレーショナルデータベースのマネージドサービスです。MySQL、PostgreSQLなどを使いたい場合に選択します。
+
+注文、顧客、商品、請求のようにテーブル間の関係が重要な業務システムではRDSが向きます。SQLで集計や結合を行いたい場合もRDSが自然です。
+
+## DynamoDBが向いているケース
+
+DynamoDBはNoSQLのマネージドデータベースです。キーを使った高速な読み書き、大量アクセス、サーバーレス構成と相性が良いサービスです。
+
+このサイトでは、問い合わせデータをContactsTableに保存します。複雑な結合は不要で、LambdaからPutItemできればよいため、DynamoDBが合っています。
+
+## コスト観点
+
+個人開発MVPでは、RDSは固定費になりやすいため慎重に扱います。DynamoDBはオンデマンドキャパシティを使うと、小規模・低頻度アクセスでは始めやすい構成になります。
+
+ただし、DynamoDBでもScan多用や大量書き込みはコスト増につながります。アクセスパターンを決めてからキー設計をします。
+
+## SAAで問われるポイント
+
+- SQLや複雑なリレーションが必要ならRDS
+- サーバーレスでスケールするNoSQLならDynamoDB
+- RDS Multi-AZは高可用性
+- Read Replicaは読み取り分散
+- DynamoDBはパーティションキー設計が重要
+
+## 実務での注意点
+
+DynamoDBは「とりあえず入れるDB」ではありません。検索条件や取得パターンが曖昧なまま作ると、後でScanだらけになります。
+
+RDSは柔軟ですが、バックアップ、パッチ、スケール、コストを考える必要があります。個人ポートフォリオでは、要件に対して過剰構成になっていないか確認します。
+
+## 関連用語
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Lambda](/terms/lambda)
+
+## 次に読む記事
+
+- [RDS・DynamoDBの違い](/comparisons/rds-vs-dynamodb)
+- [API Gateway + Lambda + DynamoDB サーバーレスAPI構成](/architectures/serverless-api-basic)

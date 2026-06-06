@@ -1,0 +1,69 @@
+---
+postId: "blog-018"
+slug: "apigateway-beginner-http-api"
+title: "Amazon API Gatewayとは？HTTP APIを初心者向けに解説"
+description: "API Gatewayの役割、HTTP API、Lambda連携、CORSの注意点をAWS初学者向けに整理します。"
+category: "AWSサービス解説"
+tags:
+  - "API Gateway"
+  - "HTTP API"
+  - "Lambda"
+  - "CORS"
+targetKeywords:
+  - "API Gateway とは"
+  - "HTTP API AWS"
+  - "API Gateway Lambda 初心者"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Amazon API Gatewayとは？HTTP APIを初心者向けに解説
+
+Amazon API Gatewayは、Web APIの入口を作るサービスです。Lambdaと組み合わせることで、サーバーレスAPIを構築できます。
+
+## 結論
+
+API Gatewayは、ブラウザやフロントエンドからのHTTPリクエストを受け、Lambdaなどのバックエンドへつなぐ入口です。
+
+## API Gatewayの役割
+
+フロントエンドは、直接Lambdaを呼び出すのではなく、API GatewayのエンドポイントへHTTPリクエストを送ります。API Gatewayがリクエストを受け、設定されたLambdaを呼び出します。
+
+このプロジェクトでは、問い合わせフォームからPOST /contactを呼び、API Gatewayがcontact-submit Lambdaを起動します。
+
+## HTTP APIとREST API
+
+API GatewayにはHTTP APIとREST APIがあります。MVPでは、シンプルで低コストにしやすいHTTP APIを優先します。
+
+REST APIの方が機能は豊富ですが、小規模な問い合わせAPIではHTTP APIで十分なケースが多いです。
+
+## CORSの注意点
+
+ブラウザからAPIを呼ぶ場合、CORS設定が必要です。本番では許可Originを独自ドメインやCloudFrontドメインに限定します。
+
+`*` を本番前提で許可すると、外部サイトからAPIを使われるリスクが上がります。MVPでも本番Originに絞る設計にします。
+
+## レート制限とスパム対策
+
+問い合わせAPIはスパム投稿の対象になりやすいです。最初はhoneypotと入力値制限を入れ、アクセスが増えたらAPI Gateway側の制限や追加対策を検討します。
+
+## 試験で問われるポイント
+
+- API GatewayはAPIの入口
+- Lambdaと組み合わせてサーバーレスAPIを作れる
+- HTTP APIはシンプルなAPIに向く
+- CORS設定が必要になる場合がある
+- 認証が必要な場合はCognito JWT Authorizerなどを使う
+
+## 関連用語
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 次に読む記事
+
+- [API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ](/blog/serverless-contact-api-flow)
+- [LambdaのログをCloudWatchで確認する方法](/blog/lambda-cloudwatch-logs-check)

@@ -1,0 +1,71 @@
+---
+postId: "blog-017"
+slug: "lambda-beginner-serverless"
+title: "AWS Lambdaとは？サーバーレスを初心者向けに解説"
+description: "AWS Lambdaの基本、メリット、注意点、API GatewayやDynamoDBとの組み合わせを初心者向けに整理します。"
+category: "AWSサービス解説"
+tags:
+  - "Lambda"
+  - "Serverless"
+  - "API Gateway"
+  - "DynamoDB"
+targetKeywords:
+  - "AWS Lambda とは"
+  - "Lambda 初心者"
+  - "サーバーレス AWS"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# AWS Lambdaとは？サーバーレスを初心者向けに解説
+
+AWS Lambdaは、サーバーを管理せずにコードを実行できるサービスです。サーバーレス構成を学ぶうえで中心になるサービスです。
+
+## 結論
+
+Lambdaは、イベントに応じて関数を実行するコンピューティングサービスです。必要なときだけ動くため、低頻度アクセスの個人開発MVPと相性が良いです。
+
+## サーバーレスとは
+
+サーバーレスは、サーバーが存在しないという意味ではありません。サーバーの管理をAWSに任せ、開発者はコードと設定に集中できるという意味です。
+
+EC2のようにOSを管理したり、常時起動サーバーを運用したりする必要がありません。
+
+## Lambdaの使いどころ
+
+Lambdaは、API処理、画像変換、定期バッチ、イベント処理、DynamoDB連携などで使われます。
+
+このサイトでは、問い合わせフォームの送信内容を受け取り、バリデーションしてDynamoDBに保存する処理にLambdaを使います。
+
+## API Gatewayとの組み合わせ
+
+Lambda単体ではWeb APIの入口にはなりません。HTTPリクエストを受ける入口としてAPI Gatewayを使い、API GatewayからLambdaを呼び出します。
+
+典型的な構成は、フロントエンドからPOST /contactを呼び、API GatewayがLambdaを起動し、LambdaがDynamoDBへ保存する流れです。
+
+## 注意点
+
+Lambdaには実行時間、メモリ、同時実行数などの制約があります。また、コールドスタートが発生する場合があります。
+
+個人MVPでは、処理を短くし、外部依存を減らし、ログに個人情報を出さないことが重要です。
+
+## 試験で問われるポイント
+
+- Lambdaはサーバーレスコンピューティング
+- イベント駆動で実行される
+- API Gatewayと組み合わせてAPIを作れる
+- DynamoDBなどのAWSサービスと連携しやすい
+- 常時起動サーバーを管理しない
+
+## 関連用語
+
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 次に読む記事
+
+- [LambdaとAPI Gatewayを初心者向けに解説](/blog/lambda-api-gateway-beginner)
+- [API Gateway + Lambda + DynamoDB サーバーレスAPI構成](/architectures/serverless-api-basic)

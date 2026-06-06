@@ -1,0 +1,79 @@
+---
+postId: "blog-025"
+slug: "lambda-cloudwatch-logs-check"
+title: "LambdaのログをCloudWatchで確認する方法"
+description: "Lambda実行時のログをCloudWatch Logsで確認し、問い合わせAPIのエラー調査に使う流れを整理します。"
+category: "サーバーレス実装"
+tags:
+  - "Lambda"
+  - "CloudWatch Logs"
+  - "運用監視"
+  - "Serverless"
+targetKeywords:
+  - "Lambda CloudWatch Logs 確認"
+  - "AWS Lambda ログ"
+  - "CloudWatch Logs 初心者"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# LambdaのログをCloudWatchで確認する方法
+
+LambdaでAPIを作ったら、CloudWatch Logsでログを確認できる状態にします。問い合わせAPIの障害調査では、最初に見る場所の1つです。
+
+## 結論
+
+Lambdaの実行ログはCloudWatch Logsに出力されます。エラー時は、Lambdaのロググループを開き、requestIdやエラーメッセージから原因を調査します。
+
+## CloudWatch Logsで見るもの
+
+問い合わせAPIでは、次のようなログを確認します。
+
+- Lambdaが呼び出されたか
+- バリデーションエラーが出ているか
+- DynamoDB PutItemで失敗していないか
+- CORSやJSONパースで失敗していないか
+- タイムアウトしていないか
+
+## ロググループ
+
+Lambdaを実行すると、通常 `/aws/lambda/関数名` のロググループにログが出ます。このプロジェクトなら、contact-submit-prodのロググループを確認します。
+
+ログストリームは実行単位や時間単位で分かれます。直近の実行を探し、エラーメッセージを確認します。
+
+## 出してよいログ
+
+出してよいログは、処理成功、バリデーションエラーのフィールド名、DynamoDB保存失敗、requestId、contactIdなどです。
+
+例として、`INFO contact submitted contactId=contact-xxxx` のようなログは調査に役立ちます。
+
+## 出してはいけないログ
+
+メールアドレス全文、問い合わせ本文全文、AWS認証情報、APIキー、JWTなどはログに出しません。
+
+ログは運用者が見るものですが、保存期間が長くなると情報漏えいリスクになります。個人情報を出さない設計が必要です。
+
+## 保存期間
+
+CloudWatch Logsは無期限保存にするとログ量が増えます。個人MVPでは、短めの保存期間を設定し、コストと情報管理のリスクを下げます。
+
+## 障害調査の流れ
+
+1. フロントエンドのエラーメッセージを確認する
+2. API Gatewayのステータスコードを確認する
+3. LambdaのCloudWatch Logsを見る
+4. DynamoDB保存有無を確認する
+5. CORS、環境変数、IAM権限を確認する
+
+## 関連用語
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+
+## 次に読む記事
+
+- [CloudWatchの基本をCloud Practitioner向けに解説](/blog/clf-monitoring-cloudwatch-basics)
+- [API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ](/blog/serverless-contact-api-flow)

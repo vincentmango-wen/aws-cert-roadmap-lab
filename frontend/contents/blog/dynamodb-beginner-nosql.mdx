@@ -1,0 +1,69 @@
+---
+postId: "blog-019"
+slug: "dynamodb-beginner-nosql"
+title: "Amazon DynamoDBとは？NoSQLを初心者向けに解説"
+description: "DynamoDBの基本、テーブル、パーティションキー、オンデマンド課金、Lambda連携を初心者向けに整理します。"
+category: "AWSサービス解説"
+tags:
+  - "DynamoDB"
+  - "NoSQL"
+  - "Lambda"
+  - "Database"
+targetKeywords:
+  - "DynamoDB とは"
+  - "DynamoDB 初心者"
+  - "AWS NoSQL"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Amazon DynamoDBとは？NoSQLを初心者向けに解説
+
+Amazon DynamoDBは、AWSのマネージドNoSQLデータベースです。サーバーレス構成と相性が良く、Lambdaから使いやすいサービスです。
+
+## 結論
+
+DynamoDBは、キーを使って高速にデータを読み書きするNoSQLデータベースです。複雑なSQL結合より、決まったアクセスパターンに沿った設計が重要です。
+
+## NoSQLとは
+
+NoSQLは、リレーショナルデータベースとは異なるデータモデルを使うデータベースの総称です。DynamoDBでは、テーブルにアイテムを保存し、キーを使って取得します。
+
+SQLのように自由にJOINする設計ではなく、「どのキーで保存し、どのキーで取得するか」を先に考えます。
+
+## パーティションキー
+
+DynamoDBの基本はパーティションキーです。テーブル内のアイテムを分散・取得するためのキーになります。
+
+問い合わせテーブルなら、contactIdをパーティションキーにする設計が考えられます。ユーザー別学習履歴なら、userIdをパーティションキーにする設計が候補になります。
+
+## オンデマンド課金
+
+DynamoDBにはオンデマンドキャパシティがあります。アクセス数が少ない個人MVPでは始めやすい選択肢です。
+
+ただし、大量アクセスやScan多用ではコストが増えます。AWS BudgetsとCloudWatch Metricsで監視します。
+
+## このプロジェクトでの使い方
+
+このサイトでは、問い合わせフォームから送信された名前、メール、件名、本文をDynamoDBに保存します。MVPでは問い合わせだけを動的データとして扱い、記事や問題は静的ファイルで管理します。
+
+## 試験で問われるポイント
+
+- DynamoDBはマネージドNoSQLデータベース
+- サーバーレス構成と相性が良い
+- パーティションキー設計が重要
+- 大量アクセスに強い設計ができる
+- RDSとはデータモデルが違う
+
+## 関連用語
+
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon RDS](/terms/rds)
+- [AWS Lambda](/terms/lambda)
+
+## 次に読む記事
+
+- [RDS・DynamoDBの違い](/comparisons/rds-vs-dynamodb)
+- [SAA向けにRDSとDynamoDBの選び方を整理する](/blog/saa-database-selection-rds-dynamodb)

@@ -1,0 +1,73 @@
+---
+postId: "blog-010"
+slug: "clf-monitoring-cloudwatch-basics"
+title: "CloudWatchの基本をCloud Practitioner向けに解説"
+description: "CloudWatch Logs、Metrics、Alarmの役割を、個人開発の運用監視と結びつけて整理します。"
+category: "CLF対策"
+tags:
+  - "CLF-C02"
+  - "CloudWatch"
+  - "監視"
+  - "ログ"
+targetKeywords:
+  - "CloudWatch 初心者"
+  - "AWS 監視 基本"
+  - "Cloud Practitioner CloudWatch"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# CloudWatchの基本をCloud Practitioner向けに解説
+
+AWS上にアプリを公開したら、動いているか、エラーが出ていないか、料金が増えていないかを確認する必要があります。その入口になるのがAmazon CloudWatchです。
+
+## 結論
+
+CloudWatchはAWSリソースのメトリクス、ログ、アラームを扱う監視サービスです。個人開発でも、Lambdaのエラー確認やAPIの実行回数確認に役立ちます。
+
+## CloudWatch Metrics
+
+Metricsは数値データです。Lambdaの実行回数、エラー数、実行時間、API Gatewayの4xx/5xx、CloudFrontのリクエスト数などを確認できます。
+
+障害時は、まず「どのサービスでエラーが増えているか」をMetricsで見ます。
+
+## CloudWatch Logs
+
+LogsはアプリケーションやLambdaが出力したログを確認する機能です。問い合わせAPIでエラーが起きた場合、LambdaのCloudWatch Logsを見ることで原因を調査できます。
+
+ただし、ログにメールアドレス全文や問い合わせ本文全文を出すのは危険です。個人情報や秘密情報はログに出さない設計にします。
+
+## CloudWatch Alarm
+
+Alarmは、指定した条件を満たしたときに通知する仕組みです。たとえばLambda Errorsが一定以上になったら通知する、といった使い方をします。
+
+MVPでは必須ではありませんが、アクセスが増えてきたら導入価値が高くなります。
+
+## CloudTrailやAWS Configとの違い
+
+CloudWatchは監視とログ、CloudTrailはAPI操作履歴、AWS Configはリソース設定の変更管理に強いサービスです。試験ではこの違いが問われます。
+
+## このプロジェクトでの使い方
+
+このサイトでは、問い合わせAPIのLambdaログ、Lambda Errors、API Gatewayの4xx/5xx、CloudFrontの4xx/5xxを確認対象にします。課金についてはCloudWatchではなく、AWS BudgetsとCost Explorerで確認します。
+
+## 試験で問われるポイント
+
+- CloudWatch Logsはログ確認に使う
+- CloudWatch Metricsは数値監視に使う
+- CloudWatch Alarmは条件付き通知に使う
+- CloudTrailはAPI操作履歴に使う
+- AWS Configは設定変更の追跡に使う
+
+## 関連用語
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS CloudTrail](/terms/cloudtrail)
+- [AWS Config](/terms/aws-config)
+
+## 次に読む記事
+
+- [CloudWatch・CloudTrail・AWS Configの違い](/comparisons/cloudwatch-vs-cloudtrail-vs-config)
+- [LambdaのログをCloudWatchで確認する方法](/blog/lambda-cloudwatch-logs-check)

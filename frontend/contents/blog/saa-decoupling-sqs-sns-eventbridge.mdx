@@ -1,0 +1,72 @@
+---
+postId: "blog-015"
+slug: "saa-decoupling-sqs-sns-eventbridge"
+title: "SQS・SNS・EventBridgeで疎結合設計を理解する"
+description: "SAAで重要な疎結合設計について、SQS、SNS、EventBridgeの役割と使い分けを整理します。"
+category: "SAA対策"
+tags:
+  - "SAA-C03"
+  - "SQS"
+  - "SNS"
+  - "EventBridge"
+  - "疎結合"
+targetKeywords:
+  - "SQS SNS EventBridge 違い"
+  - "AWS 疎結合 設計"
+  - "SAA メッセージング"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# SQS・SNS・EventBridgeで疎結合設計を理解する
+
+SAAでは、システムを疎結合にする設計がよく問われます。その代表サービスがSQS、SNS、EventBridgeです。
+
+## 結論
+
+SQSはキュー、SNSはPub/Sub通知、EventBridgeはイベントルーティングです。システム同士を直接つなぎすぎないことで、障害に強く拡張しやすい構成になります。
+
+## 疎結合とは
+
+疎結合とは、コンポーネント同士の依存を弱くする設計です。AサービスがBサービスを直接呼び出す構成だと、Bが遅いとAも影響を受けやすくなります。
+
+間にキューやイベントを挟むと、処理を非同期化でき、片方の障害が全体停止に直結しにくくなります。
+
+## SQSの役割
+
+SQSはメッセージキューです。処理待ちのメッセージを一時的にため、後続の処理が順番に取り出します。
+
+画像変換、注文処理、バッチ処理など、処理を非同期にしたい場面で使います。
+
+## SNSの役割
+
+SNSは通知のPub/Subサービスです。1つのメッセージを複数の購読先へ配信できます。
+
+メール通知、Lambda起動、SQSへの配信など、同じイベントを複数方向へ広げたいときに使います。
+
+## EventBridgeの役割
+
+EventBridgeはイベントバスです。AWSサービス、SaaS、独自アプリから発生するイベントをルールで振り分けます。
+
+定期実行にも使えるため、毎日1問配信のような機能ではEventBridge + Lambdaの構成が候補になります。
+
+## SAAで問われるポイント
+
+- SQSは非同期キュー
+- SNSは複数購読者への通知
+- EventBridgeはイベントルーティングとスケジュール実行
+- 疎結合は耐障害性と拡張性を高める
+- 同期処理を非同期化する選択肢を考える
+
+## 関連用語
+
+- [Amazon SQS](/terms/sqs)
+- [Amazon SNS](/terms/sns)
+- [Amazon EventBridge](/terms/eventbridge)
+
+## 次に読む記事
+
+- [SNS・SQS・EventBridgeの違い](/comparisons/sns-vs-sqs-vs-eventbridge)
+- [EventBridge + Lambda バッチ処理構成](/architectures/eventbridge-lambda-batch)
