@@ -1005,7 +1005,7 @@ targetKeywords:
 
   - "S3 CloudFront 静的サイト"
 
-author: "fumi"
+author: "AWS Cert Roadmap Lab"
 
 eyeCatch: "/images/blog/aws-free-tier-portfolio.png"
 
