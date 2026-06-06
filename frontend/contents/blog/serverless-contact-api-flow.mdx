@@ -1,0 +1,78 @@
+---
+postId: "blog-024"
+slug: "serverless-contact-api-flow"
+title: "API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ"
+description: "問い合わせフォームをサーバーレスAPIで保存する流れを、フロントエンドからDynamoDB保存まで整理します。"
+category: "サーバーレス実装"
+tags:
+  - "API Gateway"
+  - "Lambda"
+  - "DynamoDB"
+  - "Contact Form"
+  - "Serverless"
+targetKeywords:
+  - "問い合わせフォーム AWS Lambda"
+  - "API Gateway Lambda DynamoDB"
+  - "サーバーレス API 初心者"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ
+
+静的サイトでも、問い合わせフォームのようなユーザー入力は保存先が必要です。このサイトでは、API Gateway + Lambda + DynamoDBで問い合わせAPIを構成します。
+
+## 結論
+
+フロントエンドがPOST /contactを呼び、API GatewayがLambdaを起動し、Lambdaが入力値を検証してDynamoDBに保存します。
+
+## 全体フロー
+
+1. ユーザーが問い合わせフォームに入力する
+2. フロントエンドで必須チェックとメール形式チェックを行う
+3. API GatewayのPOST /contactへJSONを送信する
+4. LambdaがリクエストBodyをパースする
+5. honeypotを確認する
+6. Lambda側でもバリデーションする
+7. DynamoDBへPutItemする
+8. 成功レスポンスを返す
+9. フロントエンドで完了メッセージを表示する
+
+## なぜフロントだけで検証しないのか
+
+フロントエンドのチェックはユーザー体験をよくするためのものです。セキュリティ上は信用できません。
+
+APIに直接リクエストされる可能性があるため、Lambda側でも必須項目、文字数、メール形式、honeypotを確認します。
+
+## DynamoDBに保存するデータ
+
+保存する項目は、contactId、createdAt、name、email、subject、message、sourcePage、status、userAgentなどです。
+
+ただし、CloudWatch Logsにはメールアドレス全文や本文全文を出しません。ログにはrequestId、contactId、エラー種別など、調査に必要な最小情報だけを出します。
+
+## CORSの扱い
+
+本番では許可Originを本番ドメインに限定します。開発環境のlocalhostは開発時だけ許可します。
+
+CORSを `*` にして本番運用するのは避けます。
+
+## この構成のメリット
+
+- EC2を使わない
+- サーバー管理が不要
+- 低頻度アクセスなら低コストにしやすい
+- AWS資格で学ぶ主要サービスを実装で使える
+- ポートフォリオで設計意図を説明しやすい
+
+## 関連用語
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 次に読む記事
+
+- [Amazon API Gatewayとは？HTTP APIを初心者向けに解説](/blog/apigateway-beginner-http-api)
+- [Amazon DynamoDBとは？NoSQLを初心者向けに解説](/blog/dynamodb-beginner-nosql)

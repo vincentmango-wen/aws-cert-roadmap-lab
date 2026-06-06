@@ -1,0 +1,71 @@
+---
+postId: "blog-020"
+slug: "cloudfront-beginner-cdn"
+title: "Amazon CloudFrontとは？CDNを初心者向けに解説"
+description: "CloudFrontの基本、CDN、キャッシュ、S3配信、HTTPS、Invalidationを初心者向けに整理します。"
+category: "AWSサービス解説"
+tags:
+  - "CloudFront"
+  - "CDN"
+  - "S3"
+  - "Cache"
+targetKeywords:
+  - "CloudFront とは"
+  - "CDN AWS 初心者"
+  - "CloudFront S3 配信"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Amazon CloudFrontとは？CDNを初心者向けに解説
+
+Amazon CloudFrontは、AWSのCDNサービスです。静的サイト配信、画像配信、API高速化などで使われます。
+
+## 結論
+
+CloudFrontは、ユーザーに近いエッジロケーションからコンテンツを配信し、表示速度と可用性を高めるサービスです。
+
+## CDNとは
+
+CDNはContent Delivery Networkの略です。コンテンツをユーザーの近くにキャッシュして配信する仕組みです。
+
+たとえば日本のユーザーが米国のサーバーへ毎回アクセスすると遅くなります。CloudFrontを使うと、近いエッジ拠点からキャッシュを返せるため、表示速度が改善します。
+
+## S3との組み合わせ
+
+静的サイトでは、S3にHTML、CSS、JavaScript、画像を置き、CloudFrontで配信する構成がよく使われます。
+
+このとき、S3を直接公開せず、CloudFront OACでCloudFrontからのみアクセスできるようにすると安全です。
+
+## HTTPS配信
+
+CloudFrontはHTTPS配信にも使います。独自ドメインを使う場合は、ACMで証明書を発行し、CloudFront Distributionに紐づけます。
+
+CloudFront用のACM証明書は、リージョンの扱いに注意します。
+
+## Invalidationとは
+
+CloudFrontはキャッシュを持つため、S3に新しいファイルをアップロードしても、すぐに反映されない場合があります。そのときに使うのがInvalidationです。
+
+CI/CDでは、S3 sync後にCloudFront Invalidationを実行して、更新内容を反映します。
+
+## 試験で問われるポイント
+
+- CloudFrontはCDNサービス
+- エッジロケーションから配信する
+- S3と組み合わせて静的サイトを配信できる
+- HTTPS配信やキャッシュ制御に使う
+- 更新反映にはInvalidationを使う
+
+## 関連用語
+
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [AWS Certificate Manager](/terms/acm)
+
+## 次に読む記事
+
+- [ALB・NLB・CloudFrontの違い](/comparisons/alb-vs-nlb-vs-cloudfront)
+- [S3とCloudFront OACで安全に静的サイトを配信する設計](/blog/saa-s3-cloudfront-oac-design)

@@ -1,0 +1,73 @@
+---
+postId: "blog-009"
+slug: "clf-iam-basics"
+title: "IAMの基本をCloud Practitioner向けに整理する"
+description: "IAMユーザー、IAMグループ、IAMロール、IAMポリシーの基本と、最小権限の考え方を整理します。"
+category: "CLF対策"
+tags:
+  - "CLF-C02"
+  - "IAM"
+  - "セキュリティ"
+  - "最小権限"
+targetKeywords:
+  - "AWS IAM 初心者"
+  - "IAM ロール ポリシー 違い"
+  - "Cloud Practitioner IAM"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# IAMの基本をCloud Practitioner向けに整理する
+
+IAMはAWSの権限管理サービスです。Cloud PractitionerでもSAAでも重要で、AWSを安全に使うための土台になります。
+
+## 結論
+
+IAMでは「誰が」「何に対して」「何をできるか」を管理します。初学者は、IAMユーザー、IAMグループ、IAMロール、IAMポリシーの違いをまず押さえます。
+
+## IAMユーザー
+
+IAMユーザーは、AWSを操作する人やアプリケーションを表すIDです。日常作業でrootユーザーを使わず、IAMユーザーを使うのが基本です。
+
+ただし、長期アクセスキーを発行すると漏えいリスクが出ます。使わないアクセスキーは削除し、MFAを設定します。
+
+## IAMグループ
+
+IAMグループは複数ユーザーをまとめて権限管理する仕組みです。個人開発では利用場面は少ないですが、チーム開発では「開発者」「運用担当」などで分けられます。
+
+## IAMロール
+
+IAMロールは、一時的に権限を引き受けるための仕組みです。AWSサービスに権限を渡すときによく使います。
+
+たとえばLambdaがDynamoDBに書き込む場合、Lambda実行ロールにDynamoDB PutItem権限を付与します。GitHub ActionsからAWSへデプロイする場合も、OIDCでIAMロールを引き受ける構成が使えます。
+
+## IAMポリシー
+
+IAMポリシーは、許可または拒否する操作をJSONで定義するものです。Action、Resource、Effectなどを指定します。
+
+大事なのは、`*` を安易に使わないことです。必要なサービス、必要な操作、必要なリソースに絞ります。
+
+## 最小権限の原則
+
+最小権限とは、作業に必要な権限だけを付与する考え方です。このサイトでは、LambdaにはDynamoDBのPutItemだけ、GitHub ActionsにはS3 syncとCloudFront Invalidationに必要な権限だけを付与する設計です。
+
+## 試験で問われるポイント
+
+- rootユーザーは日常利用しない
+- MFAを有効化する
+- IAMポリシーで権限を定義する
+- IAMロールはAWSサービスや一時認証で使う
+- 最小権限の原則が重要
+
+## 関連用語
+
+- [IAM](/terms/iam)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 次に読む記事
+
+- [IAMユーザー・IAMロール・IAMポリシーの違い](/comparisons/iam-user-vs-role-vs-policy)
+- [GitHub OIDCでAWSデプロイを安全にする](/blog/github-actions-oidc-deploy)

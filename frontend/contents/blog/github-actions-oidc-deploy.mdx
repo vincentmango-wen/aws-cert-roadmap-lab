@@ -1,0 +1,74 @@
+---
+postId: "blog-023"
+slug: "github-actions-oidc-deploy"
+title: "GitHub Actions OIDCでAWSデプロイを安全にする"
+description: "GitHub ActionsからAWSへデプロイするときに、長期アクセスキーを使わずOIDCで一時認証する考え方を解説します。"
+category: "AWS無料枠・ポートフォリオ"
+tags:
+  - "GitHub Actions"
+  - "OIDC"
+  - "IAM"
+  - "CI/CD"
+  - "CloudFront"
+targetKeywords:
+  - "GitHub Actions OIDC AWS"
+  - "AWS デプロイ OIDC"
+  - "GitHub Actions IAM Role"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# GitHub Actions OIDCでAWSデプロイを安全にする
+
+GitHub ActionsからAWSへデプロイする場合、AWSアクセスキーをGitHub Secretsに保存する方法があります。ただし、より安全な構成としてOIDC方式があります。
+
+## 結論
+
+OIDC方式では、GitHub ActionsがAWS IAMロールを一時的に引き受けます。長期アクセスキーをGitHubに保存しないため、漏えいリスクを下げられます。
+
+## 何が問題なのか
+
+AWS_ACCESS_KEY_IDとAWS_SECRET_ACCESS_KEYをGitHub Secretsに保存すると、運用は簡単です。しかし、長期アクセスキーは漏えいしたときのリスクが大きいです。
+
+個人開発でも、ポートフォリオとして公開するなら、認証情報の扱いには注意が必要です。
+
+## OIDC方式の仕組み
+
+GitHub Actions実行時に、GitHubがOIDCトークンを発行します。AWS IAM側では、GitHubのOIDC ProviderとTrust Policyを設定し、特定リポジトリ・特定ブランチからだけIAMロールを引き受けられるようにします。
+
+このプロジェクトでは、本番ブランチは `master` として扱います。そのためTrust Policyのsub条件も `refs/heads/master` に合わせます。
+
+## 最小権限にする
+
+GitHub Actions用ロールには、S3へのアップロード、S3内ファイル削除、CloudFront Invalidationに必要な権限だけを付与します。
+
+IAM操作、DynamoDB削除、EC2操作など、デプロイに不要な権限は付与しません。
+
+## このプロジェクトでの流れ
+
+1. masterブランチへpushする
+2. GitHub Actionsが起動する
+3. Next.jsをbuildする
+4. OIDCでAWS IAMロールを引き受ける
+5. S3へout/をsyncする
+6. CloudFront Invalidationを実行する
+
+## 試験・実務でのポイント
+
+- IAMロールは一時的な権限委譲に使える
+- 最小権限の原則が重要
+- 長期アクセスキーを減らすと漏えいリスクが下がる
+- CI/CDにもセキュリティ設計が必要
+
+## 関連用語
+
+- [IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+
+## 次に読む記事
+
+- [IAMの基本をCloud Practitioner向けに整理する](/blog/clf-iam-basics)
+- [AWSポートフォリオでサーバーレス構成を選ぶ理由](/blog/aws-portfolio-serverless-architecture)

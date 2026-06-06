@@ -1,0 +1,68 @@
+---
+postId: "blog-021"
+slug: "aws-portfolio-serverless-architecture"
+title: "AWSポートフォリオでサーバーレス構成を選ぶ理由"
+description: "個人開発ポートフォリオでS3、CloudFront、API Gateway、Lambda、DynamoDBを選ぶ理由を整理します。"
+category: "AWS無料枠・ポートフォリオ"
+tags:
+  - "ポートフォリオ"
+  - "Serverless"
+  - "S3"
+  - "CloudFront"
+  - "Lambda"
+targetKeywords:
+  - "AWS ポートフォリオ サーバーレス"
+  - "AWS 個人開発 構成"
+  - "AWS 無料枠 ポートフォリオ"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# AWSポートフォリオでサーバーレス構成を選ぶ理由
+
+AWSを使ったポートフォリオを作るとき、最初からEC2やRDSで本格的な構成を作る必要はありません。個人開発MVPでは、サーバーレス構成が現実的です。
+
+## 結論
+
+静的コンテンツ中心の学習サイトなら、S3 + CloudFrontを中心にし、必要な動的処理だけAPI Gateway + Lambda + DynamoDBで作る構成が合っています。
+
+## 固定費を避けられる
+
+個人開発で一番怖いのは、使っていないのに料金が発生し続ける構成です。EC2、RDS、NAT Gateway、ALBは学習価値がありますが、MVPでは固定費や停止忘れのリスクがあります。
+
+サーバーレス中心にすると、アクセスが少ない段階では低コストに抑えやすくなります。
+
+## AWS資格の学習と直結する
+
+S3、CloudFront、Lambda、API Gateway、DynamoDB、IAM、CloudWatchは、Cloud PractitionerでもSAAでも重要です。
+
+この構成を自分で作ると、資格知識を単なる暗記ではなく、実装経験として説明できます。
+
+## 面接で説明しやすい
+
+ポートフォリオでは、作ったもの以上に「なぜその設計にしたか」を説明できることが重要です。
+
+たとえば、S3を直接公開せずCloudFront OACを使った、問い合わせだけDynamoDBに保存した、GitHub ActionsはOIDCで最小権限にした、という説明は評価されやすいポイントです。
+
+## MVPに合っている
+
+学習サイトは、用語集、比較記事、模擬問題、構成図、ブログのような静的コンテンツが中心です。これらはS3 + CloudFrontで配信できます。
+
+問い合わせフォームだけはユーザー入力を保存する必要があるため、API Gateway + Lambda + DynamoDBで動的処理にします。
+
+## 注意点
+
+サーバーレスでも何も考えなくてよいわけではありません。CORS、IAM、ログ、DynamoDBキー設計、CloudFrontキャッシュ、課金監視は必要です。
+
+## 関連用語
+
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Lambda](/terms/lambda)
+
+## 次に読む記事
+
+- [AWS無料枠でポートフォリオを作る方法](/blog/aws-free-tier-portfolio)
+- [API Gateway + Lambda + DynamoDB サーバーレスAPI構成](/architectures/serverless-api-basic)

@@ -1,0 +1,72 @@
+---
+postId: "blog-012"
+slug: "saa-vpc-public-private-subnet"
+title: "VPCのPublic SubnetとPrivate SubnetをSAA向けに整理する"
+description: "VPC、Public Subnet、Private Subnet、Internet Gateway、NAT Gatewayの役割をSAA対策として整理します。"
+category: "SAA対策"
+tags:
+  - "SAA-C03"
+  - "VPC"
+  - "Subnet"
+  - "NAT Gateway"
+  - "Internet Gateway"
+targetKeywords:
+  - "VPC Public Subnet Private Subnet"
+  - "SAA VPC 基礎"
+  - "AWS ネットワーク 初心者"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# VPCのPublic SubnetとPrivate SubnetをSAA向けに整理する
+
+SAAでネットワーク問題を解くには、VPC、サブネット、ルートテーブル、Internet Gateway、NAT Gatewayの関係を理解する必要があります。
+
+## 結論
+
+Public Subnetはインターネットから到達させるリソースを置く場所、Private Subnetは外部から直接到達させたくないリソースを置く場所です。
+
+## VPCとは
+
+VPCはAWS上に作る仮想ネットワークです。EC2、RDS、ALBなどを配置するネットワークの土台になります。
+
+S3、DynamoDB、Lambda、API Gatewayだけで構成する小さなサーバーレスMVPでは、VPCを使わない選択もあります。このサイトの問い合わせLambdaもDynamoDBにアクセスするだけなので、VPC接続しない構成がシンプルです。
+
+## Public Subnetとは
+
+Public Subnetは、ルートテーブルでInternet Gatewayへのルートを持つサブネットです。外部から到達させるALBや踏み台用途のEC2などを置くことがあります。
+
+ただし、Public Subnetに置いたから必ずインターネット公開されるわけではありません。パブリックIP、ルートテーブル、セキュリティグループなども関係します。
+
+## Private Subnetとは
+
+Private Subnetは、インターネットから直接到達させないリソースを置くサブネットです。アプリケーションサーバーやRDSを置く構成が代表的です。
+
+Private Subnet内のEC2が外部へアップデート通信する場合、NAT Gatewayなどを使います。ただしNAT Gatewayは固定費が出やすいため、個人MVPでは慎重に扱います。
+
+## SAAで問われるポイント
+
+- Public SubnetはInternet Gatewayへのルートを持つ
+- Private Subnetのリソースは外部から直接到達させない
+- NAT GatewayはPrivate Subnetから外向き通信するときに使う
+- RDSは基本的にPrivate Subnetに置く
+- マルチAZ構成ではサブネットも複数AZに分ける
+
+## 実務での注意点
+
+VPC設計は一度作ると後から変更が面倒です。CIDR、サブネット分割、AZ、ルートテーブル、セキュリティグループを最初に整理します。
+
+初学者の個人開発では、不要なVPC接続やNAT Gatewayを作らない方が安全です。学習目的で作る場合も、作成後の削除確認までセットで行います。
+
+## 関連用語
+
+- [Amazon VPC](/terms/vpc)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon RDS](/terms/rds)
+
+## 次に読む記事
+
+- [Security Group・NACLの違い](/comparisons/security-group-vs-nacl)
+- [VPC内3層Webアプリ構成](/architectures/three-tier-vpc)

@@ -1,0 +1,69 @@
+---
+postId: "blog-007"
+slug: "clf-aws-global-infrastructure"
+title: "AWSグローバルインフラストラクチャを初心者向けに解説"
+description: "リージョン、アベイラビリティゾーン、エッジロケーションの違いをCloud Practitioner向けに整理します。"
+category: "CLF対策"
+tags:
+  - "CLF-C02"
+  - "リージョン"
+  - "AZ"
+  - "CloudFront"
+targetKeywords:
+  - "AWS リージョン AZ 違い"
+  - "AWS グローバルインフラ"
+  - "Cloud Practitioner"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# AWSグローバルインフラストラクチャを初心者向けに解説
+
+AWSの構成を理解するには、まずリージョン、アベイラビリティゾーン、エッジロケーションの違いを押さえる必要があります。Cloud PractitionerでもSAAでも頻出です。
+
+## 結論
+
+リージョンは地理的な地域、アベイラビリティゾーンはリージョン内の独立したデータセンター群、エッジロケーションはユーザーに近い場所からコンテンツを配信する拠点です。
+
+## リージョンとは
+
+リージョンは、東京、バージニア北部、シンガポールなどの地理的な単位です。サービスやデータをどの地域に配置するかを決める単位になります。
+
+日本向けサービスで低遅延を狙うなら、基本は東京リージョンを選びます。このプロジェクトでも、S3、Lambda、DynamoDB、API Gatewayは東京リージョンを前提にしています。
+
+## アベイラビリティゾーンとは
+
+アベイラビリティゾーンは、リージョン内にある独立したデータセンター群です。AZと呼ばれます。
+
+高可用性を実現するには、複数AZにまたがって構成することが重要です。たとえばRDS Multi-AZやALB + Auto Scalingの構成では、1つのAZに障害が起きてもサービスを継続できるようにします。
+
+## エッジロケーションとは
+
+エッジロケーションはCloudFrontなどで使われる配信拠点です。ユーザーに近い場所からキャッシュを返すことで、表示速度を高めます。
+
+S3に置いた静的サイトをCloudFrontで配信すると、ユーザーはS3に直接アクセスするのではなく、CloudFrontのエッジ拠点を経由してコンテンツを受け取ります。
+
+## 試験で問われるポイント
+
+- リージョンは地理的な単位
+- AZはリージョン内の独立した障害分離単位
+- 複数AZ構成は高可用性につながる
+- CloudFrontはエッジロケーションを使って高速配信する
+- ACM証明書はCloudFrontで使う場合、バージニア北部で発行するケースがある
+
+## このプロジェクトでの使い方
+
+このサイトでは、静的ファイルをS3に置き、CloudFrontで配信します。問い合わせAPIはAPI Gateway、Lambda、DynamoDBで構成します。グローバル配信はCloudFront、データ保存やAPI処理は東京リージョンという分担です。
+
+## 関連用語
+
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon Route 53](/terms/route53)
+- [AWS Certificate Manager](/terms/acm)
+
+## 次に読む記事
+
+- [S3 + CloudFront 静的Webサイト構成](/architectures/static-site-s3-cloudfront)
+- [ALB・NLB・CloudFrontの違い](/comparisons/alb-vs-nlb-vs-cloudfront)

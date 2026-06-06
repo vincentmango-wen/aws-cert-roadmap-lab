@@ -1,0 +1,70 @@
+---
+postId: "blog-011"
+slug: "saa-multi-az-high-availability"
+title: "SAAで重要なMulti-AZ高可用性設計を整理する"
+description: "SAA-C03で問われやすいMulti-AZ、冗長化、単一障害点の考え方を初心者向けに整理します。"
+category: "SAA対策"
+tags:
+  - "SAA-C03"
+  - "Multi-AZ"
+  - "高可用性"
+  - "RDS"
+  - "ALB"
+targetKeywords:
+  - "SAA Multi-AZ"
+  - "AWS 高可用性 設計"
+  - "単一障害点 AWS"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# SAAで重要なMulti-AZ高可用性設計を整理する
+
+Solutions Architect Associateでは、高可用性設計が頻繁に問われます。特にMulti-AZ構成、冗長化、単一障害点の排除は必須です。
+
+## 結論
+
+高可用性を高めるには、1つのAZ、1つのインスタンス、1つのコンポーネントに依存しない構成にします。AWSでは、複数AZにまたがる設計が基本になります。
+
+## 単一障害点とは
+
+単一障害点とは、そこが止まるとシステム全体が止まる箇所です。1台だけのEC2、1つのAZだけにあるDB、冗長化されていないNAT Gatewayなどが例です。
+
+SAAでは「この構成の弱点はどこか」「どうすれば可用性が上がるか」という形で問われます。
+
+## Multi-AZとは
+
+Multi-AZは、複数のアベイラビリティゾーンを使う構成です。1つのAZで障害が起きても、別のAZで処理を継続できるようにします。
+
+RDS Multi-AZは、データベースの高可用性を高める代表的な構成です。読み取り性能向上を目的とするRead Replicaとは役割が違います。
+
+## ALBとAuto Scaling
+
+Webアプリでは、ALBで複数AZのEC2へトラフィックを分散し、Auto Scalingで台数を調整します。これにより、1台のEC2障害やAZ障害に強くなります。
+
+## サーバーレスでも高可用性を意識する
+
+Lambda、S3、DynamoDB、API Gatewayのようなマネージドサービスは、AWS側で可用性が高く設計されています。ただし、設定や依存先の設計を間違えると可用性は下がります。
+
+たとえばLambdaをVPC内に配置してNAT Gatewayに依存させる場合、NAT Gatewayの冗長化を考える必要があります。
+
+## 試験で問われるポイント
+
+- 単一AZ構成は障害に弱い
+- Multi-AZは高可用性向上に使う
+- Read Replicaは主に読み取り性能と読み取り分散に使う
+- ALB + Auto ScalingはWeb層の冗長化に使う
+- マネージドサービスでも依存関係を確認する
+
+## 関連用語
+
+- [Amazon RDS](/terms/rds)
+- [Elastic Load Balancing](/terms/elb)
+- [Auto Scaling](/terms/auto-scaling)
+
+## 次に読む記事
+
+- [Multi-AZ・Read Replicaの違い](/comparisons/multi-az-vs-read-replica)
+- [ALB + Auto Scaling + RDS Multi-AZ 高可用性構成](/architectures/high-availability-web-app)
