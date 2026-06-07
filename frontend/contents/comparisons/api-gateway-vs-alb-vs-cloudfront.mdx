@@ -1,0 +1,220 @@
+---
+comparisonId: "cmp-009"
+slug: "api-gateway-vs-alb-vs-cloudfront"
+title: "API Gateway・ALB・CloudFrontの違いを初心者向けに解説"
+description: "AWSでAPIやWebアプリの入口として使われるAPI Gateway、Application Load Balancer、Amazon CloudFrontの違いを、サーバーレス、負荷分散、CDN、試験ポイントの観点で整理します。"
+category: "Networking"
+level: "intermediate"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "api-gateway"
+  - "elb"
+  - "cloudfront"
+tags:
+  - "api"
+  - "serverless"
+  - "networking"
+  - "cloudfront"
+  - "comparison"
+  - "saa"
+priority: "high"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# API Gateway・ALB・CloudFrontの違い
+
+## 結論
+
+API Gateway、ALB、CloudFrontは、どれも外部からのリクエストを受ける入口になります。
+
+ただし、目的が違います。
+
+- サーバーレスAPIを公開するならAPI Gateway
+- EC2やECSなどWebアプリを負荷分散するならALB
+- コンテンツを高速配信・キャッシュするならCloudFront
+
+このプロジェクトでは、静的サイト配信にCloudFront、問い合わせAPIにAPI Gatewayを使います。
+
+## 比較表
+
+| 項目 | API Gateway | ALB | CloudFront |
+|---|---|---|---|
+| 分類 | API管理サービス | ロードバランサー | CDN |
+| 主な用途 | REST API / HTTP API / WebSocket API公開 | Webアプリの負荷分散 | 静的・動的コンテンツの高速配信 |
+| 代表的な接続先 | Lambda、HTTPエンドポイント、AWSサービス | EC2、ECS、Lambda | S3、ALB、API Gateway、HTTPオリジン |
+| 認証・認可 | IAM、Lambda Authorizer、Cognitoなど | OIDC認証など | 署名付きURL、WAF連携など |
+| キャッシュ | APIキャッシュ機能あり | 主目的ではない | 得意 |
+| サーバーレスとの相性 | 高い | 中 | 高い |
+| WebSocket | 対応 | 主目的ではない | 主目的ではない |
+| 試験キーワード | serverless API, REST, HTTP API, Lambda | load balancing, HTTP routing | CDN, edge, cache, static content |
+
+## 初学者向け説明
+
+API Gatewayは、APIの入口です。
+
+```text
+Frontend
+↓ POST /contact
+API Gateway
+↓
+Lambda
+```
+
+このプロジェクトの問い合わせフォームでも、API Gatewayを使う設計です。
+
+ALBは、Webアプリの入口です。
+
+```text
+User
+↓
+ALB
+↓
+EC2 / ECS
+```
+
+複数のアプリケーションサーバーに通信を振り分けます。
+
+CloudFrontは、ユーザーに近い場所からコンテンツを返すCDNです。
+
+```text
+User
+↓
+CloudFront
+↓
+S3
+```
+
+静的サイトや画像配信でよく使います。
+
+## 試験で問われるポイント
+
+### API Gatewayが正解になりやすいケース
+
+- LambdaでAPIを作りたい
+- HTTP APIまたはREST APIを公開したい
+- WebSocket APIを作りたい
+- API単位で認証・レート制限・監視をしたい
+- サーバーレス構成が要件にある
+
+### ALBが正解になりやすいケース
+
+- EC2やECS上のWebアプリを負荷分散したい
+- HTTP/HTTPSのパスベースルーティングが必要
+- コンテナアプリケーションへリクエストを振り分けたい
+- Webアプリの入口が必要
+
+### CloudFrontが正解になりやすいケース
+
+- 静的コンテンツを高速配信したい
+- S3をオリジンにしたい
+- グローバルユーザーへ低レイテンシで配信したい
+- オリジンへのアクセス回数を減らしたい
+- HTTPS配信とキャッシュを組み合わせたい
+
+## 実務での使い分け
+
+### サーバーレス問い合わせAPI
+
+API Gatewayを使います。
+
+```text
+Contact Form
+↓
+API Gateway
+↓
+Lambda
+↓
+DynamoDB
+```
+
+このプロジェクトのMVPでは、この構成が問い合わせAPIの中心です。
+
+### EC2 / ECS Webアプリ
+
+ALBを使います。
+
+```text
+User
+↓
+ALB
+↓
+ECS Service
+```
+
+コンテナやEC2を複数台構成にする場合、ALBで負荷分散します。
+
+### 静的サイト・画像配信
+
+CloudFrontを使います。
+
+```text
+User
+↓
+CloudFront
+↓
+S3
+```
+
+S3を直接公開せず、CloudFront経由で配信できます。
+
+### CloudFront + API Gateway
+
+APIにもCloudFrontを前段に置けます。
+
+```text
+User
+↓
+CloudFront
+↓
+API Gateway
+↓
+Lambda
+```
+
+ただし、MVPでは構成を複雑にしないため、まずは静的サイト配信はCloudFront、APIはAPI Gateway URLを利用する構成でも十分です。
+
+## よくある間違い
+
+### 間違い1：API GatewayとALBを同じAPI入口として覚える
+
+どちらもHTTPリクエストを受けられますが、設計思想が違います。
+
+Lambda中心のサーバーレスAPIならAPI Gateway、EC2/ECSのWebアプリ負荷分散ならALBです。
+
+### 間違い2：CloudFrontをAPI Gatewayの代替にする
+
+CloudFrontはCDNです。
+
+APIの作成・認証・ステージ管理・APIキー管理などはAPI Gatewayの領域です。
+
+### 間違い3：静的サイト配信にAPI Gatewayを使う
+
+静的サイト配信はS3 + CloudFrontが基本です。
+
+API GatewayはAPI用の入口として使います。
+
+## 関連用語
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Lambda](/terms/lambda)
+- [Amazon S3](/terms/s3)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
+
+## まとめ
+
+API Gateway、ALB、CloudFrontは、目的で分けると理解しやすいです。
+
+- API Gateway：APIの入口
+- ALB：Webアプリの負荷分散
+- CloudFront：コンテンツの高速配信
+
+このプロジェクトでは、CloudFrontとAPI Gatewayを使うため、ポートフォリオ説明でも重要な比較です。

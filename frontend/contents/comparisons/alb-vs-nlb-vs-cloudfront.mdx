@@ -1,0 +1,202 @@
+---
+comparisonId: "cmp-006"
+slug: "alb-vs-nlb-vs-cloudfront"
+title: "ALB・NLB・CloudFrontの違いを初心者向けに解説"
+description: "AWSの通信入口で混同しやすいApplication Load Balancer、Network Load Balancer、Amazon CloudFrontの違い、試験ポイント、実務での使い分けを整理します。"
+category: "Networking"
+level: "intermediate"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "elb"
+  - "cloudfront"
+tags:
+  - "networking"
+  - "load-balancer"
+  - "cloudfront"
+  - "comparison"
+  - "clf"
+  - "saa"
+priority: "high"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# ALB・NLB・CloudFrontの違い
+
+## 結論
+
+ALB、NLB、CloudFrontは、どれもユーザーからの通信を受ける入口として登場します。
+
+ただし、役割は違います。
+
+- WebアプリのHTTP/HTTPSリクエストを振り分けるならALB
+- TCP/UDPなど低レイヤーで高速に振り分けるならNLB
+- 静的コンテンツ配信、キャッシュ、世界中への高速配信ならCloudFront
+
+AWS試験では、「ロードバランサーが必要なのか」「CDNが必要なのか」を切り分けることが重要です。
+
+## 比較表
+
+| 項目 | ALB | NLB | CloudFront |
+|---|---|---|---|
+| 正式名 | Application Load Balancer | Network Load Balancer | Amazon CloudFront |
+| 分類 | ロードバランサー | ロードバランサー | CDN |
+| 主なレイヤー | L7 | L4 | エッジ配信 |
+| 主な用途 | WebアプリのHTTP/HTTPS振り分け | TCP/UDP/TLSの高速振り分け | 静的・動的コンテンツの高速配信 |
+| 代表的な接続先 | EC2、ECS、Lambdaなど | EC2、IPアドレス、ALBなど | S3、ALB、API Gateway、カスタムオリジン |
+| URLパスによる振り分け | 得意 | 不向き | キャッシュビヘイビアで制御可能 |
+| ホスト名による振り分け | 得意 | 不向き | 可能 |
+| 固定IP | 基本は不向き | 向いている | 標準ではCloudFrontドメインまたは独自ドメイン |
+| キャッシュ | しない | しない | する |
+| グローバル配信 | 主目的ではない | 主目的ではない | 得意 |
+| 試験でのキーワード | HTTP, HTTPS, path routing, host routing | TCP, UDP, static IP, high performance | CDN, edge location, cache, S3 static site |
+
+## 初学者向け説明
+
+ALBは、Webアプリの入口です。
+
+例えば、以下のような振り分けができます。
+
+```text
+/app  → アプリケーションサーバー
+/admin → 管理画面サーバー
+/api  → APIサーバー
+```
+
+NLBは、より低いレイヤーで高速に通信を流す入口です。
+
+HTTPの中身を見るというより、TCPやUDPの通信を高速にターゲットへ届ける用途で使います。
+
+CloudFrontは、ロードバランサーではなくCDNです。
+
+ユーザーの近くにあるエッジロケーションからコンテンツを返すことで、表示速度を上げます。S3静的サイトや画像配信と相性が良いです。
+
+## 試験で問われるポイント
+
+### ALBが正解になりやすいケース
+
+- HTTP/HTTPSのWebアプリを負荷分散したい
+- URLパスごとにターゲットを分けたい
+- ホスト名ごとにターゲットを分けたい
+- ECSやLambdaと組み合わせたい
+- Webアプリケーション向けの入口を作りたい
+
+### NLBが正解になりやすいケース
+
+- TCP/UDP通信を扱いたい
+- 高スループット・低レイテンシが必要
+- 固定IPが必要
+- HTTPのパスルーティングではなく、ネットワークレベルで振り分けたい
+
+### CloudFrontが正解になりやすいケース
+
+- 静的ファイルを世界中に高速配信したい
+- S3の画像、HTML、CSS、JavaScriptをキャッシュしたい
+- ユーザーに近いエッジロケーションから配信したい
+- オリジンへのアクセスを減らしたい
+- S3を直接公開せずに配信したい
+
+## 実務での使い分け
+
+### S3静的サイトを公開する場合
+
+CloudFrontを使います。
+
+```text
+User
+↓
+CloudFront
+↓
+S3
+```
+
+このプロジェクトの本番構成も、S3 + CloudFrontが基本です。
+
+### EC2やECSでWebアプリを動かす場合
+
+ALBを使います。
+
+```text
+User
+↓
+ALB
+↓
+EC2 / ECS
+```
+
+HTTP/HTTPSのWebアプリなら、まずALBを検討します。
+
+### TCPベースの高性能通信が必要な場合
+
+NLBを使います。
+
+```text
+User
+↓
+NLB
+↓
+EC2
+```
+
+ゲームサーバー、独自TCPプロトコル、高性能なネットワーク入口などで候補になります。
+
+### グローバル配信とWebアプリ負荷分散を組み合わせる場合
+
+CloudFrontとALBを組み合わせます。
+
+```text
+User
+↓
+CloudFront
+↓
+ALB
+↓
+EC2 / ECS
+```
+
+CloudFrontでキャッシュ・TLS終端・エッジ配信を行い、ALBでアプリケーションへ振り分けます。
+
+## よくある間違い
+
+### 間違い1：CloudFrontをロードバランサーとして覚える
+
+CloudFrontはCDNです。
+
+オリジンとしてALBを指定することはできますが、ALBの代わりにターゲットグループへ直接負荷分散するサービスではありません。
+
+### 間違い2：ALBとNLBを「どちらも同じLB」と覚える
+
+ALBはアプリケーション層、NLBはネットワーク層です。
+
+URLパスで振り分けるならALB、TCP/UDPや固定IPならNLBです。
+
+### 間違い3：静的サイトにALBを使う
+
+静的サイトなら、基本はS3 + CloudFrontです。
+
+ALB + EC2で静的サイトを配信すると、常時起動サーバーが必要になり、MVPではコスト面で不利です。
+
+## 関連用語
+
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon EC2](/terms/ec2)
+- [Amazon S3](/terms/s3)
+- [AWS Certificate Manager](/terms/acm)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
+
+## まとめ
+
+ALB、NLB、CloudFrontの違いは、AWS試験でも実務でも頻出です。
+
+最初は次のように覚えると判断しやすいです。
+
+- WebアプリのHTTP/HTTPS振り分け：ALB
+- TCP/UDPや固定IP：NLB
+- 静的コンテンツ配信・キャッシュ・エッジ配信：CloudFront
