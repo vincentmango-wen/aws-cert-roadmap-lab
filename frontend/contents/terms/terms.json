@@ -1122,6 +1122,74 @@
     "updatedAt": "2026-06-07"
   },
   {
+    "termId": "ecs",
+    "name": "Amazon Elastic Container Service",
+    "shortName": "ECS",
+    "category": "Compute",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon ECSは、DockerコンテナをAWS上で実行・管理するためのコンテナオーケストレーションサービスです。EC2またはFargateを実行基盤として利用できます。",
+    "oneLine": "コンテナ化したアプリをAWS上で実行・管理するサービス。",
+    "useCases": [
+      "コンテナ化したWebアプリケーションの実行",
+      "APIサーバーのコンテナ運用",
+      "バッチ処理コンテナの実行",
+      "マイクロサービス構成の管理"
+    ],
+    "examPoints": [
+      "コンテナオーケストレーションサービスである",
+      "ECS on EC2とECS on Fargateの実行方式がある",
+      "Fargateを使うとEC2インスタンス管理を減らせる",
+      "コンテナイメージの保存にはECRを使う",
+      "ALBと組み合わせてWebアプリを公開できる"
+    ],
+    "saaPoints": [
+      "サーバー管理を避けたいコンテナ実行ではFargateを検討する",
+      "ECSタスクはプライベートサブネットに配置し、ALBだけをパブリックにする構成が基本になる",
+      "タスク実行ロールとタスクロールの違いを理解する",
+      "サービスのDesired Countでタスク数を維持する",
+      "CloudWatch Logsでコンテナログを確認できる"
+    ],
+    "relatedServices": [
+      "fargate",
+      "ecr",
+      "elb",
+      "vpc",
+      "cloudwatch",
+      "iam"
+    ],
+    "comparisonSlugs": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "architectureSlugs": [
+      "ecs-fargate-web-app"
+    ],
+    "tags": [
+      "compute",
+      "container",
+      "orchestration",
+      "ecs",
+      "fargate"
+    ],
+    "costNotes": [
+      "ECS on EC2ではEC2インスタンス、EBS、ALBなどに課金される",
+      "ECS on FargateではvCPU、メモリ、実行時間に応じて課金される",
+      "ALBを組み合わせる場合はロードバランサー料金も発生する",
+      "静的サイト中心のMVPではS3 + CloudFrontの方が低コストにしやすい"
+    ],
+    "securityNotes": [
+      "タスクロールにはアプリケーションが必要なAWS操作だけを許可する",
+      "タスク実行ロールにはECRからのイメージ取得やCloudWatch Logs出力に必要な権限を付与する",
+      "ECSタスクのSecurity GroupはALBからの通信だけを許可する",
+      "コンテナイメージにAPIキーや.envファイルを含めない",
+      "本番環境ではECRイメージスキャンや最小権限IAMを確認する"
+    ],
+    "updatedAt": "2026-06-08"
+  },
+  {
     "termId": "efs",
     "name": "Amazon Elastic File System",
     "shortName": "EFS",
