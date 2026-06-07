@@ -61,14 +61,15 @@ export const awsServiceLabels: Record<string, string> = {
   iam: "IAM",
   acm: "ACM",
   route53: "Route 53",
-  apigateway: "API Gateway",
   "api-gateway": "API Gateway",
+  apigateway: "API Gateway",
   lambda: "Lambda",
   dynamodb: "DynamoDB",
   cloudwatch: "CloudWatch",
   vpc: "VPC",
   alb: "ALB",
   elb: "Elastic Load Balancing",
+  "auto-scaling": "Auto Scaling",
   autoscaling: "Auto Scaling",
   rds: "RDS",
   ec2: "EC2",
@@ -97,7 +98,33 @@ export const architectures: ArchitectureMeta[] = [
     mermaid: true,
     published: true,
     publishedAt: "2026-06-01",
-    updatedAt: "2026-06-01",
+    updatedAt: "2026-06-08",
+    sections: [
+      {
+        title: "概要",
+        body: "S3 + CloudFrontは、静的Webサイトを低コストかつ高速に公開するための基本構成です。Next.jsの静的出力で生成したHTML、CSS、JavaScript、画像をS3へ配置し、ユーザーにはCloudFront経由で配信します。\n\nS3バケットは直接公開せず、CloudFront Origin Access Controlを使ってCloudFrontからのアクセスだけを許可します。これにより、HTTPS配信、キャッシュ、S3直接公開防止をまとめて実現できます。",
+      },
+      {
+        title: "通信フロー",
+        body: "1. ユーザーがブラウザからサイトへHTTPSアクセスします。\n2. CloudFrontがリクエストを受け取ります。\n3. CloudFrontにキャッシュがあれば、そのままユーザーへ返します。\n4. キャッシュがなければ、CloudFrontがOAC経由でS3から静的ファイルを取得します。\n5. S3はCloudFront DistributionからのGetObjectだけを許可します。\n6. HTML、CSS、JavaScript、画像がユーザーへ返されます。",
+      },
+      {
+        title: "設計ポイント",
+        body: "S3のStatic website hostingは使わず、通常のS3オリジンとしてCloudFrontに接続します。S3 Public Access Blockを有効にし、Bucket PolicyでCloudFrontからのアクセスだけを許可します。\n\nCloudFrontではViewer Protocol PolicyをRedirect HTTP to HTTPSに設定します。独自ドメインを使う場合はRoute 53でDNSを管理し、ACM証明書をCloudFrontに紐づけます。CloudFront用ACM証明書はus-east-1で発行する点に注意します。",
+      },
+      {
+        title: "コスト設計",
+        body: "この構成はEC2、RDS、ALB、NAT Gatewayを使わないため、固定費を抑えやすいです。課金ポイントはS3の保存容量、S3リクエスト、CloudFrontのリクエスト数、CloudFrontからのデータ転送量です。\n\n画像ファイルを軽量化し、CloudFrontキャッシュを活用することで、S3へのリクエスト数と転送量を抑えられます。CloudFront Invalidationはデプロイ時だけ実行します。",
+      },
+      {
+        title: "SAA試験ポイント",
+        body: "静的サイト公開、グローバル配信、HTTPS化、S3直接公開防止という条件が出たら、S3 + CloudFront + OACを候補にします。\n\nS3をパブリックにしない設計、CloudFrontキャッシュ、ACM証明書のリージョン、Route 53 Aliasレコード、OACとBucket Policyの関係を押さえます。",
+      },
+      {
+        title: "このプロジェクトでの役割",
+        body: "AWS Cert Roadmap Lab本体の公開構成です。学習コンテンツは静的ファイルとして管理し、S3 + CloudFrontで配信します。これにより、個人開発MVPとして低コストで公開しながら、AWS設計意図をポートフォリオで説明できます。",
+      },
+    ],
   },
   {
     architectureId: "arc-002",
@@ -108,13 +135,39 @@ export const architectures: ArchitectureMeta[] = [
     category: "Serverless",
     level: "beginner",
     examScopes: ["CLF-C02", "SAA-C03"],
-    services: ["apigateway", "lambda", "dynamodb", "cloudwatch", "iam"],
+    services: ["api-gateway", "lambda", "dynamodb", "cloudwatch", "iam"],
     tags: ["サーバーレス", "HTTP API", "NoSQL", "ログ監視", "従量課金"],
     diagramPath: "/images/architectures/serverless-api-basic.svg",
     mermaid: true,
     published: true,
     publishedAt: "2026-06-01",
-    updatedAt: "2026-06-01",
+    updatedAt: "2026-06-08",
+    sections: [
+      {
+        title: "概要",
+        body: "API Gateway + Lambda + DynamoDBは、サーバーを常時起動せずにAPIを提供する代表的なサーバーレス構成です。フロントエンドからAPI Gatewayへリクエストを送り、Lambdaが入力値検証や保存処理を行い、DynamoDBへデータを書き込みます。\n\nこのプロジェクトでは問い合わせフォームの送信APIとして使います。用語、問題、記事、構成図は静的ファイル管理を優先し、動的処理は問い合わせAPIに絞ります。",
+      },
+      {
+        title: "通信フロー",
+        body: "1. ユーザーが問い合わせフォームを入力します。\n2. フロントエンドで入力チェックを行います。\n3. フロントエンドがAPI GatewayのPOST /contactへJSONを送信します。\n4. API GatewayがLambdaを呼び出します。\n5. LambdaがJSONパース、honeypot確認、入力値検証を行います。\n6. 問題がなければDynamoDBへ問い合わせデータを保存します。\n7. LambdaがCloudWatch Logsへ最小限のログを出力します。\n8. API Gateway経由で結果をフロントエンドへ返します。",
+      },
+      {
+        title: "設計ポイント",
+        body: "MVPではAPI Gateway HTTP APIを使います。REST APIより構成がシンプルで、問い合わせAPIのような小規模用途に向いています。\n\nLambda側ではフロントエンドの入力チェックを信用せず、必ずサーバー側でもバリデーションします。DynamoDBへの権限はPutItemだけに絞ります。CloudWatch Logsにはメールアドレス全文や問い合わせ本文全文を出力しません。",
+      },
+      {
+        title: "コスト設計",
+        body: "API Gateway、Lambda、DynamoDBは従量課金です。アクセスが少ない個人MVPでは低コストで運用しやすいです。\n\n用語集や問題データまでAPI化するとAPI呼び出しが増えるため、MVPでは静的JSONやMDXで配信します。CloudWatch Logsの保存期間も7日または14日に設定し、ログ肥大化を避けます。",
+      },
+      {
+        title: "SAA試験ポイント",
+        body: "サーバーレスAPI、イベント駆動、低運用負荷、従量課金という条件ではAPI Gateway + Lambda + DynamoDBが候補になります。\n\nAPI GatewayのCORS、Lambda実行ロール、DynamoDBのキー設計、CloudWatch Logs、エラーレスポンス、IAM最小権限をまとめて理解します。",
+      },
+      {
+        title: "このプロジェクトでの役割",
+        body: "AWS Cert Roadmap Labでは、問い合わせフォームだけを動的APIとして実装します。これにより、静的サイト中心の低コスト構成を維持しながら、API Gateway、Lambda、DynamoDB、CloudWatch、IAMの実装経験をポートフォリオとして示せます。",
+      },
+    ],
   },
   {
     architectureId: "arc-003",
@@ -125,13 +178,39 @@ export const architectures: ArchitectureMeta[] = [
     category: "Three Tier",
     level: "intermediate",
     examScopes: ["SAA-C03"],
-    services: ["vpc", "alb", "ec2", "rds", "iam"],
+    services: ["vpc", "elb", "ec2", "rds", "iam"],
     tags: ["VPC", "Subnet", "3層構成", "セキュリティ", "ネットワーク分離"],
     diagramPath: "/images/architectures/three-tier-vpc.svg",
     mermaid: true,
     published: true,
     publishedAt: "2026-06-01",
-    updatedAt: "2026-06-01",
+    updatedAt: "2026-06-08",
+    sections: [
+      {
+        title: "概要",
+        body: "3層Webアプリ構成は、Web層、アプリケーション層、データベース層を分離して配置する基本的なAWSアーキテクチャです。VPC内にPublic Subnet、Private Subnet、Database Subnetを用意し、それぞれの役割に応じてリソースを配置します。\n\nインターネットから直接アクセスされるのはALBだけにし、EC2やRDSはプライベートなネットワークに配置します。",
+      },
+      {
+        title: "通信フロー",
+        body: "1. ユーザーがインターネット経由でALBへHTTPSアクセスします。\n2. ALBがPublic Subnetでリクエストを受け取ります。\n3. ALBがPrivate Subnet内のアプリケーションサーバーへリクエストを転送します。\n4. アプリケーションサーバーがDatabase Subnet内のRDSへ接続します。\n5. RDSはアプリケーションサーバーからのDB接続だけを許可します。\n6. レスポンスはアプリケーションサーバー、ALBを経由してユーザーへ返ります。",
+      },
+      {
+        title: "設計ポイント",
+        body: "Public SubnetにはALBなど外部公開が必要なリソースだけを置きます。アプリケーションサーバーはPrivate Subnet、RDSはDatabase Subnetに配置します。\n\nSecurity Groupでは、ALBはユーザーからのHTTP/HTTPS、アプリケーションサーバーはALBからの通信、RDSはアプリケーションサーバーからのDB通信だけを許可します。管理用SSHを0.0.0.0/0へ開ける設計は避けます。",
+      },
+      {
+        title: "コスト設計",
+        body: "3層構成は実務では基本ですが、個人MVPではEC2、ALB、RDS、NAT Gatewayの固定費が発生しやすいです。このプロジェクト本体では採用せず、SAA学習用の構成図として扱います。\n\n検証目的で作成する場合は、作業後にEC2、RDS、ALB、NAT Gateway、EBS、Elastic IPを確認し、不要なリソースを残さない運用が必要です。",
+      },
+      {
+        title: "SAA試験ポイント",
+        body: "Public SubnetとPrivate Subnetの役割分担、Security GroupとNACLの違い、ALBによる負荷分散、RDSの配置、Multi-AZ化の考え方が問われます。\n\n外部公開する入口はALB、アプリケーションサーバーとDBはプライベートに配置する、という原則を押さえます。",
+      },
+      {
+        title: "このプロジェクトでの役割",
+        body: "AWS Cert Roadmap Lab本体はS3 + CloudFrontで公開しますが、SAA対策では3層Webアプリ構成の理解が必須です。面接では、なぜ個人MVPで3層構成を採用しなかったのかを、コストと運用負荷の観点で説明できます。",
+      },
+    ],
   },
   {
     architectureId: "arc-004",
@@ -142,13 +221,39 @@ export const architectures: ArchitectureMeta[] = [
     category: "High Availability",
     level: "intermediate",
     examScopes: ["SAA-C03"],
-    services: ["alb", "autoscaling", "ec2", "rds", "cloudwatch"],
+    services: ["elb", "auto-scaling", "ec2", "rds", "cloudwatch"],
     tags: ["高可用性", "Multi-AZ", "負荷分散", "Auto Scaling", "耐障害性"],
     diagramPath: "/images/architectures/high-availability-web-app.svg",
     mermaid: true,
     published: true,
     publishedAt: "2026-06-01",
-    updatedAt: "2026-06-01",
+    updatedAt: "2026-06-08",
+    sections: [
+      {
+        title: "概要",
+        body: "高可用性Webアプリ構成は、複数AZにWebサーバーを配置し、ALBで負荷分散し、Auto Scalingで必要な台数を維持し、RDS Multi-AZでDB障害に備える構成です。\n\n1つのAZや1台のEC2に障害が発生しても、別AZのリソースでサービス継続できる設計を目指します。",
+      },
+      {
+        title: "通信フロー",
+        body: "1. ユーザーがALBへHTTPSアクセスします。\n2. ALBが複数AZに配置されたEC2へリクエストを分散します。\n3. Auto Scaling Groupが希望台数を維持します。\n4. 異常なEC2はALBのヘルスチェックで切り離されます。\n5. アプリケーションはRDSのプライマリDBへ接続します。\n6. RDS Multi-AZ構成では、障害時にスタンバイDBへフェイルオーバーします。\n7. CloudWatchがメトリクスを収集し、スケーリングや障害調査に使われます。",
+      },
+      {
+        title: "設計ポイント",
+        body: "ALBとAuto Scaling Groupは複数AZにまたがるように設計します。EC2はステートレスにし、ユーザーセッションやアップロードファイルをインスタンス内に持たせない設計が望ましいです。\n\nRDS Multi-AZは可用性向上が目的です。読み取り性能向上が目的の場合はRead Replicaを検討します。Multi-AZとRead Replicaの役割を混同しないことが重要です。",
+      },
+      {
+        title: "コスト設計",
+        body: "ALB、EC2、RDSは継続的に課金されます。RDS Multi-AZではスタンバイ分のコストも考慮します。\n\n個人MVPでは固定費が重くなるため、このプロジェクト本体では採用しません。SAA対策として、可用性要件がある業務システム向けの構成として理解します。",
+      },
+      {
+        title: "SAA試験ポイント",
+        body: "高可用性、Multi-AZ、Auto Scaling、ヘルスチェック、ステートレス設計、RDS Multi-AZとRead Replicaの違いが問われます。\n\n障害に強いWebアプリを作る条件では、複数AZ、ALB、Auto Scaling、RDS Multi-AZを組み合わせる選択肢を考えます。",
+      },
+      {
+        title: "このプロジェクトでの役割",
+        body: "AWS Cert Roadmap Labは静的サイト中心なので、この高可用性構成を本番採用する必要はありません。ただし、SAAで問われる可用性設計を説明するための重要コンテンツとして扱います。",
+      },
+    ],
   },
   {
     architectureId: "arc-005",
@@ -165,7 +270,33 @@ export const architectures: ArchitectureMeta[] = [
     mermaid: true,
     published: true,
     publishedAt: "2026-06-01",
-    updatedAt: "2026-06-01",
+    updatedAt: "2026-06-08",
+    sections: [
+      {
+        title: "概要",
+        body: "EventBridge + Lambdaは、決まった時刻や周期で処理を実行するサーバーレスなバッチ構成です。サーバーを常時起動せず、スケジュールに従ってLambdaだけを起動できます。\n\nこのプロジェクトでは将来的な毎日1問配信、定期集計、コンテンツ更新チェックなどの土台として考えられます。",
+      },
+      {
+        title: "通信フロー",
+        body: "1. EventBridge SchedulerまたはEventBridge Ruleにスケジュールを設定します。\n2. 指定時刻になるとEventBridgeがLambdaを起動します。\n3. Lambdaが対象データの取得、集計、通知準備などの処理を行います。\n4. 処理結果やエラーをCloudWatch Logsへ出力します。\n5. 失敗時は再試行やDLQ設定に基づいて後続対応します。",
+      },
+      {
+        title: "設計ポイント",
+        body: "Lambdaの処理時間、タイムアウト、メモリをバッチ内容に合わせて設定します。処理が15分を超える場合や複数ステップの状態管理が必要な場合は、Step Functionsなども検討します。\n\nEventBridgeの実行頻度を高くしすぎるとLambda実行回数とログ量が増えます。個人MVPでは毎分実行のような設定は避け、日次や週次など目的に合う頻度にします。",
+      },
+      {
+        title: "コスト設計",
+        body: "EventBridgeとLambdaは従量課金です。常時起動サーバーを使わないため、低頻度の定期処理に向いています。\n\nCloudWatch Logsの保存期間を設定し、ログを無期限にためないこともコスト管理上重要です。",
+      },
+      {
+        title: "SAA試験ポイント",
+        body: "定期実行、イベント駆動、サーバーレスバッチという条件ではEventBridge + Lambdaが候補になります。\n\nCloudWatch Eventsの後継としてEventBridgeを理解し、スケジュール実行、イベントパターン、ターゲット、再試行、DLQを押さえます。",
+      },
+      {
+        title: "このプロジェクトでの役割",
+        body: "MVPでは毎日1問配信を実装しません。ただし、Phase 4以降で学習アプリ化する場合、EventBridge + Lambdaは定期配信や定期集計の中心構成になります。",
+      },
+    ],
   },
   {
     architectureId: "arc-006",
@@ -319,7 +450,7 @@ export const architectures: ArchitectureMeta[] = [
     services: [
       "cloudwatch",
       "cloudfront",
-      "apigateway",
+      "api-gateway",
       "lambda",
       "dynamodb",
       "aws-budgets",
