@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="AWS Cert Roadmap Lab">
+  
+  <path d="M180,232 L245,268 L180,304 L115,268 Z" fill="#A9661B"></path>
+  <path d="M115,268 L180,304 L180,390 L115,354 Z" fill="#8F4F12"></path>
+  <path d="M245,268 L180,304 L180,390 L245,354 Z" fill="#71400D"></path>
+  
+  <path d="M256,174 L321,210 L256,246 L191,210 Z" fill="#E08A28"></path>
+  <path d="M191,210 L256,246 L256,332 L191,296 Z" fill="#C56C10"></path>
+  <path d="M321,210 L256,246 L256,332 L321,296 Z" fill="#9E560B"></path>
+  
+  <path d="M332,116 L397,152 L332,188 L267,152 Z" fill="#FFC25C"></path>
+  <path d="M267,152 L332,188 L332,274 L267,238 Z" fill="#FF9F2E"></path>
+  <path d="M397,152 L332,188 L332,274 L397,238 Z" fill="#EC7211"></path>
+</svg>

@@ -1,0 +1,14 @@
+{
+  "name": "AWS Cert Roadmap Lab",
+  "short_name": "Cert Roadmap",
+  "description": "AWS認定の学習ロードマップ — Plan, Learn, Get certified.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1B2530",
+  "theme_color": "#1B2530",
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
