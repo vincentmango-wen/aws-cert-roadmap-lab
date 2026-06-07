@@ -6,7 +6,7 @@ export const siteConfig = {
   description:
     "AWS Cloud Practitioner / SAAの学習内容を、用語集・比較・模擬問題・構成図で体系的に整理する学習サイトです。",
   defaultPath: "/",
-  defaultOgImage: "/images/ogp/default-ogp.png",
+  defaultOgImage: "/images/assets/og-image.png",
 };
 
 export type PageMetadataInput = {
