@@ -1228,5 +1228,1026 @@
       "published": true,
       "createdAt": "2026-06-01",
       "updatedAt": "2026-06-01"
+    },
+    {
+      "questionId": "clf-031",
+      "exam": "CLF-C02",
+      "category": "Security and Compliance",
+      "domain": "Security and Compliance",
+      "difficulty": "easy",
+      "question": "AWS責任共有モデルにおいて、通常ユーザー側の責任となるものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "AWSグローバルインフラストラクチャの物理的な保護"
+        },
+        {
+          "choiceId": "B",
+          "text": "AWSデータセンターの電源設備の管理"
+        },
+        {
+          "choiceId": "C",
+          "text": "IAMユーザーやIAMロールの権限設計"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWSマネージドサービスの基盤ハードウェア交換"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "責任共有モデルでは、AWSはクラウドのセキュリティを担当し、ユーザーはクラウド内のセキュリティを担当します。IAMの権限設計やアクセス管理はユーザー側の責任です。",
+      "choiceExplanations": {
+        "A": "AWSグローバルインフラストラクチャの物理的保護はAWS側の責任です。",
+        "B": "データセンター設備の管理はAWS側の責任です。",
+        "C": "正解です。IAMの権限設計はユーザーが行うクラウド内のセキュリティです。",
+        "D": "基盤ハードウェアの保守はAWS側の責任です。"
+      },
+      "relatedServices": [
+        "iam"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "iam-user-vs-role-vs-policy"
+      ],
+      "tags": [
+        "security",
+        "shared-responsibility-model",
+        "iam",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-032",
+      "exam": "CLF-C02",
+      "category": "Billing, Pricing, and Support",
+      "domain": "Billing, Pricing, and Support",
+      "difficulty": "easy",
+      "question": "AWS利用料金が想定を超えそうな場合に通知を受け取るために使うサービスとして最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "AWS Budgets"
+        },
+        {
+          "choiceId": "B",
+          "text": "AWS CloudTrail"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWS Shield"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "AWS Budgetsは、予算額や使用量に対するしきい値を設定し、超過または超過予測時に通知を受け取るためのサービスです。",
+      "choiceExplanations": {
+        "A": "正解です。AWS Budgetsはコスト監視と予算アラートに使います。",
+        "B": "CloudTrailはAWSアカウント内のAPI操作履歴を記録するサービスです。",
+        "C": "CloudFrontはコンテンツ配信ネットワークです。予算通知サービスではありません。",
+        "D": "AWS ShieldはDDoS保護サービスです。コスト通知には使いません。"
+      },
+      "relatedServices": [
+        "aws-budgets",
+        "cost-explorer"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [],
+      "tags": [
+        "billing",
+        "budgets",
+        "cost-management",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-033",
+      "exam": "CLF-C02",
+      "category": "Cloud Technology and Services",
+      "domain": "Cloud Technology and Services",
+      "difficulty": "normal",
+      "question": "静的WebサイトのHTML、CSS、JavaScript、画像ファイルを低コストで保存する用途に最も適したAWSサービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Amazon S3"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon RDS"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon EBS"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWS IAM"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Amazon S3はオブジェクトストレージであり、HTML、CSS、JavaScript、画像などの静的ファイル保存に向いています。CloudFrontと組み合わせることで高速かつ安全に配信できます。",
+      "choiceExplanations": {
+        "A": "正解です。S3は静的ファイル保存に適したオブジェクトストレージです。",
+        "B": "RDSはリレーショナルデータベースであり、静的ファイル保存が主用途ではありません。",
+        "C": "EBSはEC2に接続するブロックストレージであり、静的サイトの公開用ストレージとしてはS3が一般的です。",
+        "D": "IAMは権限管理サービスであり、ファイル保存サービスではありません。"
+      },
+      "relatedServices": [
+        "s3",
+        "cloudfront"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "s3-vs-ebs-vs-efs"
+      ],
+      "tags": [
+        "s3",
+        "static-site",
+        "storage",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-034",
+      "exam": "CLF-C02",
+      "category": "Cloud Concepts",
+      "domain": "Cloud Concepts",
+      "difficulty": "easy",
+      "question": "クラウドの「従量課金」の説明として最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "利用量に関係なく毎月同じ金額を必ず支払う方式"
+        },
+        {
+          "choiceId": "B",
+          "text": "使ったリソース量に応じて料金が発生する方式"
+        },
+        {
+          "choiceId": "C",
+          "text": "すべてのAWSサービスが無料になる方式"
+        },
+        {
+          "choiceId": "D",
+          "text": "リソースを作成したら必ず1年契約になる方式"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "従量課金とは、利用したリソース量やリクエスト数、保存容量、実行時間などに応じて料金が発生する課金方式です。",
+      "choiceExplanations": {
+        "A": "固定料金の説明に近く、従量課金ではありません。",
+        "B": "正解です。AWSでは多くのサービスが使った分だけ課金されます。",
+        "C": "AWSには無料枠がありますが、すべてのサービスが無料ではありません。",
+        "D": "一部に長期契約で割引される購入オプションはありますが、従量課金の説明ではありません。"
+      },
+      "relatedServices": [
+        "aws-budgets",
+        "cost-explorer"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [],
+      "tags": [
+        "cloud-concepts",
+        "pay-as-you-go",
+        "billing",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-035",
+      "exam": "CLF-C02",
+      "category": "Cloud Technology and Services",
+      "domain": "Cloud Technology and Services",
+      "difficulty": "normal",
+      "question": "サーバーを常時管理せず、イベント発生時だけコードを実行したい場合に使う代表的なAWSサービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "AWS Lambda"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon EC2"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon EFS"
+        },
+        {
+          "choiceId": "D",
+          "text": "Amazon Route 53"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "AWS Lambdaはサーバーレスコンピューティングサービスで、リクエストやイベントに応じてコードを実行できます。サーバーのプロビジョニングや常時管理をユーザーが行う必要はありません。",
+      "choiceExplanations": {
+        "A": "正解です。Lambdaはイベント駆動でコードを実行するサーバーレスサービスです。",
+        "B": "EC2は仮想サーバーであり、OSやインスタンス管理が必要になります。",
+        "C": "EFSはファイルストレージサービスです。",
+        "D": "Route 53はDNSサービスです。コード実行サービスではありません。"
+      },
+      "relatedServices": [
+        "lambda",
+        "api-gateway",
+        "eventbridge"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "ec2-vs-lambda-vs-ecs"
+      ],
+      "tags": [
+        "lambda",
+        "serverless",
+        "compute",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-036",
+      "exam": "CLF-C02",
+      "category": "Security and Compliance",
+      "domain": "Security and Compliance",
+      "difficulty": "normal",
+      "question": "AWSアカウントのrootユーザーに対して最初に実施すべきセキュリティ対策として最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "rootユーザーのMFAを有効化する"
+        },
+        {
+          "choiceId": "B",
+          "text": "rootユーザーのアクセスキーを複数作成する"
+        },
+        {
+          "choiceId": "C",
+          "text": "rootユーザーを日常的な開発作業に使う"
+        },
+        {
+          "choiceId": "D",
+          "text": "すべてのIAMユーザーにAdministratorAccessを付与する"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "rootユーザーはAWSアカウント全体に強い権限を持つため、MFAを有効化し、日常作業では使わない運用が重要です。",
+      "choiceExplanations": {
+        "A": "正解です。rootユーザーには必ずMFAを設定します。",
+        "B": "rootユーザーのアクセスキーは作成しない、または不要なら削除するのが基本です。",
+        "C": "rootユーザーは日常作業には使いません。",
+        "D": "全員にAdministratorAccessを付けるのは最小権限の原則に反します。"
+      },
+      "relatedServices": [
+        "iam"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "iam-user-vs-role-vs-policy"
+      ],
+      "tags": [
+        "security",
+        "root-user",
+        "mfa",
+        "iam",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-037",
+      "exam": "CLF-C02",
+      "category": "Cloud Technology and Services",
+      "domain": "Cloud Technology and Services",
+      "difficulty": "normal",
+      "question": "複数のAWSサービスやアプリケーション間でメッセージをキューに蓄積し、非同期に処理したい場合に適したサービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Amazon SQS"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon SNS"
+        },
+        {
+          "choiceId": "C",
+          "text": "AWS CloudTrail"
+        },
+        {
+          "choiceId": "D",
+          "text": "Amazon Route 53"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Amazon SQSはメッセージキューサービスで、処理する側がメッセージを取得するまでキューに蓄積できます。非同期処理や疎結合化に使われます。",
+      "choiceExplanations": {
+        "A": "正解です。SQSはキューを使った非同期処理に適しています。",
+        "B": "SNSはpub/sub型の通知サービスです。複数購読者への配信に向いていますが、キュー蓄積が主目的ではありません。",
+        "C": "CloudTrailはAPI操作履歴を記録するサービスです。",
+        "D": "Route 53はDNSサービスです。メッセージキューではありません。"
+      },
+      "relatedServices": [
+        "sqs",
+        "sns",
+        "eventbridge",
+        "lambda"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "sns-vs-sqs-vs-eventbridge"
+      ],
+      "tags": [
+        "sqs",
+        "messaging",
+        "decoupling",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-038",
+      "exam": "CLF-C02",
+      "category": "Billing, Pricing, and Support",
+      "domain": "Billing, Pricing, and Support",
+      "difficulty": "normal",
+      "question": "AWSのサービス別利用料金を分析し、どのサービスに費用がかかっているか確認するために使うサービスとして最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "AWS Cost Explorer"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "choiceId": "C",
+          "text": "AWS IAM"
+        },
+        {
+          "choiceId": "D",
+          "text": "Amazon VPC"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "AWS Cost Explorerは、AWS利用料金や使用量をサービス別、期間別などで可視化・分析するためのサービスです。",
+      "choiceExplanations": {
+        "A": "正解です。Cost Explorerはコスト分析に使います。",
+        "B": "CloudFrontはCDNサービスです。費用分析サービスではありません。",
+        "C": "IAMは認証・認可を管理するサービスです。",
+        "D": "VPCは仮想ネットワークを作成するサービスです。"
+      },
+      "relatedServices": [
+        "cost-explorer",
+        "aws-budgets"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [],
+      "tags": [
+        "billing",
+        "cost-explorer",
+        "cost-management",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-039",
+      "exam": "CLF-C02",
+      "category": "Cloud Concepts",
+      "domain": "Cloud Concepts",
+      "difficulty": "normal",
+      "question": "クラウドの高可用性を実現する考え方として最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "単一の物理サーバーだけにすべての処理を集中させる"
+        },
+        {
+          "choiceId": "B",
+          "text": "複数のアベイラビリティゾーンを活用して障害の影響を減らす"
+        },
+        {
+          "choiceId": "C",
+          "text": "バックアップを一切取得しない"
+        },
+        {
+          "choiceId": "D",
+          "text": "すべての通信をHTTPだけに固定する"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "高可用性を高めるには、単一障害点を減らし、複数のアベイラビリティゾーンにリソースを分散する設計が重要です。",
+      "choiceExplanations": {
+        "A": "単一サーバー集中は単一障害点になります。",
+        "B": "正解です。複数AZを使うことで、1つのAZ障害の影響を抑えられます。",
+        "C": "バックアップを取らない設計は障害復旧に弱くなります。",
+        "D": "HTTPだけに固定することは高可用性の考え方ではありません。"
+      },
+      "relatedServices": [
+        "ec2",
+        "rds",
+        "auto-scaling",
+        "elb"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "multi-az-vs-read-replica"
+      ],
+      "tags": [
+        "cloud-concepts",
+        "availability",
+        "multi-az",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-040",
+      "exam": "CLF-C02",
+      "category": "Security and Compliance",
+      "domain": "Security and Compliance",
+      "difficulty": "normal",
+      "question": "AWSアカウント内で「誰が、いつ、どのAPI操作を行ったか」を確認するために使うサービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "AWS CloudTrail"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon S3"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWS Budgets"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "AWS CloudTrailは、AWSアカウント内のAPI操作履歴を記録するサービスです。監査、セキュリティ調査、変更履歴確認に使います。",
+      "choiceExplanations": {
+        "A": "正解です。CloudTrailはAPI操作履歴を記録します。",
+        "B": "CloudFrontはCDNサービスです。API操作履歴の記録が主目的ではありません。",
+        "C": "S3はオブジェクトストレージです。ログ保存先として使うことはありますが、操作履歴記録サービス自体はCloudTrailです。",
+        "D": "Budgetsは予算管理・コスト通知のサービスです。API操作履歴の確認には使いません。"
+      },
+      "relatedServices": [
+        "cloudtrail",
+        "cloudwatch",
+        "aws-config"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "cloudwatch-vs-cloudtrail-vs-config"
+      ],
+      "tags": [
+        "security",
+        "cloudtrail",
+        "audit",
+        "compliance",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-041",
+      "exam": "CLF-C02",
+      "category": "Cloud Technology and Services",
+      "domain": "Cloud Technology and Services",
+      "difficulty": "normal",
+      "question": "静的コンテンツを世界中のユーザーへ低遅延で配信するために使うAWSサービスとして最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "choiceId": "B",
+          "text": "AWS CloudTrail"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon RDS"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWS IAM"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Amazon CloudFrontはCDNサービスで、エッジロケーションを使って静的・動的コンテンツを低遅延で配信できます。S3と組み合わせた静的サイト配信でもよく使われます。",
+      "choiceExplanations": {
+        "A": "正解です。CloudFrontはCDNとしてコンテンツを高速配信します。",
+        "B": "CloudTrailはAWS API操作履歴を記録するサービスです。",
+        "C": "RDSはリレーショナルデータベースサービスです。",
+        "D": "IAMは認証・認可を管理するサービスです。"
+      },
+      "relatedServices": [
+        "cloudfront",
+        "s3"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "alb-vs-nlb-vs-cloudfront"
+      ],
+      "tags": [
+        "cloudfront",
+        "cdn",
+        "static-site",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-042",
+      "exam": "CLF-C02",
+      "category": "Security and Compliance",
+      "domain": "Security and Compliance",
+      "difficulty": "normal",
+      "question": "AWSリソースへのアクセス許可を定義するJSON形式のドキュメントはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "IAMポリシー"
+        },
+        {
+          "choiceId": "B",
+          "text": "アベイラビリティゾーン"
+        },
+        {
+          "choiceId": "C",
+          "text": "リザーブドインスタンス"
+        },
+        {
+          "choiceId": "D",
+          "text": "リージョン"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "IAMポリシーは、どのAWSリソースに対して、どの操作を許可または拒否するかを定義するJSON形式のドキュメントです。",
+      "choiceExplanations": {
+        "A": "正解です。IAMポリシーはアクセス許可を定義します。",
+        "B": "アベイラビリティゾーンはリージョン内の独立したデータセンター群です。",
+        "C": "リザーブドインスタンスは長期利用による割引購入オプションです。",
+        "D": "リージョンはAWSがサービスを提供する地理的なエリアです。"
+      },
+      "relatedServices": [
+        "iam"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "iam-user-vs-role-vs-policy"
+      ],
+      "tags": [
+        "iam",
+        "policy",
+        "security",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-043",
+      "exam": "CLF-C02",
+      "category": "Billing, Pricing, and Support",
+      "domain": "Billing, Pricing, and Support",
+      "difficulty": "easy",
+      "question": "AWSの請求や料金に関する基本的なサポートを、すべてのAWSアカウントで利用できるサポートプランはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Basic Support"
+        },
+        {
+          "choiceId": "B",
+          "text": "Developer Support"
+        },
+        {
+          "choiceId": "C",
+          "text": "Business Support"
+        },
+        {
+          "choiceId": "D",
+          "text": "Enterprise Support"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Basic SupportはすべてのAWSアカウントで利用できる基本サポートです。アカウント、請求、サービス制限などに関するサポートを受けられます。",
+      "choiceExplanations": {
+        "A": "正解です。Basic SupportはすべてのAWSアカウントに含まれます。",
+        "B": "Developer Supportは有料の開発者向けサポートプランです。",
+        "C": "Business Supportは本番ワークロード向けの有料サポートプランです。",
+        "D": "Enterprise Supportは大規模組織向けの有料サポートプランです。"
+      },
+      "relatedServices": [],
+      "relatedTerms": [
+        "aws-support"
+      ],
+      "relatedComparisons": [],
+      "tags": [
+        "support",
+        "billing",
+        "basic-support",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-044",
+      "exam": "CLF-C02",
+      "category": "Cloud Concepts",
+      "domain": "Cloud Concepts",
+      "difficulty": "easy",
+      "question": "オンプレミス環境と比較したクラウドの利点として最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "需要に応じてリソースを拡張・縮小できる"
+        },
+        {
+          "choiceId": "B",
+          "text": "物理サーバーを必ず自社で購入する必要がある"
+        },
+        {
+          "choiceId": "C",
+          "text": "すべてのセキュリティ設定が不要になる"
+        },
+        {
+          "choiceId": "D",
+          "text": "すべてのサービスが常に無料で利用できる"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "クラウドでは必要なときにリソースを増やし、不要になれば減らせます。これにより需要変動への対応や初期投資の削減がしやすくなります。",
+      "choiceExplanations": {
+        "A": "正解です。クラウドの代表的な利点はスケーラビリティと弾力性です。",
+        "B": "クラウドでは物理サーバーを自社で購入する必要はありません。",
+        "C": "セキュリティ設定は引き続き必要です。責任共有モデルを理解する必要があります。",
+        "D": "AWSには無料枠がありますが、すべてのサービスが常に無料ではありません。"
+      },
+      "relatedServices": [
+        "ec2",
+        "lambda",
+        "auto-scaling"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "ec2-vs-lambda-vs-ecs"
+      ],
+      "tags": [
+        "cloud-concepts",
+        "scalability",
+        "elasticity",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-045",
+      "exam": "CLF-C02",
+      "category": "Cloud Technology and Services",
+      "domain": "Cloud Technology and Services",
+      "difficulty": "normal",
+      "question": "AWS上でマネージド型のリレーショナルデータベースを利用したい場合に選ぶサービスとして最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Amazon RDS"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon S3"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWS CloudTrail"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Amazon RDSは、MySQL、PostgreSQL、MariaDB、Oracle、SQL Serverなどのリレーショナルデータベースをマネージドで利用できるサービスです。",
+      "choiceExplanations": {
+        "A": "正解です。RDSはマネージド型リレーショナルデータベースサービスです。",
+        "B": "S3はオブジェクトストレージです。リレーショナルデータベースではありません。",
+        "C": "CloudFrontはCDNサービスです。",
+        "D": "CloudTrailはAWS API操作履歴を記録するサービスです。"
+      },
+      "relatedServices": [
+        "rds",
+        "dynamodb",
+        "aurora"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "rds-vs-dynamodb"
+      ],
+      "tags": [
+        "rds",
+        "database",
+        "relational-database",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-046",
+      "exam": "CLF-C02",
+      "category": "Security and Compliance",
+      "domain": "Security and Compliance",
+      "difficulty": "normal",
+      "question": "AWSで保存データの暗号化キーを作成・管理するために使うサービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "AWS Key Management Service"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon Route 53"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWS Budgets"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "AWS Key Management Serviceは、暗号化キーを作成・管理し、S3、EBS、RDS、DynamoDBなどの暗号化に利用できるマネージドサービスです。",
+      "choiceExplanations": {
+        "A": "正解です。KMSは暗号化キーの作成・管理に使います。",
+        "B": "Route 53はDNSサービスです。",
+        "C": "CloudFrontはCDNサービスです。",
+        "D": "Budgetsは予算管理とコスト通知のサービスです。"
+      },
+      "relatedServices": [
+        "kms",
+        "s3",
+        "ebs",
+        "rds",
+        "dynamodb"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [],
+      "tags": [
+        "kms",
+        "encryption",
+        "security",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-047",
+      "exam": "CLF-C02",
+      "category": "Cloud Technology and Services",
+      "domain": "Cloud Technology and Services",
+      "difficulty": "normal",
+      "question": "AWSリソースやアプリケーションのメトリクス、ログ、アラームを扱う監視サービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Amazon CloudWatch"
+        },
+        {
+          "choiceId": "B",
+          "text": "AWS CloudTrail"
+        },
+        {
+          "choiceId": "C",
+          "text": "AWS Config"
+        },
+        {
+          "choiceId": "D",
+          "text": "Amazon SQS"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Amazon CloudWatchは、AWSリソースやアプリケーションのメトリクス、ログ、アラームを扱う監視サービスです。Lambdaのログ確認やメトリクス監視にも使います。",
+      "choiceExplanations": {
+        "A": "正解です。CloudWatchはメトリクス、ログ、アラームに使います。",
+        "B": "CloudTrailはAPI操作履歴を記録します。監視ログと混同しやすいので注意です。",
+        "C": "AWS Configはリソース設定の履歴や準拠状況を確認するサービスです。",
+        "D": "SQSはメッセージキューサービスです。"
+      },
+      "relatedServices": [
+        "cloudwatch",
+        "cloudtrail",
+        "aws-config",
+        "lambda"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "cloudwatch-vs-cloudtrail-vs-config"
+      ],
+      "tags": [
+        "cloudwatch",
+        "monitoring",
+        "logs",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-048",
+      "exam": "CLF-C02",
+      "category": "Billing, Pricing, and Support",
+      "domain": "Billing, Pricing, and Support",
+      "difficulty": "normal",
+      "question": "長期間継続して使用するEC2インスタンスのコストを削減する購入オプションとして最も適切なものはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Reserved Instances"
+        },
+        {
+          "choiceId": "B",
+          "text": "AWS CloudTrail"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon S3 Standard"
+        },
+        {
+          "choiceId": "D",
+          "text": "Security Group"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Reserved Instancesは、一定期間の利用を前提にオンデマンド料金より低い料金でEC2などを利用できる購入オプションです。",
+      "choiceExplanations": {
+        "A": "正解です。継続利用するワークロードのコスト削減に使います。",
+        "B": "CloudTrailはAPI操作履歴を記録するサービスです。",
+        "C": "S3 StandardはS3のストレージクラスであり、EC2購入オプションではありません。",
+        "D": "Security Groupは仮想ファイアウォールです。コスト削減の購入オプションではありません。"
+      },
+      "relatedServices": [
+        "ec2",
+        "cost-explorer"
+      ],
+      "relatedTerms": [
+        "reserved-instances"
+      ],
+      "relatedComparisons": [],
+      "tags": [
+        "ec2",
+        "reserved-instances",
+        "cost-optimization",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-049",
+      "exam": "CLF-C02",
+      "category": "Cloud Technology and Services",
+      "domain": "Cloud Technology and Services",
+      "difficulty": "normal",
+      "question": "AWSでドメイン名をIPアドレスやCloudFront Distributionなどに紐づけるDNSサービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "Amazon Route 53"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon EBS"
+        },
+        {
+          "choiceId": "C",
+          "text": "AWS Lambda"
+        },
+        {
+          "choiceId": "D",
+          "text": "Amazon DynamoDB"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Amazon Route 53はAWSのDNSサービスです。独自ドメインをCloudFrontやALBなどに紐づけるために利用します。",
+      "choiceExplanations": {
+        "A": "正解です。Route 53はDNS管理に使います。",
+        "B": "EBSはEC2に接続するブロックストレージです。",
+        "C": "Lambdaはサーバーレスでコードを実行するサービスです。",
+        "D": "DynamoDBはNoSQLデータベースサービスです。"
+      },
+      "relatedServices": [
+        "route-53",
+        "cloudfront",
+        "acm"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [],
+      "tags": [
+        "route-53",
+        "dns",
+        "domain",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
+    },
+    {
+      "questionId": "clf-050",
+      "exam": "CLF-C02",
+      "category": "Security and Compliance",
+      "domain": "Security and Compliance",
+      "difficulty": "normal",
+      "question": "AWSリソースの設定変更履歴や、設定がルールに準拠しているかを確認するために使うサービスはどれですか？",
+      "choices": [
+        {
+          "choiceId": "A",
+          "text": "AWS Config"
+        },
+        {
+          "choiceId": "B",
+          "text": "Amazon SQS"
+        },
+        {
+          "choiceId": "C",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "choiceId": "D",
+          "text": "AWS Budgets"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "AWS Configは、AWSリソースの設定履歴を記録し、設定がルールに準拠しているかを評価できるサービスです。CloudWatchやCloudTrailと混同しやすいサービスです。",
+      "choiceExplanations": {
+        "A": "正解です。AWS Configはリソース設定履歴と準拠状況の確認に使います。",
+        "B": "SQSはメッセージキューサービスです。",
+        "C": "CloudFrontはCDNサービスです。",
+        "D": "Budgetsはコスト予算とアラートのサービスです。"
+      },
+      "relatedServices": [
+        "aws-config",
+        "cloudwatch",
+        "cloudtrail"
+      ],
+      "relatedTerms": [],
+      "relatedComparisons": [
+        "cloudwatch-vs-cloudtrail-vs-config"
+      ],
+      "tags": [
+        "aws-config",
+        "compliance",
+        "configuration",
+        "clf"
+      ],
+      "published": true,
+      "createdAt": "2026-06-07",
+      "updatedAt": "2026-06-07"
     }
   ]
