@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">VPC Endpoint private access architecture</title>
+  <desc id="desc">Private subnet application connects to Amazon S3 and DynamoDB through VPC Endpoint without internet routing.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafc}
+      .box{fill:#ffffff;stroke:#cbd5e1;stroke-width:2}
+      .aws{fill:#eff6ff;stroke:#60a5fa;stroke-width:2}
+      .net{fill:#ecfdf5;stroke:#34d399;stroke-width:2}
+      .warn{fill:#fff7ed;stroke:#fb923c;stroke-width:2}
+      .title{font:700 26px sans-serif;fill:#0f172a}
+      .label{font:700 18px sans-serif;fill:#0f172a}
+      .small{font:500 14px sans-serif;fill:#475569}
+      .line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#64748b;stroke-width:2;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="680" rx="28"/>
+  <text class="title" x="60" y="58">VPC Endpoint プライベート接続構成</text>
+
+  <rect class="box" x="58" y="115" width="1084" height="475" rx="24"/>
+  <text class="label" x="86" y="155">Amazon VPC</text>
+  <text class="small" x="86" y="180">Private subnetからAWSサービスへインターネットを経由せず接続</text>
+
+  <rect class="net" x="100" y="225" width="280" height="245" rx="18"/>
+  <text class="label" x="132" y="268">Private Subnet</text>
+  <rect class="aws" x="145" y="315" width="190" height="92" rx="16"/>
+  <text class="label" x="184" y="356">Application</text>
+  <text class="small" x="174" y="382">EC2 / Lambda / ECS</text>
+
+  <rect class="warn" x="470" y="285" width="230" height="120" rx="18"/>
+  <text class="label" x="520" y="335">VPC Endpoint</text>
+  <text class="small" x="517" y="363">Gateway / Interface</text>
+
+  <rect class="aws" x="805" y="210" width="245" height="100" rx="18"/>
+  <text class="label" x="875" y="252">Amazon S3</text>
+  <text class="small" x="855" y="278">Object Storage</text>
+
+  <rect class="aws" x="805" y="382" width="245" height="100" rx="18"/>
+  <text class="label" x="840" y="424">Amazon DynamoDB</text>
+  <text class="small" x="858" y="450">NoSQL Database</text>
+
+  <rect class="box" x="474" y="490" width="225" height="58" rx="14"/>
+  <text class="label" x="548" y="525">IAM Policy</text>
+
+  <path class="line" d="M335 360 H465"/>
+  <path class="line" d="M700 325 C755 300 760 265 805 260"/>
+  <path class="line" d="M700 365 C755 390 760 430 805 430"/>
+  <path class="dash" d="M585 490 V410"/>
+  <text class="small" x="110" y="535">Point: NAT GatewayなしでS3 / DynamoDBへ接続し、コストとセキュリティを両立</text>
+</svg>

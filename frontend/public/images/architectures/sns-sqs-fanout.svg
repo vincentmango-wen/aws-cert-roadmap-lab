@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">SNS SQS fanout architecture</title>
+  <desc id="desc">Application publishes one event to SNS Topic and SNS fanouts messages to multiple SQS queues processed by Lambda functions.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafc}
+      .box{fill:#ffffff;stroke:#cbd5e1;stroke-width:2}
+      .topic{fill:#ede9fe;stroke:#8b5cf6;stroke-width:2}
+      .queue{fill:#fef3c7;stroke:#f59e0b;stroke-width:2}
+      .lambda{fill:#eff6ff;stroke:#60a5fa;stroke-width:2}
+      .title{font:700 26px sans-serif;fill:#0f172a}
+      .label{font:700 18px sans-serif;fill:#0f172a}
+      .small{font:500 14px sans-serif;fill:#475569}
+      .line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="680" rx="28"/>
+  <text class="title" x="60" y="58">SNS + SQS ファンアウト構成</text>
+
+  <rect class="box" x="70" y="285" width="190" height="88" rx="16"/>
+  <text class="label" x="115" y="326">Application</text>
+  <text class="small" x="116" y="352">Publish Event</text>
+
+  <rect class="topic" x="345" y="260" width="220" height="135" rx="20"/>
+  <text class="label" x="398" y="318">SNS Topic</text>
+  <text class="small" x="393" y="348">1イベントを複数配信</text>
+
+  <rect class="queue" x="680" y="120" width="210" height="80" rx="16"/>
+  <text class="label" x="730" y="158">SQS Queue A</text>
+  <text class="small" x="735" y="182">通知処理</text>
+
+  <rect class="queue" x="680" y="285" width="210" height="80" rx="16"/>
+  <text class="label" x="730" y="323">SQS Queue B</text>
+  <text class="small" x="735" y="347">在庫更新</text>
+
+  <rect class="queue" x="680" y="450" width="210" height="80" rx="16"/>
+  <text class="label" x="730" y="488">SQS Queue C</text>
+  <text class="small" x="735" y="512">分析ログ</text>
+
+  <rect class="lambda" x="970" y="120" width="160" height="80" rx="16"/>
+  <text class="label" x="1000" y="165">Lambda A</text>
+
+  <rect class="lambda" x="970" y="285" width="160" height="80" rx="16"/>
+  <text class="label" x="1000" y="330">Lambda B</text>
+
+  <rect class="lambda" x="970" y="450" width="160" height="80" rx="16"/>
+  <text class="label" x="1000" y="495">Lambda C</text>
+
+  <path class="line" d="M260 329 H345"/>
+  <path class="line" d="M565 300 C610 240 630 160 680 160"/>
+  <path class="line" d="M565 329 H680"/>
+  <path class="line" d="M565 358 C610 420 630 490 680 490"/>
+  <path class="line" d="M890 160 H970"/>
+  <path class="line" d="M890 325 H970"/>
+  <path class="line" d="M890 490 H970"/>
+  <text class="small" x="92" y="592">Point: 1つのイベントを複数処理へ分岐し、処理ごとに失敗とスケールを分離する</text>
+</svg>

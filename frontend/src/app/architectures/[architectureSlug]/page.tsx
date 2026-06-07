@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { architectures } from "../../../contents/architectures/architectures";
+import {
+  architectureCategoryLabels,
+  architectureLevelLabels,
+  awsServiceLabels,
+  publishedArchitectures,
+  type ArchitectureMeta,
+} from "../../../contents/architectures/architectures";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -12,48 +18,14 @@ type PageProps = {
   }>;
 };
 
-type Architecture = {
-  architectureId: string;
-  slug: string;
-  title: string;
-  description: string;
-  category: string;
-  level: string;
-  examScopes: string[];
-  services: string[];
-  tags: string[];
-  diagramPath?: string;
-  sections?: Array<{
-    title: string;
-    body: string;
-  }>;
-  published: boolean;
-  publishedAt?: string;
-  updatedAt?: string;
-};
-
-function getPublishedArchitectures(): Architecture[] {
-  return architectures.filter((architecture) => architecture.published);
-}
-
-function getArchitectureBySlug(slug: string): Architecture | undefined {
-  return getPublishedArchitectures().find(
+function getArchitectureBySlug(slug: string): ArchitectureMeta | undefined {
+  return publishedArchitectures.find(
     (architecture) => architecture.slug === slug,
   );
 }
 
-function getLevelLabel(level: string): string {
-  const labels: Record<string, string> = {
-    beginner: "初級",
-    intermediate: "中級",
-    advanced: "上級",
-  };
-
-  return labels[level] ?? level;
-}
-
 export function generateStaticParams(): Array<{ architectureSlug: string }> {
-  return getPublishedArchitectures().map((architecture) => ({
+  return publishedArchitectures.map((architecture) => ({
     architectureSlug: architecture.slug,
   }));
 }
@@ -109,11 +81,11 @@ export default async function ArchitectureDetailPage({ params }: PageProps) {
         <header className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="mb-5 flex flex-wrap gap-2">
             <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-800">
-              {architecture.category}
+              {architectureCategoryLabels[architecture.category]}
             </span>
 
             <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-              {getLevelLabel(architecture.level)}
+              {architectureLevelLabels[architecture.level]}
             </span>
 
             {architecture.examScopes.map((examScope) => (
@@ -174,7 +146,7 @@ export default async function ArchitectureDetailPage({ params }: PageProps) {
                   href={`/terms/${service}`}
                   className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-800"
                 >
-                  {service}
+                  {awsServiceLabels[service] ?? service}
                 </Link>
               ))}
             </div>
