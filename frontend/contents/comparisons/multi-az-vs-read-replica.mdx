@@ -1,0 +1,170 @@
+---
+comparisonId: "cmp-007"
+slug: "multi-az-vs-read-replica"
+title: "RDS Multi-AZ・Read Replicaの違いを初心者向けに解説"
+description: "Amazon RDSで混同しやすいMulti-AZ配置とRead Replicaの違いを、可用性、読み取り性能、フェイルオーバー、試験ポイントの観点で整理します。"
+category: "Database"
+level: "intermediate"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "rds"
+tags:
+  - "database"
+  - "rds"
+  - "multi-az"
+  - "read-replica"
+  - "comparison"
+  - "saa"
+priority: "high"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# RDS Multi-AZ・Read Replicaの違い
+
+## 結論
+
+RDS Multi-AZとRead Replicaは、どちらもデータベースの複製に関係します。
+
+ただし、目的が違います。
+
+- 障害対策・高可用性を高めるならMulti-AZ
+- 読み取り性能を上げるならRead Replica
+
+AWS試験では、この違いがかなり重要です。
+
+## 比較表
+
+| 項目 | Multi-AZ | Read Replica |
+|---|---|---|
+| 主な目的 | 高可用性・障害対策 | 読み取り性能の向上 |
+| レプリケーション | 同期レプリケーションが基本 | 非同期レプリケーション |
+| 読み取り分散 | 通常のスタンバイは読み取り不可 | 読み取り可能 |
+| フェイルオーバー | 自動フェイルオーバー | 自動フェイルオーバー目的ではない |
+| 配置 | 別AZにスタンバイを作成 | 同一リージョンまたは別リージョンに作成可能 |
+| 書き込み | プライマリのみ | プライマリのみ |
+| 読み取り | プライマリから読む | レプリカから読む |
+| 試験キーワード | high availability, failover, standby | read scaling, read-heavy workload |
+| コスト | スタンバイ分のコストが増える | レプリカ分のコストが増える |
+
+## 初学者向け説明
+
+Multi-AZは、メインのDBに障害が起きたときに備える仕組みです。
+
+```text
+Primary DB
+↓ 同期
+Standby DB
+```
+
+通常時、アプリケーションはPrimary DBを使います。  
+障害時にはStandby DBへ切り替わります。
+
+Read Replicaは、読み取りアクセスを逃がすためのDBコピーです。
+
+```text
+Primary DB
+↓ 非同期
+Read Replica
+```
+
+アプリケーションは、書き込みをPrimary DBへ、読み取りをRead Replicaへ分けられます。
+
+## 試験で問われるポイント
+
+### Multi-AZが正解になりやすいケース
+
+- データベースの可用性を高めたい
+- AZ障害に備えたい
+- 自動フェイルオーバーが必要
+- 本番DBの障害対策をしたい
+- RTOを短くしたい
+
+### Read Replicaが正解になりやすいケース
+
+- 読み取りアクセスが多い
+- レポート・分析クエリを本番DBから逃がしたい
+- 読み取りスループットを上げたい
+- 別リージョンに読み取り用DBを置きたい
+
+## 実務での使い分け
+
+### 本番DBの障害対策
+
+Multi-AZを使います。
+
+```text
+Application
+↓
+RDS Primary
+↓ 同期
+RDS Standby
+```
+
+本番環境では、DB単一障害点を避けるためにMulti-AZがよく使われます。
+
+### 読み取り負荷が高いサービス
+
+Read Replicaを使います。
+
+```text
+Write Request → Primary DB
+Read Request  → Read Replica
+```
+
+ECサイトの商品閲覧、メディアサイトの記事閲覧、管理画面の集計など、読み取りが多い場合に有効です。
+
+### 高可用性と読み取り性能の両方が必要な場合
+
+Multi-AZとRead Replicaを併用します。
+
+```text
+Primary DB
+├─ Standby DB
+└─ Read Replica
+```
+
+ただし、コストも増えるため、個人開発MVPでは基本的に使いません。
+
+## よくある間違い
+
+### 間違い1：Read Replicaを障害対策の第一候補にする
+
+Read Replicaは読み取り性能向上が主目的です。
+
+障害対策の第一候補はMulti-AZです。
+
+### 間違い2：Multi-AZで読み取り性能が上がると思う
+
+通常のRDS Multi-AZ DBインスタンス構成では、スタンバイは読み取り用に使いません。
+
+読み取り性能を上げたいならRead Replicaを検討します。
+
+### 間違い3：個人開発MVPでRDSを使う
+
+このプロジェクトでは、MVPでRDSは使いません。
+
+理由は、固定費が発生しやすく、問い合わせ保存だけならDynamoDBで足りるためです。
+
+## 関連用語
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS Budgets](/terms/aws-budgets)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
+
+## まとめ
+
+RDS Multi-AZとRead Replicaは、目的で覚えるのが一番です。
+
+- Multi-AZ：障害対策・高可用性
+- Read Replica：読み取り性能向上
+
+試験では「高可用性」と書かれていたらMulti-AZ、「読み取り負荷」と書かれていたらRead Replicaを疑います。

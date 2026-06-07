@@ -1,0 +1,167 @@
+---
+comparisonId: "cmp-008"
+slug: "security-group-vs-nacl"
+title: "Security Group・Network ACLの違いを初心者向けに解説"
+description: "Amazon VPCで混同しやすいSecurity GroupとNetwork ACLの違いを、適用範囲、ステートフル、ステートレス、許可・拒否ルール、試験ポイントの観点で整理します。"
+category: "Security"
+level: "intermediate"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "vpc"
+tags:
+  - "security"
+  - "vpc"
+  - "security-group"
+  - "nacl"
+  - "comparison"
+  - "saa"
+priority: "high"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Security Group・Network ACLの違い
+
+## 結論
+
+Security GroupとNetwork ACLは、どちらもVPC内の通信制御に使います。
+
+ただし、守る場所と動きが違います。
+
+- EC2などのリソース単位で制御するならSecurity Group
+- サブネット単位で制御するならNetwork ACL
+- Security Groupはステートフル
+- Network ACLはステートレス
+
+AWS試験では「ステートフルか、ステートレスか」が特に重要です。
+
+## 比較表
+
+| 項目 | Security Group | Network ACL |
+|---|---|---|
+| 適用範囲 | ENI・EC2などリソース単位 | サブネット単位 |
+| 動作 | ステートフル | ステートレス |
+| ルール | 許可ルールのみ | 許可ルールと拒否ルール |
+| 戻り通信 | 自動で許可 | 明示的に許可が必要 |
+| 評価順序 | すべてのルールを評価 | ルール番号の小さい順に評価 |
+| デフォルト | デフォルトSGは同一SG内通信を許可 | デフォルトNACLはすべて許可 |
+| 主な用途 | インスタンス単位のファイアウォール | サブネット境界の追加防御 |
+| 試験キーワード | stateful, instance level | stateless, subnet level, allow and deny |
+
+## 初学者向け説明
+
+Security Groupは、EC2などのリソースに付けるファイアウォールです。
+
+```text
+EC2 Instance
+└─ Security Group
+```
+
+例えば、WebサーバーならHTTP/HTTPSだけ許可します。
+
+Network ACLは、サブネットに付けるファイアウォールです。
+
+```text
+Subnet
+└─ Network ACL
+   └─ EC2 Instance
+```
+
+サブネットに出入りする通信を制御します。
+
+## 試験で問われるポイント
+
+### Security Groupが正解になりやすいケース
+
+- EC2インスタンス単位で通信を制御したい
+- ステートフルな通信制御が必要
+- WebサーバーにHTTP/HTTPSだけ許可したい
+- アプリケーションサーバーにDB接続だけ許可したい
+
+### Network ACLが正解になりやすいケース
+
+- サブネット単位で通信を制御したい
+- 明示的な拒否ルールを使いたい
+- ステートレスな通信制御が問われている
+- 追加の防御レイヤーを設けたい
+
+## 実務での使い分け
+
+### 基本の通信制御
+
+Security Groupを使います。
+
+```text
+ALB Security Group
+↓
+EC2 Security Group
+↓
+RDS Security Group
+```
+
+実務では、まずSecurity Groupで最小限の通信を許可します。
+
+### サブネット単位で制限したい場合
+
+Network ACLを使います。
+
+```text
+Public Subnet
+└─ Network ACL
+
+Private Subnet
+└─ Network ACL
+```
+
+ただし、Network ACLはステートレスなので、戻り通信も考えてルールを書く必要があります。
+
+### このプロジェクトでの位置づけ
+
+このプロジェクトのMVPでは、S3 + CloudFront + Lambda + DynamoDBが中心です。
+
+LambdaはVPC接続しない前提なので、Security GroupやNetwork ACLを直接設定する場面は少ないです。
+
+ただし、SAA対策ではVPC設計の基礎として必須です。
+
+## よくある間違い
+
+### 間違い1：Security Groupで拒否ルールを書けると思う
+
+Security Groupは許可ルールのみです。
+
+明示的な拒否ルールを使いたい場合はNetwork ACLを検討します。
+
+### 間違い2：Network ACLの戻り通信を忘れる
+
+Network ACLはステートレスです。
+
+インバウンドを許可しても、アウトバウンドの戻り通信を許可しないと通信できません。
+
+### 間違い3：Security GroupとNetwork ACLを同じ粒度で覚える
+
+Security Groupはリソース単位、Network ACLはサブネット単位です。
+
+ここを間違えると、試験問題で選択肢を誤ります。
+
+## 関連用語
+
+- [Amazon VPC](/terms/vpc)
+- [Amazon EC2](/terms/ec2)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon RDS](/terms/rds)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
+
+## まとめ
+
+Security GroupとNetwork ACLは、次のように覚えます。
+
+- Security Group：リソース単位、ステートフル、許可のみ
+- Network ACL：サブネット単位、ステートレス、許可と拒否
+
+SAAでは頻出なので、表で即答できるレベルまで整理しておく必要があります。
