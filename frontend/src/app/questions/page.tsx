@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import rawQuestions from "../../../contents/questions/clf-c02.json";
+import rawClfQuestions from "../../../contents/questions/clf-c02.json";
+import rawSaaQuestions from "../../../contents/questions/saa-c03.json";
 import {
   getBeginnerRecommendedQuestions,
   getPublishedQuestions,
   getQuestionCategorySummaries,
   getQuestionDifficultySummaries,
+  QUESTION_CATEGORY_LABELS,
   QUESTION_DIFFICULTY_LABELS,
 } from "../../lib/questions";
 import type { Question } from "../../types/question";
@@ -13,10 +15,14 @@ import { createPageMetadata, pageSeo } from "../../lib/seo";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.questions);
 
-const questions = getPublishedQuestions(rawQuestions as Question[]);
+const clfQuestions = getPublishedQuestions(rawClfQuestions as Question[]);
+const saaQuestions = getPublishedQuestions(rawSaaQuestions as Question[]);
+const questions = [...clfQuestions, ...saaQuestions];
+
 const categorySummaries = getQuestionCategorySummaries(questions);
 const difficultySummaries = getQuestionDifficultySummaries(questions);
-const beginnerQuestions = getBeginnerRecommendedQuestions(questions, 3);
+const beginnerQuestions = getBeginnerRecommendedQuestions(clfQuestions, 3);
+const saaRecommendedQuestions = saaQuestions.slice(0, 6);
 
 export default function QuestionsPage() {
   return (
@@ -29,8 +35,9 @@ export default function QuestionsPage() {
           AWS模擬問題
         </h1>
         <p className="mt-5 max-w-3xl text-base leading-8 text-slate-200 md:text-lg">
-          AWS Cloud Practitionerの理解度を確認できる問題集です。
-          まずはCLF-C02の基礎問題から解き、AWSサービスの違い・責任共有モデル・料金・サポートを整理しましょう。
+          AWS Cloud PractitionerとSolutions Architect
+          Associateの理解度を確認できる問題集です。CLF-C02でAWSの基礎を固め、
+          SAA-C03でセキュリティ・可用性・性能・コスト最適化の設計判断を学びましょう。
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -39,6 +46,12 @@ export default function QuestionsPage() {
             className="rounded-full bg-blue-500 px-6 py-3 text-center text-sm font-bold text-white transition hover:bg-blue-400"
           >
             CLF-C02問題を見る
+          </Link>
+          <Link
+            href={saaQuestions[0] ? `/questions/${saaQuestions[0].questionId}` : "/questions"}
+            className="rounded-full border border-white/30 px-6 py-3 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            SAA-C03問題を解く
           </Link>
           <Link
             href="/terms"
@@ -61,7 +74,7 @@ export default function QuestionsPage() {
               </h2>
             </div>
             <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-700">
-              {questions.length}問
+              {clfQuestions.length}問
             </span>
           </div>
 
@@ -74,36 +87,36 @@ export default function QuestionsPage() {
             href="/questions/clf"
             className="mt-6 inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
           >
-            問題一覧へ進む
+            CLF問題一覧へ進む
           </Link>
         </article>
 
-        <article className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6">
+        <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-slate-500">
+              <p className="text-sm font-semibold text-emerald-700">
                 Solutions Architect Associate
               </p>
-              <h2 className="mt-2 text-2xl font-bold text-slate-500">
+              <h2 className="mt-2 text-2xl font-bold text-slate-950">
                 SAA-C03 模擬問題
               </h2>
             </div>
-            <span className="rounded-full bg-slate-200 px-3 py-1 text-sm font-bold text-slate-600">
-              将来対応
+            <span className="rounded-full bg-white px-3 py-1 text-sm font-bold text-emerald-700">
+              {saaQuestions.length}問
             </span>
           </div>
 
-          <p className="mt-4 text-sm leading-7 text-slate-600">
-            高可用性、セキュアな設計、パフォーマンス、コスト最適化の問題はPhase 2以降で追加します。
+          <p className="mt-4 text-sm leading-7 text-slate-700">
+            セキュアな設計、耐障害性、高性能、コスト最適化の観点から、
+            AWSアーキテクチャの選定力を確認できます。
           </p>
 
-          <button
-            type="button"
-            disabled
-            className="mt-6 inline-flex cursor-not-allowed rounded-full bg-slate-300 px-5 py-3 text-sm font-bold text-slate-600"
+          <Link
+            href={saaQuestions[0] ? `/questions/${saaQuestions[0].questionId}` : "/questions"}
+            className="mt-6 inline-flex rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-600"
           >
-            準備中
-          </button>
+            SAA問題を解き始める
+          </Link>
         </article>
       </section>
 
@@ -115,20 +128,16 @@ export default function QuestionsPage() {
               カテゴリ別に確認する
             </h2>
           </div>
-          <Link
-            href="/questions/clf"
-            className="text-sm font-bold text-blue-700 hover:text-blue-900"
-          >
-            すべての問題を見る →
-          </Link>
+          <p className="text-sm font-bold text-slate-600">
+            全{questions.length}問
+          </p>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {categorySummaries.map((summary) => (
-            <Link
+            <div
               key={summary.category}
-              href="/questions/clf"
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
             >
               <div className="flex items-start justify-between gap-4">
                 <h3 className="text-lg font-bold text-slate-950">
@@ -141,7 +150,7 @@ export default function QuestionsPage() {
               <p className="mt-3 text-sm leading-7 text-slate-600">
                 {summary.description}
               </p>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -175,7 +184,7 @@ export default function QuestionsPage() {
       <section className="mt-12">
         <p className="text-sm font-semibold text-blue-700">Recommended</p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">
-          初心者におすすめの問題
+          初心者におすすめのCLF問題
         </h2>
 
         <div className="mt-6 grid gap-4">
@@ -196,6 +205,43 @@ export default function QuestionsPage() {
                   </h3>
                 </div>
                 <span className="text-sm font-bold text-blue-700">
+                  問題を見る →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <p className="text-sm font-semibold text-emerald-700">SAA-C03</p>
+        <h2 className="mt-2 text-2xl font-bold text-slate-950">
+          SAA-C03の設計問題
+        </h2>
+        <p className="mt-3 text-sm leading-7 text-slate-600">
+          セキュリティ、耐障害性、性能、コスト最適化の観点から、
+          アーキテクチャ選定の練習ができます。
+        </p>
+
+        <div className="mt-6 grid gap-4">
+          {saaRecommendedQuestions.map((question) => (
+            <Link
+              key={question.questionId}
+              href={`/questions/${question.questionId}`}
+              className="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
+            >
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="text-sm font-bold text-emerald-700">
+                    {question.questionId.toUpperCase()} /{" "}
+                    {QUESTION_CATEGORY_LABELS[question.category]} /{" "}
+                    {QUESTION_DIFFICULTY_LABELS[question.difficulty]}
+                  </p>
+                  <h3 className="mt-2 text-base font-bold leading-7 text-slate-950 md:text-lg">
+                    {question.question}
+                  </h3>
+                </div>
+                <span className="text-sm font-bold text-emerald-700">
                   問題を見る →
                 </span>
               </div>

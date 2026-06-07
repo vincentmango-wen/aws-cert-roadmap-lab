@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { QuestionPlayer } from "../../../components/questions/QuestionPlayer";
 import { createPageMetadata } from "../../../lib/seo";
 import type { Question } from "../../../types/question";
-import rawQuestions from "../../../../contents/questions/clf-c02.json";
+import rawClfQuestions from "../../../../contents/questions/clf-c02.json";
+import rawSaaQuestions from "../../../../contents/questions/saa-c03.json";
 
 type QuestionDetailPageProps = {
   params: Promise<{
@@ -15,7 +16,10 @@ type QuestionStaticParams = {
   questionId: string;
 };
 
-const questions = rawQuestions as Question[];
+const questions = [
+  ...(rawClfQuestions as Question[]),
+  ...(rawSaaQuestions as Question[]),
+];
 
 export function generateStaticParams(): QuestionStaticParams[] {
   return questions
@@ -43,7 +47,7 @@ export async function generateMetadata({
     return createPageMetadata({
       title: "模擬問題が見つかりません",
       description:
-        "指定された模擬問題は見つかりませんでした。模擬問題一覧からAWS Cloud Practitionerの問題を確認できます。",
+        "指定された模擬問題は見つかりませんでした。模擬問題一覧からAWS資格対策の問題を確認できます。",
       path: `/questions/${questionId}`,
       noIndex: true,
     });
@@ -74,7 +78,7 @@ export default async function QuestionDetailPage({
 }: QuestionDetailPageProps): Promise<React.JSX.Element> {
   const { questionId } = await params;
   const question = getPublishedQuestions().find(
-    (question) => question.questionId === questionId,
+    (item) => item.questionId === questionId,
   );
 
   if (!question) {
@@ -101,7 +105,9 @@ function getAdjacentQuestionIds(questionId: string): {
   nextQuestionId: string | null;
 } {
   const publishedQuestions = getPublishedQuestions();
-  const currentIndex = publishedQuestions.findIndex((question) => question.questionId === questionId);
+  const currentIndex = publishedQuestions.findIndex(
+    (question) => question.questionId === questionId,
+  );
 
   if (currentIndex === -1) {
     return {

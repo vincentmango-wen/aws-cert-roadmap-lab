@@ -6,7 +6,11 @@ export type QuestionCategory =
   | "Cloud Concepts"
   | "Security and Compliance"
   | "Cloud Technology and Services"
-  | "Billing, Pricing, and Support";
+  | "Billing, Pricing, and Support"
+  | "Secure Architectures"
+  | "Resilient Architectures"
+  | "High-Performing Architectures"
+  | "Cost-Optimized Architectures";
 
 export type ChoiceId = "A" | "B" | "C" | "D";
 
