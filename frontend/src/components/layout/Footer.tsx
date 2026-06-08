@@ -36,7 +36,7 @@ const footerSections: FooterSection[] = [
   {
     title: "ポートフォリオ",
     links: [
-      { label: "GitHub", href: "/github" },
+      { label: "GitHub", href: "https://github.com/vincentmango-wen" },
     ],
   },
 ];
