@@ -36,7 +36,21 @@ const footerSections: FooterSection[] = [
   {
     title: "ポートフォリオ",
     links: [
-      { label: "GitHub", href: "https://github.com/vincentmango-wen" },
+      {
+        label: "GitHub",
+        href: "https://github.com/vincentmango-wen/aws-cert-roadmap-lab",
+        external: true,
+      },
+      {
+        label: "note",
+        href: "https://note.com/fumi_ai_202507",
+        external: true,
+      },
+      {
+        label: "X",
+        href: "https://x.com/fumikun_gengen",
+        external: true,
+      },
     ],
   },
 ];
@@ -47,7 +61,7 @@ function FooterLinkItem({ link }: { link: FooterLink }): ReactElement {
       <a
         href={link.href}
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
         className="text-sm text-slate-600 underline-offset-4 transition hover:text-slate-950 hover:underline"
       >
         {link.label}
