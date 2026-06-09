@@ -4,6 +4,7 @@ import { SiteLayout } from "../components/layout/SiteLayout";
 import { createAbsoluteUrl, siteConfig } from "../lib/seo";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { GoogleAdSense } from "@/components/ads/GoogleAdSense";
 
 const assetBasePath = "/images/assets";
 
@@ -105,6 +106,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
+        <GoogleAdSense />
         <SiteLayout>{children}</SiteLayout>
         <GoogleAnalytics />
       </body>
