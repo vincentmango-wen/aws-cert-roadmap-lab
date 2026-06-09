@@ -76,7 +76,7 @@ env/
 .aws/
 aws-credentials.json
 credentials
-config
+
 
 *.pem
 *.key
