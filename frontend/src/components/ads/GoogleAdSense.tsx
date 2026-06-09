@@ -35,7 +35,7 @@ export function GoogleAdSense(): JSX.Element | null {
       src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
         trimmedClientId,
       )}`}
-      strategy="beforeInteractive"
+      strategy="afterInteractive"
       async
       crossOrigin="anonymous"
     />
