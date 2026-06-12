@@ -1,19 +1,16 @@
-export const dynamic = "force-static";
-
 import type { MetadataRoute } from "next";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import {
+  createLocalizedSitemapItems,
+  type ChangeFrequency,
+  type LocalizedSitemapRouteInput,
+  type SitemapItem,
+} from "../i18n/seo/sitemap";
 
-type SitemapItem = MetadataRoute.Sitemap[number];
+export const dynamic = "force-static";
 
-type ChangeFrequency = NonNullable<SitemapItem["changeFrequency"]>;
-
-type SitemapRouteInput = {
-  pathname: string;
-  priority: number;
-  changeFrequency: ChangeFrequency;
-  lastModified?: string | Date;
-};
+type SitemapRouteInput = LocalizedSitemapRouteInput;
 
 type TermContent = {
   termId?: unknown;
@@ -33,67 +30,10 @@ type MdxContentMeta = {
   published: boolean;
 };
 
-const FALLBACK_SITE_URL = "https://aws-cert-roadmap-lab.example.com";
-
 const CONTENT_ROOT = path.join(process.cwd(), "contents");
-
-const BUILD_TIME = new Date();
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
-}
-
-function getSiteUrl(): string {
-  const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_SITE_URL;
-  const trimmedSiteUrl = rawSiteUrl.trim().replace(/\/+$/, "");
-
-  if (trimmedSiteUrl.length === 0) {
-    return FALLBACK_SITE_URL;
-  }
-
-  if (trimmedSiteUrl.startsWith("http://") || trimmedSiteUrl.startsWith("https://")) {
-    return trimmedSiteUrl;
-  }
-
-  return `https://${trimmedSiteUrl}`;
-}
-
-function createAbsoluteUrl(pathname: string): string {
-  const siteUrl = getSiteUrl();
-
-  if (pathname === "/") {
-    return siteUrl;
-  }
-
-  const normalizedPathname = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  return `${siteUrl}${normalizedPathname}`;
-}
-
-function toLastModified(value?: string | Date): Date {
-  if (value instanceof Date) {
-    return value;
-  }
-
-  if (!isNonEmptyString(value)) {
-    return BUILD_TIME;
-  }
-
-  const parsedDate = new Date(value);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return BUILD_TIME;
-  }
-
-  return parsedDate;
-}
-
-function createSitemapItem(route: SitemapRouteInput): SitemapItem {
-  return {
-    url: createAbsoluteUrl(route.pathname),
-    lastModified: toLastModified(route.lastModified),
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
-  };
 }
 
 function readRequiredJsonArray<T>(relativeFilePath: string): T[] {
@@ -254,7 +194,9 @@ function getQuestionRoutes(): SitemapRouteInput[] {
       pathname: `/questions/${String(question.questionId).trim()}`,
       priority: 0.7,
       changeFrequency: "monthly",
-      lastModified: isNonEmptyString(question.updatedAt) ? question.updatedAt : undefined,
+      lastModified: isNonEmptyString(question.updatedAt)
+        ? question.updatedAt
+        : undefined,
     }));
 }
 
@@ -294,7 +236,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getMdxRoutes("blog", "/blog", 0.7, "weekly"),
   ];
 
-  const sitemapItems = routes.map(createSitemapItem);
+  const sitemapItems = routes.flatMap(createLocalizedSitemapItems);
 
   return deduplicateByUrl(sitemapItems).sort((a, b) => a.url.localeCompare(b.url));
 }
