@@ -124,4 +124,5 @@ temp/
 *.tmp
 *.swp
 *.swo
-scripts/
+
+# Local temporary scripts should be placed under tmp/ instead of scripts/.
