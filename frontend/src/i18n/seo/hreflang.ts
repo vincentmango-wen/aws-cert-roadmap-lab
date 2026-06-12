@@ -80,6 +80,6 @@ export function createHreflangAlternates(pathname: string): HreflangAlternates {
     [HREFLANG_BY_LOCALE.ja]: createAbsoluteUrl(createLocalizedPathname("ja", pathname)),
     [HREFLANG_BY_LOCALE.en]: createAbsoluteUrl(createLocalizedPathname("en", pathname)),
     [HREFLANG_BY_LOCALE.zh]: createAbsoluteUrl(createLocalizedPathname("zh", pathname)),
-    "x-default": createXDefaultUrl(),
+    "x-default": createAbsoluteUrl(createLocalizedPathname("ja", pathname)),
   };
 }
