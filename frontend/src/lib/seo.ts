@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
 import { createHreflangAlternates } from "@/i18n/seo/hreflang";
 
+export const supportedSeoLocales = ["ja", "en", "zh"] as const;
+
+export type SeoLocale = (typeof supportedSeoLocales)[number];
+
+const DEFAULT_SEO_LOCALE: SeoLocale = "ja";
+
+const openGraphLocaleByLocale = {
+  ja: "ja_JP",
+  en: "en_US",
+  zh: "zh_TW",
+} satisfies Record<SeoLocale, string>;
+
 export const siteConfig = {
   name: "AWS資格ロードマップラボ",
   shortName: "AWS Cert Roadmap Lab",
@@ -8,6 +20,7 @@ export const siteConfig = {
     "AWS Cloud Practitioner / SAAの学習内容を、用語集・比較・模擬問題・構成図で体系的に整理する学習サイトです。",
   defaultPath: "/",
   defaultOgImage: "/images/assets/og-image.png",
+  englishOgImage: "/images/assets/og-image-en.svg",
 };
 
 export type PageMetadataInput = {
@@ -15,12 +28,14 @@ export type PageMetadataInput = {
   description: string;
   path: `/${string}` | "/";
   image?: string;
+  imageAlt?: string;
   keywords?: string[];
   noIndex?: boolean;
   type?: "website" | "article";
   publishedTime?: string;
   modifiedTime?: string;
   enableLanguageAlternates?: boolean;
+  locale?: SeoLocale;
 };
 
 export function getSiteUrl(): string {
@@ -47,10 +62,45 @@ export function createAbsoluteUrl(path: string): string {
   return `${siteUrl}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+export function isSupportedSeoLocale(value: string): value is SeoLocale {
+  return supportedSeoLocales.some((locale) => locale === value);
+}
+
+export function resolveSeoLocaleFromPath(path: PageMetadataInput["path"]): SeoLocale {
+  if (path === "/en" || path.startsWith("/en/")) {
+    return "en";
+  }
+
+  if (path === "/zh" || path.startsWith("/zh/")) {
+    return "zh";
+  }
+
+  return DEFAULT_SEO_LOCALE;
+}
+
+export function getDefaultOgImageForLocale(locale: SeoLocale): string {
+  if (locale === "en") {
+    return siteConfig.englishOgImage;
+  }
+
+  return siteConfig.defaultOgImage;
+}
+
+function resolveSiteNameForLocale(locale: SeoLocale): string {
+  if (locale === "en") {
+    return siteConfig.shortName;
+  }
+
+  return siteConfig.name;
+}
+
 export function createPageMetadata(input: PageMetadataInput): Metadata {
+  const locale = input.locale ?? resolveSeoLocaleFromPath(input.path);
+  const siteName = resolveSiteNameForLocale(locale);
   const canonicalUrl = createAbsoluteUrl(input.path);
-  const imagePath = input.image ?? siteConfig.defaultOgImage;
+  const imagePath = input.image ?? getDefaultOgImageForLocale(locale);
   const ogImageUrl = createAbsoluteUrl(imagePath);
+  const imageAlt = input.imageAlt ?? `${input.title} - ${siteName}`;
 
   return {
     title: input.title,
@@ -68,16 +118,16 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
       title: input.title,
       description: input.description,
       url: canonicalUrl,
-      siteName: siteConfig.name,
+      siteName,
       images: [
         {
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `${input.title} - ${siteConfig.name}`,
+          alt: imageAlt,
         },
       ],
-      locale: "ja_JP",
+      locale: openGraphLocaleByLocale[locale],
       type: input.type ?? "website",
       publishedTime: input.publishedTime,
       modifiedTime: input.modifiedTime,
