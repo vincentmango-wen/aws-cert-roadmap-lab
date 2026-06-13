@@ -21,6 +21,7 @@ export const siteConfig = {
   defaultPath: "/",
   defaultOgImage: "/images/assets/og-image.png",
   englishOgImage: "/images/assets/og-image-en.svg",
+  chineseOgImage: "/images/assets/og-image-zh.png",
 };
 
 export type PageMetadataInput = {
