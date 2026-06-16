@@ -161,6 +161,22 @@ export const comparisons: Comparison[] = [
     publishedAt: "2026-06-07",
     updatedAt: "2026-06-07",
   },
+  {
+    comparisonId: "cmp-011",
+    slug: "route53-vs-cloudfront-vs-global-accelerator",
+    title: "Route 53・CloudFront・Global Acceleratorの違い",
+    description:
+      "「全部グローバルサービス」で混同しやすいAmazon Route 53、Amazon CloudFront、AWS Global Acceleratorの違いを、静的IP・キャッシュ・DNS解決の3軸と試験ポイントから整理します。",
+    category: "Networking",
+    level: "intermediate",
+    examScopes: ["CLF-C02", "SAA-C03"],
+    services: ["route53", "cloudfront"],
+    tags: ["networking", "dns", "cdn", "cloudfront", "comparison", "clf", "saa"],
+    priority: "high",
+    published: true,
+    publishedAt: "2026-06-16",
+    updatedAt: "2026-06-16",
+  },
 ];
 
 export const publishedComparisons = comparisons.filter(
