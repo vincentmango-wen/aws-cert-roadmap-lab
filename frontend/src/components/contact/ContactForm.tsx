@@ -1,8 +1,13 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import { useMemo, useState } from "react";
+
 import { submitContact } from "@/lib/api/contact";
-import { validateContactForm } from "@/lib/validators/contact";
+import {
+  validateContactForm,
+  type ContactFormLocale,
+} from "@/lib/validators/contact";
 import type {
   ContactFieldErrors,
   ContactFormField,
@@ -18,6 +23,87 @@ const initialValues: ContactFormValues = {
 };
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
+
+type ContactFormText = {
+  labels: Record<ContactFormField, string>;
+  requiredMarkAriaLabel: string;
+  validationErrorMessage: string;
+  fallbackSuccessMessage: string;
+  fallbackSubmitErrorMessage: string;
+  messageHelp: string;
+  remainingCharacters: (count: number) => string;
+  honeypotLabel: string;
+  submitButton: string;
+  submittingButton: string;
+};
+
+const contactFormTexts = {
+  ja: {
+    labels: {
+      name: "名前",
+      email: "メールアドレス",
+      subject: "件名",
+      message: "本文",
+      honeypot: "この項目は入力しないでください",
+    },
+    requiredMarkAriaLabel: "必須",
+    validationErrorMessage: "入力内容を確認してください。",
+    fallbackSuccessMessage: "お問い合わせを受け付けました。",
+    fallbackSubmitErrorMessage: "問い合わせ送信中にエラーが発生しました。",
+    messageHelp:
+      "AWS記事の誤り報告、ポートフォリオへの質問、仕事相談などを送信できます。",
+    remainingCharacters: (count: number) =>
+      `残り ${count.toLocaleString("ja-JP")} 文字`,
+    honeypotLabel: "この項目は入力しないでください",
+    submitButton: "問い合わせを送信する",
+    submittingButton: "送信中...",
+  },
+  en: {
+    labels: {
+      name: "Name",
+      email: "Email address",
+      subject: "Subject",
+      message: "Message",
+      honeypot: "Do not fill out this field",
+    },
+    requiredMarkAriaLabel: "required",
+    validationErrorMessage: "Please review the form fields.",
+    fallbackSuccessMessage: "Your message has been received.",
+    fallbackSubmitErrorMessage:
+      "An error occurred while sending your message.",
+    messageHelp:
+      "Use this form to report content issues, ask about the portfolio, or discuss work opportunities.",
+    remainingCharacters: (count: number) =>
+      `${count.toLocaleString("en-US")} characters remaining`,
+    honeypotLabel: "Do not fill out this field",
+    submitButton: "Send message",
+    submittingButton: "Sending...",
+  },
+  zh: {
+  labels: {
+    name: "姓名",
+    email: "電子郵件地址",
+    subject: "主旨",
+    message: "內容",
+    honeypot: "請不要填寫此欄位",
+  },
+  requiredMarkAriaLabel: "必填",
+  validationErrorMessage: "請確認輸入內容。",
+  fallbackSuccessMessage: "已收到你的聯絡訊息。",
+  fallbackSubmitErrorMessage: "送出聯絡訊息時發生錯誤。",
+  messageHelp:
+    "你可以回報AWS文章錯誤、詢問作品集內容，或聯繫工作與合作相關事宜。",
+  remainingCharacters: (count: number) =>
+    `剩餘 ${count.toLocaleString("zh-TW")} 字`,
+  honeypotLabel: "請不要填寫此欄位",
+  submitButton: "送出聯絡訊息",
+  submittingButton: "送出中...",
+  },
+} as const satisfies Record<ContactFormLocale, ContactFormText>;
+
+type ContactFormProps = {
+  locale?: ContactFormLocale;
+};
 
 function buildFieldErrors(
   errors: { field: ContactFormField; message: string }[],
@@ -44,7 +130,9 @@ function getApiFieldErrors(details: { field?: string; message: string }[]) {
   }, {});
 }
 
-export default function ContactForm() {
+export default function ContactForm({ locale = "ja" }: ContactFormProps) {
+  const text = contactFormTexts[locale];
+
   const [values, setValues] = useState<ContactFormValues>(initialValues);
   const [fieldErrors, setFieldErrors] = useState<ContactFieldErrors>({});
   const [status, setStatus] = useState<SubmitStatus>("idle");
@@ -89,12 +177,12 @@ export default function ContactForm() {
     setMessage("");
     setFieldErrors({});
 
-    const validationErrors = validateContactForm(values);
+    const validationErrors = validateContactForm(values, locale);
 
     if (validationErrors.length > 0) {
       setFieldErrors(buildFieldErrors(validationErrors));
       setStatus("error");
-      setMessage("入力内容を確認してください。");
+      setMessage(text.validationErrorMessage);
       return;
     }
 
@@ -123,13 +211,11 @@ export default function ContactForm() {
       }
 
       setStatus("success");
-      setMessage(response.message || "お問い合わせを受け付けました。");
+      setMessage(response.message || text.fallbackSuccessMessage);
       setValues(initialValues);
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "問い合わせ送信中にエラーが発生しました。";
+        error instanceof Error ? error.message : text.fallbackSubmitErrorMessage;
 
       setStatus("error");
       setMessage(errorMessage);
@@ -159,8 +245,11 @@ export default function ContactForm() {
             className="block text-sm font-semibold text-slate-800"
             htmlFor="name"
           >
-            名前
-            <span className="ml-1 text-red-500" aria-hidden="true">
+            {text.labels.name}
+            <span
+              className="ml-1 text-red-500"
+              aria-label={text.requiredMarkAriaLabel}
+            >
               *
             </span>
           </label>
@@ -189,8 +278,11 @@ export default function ContactForm() {
             className="block text-sm font-semibold text-slate-800"
             htmlFor="email"
           >
-            メールアドレス
-            <span className="ml-1 text-red-500" aria-hidden="true">
+            {text.labels.email}
+            <span
+              className="ml-1 text-red-500"
+              aria-label={text.requiredMarkAriaLabel}
+            >
               *
             </span>
           </label>
@@ -219,8 +311,11 @@ export default function ContactForm() {
             className="block text-sm font-semibold text-slate-800"
             htmlFor="subject"
           >
-            件名
-            <span className="ml-1 text-red-500" aria-hidden="true">
+            {text.labels.subject}
+            <span
+              className="ml-1 text-red-500"
+              aria-label={text.requiredMarkAriaLabel}
+            >
               *
             </span>
           </label>
@@ -250,8 +345,11 @@ export default function ContactForm() {
             className="block text-sm font-semibold text-slate-800"
             htmlFor="message"
           >
-            本文
-            <span className="ml-1 text-red-500" aria-hidden="true">
+            {text.labels.message}
+            <span
+              className="ml-1 text-red-500"
+              aria-label={text.requiredMarkAriaLabel}
+            >
               *
             </span>
           </label>
@@ -274,12 +372,10 @@ export default function ContactForm() {
                 {fieldErrors.message}
               </p>
             ) : (
-              <p className="text-sm text-slate-500">
-                AWS記事の誤り報告、ポートフォリオへの質問、仕事相談などを送信できます。
-              </p>
+              <p className="text-sm text-slate-500">{text.messageHelp}</p>
             )}
             <p id="message-count" className="shrink-0 text-sm text-slate-500">
-              残り {remainingMessageLength.toLocaleString()} 文字
+              {text.remainingCharacters(remainingMessageLength)}
             </p>
           </div>
         </div>
@@ -288,7 +384,7 @@ export default function ContactForm() {
           className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden"
           aria-hidden="true"
         >
-          <label htmlFor="honeypot">この項目は入力しないでください</label>
+          <label htmlFor="honeypot">{text.honeypotLabel}</label>
           <input
             id="honeypot"
             name="honeypot"
@@ -318,7 +414,7 @@ export default function ContactForm() {
           disabled={isSubmitting}
           className="w-full rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
         >
-          {isSubmitting ? "送信中..." : "問い合わせを送信する"}
+          {isSubmitting ? text.submittingButton : text.submitButton}
         </button>
       </div>
     </form>
