@@ -1,0 +1,195 @@
+---
+comparisonId: "cmp-011"
+slug: "route53-vs-cloudfront-vs-global-accelerator"
+title: "Route 53・CloudFront・Global Acceleratorの違いを初心者向けに解説"
+description: "「全部グローバルサービス」で混同しやすいAmazon Route 53、Amazon CloudFront、AWS Global Acceleratorの違い、試験ポイント、実務での使い分けを整理します。"
+category: "Networking"
+level: "intermediate"
+examScopes:
+  - "CLF-C02"
+  - "SAA-C03"
+services:
+  - "route53"
+  - "cloudfront"
+tags:
+  - "networking"
+  - "dns"
+  - "cdn"
+  - "cloudfront"
+  - "comparison"
+  - "clf"
+  - "saa"
+priority: "high"
+published: true
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+---
+
+# Route 53・CloudFront・Global Acceleratorの違い
+
+## 結論
+
+Route 53、CloudFront、Global Acceleratorは、AWSマネジメントコンソールの「リージョン」欄に「Global」と表示される、リージョンに縛られないサービスです。
+
+そのため「全部グローバル」とまとめて覚えてしまい、問題文の「グローバル」という単語に引っ張られて混同しがちです。
+
+ただし、役割の階層はそれぞれ違います。
+
+- 名前（ドメイン）をIPアドレスに変換するならRoute 53
+- 静的・動的コンテンツをエッジでキャッシュして高速配信するならCloudFront
+- TCP/UDPのパケットを静的IP経由でAWSバックボーンに乗せて高速化するならGlobal Accelerator
+
+迷ったら、「静的IPがあるか」「キャッシュするか」「DNSを解決するか」の3軸で切り分けると判断しやすくなります。
+
+## 比較表
+
+| 項目 | Route 53 | CloudFront | Global Accelerator |
+|---|---|---|---|
+| 正式名 | Amazon Route 53 | Amazon CloudFront | AWS Global Accelerator |
+| 分類 | DNS | CDN | ネットワーク高速化 |
+| 主なレイヤー | DNS層 | エッジ配信（HTTP/HTTPS） | L3/L4（TCP/UDP） |
+| 主な目的 | 名前をIPに変換する | コンテンツをキャッシュ配信する | パケットを最短経路で運ぶ |
+| 静的IP | 持たない（DNS名で運用） | 持たない（DNS名で運用） | 持つ（IPv4静的IPを2個） |
+| キャッシュ | しない | する（デフォルトTTL 24時間） | しない（経路最適化のみ） |
+| 対応プロトコル | DNSクエリ | HTTP / HTTPS | TCP / UDP |
+| 代表的な用途 | ドメイン登録、DNSルーティング、ヘルスチェック | 画像・動画・JS/CSSの高速配信 | ゲーム、VoIP、固定IPが必要なアプリ |
+| 料金の性質 | 使った分だけ | 使った分だけ | アクセラレータ作成で固定費が発生 |
+| 試験でのキーワード | DNS, routing policy, failover, geolocation | CDN, edge location, cache, S3 static site | static IP, anycast, TCP/UDP, non-HTTP |
+
+## 初学者向け説明
+
+### Amazon Route 53
+
+Route 53は、ドメイン名をIPアドレスに変換するDNSサービスです。
+
+世界中のエッジロケーションにDNSサーバーが分散配置されていて、どこから問い合わせても近い場所から応答が返ってきます。これが「グローバル」と呼ばれる理由です。
+
+ここで返ってくるのはIPアドレスそのものであって、HTMLや画像のような「コンテンツ」ではない、というのがCloudFrontとの最大の違いです。
+
+### Amazon CloudFront
+
+CloudFrontは、HTTP/HTTPSコンテンツをエッジでキャッシュ配信するCDNです。
+
+世界中のエッジロケーションにHTML・画像・動画・JS・CSS・APIレスポンスなどをキャッシュしておき、ユーザーから一番近いエッジから配信します。
+
+S3静的サイトや画像配信と相性が良く、このプロジェクトの本番構成もS3 + CloudFrontが基本です。
+
+### AWS Global Accelerator
+
+Global Acceleratorは、TCP/UDPのトラフィックをAWSバックボーン経由で最適化し、静的なAnycast IPを提供するサービスです。
+
+CloudFrontとの違いは、HTTP/HTTPSに限定されないことと、静的IPを持つことです。コンテンツをキャッシュするのではなく、パケットそのものを最短経路に乗せて高速化します。
+
+固定IPが必要なゲームやVoIP、IPホワイトリストを要求される金融系などで候補になります。
+
+## 試験で問われるポイント
+
+### Route 53が正解になりやすいケース
+
+- ドメインを登録・管理したい
+- DNSクエリに応じてIPアドレスを返したい
+- リージョン障害時にDNSでフェイルオーバーしたい
+- レイテンシー・加重・位置情報などのルーティングポリシーで振り分けたい
+- エンドポイントの死活監視（ヘルスチェック）をしたい
+
+### CloudFrontが正解になりやすいケース
+
+- 静的ファイルを世界中に高速配信したい
+- S3の画像、HTML、CSS、JavaScriptをキャッシュしたい
+- ユーザーに近いエッジロケーションから配信したい
+- S3を直接公開せずにHTTPSとカスタムドメインで配信したい
+- AWSオリジンからの転送量を抑えてコスト最適化したい
+
+### Global Acceleratorが正解になりやすいケース
+
+- TCP/UDPの通信を高速化したい（HTTP/HTTPSに限らない）
+- クライアントに配布する静的IPが必要
+- ゲームやVoIPなどリアルタイム性が重要
+- リージョン障害時のフェイルオーバーを数秒以内で行いたい
+
+### Route 53のルーティングポリシー（CLF-C02頻出）
+
+| 問題文のキーワード | 正解 |
+|---|---|
+| A/Bテストで10%/90%に振り分け | 加重（Weighted） |
+| 最もレイテンシーが低いリージョンへ | レイテンシー |
+| ヘルスチェック連動で災害復旧（DR） | フェイルオーバー |
+| データ主権を守りつつ地域で振り分け | 位置情報（Geolocation） |
+| 簡易な負荷分散で複数IPを返す | 複数値回答 |
+
+## 実務での使い分け
+
+### S3静的サイトを独自ドメインで公開する場合
+
+Route 53とCloudFrontを組み合わせます。
+
+```text
+User
+↓
+Route 53（ドメイン → CloudFrontへ解決）
+↓
+CloudFront（キャッシュ・TLS終端）
+↓
+S3
+```
+
+Route 53で独自ドメインをCloudFrontへ向け、CloudFrontでキャッシュとHTTPSを担います。
+
+### TCP/UDPの低レイテンシ通信が必要な場合
+
+Global Acceleratorを使います。
+
+```text
+User
+↓
+Global Accelerator（静的IP・最短経路）
+↓
+ALB / NLB / EC2
+```
+
+HTTPでは扱えないプロトコルや、固定IPをクライアントへ配布したい場合に候補になります。
+
+### グローバル配信と固定IPを混同しないために
+
+「グローバルに配信」だけならCloudFront、「グローバルな静的IP」が条件に入ればGlobal Acceleratorです。問題文の「何をしてほしいか」を主語に置き換えると、3軸のどれにチェックが立つかで判断できます。
+
+## よくある間違い
+
+### 間違い1：3つとも「グローバルだから同じ」と覚える
+
+3つはリージョンに縛られない点では共通ですが、Route 53はDNS層、CloudFrontはCDN層、Global AcceleratorはL3/L4層と、働く階層がそれぞれ違います。
+
+### 間違い2：CloudFrontに静的IPがあると思う
+
+CloudFrontは静的IPを持たず、DNS名で運用します。静的IPが条件に入っていればGlobal Acceleratorを検討します。
+
+### 間違い3：Global AcceleratorをCDNとして覚える
+
+Global Acceleratorはコンテンツをキャッシュしません。パケットを最短経路に乗せるサービスであり、キャッシュ配信が目的ならCloudFrontです。
+
+### 間違い4：Global Acceleratorのコスト感を「使った分だけ」と思う
+
+CloudFrontやRoute 53が従量課金中心なのに対し、Global Acceleratorはアクセラレータを作成しただけで固定費が発生します。「コスト最適化で停止候補はどれか」を問われたときに見落としやすいポイントです。
+
+## 関連用語
+
+- [Amazon Route 53](/terms/route53)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [Elastic Load Balancing](/terms/elb)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
+
+## まとめ
+
+Route 53、CloudFront、Global Acceleratorは、どれも「グローバル」と表示されるため混同しがちですが、役割の階層はきれいに分かれています。
+
+次の3軸で覚えると判断しやすくなります。
+
+- DNS解決（名前 → IP）：Route 53
+- コンテンツのキャッシュ配信：CloudFront
+- 静的IP・TCP/UDPの経路最適化：Global Accelerator
+
+「グローバル」という単語に引っ張られず、「静的IPがあるか」「キャッシュするか」「DNSを解決するか」で切り分けると、3サービスの取り違えを防げます。
