@@ -51,3 +51,24 @@ table {
     white-space: nowrap;
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mascot-arm {
+    transform-origin: 446px 174px;
+    animation: wave 2.4s ease-in-out infinite;
+  }
+  .mascot-balloon {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-12deg); }
+  60% { transform: rotate(8deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
