@@ -4,16 +4,34 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
 
+/**
+ * サーバー側で解決済みの関連リンク情報。
+ * server component (`questions/[questionId]/page.tsx`) が存在チェックを行い、
+ * この型で QuestionPlayer に渡す。
+ * これにより "use client" な QuestionPlayer が termGuards (terms.json 85KB) を
+ * client bundle に引き込まない。
+ */
+export type ResolvedLink = {
+  id: string;
+  exists: boolean;
+};
+
 type QuestionPlayerProps = {
   question: Question;
   previousQuestionId?: string;
   nextQuestionId?: string;
+  resolvedServices?: ResolvedLink[];
+  resolvedTerms?: ResolvedLink[];
+  resolvedComparisons?: ResolvedLink[];
 };
 
 export function QuestionPlayer({
   question,
   previousQuestionId,
   nextQuestionId,
+  resolvedServices,
+  resolvedTerms,
+  resolvedComparisons,
 }: QuestionPlayerProps): React.JSX.Element {
   const [selectedChoiceId, setSelectedChoiceId] = useState<ChoiceId | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -246,18 +264,27 @@ export function QuestionPlayer({
         <div className="grid gap-6 md:grid-cols-2">
           <div>
             <h3 className="mb-3 text-sm font-bold text-slate-700">関連サービス</h3>
-            {question.relatedServices && question.relatedServices.length > 0 ? (
+            {resolvedServices && resolvedServices.length > 0 ? (
               <ul className="flex flex-wrap gap-2">
-                {question.relatedServices.map((serviceId) => (
-                  <li key={serviceId}>
-                    <Link
-                      href={`/terms/${serviceId}`}
-                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
-                    >
-                      {serviceId.toUpperCase()}
-                    </Link>
-                  </li>
-                ))}
+                {resolvedServices.map(({ id: serviceId, exists }) =>
+                  exists ? (
+                    <li key={serviceId}>
+                      <Link
+                        href={`/terms/${serviceId}`}
+                        className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
+                      >
+                        {serviceId.toUpperCase()}
+                      </Link>
+                    </li>
+                  ) : (
+                    <li key={serviceId}>
+                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-400">
+                        {serviceId.toUpperCase()}
+                        <span className="ml-1 text-xs font-normal">準備中</span>
+                      </span>
+                    </li>
+                  ),
+                )}
               </ul>
             ) : (
               <p className="text-sm text-slate-500">関連サービスは未設定です。</p>
@@ -266,21 +293,59 @@ export function QuestionPlayer({
 
           <div>
             <h3 className="mb-3 text-sm font-bold text-slate-700">関連用語</h3>
-            {question.relatedTerms && question.relatedTerms.length > 0 ? (
+            {resolvedTerms && resolvedTerms.length > 0 ? (
               <ul className="flex flex-wrap gap-2">
-                {question.relatedTerms.map((termId) => (
-                  <li key={termId}>
-                    <Link
-                      href={`/terms/${termId}`}
-                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
-                    >
-                      {termId}
-                    </Link>
-                  </li>
-                ))}
+                {resolvedTerms.map(({ id: termId, exists }) =>
+                  exists ? (
+                    <li key={termId}>
+                      <Link
+                        href={`/terms/${termId}`}
+                        className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
+                      >
+                        {termId}
+                      </Link>
+                    </li>
+                  ) : (
+                    <li key={termId}>
+                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-400">
+                        {termId}
+                        <span className="ml-1 text-xs font-normal">準備中</span>
+                      </span>
+                    </li>
+                  ),
+                )}
               </ul>
             ) : (
               <p className="text-sm text-slate-500">関連用語は未設定です。</p>
+            )}
+          </div>
+
+          <div>
+            <h3 className="mb-3 text-sm font-bold text-slate-700">関連比較記事</h3>
+            {resolvedComparisons && resolvedComparisons.length > 0 ? (
+              <ul className="flex flex-wrap gap-2">
+                {resolvedComparisons.map(({ id: slug, exists }) =>
+                  exists ? (
+                    <li key={slug}>
+                      <Link
+                        href={`/comparisons/${slug}`}
+                        className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
+                      >
+                        {slug}
+                      </Link>
+                    </li>
+                  ) : (
+                    <li key={slug}>
+                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-400">
+                        {slug}
+                        <span className="ml-1 text-xs font-normal">準備中</span>
+                      </span>
+                    </li>
+                  ),
+                )}
+              </ul>
+            ) : (
+              <p className="text-sm text-slate-500">関連比較記事は未設定です。</p>
             )}
           </div>
         </div>

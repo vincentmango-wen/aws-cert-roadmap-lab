@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import termsData from "../../../../contents/terms/terms.json";
 import { createPageMetadata } from "../../../lib/seo";
+import { isExistingComparison, isExistingArchitecture } from "../../../lib/termGuards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -361,15 +362,25 @@ export default async function TermDetailPage({ params }: PageProps) {
           <Section title="関連する比較記事">
             {term.comparisonSlugs && term.comparisonSlugs.length > 0 ? (
               <div className="space-y-3">
-                {term.comparisonSlugs.map((slug) => (
-                  <Link
-                    key={slug}
-                    href={`/comparisons/${slug}`}
-                    className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-                  >
-                    {formatSlugLabel(slug)}
-                  </Link>
-                ))}
+                {term.comparisonSlugs.map((slug) =>
+                  isExistingComparison(slug) ? (
+                    <Link
+                      key={slug}
+                      href={`/comparisons/${slug}`}
+                      className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {formatSlugLabel(slug)}
+                    </Link>
+                  ) : (
+                    <div
+                      key={slug}
+                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
+                    >
+                      {formatSlugLabel(slug)}
+                      <span className="ml-2 text-xs font-normal">準備中</span>
+                    </div>
+                  ),
+                )}
               </div>
             ) : (
               <EmptyMessage>
@@ -381,15 +392,25 @@ export default async function TermDetailPage({ params }: PageProps) {
           <Section title="関連する構成図">
             {term.architectureSlugs && term.architectureSlugs.length > 0 ? (
               <div className="space-y-3">
-                {term.architectureSlugs.map((slug) => (
-                  <Link
-                    key={slug}
-                    href={`/architectures/${slug}`}
-                    className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-                  >
-                    {formatSlugLabel(slug)}
-                  </Link>
-                ))}
+                {term.architectureSlugs.map((slug) =>
+                  isExistingArchitecture(slug) ? (
+                    <Link
+                      key={slug}
+                      href={`/architectures/${slug}`}
+                      className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {formatSlugLabel(slug)}
+                    </Link>
+                  ) : (
+                    <div
+                      key={slug}
+                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
+                    >
+                      {formatSlugLabel(slug)}
+                      <span className="ml-2 text-xs font-normal">準備中</span>
+                    </div>
+                  ),
+                )}
               </div>
             ) : (
               <EmptyMessage>

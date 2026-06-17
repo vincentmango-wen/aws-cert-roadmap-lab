@@ -8,6 +8,7 @@ import {
   publishedArchitectures,
   type ArchitectureMeta,
 } from "../../../contents/architectures/architectures";
+import { isExistingTerm } from "../../../lib/termGuards";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -140,15 +141,24 @@ export default async function ArchitectureDetailPage({ params }: PageProps) {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
-              {architecture.services.map((service) => (
-                <Link
-                  key={service}
-                  href={`/terms/${service}`}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-800"
-                >
-                  {awsServiceLabels[service] ?? service}
-                </Link>
-              ))}
+              {architecture.services.map((service) =>
+                isExistingTerm(service) ? (
+                  <Link
+                    key={service}
+                    href={`/terms/${service}`}
+                    className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-800"
+                  >
+                    {awsServiceLabels[service] ?? service}
+                  </Link>
+                ) : (
+                  <span
+                    key={service}
+                    className="rounded-full border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-400"
+                  >
+                    {awsServiceLabels[service] ?? service}
+                  </span>
+                ),
+              )}
             </div>
           </section>
         ) : null}

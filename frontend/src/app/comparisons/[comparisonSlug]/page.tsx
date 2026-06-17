@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createPageMetadata } from "../../../lib/seo";
+import { isExistingTerm } from "../../../lib/termGuards";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -708,15 +709,24 @@ export default async function ComparisonDetailPage({
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
-              {comparison.services.map((service) => (
-                <Link
-                  key={service}
-                  href={`/terms/${service}`}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-                >
-                  {formatServiceName(service)}
-                </Link>
-              ))}
+              {comparison.services.map((service) =>
+                isExistingTerm(service) ? (
+                  <Link
+                    key={service}
+                    href={`/terms/${service}`}
+                    className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                  >
+                    {formatServiceName(service)}
+                  </Link>
+                ) : (
+                  <span
+                    key={service}
+                    className="rounded-full border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400"
+                  >
+                    {formatServiceName(service)}
+                  </span>
+                ),
+              )}
             </div>
           </section>
         ) : null}

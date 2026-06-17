@@ -1271,7 +1271,7 @@
     ],
     "relatedServices": [
       "ec2",
-      "autoscaling",
+      "auto-scaling",
       "elb"
     ],
     "comparisonSlugs": [],

@@ -7,6 +7,7 @@ import {
   publishedArchitectures,
 } from "../../contents/architectures/architectures";
 import { createPageMetadata, pageSeo } from "../../lib/seo";
+import { isExistingTerm } from "../../lib/termGuards";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.architectures);
 
@@ -103,15 +104,24 @@ export default function ArchitecturesPage() {
             <div className="mt-5">
               <h4 className="text-sm font-bold text-slate-900">使用AWSサービス</h4>
               <div className="mt-3 flex flex-wrap gap-2">
-                {architecture.services.map((service) => (
-                  <Link
-                    key={`${architecture.architectureId}-${service}`}
-                    href={`/terms/${service}`}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-                  >
-                    {awsServiceLabels[service] ?? service}
-                  </Link>
-                ))}
+                {architecture.services.map((service) =>
+                  isExistingTerm(service) ? (
+                    <Link
+                      key={`${architecture.architectureId}-${service}`}
+                      href={`/terms/${service}`}
+                      className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {awsServiceLabels[service] ?? service}
+                    </Link>
+                  ) : (
+                    <span
+                      key={`${architecture.architectureId}-${service}`}
+                      className="rounded-full border border-slate-100 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-400"
+                    >
+                      {awsServiceLabels[service] ?? service}
+                    </span>
+                  ),
+                )}
               </div>
             </div>
 
