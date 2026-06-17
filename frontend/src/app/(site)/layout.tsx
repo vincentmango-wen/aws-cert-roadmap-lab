@@ -54,7 +54,6 @@ export default function SiteGroupLayout({
     <>
       {googleAdSenseClientId !== null ? (
         <head>
-          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
