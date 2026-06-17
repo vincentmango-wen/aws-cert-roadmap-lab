@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Script from "next/script";
 
 /**
  * コンテンツルート専用 layout（route group: (site)）。
@@ -9,6 +8,13 @@ import Script from "next/script";
  * Google AdSense ポリシー準拠:
  * 「コンテンツを含まない画面（404 等）に広告コードを配置してはならない」
  * 対処: root layout から AdSense を除き、コンテンツルートのみで注入。
+ *
+ * next/script は static export 下で実 <script src="..."> タグを生成せず
+ * <link rel="preload"> + ランタイム queue になるため、AdSense 審査クローラが
+ * スクリプトを検出できない。そのため next/script を使わず、<head> 内に
+ * 素の <script async src="..."> タグを直接書いて確実に出力する。
+ * （Next.js App Router はこの layout から返した <head> 要素を HTML の
+ * <head> ブロックにマージして静的 HTML に出力する）
  */
 
 const ADSENSE_CLIENT_ID_PREFIX = "ca-pub-";
@@ -46,18 +52,19 @@ export default function SiteGroupLayout({
 
   return (
     <>
-      {children}
       {googleAdSenseClientId !== null ? (
-        <Script
-          id="google-adsense-review-code"
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
-            googleAdSenseClientId,
-          )}`}
-          strategy="beforeInteractive"
-          async
-          crossOrigin="anonymous"
-        />
+        <head>
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
+              googleAdSenseClientId,
+            )}`}
+            crossOrigin="anonymous"
+          />
+        </head>
       ) : null}
+      {children}
     </>
   );
 }
