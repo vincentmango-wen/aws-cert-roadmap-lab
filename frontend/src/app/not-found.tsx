@@ -44,7 +44,7 @@ export default function NotFound(): ReactElement {
           />
 
           {/* eyebrow — マスコット底と水平を合わせる */}
-          <p className="mt-[-2px] text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+          <p className="mt-[-2px] text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
             404 Not Found
           </p>
 
