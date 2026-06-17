@@ -12,6 +12,7 @@ import {
   type AwsTerm,
   type TermDetailLocale,
 } from "./term-detail-data";
+import { isExistingComparison, isExistingArchitecture } from "../../lib/termGuards";
 
 type TermDetailContentProps = {
   locale: TermDetailLocale;
@@ -220,15 +221,25 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
           <Section title={labels.comparisonArticlesTitle}>
             {term.comparisonSlugs && term.comparisonSlugs.length > 0 ? (
               <div className="space-y-3">
-                {term.comparisonSlugs.map((slug) => (
-                  <Link
-                    key={slug}
-                    href={`/comparisons/${slug}`}
-                    className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-                  >
-                    {formatSlugLabel(slug)}
-                  </Link>
-                ))}
+                {term.comparisonSlugs.map((slug) =>
+                  isExistingComparison(slug) ? (
+                    <Link
+                      key={slug}
+                      href={`/comparisons/${slug}`}
+                      className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {formatSlugLabel(slug)}
+                    </Link>
+                  ) : (
+                    <div
+                      key={slug}
+                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
+                    >
+                      {formatSlugLabel(slug)}
+                      <span className="ml-2 text-xs font-normal">準備中</span>
+                    </div>
+                  ),
+                )}
               </div>
             ) : (
               <EmptyMessage>{labels.noComparisonArticles}</EmptyMessage>
@@ -238,15 +249,25 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
           <Section title={labels.architectureArticlesTitle}>
             {term.architectureSlugs && term.architectureSlugs.length > 0 ? (
               <div className="space-y-3">
-                {term.architectureSlugs.map((slug) => (
-                  <Link
-                    key={slug}
-                    href={`/architectures/${slug}`}
-                    className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-                  >
-                    {formatSlugLabel(slug)}
-                  </Link>
-                ))}
+                {term.architectureSlugs.map((slug) =>
+                  isExistingArchitecture(slug) ? (
+                    <Link
+                      key={slug}
+                      href={`/architectures/${slug}`}
+                      className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {formatSlugLabel(slug)}
+                    </Link>
+                  ) : (
+                    <div
+                      key={slug}
+                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
+                    >
+                      {formatSlugLabel(slug)}
+                      <span className="ml-2 text-xs font-normal">準備中</span>
+                    </div>
+                  ),
+                )}
               </div>
             ) : (
               <EmptyMessage>{labels.noArchitectureArticles}</EmptyMessage>

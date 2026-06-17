@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { publishedComparisons } from "../../contents/comparisons/comparisons";
+import { isExistingTerm } from "../../lib/termGuards";
 import type {
   Comparison,
   ComparisonLevel,
@@ -101,15 +102,24 @@ function ComparisonCard({ comparison }: { comparison: Comparison }) {
           対象サービス
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
-          {comparison.services.map((service) => (
-            <Link
-              key={service}
-              href={`/terms/${service}`}
-              className="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-700 hover:border-blue-300 hover:text-blue-700"
-            >
-              {formatServiceName(service)}
-            </Link>
-          ))}
+          {comparison.services.map((service) =>
+            isExistingTerm(service) ? (
+              <Link
+                key={service}
+                href={`/terms/${service}`}
+                className="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-700 hover:border-blue-300 hover:text-blue-700"
+              >
+                {formatServiceName(service)}
+              </Link>
+            ) : (
+              <span
+                key={service}
+                className="rounded-lg border border-slate-100 bg-slate-100 px-3 py-1 text-sm font-medium text-slate-400"
+              >
+                {formatServiceName(service)}
+              </span>
+            ),
+          )}
         </div>
       </div>
 

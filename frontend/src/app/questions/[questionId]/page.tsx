@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { QuestionPlayer } from "../../../components/questions/QuestionPlayer";
+import type { ResolvedLink } from "../../../components/questions/QuestionPlayer";
 import { createPageMetadata } from "../../../lib/seo";
+import { isExistingTerm, isExistingComparison } from "../../../lib/termGuards";
 import type { Question } from "../../../types/question";
 import rawClfQuestions from "../../../../contents/questions/clf-c02.json";
 import rawSaaQuestions from "../../../../contents/questions/saa-c03.json";
@@ -87,11 +89,27 @@ export default async function QuestionDetailPage({
 
   const adjacentQuestionIds = getAdjacentQuestionIds(questionId);
 
+  // server 側で存在チェックを済ませ、解決済み構造を client に渡す。
+  // QuestionPlayer ("use client") から termGuards (terms.ja.json 85KB) の
+  // import を排除し client bundle 汚染を解消する。
+  const resolvedServices: ResolvedLink[] = (question.relatedServices ?? []).map(
+    (id) => ({ id, exists: isExistingTerm(id) }),
+  );
+  const resolvedTerms: ResolvedLink[] = (question.relatedTerms ?? []).map(
+    (id) => ({ id, exists: isExistingTerm(id) }),
+  );
+  const resolvedComparisons: ResolvedLink[] = (question.relatedComparisons ?? []).map(
+    (id) => ({ id, exists: isExistingComparison(id) }),
+  );
+
   return (
     <QuestionPlayer
       question={question}
       previousQuestionId={adjacentQuestionIds.previousQuestionId ?? undefined}
       nextQuestionId={adjacentQuestionIds.nextQuestionId ?? undefined}
+      resolvedServices={resolvedServices}
+      resolvedTerms={resolvedTerms}
+      resolvedComparisons={resolvedComparisons}
     />
   );
 }
