@@ -1,35 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import Script from "next/script";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { SiteLayout } from "../components/layout/SiteLayout";
 import { createAbsoluteUrl, siteConfig } from "../lib/seo";
 import "./globals.css";
 
 const assetBasePath = "/images/assets";
-const ADSENSE_CLIENT_ID_PREFIX = "ca-pub-";
-
-function getGoogleAdSenseClientId(): string | null {
-  if (process.env.NODE_ENV !== "production") {
-    return null;
-  }
-
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID?.trim();
-
-  if (typeof clientId !== "string") {
-    return null;
-  }
-
-  if (!clientId.startsWith(ADSENSE_CLIENT_ID_PREFIX)) {
-    return null;
-  }
-
-  if (clientId.length <= ADSENSE_CLIENT_ID_PREFIX.length) {
-    return null;
-  }
-
-  return clientId;
-}
 
 export const viewport: Viewport = {
   themeColor: "#1B2530",
@@ -126,25 +102,12 @@ type RootLayoutProps = {
 export default function RootLayout({
   children,
 }: RootLayoutProps): React.JSX.Element {
-  const googleAdSenseClientId = getGoogleAdSenseClientId();
-
   return (
     <html lang="ja">
       <body>
         <SiteLayout>{children}</SiteLayout>
         <GoogleAnalytics />
       </body>
-      {googleAdSenseClientId !== null ? (
-        <Script
-          id="google-adsense-review-code"
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
-            googleAdSenseClientId,
-          )}`}
-          strategy="beforeInteractive"
-          async
-          crossOrigin="anonymous"
-        />
-      ) : null}
     </html>
   );
 }

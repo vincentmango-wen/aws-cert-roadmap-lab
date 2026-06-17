@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactElement } from "react";
 import Link from "next/link";
-import { createPageMetadata, pageSeo } from "../../lib/seo";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.privacy);
 

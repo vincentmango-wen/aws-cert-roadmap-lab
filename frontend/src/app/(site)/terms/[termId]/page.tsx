@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import termsData from "../../../../contents/terms/terms.json";
-import { createPageMetadata } from "../../../lib/seo";
-import { isExistingComparison, isExistingArchitecture } from "../../../lib/termGuards";
+import termsData from "../../../../../contents/terms/terms.json";
+import { createPageMetadata } from "@/lib/seo";
+import { isExistingComparison, isExistingArchitecture } from "@/lib/termGuards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -359,11 +359,13 @@ export default async function TermDetailPage({ params }: PageProps) {
         </Section>
 
         <section className="grid gap-6 lg:grid-cols-2">
+          {/* 関連比較記事: 実在する slug のみ表示。1件もなければ EmptyMessage */}
           <Section title="関連する比較記事">
-            {term.comparisonSlugs && term.comparisonSlugs.length > 0 ? (
-              <div className="space-y-3">
-                {term.comparisonSlugs.map((slug) =>
-                  isExistingComparison(slug) ? (
+            {(() => {
+              const existingSlugs = term.comparisonSlugs?.filter(isExistingComparison) ?? [];
+              return existingSlugs.length > 0 ? (
+                <div className="space-y-3">
+                  {existingSlugs.map((slug) => (
                     <Link
                       key={slug}
                       href={`/comparisons/${slug}`}
@@ -371,29 +373,23 @@ export default async function TermDetailPage({ params }: PageProps) {
                     >
                       {formatSlugLabel(slug)}
                     </Link>
-                  ) : (
-                    <div
-                      key={slug}
-                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
-                    >
-                      {formatSlugLabel(slug)}
-                      <span className="ml-2 text-xs font-normal">準備中</span>
-                    </div>
-                  ),
-                )}
-              </div>
-            ) : (
-              <EmptyMessage>
-                この用語には、まだ関連比較記事が登録されていません。
-              </EmptyMessage>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <EmptyMessage>
+                  この用語には、まだ関連比較記事が登録されていません。
+                </EmptyMessage>
+              );
+            })()}
           </Section>
 
+          {/* 関連構成図: 実在する slug のみ表示。1件もなければ EmptyMessage */}
           <Section title="関連する構成図">
-            {term.architectureSlugs && term.architectureSlugs.length > 0 ? (
-              <div className="space-y-3">
-                {term.architectureSlugs.map((slug) =>
-                  isExistingArchitecture(slug) ? (
+            {(() => {
+              const existingSlugs = term.architectureSlugs?.filter(isExistingArchitecture) ?? [];
+              return existingSlugs.length > 0 ? (
+                <div className="space-y-3">
+                  {existingSlugs.map((slug) => (
                     <Link
                       key={slug}
                       href={`/architectures/${slug}`}
@@ -401,22 +397,14 @@ export default async function TermDetailPage({ params }: PageProps) {
                     >
                       {formatSlugLabel(slug)}
                     </Link>
-                  ) : (
-                    <div
-                      key={slug}
-                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
-                    >
-                      {formatSlugLabel(slug)}
-                      <span className="ml-2 text-xs font-normal">準備中</span>
-                    </div>
-                  ),
-                )}
-              </div>
-            ) : (
-              <EmptyMessage>
-                この用語には、まだ関連構成図が登録されていません。
-              </EmptyMessage>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <EmptyMessage>
+                  この用語には、まだ関連構成図が登録されていません。
+                </EmptyMessage>
+              );
+            })()}
           </Section>
         </section>
 

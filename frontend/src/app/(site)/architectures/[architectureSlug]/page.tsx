@@ -7,8 +7,8 @@ import {
   awsServiceLabels,
   publishedArchitectures,
   type ArchitectureMeta,
-} from "../../../contents/architectures/architectures";
-import { isExistingTerm } from "../../../lib/termGuards";
+} from "@/contents/architectures/architectures";
+import { isExistingTerm } from "@/lib/termGuards";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;

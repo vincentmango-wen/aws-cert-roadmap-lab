@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { QuestionListClient } from "../../../components/questions/QuestionListClient";
-import rawQuestions from "../../../../contents/questions/clf-c02.json";
+import { QuestionListClient } from "@/components/questions/QuestionListClient";
+import rawQuestions from "../../../../../contents/questions/clf-c02.json";
 import {
   getPublishedQuestions,
   getQuestionCategorySummaries,
-} from "../../../lib/questions";
-import type { Question } from "../../../types/question";
-import { createPageMetadata, pageSeo } from "../../../lib/seo";
+} from "@/lib/questions";
+import type { Question } from "@/types/question";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.clfQuestions);
 

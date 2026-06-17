@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import termsData from "../../../contents/terms/terms.json";
-import { createPageMetadata, pageSeo } from "../../lib/seo";
+import termsData from "../../../../contents/terms/terms.json";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
 import { TermsListClient, type TermSummary } from "./TermsListClient";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.terms);

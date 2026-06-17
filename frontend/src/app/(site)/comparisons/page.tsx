@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { publishedComparisons } from "../../contents/comparisons/comparisons";
-import { isExistingTerm } from "../../lib/termGuards";
+import { publishedComparisons } from "@/contents/comparisons/comparisons";
+import { isExistingTerm } from "@/lib/termGuards";
 import type {
   Comparison,
   ComparisonLevel,
   ComparisonPriority,
-} from "../../types/comparison";
+} from "@/types/comparison";
 
 export const metadata: Metadata = {
   title: "AWSサービス比較 | AWS Cert Roadmap Lab",

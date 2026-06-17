@@ -5,9 +5,9 @@ import {
   architectureLevelLabels,
   awsServiceLabels,
   publishedArchitectures,
-} from "../../contents/architectures/architectures";
-import { createPageMetadata, pageSeo } from "../../lib/seo";
-import { isExistingTerm } from "../../lib/termGuards";
+} from "@/contents/architectures/architectures";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
+import { isExistingTerm } from "@/lib/termGuards";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.architectures);
 
