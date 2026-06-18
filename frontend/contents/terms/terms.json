@@ -692,7 +692,22 @@
       "テンプレートに秘密情報を書かない",
       "IAM作成権限を持つテンプレートはレビューする"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS CloudFormation は、AWS リソースをテンプレート（YAML または JSON）として宣言的に\n定義し、「スタック」という単位で作成・更新・削除を一括管理する Infrastructure as\nCode（IaC）サービスである。テンプレートには VPC、サブネット、EC2、IAM ロール、\nRDS、S3 バケットなど、ほぼすべての AWS リソースが定義でき、スタックを実行するだけで\n依存関係を解決しながら一貫した順序でリソースをプロビジョニングできる。実務では、\n環境（dev / staging / prod）ごとに同一テンプレートからスタックを払い出すパターン、\nチェンジセットで変更内容を事前確認してから本番に適用するパターン、StackSet で複数\nアカウント・複数リージョンへ一括展開するパターンが標準的に採用される。\n\nCloudFormation のメリットは、リソース構成がコードとしてリポジトリに残るため変更履歴\nを Git で追跡できる点、手動でコンソール操作した場合に起きやすい構成ドリフトを\nドリフト検出機能で検知できる点、ロールバック機能でデプロイ失敗時に自動的に元の\n状態へ戻せる点である。テンプレートを直接書く代わりに、より高レベルな抽象を提供する\nAWS CDK（汎用プログラミング言語で IaC を記述）や AWS SAM（サーバーレス特化）も内部\n的に CloudFormation へ合成される。CloudFormation 自体の利用料金は発生しないが、作成\nされたリソースには通常の料金が課金されるため、停止し忘れ・誤った高額リソース定義は\nコスト事故につながる。\n\nCLF-C02 では、「AWS リソースをコードで定義・管理するサービスは何か」「テンプレート\nからリソースを一括作成するサービスは何か」という形で問われる。Terraform（HashiCorp\n製のサードパーティ IaC）と並列で扱われることがあるが、CloudFormation は AWS 公式\nのマネージド IaC である点を押さえておく。SAA-C03 以降では、スタック間参照（Export /\nImportValue）、ネストスタック、StackSet による組織横断デプロイ、デプロイ失敗時の\nロールバック挙動の詳細が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudFormation（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudformation/"
+      },
+      {
+        "label": "AWS CloudFormation とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "テンプレートの構造（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/template-anatomy.html"
+      }
+    ]
   },
   {
     "termId": "cloudfront",
@@ -808,7 +823,22 @@
       "証跡ログの削除権限を制限する",
       "重要アカウントでは有効化状態を確認する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS CloudTrail は、AWS アカウント内のすべての API 呼び出しを記録する監査ログ\nサービスである。誰が（IAM プリンシパル）、どのサービスに対して、いつ（日時）、\nどこから（ソース IP）、どのような操作（API 名・リクエストパラメータ・レスポンス）\nを実行したかを記録し、セキュリティインシデントの事後調査、コンプライアンス監査、\n運用トラブルシュートに活用される。すべてのリージョンで有効化しておくことが\nセキュリティ上の基本であり、AWS Organizations と組み合わせることで複数アカウントの\nイベントを一元管理できる。\n\nCloudTrail のイベントは大きく 3 種類に分かれる。管理イベント（マネジメントイベント）\nは EC2 インスタンス起動・IAM ポリシー変更などのコントロールプレーン操作で、デフォルト\nで 90 日分が「イベント履歴」として閲覧可能。S3 オブジェクトの GET/PUT などの\nデータイベントはデフォルト無効で、有効化するとコストが増加する。証跡（Trail）を\n設定することで長期的に S3 バケットへ保存でき、CloudWatch Logs へのエクスポートや\nAmazon Athena による分析にも連携できる。\n\nCLF-C02 では「AWS API 操作を記録するサービスは何か」「誰がリソースを変更したか\n調査するサービスは何か」という形で問われる頻出サービスである。CloudWatch（メトリクス・\nアラーム）、AWS Config（リソース構成変更の記録・ルール準拠チェック）と混同しやすい\nため、3 サービスの役割を明確に区別しておくことが重要である。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      },
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "CloudTrail の仕組み（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/how-cloudtrail-works.html"
+      }
+    ]
   },
   {
     "termId": "cloudwatch",
@@ -862,7 +892,22 @@
       "メール本文や問い合わせ本文全文をログに出さない",
       "ログ閲覧権限を限定する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon CloudWatch は、AWS リソースおよびアプリケーションのメトリクス・ログ・\nアラームを統合して管理するモニタリングサービスである。EC2 CPU 使用率・RDS 接続数・\nLambda 実行時間などの標準メトリクスは自動で収集され、追加設定不要でダッシュボードや\nアラームに使える。CloudWatch Logs はアプリケーションのログを収集・保存するサービスで、\nLambda の標準出力・EC2 上のアプリケーションログ・VPC フローログなどを一元管理できる。\n\nCloudWatch Alarms は、メトリクスが設定したしきい値を超えた際に Amazon SNS 経由で\nメール・Slack・PagerDuty などへ通知を送ったり、EC2 Auto Scaling をトリガーして\nインスタンスを増減させる自動対応ができる。ダッシュボードでは複数リソースのメトリクスを\n可視化でき、Amazon EventBridge と組み合わせてイベント駆動の運用自動化も実現できる。\nコスト軸では、カスタムメトリクスはメトリクス数・API リクエスト数に応じて課金されるため、\n多量のカスタムメトリクスを投入する際は事前にコスト試算が必要である。\n\nCLF-C02 では「メトリクス収集・アラーム通知を行うサービスは何か」という形で問われる。\nCloudTrail（API 操作ログ）、AWS Config（リソース構成変更の記録・ルール準拠チェック）\nとの 3 サービス比較が頻出であり、それぞれの役割を明確に区別しておくことが重要である。\nSAA-C03 以降では、CloudWatch Logs Insights によるクエリ分析、メトリクスフィルターで\nログから独自メトリクスを生成するパターン、Contributor Insights によるトップ N 分析\nなどの高度な活用パターンが問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "Amazon CloudWatch とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch Logs とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+      }
+    ]
   },
   {
     "termId": "codebuild",
@@ -911,7 +956,18 @@
       "ビルドログに秘密情報を出さない",
       "ビルド用IAMロールを最小権限にする"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS CodeBuild は、ソースコードのコンパイル・テスト・パッケージングを実行する\nフルマネージドのビルドサービスである。ビルドごとに独立した Docker コンテナが起動\nするため、環境の汚染がなく再現性が高い。GitHub・CodeCommit・Bitbucket などのリポジトリ\nと直接連携でき、ビルド成果物（バイナリ・ZIP・Docker イメージ）を Amazon S3 や\nAmazon ECR に出力できる。サーバーの管理は不要で、実際のビルド時間に応じた従量課金\nが採用されている。\n\nビルド処理は、プロジェクトルートに配置する buildspec.yml でフェーズ単位に定義する。\ninstall（依存関係インストール）、pre_build（テスト準備）、build（コンパイル・テスト\n実行）、post_build（成果物のパッケージング・プッシュ）の 4 フェーズが基本構成で、\n各フェーズのコマンドを YAML で記述する。ビルドに使うイメージは AWS 提供のマネージド\nイメージ（Node.js・Java・Python・Go など）か、ECR に登録したカスタムイメージを選択\nできる。環境変数には SSM Parameter Store や AWS Secrets Manager との統合が用意されており、\nAPIキーなどの秘密情報をビルドログに露出させずに安全に注入できる。\n\nCLF-C02 では「AWS の継続的インテグレーション（CI）サービスはどれか」という形で、\nCodeCommit（ソース管理）・CodeBuild（ビルド・テスト）・CodeDeploy（デプロイ）・\nCodePipeline（パイプライン統合）の 4 サービスの役割を整理して覚えることが重要である。",
+    "officialDocs": [
+      {
+        "label": "AWS CodeBuild（AWS公式）",
+        "url": "https://aws.amazon.com/jp/codebuild/"
+      },
+      {
+        "label": "AWS CodeBuild とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/welcome.html"
+      }
+    ]
   },
   {
     "termId": "codepipeline",
@@ -960,7 +1016,22 @@
       "デプロイ権限を対象リソースに限定する",
       "本番デプロイの承認ルールを決める"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS CodePipeline は、ソースコードのコミットからビルド・テスト・デプロイまでの\nCI/CD パイプラインを視覚的に構築・管理するオーケストレーションサービスである。\nパイプラインはステージとアクションで構成され、各ステージに CodeBuild・CodeDeploy・\nCloudFormation・ECS・Lambda などの AWS サービスや、GitHub Actions・Jenkins などの\nサードパーティサービスをアクションとして組み込める。\n\n標準的な構成は、ソースステージ（CodeCommit または GitHub でのプッシュをトリガー）→\nビルドステージ（CodeBuild でのコンパイル・テスト）→デプロイステージ（CodeDeploy または\nCloudFormation による本番反映）という 3 ステージ構成である。ステージ間に手動承認\nアクションを挟むことで、本番デプロイ前に承認者の確認を必須化できる。複数環境\n（dev → staging → prod）へのプロモーションも、ステージを増やすだけで実現できる。\n料金はパイプライン 1 本あたりの月額固定料金が基本で、最初の 1 本は無料利用枠がある。\n\nCLF-C02 では「CI/CD パイプラインを管理するサービスはどれか」という形で、\nCodeCommit・CodeBuild・CodeDeploy・CodePipeline の 4 サービスの役割を整理して覚える\nことが重要である。CodeBuild が個々のビルド・テスト処理を担うのに対し、CodePipeline は\nそれらを統合してパイプライン全体をオーケストレーションする役割を担う。SAA-C03 以降では、\nブルー・グリーンデプロイ・カナリアリリース・クロスアカウントパイプラインの設計パターン\nが出題範囲に含まれる。",
+    "officialDocs": [
+      {
+        "label": "AWS CodePipeline（AWS公式）",
+        "url": "https://aws.amazon.com/jp/codepipeline/"
+      },
+      {
+        "label": "AWS CodePipeline とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/welcome.html"
+      },
+      {
+        "label": "CodePipeline の概念（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/concepts.html"
+      }
+    ]
   },
   {
     "termId": "cognito",

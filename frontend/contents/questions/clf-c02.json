@@ -778,7 +778,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS で保存データ（data at rest）の暗号化を中核的に担うサービスが AWS Key Management\nService（KMS）である。KMS は暗号鍵（カスタマーマスターキー / KMS キー）を作成・保管・\nローテーションするマネージドサービスであり、S3、EBS、RDS、DynamoDB、Lambda、\nCloudWatch Logs、Secrets Manager、SNS、SQS など、多くの AWS サービスから「保存先で\n暗号化する鍵」として指定できる。鍵そのものは FIPS 140-2 認証済みのハードウェア\nセキュリティモジュール（HSM）上で保護され、平文の鍵が KMS の外に出ない設計となって\nいる。\n\n実務での利用パターンは大きく 2 系統に分かれる。1 つは AWS マネージドキー（aws/s3,\naws/ebs など、サービスごとに AWS 側が作成する鍵）を使ってデフォルトで暗号化を有効化\nするパターンで、特別な要件がなければまずこれで保存データを暗号化する。もう 1 つは\nカスタマーマネージドキー（CMK）を自分で作成して使うパターンで、鍵のローテーション\nポリシー、鍵の使用権限を持つ IAM プリンシパルの制御、鍵ポリシーによるアカウント\n境界制御など、より細かい統制が必要なときに採用される。混同しやすいサービスとして\nCloudFront（CDN）、Route 53（DNS）、AWS Budgets（コスト監視）があり、いずれも暗号化\nの主担当ではない点を整理しておくと選択肢を絞りやすい。\n\nCLF-C02 では、「保存データを暗号化するために利用できるサービスはどれか」「S3 や\nDynamoDB の保存データ暗号化で使う鍵管理サービスは何か」という形で問われる。誤答\nとして CDN / DNS / コスト監視サービスを当て込んでくるパターンが頻出する。SAA-C03 以降\nでは、SSE-S3 / SSE-KMS / SSE-C / クライアントサイド暗号化の使い分け、鍵ポリシーと\nIAM ポリシーの組み合わせ、Envelope Encryption の仕組みが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Key Management Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kms/"
+      },
+      {
+        "label": "AWS Key Management Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "保存中および転送中のデータの暗号化（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/logical-separation/encrypting-data-at-rest-and--in-transit.html"
+      }
+    ]
   },
   {
     "questionId": "clf-013",
@@ -832,7 +847,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS CloudTrail は、AWS アカウント内で発生した API 呼び出しや管理イベントを記録し、\n誰がいつどのリソースに対してどの操作を実行したかを追跡可能にするサービスである。\nマネジメントコンソール、AWS CLI、AWS SDK、AWS サービス間の自動呼び出しなど、API を\n経由するあらゆる操作が記録対象となる。各イベントには操作元の IAM プリンシパル\n（ユーザー名・ロール名）、ソース IP アドレス、リクエストパラメータ、レスポンスが\n含まれ、セキュリティインシデントの調査、コンプライアンス監査、運用変更の原因追跡で\n中核的な役割を果たす。\n\nCloudTrail には大きく 2 つの利用形態がある。1 つは「イベント履歴」で、追加設定なしで\n過去 90 日間の管理イベントをコンソールから検索でき、緊急時の初動調査に使われる。\nもう 1 つは「証跡（Trail）」で、組織やアカウント単位で長期保存用に S3 バケットへ\n継続的にログを書き出す設定であり、コンプライアンス要件で長期保管が求められる本番\n環境では必須となる。データイベント（S3 オブジェクトレベルの操作、Lambda 関数呼び出し\nなど）はデフォルトでは記録されず、別途有効化が必要である点も実務上の重要ポイント\nとなる。\n\nCLF-C02 では、「AWS アカウント内の API 操作履歴を記録するサービスは何か」「監査\nログを取得するサービスは何か」という形で問われる。誤答として S3 / CloudFront（静的\n配信）、DynamoDB（NoSQL）、Route 53（DNS）といった用途が異なるサービスを当て込んで\nくる。CloudWatch（メトリクスとログ監視）/ AWS Config（リソース設定状態の評価）と\n混同しやすいが、CloudTrail は「API 呼び出しの記録」、CloudWatch は「メトリクスと\nアプリケーションログ」、Config は「リソース設定の状態と変更履歴」と守備範囲が\n異なるため、3 つの使い分けは頻出ポイントとなる。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      },
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      }
+    ]
   },
   {
     "questionId": "clf-014",
@@ -882,7 +908,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "MFA（Multi-Factor Authentication, 多要素認証）は、サインイン時にパスワード（知識要素）\nに加えて、認証アプリで生成されるワンタイムコードやハードウェアセキュリティキー\n（所有要素）など、複数の異なる種類の要素を要求する仕組みである。AWS では IAM ユーザー\nと root ユーザーの両方に MFA を設定でき、有効化することでパスワード漏えい単独では\nアカウントを乗っ取れなくなる。GitHub などのパブリックリポジトリに資格情報が誤って\n公開された場合や、フィッシング被害でパスワードを盗まれた場合でも、第 2 の要素が\n攻撃者の手元にない限りログインを阻止できる点が、MFA を有効化する最大の目的である。\n\n実務で利用される MFA デバイスには、仮想 MFA デバイス（Authy / Google Authenticator\n等のスマートフォンアプリ）、U2F / FIDO2 セキュリティキー（YubiKey 等の物理デバイス）、\nハードウェア TOTP デバイスがある。AWS 公式のベストプラクティスでは、特権度の高い\nアカウント（root ユーザー、管理者 IAM ユーザー、本番デプロイ権限を持つ CI/CD 用\nロール）には必ず MFA を有効化することが推奨されている。さらに、MFA の状態を IAM\nポリシーの条件キー（`aws:MultiFactorAuthPresent`）で判定し、MFA を通したセッション\nにのみ機密操作を許可する設計も標準的に採用される。\n\nCLF-C02 では、「MFA を有効化する主な目的は何か」「アカウント乗っ取りリスクを下げる\nためにできることは何か」という形で問われる。正解は「パスワードだけに依存せず認証を\n強化する」のような選択肢であり、誤答として「S3 容量を増やす」「EC2 性能を上げる」\n「CloudFront キャッシュを削除する」のように、認証強化とは無関係なサービス操作を\n当て込むパターンが多い。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management で MFA を使用する（AWS公式）",
+        "url": "https://aws.amazon.com/jp/iam/features/mfa/"
+      },
+      {
+        "label": "AWS での多要素認証 (MFA)（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_credentials_mfa.html"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
   },
   {
     "questionId": "clf-015",
@@ -932,7 +973,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Artifact は、AWS のコンプライアンス関連ドキュメントを取得するためのセルフ\nサービスポータルである。SOC 1 / SOC 2 / SOC 3 レポート、ISO 認証関連書類、PCI DSS\nの AOC（Attestation of Compliance）、HIPAA や FedRAMP 関連の文書、各種国・地域固有の\nコンプライアンス文書、AWS との契約書類（BAA: ビジネスアソシエイト契約、NDA 等）が\n含まれる。これらは AWS のセキュリティ・コンプライアンス対応状況を第三者に説明する\n際の一次資料となり、社内監査・外部監査・顧客への提出資料として直接活用できる。\n\n実務での利用シーンとして、SOC 2 監査を受ける際に AWS が運用するインフラ部分の統制\n証拠として SOC 2 レポートを取得する、HIPAA 対応の医療系システムを構築する際に BAA\nを AWS と締結する、PCI DSS のカード会員データ保管環境で AWS の責任範囲を AOC で\n証明する、といったパターンがある。AWS Artifact 自体の利用料金は無料だが、文書は\nNDA 配下で配布されるため、ダウンロード時に契約条件への同意が求められる。組織として\nAWS Organizations を利用している場合、管理アカウントから委任して各メンバーアカウント\nで個別に取得することも可能である。\n\nCLF-C02 では、「AWS のコンプライアンスレポートにアクセスするサービスは何か」「監査\n資料を取得できるサービスは何か」という形で問われる。誤答として「EC2 バックアップ\nサービス」「Lambda スケジューラ」「CloudFront エッジ選択」のように、コンプライアンス\n資料配布とは別領域のサービス機能を当て込むパターンが多い。AWS Audit Manager\n（監査証跡の収集自動化）と名称が似ているが、Artifact は「AWS 自身のコンプライアンス\n資料の取得」、Audit Manager は「利用者環境の監査証跡収集」と役割が異なる点を整理\nしておく。",
+    "officialDocs": [
+      {
+        "label": "AWS Artifact（AWS公式）",
+        "url": "https://aws.amazon.com/jp/artifact/"
+      },
+      {
+        "label": "AWS Artifact とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/artifact/latest/ug/what-is-aws-artifact.html"
+      },
+      {
+        "label": "AWS コンプライアンスプログラム（AWS公式）",
+        "url": "https://aws.amazon.com/jp/compliance/programs/"
+      }
+    ]
   },
   {
     "questionId": "clf-016",
@@ -983,7 +1039,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "最小権限の原則（Principle of Least Privilege）は、ユーザー・ロール・サービスに対して\n「業務上必要な操作とリソースに対する権限のみを付与し、それ以上は付与しない」という\nセキュリティ設計の基本原則である。AWS では IAM ポリシーを通じて、Action（操作）\nResource（対象リソース）/ Condition（条件）の 3 軸で権限を細かく絞り込める。たとえば\n「特定の S3 バケット配下のオブジェクトに対する `GetObject` のみ許可し、書き込みや\n削除は許可しない」「特定のリージョンでのみ EC2 起動を許可する」「MFA を経由した\nセッションでのみ機密操作を許可する」といった粒度で制御できる。\n\n実務でこの原則を運用する際の標準的なアプローチは、まず広めの権限（AWS マネージド\nポリシーや `*:*` に近い権限）でアプリケーションを動かし、CloudTrail で実際に呼ばれた\nAPI を集計し、その結果を元に IAM Access Analyzer のポリシー生成機能を使って必要最小限\nのポリシーへ絞り込むという段階的縮小である。逆に、`AdministratorAccess` を全ユーザー\nに付与した状態を放置すると、内部不正・誤操作・資格情報漏えい時の被害範囲が無制限に\n広がる。アクセスキーの共有はもう 1 段階手前の禁止事項であり、人ごとに IAM ユーザーを\n分け、できれば IAM Identity Center 経由で一時クレデンシャルを使う運用が望ましい。\n\nCLF-C02 では、「最小権限の原則を説明したものとして最も適切なものはどれか」という\n直接的な定義問題として頻出する。正解は「業務に必要な権限だけを付与する」という\n選択肢であり、誤答は「全員に AdministratorAccess を付与する」「権限管理を行わない」\n「アクセスキーを全員で共有する」のように、原則の真逆をいくパターンが並ぶ。SAA-C03\n以降では、IAM ポリシーの条件キー、リソースベースポリシーとアイデンティティベース\nポリシーの組み合わせ、Permissions Boundaries や SCP による上限管理が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      },
+      {
+        "label": "IAM ポリシーによるアクセスの制御（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/access_controlling.html"
+      },
+      {
+        "label": "IAM のポリシーとアクセス許可（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/access_policies.html"
+      }
+    ]
   },
   {
     "questionId": "clf-017",
