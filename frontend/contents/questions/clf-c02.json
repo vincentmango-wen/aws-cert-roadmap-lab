@@ -1440,9 +1440,20 @@
       "cdn",
       "edge"
     ],
+    "practicalNote": "Amazon CloudFront は、AWS が世界中のエッジロケーションで運用する CDN（Content\nDelivery Network）サービスである。S3 バケット / ALB / API Gateway / 自前のオリジン\nサーバー等を「オリジン」として登録し、エッジロケーション側がオリジンから取得した\nコンテンツをキャッシュしてユーザーへ近距離から配信する。これにより、地理的距離に\nよる遅延を縮め、オリジンへの直接トラフィックを減らしてオリジン負荷とデータ転送\nコストを抑える。\n\n試験文脈では「コンテンツをエッジから高速配信するサービスはどれか」「CDN サービス\nはどれか」というキーワードで CloudFront を選ばせる問題が中心となる。誤答として\n頻出するのは IAM（ユーザー / 権限管理）/ RDS（リレーショナル DB の SQL 実行）/\nAWS Budgets（予算超過アラート）など、配信とは全く異なる守備範囲のサービスで、\nサービスの役割を取り違えていないかを問う典型パターンである。CloudFront 本体は\nコンテンツを「保存」するサービスではなくキャッシュして配信するサービスである点、\nHTTPS 配信に使う点、ACM 証明書を組み合わせる点が CLF-C02 の頻出ポイントである。\n\nSAA-C03 以降では、S3 オリジンを OAC（Origin Access Control）で保護してバケットを\n非公開のまま配信する設計、キャッシュ TTL と Invalidation の運用、ACM 証明書を\nCloudFront で使う場合のリージョン（us-east-1 固定）の制約、WAF との組み合わせ\nによる攻撃緩和、署名付き URL / 署名付き Cookie によるアクセス制御が踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudfront/"
+      },
+      {
+        "label": "Amazon CloudFront とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      }
+    ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18"
   },
   {
     "questionId": "clf-023",
@@ -1492,9 +1503,24 @@
       "dns",
       "networking"
     ],
+    "practicalNote": "Amazon Route 53 は、AWS が提供するマネージドの権威 DNS サービスである。中核機能は\n3 つで、ドメイン名登録（レジストラ機能）、DNS 名前解決（権威 DNS サーバー機能）、\nヘルスチェックと連動したルーティングポリシーである。利用者は「ホストゾーン」を\n作成して DNS レコード（A / AAAA / CNAME / MX / TXT / Alias 等）を登録し、世界中の\nDNS リゾルバからの問い合わせに対して AWS のエッジロケーション群が応答する。\n\nルーティングポリシーには、シンプル（単純な 1:1 解決）/ 重み付け（A/B テスト）/\nレイテンシーベース（ユーザーから最も低遅延のリージョンへ振る）/ 位置情報（国・\n地域別に振る）/ フェイルオーバー（ヘルスチェック失敗時に予備へ切替）/ マルチ\nバリュー（複数 IP を返す）/ 地理的近接（トラフィックバイアス付き）があり、要件に\n応じて使い分ける。Alias レコードは AWS リソース（CloudFront / ALB / S3 静的サイト /\nAPI Gateway 等）への参照を CNAME ではなく Apex（ルート）ドメインから直接張れる\n点が CNAME と異なる重要な特徴である。\n\n試験文脈では「DNS 名前解決のサービスはどれか」「ドメイン関連機能を提供するサービス\nはどれか」という形で問われる。誤答として「Lambda コードを自動生成する」「S3\nオブジェクトを暗号化する」「CloudWatch Logs を削除する」など、DNS と全く関係のない\n役割の選択肢が並ぶパターンが頻出する。CLF-C02 ではサービスの守備範囲を取り違え\nないかが主眼となり、SAA-C03 以降では Alias レコードと CNAME の使い分け、ルーティング\nポリシーの選定、ヘルスチェックと DR 設計（Route 53 フェイルオーバー）、Private\nHosted Zone と VPC の関係が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      },
+      {
+        "label": "Amazon Route 53 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Route 53 のルーティングポリシー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/routing-policy.html"
+      }
+    ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18"
   },
   {
     "questionId": "clf-024",
@@ -1547,9 +1573,24 @@
       "queue",
       "integration"
     ],
+    "practicalNote": "Amazon SQS（Simple Queue Service）は、フルマネージドのメッセージキューサービスで\nある。送信側（プロデューサー）がメッセージをキューに投入し、受信側（コンシューマ）が\nキューからメッセージを取り出して処理する。送信側と受信側が直接通信しないため、\n両者を「疎結合」にできる点が最大の特徴である。コンシューマが一時的に停止していても\nメッセージはキューに保持され、復帰後に処理を継続できるため、システム全体の耐障害性\nが向上する。\n\nキューには 2 種類あり、標準キューは「ほぼ無制限のスループット」「最低 1 回配信」\n「ベストエフォートの順序保証」が特徴で、ほとんどの非同期ワークロードに適する。\nFIFO キューは「順序保証」「重複排除」「スループットは標準キューより低い」という\n性質を持ち、注文処理や決済イベントのように順序と重複排除が必須のワークロードで\n使う。各メッセージには可視性タイムアウト（受信中の他コンシューマからの不可視期間）\nが設定され、その間に処理完了しないとメッセージが再度キューに戻されて再処理対象\nとなる。\n\n試験文脈では「アプリケーション間でメッセージをキュー方式で受け渡すサービスはどれ\nか」「システムを疎結合にするサービスはどれか」という形で問われる。誤答として\nCloudFront（キャッシュ配信）/ Cost Explorer（料金分析）/ VPC（仮想ネットワーク）\nなど、メッセージング以外のサービスが並ぶ。SNS（Pub/Sub）/ EventBridge（イベント\nルーティング）/ SQS（メッセージキュー）の 3 つの使い分けは頻出比較ポイントで、\n1:1 ポーリング型なら SQS、1:N ファンアウトなら SNS、ルールベースのイベント分配\nなら EventBridge という整理になる。SAA-C03 以降では、可視性タイムアウト設計、\nDLQ（デッドレターキュー）、ロングポーリング、SNS+SQS ファンアウト構成が踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      },
+      {
+        "label": "Amazon SQS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon SQS キューの種類（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"
+      }
+    ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18"
   },
   {
     "questionId": "clf-025",
@@ -1602,9 +1643,24 @@
       "monitoring",
       "logs"
     ],
+    "practicalNote": "Amazon CloudWatch は、AWS リソースとアプリケーションのメトリクス・ログ・アラーム\nを集約管理する監視サービスである。EC2 / RDS / Lambda / ECS / API Gateway など主要\nサービスが標準でメトリクス（CPU 使用率・ネットワーク I/O・リクエスト数・実行時間\n等）を CloudWatch に送出し、利用者は追加設定なしで時系列データを確認できる。アプリ\nケーション側からカスタムメトリクスを送出することもでき、ビジネス指標（注文数・\nエラー率・課金額など）を統合的に可視化できる。\n\nCloudWatch Logs ではアプリケーションログを集約保存し、Logs Insights によるクエリ\n検索、保管期間（リテンション）設定、S3 への長期エクスポート、Metric Filter による\nログからのメトリクス抽出ができる。CloudWatch Alarms はメトリクスのしきい値超過を\n検知して SNS 経由でメール / Slack / PagerDuty 等へ通知するほか、Auto Scaling や\nEC2 アクションのトリガとしても使える。CloudWatch Dashboards でこれらをまとめて\n表示し、運用ダッシュボードを構築する。\n\n試験文脈では「AWS リソースを監視するサービスはどれか」「メトリクスやログを管理\nするサービスはどれか」という形で問われる。誤答として Route 53（DNS）/ S3 バケット\n生成 / IAM ポリシー削除など、監視・観測とは全く異なる役割の選択肢が並ぶ。CloudWatch\n（リソース・アプリケーションの「動き」を監視）/ CloudTrail（AWS API 呼び出しの監査\nログ）/ AWS Config（リソース構成変更の履歴）の 3 つの使い分けは CLF-C02 / SAA-C03\nともに頻出比較ポイントで、SAA-C03 以降ではアラームと Auto Scaling 連携、複合\nアラーム、Logs Insights クエリ設計、X-Ray との分散トレーシング連携が踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "Amazon CloudWatch とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch Logs とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+      }
+    ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18"
   },
   {
     "questionId": "clf-026",
@@ -1653,9 +1709,20 @@
       "budget",
       "cost-management"
     ],
+    "practicalNote": "AWS Budgets は、利用料金や使用量に対して予算（しきい値）を設定し、超過または超過\n予測時にアラートを発火する予算管理サービスである。コスト予算（月次・四半期・年次\nの課金額に対するしきい値）、使用量予算（特定サービスの利用量に対するしきい値）、\nリザベーション利用率予算、Savings Plans 利用率予算といった種類の予算を作成でき、\n通知先には Email・SNS トピックを指定する。Budgets Actions を使うと、しきい値超過\n時に IAM ポリシーを自動付与してリソース起動を抑止するなどの自動アクションも設定\nできる。\n\n実務での代表的な使い方は、個人開発・検証用 AWS アカウントの「うっかり高額課金」\n事故防止である。月次予算 1,000 円 / 5,000 円のような小さなしきい値で設定し、50%\n通過 / 80% 通過 / 100% 通過 / 予測超過 の 4 段階でメール通知させると、想定外の\nコスト発生を早期に検知できる。本番アカウントでは、プロジェクト別タグ予算でチーム\nごとの予算管理を行うパターンが多い。混同しやすいサービスとして Cost Explorer が\nあり、Cost Explorer は「コスト構造を可視化・分析する」のに対し、Budgets は「予算\nしきい値を設定して超過時にアラートを発火する」点で役割が異なる。\n\n試験文脈では「予算を設定して超過時に通知するサービスはどれか」「課金アラートを\n設定できるサービスはどれか」という形で問われる。誤答として S3 暗号化 / EC2 OS\n更新 / DNS レコード作成など、予算管理とは全く異なる役割の選択肢が並ぶ。CLF-C02\nではサービスの守備範囲を取り違えないかが主眼で、AWS Budgets（予算アラート）/\nCost Explorer（コスト可視化・分析）/ Cost and Usage Report（詳細な利用料金 CSV\nを S3 へエクスポート）の 3 つの使い分けは頻出整理ポイントとなる。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "AWS Budgets でコストを管理する（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      }
+    ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18"
   },
   {
     "questionId": "clf-027",

@@ -1410,7 +1410,22 @@
       "リポジトリ権限をIAMで制限する",
       "イメージにAPIキーや.envを含めない"
     ],
-    "updatedAt": "2026-06-07"
+    "practicalNote": "Amazon ECR（Elastic Container Registry）は、Docker コンテナイメージと OCI 形式の\nアーティファクトを保存・管理するフルマネージドのコンテナレジストリサービスである。\nプライベートレジストリ（アカウント / IAM で閉じた共有）とパブリックレジストリ\n（インターネット公開）の 2 種類があり、ECS / EKS / App Runner / Lambda（コンテナ\nイメージ実行）など、AWS 上のコンテナ実行基盤と密接に連携する。Docker CLI からは\n通常のレジストリと同じく `docker push` / `docker pull` で操作でき、認証は IAM 経由\nで発行された一時トークンを使う。\n\n実務での代表的な利用シナリオは、CI/CD パイプラインからのイメージ push と、ECS /\nEKS タスクからの自動 pull である。CodeBuild や GitHub Actions でイメージをビルド\nして ECR に push し、ECS サービス更新で新しいタスク定義が ECR から最新イメージを\npull して実行する流れになる。ECR にはイメージスキャン機能（Basic スキャンと\nEnhanced スキャン）があり、push 時に既知の脆弱性（CVE）を自動検出して通知できる。\nライフサイクルポリシーを設定すると、古いイメージ（タグ数や作成日基準）を自動削除\nでき、ストレージコストの肥大化を防げる。\n\nセキュリティ運用ではリポジトリポリシー（リソースベース IAM）で「どの IAM プリンシ\nパルが push / pull できるか」を制御し、本番イメージへの不正書き込みを防止する。\nコンテナイメージに API キー・`.env` ファイル・秘密鍵を含めない（環境変数や Secrets\nManager / Parameter Store から実行時注入する）のが基本となる。CLF-C02 では「コンテナ\nイメージを保存するサービス」「ECS / EKS と組み合わせるレジストリ」という形で問われ、\nSAA-C03 以降では Enhanced スキャンと Amazon Inspector との統合、クロスアカウント\nレプリケーション、Private endpoint（VPC エンドポイント）経由でのイメージ pull が\n踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon ECR（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ecr/"
+      },
+      {
+        "label": "Amazon ECR とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/what-is-ecr.html"
+      },
+      {
+        "label": "Amazon ECR イメージスキャン（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/image-scanning.html"
+      }
+    ],
+    "updatedAt": "2026-06-18"
   },
   {
     "termId": "ecs",
@@ -1478,7 +1493,22 @@
       "コンテナイメージにAPIキーや.envファイルを含めない",
       "本番環境ではECRイメージスキャンや最小権限IAMを確認する"
     ],
-    "updatedAt": "2026-06-08"
+    "practicalNote": "Amazon ECS（Elastic Container Service）は、Docker コンテナを AWS 上で実行・管理する\nフルマネージドのコンテナオーケストレーションサービスである。タスク定義（コンテナ\nイメージ・CPU / メモリ・ネットワーク・IAM ロール・ログ出力先などをまとめた設計図）、\nタスク（タスク定義から起動された 1 つ以上のコンテナ実行単位）、サービス（タスクを\n指定数維持し、必要に応じて ALB / NLB と連携する論理単位）、クラスター（タスク・\nサービスを束ねる論理境界）という構成要素で運用される。\n\n実行基盤として「ECS on EC2」と「ECS on Fargate」の 2 種類が選べる。EC2 起動タイプ\nではコンテナホストとなる EC2 インスタンスを利用者が管理し、インスタンスタイプの\n柔軟な選定や GPU / 特殊用途インスタンスの利用、Spot インスタンスによるコスト最適化\nが可能となる。Fargate 起動タイプではコンテナホスト管理が AWS 側に隠蔽され、利用者\nは CPU / メモリ要件を指定するだけでよく、サーバー管理を削減できる代わりに単位時間\nあたりの実行コストは EC2 + 自前管理より高めになる。\n\n実務での標準構成は、ECS タスクをプライベートサブネットに配置し、パブリックサブネット\nに置いた ALB だけがインターネットから到達可能にする 3 層構成である。ALB → ECS\nサービスへの動的ポートマッピング、CloudWatch Logs へのコンテナログ出力、Auto Scaling\n（CPU / メモリ / ALB リクエスト数ベース）でタスク数を自動増減させる設計が標準と\nなる。タスクには 2 種類の IAM ロールがあり、「タスク実行ロール」は ECR からのイメージ\npull や CloudWatch Logs 出力など ECS 自体が必要とする AWS API 操作に使い、「タスク\nロール」はコンテナ内アプリケーションが AWS API（S3 / DynamoDB 等）にアクセスする\nときに使う。両者の混同は権限事故の原因となるため、明確に分けて設計する。\n\nCLF-C02 では「コンテナを実行するオーケストレーションサービス」「ECR と組み合わせる\nコンテナ実行基盤」という形で問われる。SAA-C03 以降では Fargate と EC2 起動タイプ\nの選定、サービスの Desired Count 設計、Capacity Provider、ECS Service Connect / Service\nDiscovery、EKS（Kubernetes 互換）との使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon ECS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ecs/"
+      },
+      {
+        "label": "Amazon ECS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/Welcome.html"
+      },
+      {
+        "label": "Amazon ECS 起動タイプ（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/ecs-configuration.html"
+      }
+    ],
+    "updatedAt": "2026-06-18"
   },
   {
     "termId": "efs",
@@ -1531,7 +1561,22 @@
       "Security GroupでNFS通信を制限する",
       "暗号化とアクセスポイントを検討する"
     ],
-    "updatedAt": "2026-06-01"
+    "practicalNote": "Amazon EFS（Elastic File System）は、複数の EC2 インスタンスや Lambda 関数から同時に\nマウントして共有できるフルマネージドの NFS（Network File System）ファイルストレージ\nである。OS から見ると通常のファイルシステムとしてマウントされ、複数クライアントが\n同じファイルへ同時に読み書きできる。容量は利用に応じて自動的に伸縮し、事前に\nプロビジョニングする必要がない。複数 AZ にまたがる「マウントターゲット」を各サブ\nネットに配置することで、複数 AZ の EC2 から同じファイルシステムにアクセスできる\n点が EBS との大きな違いである。\n\nストレージクラスは「Standard」（複数 AZ 冗長 / 通常の Web ・アプリケーションで標準）と\n「One Zone」（単一 AZ 冗長 / 低コスト / 開発・テスト用途）の 2 階層に、それぞれ\nアクセス頻度が低いデータを自動的に低コスト階層へ移行する Infrequent Access（IA）の\nライフサイクル管理が組み合わさる構造になっている。Lifecycle Management で「30 日\nアクセスがなければ IA 階層へ移動」のようなルールを設定でき、アクセス頻度の偏った\nデータセットでコストを抑えられる。スループットモードはバースト（容量比例で自動\nスケール）と Elastic / Provisioned（明示確保）から選ぶ。\n\n実務での典型構成は、複数 EC2 から共有するメディアファイル置き場、Web コンテンツの\n共有、CMS の `uploads/` ディレクトリ共有、Linux ワークロードでの共有スクラッチ\n領域、Lambda コンテナイメージから読み出す共有モデルファイルなどである。S3\n（オブジェクトストレージ / HTTP API 経由）/ EBS（単一 EC2 にアタッチするブロック\nストレージ）/ EFS（複数 EC2 から NFS マウントするファイルストレージ）の 3 つの\n使い分けは試験でも実務でも頻出整理ポイントとなる。セキュリティ運用では\nSecurity Group で NFS（TCP 2049）通信を必要なクライアントだけに制限し、保存時暗号化\n（KMS 連動）と転送時暗号化（TLS）の有効化、EFS アクセスポイントによるファイル\nシステム内のサブパス・ユーザー権限制御を行う。",
+    "officialDocs": [
+      {
+        "label": "Amazon EFS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/efs/"
+      },
+      {
+        "label": "Amazon EFS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/whatisefs.html"
+      },
+      {
+        "label": "Amazon EFS のパフォーマンス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/performance.html"
+      }
+    ],
+    "updatedAt": "2026-06-18"
   },
   {
     "termId": "elastic-beanstalk",
@@ -1582,7 +1627,22 @@
       "作成されるSecurity Groupを確認する",
       "環境変数に秘密情報を直書きしない"
     ],
-    "updatedAt": "2026-06-07"
+    "practicalNote": "AWS Elastic Beanstalk は、アプリケーションのソースコード（zip / war / Docker\nイメージ等）をアップロードするだけで、裏側の EC2・Auto Scaling グループ・ELB・\nセキュリティグループ・ヘルスチェックなどの実行環境一式を自動構築・運用してくれる\nPaaS（Platform as a Service）寄りのデプロイサービスである。対応言語・ランタイムは\nJava / .NET / Node.js / Python / Ruby / Go / PHP / Docker と幅広く、Web アプリ\nケーション（HTTP リクエスト処理型）とワーカー（SQS キュー処理型）の 2 種類の環境\nタイプから選択する。\n\nElastic Beanstalk の特徴は「インフラ制御を完全に隠蔽せず、必要に応じて利用者が\nEC2 や Auto Scaling 設定を上書きできる」点である。Lambda / App Runner のような\n完全サーバーレスとは異なり、裏側で EC2 が常駐するため、トラフィックがない時間帯\nでも EC2 / EBS / ELB の固定費が発生する。個人開発の MVP や検証用途では、この\n固定費がコスト盲点になりやすく、静的サイト中心であれば S3 + CloudFront、間欠的\nワークロードであれば Lambda + API Gateway の方がコスト効率で優位になることが多い。\n\n実務での代表的な利用シナリオは、Heroku 的なシンプルなデプロイ体験を AWS 上で\n得たい中規模 Web アプリケーション、EC2 ベースで運用したいが Auto Scaling や ELB\nの構築・運用コストを下げたい既存アプリケーションの移行、社内アプリで「インフラ\n構築の手間を下げつつ EC2 レベルのカスタマイズ余地は残したい」要件である。CLF-C02\nでは「アプリケーションコードのアップロードだけで実行環境を作成・管理してくれる\nサービス」「PaaS 寄りのサービス」という形で問われ、SAA-C03 以降では環境設定の\nBlue/Green デプロイ、`.ebextensions` による細かい設定上書き、カスタム AMI、VPC\n配置、CloudWatch との運用連携が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Elastic Beanstalk（AWS公式）",
+        "url": "https://aws.amazon.com/jp/elasticbeanstalk/"
+      },
+      {
+        "label": "AWS Elastic Beanstalk とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/Welcome.html"
+      },
+      {
+        "label": "AWS Elastic Beanstalk の基本概念（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/concepts.html"
+      }
+    ],
+    "updatedAt": "2026-06-18"
   },
   {
     "termId": "elasticache",
@@ -1634,7 +1694,22 @@
       "Security Groupで接続元を制限する",
       "インターネットから直接接続させない"
     ],
-    "updatedAt": "2026-06-07"
+    "practicalNote": "Amazon ElastiCache は、Redis 互換または Memcached 互換のインメモリキャッシュ /\nインメモリデータストアをマネージドで提供するサービスである。データを RAM 上に\n保持してミリ秒未満のレイテンシで読み書きできるため、リレーショナル DB（RDS）\nや NoSQL DB（DynamoDB）への高頻度アクセスをキャッシュで肩代わりして、データベース\n負荷とレスポンス遅延を抑える用途で使われる。エンジンは Redis 互換（Redis OSS /\nValkey ベース）と Memcached の 2 系統があり、用途に応じて選び分ける。\n\nRedis 互換エンジンは、文字列・ハッシュ・リスト・セット・ソート済みセット・ストリーム\nなどの豊富なデータ構造、永続化（スナップショット / AOF）、レプリケーション、\nクラスター構成（シャーディング）、Pub/Sub、トランザクション機能を持つ。セッション\n管理、ランキング集計、メッセージング、リアルタイムリーダーボードなど、単純な KV\nを超える複雑なデータ操作が必要な場面で選ばれる。Memcached 互換エンジンは機能を\n単純な KV キャッシュに絞った代わりに、マルチスレッドで高スループットを出せるため、\n大量の DB クエリ結果を単純にキャッシュしたい用途に向く。永続化やレプリケーション\nが必要なら Redis 互換、純粋なキャッシュ用途で水平スケールしたいなら Memcached\nという整理になる。\n\n実務での代表的な利用シナリオは、ステートレスな Web アプリケーションのセッション\nストア、SaaS アプリの「同じユーザーが同じ画面を何度も開く」場面のクエリ結果\nキャッシュ、ランキング / リアルタイム集計、レート制限カウンタ、Pub/Sub による\nコンポーネント間連携である。ElastiCache ノードは VPC 内に配置し、Security Group\nで接続元アプリケーション（EC2 / ECS / Lambda）からの通信のみ許可してインターネット\nから直接到達できないようにする。ノード起動中は時間単価で課金されるため、個人\n開発の MVP では固定費盲点になりやすく、要件が見えるまで導入を遅らせる判断が\n合理的なケースが多い。CLF-C02 では「インメモリキャッシュサービス」「DB アクセス\nを減らしてレスポンスを速くするサービス」という形で問われ、SAA-C03 以降では Redis\nクラスターモード、Multi-AZ レプリケーション、フェイルオーバー設計、DAX\n（DynamoDB Accelerator）との使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon ElastiCache（AWS公式）",
+        "url": "https://aws.amazon.com/jp/elasticache/"
+      },
+      {
+        "label": "Amazon ElastiCache とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/WhatIs.html"
+      },
+      {
+        "label": "ElastiCache でエンジンを選択する（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/SelectEngine.html"
+      }
+    ],
+    "updatedAt": "2026-06-18"
   },
   {
     "termId": "elb",
