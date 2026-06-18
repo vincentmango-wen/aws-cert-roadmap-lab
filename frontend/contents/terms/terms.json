@@ -375,7 +375,18 @@
       "起動テンプレートに秘密情報を埋め込まない",
       "インスタンスプロファイルの権限を絞る"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Auto Scaling は、需要の増減に合わせてリソース数を自動的に調整する仕組みである。\nもっとも広く使われるのは EC2 Auto Scaling（Auto Scaling Group）で、CloudWatch メトリクス\n（CPU 使用率・リクエスト数・カスタムメトリクスなど）をトリガに、最小・希望・最大\nキャパシティの範囲内で EC2 インスタンスを増減させる。実務では、ALB の背後に Auto\nScaling Group を配置して Web 層の負荷分散と自動拡張を実現する構成、夜間や週末に台数を\n減らしてコストを下げる構成、障害が起きたインスタンスを自動置換するセルフヒーリング\n構成といった用途で標準的に採用される。\n\nEC2 以外にも、AWS Auto Scaling というブランド名のもとで ECS サービス、DynamoDB の\n読み書きキャパシティ、Aurora Read Replica など、複数のリソース種別のスケーリングを\n横断的に管理できるサービス（AWS Auto Scaling Plans）が提供されている。スケーリング\nポリシーには、メトリクスのしきい値で増減を判断するターゲット追跡スケーリング、\n段階的なステップスケーリング、時間帯やスケジュールに基づくスケジュールドスケーリング\nがある。Auto Scaling と ELB（ALB / NLB）はセットで設計されるのが基本で、ELB が\nヘルスチェックとトラフィック分散を担い、Auto Scaling が台数調整を担う。\n\nCLF-C02 では、「負荷に応じて EC2 を自動で増減させる仕組みは何か」「高可用性を実現\nするために組み合わせるサービスは何か（→ ELB と組み合わせる）」という形で問われる。\n誤答として「ストレージのバックアップを取るサービス」「DNS を提供するサービス」など、\nスケーリングとは別領域のサービスを当て込んでくるパターンが多い。SAA-C03 以降では、\n最小・希望・最大キャパシティの設定、複数 AZ にまたがる Auto Scaling Group の構成、\nターゲット追跡スケーリングとステップスケーリングの使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Auto Scaling（AWS公式）",
+        "url": "https://aws.amazon.com/jp/autoscaling/"
+      },
+      {
+        "label": "Amazon EC2 Auto Scaling とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      }
+    ]
   },
   {
     "termId": "aws-backup",
@@ -424,7 +435,22 @@
       "バックアップの削除権限を制限する",
       "復元テストを行わないバックアップは信用しすぎない"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS Backup は、複数の AWS サービスのバックアップを一元管理できるマネージドサービスで\nある。RDS、Aurora、DynamoDB、EFS、FSx、EBS、S3、Storage Gateway など、対応サービスに\nまたがるバックアップポリシー（バックアップ頻度・保持期間・リージョン間コピー設定）を\nバックアップ計画として一括定義し、自動実行する。実務では、サービスごとに個別の\nバックアップ仕組みを持つ運用（RDS スナップショット / EBS スナップショット / DynamoDB\nオンデマンドバックアップを別々に管理）から、AWS Backup に統合することで、コンプライ\nアンス要件を満たす保持期間の統一管理、誰がいつ何を復元したかの監査ログの一元化、\n復元テストの集約といった運用負荷削減が実現できる。\n\nバックアップ設計には RPO（Recovery Point Objective: どこまでデータ損失を許容できるか）\nと RTO（Recovery Time Objective: どれくらいの時間で復旧する必要があるか）の指標が\n中心となる。RPO が短い（数分以内）ワークロードでは、Aurora の継続的バックアップや\nDynamoDB の Point-in-Time Recovery といった、サービス固有の細粒度バックアップ機能を\n併用することが多い。災害対策（DR）目的では、AWS Backup のリージョン間コピー機能を\n使って別リージョンにバックアップを複製しておく構成が標準的である。バックアップは\n取得するだけでなく、定期的に復元テストを行い、実際に復旧できることを確認する運用が\n重要となる。\n\nCLF-C02 では、「バックアップを一元管理できるサービスは何か」「RPO/RTO に応じてバック\nアップ頻度を決める対象は何か」という形で問われる。SAA-C03 以降では、災害対策戦略\n（バックアップ&リストア / パイロットライト / ウォームスタンバイ / マルチサイト\nアクティブアクティブ）における AWS Backup の位置付け、コンプライアンス要件\n（SOC / HIPAA / PCI DSS）に対応する保持期間設計、削除権限の制限と Vault Lock による\n保護といった、より踏み込んだ設計判断が問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Backup（AWS公式）",
+        "url": "https://aws.amazon.com/jp/backup/"
+      },
+      {
+        "label": "AWS Backup とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/whatisbackup.html"
+      },
+      {
+        "label": "バックアップのリージョン間コピー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/cross-region-backup.html"
+      }
+    ]
   },
   {
     "termId": "aws-budgets",
@@ -476,7 +502,22 @@
       "アクセスキー漏えい時の課金増加検知にも役立つ",
       "請求情報の閲覧権限を限定する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Budgets は、AWS の利用料金や使用量に対して予算を設定し、しきい値を超えた場合に\n通知やアクションを実行できるコスト管理サービスである。実績値に基づくアラートに加え、\n予測値（このままの利用ペースで月末にいくらになるか）に基づくアラートも設定できるため、\n月末に請求書を見て初めて気付くのではなく、月の途中で予算オーバーの兆候を検知できる。\n実務では、検証用アカウントの月額予算を低額（例: USD 10）で設定して学習中の課金事故を\n防ぐ用途、本番アカウントでサービス別予算を設定して特定サービスのコスト急増を検知する\n用途、組織全体予算を Organizations と組み合わせて全社コストガバナンスを敷く用途で\n利用される。\n\nBudgets には複数の種類がある。コスト予算（金額ベース）と使用量予算（時間・GB・転送量\nベース）に加え、リザーブドインスタンスや Savings Plans のカバレッジ予算・使用率予算も\n設定可能である。アクション付き Budget（Budgets Actions）を使うと、しきい値超過時に\nIAM ポリシーをアタッチして特定ユーザーの追加リソース作成を停止する、特定の EC2 を\n停止するといった自動対処も可能だが、誤発火による業務影響を避けるため、本番環境で\n有効化する前に検証環境で挙動を確認する運用が望ましい。Cost Explorer はコストの分析と\n傾向把握を担い、Budgets はしきい値ベースの監視と通知を担うという役割分担になる。\n\nCLF-C02 では、「AWS の使いすぎを検知するサービスは何か」「実績値だけでなく予測値でも\nアラートを設定できるサービスは何か」という形で問われる。誤答として「Cost Explorer\n（分析担当）」「CloudWatch（メトリクス監視担当）」を当て込んでくるパターンがあり、\nそれぞれの守備範囲を分けて理解する必要がある。SAA-C03 以降では、Cost Anomaly Detection\n（機械学習でコスト異常を検知）との使い分け、Organizations を使った組織全体予算の集約、\nアクション付き Budget の権限設計が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "AWS Budgets による費用管理（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "予算の作成（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-create.html"
+      }
+    ]
   },
   {
     "termId": "aws-config",
@@ -527,7 +568,22 @@
       "公開S3や暗号化未設定の検出に役立つ",
       "準拠違反の通知先を決める"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Config は、AWS リソースの設定変更履歴を記録し、定義したルールに基づいて準拠状態を\n評価するサービスである。各リソース（EC2 / S3 / IAM / セキュリティグループ等）の設定\nスナップショットを継続的に取得し、「いつ・誰が・どの項目を・どう変更したか」を時系列\nで追跡できる。Config Rules（マネージドルールおよびカスタムルール）を使うと、たとえば\n「S3 バケットの公開設定がオフになっているか」「EBS ボリュームが暗号化されているか」\n「セキュリティグループに 0.0.0.0/0 からの全ポート許可がないか」といった準拠条件を\n継続的にチェックし、違反を検出した時点で通知や自動修復を実行できる。\n\n実務では、セキュリティベースラインの継続評価（CIS Benchmark / AWS Foundational\nSecurity Best Practices 準拠）、コンプライアンス監査時の証跡提供、構成ドリフト検出\n（IaC で定義した状態から手動変更で逸脱した箇所の検出）といった用途で採用される。\n類似サービスとの違いとして、CloudTrail は「API 呼び出しログ（誰が何の API を呼んだか）」\nを記録するのに対し、Config は「リソース設定の状態と変更履歴」を記録する点で守備範囲\nが異なる。CloudWatch は「メトリクスとログ」を扱う監視サービスであり、Config の役割\nとはさらに別軸となる。組織横断で集約管理する場合は、Config Aggregator を使って複数\nアカウント・複数リージョンの記録を 1 アカウントに集約する設計が標準である。\n\nCLF-C02 では、「リソース設定の履歴や準拠状態を評価するサービスは何か」という形で\n問われる。CloudTrail（API 呼び出しログ）/ CloudWatch（メトリクス監視）との 3 つの\n使い分けが頻出ポイントであり、それぞれ「何を記録対象とするか」を整理しておくと\n正答に絞りやすい。SAA-C03 以降では、Config Rules によるベースライン違反検出、組織\n全体での集約、記録対象リソースの絞り込みによるコスト最適化が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Config（AWS公式）",
+        "url": "https://aws.amazon.com/jp/config/"
+      },
+      {
+        "label": "AWS Config とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/WhatIsConfig.html"
+      },
+      {
+        "label": "AWS Config によるリソースの評価（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/evaluate-config.html"
+      }
+    ]
   },
   {
     "termId": "cdk",
@@ -576,7 +632,18 @@
       "作成されるIAM権限を確認する",
       "本番環境へのデプロイ権限を制限する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS CDK（Cloud Development Kit）は、TypeScript / Python / Java / C# / Go などの\n汎用プログラミング言語で AWS インフラを定義できる Infrastructure as Code（IaC）\nツールである。CDK で書いたコード（CDK アプリ）は内部的に CloudFormation テンプレート\nに合成（synth）され、CloudFormation スタックとしてデプロイされる。実務では、複雑な\nリソース構成を再利用可能な Construct（コンポーネント）に切り出して標準化する用途、\n環境ごと（dev / staging / prod）の差分をパラメータ化して同一コードから複数環境を\n払い出す用途、Lambda 関数のコードとインフラ定義を 1 つの言語で完結させる用途で\n採用される。\n\nCloudFormation テンプレート（YAML / JSON）を直接書く場合と比べたメリットは、IDE 補完\nや型チェックが効く、ループや条件分岐をプログラミング言語の構文で記述できる、再利用\n可能な Construct ライブラリ（L1 / L2 / L3 Constructs / AWS Solutions Constructs）で\nベストプラクティスをコードとして取り込める、といった点である。一方、CDK 経由でデプロイ\nされた CloudFormation スタックを CDK を介さずに直接編集すると同期が崩れるため、運用\nルールとして「CDK 管理対象は CDK 経由でのみ変更する」原則を守る必要がある。CDK 自体\nには課金されないが、作成された AWS リソースには通常通り料金が発生するため、誤って\n高額リソースを作らないよう PR レビューでチェックする運用が望ましい。\n\nCLF-C02 では、「インフラをコードで管理する選択肢は何か」「CloudFormation を生成して\nリソースを管理するツールは何か」という形で問われる。CloudFormation / CDK / Terraform\n（サードパーティ）の使い分けが論点になりやすく、CDK は「AWS 公式の IaC ツールで\n汎用言語が使える」という位置付けを押さえておく。SAA-C03 以降では、スタック分割の\n粒度、CDK Construct の階層（L1 = CloudFormation リソースの薄いラッパー / L2 = 安全な\nデフォルト付き / L3 = ベストプラクティスを束ねた高レベル）、本番環境へのデプロイ権限\n制御が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Cloud Development Kit（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cdk/"
+      },
+      {
+        "label": "AWS Cloud Development Kit (AWS CDK) v2 開発者ガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/home.html"
+      }
+    ]
   },
   {
     "termId": "cloudformation",

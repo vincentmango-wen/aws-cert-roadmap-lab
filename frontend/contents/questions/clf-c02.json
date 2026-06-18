@@ -446,7 +446,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Well-Architected Framework は、クラウド上のワークロード設計をレビューするための\nベストプラクティス集であり、現在は 6 つの柱（運用上の優秀性 / セキュリティ / 信頼性 /\nパフォーマンス効率 / コスト最適化 / 持続可能性）で構成されている。実務では、新規システム\nの設計レビュー、既存システムのリアーキテクト判断、社内アーキテクトレビュー時の共通言語\nとして利用される。AWS が無償提供する Well-Architected Tool を使うと、ワークロード単位\nで各柱に沿った質問に回答し、改善ポイント（High Risk Issue / Medium Risk Issue）を一覧化\nできる。\n\n各柱の中心テーマは異なる役割を持つ。運用上の優秀性はデプロイ自動化や運用標準化、\nセキュリティは IAM 最小権限・暗号化・監査ログ、信頼性は Multi-AZ 配置やバックアップ、\nパフォーマンス効率は適切なインスタンスタイプ選定やキャッシュ活用、コスト最適化は\nリソース棚卸しや料金モデルの最適化、持続可能性はリソース効率と環境負荷低減を扱う。\n柱は独立しているが相互に影響し合うため、たとえばコスト最適化のためにリソースを縮小\nしすぎると信頼性が下がる、というトレードオフを意識する必要がある。\n\nCLF-C02 では、「Well-Architected Framework の柱に含まれるものはどれか」「コスト最適化の\n柱が扱う領域はどれか」という形で問われる。誤答の典型は「紙帳票管理」「手動サーバー\n調達」「固定料金保証」のように、クラウド設計の柱として明らかに不適切な選択肢である。\nSAA-C03 以降では、特定のシナリオから「どの柱の観点で改善すべきか」を問う応用問題が\n出題されるため、6 つの柱の名称とそれぞれの中心テーマを正確に対応付けておく必要がある。",
+    "officialDocs": [
+      {
+        "label": "AWS Well-Architected フレームワーク（AWS公式）",
+        "url": "https://aws.amazon.com/jp/architecture/well-architected/"
+      },
+      {
+        "label": "AWS Well-Architected Framework（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/framework/welcome.html"
+      },
+      {
+        "label": "コスト最適化の柱（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/cost-optimization-pillar/welcome.html"
+      }
+    ]
   },
   {
     "questionId": "clf-008",
@@ -497,7 +512,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS クラウドの利用によってオンプレミス環境と比較して大きく削減できるのは、物理サーバー\nの購入・データセンターの設備投資・ハードウェア保守・ネットワーク機器の調達といった、\n「アプリケーションの差別化に直接寄与しないインフラ作業」である。AWS ではこの領域を\n「Undifferentiated Heavy Lifting（差別化されない重労働）」と呼び、利用者はこれらを\nAWS に任せて、本来注力すべきアプリケーション設計・データモデリング・ユーザー体験\n設計に時間を振り向けることができる。EC2 の起動、S3 への保存、RDS の構築といった操作\nは、いずれも物理機器の調達工程を介さずに数分で完了する。\n\n一方で、AWS に任せられる範囲は「クラウドそのもの（of the cloud）」までであり、\n「クラウドの中身（in the cloud）」については利用者側の責任が残る。具体的には、\nアプリケーションの設計と実装、データの分類と暗号化方式の選定、IAM ユーザーや権限の\n管理、OS パッチ適用（EC2 の場合）、ネットワーク設定（セキュリティグループ・VPC）\nなどは、AWS がインフラを提供しても利用者側で意思決定し運用する必要がある。これは\n責任共有モデルとして整理されており、削減できる対象とできない対象を切り分ける際の\n判断基準になる。\n\nCLF-C02 では、「クラウド化で削減できるものは何か」が責任共有モデルと絡めて問われる。\n正解は「物理サーバーの購入・設置・保守作業」のような、インフラ側の作業である。\n誤答としては「アプリケーション設計の責任」「ユーザーアカウント管理の責任」「データ\n分類の責任」のように、利用者側の責任として残る項目が並ぶ。CapEx（資本支出）から\nOpEx（運用支出）への転換、初期投資の削減、市場投入までの時間短縮といったキーワードも\n同じ文脈で繰り返し出題される。",
+    "officialDocs": [
+      {
+        "label": "AWS クラウドの経済性（AWS公式）",
+        "url": "https://aws.amazon.com/jp/economics/"
+      },
+      {
+        "label": "AWS の料金の仕組み（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/how-aws-pricing-works.html"
+      },
+      {
+        "label": "責任共有モデル(AWS公式)",
+        "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      }
+    ]
   },
   {
     "questionId": "clf-009",
@@ -548,7 +578,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS の責任共有モデル（Shared Responsibility Model）は、AWS と利用者の間でセキュリティ\n責任をどう分担するかを定義する基本枠組みである。AWS 側は「クラウドそのもののセキュリ\nティ（Security OF the Cloud）」を担い、データセンターの物理セキュリティ、ハードウェア\nの保守、ハイパーバイザーやマネージドサービス基盤の運用までを責任範囲とする。一方、\n利用者側は「クラウド内のセキュリティ（Security IN the Cloud）」を担い、IAM ユーザーと\nロールの管理、データの分類と暗号化、ネットワーク設定（セキュリティグループ・VPC 設定）、\nOS パッチ適用（EC2 の場合）、アプリケーションのセキュリティ実装などを担当する。\n\n利用者側の責任範囲は、利用するサービス形態によって変動する。EC2 のような IaaS では\nOS から上のレイヤー全てが利用者責任になる一方、Lambda や DynamoDB のようなマネージド\nサービスでは OS・ミドルウェアの管理を AWS が担うため、利用者は IAM 権限・データ・\nアプリケーションロジックの管理に集中できる。実務では、IAM ポリシーの最小権限設計、\nS3 バケットの公開設定確認、Security Hub や AWS Config による設定ドリフト検出が、\n利用者責任を果たすための定型作業として組み込まれる。\n\nCLF-C02 では、「次のうちユーザー側の責任はどれか」「次のうち AWS 側の責任はどれか」\nという直接的な形で頻出する。ユーザー側責任の典型例は IAM ユーザーや権限の管理、データ\nの暗号化、アプリケーションのセキュリティ実装である。AWS 側責任の典型例はデータ\nセンターの物理セキュリティ、リージョン施設の管理、グローバルネットワーク機器の保守\nである。「責任の切れ目」を正確に押さえることが正答への近道となる。",
+    "officialDocs": [
+      {
+        "label": "責任共有モデル(AWS公式)",
+        "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス(AWS公式ドキュメント)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
   },
   {
     "questionId": "clf-010",
@@ -602,7 +643,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "IAM ロールは、AWS リソースや利用者に対して一時的な認証情報を発行する形で権限を付与\nする仕組みである。IAM ユーザーが「人」に紐づく永続的なクレデンシャル（パスワード /\nアクセスキー）を持つのに対し、IAM ロールはエンティティに紐づかず、必要なタイミングで\nAssumeRole することで一時的なクレデンシャル(STS が発行するアクセスキー ID / シーク\nレットアクセスキー / セッショントークン)が払い出される。発行された認証情報には\n有効期限が設定されており、漏えい時の影響範囲が時間軸で制限される点が、長期間有効な\nアクセスキーと比較した最大の利点である。\n\n実務での代表的な利用パターンは 3 つある。1 つ目は EC2 インスタンスプロファイルで、\nEC2 上で動くアプリケーションから S3 や DynamoDB を操作する際に、アクセスキーを\nコードや環境変数に埋め込まず IAM ロール経由で権限を取得する構成である。2 つ目は\nLambda 実行ロールで、Lambda 関数が他の AWS サービスにアクセスする際の認証に使う。\n3 つ目はクロスアカウントアクセスで、別 AWS アカウントの IAM ユーザーやロールに\nAssumeRole を許可することで、長期クレデンシャルを共有せずにアカウント間連携を実現\nする。Identity Center（旧 SSO）や Cognito も、内部的には IAM ロールの一時クレデン\nシャル発行機構を利用している。\n\nCLF-C02 では、「IAM ロールの説明として最も適切なものはどれか」「アクセスキーを使わず\nEC2 から S3 にアクセスする方法は何か」という形で問われる。誤答として「画像圧縮\nサービス」「メトリクス表示」「ドメイン登録機能」のように、IAM とは別領域のサービスを\n当て込んでくるパターンが多い。SAA-C03 以降では、IAM ユーザー / グループ / ロール /\nポリシーの使い分け、信頼ポリシーとアクセス許可ポリシーの違い、AssumeRole の認可\nフローまで踏み込んで出題される。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management（AWS公式）",
+        "url": "https://aws.amazon.com/jp/iam/"
+      },
+      {
+        "label": "IAM ロール（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles.html"
+      },
+      {
+        "label": "IAM ロールの使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_use.html"
+      }
+    ]
   },
   {
     "questionId": "clf-011",
@@ -655,7 +711,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS アカウントの root ユーザーは、当該アカウントに対するすべての操作権限（アカウント\nの解約、支払い情報の変更、サポートプランの変更を含む）を持つ最上位の特権アカウントで\nある。権限が強すぎるため、日常運用での利用は推奨されておらず、AWS 公式のベストプラク\nティスでは「root ユーザーは限定された数のタスク（例: 初回サインアップ後の IAM\nユーザー作成、サポートプランの変更、特定の請求設定）にのみ使用し、それ以外の日常作業\nには IAM ユーザーまたは IAM Identity Center で発行したユーザーを使う」運用が推奨されて\nいる。MFA（多要素認証）の有効化、強固なパスワード設定、アクセスキーを作成しない\n（または作成済みなら削除する）といった保護措置も必須に位置付けられる。\n\n実務では、初期セットアップ完了後すぐに管理者用 IAM ユーザー（または IAM Identity\nCenter のユーザー）を作成し、以後の作業はすべてその IAM ユーザー側で行う運用が標準\nである。AWS Organizations を使う場合、メンバーアカウントの root ユーザーは\nService Control Policy（SCP）でも完全には制限できないため、各アカウントの root\nユーザーごとに MFA を有効化し、認証情報を金庫やパスワードマネージャーで厳重に管理\nする必要がある。root ユーザーのアクセスキーが GitHub などのパブリックリポジトリに\n誤って公開された場合、第三者にアカウントを乗っ取られて高額なリソースを起動される\n事故が現実に発生しているため、アクセスキーを作成しないこと自体が最も確実な防御策と\nなる。\n\nCLF-C02 では、「root ユーザーに対する推奨事項として正しいものはどれか」という形で\n頻出する。正解は「日常作業では使わず、MFA を有効化する」のように、保護を強化し\n利用を限定する選択肢である。誤答の典型は「アクセスキーを作成して GitHub に保存する」\n「すべての開発者でパスワードを共有する」「請求情報を確認できないようにする」のように、\nセキュリティのベストプラクティスと明らかに矛盾するパターンである。",
+    "officialDocs": [
+      {
+        "label": "AWS アカウントのルートユーザー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_root-user.html"
+      },
+      {
+        "label": "ルートユーザーのみが実行できるタスク（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/accounts/latest/reference/root-user-tasks.html"
+      },
+      {
+        "label": "ルートユーザーの MFA の有効化（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/enable-virt-mfa-for-root.html"
+      }
+    ]
   },
   {
     "questionId": "clf-012",
