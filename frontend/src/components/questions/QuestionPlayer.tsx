@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
+import { filterValidOfficialDocs } from "@/lib/official-doc";
 
 /**
  * サーバー側で解決済みの関連リンク情報。
@@ -226,11 +227,11 @@ export function QuestionPlayer({
 
           <div className="mb-6">
             <h3 className="mb-2 text-base font-bold text-slate-950">解説</h3>
-            <p className="leading-7 text-slate-800">{question.explanation}</p>
+            <p className="whitespace-pre-line leading-7 text-slate-800">{question.explanation}</p>
           </div>
 
           {question.choiceExplanations ? (
-            <div>
+            <div className="mb-6">
               <h3 className="mb-3 text-base font-bold text-slate-950">選択肢ごとの解説</h3>
               <div className="space-y-3">
                 {question.choices.map((choice) => {
@@ -248,13 +249,47 @@ export function QuestionPlayer({
                       <p className="mb-1 text-sm font-bold text-slate-950">
                         {choice.choiceId}. {choice.text}
                       </p>
-                      <p className="text-sm leading-6 text-slate-700">{explanation}</p>
+                      <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{explanation}</p>
                     </div>
                   );
                 })}
               </div>
             </div>
           ) : null}
+
+          {/* 実務での使いどころ: 客観的な実務文脈・よくある誤解の枠（体験談・一人称感想は入れない）。
+              practicalNote が存在する設問のみ表示。存在しない場合はセクションごと非表示。 */}
+          {question.practicalNote ? (
+            <div className="mb-6">
+              <h3 className="mb-2 text-base font-bold text-slate-950">実務での使いどころ</h3>
+              <p className="whitespace-pre-line leading-7 text-slate-800">{question.practicalNote}</p>
+            </div>
+          ) : null}
+
+          {/* 公式ドキュメント: officialDocs が存在かつ allowlist を通過した件が1件以上の場合のみ表示。 */}
+          {(() => {
+            const validDocs = filterValidOfficialDocs(question.officialDocs);
+            return validDocs.length > 0 ? (
+              <div>
+                <h3 className="mb-3 text-base font-bold text-slate-950">公式ドキュメント</h3>
+                <ul className="space-y-2">
+                  {validDocs.map((doc) => (
+                    <li key={doc.url}>
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
+                      >
+                        {doc.label}
+                        <span aria-hidden="true">↗</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null;
+          })()}
         </section>
       ) : null}
 
