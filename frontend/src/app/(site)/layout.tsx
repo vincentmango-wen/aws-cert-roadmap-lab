@@ -11,10 +11,13 @@ import type { ReactNode } from "react";
  *
  * next/script は static export 下で実 <script src="..."> タグを生成せず
  * <link rel="preload"> + ランタイム queue になるため、AdSense 審査クローラが
- * スクリプトを検出できない。そのため next/script を使わず、<head> 内に
- * 素の <script async src="..."> タグを直接書いて確実に出力する。
- * （Next.js App Router はこの layout から返した <head> 要素を HTML の
- * <head> ブロックにマージして静的 HTML に出力する）
+ * スクリプトを検出できない。そのため next/script を使わず素の
+ * <script async src="..."> タグを直接書いて確実に出力する。
+ *
+ * <head> wrapper は使わない: JSX で <head> を return すると、Next.js の
+ * static export 時に body 内に空 <head></head> が残留し HTML5 仕様違反
+ * （<head> は <html> 直下のみ可）になる。React 19 は async script を
+ * document <head> へ自動 hoist するため、Fragment 直下に置くだけで十分。
  */
 
 const ADSENSE_CLIENT_ID_PREFIX = "ca-pub-";
@@ -53,15 +56,13 @@ export default function SiteGroupLayout({
   return (
     <>
       {googleAdSenseClientId !== null ? (
-        <head>
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
-              googleAdSenseClientId,
-            )}`}
-            crossOrigin="anonymous"
-          />
-        </head>
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
+            googleAdSenseClientId,
+          )}`}
+          crossOrigin="anonymous"
+        />
       ) : null}
       {children}
     </>
