@@ -19,10 +19,8 @@ export type QuestionChoice = {
   text: string;
 };
 
-export type OfficialDoc = {
-  label: string;
-  url: string;
-};
+import type { OfficialDoc } from "@/types/official-doc";
+export type { OfficialDoc };
 
 export type Question = {
   questionId: string;

@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import termsData from "../../../../../contents/terms/terms.json";
 import { createPageMetadata } from "@/lib/seo";
 import { isExistingComparison, isExistingArchitecture } from "@/lib/termGuards";
+import { filterValidOfficialDocs } from "@/lib/official-doc";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import type { OfficialDoc } from "@/types/official-doc";
 
 export async function generateMetadata({
   params,
@@ -68,11 +70,6 @@ type TermCategory =
 type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 
 type ExamScope = "CLF-C02" | "SAA-C03";
-
-type OfficialDoc = {
-  label: string;
-  url: string;
-};
 
 type AwsTerm = {
   termId: string;
@@ -330,26 +327,29 @@ export default async function TermDetailPage({ params }: PageProps) {
           </Section>
         ) : null}
 
-        {/* 公式ドキュメント: officialDocs が存在かつ1件以上の場合のみ表示。 */}
-        {term.officialDocs && term.officialDocs.length > 0 ? (
-          <Section title="公式ドキュメント">
-            <ul className="space-y-2">
-              {term.officialDocs.map((doc) => (
-                <li key={doc.url}>
-                  <a
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
-                  >
-                    {doc.label}
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </Section>
-        ) : null}
+        {/* 公式ドキュメント: officialDocs が存在かつ allowlist を通過した件が1件以上の場合のみ表示。 */}
+        {(() => {
+          const validDocs = filterValidOfficialDocs(term.officialDocs);
+          return validDocs.length > 0 ? (
+            <Section title="公式ドキュメント">
+              <ul className="space-y-2">
+                {validDocs.map((doc) => (
+                  <li key={doc.url}>
+                    <a
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
+                    >
+                      {doc.label}
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          ) : null;
+        })()}
 
         <section className="grid gap-6 lg:grid-cols-2">
           <Section title="コスト注意点">

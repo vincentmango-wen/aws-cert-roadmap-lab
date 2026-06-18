@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
+import { filterValidOfficialDocs } from "@/lib/official-doc";
 
 /**
  * サーバー側で解決済みの関連リンク情報。
@@ -265,27 +266,30 @@ export function QuestionPlayer({
             </div>
           ) : null}
 
-          {/* 公式ドキュメント: officialDocs が存在かつ1件以上の場合のみ表示。 */}
-          {question.officialDocs && question.officialDocs.length > 0 ? (
-            <div>
-              <h3 className="mb-3 text-base font-bold text-slate-950">公式ドキュメント</h3>
-              <ul className="space-y-2">
-                {question.officialDocs.map((doc) => (
-                  <li key={doc.url}>
-                    <a
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
-                    >
-                      {doc.label}
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+          {/* 公式ドキュメント: officialDocs が存在かつ allowlist を通過した件が1件以上の場合のみ表示。 */}
+          {(() => {
+            const validDocs = filterValidOfficialDocs(question.officialDocs);
+            return validDocs.length > 0 ? (
+              <div>
+                <h3 className="mb-3 text-base font-bold text-slate-950">公式ドキュメント</h3>
+                <ul className="space-y-2">
+                  {validDocs.map((doc) => (
+                    <li key={doc.url}>
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
+                      >
+                        {doc.label}
+                        <span aria-hidden="true">↗</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null;
+          })()}
         </section>
       ) : null}
 
