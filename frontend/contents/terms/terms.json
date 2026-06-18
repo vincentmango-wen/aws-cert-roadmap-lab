@@ -49,7 +49,22 @@
       "期限切れを防ぐためDNS検証を使う",
       "秘密鍵を外部に出さない"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "ACM は SSL/TLS 証明書を発行・管理するサービスであり、CloudFront や ALB、API Gateway\nなどの AWS サービスと統合して、HTTPS 通信を簡単に設定できるようにする。実務でもっとも\nよく使われる場面は、独自ドメインを使った Web サイトの HTTPS 化である。Route 53 で\n取得したドメインに対し、ACM でパブリック証明書を発行し、CloudFront や ALB のリスナーに\n紐付けるだけで、証明書の自動更新を含めた HTTPS 配信が完成する。証明書の有効期限が\n近づくと AWS 側で自動的に更新されるため、期限切れ事故を構造的に減らせる点が、自前で\n証明書を管理する方式と比較した最大の利点である。\n\nACM を扱ううえで注意が必要なのは、証明書のリージョン制約である。ALB に紐付ける証明書\nは、ALB と同じリージョンで発行する必要がある。一方、CloudFront に紐付ける証明書は\nグローバルサービスである CloudFront の性質上、必ず us-east-1（バージニア北部）で発行\nしなければならない。リージョンを間違えて発行した証明書は CloudFront のディストリ\nビューションから選択できず、初学者が詰まりやすいポイントになっている。また、ACM が\n発行するのはパブリック証明書とプライベート証明書の 2 種類で、インターネット向けには\nパブリック証明書を、社内システム向けには ACM Private CA で発行するプライベート証明書\nを使い分ける。\n\nCLF-C02 / SAA-C03 では、「HTTPS 化に使うサービスは何か」「CloudFront 用の証明書は\nどのリージョンで発行するか」という形で問われる。検証方式の DNS 検証とメール検証の\n違いも頻出ポイントで、DNS 検証は Route 53 と組み合わせれば自動更新まで含めて完結する\nため、実務では DNS 検証が推奨される。",
+    "officialDocs": [
+      {
+        "label": "AWS Certificate Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/certificate-manager/"
+      },
+      {
+        "label": "AWS Certificate Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/acm-overview.html"
+      },
+      {
+        "label": "DNS 検証を使用した ACM 証明書の発行（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/dns-validation.html"
+      }
+    ]
   },
   {
     "termId": "api-gateway",
@@ -100,7 +115,22 @@
       "本番でAccess-Control-Allow-Originに*を使わない",
       "入力値検証をLambda側でも行う"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "Amazon API Gateway は、HTTP API や REST API、WebSocket API を公開・管理するためのマネージド\nサービスである。実務でもっとも多い使い方は、Lambda と組み合わせたサーバーレス API の\n構築である。フロントエンドからのリクエストを API Gateway で受け、認証・認可・レート\n制限・CORS 制御などをこの層で処理してから、バックエンドの Lambda 関数や EC2 上の\nサービスに転送する構成になる。サーバーを常駐させないため、アクセスがない時間帯の\nコストが抑えられ、トラフィックの急増にも自動的にスケールする。\n\nAPI Gateway には HTTP API と REST API の 2 種類があり、用途に応じて選び分ける。HTTP API は\n低レイテンシ・低コストで、JWT 認証や CORS など基本的な機能が揃っており、ほとんどの\nモダンな Web/モバイルアプリ向け API にはこちらが第一候補となる。REST API はリクエスト\nバリデーション、API キー管理、AWS WAF との統合、プライベート API といった高度な機能を\n備えており、エンタープライズ用途や細かい制御が必要な API ではこちらが選ばれる。\nWebSocket API はチャットやリアルタイム通知のような双方向通信に使われる。\n\nCLF-C02 / SAA-C03 では、「サーバーレス API の入口として使うサービスは何か」「Lambda と\n連携してフロントエンドに API を提供するサービスは何か」という形で問われる。CORS の\n設定、認証方式（IAM 認証、Cognito Authorizer、Lambda Authorizer）、レート制限と\nスロットリングの設計は、SAA-C03 以降で踏み込んで出題される。本番運用では\nAccess-Control-Allow-Origin にワイルドカード（`*`）を設定したまま放置しない、API キー\nや認証トークンをログに出さないといった、セキュリティ上の基本も問われやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon API Gateway（AWS公式）",
+        "url": "https://aws.amazon.com/jp/api-gateway/"
+      },
+      {
+        "label": "Amazon API Gateway とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/welcome.html"
+      },
+      {
+        "label": "HTTP API と REST API の選択（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/http-api-vs-rest.html"
+      }
+    ]
   },
   {
     "termId": "app-runner",
@@ -149,7 +179,18 @@
       "公開範囲と環境変数を確認する",
       "ECRイメージの権限を制限する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS App Runner は、コンテナイメージまたはソースコードリポジトリから Web アプリケーション\nや API を直接デプロイできるマネージドサービスである。VPC・ロードバランサー・Auto Scaling\nグループといった基盤を個別に構成することなく、コンテナイメージを指定するだけで HTTPS\nエンドポイント付きの実行環境が払い出される。実務では、ECS や EKS を使うほど運用負荷を\nかけたくない小〜中規模の Web アプリ・API 公開や、社内ツールのコンテナ化、プロトタイプの\n本番運用といった場面で採用される。\n\nApp Runner は運用負荷を下げる代わりに、いくつかのトレードオフがある。常時稼働を前提と\nした料金体系（アクティブな vCPU・メモリ時間に対する課金）であるため、まったくアクセスが\nない時間帯でも一定の最小コストが発生する。一方、Lambda + API Gateway 構成はリクエストが\nないときの課金がほぼゼロになるが、コンテナ実行モデルではなく関数実行モデルである点で\nアプリケーションの作り方が変わる。常時稼働の Web サーバーをコンテナで動かしたいが ECS の\n複雑さは避けたい、というニーズに対しては App Runner が、リクエスト単位の軽量処理を\nサーバーレスで動かしたいなら Lambda + API Gateway が、それぞれ適している。\n\nCLF-C02 / SAA-C03 では、「コンテナアプリケーションをマネージドに実行できるサービス」\n「ECS や EKS と比べて運用負荷を下げられるサービス」という文脈で問われる。ECS（Fargate）、\nEKS、App Runner、Lambda の比較は、運用負荷、課金モデル、対応するワークロードの種類で\n整理しておくと、SAA-C03 のアーキテクチャ設計問題に対応しやすい。静的サイトしか公開\nしない場合は、App Runner よりも S3 + CloudFront 構成の方がコストと適合性の両面で\n優位である。",
+    "officialDocs": [
+      {
+        "label": "AWS App Runner（AWS公式）",
+        "url": "https://aws.amazon.com/jp/apprunner/"
+      },
+      {
+        "label": "AWS App Runner とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/what-is-apprunner.html"
+      }
+    ]
   },
   {
     "termId": "athena",
@@ -199,7 +240,22 @@
       "S3バケット権限とAthena実行権限を分ける",
       "クエリ結果保存先のS3権限を管理する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Amazon Athena は、S3 に保存されたデータに対して標準 SQL でクエリを実行できる\nサーバーレスの分析サービスである。事前にデータベースサーバーをプロビジョニングする\n必要がなく、データを S3 に置き、Glue Data Catalog 等でテーブル定義を登録するだけで\nすぐにクエリを実行できる。実務では、CloudFront や ALB のアクセスログ分析、CloudTrail の\n監査ログ分析、CSV や JSON 形式で蓄積された業務データのアドホック調査、データレイク上\nでのデータ探索といった用途で使われる。\n\nAthena のコストはクエリでスキャンした S3 データ量に対して課金される（1 TB あたり数 USD\n程度）。このため、データ形式とパーティショニングの設計がコスト最適化の中心的な課題に\nなる。CSV や JSON のような行指向フォーマットを、Parquet や ORC のような列指向\nフォーマットに変換すると、必要なカラムだけを読み出せるためスキャン量が大幅に減る。\nまた、日付やリージョンなど検索条件に頻出するキーでパーティションを切ると、不要な\nパーティションのスキャンを Athena 側で自動的にスキップできる。Glue Data Catalog で\nテーブル定義（スキーマとパーティション情報）を集中管理し、Athena と他の分析サービス\n（Redshift Spectrum、EMR など）で共有する設計が標準的である。\n\nCLF-C02 / SAA-C03 では、「S3 上のデータを SQL で分析できるサーバーレスサービス」という\n形で問われる。EMR（マネージド Hadoop/Spark）や Redshift（データウェアハウス）との\n使い分けも頻出で、Athena はアドホックなクエリ・小〜中規模のログ分析向き、EMR は大規模\nバッチ処理向き、Redshift は定常的な BI 分析向きという棲み分けを覚えておくと判断しやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena（AWS公式）",
+        "url": "https://aws.amazon.com/jp/athena/"
+      },
+      {
+        "label": "Amazon Athena とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/what-is.html"
+      },
+      {
+        "label": "列指向ストレージ形式（Parquet / ORC）の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/columnar-storage.html"
+      }
+    ]
   },
   {
     "termId": "aurora",
@@ -253,7 +309,22 @@
       "VPC内に配置してアクセス元を制限する",
       "認証情報をコードへ直書きしない"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Amazon Aurora は、MySQL および PostgreSQL 互換のリレーショナルデータベースサービスで、\nAWS が独自に設計した分散ストレージレイヤーの上に構築されている。同じインスタンス\nクラスの RDS for MySQL / RDS for PostgreSQL と比較して、スループットや可用性、復旧\n時間の面で優位性があるとされる。実務では、Web アプリケーションのメイン RDB、SaaS\nバックエンド、高い可用性を求められる業務システムの DB レイヤーといった、書き込み・\n読み取りの両方が継続的に発生するワークロードで採用される。\n\nAurora の特徴は、ストレージレイヤーとコンピュートレイヤーが分離されている点にある。\nストレージは 3 つの AZ にまたがる 6 個のコピーで自動的に冗長化され、データ損失耐性\n（最大 2 つのコピー喪失まで書き込み継続、3 つのコピー喪失まで読み取り継続）と高速な\nリカバリ時間を実現している。書き込みは 1 つのプライマリインスタンスが処理し、Aurora\nReplica（最大 15 台）で読み取り負荷を分散する。トラフィックが急増する SaaS や、需要\n変動の大きいワークロードでは、Aurora Serverless v2 を使うことで利用量に応じて\nコンピュート容量が自動的に増減する。\n\nCLF-C02 / SAA-C03 では、「RDS の中で MySQL/PostgreSQL 互換のサービスは何か」「読み取り\n負荷を分散するために使う構成は何か（→ Aurora Replica）」「Multi-AZ と Read Replica の\n違い」が頻出する。Multi-AZ は可用性向上のためのスタンバイ構成（読み取りには使えない）、\nRead Replica は読み取り性能向上のためのレプリカ（書き込みはできない）という整理が\n出題の中心になる。Aurora は RDS のいち選択肢に位置付けられている点も押さえておく。",
+    "officialDocs": [
+      {
+        "label": "Amazon Aurora（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/aurora/"
+      },
+      {
+        "label": "Amazon Aurora の概要（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html"
+      },
+      {
+        "label": "Aurora のレプリケーション（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html"
+      }
+    ]
   },
   {
     "termId": "auto-scaling",

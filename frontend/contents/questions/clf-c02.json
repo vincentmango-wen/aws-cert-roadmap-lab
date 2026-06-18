@@ -112,7 +112,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "従量課金モデル（Pay-as-you-go）は、AWS の多くのサービスで採用されている課金体系であり、\nEC2 の稼働時間、S3 の保存容量、Lambda の実行回数、データ転送量など、利用したリソースの\n種類と量に応じて料金が発生する。前払いや長期契約を必須としないため、検証用に短期間だけ\nリソースを起動して破棄する使い方や、需要が読みにくいワークロードでまず小さく始めて\n段階的にスケールさせる使い方と相性が良い。\n\n一方で、従量課金は「常に最安」を意味しない。安定して稼働し続けるサーバーや、長期に\nわたって利用が確定しているワークロードでは、リザーブドインスタンスや Savings Plans の\nような長期コミットによる割引、あるいは Spot インスタンスのような余剰キャパシティ活用\n方式の方が、オンデマンド従量課金よりも単価が下がるケースが多い。さらに、リソースを\n停止し忘れたまま放置すると、利用が無くても課金が継続するため、AWS Budgets でしきい値\nを設定し、Cost Explorer で実績を可視化する運用がセットで必要となる。\n\nCLF-C02 では、従量課金は「使った分だけ支払う（Pay only for what you use）」という表現\nで繰り返し問われる。誤答の選択肢としては「利用量に関係なく無料」「初期投資のみで以降\nは無料」「常に定額」のような言い切り型が多く、これらはクラウドの料金特性と矛盾する\nため除外できる。「無料利用枠（AWS Free Tier）」と「従量課金」を混同させる選択肢にも\n注意が必要であり、無料利用枠はサービスごとに上限と期間が定められた限定的な仕組みで\nある点を押さえておく。",
+    "officialDocs": [
+      {
+        "label": "AWS の料金体系（AWS公式）",
+        "url": "https://aws.amazon.com/jp/pricing/"
+      },
+      {
+        "label": "AWS の料金の仕組み（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/how-aws-pricing-works.html"
+      },
+      {
+        "label": "AWS 無料利用枠（AWS公式）",
+        "url": "https://aws.amazon.com/jp/free/"
+      }
+    ]
   },
   {
     "questionId": "clf-003",
@@ -163,7 +178,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "リージョンは、AWS のグローバルインフラストラクチャの最上位の単位であり、世界中の特定の\n地理的エリアに配置された独立したインフラ群を指す。東京（ap-northeast-1）、大阪\n（ap-northeast-3）、バージニア北部（us-east-1）、アイルランド（eu-west-1）などが代表例\nである。各リージョンは複数のアベイラビリティゾーン（AZ）で構成され、リージョン間は\n互いに物理的・電源的・ネットワーク的に分離されている。実務でリージョンを選ぶ判断軸は、\nユーザーからの地理的近さ（レイテンシ）、データ所在地に関する法令や社内ポリシー、利用\nしたいサービスの提供状況、そしてリージョン別の料金差である。\n\nリージョン選択で実務上特に注意が必要な点は、サービスのリージョン提供状況に差がある\nことと、一部サービスがリージョンを跨いで動作するグローバルサービスである点である。\nIAM、Route 53、CloudFront、AWS Organizations などはグローバルサービスとして扱われ、\nリージョンを指定しないか、特定の固定リージョン（CloudFront 用の ACM 証明書は\nus-east-1）で操作する必要がある。また、リージョン間のデータ転送には料金が発生するため、\nバックアップ目的でリージョンを跨いだコピーを設計する際は転送量と頻度を見積もる必要が\nある。\n\nCLF-C02 では、リージョンと AZ、エッジロケーションの関係性が頻出する。リージョンは\n「複数の AZ を含む地理的エリア」、AZ は「1 つ以上のデータセンターから構成される独立した\n施設」、エッジロケーションは「CloudFront などが利用する配信用拠点」として明確に区別\nされて出題される。「1 台の物理サーバー」「IAM ユーザーを管理する単位」「S3 内のフォルダ」\nなど、概念的に別レイヤーのものを選ばせる誤答が多い。",
+    "officialDocs": [
+      {
+        "label": "AWS グローバルインフラストラクチャ（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/"
+      },
+      {
+        "label": "AWS リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      },
+      {
+        "label": "リージョンとアベイラビリティーゾーン（EC2 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+      }
+    ]
   },
   {
     "questionId": "clf-004",
@@ -216,7 +246,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "アベイラビリティゾーン（AZ）を複数利用するマルチ AZ 構成は、単一の物理データセンター\n障害（停電・ネットワーク機器故障・自然災害など）が発生した際に、サービス全体を停止\nさせない設計の基本である。実務では、EC2 を Auto Scaling Group で複数 AZ に配置し、\nALB を前面に立ててトラフィックを分散する Web 層構成、RDS を Multi-AZ 配置にして\nスタンバイ DB を別 AZ に置く DB 層構成、ファイルストレージを EFS のようなリージョン内\n冗長化されたサービスに置く構成などが標準的に採用される。\n\n複数 AZ 構成にはトレードオフも存在する。AZ を跨ぐデータ転送には料金が発生し、AZ 間の\nレイテンシは同一 AZ 内の通信より高くなる。また、RDS の Multi-AZ はスタンバイ用の DB\nインスタンスが追加で起動するため、シングル AZ 構成と比較して概ね 2 倍のコンピュート\nコストが発生する。可用性を高めるとコストも上がるため、ワークロードに求められる SLA\n（例: 99.9% / 99.99%）に応じて、シングル AZ で十分か、Multi-AZ が必要か、さらに\nマルチリージョンまで広げるかを段階的に判断することになる。\n\nCLF-C02 では、複数 AZ 配置の目的は「単一障害点（SPOF）の排除」「高可用性の実現」\nという文脈で問われる。誤答の典型は「コストを下げるため」「IAM ユーザー数を増やすため」\n「監視を不要にするため」のような、可用性とは別軸の話を当て込んでくるパターンである。\nさらに、「マルチ AZ」と「マルチリージョン」の混同にも注意が必要で、マルチ AZ は同一\nリージョン内の可用性向上策、マルチリージョンは地理的災害対策やレイテンシ最適化に\n位置付けられる。",
+    "officialDocs": [
+      {
+        "label": "AWS リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      },
+      {
+        "label": "Amazon RDS Multi-AZ 配置（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "AWS Well-Architected フレームワーク 信頼性の柱（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/reliability-pillar/welcome.html"
+      }
+    ]
   },
   {
     "questionId": "clf-005",
@@ -268,7 +313,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "スケーラビリティは、負荷の増減に合わせてシステムの処理能力を増減できる性質を指す。\n拡張方向には大きく 2 つの軸があり、1 台あたりのスペックを上げる垂直スケール\n（スケールアップ／スケールダウン）と、台数を増減させる水平スケール\n（スケールアウト／スケールイン）に分かれる。AWS では水平スケールを自動化する仕組みが\n充実しており、EC2 Auto Scaling Group は CloudWatch メトリクス（CPU 使用率・リクエスト数\nなど）をトリガに自動でインスタンスを増減させる。Lambda はリクエストごとに実行環境が\n起動するため、利用者側がスケーリング設定をほとんど意識せずに済む。\n\nスケーラビリティと混同されやすい概念にエラスティシティ（弾力性）がある。スケーラビリティ\nは「拡張できる能力そのもの」を指す静的な性質であり、エラスティシティは「需要に応じて\n動的に拡張・縮小し、無駄なリソースを抱え込まない」という動的な振る舞いを指す。\n両者は近い概念だが試験では区別されて問われることがあり、特に「需要が下がったときに\nリソースを減らせる」という文脈はエラスティシティの方が適切である。スケーラビリティを\nうたう一方で、実装上はステートをローカルに持つアプリケーションになっていると水平\nスケールできないため、設計時にステートレス化やセッションストアの外出しを検討する\n必要がある。\n\nCLF-C02 では、スケーラビリティは「負荷に応じてリソース量を増減できる性質」という\n直接的な定義で問われる。「データを紙で保存する」「通信を手動で承認する」「サーバーを\n1 台だけで運用する」のような、概念とまったく無関係な選択肢が誤答として並ぶことが多く、\n正解はほぼ一意に絞れる。一方で、Well-Architected Framework のパフォーマンス効率の柱と\n関連付けた応用問題では、スケーラビリティとエラスティシティ、Auto Scaling と\nサーバーレスの使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Auto Scaling とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "AWS Auto Scaling（AWS公式）",
+        "url": "https://aws.amazon.com/jp/autoscaling/"
+      },
+      {
+        "label": "AWS Well-Architected フレームワーク（AWS公式）",
+        "url": "https://aws.amazon.com/jp/architecture/well-architected/"
+      }
+    ]
   },
   {
     "questionId": "clf-006",
@@ -321,7 +381,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "高可用性（High Availability, HA）は、システムが予期しない障害に遭遇しても、サービス\n提供を継続できる性質を指す。AWS で高可用性を実現する基本パターンは、複数の\nアベイラビリティゾーンへのリソース分散、ロードバランサーによるトラフィック分配、\nスタンバイ系を含むデータベース冗長化、定期的なバックアップと監視の組み合わせである。\nWeb 層は ALB + Auto Scaling Group を 2 つ以上の AZ にまたがせ、データ層は RDS の\nMulti-AZ や Aurora のクラスタ構成で書き込み系と読み取り系を冗長化する、というのが\n標準構成になる。\n\n高可用性と関連する概念には、耐障害性（Fault Tolerance）、災害復旧（Disaster Recovery）、\nバックアップ・リストアがあり、それぞれ目的と達成手段が異なる。高可用性は「単一の\nコンポーネント障害が起きてもサービスを止めない」ことが主眼であるのに対し、災害復旧は\n「リージョン規模の障害が発生した場合に別リージョンへ切り替える」ことが主眼であり、\nRTO（目標復旧時間）と RPO（目標復旧時点）の指標で設計される。可用性を高めるほど\n構成は複雑になり、コストも増えるため、ビジネス要件として許容できるダウンタイムを\n明確にしたうえで設計するのが実務上の基本となる。\n\nCLF-C02 では、高可用性の設計として「複数 AZ への分散」が正解として出題される頻度が\n高い。誤答としては「1 台の EC2 にすべて集約する」「バックアップを取得しない」\n「監視を停止する」のように、可用性を直接損なう極端な選択肢が並ぶ。SAA-C03 などの上位\n試験では、Multi-AZ と Read Replica の使い分け（前者は可用性、後者は読み取り性能）、\nあるいはアクティブ／パッシブ構成とアクティブ／アクティブ構成の違いといった、より\n踏み込んだ設計判断が問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Well-Architected フレームワーク 信頼性の柱（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/reliability-pillar/welcome.html"
+      },
+      {
+        "label": "Amazon RDS Multi-AZ 配置（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "AWS リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      }
+    ]
   },
   {
     "questionId": "clf-007",
