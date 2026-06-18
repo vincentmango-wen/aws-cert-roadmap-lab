@@ -1773,7 +1773,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Cost Explorer は、AWS アカウントで発生したコストと使用量を可視化・分析するための\n無料のマネジメントコンソール機能である。日次・月次の利用料金推移、サービス別の内訳、\nリージョン別の内訳、リンクされたアカウント別の内訳、タグやコスト配分タグによる\nグルーピングなどを、グラフと表で参照できる。最大過去 13 か月の実績データに加え、\n将来 12 か月の予測も提供される。\n\n試験文脈では「AWS の利用料金や使用量の傾向を分析するサービスはどれか」という形で\n出題され、Cost Explorer を選ばせる問題が中心となる。誤答として「IAM ユーザーの\nパスワードリセット」「Lambda コードの保存」「Route 53 の DNS 問い合わせ停止」など、\nコスト管理と全く異なる守備範囲の選択肢が並ぶパターンが頻出する。サービスの役割を\n取り違えていないかを問う典型問題である。\n\n実務では Cost Explorer と AWS Budgets を組み合わせて使うことが多い。Cost Explorer は\n過去の傾向を「分析」する用途、AWS Budgets は事前に決めた予算超過を「アラート」する\n用途と役割が分かれる。CLF-C02 ではこの 2 サービスの役割分担も繰り返し問われる。\nさらに踏み込んだコスト最適化の文脈では、Cost Explorer のレポートを起点に Savings\nPlans の購入推奨を確認したり、リザーブドインスタンスのカバレッジ・使用率を把握\nしたりする使い方が一般的である。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
   },
   {
     "questionId": "clf-028",
@@ -1824,7 +1835,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Trusted Advisor は、AWS アカウント内のリソース構成を自動でチェックし、\nコスト最適化・セキュリティ・耐障害性・パフォーマンス・サービスクォータの 5 つの\nカテゴリで改善推奨事項を提示するサービスである。代表的なチェック項目には、未使用の\nElastic IP / 使用率の低い EC2 インスタンス / 公開状態の S3 バケット / IAM 用 MFA の\n有無 / EBS スナップショットの世代管理状況などがある。\n\n提供されるチェック項目はサポートプランによって異なる。Basic / Developer サポートでは\nコアチェック（セキュリティとサービスクォータの一部）に限定され、Business 以上の\n有料サポートに加入すると全カテゴリのフルチェックが利用できるようになる。CLF-C02 では\nこの「サポートプランによる機能差」がしばしば問われる。\n\n試験文脈では「AWS 環境のコスト・セキュリティ・耐障害性の改善提案を確認できるサービス\nはどれか」という形で出題される。誤答には「S3 オブジェクトの画像編集」「EC2 ソース\nコードの自動生成」「Lambda の学習教材」など、Trusted Advisor の役割と全く関係のない\n選択肢が並ぶパターンが多い。Trusted Advisor は「推奨事項を提示する」サービスであり、\n自動で構成を変更するサービスではない点も押さえておく必要がある。",
+    "officialDocs": [
+      {
+        "label": "AWS Trusted Advisor（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      },
+      {
+        "label": "AWS Trusted Advisor の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      }
+    ]
   },
   {
     "questionId": "clf-029",
@@ -1875,7 +1897,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "EC2 の課金モデルには、オンデマンド / Savings Plans / リザーブドインスタンス（RI）/\nスポットインスタンスの 4 種類がある。オンデマンドは予約なしで秒・時間単位の従量課金、\nSavings Plans と RI は 1 年または 3 年のコミットで時間あたり単価を割引く方式、スポットは\n余剰キャパシティを大幅割引で利用する代わりに中断のリスクがある方式である。長期間\n安定して稼働するワークロードでは、Savings Plans または RI を組み合わせることでオン\nデマンドより最大 70% 前後のコスト削減が可能になる。\n\nSavings Plans は EC2 / Fargate / Lambda にまたがってコミット時間あたりの利用額を約束\nする方式で、Compute Savings Plans はインスタンスファミリー・リージョン・OS・テナンシー\nの変更にも追従できる柔軟性が特徴である。RI は EC2 専用でインスタンスタイプを特定する\n代わりに、Standard RI は最大の割引率、Convertible RI はファミリー変更の柔軟性が得られる。\nCLF-C02 では「長期利用なら割引オプションを検討する」という方向性が問われる程度で、\nSAA-C03 以降で Savings Plans と RI の使い分けや Compute / EC2 Instance Savings Plans の\n差分が踏み込んで問われる。\n\n誤答として頻出するのは「常にオンデマンド料金だけを使う」「CloudWatch Logs を無期限\n保存する」「データを高頻度アクセス用ストレージに固定する」など、コスト削減ではなく\nコスト増を招く選択肢である。「長期固定利用 = 割引コミット」「変動が大きい = オン\nデマンドやサーバーレス」「中断に耐えられる = スポット」という対応関係を押さえて\nおきたい。",
+    "officialDocs": [
+      {
+        "label": "AWS Savings Plans（AWS公式）",
+        "url": "https://aws.amazon.com/jp/savingsplans/"
+      },
+      {
+        "label": "Savings Plans とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/savingsplans/latest/userguide/what-is-savings-plans.html"
+      },
+      {
+        "label": "Amazon EC2 リザーブドインスタンス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ec2-reserved-instances.html"
+      }
+    ]
   },
   {
     "questionId": "clf-030",
@@ -1924,7 +1961,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS サポートには、Basic / Developer / Business / Enterprise On-Ramp / Enterprise の\n複数プランが用意されている。Basic はすべてのアカウントに無料で付帯する最小プランで、\n請求・アカウント関連の問い合わせと AWS のドキュメント・ホワイトペーパー・コミュニティ\nフォーラムへのアクセス、Trusted Advisor のコアチェック、AWS Personal Health Dashboard が\n含まれる。Developer 以上は有料で、技術サポートのケース起票・応答時間 SLA・Trusted\nAdvisor のフルチェック・サードパーティソフトウェアサポートなどがプランに応じて\n段階的に拡充される。Enterprise On-Ramp と Enterprise では Technical Account Manager\n（TAM）による定期的なアーキテクチャレビューや運用支援が提供される。\n\n試験文脈では「用途や必要なサポートレベルに応じて複数のプランが用意されている」と\nいう中立的な正解選択肢に対して、「すべてのプランで TAM が必ず付く」「サポートプランは\n完全無料である」「サポートプランを使うと AWS 利用料金が無料になる」のような極端な\n言い切り誤答が並ぶパターンが頻出する。Basic は無料で付帯するという事実と、技術\nサポートや TAM はプランによって異なるという事実の 2 つを押さえれば、極端な誤答は\n排除できる。\n\n実務でのプラン選定の目安は、本番ワークロードを 1 つでも持つなら Business 以上を検討、\nミッションクリティカルな本番運用を持つなら Enterprise On-Ramp / Enterprise を検討、\n学習用・検証用のみなら Basic または Developer に留める、という方向性が一般的である。\nサポートプランの料金は、月額固定額と AWS 利用料に対する一定割合の合算で、利用額が\n大きくなるほど料金も上がる構造である。",
+    "officialDocs": [
+      {
+        "label": "AWS サポートプラン比較（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/plans/"
+      },
+      {
+        "label": "AWS Trusted Advisor の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      }
+    ]
   },
   {
     "questionId": "clf-031",
@@ -1974,7 +2022,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS 責任共有モデル（Shared Responsibility Model）は、AWS とユーザーの責任範囲を\n「クラウドのセキュリティ（Security of the Cloud）」と「クラウド内のセキュリティ\n（Security in the Cloud）」に分割する考え方である。AWS 側は、データセンターの物理\nセキュリティ、サーバー・ストレージ・ネットワーク機器のハードウェア、ハイパーバイザー\nやマネージドサービスの基盤ソフトウェア、AWS グローバルインフラ全体の運用を担当する。\nユーザー側は、IAM の権限設計、OS やミドルウェアのパッチ適用（IaaS の場合）、データの\n暗号化、ネットワーク構成（VPC / Security Group / NACL）、アプリケーションコード、\nデータの分類と保護を担当する。\n\n責任範囲は利用するサービスのタイプによってシフトする。EC2 のような IaaS では OS 以上\nすべてがユーザー責任、RDS のようなマネージドサービスでは OS と DB エンジン本体が AWS\n責任に移り、ユーザーはスキーマ設計・データ・接続経路・IAM 認証の責任を負う。S3 や\nDynamoDB のようなフルマネージドサービスでは、ユーザー責任はさらに狭まりデータと\nアクセス制御に集中する。Lambda のようなサーバーレスサービスでも、関数コードと IAM\nロールはユーザー責任である。\n\n試験文脈では「次のうちユーザー側の責任はどれか」という形で出題され、IAM の権限設計 /\nデータの暗号化 / Security Group のルール設定 / ゲスト OS のパッチ適用などが正解選択肢に\nなる。誤答には「データセンターの電源設備管理」「グローバルインフラの物理保護」「マネージド\nサービスの基盤ハードウェア交換」など、明確に AWS 側責任である項目が並ぶ。CLF-C02 では\nこの境界線を取り違えないかが繰り返し問われる頻出領域である。",
+    "officialDocs": [
+      {
+        "label": "責任共有モデル（AWS公式）",
+        "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "AWS Identity and Access Management（IAM）とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/introduction.html"
+      }
+    ]
   },
   {
     "questionId": "clf-032",

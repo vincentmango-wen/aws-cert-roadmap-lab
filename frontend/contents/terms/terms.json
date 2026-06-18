@@ -1763,7 +1763,18 @@
       "HTTPSリスナーとACM証明書を利用する",
       "Security Groupで入口を制限する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "Elastic Load Balancing（ELB）は、受信したトラフィックを複数のターゲット（EC2 インスタンス /\nコンテナ / Lambda 関数 / IP アドレス）へ自動的に分散する AWS のマネージドロード\nバランサーサービスである。ALB（Application Load Balancer）/ NLB（Network Load Balancer）/\nGWLB（Gateway Load Balancer）/ CLB（Classic Load Balancer）の 4 種類があり、レイヤーや\n用途に応じて選択する。ALB は HTTP / HTTPS（レイヤー 7）向けで、パスベース・ホストベース・\nHTTP ヘッダー・クエリ文字列によるルーティングに対応する。NLB は TCP / UDP / TLS\n（レイヤー 4）向けで、超低遅延・高スループット・固定 IP が必要なワークロードに適する。\nGWLB はサードパーティ製仮想アプライアンス（ファイアウォール / IDS / IPS）の挿入に\n特化したサービスで、CLB は旧世代の汎用ロードバランサーである。\n\n代表的な構成は、複数 AZ にまたがる EC2 群の前面に ALB を配置し、Auto Scaling と組み\n合わせて Web アプリケーションの高可用性とスケーラビリティを確保する形である。ALB の\nターゲットグループ単位でヘルスチェックを実施し、応答しないインスタンスを自動で切り\n離す。リスナーには HTTPS リスナーを設定し、ACM 証明書を関連付けて TLS 終端を ALB で\n行う設計が一般的である。マイクロサービス構成では、1 つの ALB に複数のターゲット\nグループを紐付け、パスベースルーティングで /api を API サーバー、/static を静的\n配信、それ以外を Web サーバーへ振り分ける設計が広く採用される。\n\n試験文脈では、CLF-C02 で「トラフィックを複数サーバーに分散するサービスはどれか」\n「Multi-AZ 構成で可用性を上げる入口に使うサービスはどれか」という形で出題される。\nSAA-C03 では ALB / NLB の選定（HTTP/HTTPS なら ALB、超低遅延 TCP/UDP なら NLB）、\nクロスゾーン負荷分散の有効化、ステッキーセッション、ターゲットグループのヘルス\nチェック設計、WAF / CloudFront / Route 53 との組み合わせが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Elastic Load Balancing（AWS公式）",
+        "url": "https://aws.amazon.com/jp/elasticloadbalancing/"
+      },
+      {
+        "label": "Elastic Load Balancing とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/userguide/what-is-load-balancing.html"
+      }
+    ]
   },
   {
     "termId": "eventbridge",
@@ -1816,7 +1827,18 @@
       "ルール作成・ターゲット変更権限を限定する",
       "外部イベント連携では信頼元を確認する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-01",
+    "practicalNote": "Amazon EventBridge は、AWS サービス・カスタムアプリケーション・SaaS パートナー\nアプリケーションから発生するイベントを集約し、ルールに基づいてターゲット（Lambda /\nStep Functions / SQS / SNS / Kinesis Data Streams / API Gateway / 他アカウントの\nEventBridge など）へルーティングするサーバーレスのイベントバスサービスである。\nCloudWatch Events の後継として位置付けられており、AWS サービス連携と SaaS イベント\n取り込みの両方を統一的に扱える点が特徴である。スケジュール式（cron 式 / rate 式）に\nよる定期実行もサポートし、定時バッチや日次配信などのトリガーとして広く使われる。\n\nEventBridge の中核概念はイベントバス・ルール・ターゲットの 3 要素である。デフォルト\nイベントバスには AWS サービスのイベントが自動で流れ込み、カスタムイベントバスには\n独自のアプリケーションイベントを送信できる。ルールはイベントパターン（JSON 形式の\nマッチング条件）で対象イベントを絞り込み、最大 5 つのターゲットへ並列にイベントを\n配信する。配信失敗時には自動リトライと DLQ（Dead Letter Queue）への退避が可能で、\n最大 24 時間の再試行ウィンドウが設定できる。\n\n実務でよく使われるパターンは、EC2 の状態変化（起動・停止・終了）を検知して通知を\n送る監視ユースケース、CodePipeline / CodeBuild の状態変化を検知して Slack や Teams へ\n通知する CI/CD ユースケース、EventBridge Scheduler を使った日次・週次バッチの定期\n実行、SaaS（Datadog / PagerDuty / Auth0 等）からのイベントを AWS 側ワークフローへ\n取り込む統合ユースケースなどである。試験文脈では、CLF-C02 で「イベント駆動アーキテクチャ\nで使うサービスはどれか」「スケジュール実行に使えるサービスはどれか」という形で出題\nされる。SAA-C03 では SNS / SQS / EventBridge の使い分け（pub-sub なら SNS、キューイング\nなら SQS、イベントルーティングなら EventBridge）が頻出する。",
+    "officialDocs": [
+      {
+        "label": "Amazon EventBridge（AWS公式）",
+        "url": "https://aws.amazon.com/jp/eventbridge/"
+      },
+      {
+        "label": "Amazon EventBridge とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/eventbridge/latest/userguide/eb-what-is.html"
+      }
+    ]
   },
   {
     "termId": "fargate",
@@ -1865,7 +1887,18 @@
       "タスクロールと実行ロールを分ける",
       "コンテナイメージに秘密情報を含めない"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS Fargate は、Amazon ECS および Amazon EKS でコンテナを実行する際の「サーバーレス」\nコンピュートエンジンである。従来の ECS / EKS では EC2 インスタンスを起動してコンテナ\nホストとして管理する必要があったが、Fargate を使うとコンテナを動かす EC2 インスタンスを\nユーザーが意識する必要がなくなる。タスク定義（または Pod 定義）で vCPU・メモリ・\nネットワーク設定を指定すると、AWS 側が自動でキャパシティをプロビジョニングしてコンテナを\n起動する。OS パッチ適用・ホスト管理・キャパシティ確保が不要になり、運用負荷を大幅に\n削減できる。\n\nFargate と EC2 起動タイプの主な違いは、課金モデルと管理範囲である。EC2 起動タイプは\nインスタンスごとの時間課金で、空きキャパシティの分も課金対象になる。Fargate はタスク\nごとに vCPU・メモリ・実行時間で課金されるため、コンテナ単位で必要な分だけ課金され、\nリソース利用率が高ければ EC2 起動タイプより安く、低ければ高くなる傾向がある。SAA-C03\nでは「常時稼働 API」「短時間バッチ」「不定期な処理」のどのパターンで Fargate が向くか、\nEC2 起動タイプとどちらを選ぶかの判断が問われる。\n\n代表的なユースケースは、Web API のサーバーレスコンテナ実行、CI/CD パイプラインから\n起動する短時間バッチジョブ、機械学習の推論コンテナ実行、サードパーティイメージ\n（OSS ツール）の単発実行などである。Lambda との使い分けは、Lambda は最大実行時間\n15 分・関数単位の制約があるのに対し、Fargate は長時間処理や任意のコンテナイメージを\n扱える点が強みになる。試験文脈では、CLF-C02 で「EC2 を管理せずにコンテナを実行する\nサービスはどれか」という形で出題され、ECS / EKS / Fargate の関係を取り違えないかが\n問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Fargate（AWS公式）",
+        "url": "https://aws.amazon.com/jp/fargate/"
+      },
+      {
+        "label": "AWS Fargate（Amazon ECS 開発者ガイド / AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/AWS_Fargate.html"
+      }
+    ]
   },
   {
     "termId": "fsx",
@@ -1917,7 +1950,22 @@
       "VPC内アクセスと認証を設計する",
       "ファイル共有権限を最小化する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Amazon FSx は、業界標準のファイルシステムをフルマネージドで提供するサービス群である。\nFSx for Windows File Server（SMB プロトコル / Active Directory 統合 / NTFS 準拠 ACL）、\nFSx for Lustre（HPC・機械学習向け超並列ファイルシステム）、FSx for NetApp ONTAP\n（NetApp の機能を AWS で利用）、FSx for OpenZFS（OpenZFS のスナップショット・複製機能を\n活用）の 4 種類が提供されており、それぞれ異なるワークロードに最適化されている。S3 や\nEFS とは用途と特性が異なり、特定のファイルシステム機能やプロトコルが必須な場面で選択\nされる。\n\nFSx for Windows File Server は、Windows ワークロードのオンプレミス移行で広く使われる。\nSMB プロトコルでアクセスでき、Active Directory（AWS Managed Microsoft AD またはセルフ\nマネージド AD）と統合してユーザー・グループの認証と NTFS ACL によるアクセス制御を\n実現できる。既存の Windows 共有フォルダーをそのまま移行できるため、ファイルサーバーの\nリフト & シフトに適する。\n\nFSx for Lustre は、機械学習トレーニングや HPC（High-Performance Computing）など、超高\nスループット・低遅延が必要なワークロード向けに設計されている。S3 バケットと統合して\nS3 上のオブジェクトを Lustre ファイルシステム経由で透過的にアクセスできる「データ\nリポジトリ統合」が特徴で、機械学習データセットを S3 に置きつつ、トレーニング時のみ\nLustre 経由で高速アクセスする使い方がよく取られる。試験文脈では、CLF-C02 で「ファイル\nストレージサービスである」「Windows File Server や Lustre の選択肢がある」程度が\n問われる。SAA-C03 では S3 / EBS / EFS / FSx の使い分け（オブジェクト / ブロック / NFS /\nSMB・Lustre）が頻出する。",
+    "officialDocs": [
+      {
+        "label": "Amazon FSx（AWS公式）",
+        "url": "https://aws.amazon.com/jp/fsx/"
+      },
+      {
+        "label": "Amazon FSx for Windows File Server とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "Amazon FSx for Lustre とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/LustreGuide/what-is.html"
+      }
+    ]
   },
   {
     "termId": "glue",
@@ -1966,7 +2014,18 @@
       "Glue実行ロールのS3アクセス範囲を限定する",
       "分析対象データに個人情報を含めない"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS Glue は、データレイクやデータウェアハウス向けの ETL（Extract / Transform / Load）\n処理とデータカタログ管理をサーバーレスで実行できるデータ統合サービスである。中核\nコンポーネントは Glue Data Catalog（メタデータの中央リポジトリ）、Glue Crawler（データ\nソースをスキャンしてスキーマを自動推論しカタログ登録）、Glue ETL ジョブ（Spark または\nPython シェル環境で変換処理を実行）、Glue Studio（GUI でジョブを設計）、Glue\nDataBrew（コード不要のデータ前処理ツール）などである。Apache Spark ベースのジョブ実行\n基盤を AWS 側がフルマネージドで提供するため、クラスタ管理が不要となる。\n\n代表的な構成は、S3 にログ・CSV・Parquet などのデータを集約してデータレイクとし、\nGlue Crawler でスキーマを推論して Glue Data Catalog に登録、Amazon Athena から SQL で\nクエリする「サーバーレス分析基盤」である。Athena は Glue Data Catalog をメタストアと\nして参照するため、Glue でカタログ化したテーブルをそのまま Athena でクエリできる。\nAmazon Redshift Spectrum や Amazon EMR からも同じ Data Catalog を参照でき、複数の分析\nツール間でメタデータを共有できる点が大きな利点となる。\n\nETL ジョブでは、S3 上の CSV や JSON を読み込み、列の型変換・欠損値補完・JOIN・集計を\n施したうえで、Parquet や ORC などの列指向フォーマットへ変換して S3 に書き戻す、と\nいったパターンが典型的に使われる。試験文脈では、CLF-C02 で「ETL サービスである」\n「Glue Data Catalog でメタデータ管理ができる」「Athena や Redshift と組み合わせられる」\n程度が問われる。SAA-C03 では S3 データレイク + Glue + Athena の構成、Lake Formation との\n役割分担、Glue ジョブのコスト最適化（DPU 数とジョブ実行時間）が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Glue（AWS公式）",
+        "url": "https://aws.amazon.com/jp/glue/"
+      },
+      {
+        "label": "AWS Glue とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/glue/latest/dg/what-is-glue.html"
+      }
+    ]
   },
   {
     "termId": "guardduty",
