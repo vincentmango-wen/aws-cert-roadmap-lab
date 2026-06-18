@@ -69,6 +69,11 @@ type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 
 type ExamScope = "CLF-C02" | "SAA-C03";
 
+type OfficialDoc = {
+  label: string;
+  url: string;
+};
+
 type AwsTerm = {
   termId: string;
   name: string;
@@ -81,6 +86,10 @@ type AwsTerm = {
   useCases: string[];
   examPoints: string[];
   saaPoints?: string[];
+  /** 客観的な実務での使いどころ・よくある誤解を記述する枠（体験談・一人称感想は入れない）。\n\n 区切りで複数段落。 */
+  practicalNote?: string;
+  /** 公式ドキュメントへの外部リンク配列。空または未定義の場合はセクション非表示。 */
+  officialDocs?: OfficialDoc[];
   relatedServices?: string[];
   comparisonSlugs?: string[];
   architectureSlugs?: string[];
@@ -292,7 +301,7 @@ export default async function TermDetailPage({ params }: PageProps) {
         </Section>
 
         <Section title="概要">
-          <p className="leading-8">{term.summary}</p>
+          <p className="whitespace-pre-line leading-8">{term.summary}</p>
         </Section>
 
         <Section title="主な用途">
@@ -312,6 +321,35 @@ export default async function TermDetailPage({ params }: PageProps) {
             </EmptyMessage>
           )}
         </Section>
+
+        {/* 実際の使いどころ: 客観的な実務文脈・よくある誤解の枠（体験談・一人称感想は入れない）。
+            practicalNote が存在する用語のみ表示。存在しない場合はセクションごと非表示。 */}
+        {term.practicalNote ? (
+          <Section title="実際の使いどころ">
+            <p className="whitespace-pre-line leading-8">{term.practicalNote}</p>
+          </Section>
+        ) : null}
+
+        {/* 公式ドキュメント: officialDocs が存在かつ1件以上の場合のみ表示。 */}
+        {term.officialDocs && term.officialDocs.length > 0 ? (
+          <Section title="公式ドキュメント">
+            <ul className="space-y-2">
+              {term.officialDocs.map((doc) => (
+                <li key={doc.url}>
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
+                  >
+                    {doc.label}
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </Section>
+        ) : null}
 
         <section className="grid gap-6 lg:grid-cols-2">
           <Section title="コスト注意点">

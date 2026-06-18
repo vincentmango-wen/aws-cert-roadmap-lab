@@ -600,6 +600,17 @@
       "networking",
       "static-site"
     ],
+    "practicalNote": "CloudFront が実務でよく使われる典型構成は、静的サイトの「S3 + CloudFront」である。\nS3 に HTML・CSS・JavaScript・画像を置き、CloudFront を前面に立てて配信する。この構成は\nサーバーを常駐させないため、アクセスがない時間帯のコストを抑えつつ、世界中のユーザーへ\n低遅延で配信できる。個人開発のポートフォリオサイトから企業のキャンペーンサイトまで、\n規模を問わず採用される。\n\n動的なアプリケーションでも、CloudFront をフロントに置いて静的アセット（画像・JS・CSS）を\nキャッシュ配信し、API リクエストだけをオリジン（ALB や API Gateway）へ通す構成が一般的\nである。これにより、変化しないアセットの配信をエッジに任せ、オリジンの負荷を本来処理が\n必要なリクエストに集中させられる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "CloudFront での OAC（Origin Access Control）の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+      }
+    ],
     "costNotes": [
       "転送量、リクエスト数、Invalidationで課金される",
       "画像軽量化で転送量を抑える"
@@ -608,7 +619,7 @@
       "Viewer Protocol PolicyでHTTPSへリダイレクトする",
       "S3オリジンはOACで制限する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18"
   },
   {
     "termId": "cloudtrail",
