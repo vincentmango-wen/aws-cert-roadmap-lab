@@ -1082,7 +1082,22 @@
       "ユーザーIDをリクエストBodyから信用しない",
       "JWT検証済みのclaimsを使って本人確認する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon Cognito は、Web アプリやモバイルアプリに**ユーザー認証・認可基盤**を追加するための\nフルマネージドサービスである。主要な構成要素は 2 つあり、役割が異なる。\n\n**User Pool** は、ユーザーのサインアップ・サインイン・パスワードリセット・MFA を管理する\n認証ディレクトリである。認証成功後に JWT（ID トークン / アクセストークン / リフレッシュ\nトークン）を発行し、クライアントに返す。API Gateway の JWT Authorizer と組み合わせると、\nLambda に届くリクエストの認証チェックをゲート段階で行える。\n\n**Identity Pool（旧称: フェデレーション ID）** は、認証済みユーザー（Cognito User Pool や\nGoogle / Facebook などの外部 IdP で認証）に対して一時的な AWS 認証情報（IAM ロール\n相当のアクセスキー）を払い出す。S3 バケットや DynamoDB テーブルへユーザーが直接\nアクセスする構成（Mobile SDK からの直接 SDK 呼び出しなど）で使われる。\n\n実装上の重要な注意点として、API から返す個人データの所有権確認には JWT クレームの\n`sub`（subject）を使う。リクエスト Body や URL パスに含まれる `userId` は改ざん可能\nであるため、信頼できる識別子として使ってはならない。Lambda オーソライザーや JWT\nAuthorizer で検証済みのクレームのみをバックエンドの認可ロジックに使う設計が必須\nである。\n\nCLF-C02 では「アプリのユーザー認証に使うサービスはどれか」「ユーザーログインを\n管理するマネージドサービスはどれか」として問われる。SAA-C03 では User Pool と\nIdentity Pool の使い分け、API Gateway との JWT Authorizer 連携、外部 IdP フェデレー\nションの設計が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Cognito（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cognito/"
+      },
+      {
+        "label": "Amazon Cognito とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/what-is-amazon-cognito.html"
+      },
+      {
+        "label": "Amazon Cognito ユーザープール（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/cognito-user-pools.html"
+      }
+    ]
   },
   {
     "termId": "cost-explorer",
@@ -1130,7 +1145,18 @@
       "請求情報にアクセスできるユーザーを限定する",
       "コスト異常を見つけたらCloudTrailも確認する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Cost Explorer は、AWS の利用料金を**可視化・分析**するためのツールである。\nコンソールから直接アクセスでき、過去 13 か月分の費用データをサービス別・リージョン\n別・タグ別・アカウント別に確認できる。また 12 か月先の費用を予測するフォーキャスト\n機能も持つ。\n\n**AWS Budgets との役割の違い**が試験でよく問われる。Cost Explorer は「過去と現在の\nコストを可視化して分析する」ツールであり、アラートや通知機能を持たない。Budgets は\n「設定した予算に対してアラートを送る」ツールであり、メールや SNS 通知が可能である。\n費用を把握したい場合は Cost Explorer、費用を超過したときに通知を受けたい場合は\nBudgets、という使い分けになる。\n\nコスト分析の実践では、CloudTrail と組み合わせることで「どの IAM ユーザー・ロールが\n予期せぬリソースを作成したか」を調査する際に Cost Explorer でコスト急増を検知し、\nCloudTrail でオペレーション履歴を掘り下げる、というワークフローが一般的である。\nタグ付けを徹底することで、プロジェクト別・環境別（dev/staging/prod）のコスト配賦\nが可能になり、部門間のチャージバックにも活用できる。\n\nCLF-C02 では「コストを分析するサービスはどれか」「過去 12 か月のコスト推移を確認\nするにはどれを使うか」として正答になる。誤答として Budgets（通知目的）/ CloudTrail\n（操作ログ目的）/ CloudWatch（パフォーマンス監視目的）が並ぶ。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      },
+      {
+        "label": "AWS Cost Explorer とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      }
+    ]
   },
   {
     "termId": "dynamodb",
@@ -1183,7 +1209,22 @@
       "IAMでPutItemなど必要な操作だけ許可する",
       "個人情報を保存する場合はログ出力とアクセス権限に注意する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon DynamoDB は AWS が提供するフルマネージドの NoSQL データベースである。\nサーバーのプロビジョニング、OS パッチ、クラスタ管理は AWS が担う。開発者は\nテーブル設計とアプリケーションコードに集中できる。\n\n**設計の核心はアクセスパターン駆動**である。DynamoDB はパーティションキー（PK）と\nオプションのソートキー（SK）でデータを識別する。パーティションキーが同一のアイテム\nは同一のパーティションに格納され、ソートキー範囲での Query が高速になる。テーブル\n設計は「最初にアクセスパターンを列挙し、そのパターンをキー構造で表現する」という\n順序で進める。RDB のように正規化してから JOIN するアプローチは取らない。\n\n**Query と Scan の使い分け**は重要な最適化ポイントである。Query はパーティション\nキーを指定してインデックスを使うため高速かつ低コスト。Scan は全テーブルを順次\nスキャンするため、データ量が増えるに従って低速・高コストになる。本番環境での\nScan 多用は避け、GSI（グローバルセカンダリインデックス）を作成して Query で\n解決するのが標準的な設計パターンである。\n\n**キャパシティモード**は 2 種類ある。オンデマンドモードはアクセス量に応じて自動\nスケールし、未使用分の課金がない。プロビジョンドモードは事前に RCU（読み取り\nキャパシティユニット）/ WCU（書き込みキャパシティユニット）を指定し、Auto\nScaling と組み合わせて使う。\n\n**DynamoDB Streams** は、テーブルへの変更（INSERT / MODIFY / REMOVE）をリアル\nタイムで取得できるイベントストリーム機能である。Lambda と連携してイベント駆動\n処理（レプリケーション・通知・集計）を実装できる。\n\n**IAM によるアクセス制御**は、テーブル単位ではなくアクション単位（`PutItem` /\n`GetItem` / `Query` / `Scan` 等）で付与する。最小権限の原則に従い、Lambda 関数に\n必要な操作だけを許可した IAM ロールを付与する。\n\nSAA-C03 では、GSI / LSI（ローカルセカンダリインデックス）の設計、DAX（DynamoDB\nAccelerator）によるインメモリキャッシュ、DynamoDB Streams + Lambda の連携パターン、\nRDS との使い分け判断軸が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon DynamoDB（AWS公式）",
+        "url": "https://aws.amazon.com/jp/dynamodb/"
+      },
+      {
+        "label": "Amazon DynamoDB とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/Introduction.html"
+      },
+      {
+        "label": "Amazon DynamoDB のコアコンポーネント（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html"
+      }
+    ]
   },
   {
     "termId": "ebs",
@@ -1236,7 +1277,22 @@
       "EBS暗号化を有効化する",
       "スナップショット共有範囲を確認する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon EBS（Elastic Block Store）は、EC2 インスタンスにアタッチして使う\n**ブロックストレージ**サービスである。OS からは通常のディスクドライブとして認識され、\nファイルシステムをマウントしてデータの読み書きができる。EC2 インスタンスと同じ\nアベイラビリティゾーン（AZ）に配置される必要があり、**AZ をまたいでのアタッチは\nできない**。\n\n**オブジェクトストレージ（S3）・ファイルストレージ（EFS）との違い**はよく問われる。\nEBS はブロックデバイスとして 1 つの EC2 にアタッチして高速な I/O を提供する用途に\n向く。S3 はオブジェクト単位で HTTP API によりアクセスするため、EC2 からディスク\nとして使うことはできない。EFS は複数の EC2 から同時にマウントできる共有ファイル\nシステムである。\n\n**ボリュームタイプ**はワークロードに応じて選択する。汎用 SSD の gp3 は最も一般的\nな選択肢でコスト効率に優れる。プロビジョンド IOPS SSD の io2 は高 IOPS が必要な\nデータベース用途に使う。スループット最適化 HDD（st1）は大容量の順次読み書きに向き\n（ログ・ビッグデータ処理）、コールド HDD（sc1）は低頻度アクセスの大容量データに\n向く低コスト選択肢である。\n\n**スナップショット**は EBS ボリュームの時点コピーを S3 に保存する機能である。ユーザー\nは S3 バケットを意識せずに操作できる。スナップショットは増分バックアップ方式で、\n初回フル取得後は変更差分のみが保存されるため効率的である。スナップショットから\n新しい EBS ボリュームを復元したり、別のリージョンへコピーして DR 対策をとったり\nすることができる。\n\n重要な注意点として、**EC2 インスタンスを停止してもアタッチされた EBS ボリュームには\n課金が継続する**。不要なボリュームは明示的に削除しないとコストが発生し続ける。\n\nCLF-C02 では「EC2 のディスクとして使うストレージはどれか」「AZ に紐づくブロック\nストレージはどれか」として問われる。SAA-C03 では ボリュームタイプの選定基準、\nMulti-Attach（io1/io2 の限定機能）、暗号化（KMS との連携）、スナップショットの\nライフサイクル管理が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EBS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ebs/"
+      },
+      {
+        "label": "Amazon EBS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/what-is-ebs.html"
+      },
+      {
+        "label": "Amazon EBS ボリュームタイプ（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/ebs-volume-types.html"
+      }
+    ]
   },
   {
     "termId": "ec2",
@@ -1290,7 +1346,22 @@
       "Security Groupで必要な通信だけ許可する",
       "SSH秘密鍵を公開リポジトリに置かない"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon EC2（Elastic Compute Cloud）は、AWS クラウド上で仮想サーバー（インスタンス）\nを起動・管理できる IaaS サービスである。AMI（Amazon Machine Image）を選択することで\nOS と初期ソフトウェアが構成済みの状態でインスタンスを起動できる。\n\n**インスタンスタイプ**はワークロードに応じて選択する。汎用（M 系・T 系）、コンピューティング\n最適化（C 系）、メモリ最適化（R 系・X 系）、ストレージ最適化（I 系・D 系）、\n高速コンピューティング（P 系・G 系 / GPU）などのファミリーに分かれる。CLF では\n「vCPU 数と RAM の組み合わせを選ぶ」という基本理解が問われる。\n\n**購入オプション**はコスト最適化の要であり、CLF-C02・SAA-C03 ともに頻出である。\n- **オンデマンド**: 秒単位課金・コミットなし・短期の予測不能なワークロードに適する\n- **リザーブドインスタンス（RI）**: 1 年または 3 年のコミットで最大 75% 割引。定常ワークロード向け\n- **Savings Plans**: RI と同等の割引率を柔軟に（インスタンスタイプ問わず）適用できる新しい仕組み\n- **スポットインスタンス**: AWS の余剰容量を最大 90% 割引で利用。中断リスクあり。耐障害性の高い分散ワークロード（バッチ・ML 学習など）向け\n- **Dedicated Host**: 物理サーバーを占有。BYOL（ライセンス持ち込み）対応\n\n**Auto Scaling と ELB の組み合わせ**は Web アプリの標準構成である。Auto Scaling が\nトラフィックに応じてインスタンス数を増減させ、ELB（Elastic Load Balancing）が\nリクエストを各インスタンスへ分散する。この構成では**ステートレスな設計**（インスタンス\n内部にセッション情報を持たない）が必要であり、セッションは ElastiCache（Redis/\nMemcached）や DynamoDB に外出しするのが標準パターンである。\n\n**責任共有モデル**の観点では、EC2 はハイパーバイザーより上（OS / ミドルウェア / \nアプリ）の管理が利用者責任になる（「クラウド内のセキュリティ」領域）。\n\nCLF-C02 では「仮想サーバーを提供するサービスはどれか」「EC2 の課金モデルはどれか」\nとして問われる。SAA-C03 では購入オプションの使い分け判断、Auto Scaling + ELB の\nアーキテクチャ設計、AMI のカスタマイズと横展開、インスタンスメタデータとユーザー\nデータの活用が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      },
+      {
+        "label": "Amazon EC2 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "label": "Amazon EC2 インスタンスの購入オプション（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/instance-purchasing-options.html"
+      }
+    ]
   },
   {
     "termId": "ecr",

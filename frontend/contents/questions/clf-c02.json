@@ -1106,7 +1106,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon S3（Simple Storage Service）は、ファイルを「オブジェクト」という単位で保存する\nフルマネージドのオブジェクトストレージサービスである。バケット（保存先の論理的な\n入れ物）にオブジェクトをキー名付きで配置し、HTTP/HTTPS 経由で読み書きする。ストレージ\n容量に上限がなく、1 オブジェクトあたり最大 5 TB まで保存できる。耐久性は 11 ナイン\n（99.999999999%）の年間オブジェクト耐久性で設計されており、複数の物理拠点へ自動的に\nレプリケートされる。\n\n実務での代表的な用途は、静的 Web サイトのアセット（画像・CSS・JavaScript・HTML）\n配信、データレイク（CSV / JSON / Parquet 等の分析用元データ保管）、バックアップと\nアーカイブ（EBS スナップショットや RDS スナップショットの保管先も内部的に S3）、\nログ集約（CloudTrail / ALB / VPC Flow Logs の保存先）、CloudFront のオリジン、\nソフトウェア配布用パッケージの置き場である。アクセス頻度に応じてストレージクラスを\n選べ（Standard / Standard-IA / Intelligent-Tiering / Glacier 系）、ライフサイクル\nポリシーで自動的に低コストなクラスへ移行させてコスト最適化できる。S3 はブロック\nストレージ（EBS / EC2 にアタッチして OS から見える「ディスク」）でもファイル\nストレージ（EFS / NFS マウント）でもないため、用途が異なる点を理解しておく必要が\nある。\n\nCLF-C02 では、「S3 の主な用途として最も適切なのはどれか」「画像やバックアップを\n保存するのに適したサービスはどれか」という形で問われる。誤答として EC2（仮想\nサーバー）/ Route 53（DNS）/ RDS（リレーショナル DB）など、ストレージ用途ではない\nサービスが並ぶ。SAA-C03 以降では、ストレージクラスの選定、バージョニング、レプリ\nケーション、署名付き URL、バケットポリシーと IAM ポリシーの組み合わせ、暗号化方式\n（SSE-S3 / SSE-KMS / SSE-C）の使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      },
+      {
+        "label": "Amazon S3 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3 ストレージクラスを利用する（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/storage-class-intro.html"
+      }
+    ]
   },
   {
     "questionId": "clf-018",
@@ -1160,7 +1175,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon EC2（Elastic Compute Cloud）は、AWS が提供する IaaS（Infrastructure as a\nService）型の仮想サーバーサービスである。ユーザーは OS、ミドルウェア、ランタイム、\nアプリケーションのすべてを自分でインストール・設定・管理する責任を持ち、ハード\nウェアや仮想化基盤（ハイパーバイザー）の管理は AWS が担う。AWSの責任共有モデルで\n「クラウド内のセキュリティ」（OS以上）はユーザー側に分類される。\n\nEC2 の主な使われ方は、既存のオンプレミス・サーバーをそのままクラウドへ移行する\n「リフトアンドシフト」、Webサーバー・AP サーバー・DB サーバーの構築、バッチ処理\nサーバー、機械学習モデルのトレーニングなどである。課金はインスタンスの起動時間\n単位（秒単位）で発生し、停止中は EC2 インスタンス料金がかからないが、アタッチ\nされた EBS ボリューム（ストレージ）には停止中でも課金が続く。\n\n購入オプションは複数用意されており、利用状況に応じて選択する。オンデマンドは\n時間単位で必要な分だけ使う基本形態。リザーブドインスタンス（RI）は 1 年または\n3 年のコミットメントと引き換えに大幅な割引が得られる。Savings Plans は RI と同様\nのコミット割引を柔軟に適用できる新しい仕組み。スポットインスタンスは AWS の余剰\nキャパシティを市場価格で使う形態で最大 90% 割引になるが、AWS の都合で中断される\nリスクがある。Dedicated Host は物理サーバーを占有する形式で、ライセンス持ち込み\n（BYOL）対応に使われる。\n\nCLF-C02 では「EC2 は何をするサービスか」「仮想サーバーはどれか」という形で問われる。\n誤答として S3（オブジェクトストレージ）/ Route 53（DNS）/ Budgets（予算管理）が\n並ぶことが多い。SAA-C03 以降では Auto Scaling グループ・ELB との組み合わせ、\nAMI の仕組み、セキュリティグループと Network ACL の差異、購入オプションの使い分け\nが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      },
+      {
+        "label": "Amazon EC2 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "label": "Amazon EC2 インスタンスタイプ（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/instance-types.html"
+      }
+    ]
   },
   {
     "questionId": "clf-019",
@@ -1214,7 +1244,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Lambda は、サーバーの調達・管理を一切行わずにコードを実行できるサーバーレス\nコンピューティングサービスである。関数単位でデプロイし、イベント（API Gateway\nへのリクエスト、S3 へのファイルアップロード、SQS へのメッセージ到着、CloudWatch\nEvents のスケジュールなど）をトリガーとして自動起動する。実行時間が実際に使われた\nミリ秒単位で課金される（1 リクエストあたり 0.0000002 USD 前後）ため、リクエスト数\nが少ない小規模なワークロードやイベント駆動な処理では EC2 より大幅に安くなる。\n\n主な特徴として、最大実行時間が 15 分に制限されている点がある。長時間の処理（バッチ\nや動画変換など）には不向きであり、その場合は EC2 や ECS/Fargate が選択肢になる。\nサポートするランタイムは Node.js / Python / Java / Go / Ruby / .NET 系が公式提供\nされており、カスタムランタイムを使えば任意の言語を動かすこともできる。同時実行数の\nデフォルトの上限はリージョン単位であり、急激なトラフィック増加に対してコールド\nスタートによるレイテンシが発生する可能性がある。\n\nCLF-C02 では「サーバーを管理せずにコードを実行できるのはどれか」「Lambda の特徴\nとして正しいのはどれか」という形で問われる。サーバーレスという概念そのものの理解\n（インフラ管理不要・イベント駆動・ミリ秒課金・実行時間上限あり）を押さえておく\nことが重要である。誤答として EC2（サーバー管理が必要）/ ECS（コンテナ管理が\n必要）が並ぶことが多い。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda（AWS公式）",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      },
+      {
+        "label": "AWS Lambda とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      }
+    ]
   },
   {
     "questionId": "clf-020",
@@ -1267,7 +1308,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon RDS（Relational Database Service）は、リレーショナルデータベース（RDB）の\n構築・運用・スケーリングをマネージドで提供するサービスである。OS のパッチ適用、\nデータベースエンジンのアップグレード、自動スナップショット（バックアップ）、\nフェイルオーバー（Multi-AZ 構成時の自動切り替え）を AWS が担う。利用者はデータ\nモデル設計・SQL チューニング・アプリケーション開発に集中できる。\n\n対応エンジンは Amazon Aurora（MySQL / PostgreSQL 互換）/ MySQL / PostgreSQL /\nMariaDB / Oracle / Microsoft SQL Server の 6 系統である。Aurora は AWS 独自の\nクラウドネイティブエンジンであり、通常の MySQL より高スループット・低遅延を謳う。\nEC2 に RDB を自分でインストールする方法と比べて、RDS は運用の手間を大幅に省ける\n代わりに OS レベルのカスタマイズができなくなる点が制約となる。\n\nMulti-AZ 配置を有効にすると、別のアベイラビリティゾーンにスタンバイ・レプリカが\n作成され、プライマリの障害時に自動的にフェイルオーバーする。Read Replica を作成\nすることで読み取りのスケールアウトが可能になる。\n\nCLF-C02 では「リレーショナルデータベースのマネージドサービスはどれか」という直球の\n問いで登場する。誤答として NoSQL の DynamoDB、CDN の CloudFront、メッセージキュー\nの SQS が並ぶ。RDS = リレーショナル DB のマネージドという軸を押さえておけば確実\nに正答できる。SAA-C03 以降では Multi-AZ と Read Replica の違い、Aurora の特性、\nパラメータグループ、暗号化、スナップショットの共有・コピーが深掘りされる。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/"
+      },
+      {
+        "label": "Amazon RDS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS DB インスタンス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Overview.DBInstance.html"
+      }
+    ]
   },
   {
     "questionId": "clf-021",
@@ -1321,7 +1377,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon DynamoDB は AWS が提供するフルマネージドの NoSQL データベースサービスである。\nCLF-C02 の試験文脈では、「リレーショナル DB が必要か、NoSQL が必要か」という\n二択の判断軸として理解することが重要である。\n\n試験で問われる DynamoDB の特徴は以下の 4 点に集約される。（1）NoSQL であること\n（スキーマレス・非リレーショナル）、（2）フルマネージドであること（サーバー管理\n不要・スケーリング自動）、（3）高スループットと一桁ミリ秒レイテンシが特徴、\n（4）Lambda・API Gateway との組み合わせでサーバーレスアーキテクチャの\nバックエンドとして使われることが多い。\n\n判断軸としては、既存の RDB スキーマがあり JOIN が必要なシステムには RDS、\nアクセスパターンが単純で大量の読み書きが必要な場合や NoSQL 指向のシステムには\nDynamoDB を選ぶ、という基本を押さえる。CLF では「NoSQLキーバリュー型のマネージド\nサービスはどれか」「Lambda と組み合わせてサーバーレス構成で使うDBはどれか」の\n問いで正答として DynamoDB を選ぶことができる。誤答として RDS（リレーショナル DB）、\nVPC（仮想ネットワーク）、EC2（仮想サーバー）、CloudFront（CDN）が並ぶ。",
+    "officialDocs": [
+      {
+        "label": "Amazon DynamoDB（AWS公式）",
+        "url": "https://aws.amazon.com/jp/dynamodb/"
+      },
+      {
+        "label": "Amazon DynamoDB とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/Introduction.html"
+      }
+    ]
   },
   {
     "questionId": "clf-022",
