@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import rawClfQuestions from "../../../contents/questions/clf-c02.json";
-import rawSaaQuestions from "../../../contents/questions/saa-c03.json";
+import rawClfQuestions from "../../../../contents/questions/clf-c02.json";
+import rawSaaQuestions from "../../../../contents/questions/saa-c03.json";
 import {
   getBeginnerRecommendedQuestions,
   getPublishedQuestions,
@@ -9,9 +9,9 @@ import {
   getQuestionDifficultySummaries,
   QUESTION_CATEGORY_LABELS,
   QUESTION_DIFFICULTY_LABELS,
-} from "../../lib/questions";
-import type { Question } from "../../types/question";
-import { createPageMetadata, pageSeo } from "../../lib/seo";
+} from "@/lib/questions";
+import type { Question } from "@/types/question";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.questions);
 

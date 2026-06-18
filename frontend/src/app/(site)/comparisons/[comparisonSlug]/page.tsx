@@ -4,44 +4,47 @@ import { Fragment, type ReactElement, type ReactNode } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createPageMetadata } from "../../../lib/seo";
+import { createPageMetadata } from "@/lib/seo";
+import { isExistingTerm } from "@/lib/termGuards";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
 
-type BlogPostPageProps = {
+type ComparisonPageProps = {
   params: Promise<{
-    postSlug: string;
+    comparisonSlug: string;
   }>;
 };
 
-type BlogPostStaticParams = {
-  postSlug: string;
+type ComparisonStaticParams = {
+  comparisonSlug: string;
 };
 
 type FrontmatterValue = string | boolean | string[];
 
-type BlogPost = {
-  postId: string;
+type ComparisonArticle = {
+  comparisonId: string;
   slug: string;
   title: string;
   description: string;
   category: string;
+  level: string;
+  examScopes: string[];
+  services: string[];
   tags: string[];
-  targetKeywords: string[];
-  author: string;
+  priority: string;
   published: boolean;
   publishedAt: string;
   updatedAt: string;
   content: string;
 };
 
-function getBlogDirectory(): string | null {
+function getComparisonsDirectory(): string | null {
   const candidates = [
-    path.join(process.cwd(), "contents", "blog"),
-    path.join(process.cwd(), "src", "contents", "blog"),
-    path.join(process.cwd(), "frontend", "contents", "blog"),
-    path.join(process.cwd(), "frontend", "src", "contents", "blog"),
+    path.join(process.cwd(), "contents", "comparisons"),
+    path.join(process.cwd(), "src", "contents", "comparisons"),
+    path.join(process.cwd(), "frontend", "contents", "comparisons"),
+    path.join(process.cwd(), "frontend", "src", "contents", "comparisons"),
   ];
 
   for (const candidate of candidates) {
@@ -211,7 +214,7 @@ function removeLeadingH1(content: string, title: string): string {
   return lines.join("\n").trim();
 }
 
-function parseBlogPostFile(filePath: string): BlogPost {
+function parseComparisonFile(filePath: string): ComparisonArticle {
   const rawFile = fs.readFileSync(filePath, "utf8");
   const fallbackSlug = path.basename(filePath, ".mdx");
 
@@ -228,17 +231,19 @@ function parseBlogPostFile(filePath: string): BlogPost {
   const content = removeLeadingH1(rawContent, title);
 
   return {
-    postId: getString(frontmatter.postId, slug),
+    comparisonId: getString(frontmatter.comparisonId, slug),
     slug,
     title,
     description: getString(
       frontmatter.description,
-      "AWS資格学習に関する記事です。",
+      "AWSサービスの違いを比較する記事です。",
     ),
     category: getString(frontmatter.category, "AWS"),
+    level: getString(frontmatter.level, "beginner"),
+    examScopes: getStringArray(frontmatter.examScopes),
+    services: getStringArray(frontmatter.services),
     tags: getStringArray(frontmatter.tags),
-    targetKeywords: getStringArray(frontmatter.targetKeywords),
-    author: getString(frontmatter.author, "AWS資格ロードマップラボ"),
+    priority: getString(frontmatter.priority, "medium"),
     published: getBoolean(frontmatter.published, true),
     publishedAt: getString(frontmatter.publishedAt, ""),
     updatedAt: getString(frontmatter.updatedAt, ""),
@@ -246,36 +251,82 @@ function parseBlogPostFile(filePath: string): BlogPost {
   };
 }
 
-function getAllBlogPosts(): BlogPost[] {
-  const blogDirectory = getBlogDirectory();
+function getAllComparisons(): ComparisonArticle[] {
+  const comparisonsDirectory = getComparisonsDirectory();
 
-  if (!blogDirectory) {
+  if (!comparisonsDirectory) {
     return [];
   }
 
   return fs
-    .readdirSync(blogDirectory)
+    .readdirSync(comparisonsDirectory)
     .filter((fileName) => fileName.endsWith(".mdx"))
-    .map((fileName) => parseBlogPostFile(path.join(blogDirectory, fileName)))
-    .sort((firstPost, secondPost) =>
-      secondPost.publishedAt.localeCompare(firstPost.publishedAt),
+    .map((fileName) =>
+      parseComparisonFile(path.join(comparisonsDirectory, fileName)),
+    )
+    .sort((firstComparison, secondComparison) =>
+      firstComparison.title.localeCompare(secondComparison.title, "ja"),
     );
 }
 
-function getPublishedBlogPosts(): BlogPost[] {
-  return getAllBlogPosts().filter((post) => post.published);
+function getPublishedComparisons(): ComparisonArticle[] {
+  return getAllComparisons().filter((comparison) => comparison.published);
 }
 
-function getBlogPostBySlug(slug: string): BlogPost | null {
+function getComparisonBySlug(slug: string): ComparisonArticle | null {
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return null;
   }
 
-  const post = getPublishedBlogPosts().find(
-    (blogPost) => blogPost.slug === slug,
+  const comparison = getPublishedComparisons().find(
+    (item) => item.slug === slug,
   );
 
-  return post ?? null;
+  return comparison ?? null;
+}
+
+function getLevelLabel(level: string): string {
+  const labels: Record<string, string> = {
+    beginner: "初級",
+    intermediate: "中級",
+    advanced: "上級",
+  };
+
+  return labels[level] ?? level;
+}
+
+function getPriorityLabel(priority: string): string {
+  const labels: Record<string, string> = {
+    high: "優先度 高",
+    medium: "優先度 中",
+    low: "優先度 低",
+  };
+
+  return labels[priority] ?? priority;
+}
+
+function formatServiceName(service: string): string {
+  const serviceNameMap: Record<string, string> = {
+    s3: "S3",
+    ebs: "EBS",
+    efs: "EFS",
+    rds: "RDS",
+    dynamodb: "DynamoDB",
+    sns: "SNS",
+    sqs: "SQS",
+    eventbridge: "EventBridge",
+    iam: "IAM",
+    cloudwatch: "CloudWatch",
+    cloudtrail: "CloudTrail",
+    config: "AWS Config",
+    lambda: "Lambda",
+    "api-gateway": "API Gateway",
+    cloudfront: "CloudFront",
+    ec2: "EC2",
+    vpc: "VPC",
+  };
+
+  return serviceNameMap[service] ?? service.toUpperCase();
 }
 
 function renderInline(text: string): ReactNode[] {
@@ -533,115 +584,170 @@ function MarkdownContent({
   );
 }
 
-export function generateStaticParams(): BlogPostStaticParams[] {
-  return getPublishedBlogPosts().map((post) => ({
-    postSlug: post.slug,
+export function generateStaticParams(): ComparisonStaticParams[] {
+  return getPublishedComparisons().map((comparison) => ({
+    comparisonSlug: comparison.slug,
   }));
 }
 
 export async function generateMetadata({
   params,
-}: BlogPostPageProps): Promise<Metadata> {
-  const { postSlug } = await params;
-  const post = getBlogPostBySlug(postSlug);
+}: ComparisonPageProps): Promise<Metadata> {
+  const { comparisonSlug } = await params;
+  const comparison = getComparisonBySlug(comparisonSlug);
 
-  if (!post) {
+  if (!comparison) {
     return createPageMetadata({
-      title: "記事が見つかりません",
-      description: "指定されたブログ記事は見つかりませんでした。",
-      path: `/blog/${postSlug}`,
+      title: "比較記事が見つかりません",
+      description: "指定されたAWSサービス比較記事は見つかりませんでした。",
+      path: `/comparisons/${comparisonSlug}`,
       noIndex: true,
     });
   }
 
   return createPageMetadata({
-    title: post.title,
-    description: post.description,
-    path: `/blog/${post.slug}`,
-    keywords: ["AWS", "AWS資格", "AWSブログ", ...post.targetKeywords],
+    title: comparison.title,
+    description: comparison.description,
+    path: `/comparisons/${comparison.slug}`,
+    keywords: [
+      "AWS",
+      "AWS比較",
+      "AWSサービス",
+      ...comparison.services,
+      ...comparison.tags,
+    ],
     type: "article",
-    publishedTime: post.publishedAt,
-    modifiedTime: post.updatedAt,
+    publishedTime: comparison.publishedAt,
+    modifiedTime: comparison.updatedAt,
   });
 }
 
-export default async function BlogPostPage({
+export default async function ComparisonDetailPage({
   params,
-}: BlogPostPageProps): Promise<ReactElement> {
-  const { postSlug } = await params;
-  const post = getBlogPostBySlug(postSlug);
+}: ComparisonPageProps): Promise<ReactElement> {
+  const { comparisonSlug } = await params;
+  const comparison = getComparisonBySlug(comparisonSlug);
 
-  if (!post) {
+  if (!comparison) {
     notFound();
   }
 
+  const relatedComparisons = getPublishedComparisons()
+    .filter((item) => item.slug !== comparison.slug)
+    .filter(
+      (item) =>
+        item.category === comparison.category ||
+        item.services.some((service) => comparison.services.includes(service)),
+    )
+    .slice(0, 3);
+
   return (
     <main className="bg-slate-50">
-      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <nav className="text-sm text-slate-500" aria-label="パンくず">
           <Link href="/" className="hover:text-slate-900">
             ホーム
           </Link>
           <span className="mx-2">/</span>
-          <Link href="/blog" className="hover:text-slate-900">
-            ブログ
+          <Link href="/comparisons" className="hover:text-slate-900">
+            比較
           </Link>
           <span className="mx-2">/</span>
-          <span className="font-medium text-slate-900">{post.title}</span>
+          <span className="font-medium text-slate-900">
+            {comparison.title}
+          </span>
         </nav>
 
         <header className="mt-8 rounded-3xl border border-slate-200 bg-white p-8">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-700">
-            {post.category}
-          </p>
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+              {comparison.category}
+            </span>
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+              {getLevelLabel(comparison.level)}
+            </span>
+            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+              {getPriorityLabel(comparison.priority)}
+            </span>
+          </div>
 
-          <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-            {post.title}
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+            {comparison.title}
           </h1>
 
           <p className="mt-5 text-base leading-8 text-slate-600">
-            {post.description}
+            {comparison.description}
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2 text-sm text-slate-500">
-            <span>公開日：{post.publishedAt || "未設定"}</span>
+            <span>公開日：{comparison.publishedAt || "未設定"}</span>
             <span>/</span>
-            <span>更新日：{post.updatedAt || "未設定"}</span>
-            <span>/</span>
-            <span>著者：{post.author}</span>
+            <span>更新日：{comparison.updatedAt || "未設定"}</span>
           </div>
 
-          {post.tags.length > 0 ? (
+          {comparison.examScopes.length > 0 ? (
             <div className="mt-6 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {comparison.examScopes.map((examScope) => (
                 <span
-                  key={tag}
-                  className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  key={examScope}
+                  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700"
                 >
-                  #{tag}
+                  {examScope}
                 </span>
               ))}
             </div>
           ) : null}
         </header>
 
+        {comparison.services.length > 0 ? (
+          <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8">
+            <h2 className="text-xl font-bold text-slate-950">
+              比較対象サービス
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              サービス名をクリックすると、用語詳細ページで復習できます。
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              {comparison.services.map((service) =>
+                isExistingTerm(service) ? (
+                  <Link
+                    key={service}
+                    href={`/terms/${service}`}
+                    className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                  >
+                    {formatServiceName(service)}
+                  </Link>
+                ) : (
+                  <span
+                    key={service}
+                    className="rounded-full border border-slate-100 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400"
+                  >
+                    {formatServiceName(service)}
+                  </span>
+                ),
+              )}
+            </div>
+          </section>
+        ) : null}
+
         <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8">
-          <MarkdownContent content={post.content} />
+          <MarkdownContent content={comparison.content} />
         </section>
 
         <section className="mt-8 rounded-3xl bg-slate-950 p-8 text-white">
           <h2 className="text-xl font-bold">次に学ぶ内容</h2>
           <p className="mt-3 text-sm leading-7 text-slate-300">
-            ブログ記事だけでなく、AWS用語集・サービス比較・模擬問題・構成図を組み合わせると、
-            資格知識と実装イメージをつなげて理解できます。
+            比較で違いを理解したら、関連用語と模擬問題で知識を確認してください。
+            資格試験では「似ているサービスの使い分け」が問われます。
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/blog"
+              href="/comparisons"
               className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-slate-100"
             >
-              ブログ一覧へ戻る
+              比較一覧へ戻る
             </Link>
             <Link
               href="/terms"
@@ -657,6 +763,32 @@ export default async function BlogPostPage({
             </Link>
           </div>
         </section>
+
+        {relatedComparisons.length > 0 ? (
+          <section className="mt-10">
+            <h2 className="text-2xl font-bold text-slate-950">関連比較</h2>
+
+            <div className="mt-5 grid gap-5 md:grid-cols-3">
+              {relatedComparisons.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/comparisons/${item.slug}`}
+                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-md"
+                >
+                  <p className="text-xs font-semibold text-blue-700">
+                    {item.category}
+                  </p>
+                  <h3 className="mt-2 font-bold leading-7 text-slate-950">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    {item.description}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </article>
     </main>
   );

@@ -262,12 +262,14 @@ export function QuestionPlayer({
         <h2 className="mb-4 text-lg font-bold text-slate-950">関連リンク</h2>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <h3 className="mb-3 text-sm font-bold text-slate-700">関連サービス</h3>
-            {resolvedServices && resolvedServices.length > 0 ? (
+          {/* 関連サービス: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {resolvedServices && resolvedServices.some(({ exists }) => exists) ? (
+            <div>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">関連サービス</h3>
               <ul className="flex flex-wrap gap-2">
-                {resolvedServices.map(({ id: serviceId, exists }) =>
-                  exists ? (
+                {resolvedServices
+                  .filter(({ exists }) => exists)
+                  .map(({ id: serviceId }) => (
                     <li key={serviceId}>
                       <Link
                         href={`/terms/${serviceId}`}
@@ -276,27 +278,19 @@ export function QuestionPlayer({
                         {serviceId.toUpperCase()}
                       </Link>
                     </li>
-                  ) : (
-                    <li key={serviceId}>
-                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-400">
-                        {serviceId.toUpperCase()}
-                        <span className="ml-1 text-xs font-normal">準備中</span>
-                      </span>
-                    </li>
-                  ),
-                )}
+                  ))}
               </ul>
-            ) : (
-              <p className="text-sm text-slate-500">関連サービスは未設定です。</p>
-            )}
-          </div>
+            </div>
+          ) : null}
 
-          <div>
-            <h3 className="mb-3 text-sm font-bold text-slate-700">関連用語</h3>
-            {resolvedTerms && resolvedTerms.length > 0 ? (
+          {/* 関連用語: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {resolvedTerms && resolvedTerms.some(({ exists }) => exists) ? (
+            <div>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">関連用語</h3>
               <ul className="flex flex-wrap gap-2">
-                {resolvedTerms.map(({ id: termId, exists }) =>
-                  exists ? (
+                {resolvedTerms
+                  .filter(({ exists }) => exists)
+                  .map(({ id: termId }) => (
                     <li key={termId}>
                       <Link
                         href={`/terms/${termId}`}
@@ -305,27 +299,19 @@ export function QuestionPlayer({
                         {termId}
                       </Link>
                     </li>
-                  ) : (
-                    <li key={termId}>
-                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-400">
-                        {termId}
-                        <span className="ml-1 text-xs font-normal">準備中</span>
-                      </span>
-                    </li>
-                  ),
-                )}
+                  ))}
               </ul>
-            ) : (
-              <p className="text-sm text-slate-500">関連用語は未設定です。</p>
-            )}
-          </div>
+            </div>
+          ) : null}
 
-          <div>
-            <h3 className="mb-3 text-sm font-bold text-slate-700">関連比較記事</h3>
-            {resolvedComparisons && resolvedComparisons.length > 0 ? (
+          {/* 関連比較記事: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {resolvedComparisons && resolvedComparisons.some(({ exists }) => exists) ? (
+            <div>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">関連比較記事</h3>
               <ul className="flex flex-wrap gap-2">
-                {resolvedComparisons.map(({ id: slug, exists }) =>
-                  exists ? (
+                {resolvedComparisons
+                  .filter(({ exists }) => exists)
+                  .map(({ id: slug }) => (
                     <li key={slug}>
                       <Link
                         href={`/comparisons/${slug}`}
@@ -334,20 +320,10 @@ export function QuestionPlayer({
                         {slug}
                       </Link>
                     </li>
-                  ) : (
-                    <li key={slug}>
-                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-400">
-                        {slug}
-                        <span className="ml-1 text-xs font-normal">準備中</span>
-                      </span>
-                    </li>
-                  ),
-                )}
+                  ))}
               </ul>
-            ) : (
-              <p className="text-sm text-slate-500">関連比較記事は未設定です。</p>
-            )}
-          </div>
+            </div>
+          ) : null}
         </div>
       </section>
 

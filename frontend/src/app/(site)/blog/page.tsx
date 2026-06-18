@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactElement } from "react";
-import { blogPosts } from "../../contents/blog/blogPosts";
-import { createPageMetadata, pageSeo } from "../../lib/seo";
+import { blogPosts } from "@/contents/blog/blogPosts";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.blog);
 
