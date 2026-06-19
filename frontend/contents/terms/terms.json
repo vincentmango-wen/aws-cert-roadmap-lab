@@ -2391,7 +2391,18 @@
       "実行ロールは必要なDynamoDBテーブルだけに絞る",
       "ログに個人情報や秘密情報を出さない"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Lambda は、サーバーをプロビジョニング・管理することなくコードを実行できる\nサーバーレスコンピューティングサービスである。利用者は実行したい関数コードと\n実行環境（ランタイム）、メモリ・タイムアウトなどの設定を登録するだけで、AWS 側が\n実行基盤を自動で確保・スケールする。コードはイベント（API Gateway からの HTTP\nリクエスト、S3 のオブジェクト作成、DynamoDB Streams、EventBridge スケジュール、\nSQS メッセージ受信など）をトリガーとして起動する。\n\n料金は「リクエスト数」と「実行時間 × 割り当てメモリ量」の組み合わせで課金される。\nアイドル時はリソースが起動しないため、リクエストが無い時間帯の料金は発生しない。\n無料利用枠として、毎月 100 万リクエストと 40 万 GB 秒の実行時間が用意されている。\n\n主要なユースケースは、API Gateway と組み合わせたサーバーレス API、S3 や DynamoDB\nイベントに応答するデータ処理、EventBridge スケジュールによる定期ジョブ、Step\nFunctions によるワークフローの 1 ステップとしての利用などである。サポートされる\nランタイムは Python・Node.js・Java・Go・.NET・Ruby のマネージドランタイムに加え、\nカスタムランタイム・コンテナイメージにも対応する。実行時間の上限は 1 リクエストあたり\n最大 15 分、デプロイパッケージサイズや一時ストレージ（/tmp）のサイズなどに制約がある\nため、長時間バッチや巨大ファイル処理には別サービス（AWS Batch、ECS、Step Functions\nの組み合わせなど）が選択肢となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda（AWS公式）",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      }
+    ]
   },
   {
     "termId": "organizations",
@@ -2439,7 +2450,18 @@
       "管理アカウントのMFAを必須にする",
       "SCPで危険なリージョンやサービスを制限できる"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Organizations は、複数の AWS アカウントを 1 つの組織として一元管理するための\nサービスである。組織（Organization）の下に組織単位（OU: Organizational Unit）を\n作成し、その配下にメンバーアカウントを配置できる。アカウントを階層構造で整理する\nことで、用途別（本番・検証・サンドボックス）・部門別・プロジェクト別といった切り口で\n管理しやすくなる。\n\n主要な機能としては、新規 AWS アカウントのプログラム的な作成、サービスコントロール\nポリシー（SCP: Service Control Policy）による組織全体やOU 単位のアクセス権限の\n上限制御、すべてのメンバーアカウントの請求を組織の管理アカウントに集約する一括請求\n（Consolidated Billing）、AWS CloudTrail / AWS Config / Security Hub / GuardDuty\nなどの組織全体への一括展開と集約管理が挙げられる。\n\n典型的なユースケースは、企業や個人開発者が複数アカウントを使い分けるマルチアカウント\n戦略の基盤として用いるケースである。たとえば本番ワークロードと開発・検証ワークロードを\n別アカウントに分離し、SCP で開発アカウントから本番リソースへのアクセスを構造的に\n禁止する、といった統制が組める。料金面では、Organizations 自体は追加料金なしで利用\nでき、一括請求によりリザーブドインスタンスや Savings Plans、無料利用枠が組織全体で\n共有・最適化されるため、複数アカウント運用時のコスト管理が単純化される。",
+    "officialDocs": [
+      {
+        "label": "AWS Organizations とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/organizations/latest/userguide/orgs_introduction.html"
+      },
+      {
+        "label": "AWS Organizations（AWS公式）",
+        "url": "https://aws.amazon.com/jp/organizations/"
+      }
+    ]
   },
   {
     "termId": "quicksight",
@@ -2488,7 +2510,18 @@
       "閲覧可能なダッシュボードをユーザーごとに制限する",
       "公開範囲を誤るとデータ漏えいにつながる"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon QuickSight は、AWS が提供するクラウドネイティブのビジネスインテリジェンス\n（BI）サービスである。データソースに接続し、ダッシュボードやレポートを作成・共有\nできる。データソースとしては、Amazon S3、Amazon Redshift、Amazon RDS、Amazon\nAthena、Amazon Aurora といった AWS のデータストアに加え、Salesforce やオンプレミス\nの SQL データベース、CSV/Excel ファイルのアップロードにも対応する。\n\n主要な機能としては、ドラッグ&ドロップ操作によるビジュアル作成、SPICE（Super-fast,\nParallel, In-memory Calculation Engine）と呼ばれるインメモリエンジンによる高速集計、\nダッシュボードの組織内共有や Web アプリケーションへの埋め込み、機械学習を組み込んだ\n予測・異常検知・自然言語クエリ（Amazon Q in QuickSight）などが挙げられる。\n\n料金モデルは作成者（Author）と閲覧者（Reader）でユーザー単位の月額課金が分かれており、\n閲覧者は閲覧した分だけのセッション課金プランも選択できる。SPICE 容量は別途月額課金と\nなる。サーバープロビジョニングや BI 専用基盤の構築は不要で、ユーザー登録とデータ\nソース接続のみで利用を開始できる点が特徴である。典型的なユースケースは、社内 KPI の\nダッシュボード化、Athena による S3 上のログ分析結果の可視化、Redshift の集計データを\n経営層・営業現場へ配信する社内 BI 基盤などである。",
+    "officialDocs": [
+      {
+        "label": "Amazon QuickSight とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/quick/latest/userguide/what-is.html"
+      },
+      {
+        "label": "Amazon QuickSight（AWS公式）",
+        "url": "https://aws.amazon.com/quick/quicksight/"
+      }
+    ]
   },
   {
     "termId": "rds",
@@ -2542,7 +2575,18 @@
       "DBをパブリック公開しない",
       "保存時暗号化とバックアップ設定を確認する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon Relational Database Service（Amazon RDS）は、リレーショナルデータベースを\nマネージドで提供するサービスである。OS パッチ適用・DB エンジンのマイナーバージョン\nアップ・自動バックアップ・スナップショット取得・障害時のフェイルオーバーといった\n運用作業を AWS 側が肩代わりするため、利用者はスキーマ設計・クエリチューニング・\nアプリケーション側のロジックに集中できる。\n\nサポートする DB エンジンは、Amazon Aurora（MySQL/PostgreSQL 互換）、MySQL、\nPostgreSQL、MariaDB、Oracle Database、Microsoft SQL Server の 6 種類である。\nインスタンスタイプ・ストレージタイプ・ストレージ容量はワークロードに合わせて選択でき、\nストレージは利用に応じて自動拡張するオプションも提供される。\n\n可用性と耐障害性の主要機能としては、マルチ AZ 配置（プライマリと同期スタンバイを\n異なる AZ に配置し、障害時に自動フェイルオーバー）、リードレプリカ（参照クエリの\n負荷分散と一部のクロスリージョン構成）、自動バックアップによるポイントインタイム\nリカバリ、手動スナップショットによる時点指定の保存が挙げられる。料金は「DB インスタンス\nの稼働時間 × インスタンスタイプ」「ストレージ容量」「バックアップ容量」「データ\n転送量」などの組み合わせで課金される。リザーブドインスタンスによる長期コミット割引も\n利用できる。CLF-C02 では、自前で EC2 上に DB を構築する場合と RDS を使う場合の責任\n共有モデル上の役割分担（パッチ・バックアップを誰が担うか）が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/"
+      }
+    ]
   },
   {
     "termId": "redshift",
@@ -2592,7 +2636,18 @@
       "データアクセス権限をIAMとDB権限で分ける",
       "分析対象データに個人情報が含まれる場合はマスキングを検討する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon Redshift は、AWS が提供するクラウドデータウェアハウスサービスである。\nペタバイト級のデータに対する分析クエリを高速に実行することを目的とした列指向\n（カラムナ）ストレージ + MPP（Massively Parallel Processing）アーキテクチャを\n採用しており、複数ノードに処理を分散させて並列実行する。SQL インターフェースで\n扱えるため、既存の BI ツールや SQL クライアントからそのまま接続できる。\n\n提供形態としては、利用者がノードタイプとノード数を指定してクラスターを稼働させる\nプロビジョンド構成と、必要なときに必要な計算リソースを自動で確保する Amazon\nRedshift Serverless がある。Redshift Spectrum を使えば、Amazon S3 上に配置した\nデータを Redshift にロードせずに直接 SQL でクエリすることもでき、データレイクと\nデータウェアハウスを跨いだ分析が可能になる。\n\n主要なユースケースは、複数システムから収集した大量データを集約してエンタープライズ\nデータウェアハウスを構築するケース、BI ツール（Amazon QuickSight、Tableau、Power BI\nなど）の分析基盤として使うケース、Amazon S3 のデータレイクと連携した分析、機械学習\n向け前処理データの集計などである。OLTP 向けの汎用リレーショナルデータベース（Amazon\nRDS / Aurora）が「アプリケーションのトランザクション処理」を担うのに対し、Redshift は\n「集計・分析クエリ」に最適化されたサービスである、という役割分担が CLF-C02 でも\n繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Redshift 管理ガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/redshift/latest/mgmt/welcome.html"
+      },
+      {
+        "label": "Amazon Redshift（AWS公式）",
+        "url": "https://aws.amazon.com/jp/redshift/"
+      }
+    ]
   },
   {
     "termId": "route53",

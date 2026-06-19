@@ -2393,7 +2393,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon SQS（Simple Queue Service）は、AWS が提供するフルマネージドのメッセージキュー\nサービスである。送信側（プロデューサー）が送ったメッセージを SQS キューに一時的に\n蓄積し、受信側（コンシューマー）が任意のタイミングでメッセージを取得して処理する。\n送信側と受信側が同時稼働している必要がなく、片方が停止しても処理を継続できるため、\nコンポーネント間を疎結合化する基盤として用いられる。\n\n試験文脈では「複数の AWS サービスやアプリケーション間でメッセージをキューに蓄積し、\n非同期に処理したい場合」「処理ピークの吸収・コンポーネントの疎結合化を行いたい場合」\nに適したサービスとして Amazon SQS を選ばせる問題が出る。誤答として Amazon SNS（パブ\nリッシュ/サブスクライブ型の通知）、AWS CloudTrail（API 操作履歴の記録）、Amazon\nRoute 53（DNS）が並ぶパターンが頻出する。SNS は「複数の受信者へ同じメッセージを\nプッシュ配信する」用途であり、キューに蓄積して順次処理する SQS とは役割が異なる。\n\n実務では、SQS は EC2 ワーカー群や Lambda を後段に置いて非同期ジョブを処理する構成で\nよく使われる。スタンダードキューと FIFO キューの 2 種類があり、順序保証や重複排除を\n必要とする処理では FIFO を選ぶ。CLF-C02 ではキューと Pub/Sub の役割分担（SQS と SNS\nの対比）が問われやすく、SAA-C03 以降では SQS のメッセージ可視性タイムアウト・デッド\nレターキュー・SNS との Fan-out 構成（SNS → 複数 SQS）まで踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon Simple Queue Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      }
+    ]
   },
   {
     "questionId": "clf-038",
@@ -2442,7 +2453,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Cost Explorer は、AWS の利用料金や使用量をサービス別・期間別・アカウント別・\nタグ別などで可視化・分析するためのコスト管理サービスである。過去 12 か月までの履歴を\nグラフや表で確認でき、最大 12 か月先までの利用予測も表示できる。リザーブドインスタンス\nや Savings Plans のカバレッジ・使用率分析もここから参照できる。\n\n試験文脈では「AWS のサービス別利用料金を分析し、どのサービスに費用がかかっているか\n確認するために使うサービス」として Cost Explorer を選ばせる問題が出る。誤答として\nAmazon CloudFront（CDN）、AWS IAM（認証・認可）、Amazon VPC（ネットワーク）など\nコスト分析と無関係なサービスが並ぶパターンが多く、サービスの守備範囲を取り違えて\nいなければ切り分け可能である。\n\n実務では Cost Explorer と AWS Budgets を組み合わせて使う。Cost Explorer は過去・現在の\nコストを「分析」する用途、AWS Budgets は事前に決めたしきい値を超えたことを「アラート」\nする用途と役割が分かれる。CLF-C02 ではこの 2 サービスの役割分担、および AWS Cost\nand Usage Report（詳細な明細を S3 へ出力するレポート）との位置づけの違いも頻出論点と\nなる。Cost Explorer は分析・可視化、Budgets は通知、CUR は詳細明細データの出力、と\n整理して覚えると切り分けやすい。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
   },
   {
     "questionId": "clf-039",
@@ -2495,7 +2517,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "高可用性（High Availability）は、システム全体が停止する時間をできる限り短くする\n設計思想である。AWS では、各リージョンが複数のアベイラビリティゾーン（AZ）で構成\nされている。AZ は物理的に独立したデータセンター群であり、電源・空調・ネットワーク\nが分離されているため、ある AZ で障害が発生しても他の AZ には波及しない設計となって\nいる。複数 AZ にリソースを分散させることで、単一 AZ 障害による全停止を避けられる。\n\n試験文脈では「クラウドの高可用性を実現する考え方」として「複数のアベイラビリティ\nゾーンを活用して障害の影響を減らす」を選ばせる問題が出る。誤答には「単一の物理\nサーバーだけにすべての処理を集中させる」「バックアップを一切取得しない」「すべての\n通信を HTTP だけに固定する」のような、高可用性の定義と明らかに矛盾する選択肢が\n並ぶ。極端な集中・バックアップ放棄・プロトコル固定はいずれも単一障害点を増やす\n方向の設計であり、可用性の観点から不正解となる。\n\n実務では、複数 AZ 構成は ELB（Application/Network Load Balancer）配下の EC2 を\n複数 AZ に配置する、RDS のマルチ AZ 配置でスタンバイを別 AZ に持つ、S3 のように\nそもそも複数 AZ にデータを冗長保存するサービスを選ぶ、といった形で実装される。\nCLF-C02 では「リージョン」「AZ」「エッジロケーション」の役割の違いと、マルチ AZ /\nマルチリージョンの使い分け（AZ 障害対策 vs 大規模災害対策）が繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS グローバルインフラストラクチャ（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/"
+      },
+      {
+        "label": "リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      }
+    ]
   },
   {
     "questionId": "clf-040",
@@ -2548,7 +2581,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS CloudTrail は、AWS アカウント内で実行された API 操作の履歴を記録するサービス\nである。マネジメントコンソール・AWS CLI・SDK・各 AWS サービスから発行された API\nコール（「誰が」「いつ」「どの IP から」「どの操作を」「どのリソースに対して」行ったか）\nをイベントとして記録し、過去 90 日分のイベント履歴をコンソールから検索できる。S3\nバケットへ Trail を出力する設定にすれば、より長期の保管とログ分析が可能になる。\n\n試験文脈では「AWS アカウント内で『誰が、いつ、どの API 操作を行ったか』を確認する\nために使うサービス」として CloudTrail を選ばせる問題が出る。誤答として Amazon\nCloudFront（CDN）、Amazon S3（オブジェクトストレージ）、AWS Budgets（予算アラート）\nが並ぶパターンが多い。いずれも API 操作履歴の記録が主目的のサービスではないため、\n役割を取り違えていなければ切り分け可能である。\n\n実務では CloudTrail は監査・セキュリティ調査・変更履歴確認に使われる。意図しない\nリソース変更が起きたとき「誰が、いつ、何をしたか」を後追いできる基盤となる。CLF-C02\nでは CloudTrail（API 操作履歴）と Amazon CloudWatch（メトリクス・ログ・アラーム）、\nAWS Config（リソース構成の変更履歴とコンプライアンス評価）の役割分担が頻出論点と\nなる。CloudTrail は「誰が API を叩いたか」、CloudWatch は「リソースの稼働メトリクス\nと運用ログ」、Config は「リソース設定そのものの状態とその変化」と整理して覚えると、\n3 サービスを混同せずに切り分けられる。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "AWS CloudTrail（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      }
+    ]
   },
   {
     "questionId": "clf-041",
@@ -2599,7 +2643,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon CloudFront は、AWS が提供するコンテンツデリバリーネットワーク（CDN）サービス\nである。世界各地のエッジロケーションにコンテンツをキャッシュし、エンドユーザーから\n地理的に最も近いエッジから配信することで、レイテンシーを下げる。オリジンには Amazon\nS3 バケット、EC2 上のアプリケーション、Application Load Balancer、外部の HTTP/HTTPS\nサーバーなどを指定できる。静的コンテンツも動的コンテンツも配信対象とできる。\n\n試験文脈では「静的コンテンツを世界中のユーザーへ低遅延で配信するために使う AWS\nサービス」として CloudFront を選ばせる問題が出る。誤答として AWS CloudTrail（API\n操作履歴）、Amazon RDS（リレーショナルデータベース）、AWS IAM（認証・認可）が\n並ぶパターンが多い。いずれもコンテンツ配信が主目的のサービスではないため、\nサービスの守備範囲を取り違えていなければ切り分け可能である。\n\n実務では、S3 をオリジン、CloudFront をその前面に置く「S3 + CloudFront」が静的サイト\n配信の標準構成となる。HTTPS 配信・カスタムドメイン対応・キャッシュによる転送量削減・\nAWS WAF 連携によるリクエスト保護をまとめて実現できる。CLF-C02 では CloudFront の\n役割と、エッジロケーション・リージョン・AZ の階層関係が問われる。SAA-C03 以降では\nOrigin Access Control（OAC）による S3 直接アクセスの防止、署名付き URL/Cookie に\nよる限定公開、CloudFront Functions / Lambda@Edge によるエッジ処理まで踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "Amazon CloudFront（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudfront/"
+      }
+    ]
   },
   {
     "questionId": "clf-042",
