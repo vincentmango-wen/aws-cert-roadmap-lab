@@ -31,6 +31,7 @@ type BlogPost = {
   targetKeywords: string[];
   author: string;
   published: boolean;
+  noIndex: boolean;
   publishedAt: string;
   updatedAt: string;
   content: string;
@@ -240,6 +241,7 @@ function parseBlogPostFile(filePath: string): BlogPost {
     targetKeywords: getStringArray(frontmatter.targetKeywords),
     author: getString(frontmatter.author, "AWS資格ロードマップラボ"),
     published: getBoolean(frontmatter.published, true),
+    noIndex: getBoolean(frontmatter.noIndex, false),
     publishedAt: getString(frontmatter.publishedAt, ""),
     updatedAt: getString(frontmatter.updatedAt, ""),
     content,
@@ -562,6 +564,7 @@ export async function generateMetadata({
     type: "article",
     publishedTime: post.publishedAt,
     modifiedTime: post.updatedAt,
+    noIndex: post.noIndex,
   });
 }
 

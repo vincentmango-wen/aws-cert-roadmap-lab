@@ -31,6 +31,7 @@ type MdxContentMeta = {
   slug: string;
   updatedAt?: string;
   published: boolean;
+  noIndex: boolean;
 };
 
 const FALLBACK_SITE_URL = "https://aws-cert-roadmap-lab.example.com";
@@ -151,6 +152,7 @@ function readMdxContentMetas(directoryName: string): MdxContentMeta[] {
       const frontmatter = extractFrontmatter(fileContent);
 
       const publishedValue = readFrontmatterValue(frontmatter, "published");
+      const noIndexValue = readFrontmatterValue(frontmatter, "noIndex");
       const updatedAt =
         readFrontmatterValue(frontmatter, "updatedAt") ??
         readFrontmatterValue(frontmatter, "publishedAt");
@@ -159,9 +161,10 @@ function readMdxContentMetas(directoryName: string): MdxContentMeta[] {
         slug,
         updatedAt,
         published: publishedValue !== "false",
+        noIndex: noIndexValue === "true",
       };
     })
-    .filter((meta) => meta.slug.length > 0)
+    .filter((meta) => meta.slug.length > 0 && meta.published && !meta.noIndex)
     .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 

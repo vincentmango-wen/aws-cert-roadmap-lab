@@ -84,7 +84,7 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
     robots: input.noIndex
       ? {
           index: false,
-          follow: false,
+          follow: true,
         }
       : {
           index: true,
