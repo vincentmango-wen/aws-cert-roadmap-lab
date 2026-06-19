@@ -3016,7 +3016,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon CloudWatch は、AWS リソースおよびその上で稼働するアプリケーションのメトリクス・\nログ・イベント・アラームを統合的に扱う監視サービスである。EC2 の CPU 使用率、ELB の\nリクエスト数、RDS の接続数といった標準メトリクスをはじめ、Lambda の実行ログや、\nアプリケーションが出力するカスタムメトリクスも CloudWatch に集約できる。CloudWatch\nAlarms によりしきい値超過時に Amazon SNS 通知や Auto Scaling アクションを発火させる\n構成が一般的である。\n\n試験文脈では「AWS リソースのメトリクス・ログ・アラームを扱う監視サービス」として\nCloudWatch を選ばせる問題が出る。誤答として AWS CloudTrail（API コール監査）、AWS\nConfig（リソース設定変更履歴と準拠評価）、Amazon SQS（メッセージキュー）が並ぶ\nパターンが多い。CloudTrail / Config と CloudWatch は「何を記録するか」が異なる役割\nであり、CLF-C02 ではこの 3 サービスの守備範囲の違いが繰り返し問われる。\n\n実務では、CloudWatch Logs に Lambda・ECS・EC2 のアプリケーションログを集約し、\nCloudWatch Metrics で時系列メトリクスを蓄積し、CloudWatch Alarms でしきい値違反を\n検知する 3 層構成が基本となる。CloudWatch Logs Insights によるログクエリ、\nCloudWatch Dashboards によるメトリクス可視化、CloudWatch Synthetics による外形監視\nなど、運用に必要な観測機能が一つのサービスに集約されている。CloudTrail は「誰が\nどの API を叩いたか（監査ログ）」、Config は「リソース設定がどう変化したか・\nルールに準拠しているか」、CloudWatch は「リソースとアプリの稼働状況」と整理して\n覚えると誤答を避けやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      }
+    ]
   },
   {
     "questionId": "clf-048",
@@ -3067,7 +3082,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Reserved Instances（RI）は、1 年または 3 年の利用期間をコミットすることで、オンデマンド\n料金より大幅に割引された料金で EC2 などのリソースを利用できる購入オプションである。\n支払い方式は「全額前払い（All Upfront）」「一部前払い（Partial Upfront）」「前払いなし\n（No Upfront）」の 3 種類があり、前払い割合が大きいほど割引率が高くなる。RI は\nインスタンスタイプ・リージョン・OS・テナンシーに対して適用される予約であり、長期間\n継続して稼働させるワークロードに対して有効である。\n\n試験文脈では「長期間継続して使用する EC2 のコストを削減する購入オプション」として\nReserved Instances を選ばせる問題が出る。誤答として AWS CloudTrail（監査ログ）、\nAmazon S3 Standard（ストレージクラス）、Security Group（仮想ファイアウォール）が\n並ぶパターンが多い。これらはいずれも購入オプションではなく、別の役割を持つサービス・\n機能であるため、「購入オプション」「コスト削減」というキーワードで切り分けられる。\n\n実務では、EC2 のコスト最適化は Reserved Instances・Savings Plans・Spot Instances・\nオンデマンドの 4 種類を組み合わせて行う。常時稼働の本番ワークロードには RI または\nSavings Plans、開発環境やバッチには Spot、需要が読みにくいワークロードにはオンデマンドを\n割り当てる構成が典型的である。Savings Plans は RI と似た長期コミット型割引だが、\nインスタンスタイプを問わず特定の利用額（時間あたりドル）をコミットする点が異なり、\nRI よりも柔軟性が高い。CLF-C02 では Reserved Instances・Savings Plans・Spot Instances の\n3 オプションの違いと、それぞれが向くワークロード特性が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Reserved Instances（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ec2-reserved-instances.html"
+      },
+      {
+        "label": "Amazon EC2 リザーブドインスタンス（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/pricing/reserved-instances/"
+      },
+      {
+        "label": "AWS Savings Plans（AWS公式）",
+        "url": "https://aws.amazon.com/jp/savingsplans/"
+      }
+    ]
   },
   {
     "questionId": "clf-049",
@@ -3117,7 +3147,22 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon Route 53 は、AWS が提供する権威 DNS サービスである。独自ドメインを取得・管理し、\nそのドメインに対する DNS レコード（A / AAAA / CNAME / MX / TXT 等）を登録することで、\nドメイン名から AWS リソース（CloudFront Distribution・ALB・S3 静的サイト・EC2 等）への\n名前解決を提供する。AWS リソースに対しては「Alias レコード」と呼ばれる Route 53 固有の\n仕組みがあり、CloudFront や ALB の DNS 名を CNAME ではなく Alias として登録できる。\nAlias は無料で利用でき、ZONE APEX（example.com そのもの）にも設定できる点が CNAME と\n異なる。\n\n試験文脈では「AWS で DNS 名前解決を提供するサービス」として Route 53 を選ばせる\n問題が出る。誤答として Amazon EBS（ブロックストレージ）、AWS Lambda（サーバーレス\nコンピュート）、Amazon DynamoDB（NoSQL データベース）など、DNS と無関係なサービスが\n並ぶパターンが多い。「DNS」「ドメイン名」「名前解決」というキーワードが揃った時点で\nRoute 53 以外の選択肢は切り捨てられる。\n\n実務では、Route 53 のルーティングポリシーが選定の要点となる。シンプルルーティング・\n加重ルーティング（A/B テスト・段階的リリース）・レイテンシーベース（ユーザーに最も近い\nリージョンへ誘導）・位置情報ルーティング（国・地域でルーティング先を分岐）・フェイルオーバー\n（ヘルスチェックに基づく障害切り替え）・複数値回答などのポリシーが用意されており、\nワークロードの要件に応じて使い分ける。CLF-C02 では「Route 53 = DNS」という基本に加え、\nドメイン登録機能とヘルスチェック機能を持つ点が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      },
+      {
+        "label": "Route 53 ルーティングポリシーの選択（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/routing-policy.html"
+      }
+    ]
   },
   {
     "questionId": "clf-050",
@@ -3169,6 +3214,21 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Config は、AWS リソースの設定情報を継続的に記録し、設定変更履歴を保持し、設定が\nあらかじめ定義したルール（Config Rules）に準拠しているかを評価するサービスである。\nEC2 のセキュリティグループ、S3 バケットの暗号化設定、IAM ロールのポリシーといった\n「リソースの構成（設定値）」を時系列で記録し、いつ・誰が・何を変えたかを追跡できる。\nConfig Rules を有効化することで「S3 バケットのパブリックアクセスをブロックする」\n「EBS ボリュームが暗号化されている」といった準拠条件を継続評価し、違反リソースを\n検知できる。\n\n試験文脈では「AWS リソースの設定変更履歴を記録し、設定がルールに準拠しているかを\n確認するサービス」として AWS Config を選ばせる問題が出る。誤答として Amazon SQS\n（メッセージキュー）、Amazon CloudFront（CDN）、AWS Budgets（予算アラート）が\n並ぶパターンが多いが、いずれも設定変更履歴や準拠評価とは無関係である。CloudWatch・\nCloudTrail との混同が頻出論点であり、Config は「リソース設定がどう変化したか」と\n「設定が準拠しているか」、CloudTrail は「誰がどの API を叩いたか」、CloudWatch は\n「リソースとアプリの稼働状況」と役割が分かれる。\n\n実務では、Config は監査・コンプライアンス用途で利用される。マネージドルールとして\n「s3-bucket-public-read-prohibited」「encrypted-volumes」「root-account-mfa-enabled」\nなど 100 種類以上のチェックがあらかじめ用意されており、有効化するだけで継続的な\n準拠監視を開始できる。AWS Security Hub と組み合わせて組織全体の準拠状況を集約する\n構成も一般的である。CLF-C02 では Config・CloudTrail・CloudWatch の役割分担と、\n「Config Rules で準拠監視」「CloudTrail で API 監査」「CloudWatch で稼働監視」と\nいう整理が繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Config とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/WhatIsConfig.html"
+      },
+      {
+        "label": "AWS Config（AWS公式）",
+        "url": "https://aws.amazon.com/jp/config/"
+      },
+      {
+        "label": "AWS Config ルールによるリソースの評価（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/evaluate-config.html"
+      }
+    ]
   }
 ]

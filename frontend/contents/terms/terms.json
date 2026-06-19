@@ -3008,7 +3008,18 @@
       "キュー操作権限を送信・受信で分ける",
       "メッセージに秘密情報を直接入れない"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon SQS は、AWS のフルマネージドなメッセージキューサービスである。メッセージを\nキューに送信する側（プロデューサー）と受信する側（コンシューマー）を分離することで、\n処理を非同期化し、システム全体の疎結合化を実現する。送信側はコンシューマーの稼働\n状況を意識せずメッセージを送れ、受信側は自身のペースでメッセージを取り出して処理\nできるため、瞬間的な負荷変動に対する緩衝（バッファ）として機能する。SQS には\nStandard Queue と FIFO Queue の 2 種類があり、Standard は順序保証なし・少なくとも\n1 回配信、FIFO は順序保証あり・正確に 1 回処理を提供する。\n\n実務では、注文処理の非同期化、Lambda への処理分散、障害時のリトライバッファ、\nECS タスク間のジョブ受け渡しなどに利用される。可視性タイムアウト（Visibility\nTimeout）は SQS の重要概念で、コンシューマーがメッセージを取り出してから処理完了\n（delete）するまでの間、そのメッセージを他のコンシューマーから見えなくする時間である。\n処理がタイムアウト内に完了しなければメッセージは再び可視化され、別のコンシューマー\nが取り出せる。これにより少なくとも 1 回の処理が保証される代わりに、コンシューマー\n側で冪等性（idempotency）を担保する必要がある。\n\n料金はリクエスト数（API 呼び出し回数）に応じた従量課金で、データ転送量は別途課金\nされる。デッドレターキュー（DLQ）を設定することで、規定回数を超えて処理に失敗した\nメッセージを別キューに退避し、後続調査に回せる。CLF-C02 では「SQS = メッセージ\nキューによる疎結合化」という基本概念と、Standard / FIFO の使い分け、可視性タイム\nアウトが頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Simple Queue Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon SQS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      }
+    ]
   },
   {
     "termId": "step-functions",
@@ -3061,7 +3072,18 @@
       "実行ロールの権限を各連携先に限定する",
       "失敗時の入力データをログに出しすぎない"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Step Functions は、複数の処理ステップをワークフローとして定義し、状態管理・\nリトライ制御・条件分岐・並列実行を組み合わせて実行できるフルマネージドな\nオーケストレーションサービスである。ステートマシンと呼ばれる定義（Amazon States\nLanguage という JSON 形式の DSL で記述）に従い、Lambda 関数・ECS タスク・DynamoDB\n操作・SNS 通知などの「タスク」を順次または並列に実行し、各ステップの成功・失敗・\n出力を状態として追跡する。\n\n実務では、複数 Lambda を順序立てて呼び出すバッチ処理、承認フロー、ETL パイプライン、\nマイクロサービス間のオーケストレーションなどに利用される。Step Functions を使わず\nLambda 同士を直接呼び出す構成と比較した利点は、各ステップの実行履歴がコンソールで\n可視化される点、失敗時のリトライ・キャッチ処理を宣言的に書ける点、長時間（最大\n1 年）にわたるワークフローを状態管理できる点である。Express Workflow（短時間・\n高スループット向け）と Standard Workflow（長時間・状態履歴保持向け）の 2 種類が\nあり、用途に応じて選択する。\n\n料金は状態遷移数（Standard）または実行時間とリクエスト数（Express）に応じた\n従量課金で、待機ステップ中も課金対象になる点に留意する。EventBridge と組み合わせて\nスケジュール起動やイベント駆動実行を構成するパターンが一般的である。CLF-C02 では\n「Step Functions = ワークフローオーケストレーション」「Lambda と組み合わせて\nサーバーレス構成を組める」「状態遷移を可視化できる」という整理が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Step Functions とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Step Functions（AWS公式）",
+        "url": "https://aws.amazon.com/jp/step-functions/"
+      }
+    ]
   },
   {
     "termId": "systems-manager",
@@ -3110,7 +3132,18 @@
       "本番秘密情報をGitに置かない",
       "Session Manager利用時はIAM権限とログ出力を設定する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Systems Manager（SSM）は、AWS リソースとオンプレミスサーバーの運用管理を統合\n的に行うサービス群である。単一のサービスではなく、Parameter Store・Session Manager・\nRun Command・Patch Manager・State Manager・Automation など複数の機能（Capability）\nの集合体として提供される。EC2 インスタンスや オンプレサーバーに SSM Agent を導入する\nことで、これらの機能から各サーバーを管理対象として扱えるようになる。\n\n実務でよく使われる機能は次の通りである。Parameter Store は設定値・接続文字列・\n暗号化済みシークレットを階層構造で管理し、Lambda や EC2 から取得できる（Secrets\nManager より安価で、機密情報を扱わない設定値に向く）。Session Manager は SSH キーや\nインバウンドポート開放なしに EC2 へターミナル接続できる仕組みで、踏み台サーバー\nを不要にする。Run Command は複数の EC2 に対して一斉にスクリプトやコマンドを実行\nできる仕組みで、定型運用作業の自動化に使われる。Patch Manager は OS パッチ適用、\nState Manager は構成ドリフト管理を担う。\n\n料金は機能ごとに異なり、Session Manager・Run Command・Parameter Store の Standard\nティアは無料で利用できる（Advanced Parameter Store やオンプレ管理拡張は有料）。\nCLF-C02 では Systems Manager 全体が「運用管理サービス群」として問われ、特に\nParameter Store による設定値管理と Session Manager による SSH 不要接続が頻出\n論点となる。Secrets Manager との使い分け（機密性が高く自動ローテーションが必要なら\nSecrets Manager、コスト優先で平文・SecureString での管理で十分なら Parameter Store）\nも整理しておくと選択肢の絞り込みが速くなる。",
+    "officialDocs": [
+      {
+        "label": "AWS Systems Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/what-is-systems-manager.html"
+      },
+      {
+        "label": "AWS Systems Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/systems-manager/"
+      }
+    ]
   },
   {
     "termId": "trusted-advisor",
@@ -3159,7 +3192,18 @@
       "セキュリティ警告を確認する",
       "公開設定や権限過多の指摘を放置しない"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Trusted Advisor は、AWS 環境を「コスト最適化」「セキュリティ」「耐障害性」\n「パフォーマンス」「サービスクォータ」の 5 つのカテゴリでチェックし、ベスト\nプラクティスに沿った改善提案を行うサービスである。チェックは AWS があらかじめ\n用意した項目に基づいて自動実行され、結果はマネジメントコンソールでカテゴリ別に\n確認できる。代表的なチェック項目には、IAM ルートユーザーの MFA 有効化、S3 バケットの\nパブリックアクセス、未使用の EC2 Elastic IP、低稼働率の EC2 インスタンス、サービス\nクォータの使用状況などがある。\n\n利用できるチェック項目数はサポートプランによって異なる。Basic Support と Developer\nSupport では「コアチェック」と呼ばれる 6 項目のみが利用できる（セキュリティと\nサービスクォータ中心）。Business Support 以上で全カテゴリ・全項目（100 種類以上）が\n利用可能になり、API による自動取得や週次の改善レポート送信なども提供される。\n試験文脈では「サポートプランによりチェック範囲が異なる」点が繰り返し問われる\nため、Basic / Developer はコア 6、Business 以上は全項目という対応関係を覚えて\nおく。\n\n実務では、Trusted Advisor の「コスト最適化」カテゴリで未使用リソース（停止 EC2 に\n付随する EBS、未使用 Elastic IP、低稼働 RDS）を洗い出してコスト削減に繋げる運用、\n「セキュリティ」カテゴリで IAM・S3・セキュリティグループの設定不備を継続監視する\n運用が典型的である。AWS Config Rules や AWS Security Hub と役割が一部重なるが、\nTrusted Advisor は「AWS のベストプラクティスに対する評価」を提供する点が固有の\n価値である。",
+    "officialDocs": [
+      {
+        "label": "AWS Trusted Advisor（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS Trusted Advisor（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      }
+    ]
   },
   {
     "termId": "vpc",
@@ -3212,7 +3256,18 @@
       "管理用ポートを0.0.0.0/0に開けない",
       "プライベートリソースはパブリックサブネットに置かない"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon VPC は、AWS アカウント内に論理的に分離されたネットワーク空間（仮想プライベート\nクラウド）を作成するサービスである。CIDR ブロック（例: 10.0.0.0/16）でアドレス空間を\n定義し、その中に複数のサブネット（パブリックサブネット / プライベートサブネット）を\nアベイラビリティゾーン単位で切り分けて配置する。サブネット間のルーティングはルート\nテーブルで制御し、インターネットへの出口は Internet Gateway、プライベートサブネット\nからの外向き通信は NAT Gateway で実現する。これらの構成要素を組み合わせることで、\nオンプレミスのネットワーク設計に近い構造を AWS 上に再現できる。\n\n通信制御は Security Group（インスタンスレベル・ステートフル・許可ルールのみ）と\nNetwork ACL（サブネットレベル・ステートレス・許可と拒否の両方を記述可能）の 2 層で\n行う。Security Group は「このインスタンスにどこから入って来てよいか」「どこへ\n出ていってよいか」を許可型で定義し、Network ACL はサブネット単位での粗い制御を担う。\n両者は併用され、Security Group での細かい制御と Network ACL での包括的な遮断を\n組み合わせる構成が一般的である。\n\n実務では、Web 三層構成（パブリックサブネットに ALB、プライベートサブネットに\nEC2・ECS、データベースサブネットに RDS）を VPC 上に構築する設計が典型的である。\n複数の VPC を接続する場合は VPC Peering、複数アカウント・複数 VPC を集約する場合は\nTransit Gateway、AWS サービスへの閉域アクセスは VPC Endpoint（Gateway 型 / Interface\n型）を使う。VPC 本体・サブネット・ルートテーブル・Internet Gateway・Security Group・\nNetwork ACL の作成自体は無料で、NAT Gateway・VPC Endpoint・データ転送量に課金が\n発生する。CLF-C02 では VPC の基本構成要素（サブネット・ルートテーブル・IGW・NAT・\nSecurity Group・Network ACL）の役割分担が繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Virtual Private Cloud とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/what-is-amazon-vpc.html"
+      },
+      {
+        "label": "Amazon Virtual Private Cloud（AWS公式）",
+        "url": "https://aws.amazon.com/jp/vpc/"
+      }
+    ]
   },
   {
     "termId": "waf",
@@ -3260,7 +3315,18 @@
       "誤検知で正規ユーザーをブロックしないようログを確認する",
       "ルール変更権限を限定する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS WAF（Web Application Firewall）は、Web アプリケーションに対する悪意あるリクエストを\nルールベースで検知・ブロックするマネージドファイアウォールサービスである。SQL\nインジェクション・クロスサイトスクリプティング（XSS）・特定 IP アドレスからの大量\nリクエスト・特定地域からのアクセスなどを、ルールに従って評価する。WAF はそれ単体で\n動作するのではなく、CloudFront・Application Load Balancer（ALB）・API Gateway・\nAWS AppSync など「保護対象のリソース」に紐づけて配備する。\n\nルールには 3 種類ある。マネージドルール（AWS や AWS Marketplace パートナーが提供する\nルールセット）、カスタムルール（自分で条件を記述）、レートベースルール（一定期間内の\nリクエスト数に基づくブロック）である。マネージドルールには OWASP Top 10 対策・Bot\n管理・既知の悪意ある IP 対策など、よく使うルールセットが含まれており、有効化するだけで\n基本的な保護を開始できる。これらをルールグループとして Web ACL（Access Control List）\nに束ね、Web ACL を保護対象リソースに関連付ける構成となる。\n\n料金は Web ACL 数・ルール数・処理リクエスト数による従量課金で、マネージドルールには\n別途ルールグループごとの料金が加算される。AWS Shield Standard との関係も整理して\nおく必要があり、Shield Standard は L3/L4 の DDoS 対策を全 AWS ユーザーに無料で提供する\nのに対し、WAF は L7（HTTP/HTTPS）層のルールベース防御を担う。両者は守備範囲が異なる\nため、Web アプリの保護には WAF と Shield Standard を併用するのが基本である。CLF-C02\nでは「WAF = L7 の Web アプリ保護」「CloudFront / ALB と連携」「マネージドルールで\nSQL インジェクションや XSS を防げる」という整理が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS WAF とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/waf-chapter.html"
+      },
+      {
+        "label": "AWS WAF（AWS公式）",
+        "url": "https://aws.amazon.com/jp/waf/"
+      }
+    ]
   },
   {
     "termId": "x-ray",
@@ -3313,6 +3379,17 @@
       "トレースに個人情報や本文を含めない",
       "本番で取得するデータ範囲を制限する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS X-Ray は、分散アプリケーションのリクエスト経路と処理時間を可視化する分散トレー\nシングサービスである。API Gateway → Lambda → DynamoDB のようなサーバーレス構成や、\nALB → ECS → RDS のようなマイクロサービス構成において、1 つのリクエストが各コンポー\nネントを通過する経路と、各コンポーネントでの処理時間（レイテンシ）・エラー情報を\n記録する。X-Ray コンソールではサービスマップとして全体像を可視化でき、どのサービス\n間呼び出しが遅いか・どこでエラーが発生しているかをリクエスト単位で追跡できる。\n\nX-Ray を有効化するには、アプリケーションコード側に X-Ray SDK を組み込むか、対象\nサービスの X-Ray トレース機能を有効化する。Lambda・API Gateway・ALB・SQS・SNS など\n主要サービスはコンソール側でトレースを有効化するだけで X-Ray にデータが送られる。\nSDK を組み込んだ場合は、独自のサブセグメント（外部 API 呼び出しや DB クエリ等）を\n記録でき、より細かい粒度でボトルネックを特定できる。サンプリングレートを設定する\nことで、トレース対象とするリクエスト割合を制御し、コストを抑えられる。\n\nCloudWatch Logs との役割の違いを整理しておく必要がある。CloudWatch Logs は「個別\nサービスのテキストログ」を集約するのに対し、X-Ray は「複数サービスにまたがる\nリクエストの実行経路と処理時間」を可視化する。障害調査では両者を併用し、X-Ray で\nどこが遅いか・どこで失敗しているかを特定し、CloudWatch Logs で該当箇所の詳細ログを\n確認する流れが一般的である。料金は記録トレース数と取得トレース数の従量課金で、毎月\n一定量の無料利用枠がある。CLF-C02 では「X-Ray = 分散トレーシング」「Lambda や API\nGateway の遅延調査に使う」「CloudWatch Logs とは役割が異なる」という整理が頻出\n論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS X-Ray とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/aws-xray.html"
+      },
+      {
+        "label": "AWS X-Ray の概念（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-concepts.html"
+      }
+    ]
   }
 ]
