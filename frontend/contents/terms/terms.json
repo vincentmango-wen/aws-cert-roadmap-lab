@@ -2698,7 +2698,18 @@
       "DNSレコード変更権限を限定する",
       "ドメイン管理アカウントをMFAで保護する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon Route 53 は、AWS が提供する可用性とスケーラビリティに優れたクラウド DNS\n（Domain Name System）サービスである。ドメイン名の登録（Domain Registration）・\nDNS レコードのホスティング（Hosted Zone）・ヘルスチェック・トラフィックルーティングを\n1 つのサービスで提供する。AWS リソース向けの Alias レコードを使えば、CloudFront\nディストリビューション・Application Load Balancer・S3 静的ウェブサイトホスティング・\nAPI Gateway などへ追加課金なしで名前解決を向けられる。\n\n主要なルーティングポリシーとして、シンプルルーティング（単一レコード）、加重ルーティング\n（指定した重みで分散）、レイテンシールーティング（最も低レイテンシのリージョンへ振り分け）、\nフェイルオーバールーティング（プライマリ障害時にセカンダリへ切り替え）、位置情報\nルーティング（クライアントの地理位置に基づく振り分け）、地理的近接性ルーティング、\n複数値回答ルーティングの 7 種類が提供される。ヘルスチェック機能と組み合わせることで、\n障害発生時の自動 DNS フェイルオーバーを構成できる。\n\n典型的なユースケースは、独自ドメインを CloudFront ディストリビューションや ALB に\n向ける構成、複数リージョンへの DNS レベルでの負荷分散、フェイルオーバーによる DR\n（災害復旧）構成、社内アプリケーション用のプライベート DNS（Private Hosted Zone）の\n運用などである。料金は Hosted Zone 1 つあたりの月額固定費 + DNS クエリ回数 + ヘルス\nチェック数 + ドメイン登録費（年額・TLD ごとに異なる）の組み合わせで課金される。\nAWS リソース向け Alias レコードへのクエリは無料となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      }
+    ]
   },
   {
     "termId": "s3",
@@ -2752,7 +2763,18 @@
       "バケットを安易にパブリック公開しない",
       "CloudFront経由で配信する場合はOACを利用する"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon Simple Storage Service（Amazon S3）は、AWS が提供するオブジェクトストレージ\nサービスである。ファイル（オブジェクト）をバケット（バケット名は AWS 全体で一意）に\n保存する形式を取り、HTML・CSS・JavaScript・画像・動画・ログ・バックアップ・データ\nレイク用ファイルなど、あらゆる種類のデータを保存できる。標準の Amazon S3 Standard\nクラスでは 99.999999999%（イレブンナイン）のオブジェクト耐久性を持ち、複数 AZ への\n冗長保存が組み込みで行われる。\n\n主要なストレージクラスとして、頻繁にアクセスする S3 Standard、アクセス頻度の低い\nデータ向けの S3 Standard-IA（Infrequent Access）と S3 One Zone-IA、アクセスパターンが\n不明なデータ向けの S3 Intelligent-Tiering、アーカイブ用途の S3 Glacier Instant Retrieval /\nS3 Glacier Flexible Retrieval / S3 Glacier Deep Archive が提供される。ライフサイクル\nポリシーを設定すれば、オブジェクトを一定期間後に自動で安価なクラスへ移行したり、\n不要になった時点で削除したりできる。\n\n典型的なユースケースは、CloudFront と組み合わせた静的ウェブサイト配信、ログ・\nバックアップ・スナップショットの長期保管、Amazon Athena / Amazon EMR / Amazon\nRedshift Spectrum と連携したデータレイク基盤、各種 AWS サービス（CloudTrail / VPC\nFlow Logs / ELB アクセスログ等）の出力先などである。料金は「保存容量 × ストレージ\nクラス単価」「リクエスト数」「データ転送量」「ライフサイクル移行リクエスト数」などの\n組み合わせで課金される。セキュリティ面では、デフォルトでブロックパブリックアクセス\nが有効になっており、意図しない公開を防ぐ設計となっている。CloudFront 経由配信時は\nOrigin Access Control（OAC）でバケットへの直接アクセスを制限する構成が推奨される。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      }
+    ]
   },
   {
     "termId": "secrets-manager",
@@ -2800,7 +2822,18 @@
       "秘密情報を環境変数やGitに直書きしない",
       "取得権限を対象Lambdaだけに絞る"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Secrets Manager は、データベース認証情報・API キー・OAuth トークン・その他の\nシークレット（秘密情報）を安全に保存・取得・ローテーションするためのマネージド\nサービスである。シークレットは AWS KMS で暗号化されて保管され、IAM ポリシーで\n取得権限を細かく制御できる。アプリケーションコードからは AWS SDK 経由で API\n（GetSecretValue）でシークレットを取得する形となり、コード内や環境変数・設定ファイルへ\n平文で書き込む必要がなくなる。\n\n主要な機能として、自動ローテーション機能がある。Amazon RDS / Amazon Redshift /\nAmazon DocumentDB / Amazon ElastiCache 向けには AWS が提供するローテーション用\nLambda 関数のテンプレートが用意されており、設定するだけで定期的にシークレットが\n自動更新される。任意のシークレットについても、カスタムローテーション用 Lambda 関数を\n書けば同様の自動更新が可能である。シークレットのバージョン管理が組み込まれて\nおり、ローテーション中の旧バージョンも一定期間参照できる。\n\n典型的なユースケースは、Lambda 関数や ECS タスクから RDS への接続パスワードを\n取得するケース、外部 SaaS 連携用 API キーを安全に保管するケース、CI/CD パイプライン\n内で利用するクレデンシャルの一元管理などである。料金は「シークレット数 × 月額固定費」\n+「API コール数」の組み合わせで課金される。類似サービスの AWS Systems Manager\nParameter Store と比較した場合、Parameter Store は無料の Standard ティアがある一方で\n自動ローテーション機能がなく、Secrets Manager はローテーション機能を含む有償サービス\nとして位置づけられる。SAA-C03 以降では Parameter Store との使い分けが頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Secrets Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/intro.html"
+      },
+      {
+        "label": "AWS Secrets Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/secrets-manager/"
+      }
+    ]
   },
   {
     "termId": "shield",
@@ -2851,7 +2884,18 @@
       "DDoS対策はCloudFront、Route 53、WAFと合わせて考える",
       "攻撃時の連絡・復旧手順を用意する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Shield は、AWS 上のアプリケーションを分散型サービス拒否（DDoS: Distributed\nDenial of Service）攻撃から保護するマネージドサービスである。Shield Standard と\nShield Advanced の 2 つの提供形態があり、Standard はすべての AWS 利用者に追加料金\nなしで自動的に適用される。CloudFront・Route 53・AWS Global Accelerator・Elastic Load\nBalancing といったエッジ・境界サービスを利用するワークロードでは、ネットワーク層\n（L3/L4）の SYN フラッド・UDP リフレクション攻撃などへの基本保護が常時有効化されている。\n\nShield Advanced は有料の上位プランで、保護対象リソース（CloudFront ディストリ\nビューション・Route 53 ホストゾーン・ALB / NLB・Global Accelerator・Elastic IP）を\n明示的に登録することで利用する。Standard より高度な L3/L4 攻撃緩和、Layer 7 攻撃\n（HTTP フラッド等）への対応、攻撃発生時に AWS Shield Response Team（SRT）への\n24/7 アクセス、DDoS 攻撃に起因する EC2 / ELB / CloudFront / Route 53 料金スパイクの\nコスト保護、AWS WAF の利用料金（保護対象リソース分）の組み込み提供などが追加される。\n\n典型的なユースケースは、Shield Standard をベースとした CloudFront + S3 / ALB 配信の\n標準的な DDoS 防御、Shield Advanced を契約した大規模公開サービスでの高度な防御と\n24/7 サポートの確保である。料金面では Shield Advanced は組織単位で月額固定費が\n発生し、1 年間のコミットメントが必要となるため、個人開発や MVP 段階では Shield\nStandard で対応するのが基本となる。CLF-C02 では Shield Standard と Advanced の違い、\nおよび AWS WAF（アプリケーション層の Web ACL によるルールベース防御）との役割\n分担（Shield = DDoS 対策、WAF = アプリケーション層ルール）が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS WAF, AWS Shield, AWS Firewall Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/ddos-overview.html"
+      },
+      {
+        "label": "AWS Shield（AWS公式）",
+        "url": "https://aws.amazon.com/jp/shield/"
+      }
+    ]
   },
   {
     "termId": "sns",
@@ -2902,7 +2946,18 @@
       "トピック発行権限を限定する",
       "外部通知に個人情報を含めない"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon Simple Notification Service（Amazon SNS）は、AWS が提供するフルマネージドの\nパブリッシュ/サブスクライブ型（Pub/Sub 型）メッセージングサービスである。発行者\n（パブリッシャー）がトピック（Topic）にメッセージを送信すると、そのトピックを購読\n（サブスクライブ）しているすべての受信先へ同じメッセージが配信される。1 つのメッセージを\n複数の宛先へ同時に届ける Fan-out 配信が主要な役割であり、コンポーネント間を疎結合化\nする基盤として用いられる。\n\nサブスクリプション（購読先）として指定できるエンドポイントは多岐にわたる。Amazon\nSQS キュー、AWS Lambda 関数、HTTP/HTTPS エンドポイント、E メール、SMS（携帯電話\nショートメッセージ）、モバイルプッシュ通知（Apple/Google/Amazon の各種プッシュ通知\nサービス）、AWS Event Fork Pipelines などに対応する。サブスクリプションフィルター\nポリシーを使えば、トピックへ送信されたメッセージのうち特定の属性を持つものだけを\n受け取るよう、購読先ごとに条件を絞り込める。\n\n典型的なユースケースは、CloudWatch アラームから運用担当者へのメール通知、複数の\nSQS キューへ同時にメッセージを配信する Fan-out パターン、マイクロサービス間の非同期\nイベント連携、モバイルアプリへのプッシュ通知配信などである。料金は「発行リクエスト\n数」「配信通知数」「データ転送量」などの組み合わせで課金され、配信先プロトコル\n（SMS は単価が高い、SQS / Lambda 配信は単価が低い）によって従量課金単価が異なる。\nCLF-C02 では SNS（Pub/Sub 型・複数受信者へプッシュ配信）と SQS（キュー型・1 メッセージは\n1 受信者で消費）の役割分担、および SNS + SQS の Fan-out 構成が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon SNS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/sns/latest/dg/welcome.html"
+      },
+      {
+        "label": "Amazon Simple Notification Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sns/"
+      }
+    ]
   },
   {
     "termId": "sqs",

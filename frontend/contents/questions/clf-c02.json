@@ -2704,7 +2704,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Identity and Access Management（IAM）におけるポリシー（IAM ポリシー）は、AWS\nリソースに対する「誰が」「どのリソースに対して」「どの操作を」「許可するか/拒否するか」を\n定義する JSON 形式のドキュメントである。ポリシーは Version・Statement・Effect・Action・\nResource・Condition といった要素から構成され、Effect（Allow/Deny）と Action（API\nアクション名）、Resource（対象 ARN）の組み合わせでアクセス権限を表現する。ポリシーは\nIAM ユーザー・IAM グループ・IAM ロールにアタッチされて初めて効果を持つ。\n\n試験文脈では「AWS リソースへのアクセス許可を JSON 形式で定義するもの」として IAM\nポリシーを選ばせる問題が出る。誤答として「アベイラビリティゾーン（リージョン内の\n独立データセンター群）」「リザーブドインスタンス（割引購入オプション）」「リージョン\n（地理的エリア）」など、アクセス制御とは役割の異なるリソース概念が並ぶパターンが\n多い。「JSON 形式」「アクセス許可の定義」というキーワードが揃った時点で IAM ポリシー\n以外の選択肢は切り捨ててよい。\n\n実務では、ポリシーは AWS 管理ポリシー（AWS があらかじめ用意したもの）、カスタマー\n管理ポリシー（利用者が再利用可能な形で作成したもの）、インラインポリシー（特定の\nプリンシパルに直接埋め込んだもの）の 3 種類で運用する。最小権限の原則に従い、必要な\nAction を必要な Resource に対してのみ許可する設計が推奨される。CLF-C02 では IAM\nユーザー・IAM グループ・IAM ロール・IAM ポリシーの 4 概念の役割分担と、責任共有\nモデルにおける「IAM はユーザー責任の領域である」点が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "IAM のポリシーとアクセス許可（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/access_policies.html"
+      },
+      {
+        "label": "AWS Identity and Access Management (IAM)（AWS公式）",
+        "url": "https://aws.amazon.com/jp/iam/"
+      }
+    ]
   },
   {
     "questionId": "clf-043",
@@ -2752,7 +2763,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Support には、Basic / Developer / Business / Enterprise On-Ramp / Enterprise の\n5 つのプランがある。このうち Basic Support は、すべての AWS アカウントに標準で含まれる\n無料のサポートプランである。Basic Support の範囲は、アカウント・請求に関する 24/7 の\nカスタマーサービス、AWS Trusted Advisor のコアチェック（6 項目）、AWS Personal Health\nDashboard、サービスクォータ引き上げリクエスト、ドキュメント・ホワイトペーパー・サポート\nフォーラムへのアクセスに限定される。技術的な質問への対応や本番ワークロード向けの\nSLA は含まれない。\n\n試験文脈では「AWS のすべてのアカウントで利用できる基本サポートプラン」として\nBasic Support を選ばせる問題が出る。誤答として Developer Support（個人開発者・\n非本番ワークロード向け）、Business Support（本番ワークロード向け）、Enterprise\nSupport（ミッションクリティカルワークロード向け）が並ぶパターンが多い。Basic 以外の\n3 プランはいずれも有料であり、「すべてのアカウントに含まれる」という条件と矛盾する。\n\n実務では、Developer Support 以上のプランでは技術的なケース起票が可能になり、ケース\nへの応答 SLA・Trusted Advisor の全チェック項目（コア 6 + 全 100 超）・Infrastructure\nEvent Management・AWS の専任スタッフ（TAM: Technical Account Manager）といった機能が\nプランの階梯に応じて追加される。CLF-C02 では 5 プランの守備範囲の違い、特に「Basic は\n技術ケース起票不可」「Business 以降で 24/7 技術サポート」「Enterprise で TAM が付く」\nという階梯構造が繰り返し問われる。AWS Trusted Advisor のチェック項目数（Basic /\nDeveloper はコア 6、Business 以上で全項目）も頻出論点である。",
+    "officialDocs": [
+      {
+        "label": "AWS Support のプラン比較（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/plans/"
+      },
+      {
+        "label": "AWS Support プラン（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/aws-support-plans.html"
+      }
+    ]
   },
   {
     "questionId": "clf-044",
@@ -2804,7 +2826,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "クラウドコンピューティングの代表的な利点は、需要に応じてリソースを拡張・縮小できる\nこと、すなわちスケーラビリティ（拡張性）と弾力性（エラスティシティ）である。\nオンプレミス環境では、ピーク時のアクセスを見込んでサーバーを事前に多めに用意する\n必要があり、平常時は余ったサーバーが固定費として残る。クラウドでは Auto Scaling や\nElastic Load Balancing、サーバーレス構成（AWS Lambda 等）により、需要に応じてリソース\n量を自動で増減でき、使った分だけ支払う従量課金と組み合わせて無駄を抑えられる。\n\n試験文脈では、オンプレミスと対比したクラウドの利点として「需要に応じてリソースを\n拡張・縮小できる」を選ばせる問題が出る。誤答として「物理サーバーを必ず自社で購入する\n必要がある（オンプレミスの説明）」「すべてのセキュリティ設定が不要になる（責任共有\nモデルと矛盾）」「すべてのサービスが常に無料で利用できる（無料利用枠の誤認）」のように、\nクラウドの定義と明らかに矛盾する選択肢が並ぶ。極端な言い切り（「必ず」「すべて」「常に」）\nが含まれる選択肢は誤答である可能性が高い。\n\n実務では、弾力性が効くワークロードと効かないワークロードの見極めが選定基準となる。\n需要変動が大きい Web サイト・キャンペーン・バッチ処理では Auto Scaling やサーバー\nレスが有効である一方、負荷が常に一定のワークロードではリザーブドインスタンスや\nSavings Plans のような長期コミット割引の方が単価を抑えられる。CLF-C02 では「クラウド\n＝常に安い」という単純化を避け、「需要に合わせて無駄を減らせる」という正確な定義で\n押さえることが求められる。スケーラビリティ・弾力性・俊敏性・従量課金の 4 つは\n「クラウドのメリット」として繰り返し出題される。",
+    "officialDocs": [
+      {
+        "label": "クラウドコンピューティングとは（AWS公式）",
+        "url": "https://aws.amazon.com/jp/what-is-cloud-computing/"
+      },
+      {
+        "label": "クラウドコンピューティングの 6 つの利点（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/six-advantages-of-cloud-computing.html"
+      }
+    ]
   },
   {
     "questionId": "clf-045",
@@ -2856,7 +2889,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon RDS（Relational Database Service）は、リレーショナルデータベースをマネージドで\n提供するサービスである。MySQL・PostgreSQL・MariaDB・Oracle Database・Microsoft SQL\nServer に加え、AWS が独自開発した Amazon Aurora（MySQL/PostgreSQL 互換）の 6 種類の\nDB エンジンをサポートする。OS パッチ適用・DB エンジンのマイナーバージョンアップ・\n自動バックアップ・スナップショット取得・障害時のフェイルオーバーといった運用作業を\nAWS 側が肩代わりするため、利用者はスキーマ設計・クエリチューニング・アプリケーション\n側のロジックに集中できる。\n\n試験文脈では「マネージド型のリレーショナルデータベースを利用したい場合に選ぶ\nサービス」として Amazon RDS を選ばせる問題が出る。誤答として Amazon S3（オブジェクト\nストレージ）、Amazon CloudFront（CDN）、AWS CloudTrail（API 操作履歴記録）など、データ\nストア以外のサービスが並ぶパターンが多い。「リレーショナル」というキーワードが\n明示されている場合、ドキュメント DB の Amazon DocumentDB、KVS / ドキュメント型の\nAmazon DynamoDB、データウェアハウスの Amazon Redshift は不適合となるため、選択肢の\n中に並んでいても切り捨てる。\n\n実務では、自前で EC2 上に DB を構築する場合と RDS を使う場合の責任分担の違いが\n選定基準となる。EC2 上の自前 DB ではパッチ適用・バックアップ・フェイルオーバー\n設計を利用者が担うのに対し、RDS ではこれらが AWS 側の責任範囲となる。CLF-C02 では\n責任共有モデル上の「マネージドサービスを使うほど利用者の運用負担が減る」原則と、\nRDS のマルチ AZ 配置（高可用性）/ リードレプリカ（読み取り負荷分散）の役割の違いが\n頻出論点となる。RDS と DynamoDB の使い分け（リレーショナル vs キーバリュー / NoSQL）も\nあわせて押さえる必要がある。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/"
+      }
+    ]
   },
   {
     "questionId": "clf-046",
@@ -2908,7 +2952,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Key Management Service（AWS KMS）は、暗号化キー（カスタマーマスターキー: CMK /\n現在は KMS キーと呼称）を作成・管理し、AWS 各サービスのデータ暗号化に利用できる\nマネージドサービスである。KMS キーは Hardware Security Module（HSM）に保管され、\n平文の状態でハードウェア外へ出ない設計となっている。Amazon S3・Amazon EBS・\nAmazon RDS・Amazon DynamoDB・AWS Secrets Manager・AWS Systems Manager Parameter\nStore といった主要サービスから、KMS キーを指定して保存データを暗号化できる。\n\n試験文脈では「AWS で保存データの暗号化キーを作成・管理するために使うサービス」として\nAWS KMS を選ばせる問題が出る。誤答として Amazon Route 53（DNS）、Amazon CloudFront\n（CDN）、AWS Budgets（予算管理）など、暗号化と無関係のサービスが並ぶパターンが\n多い。「暗号化キーの作成・管理」というキーワードが明示されている場合、AWS CloudHSM\n（専用 HSM の利用）と区別が必要になるケースもあるが、CLF-C02 レベルでは「マネージド\n共有 HSM = KMS」「専用占有 HSM = CloudHSM」と整理して切り分ければよい。\n\n実務では、KMS キーには AWS マネージドキー（AWS 側が管理する各サービス専用キー）と\nカスタマーマネージドキー（利用者が作成・管理するキー）の 2 種類がある。キーローテーションの\n有効化、IAM ポリシー・KMS キーポリシーによるキー利用権限の制御、AWS CloudTrail に\nよるキー利用ログの監査記録といった運用が組み合わさる。CLF-C02 では責任共有モデル\nにおける「データの暗号化はユーザー責任」の原則と、KMS が保存データ暗号化（at-rest\nencryption）の中心であることが頻出論点となる。転送中の暗号化（in-transit encryption）に\n使われる AWS Certificate Manager（ACM）との役割分担もあわせて押さえる必要がある。",
+    "officialDocs": [
+      {
+        "label": "AWS Key Management Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "AWS Key Management Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kms/"
+      }
+    ]
   },
   {
     "questionId": "clf-047",
