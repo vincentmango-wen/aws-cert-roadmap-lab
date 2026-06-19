@@ -2082,7 +2082,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Budgets は、AWS の利用料金や使用量に対してしきい値を設定し、しきい値を超過した、\nあるいは超過しそうな場合に通知を受け取るためのコスト管理サービスである。月次・四半期・\n年次の予算金額、リザーブドインスタンスやSavings Plans のカバレッジ・使用率、\n特定サービスやタグ単位の利用量など、複数の軸で予算を設定できる。通知先は Amazon SNS\nトピックや E メール、AWS Chatbot 経由の Slack / Microsoft Teams が選べる。\n\n試験文脈では「AWS 利用料金が想定を超えそうな場合に通知を受け取るために使うサービスは\nどれか」という形で出題される。誤答として CloudTrail（API 操作履歴の記録）、CloudFront\n（CDN）、Shield（DDoS 保護）などが並ぶパターンが頻出する。いずれもコスト通知が主目的の\nサービスではないため、サービスの守備範囲を取り違えていなければ容易に切り分けられる。\n\n実務では AWS Budgets と AWS Cost Explorer を組み合わせて使うケースが多い。Cost Explorer\nは過去から現在のコストを「分析」する用途、AWS Budgets は事前に決めたしきい値を超えた\nことを「アラート」する用途と役割が分かれる。CLF-C02 ではこの 2 サービスの役割分担も\n頻出論点となる。実費課金の事故防止としては、AWS Budgets でアカウント全体の月次予算\nアラートを 1 件設定しておくのが最も低コストの第一歩となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets を使用したコストの管理（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "AWS Budgets（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      }
+    ]
   },
   {
     "questionId": "clf-033",
@@ -2133,7 +2144,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon S3 は、HTML・CSS・JavaScript・画像などの静的ファイルを保管し、HTTP/HTTPS で\n直接配信できるオブジェクトストレージサービスである。静的ウェブサイトホスティング機能を\n有効にすると、バケット内のオブジェクトを Web サイトとして公開でき、サーバーを常駐させ\nなくても Web ページを提供できる。サーバー管理が不要で、転送量と保管量に応じた従量課金で\n利用できるため、静的サイト配信の基盤として広く使われる。\n\n試験文脈では「静的ウェブサイトのコンテンツを格納するために使うサービスはどれか」という\n形で出題され、Amazon S3 を選ばせる問題が中心となる。誤答として RDS（リレーショナル\nデータベース）、EBS（EC2 用のブロックストレージ）、IAM（認証・認可）などが並ぶ。\nいずれも静的サイトのコンテンツ配信が主目的のサービスではないため、サービスの守備範囲を\n取り違えていなければ切り分け可能である。\n\n実務では S3 単体で静的サイトを公開するより、S3 + CloudFront の組み合わせが一般的である。\nS3 をオリジン、CloudFront を CDN として前面に置き、HTTPS 配信・キャッシュ高速化・\nカスタムドメイン対応・WAF 連携などをまとめて実現する構成となる。CLF-C02 では S3 の\n役割を問う問題が中心だが、SAA-C03 以降では S3 + CloudFront 構成と Origin Access\nControl（OAC）による S3 直接公開の防止も繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3 を使用したウェブサイトのホスティング（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/WebsiteHosting.html"
+      }
+    ]
   },
   {
     "questionId": "clf-034",
@@ -2182,7 +2204,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "従量課金（Pay-as-you-go）は、利用したリソース量に応じて料金が発生する課金モデルである。\nAWS のほぼすべてのサービスはこの考え方に基づき、EC2 インスタンスは起動していた時間、\nS3 は保管しているオブジェクト量と転送量、Lambda は実行回数と実行時間、というように\n「使った分だけ」課金される。リソースを停止・削除すれば課金は止まる、または下がる。\n\n試験文脈では「クラウドの従量課金とはどのような方式か」を問う形で出題される。誤答には\n「利用量に関係なく毎月同じ金額を必ず支払う方式」「すべてのAWSサービスが無料になる方式」\n「リソースを作成したら必ず1年契約になる方式」などが並ぶ。いずれも従量課金の定義と\n矛盾するため切り分け可能である。「すべて無料」「必ず固定額」「必ず長期契約」のような\n極端な言い切りは、クラウドの特性とずれていることが多く、誤答である可能性が高い。\n\n実務での注意点は、従量課金の利点である「使った分だけ」が、裏返せば「使い過ぎるとコストが\n青天井に増える」という性質でもあるという点である。リソースの停止忘れ・無料利用枠超過・\n意図しない大量データ転送などで請求額が想定を超える事故は珍しくない。対策として AWS\nBudgets で予算アラートを設定する・Cost Explorer で定期的に内訳を確認する・利用しない\nリソースは削除する、という運用が一般的である。負荷が常に一定のワークロードでは、\nリザーブドインスタンスや Savings Plans のような長期コミット型の割引と組み合わせて\nコストを下げる選択肢もある。CLF-C02 ではこれらの料金モデルも横断的に問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS の料金（AWS公式）",
+        "url": "https://aws.amazon.com/jp/pricing/"
+      },
+      {
+        "label": "クラウドコンピューティングとは（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/what-is-cloud-computing.html"
+      }
+    ]
   },
   {
     "questionId": "clf-035",
@@ -2234,7 +2267,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Lambda は、サーバーを管理せずにコードを実行できるサーバーレスコンピューティング\nサービスである。コードを Lambda 関数として登録し、API Gateway 経由のリクエスト、\nS3 のオブジェクト作成、DynamoDB ストリーム、EventBridge スケジュール、SQS メッセージ\nなど、さまざまなイベントをトリガーに自動で実行される。実行された時間（ミリ秒単位）と\nリクエスト数に対してのみ課金され、待機している時間にコストはかからない。\n\n試験文脈では「サーバー管理なしにコードを実行できる、イベント駆動のコンピューティング\nサービスはどれか」という形で出題される。誤答として EC2（仮想サーバー）、EFS（共有\nファイルストレージ）、Route 53（DNS）などが並ぶ。EC2 はインスタンスの起動・停止・\nパッチ適用などのサーバー管理が必要で、サーバーレスではない。EFS と Route 53 は\nそもそもコンピューティングサービスではない。\n\n実務では Lambda は API バックエンド、定期バッチ、ファイルアップロード時の画像処理、\nログ加工、Slack 通知などの軽量処理で広く使われる。長時間処理（既定上限 15 分）、\n重い計算、大量のメモリを必要とする処理は Lambda には向かず、ECS / Fargate / EC2 など\n別の選択肢を検討することになる。CLF-C02 では「サーバーレスとは何か」「Lambda の\n役割は何か」を問う出題が中心であり、利用量に応じた課金・運用負荷の低さ・イベント駆動と\nいったキーワードが繰り返し登場する。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda（AWS公式）",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      }
+    ]
   },
   {
     "questionId": "clf-036",
@@ -2285,7 +2329,18 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS アカウントの root ユーザーは、アカウント作成時のメールアドレスとパスワードで\nログインできる最上位の特権ユーザーであり、すべての AWS サービスとリソースに対する\n無制限のアクセス権を持つ。root ユーザーが侵害されると、アカウントの請求情報変更、\n全リソースの削除、不正なリソースの大量起動などが行えるため、保護の優先度が最も高い。\nAWS のベストプラクティスでは、root ユーザーには必ず MFA（多要素認証）を有効化し、\n日常的な操作には使わず、IAM ユーザーまたは IAM Identity Center のユーザーで作業する\nことが推奨されている。\n\n試験文脈では「AWS アカウントのセキュリティを高めるために最初に行うべき設定はどれか」と\nいう形で出題され、「root ユーザーの MFA を有効化する」が正解として選ばれる。誤答として\n「root ユーザーのアクセスキーを複数作成する」「root ユーザーを日常的な開発作業に使う」\n「すべての IAM ユーザーに AdministratorAccess を付与する」などが並ぶ。いずれも最小権限の\n原則や root ユーザー保護の方針と真逆の操作であり、ベストプラクティスを理解していれば\n切り分け可能である。\n\n実務でアカウント開設直後に推奨される初期設定は、root ユーザーへの MFA 設定、root ユーザー\nのアクセスキー作成回避、管理用 IAM ユーザーまたは IAM Identity Center ユーザーの作成、\nAWS Budgets による予算アラート、AWS CloudTrail による API 操作履歴の有効化、というのが\n一般的な並びとなる。CLF-C02 ではこの「アカウント開設直後の初期設定」を問う出題が頻出\nであり、root ユーザーと IAM ユーザーの役割分担、MFA、最小権限という 3 つのキーワードが\n繰り返し登場する。",
+    "officialDocs": [
+      {
+        "label": "AWS アカウントのルートユーザー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_root-user.html"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
   },
   {
     "questionId": "clf-037",

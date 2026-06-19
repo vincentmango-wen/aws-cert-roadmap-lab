@@ -2074,7 +2074,18 @@
       "検出結果をメールやSNSへ通知する設計を検討する",
       "高重大度の検知は即時対応する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon GuardDuty は、AWS 環境内の不審なアクティビティや既知の攻撃パターンを継続的に\n検知するマネージド型の脅威検知サービスである。AWS CloudTrail のイベントログ、\nAmazon VPC Flow Logs、DNS クエリログ、Amazon S3 データイベント、Amazon EKS 監査ログ\nなどを分析対象として取り込み、機械学習と脅威インテリジェンスを使って異常検知を行う。\n利用者はエージェントのインストールや個別ログ収集の設定をせずに、コンソールから有効化\nするだけで利用を開始できる。\n\n検出結果は重大度（Low / Medium / High）付きで「Findings」として通知され、Amazon\nEventBridge 経由で SNS 通知、Lambda 自動対応、Security Hub への集約などへ連携できる。\n代表的な検出例には、Tor 経由の不審な API 呼び出し、暗号通貨マイニングを示唆する\n通信パターン、侵害された認証情報による異常な操作、想定外のリージョンからのアクセス\nなどがある。\n\n試験文脈では「AWS 環境内の不審な操作や攻撃の兆候を継続的に検知するサービスはどれか」\nという形で出題され、GuardDuty が選ばれる。Inspector（脆弱性スキャン）、Macie（S3 内の\n機密データ検出）、Security Hub（複数セキュリティサービスの集約）と役割が混同されやすい\nため、検出対象の違いを整理して覚える必要がある。料金は分析対象データの量に応じた\n従量課金で、商用化やアクセス増加に伴って導入を判断するのが一般的である。",
+    "officialDocs": [
+      {
+        "label": "Amazon GuardDuty とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/guardduty/latest/ug/what-is-guardduty.html"
+      },
+      {
+        "label": "Amazon GuardDuty（AWS公式）",
+        "url": "https://aws.amazon.com/jp/guardduty/"
+      }
+    ]
   },
   {
     "termId": "iam",
@@ -2128,7 +2139,22 @@
       "AdministratorAccessの常用を避ける",
       "AWSアクセスキーをGitHubにコミットしない"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Identity and Access Management（IAM）は、AWS リソースへのアクセスを認証・認可する\nためのサービスである。IAM ユーザー、IAM グループ、IAM ロール、IAM ポリシーという\n4 つの要素を組み合わせて、「誰が、どの AWS リソースに対して、どの操作を許可されているか」\nを制御する。IAM ポリシーは JSON 形式で記述し、Action（許可・拒否する API 操作）と\nResource（対象リソース）と Condition（追加条件）を指定する。\n\nIAM ロールは、IAM ユーザーに直接付与するのではなく、AWS サービス（EC2、Lambda など）、\n別 AWS アカウント、外部 ID 連携（SAML / OIDC）などに対して権限を委任する仕組みである。\nたとえば Lambda 関数が S3 にオブジェクトを書き込む場合、関数にアクセスキーを直書きする\nのではなく、S3 への PutObject 権限を持つ IAM ロールを Lambda に割り当てて利用する。\nこれによりアクセスキーの漏洩リスクを抑え、キーローテーションの運用負荷も減らせる。\n\nCLF-C02 では root ユーザーと IAM ユーザーの違い、MFA の重要性、最小権限の原則、IAM\nロールによる権限委任が頻出論点となる。SAA-C03 以降ではクロスアカウントアクセスにおける\n信頼ポリシーの設計、IAM ポリシーと S3 バケットポリシー・KMS キーポリシーの優先順位、\nIAM Identity Center を使った組織横断のシングルサインオンなど、より踏み込んだ設計が\n問われる。IAM 自体の利用に追加料金はかからないが、権限ミスによる不要リソース作成や\n意図しない API 呼び出しは課金事故につながるため、運用設計の重要度は高い。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/introduction.html"
+      },
+      {
+        "label": "IAM ロール（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles.html"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
   },
   {
     "termId": "inspector",
@@ -2177,7 +2203,18 @@
       "検出結果を放置しない運用ルールを決める",
       "重大度の高い脆弱性から修正する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon Inspector は、Amazon EC2 インスタンス、Amazon ECR に保存されたコンテナイメージ、\nAWS Lambda 関数に対して、脆弱性および予期しないネットワーク到達可能性を継続的に検出\nするマネージド型の脆弱性管理サービスである。サービスを有効化すると対象リソースが自動的に\n検出され、CVE データベースを基準としたソフトウェア脆弱性の検出が継続的に実行される。\n検出結果は重大度（Critical / High / Medium / Low / Informational）付きで提示され、\nSecurity Hub や Amazon EventBridge を経由した通知・自動対応に連携できる。\n\nECR コンテナイメージスキャンでは、イメージプッシュ時の単発スキャンに加え、登録済み\nイメージに対する継続的スキャンが可能であり、新規 CVE が公開された際にも遡って影響範囲を\n把握できる。Lambda 関数のスキャンでは、関数コードと依存ライブラリの脆弱性が検出対象と\nなる。EC2 のスキャンには SSM エージェントとの連携が必要であり、エージェント未導入の\nインスタンスはスキャン対象外となる。\n\n試験文脈では GuardDuty との役割の違いがよく問われる。GuardDuty は「環境の不審な操作・\n通信を検知する」のに対し、Inspector は「リソースの脆弱性そのものを検出する」という違い\nがある。コンテナ運用では ECR の標準スキャン（Basic scanning）と Inspector の拡張スキャン\n（Enhanced scanning）の使い分けも問われやすい。料金はスキャン対象のリソース数と\nスキャン頻度に応じた従量課金で、MVP では費用対効果を確認したうえで導入を判断する運用が\n一般的である。",
+    "officialDocs": [
+      {
+        "label": "Amazon Inspector とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/inspector/latest/user/what-is-inspector.html"
+      },
+      {
+        "label": "Amazon Inspector（AWS公式）",
+        "url": "https://aws.amazon.com/jp/inspector/"
+      }
+    ]
   },
   {
     "termId": "kinesis",
@@ -2228,7 +2265,18 @@
       "ストリームへのPut/Get権限をIAMで制限する",
       "ログデータに個人情報を含める場合は扱いに注意する"
     ],
-    "updatedAt": "2026-06-07"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon Kinesis は、ストリーミングデータをリアルタイムで収集・処理・分析するための\nサービス群の総称である。Amazon Kinesis Data Streams は順序保証付きのストリーム\nストレージで、シャード単位のスループットでデータを保持し、最大 365 日まで保持期間を\n延長できる。Amazon Data Firehose（旧 Kinesis Data Firehose）は、ストリームを S3 や\nRedshift、OpenSearch Service などへ自動配信するフルマネージドの配信パイプラインである。\nAmazon Managed Service for Apache Flink（旧 Kinesis Data Analytics）は、ストリーム上で\nSQL や Apache Flink によるリアルタイム集計を実行できる分析基盤である。\n\n代表的なユースケースには、Web サイトのクリックストリーム解析、IoT デバイスからの\nセンサーデータ取り込み、アプリケーションログの集約と転送、リアルタイム不正検知などが\nある。Lambda と組み合わせると、ストリームの新規レコード到着をトリガーに任意の処理を\n実行でき、サーバーを常駐させずにストリーム処理を構成できる。\n\n試験文脈では SQS、SNS、EventBridge との役割の違いが問われる。Kinesis Data Streams は\n「順序保証付きの再生可能なストリーム」を提供する点が他のメッセージングサービスと\n異なる。SQS は「メッセージを取得して削除する一回限りの処理」、SNS は「pub/sub による\n複数購読者への配信」、EventBridge は「ルールベースのイベントルーティング」がそれぞれの\n中心的な役割となる。料金はシャード時間とデータ量に基づく従量課金で、小規模なフォーム\n送信や数件のメッセージ配送のような用途には不向きである。",
+    "officialDocs": [
+      {
+        "label": "Amazon Kinesis Data Streams とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/streams/latest/dev/introduction.html"
+      },
+      {
+        "label": "Amazon Kinesis（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kinesis/"
+      }
+    ]
   },
   {
     "termId": "kms",
@@ -2278,7 +2326,18 @@
       "キー削除は復旧不能になるため慎重に扱う",
       "キーポリシーで管理者と利用者を分ける"
     ],
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Key Management Service（KMS）は、データ暗号化に使うキーを作成・管理・利用する\nためのマネージドサービスである。KMS で作成する KMS キー（旧称: CMK / カスタマー\nマスターキー）は、AWS が管理する AWS 管理キー、利用者が作成・管理するカスタマー管理キー、\nAWS 所有キーの 3 種類に大別される。AWS が提供する多くのサービス（S3、EBS、RDS、\nDynamoDB、Secrets Manager など）と統合されており、保存時暗号化（encryption at rest）の\nキーとして利用できる。\n\nKMS キーへのアクセス制御は「キーポリシー」と「IAM ポリシー」の組み合わせで行う。\nキーポリシーは KMS キーごとに設定する JSON で、誰がそのキーを管理できるか・誰が\n暗号化／復号に使えるかを定義する。クロスアカウントで KMS キーを共有する場合、\n利用側アカウントの IAM ポリシーだけでなく、キーポリシー側でも明示的に許可する必要が\nある点が試験で頻出する。カスタマー管理キーは自動キーローテーション（年次など）を\n設定できる。\n\n試験文脈では「保存時の暗号化に使うキーを管理するサービスはどれか」「クロスアカウントで\n暗号化データを共有する場合のキー管理はどう設計すべきか」という形で出題される。\nAWS 管理キーは料金がかからず簡単に使い始められるが、キーポリシーをカスタマイズできない\nため、組織横断の細かな権限制御が必要な場合はカスタマー管理キーを選ぶことになる。\nカスタマー管理キーには月額のキー保管料と API リクエスト数に応じた従量課金が発生する。\nKMS キーを削除すると、そのキーで暗号化されたデータは復号できなくなるため、削除操作に\nは最短 7 日間の待機期間が設けられている。",
+    "officialDocs": [
+      {
+        "label": "AWS Key Management Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "AWS Key Management Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kms/"
+      }
+    ]
   },
   {
     "termId": "lambda",
