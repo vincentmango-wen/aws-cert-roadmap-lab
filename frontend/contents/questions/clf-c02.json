@@ -120,8 +120,8 @@
         "url": "https://aws.amazon.com/jp/pricing/"
       },
       {
-        "label": "AWS の料金の仕組み（AWS公式ホワイトペーパー）",
-        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/how-aws-pricing-works.html"
+        "label": "AWS Overview ホワイトペーパー（AWS公式）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/"
       },
       {
         "label": "AWS 無料利用枠（AWS公式）",
@@ -520,8 +520,8 @@
         "url": "https://aws.amazon.com/jp/economics/"
       },
       {
-        "label": "AWS の料金の仕組み（AWS公式ホワイトペーパー）",
-        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/how-aws-pricing-works.html"
+        "label": "AWS Overview ホワイトペーパー（AWS公式）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/"
       },
       {
         "label": "責任共有モデル(AWS公式)",
@@ -656,7 +656,7 @@
       },
       {
         "label": "IAM ロールの使用（AWS公式ドキュメント）",
-        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_use.html"
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_manage-assume.html"
       }
     ]
   },
@@ -720,7 +720,7 @@
       },
       {
         "label": "ルートユーザーのみが実行できるタスク（AWS公式ドキュメント）",
-        "url": "https://docs.aws.amazon.com/ja_jp/accounts/latest/reference/root-user-tasks.html"
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_root-user.html#root-user-tasks"
       },
       {
         "label": "ルートユーザーの MFA の有効化（AWS公式ドキュメント）",
