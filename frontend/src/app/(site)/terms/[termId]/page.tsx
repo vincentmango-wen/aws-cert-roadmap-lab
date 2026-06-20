@@ -3,6 +3,7 @@ import termsData from "../../../../../contents/terms/terms.json";
 import { createPageMetadata } from "@/lib/seo";
 import { isExistingComparison, isExistingArchitecture } from "@/lib/termGuards";
 import { filterValidOfficialDocs } from "@/lib/official-doc";
+import { formatSlugLabel } from "@/lib/format-slug-label";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -153,13 +154,6 @@ function getAdjacentTerms(currentTermId: string): {
     previousTerm: terms[currentIndex - 1],
     nextTerm: terms[currentIndex + 1],
   };
-}
-
-function formatSlugLabel(slug: string): string {
-  return slug
-    .split("-")
-    .map((word) => word.toUpperCase())
-    .join(" / ");
 }
 
 function Badge({

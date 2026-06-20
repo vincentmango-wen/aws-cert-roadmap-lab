@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
 import { filterValidOfficialDocs } from "@/lib/official-doc";
+import { formatSlugLabel } from "@/lib/format-slug-label";
 
 /**
  * サーバー側で解決済みの関連リンク情報。
@@ -21,9 +22,11 @@ type QuestionPlayerProps = {
   question: Question;
   previousQuestionId?: string;
   nextQuestionId?: string;
-  resolvedServices?: ResolvedLink[];
-  resolvedTerms?: ResolvedLink[];
-  resolvedComparisons?: ResolvedLink[];
+  // resolved* は server component (`questions/[questionId]/page.tsx`) で必ず解決して渡される。
+  // 「存在しない関連 ID にはリンクを張らない」不変条件を server 側で守るため、型レベルで required にしている。
+  resolvedServices: ResolvedLink[];
+  resolvedTerms: ResolvedLink[];
+  resolvedComparisons: ResolvedLink[];
 };
 
 export function QuestionPlayer({
@@ -298,7 +301,7 @@ export function QuestionPlayer({
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* 関連サービス: 実在するもののみ表示。1件もなければセクションごと非表示 */}
-          {resolvedServices && resolvedServices.some(({ exists }) => exists) ? (
+          {resolvedServices.some(({ exists }) => exists) ? (
             <div>
               <h3 className="mb-3 text-sm font-bold text-slate-700">関連サービス</h3>
               <ul className="flex flex-wrap gap-2">
@@ -310,7 +313,7 @@ export function QuestionPlayer({
                         href={`/terms/${serviceId}`}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
-                        {serviceId.toUpperCase()}
+                        {formatSlugLabel(serviceId)}
                       </Link>
                     </li>
                   ))}
@@ -319,7 +322,7 @@ export function QuestionPlayer({
           ) : null}
 
           {/* 関連用語: 実在するもののみ表示。1件もなければセクションごと非表示 */}
-          {resolvedTerms && resolvedTerms.some(({ exists }) => exists) ? (
+          {resolvedTerms.some(({ exists }) => exists) ? (
             <div>
               <h3 className="mb-3 text-sm font-bold text-slate-700">関連用語</h3>
               <ul className="flex flex-wrap gap-2">
@@ -331,7 +334,7 @@ export function QuestionPlayer({
                         href={`/terms/${termId}`}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
-                        {termId}
+                        {formatSlugLabel(termId)}
                       </Link>
                     </li>
                   ))}
@@ -340,7 +343,7 @@ export function QuestionPlayer({
           ) : null}
 
           {/* 関連比較記事: 実在するもののみ表示。1件もなければセクションごと非表示 */}
-          {resolvedComparisons && resolvedComparisons.some(({ exists }) => exists) ? (
+          {resolvedComparisons.some(({ exists }) => exists) ? (
             <div>
               <h3 className="mb-3 text-sm font-bold text-slate-700">関連比較記事</h3>
               <ul className="flex flex-wrap gap-2">
@@ -352,7 +355,7 @@ export function QuestionPlayer({
                         href={`/comparisons/${slug}`}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
-                        {slug}
+                        {formatSlugLabel(slug)}
                       </Link>
                     </li>
                   ))}
