@@ -50,7 +50,22 @@
       "Do not expose private keys externally"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "ACM is a service that issues and manages SSL/TLS certificates, integrating with AWS services such as CloudFront, ALB, and API Gateway so that HTTPS communication can be configured with minimal effort. The most common real-world scenario is enabling HTTPS for websites that use a custom domain. By issuing a public certificate from ACM for a domain obtained via Route 53 and attaching it to a CloudFront distribution or an ALB listener, HTTPS delivery — including automatic certificate renewal — is complete. As the expiration date approaches, AWS automatically renews the certificate, which structurally reduces the risk of expiration-related incidents and is the biggest advantage compared to managing certificates manually.\n\nA key consideration when working with ACM is the region constraint of certificates. A certificate attached to an ALB must be issued in the same region as the ALB. On the other hand, because CloudFront is a global service, certificates attached to CloudFront must always be issued in us-east-1 (N. Virginia). Certificates issued in the wrong region cannot be selected from a CloudFront distribution, which is a common pitfall for beginners. ACM also distinguishes between public and private certificates: public certificates are used for internet-facing systems, while private certificates issued by ACM Private CA are used for internal systems.\n\nCLF-C02 / SAA-C03 frequently ask questions like \"Which service is used to enable HTTPS?\" and \"In which region must a certificate for CloudFront be issued?\". The difference between DNS validation and email validation is also a common topic. DNS validation, when combined with Route 53, can fully automate the renewal process, which is why it is the recommended option in production.",
+    "officialDocs": [
+      {
+        "label": "AWS Certificate Manager (AWS Official)",
+        "url": "https://aws.amazon.com/jp/certificate-manager/"
+      },
+      {
+        "label": "What is AWS Certificate Manager (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/acm-overview.html"
+      },
+      {
+        "label": "Issuing ACM Certificates Using DNS Validation (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/dns-validation.html"
+      }
+    ]
   },
   {
     "termId": "api-gateway",
@@ -102,7 +117,22 @@
       "Also validate inputs on the Lambda side"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon API Gateway is a managed service for publishing and managing HTTP APIs, REST APIs, and WebSocket APIs. The most common use case in practice is building serverless APIs in combination with Lambda. Requests from the frontend are received by API Gateway, which handles authentication, authorization, rate limiting, and CORS at this layer before forwarding them to backend Lambda functions or services running on EC2. Because no server runs continuously, costs are kept low during periods without traffic, and the service automatically scales to handle sudden traffic spikes.\n\nAPI Gateway offers two main types — HTTP APIs and REST APIs — which are chosen based on the use case. HTTP APIs offer low latency and low cost, providing basic features such as JWT authentication and CORS, making them the first choice for most modern web and mobile API workloads. REST APIs offer advanced features such as request validation, API key management, AWS WAF integration, and private APIs, making them better suited for enterprise use cases and APIs that require fine-grained control. WebSocket APIs are used for bidirectional communication such as chat and real-time notifications.\n\nCLF-C02 / SAA-C03 typically ask questions such as \"Which service serves as the entry point for serverless APIs?\" and \"Which service integrates with Lambda to provide APIs to the frontend?\". CORS configuration, authentication methods (IAM authentication, Cognito Authorizer, Lambda Authorizer), and rate limiting / throttling design are explored more deeply starting from SAA-C03. Basic production security topics — such as avoiding leaving Access-Control-Allow-Origin set to wildcard (`*`), and not logging API keys or authentication tokens — are also commonly tested.",
+    "officialDocs": [
+      {
+        "label": "Amazon API Gateway (AWS Official)",
+        "url": "https://aws.amazon.com/jp/api-gateway/"
+      },
+      {
+        "label": "What is Amazon API Gateway (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/welcome.html"
+      },
+      {
+        "label": "Choosing Between HTTP APIs and REST APIs (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/http-api-vs-rest.html"
+      }
+    ]
   },
   {
     "termId": "app-runner",
@@ -152,7 +182,18 @@
       "Restrict permissions on ECR images"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS App Runner is a managed service that lets you deploy web applications and APIs directly from a container image or a source code repository. Without separately configuring foundational components such as VPCs, load balancers, and Auto Scaling groups, simply specifying a container image provisions an execution environment with an HTTPS endpoint. In practice, App Runner is adopted for publishing small to medium-sized web apps and APIs where the operational overhead of ECS or EKS is unjustified, for containerizing internal tools, and for running prototypes in production.\n\nApp Runner trades operational simplicity for some constraints. Because its pricing model assumes continuous operation (charging for active vCPU and memory hours), a minimum baseline cost is incurred even during periods of no traffic. In contrast, Lambda + API Gateway architectures incur almost no charges when there are no requests, but they use a function execution model rather than a container execution model, which changes how the application must be structured. App Runner suits cases where you want to run a continuously running web server in a container but want to avoid the complexity of ECS, while Lambda + API Gateway suits cases where you want to run lightweight per-request processing serverlessly.\n\nCLF-C02 / SAA-C03 ask about App Runner in contexts such as \"a service that runs container applications in a managed way\" and \"a service that reduces operational overhead compared to ECS or EKS\". Comparisons among ECS (Fargate), EKS, App Runner, and Lambda — organized by operational overhead, pricing model, and supported workload types — help with answering SAA-C03 architecture design questions. For purely static sites, an S3 + CloudFront architecture is superior to App Runner in both cost and fit.",
+    "officialDocs": [
+      {
+        "label": "AWS App Runner (AWS Official)",
+        "url": "https://aws.amazon.com/jp/apprunner/"
+      },
+      {
+        "label": "What is AWS App Runner (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/what-is-apprunner.html"
+      }
+    ]
   },
   {
     "termId": "athena",
@@ -203,7 +244,22 @@
       "Manage permissions on the S3 location used for query results"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Athena is a serverless analytics service that lets you run standard SQL queries against data stored in S3. There is no need to provision a database server in advance — just place data in S3, register table definitions in Glue Data Catalog or similar, and queries can be executed immediately. In practice, Athena is used for analyzing CloudFront and ALB access logs, auditing CloudTrail logs, performing ad-hoc investigation on business data accumulated in CSV or JSON, and exploring data in a data lake.\n\nAthena pricing is based on the amount of S3 data scanned per query (a few USD per TB). Therefore, the design of data formats and partitioning is the central concern for cost optimization. Converting row-oriented formats such as CSV or JSON to columnar formats such as Parquet or ORC significantly reduces scan volume because only the necessary columns are read. Additionally, partitioning by frequently filtered keys such as date or region allows Athena to automatically skip scanning unnecessary partitions. A standard design pattern is to manage table definitions (schema and partition information) centrally in Glue Data Catalog and share them across Athena and other analytics services (Redshift Spectrum, EMR, etc.).\n\nCLF-C02 / SAA-C03 ask about Athena as \"a serverless service that allows SQL analysis of data in S3\". Differentiation from EMR (managed Hadoop/Spark) and Redshift (data warehouse) is also a frequent topic. The standard division is: Athena for ad-hoc queries and small to medium-sized log analysis, EMR for large-scale batch processing, and Redshift for routine BI analysis. Remembering this segmentation makes judgment calls easier.",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena (AWS Official)",
+        "url": "https://aws.amazon.com/jp/athena/"
+      },
+      {
+        "label": "What is Amazon Athena (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/what-is.html"
+      },
+      {
+        "label": "Using Columnar Storage Formats (Parquet / ORC) (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/columnar-storage.html"
+      }
+    ]
   },
   {
     "termId": "aurora",
@@ -258,7 +314,22 @@
       "Do not hardcode credentials in code"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Aurora is a relational database service compatible with MySQL and PostgreSQL, built on top of a distributed storage layer designed independently by AWS. Compared with RDS for MySQL / RDS for PostgreSQL of the same instance class, Aurora is said to have advantages in throughput, availability, and recovery time. In practice, it is adopted for workloads with continuous read and write activity, such as primary RDBs for web applications, SaaS backends, and database layers for business systems that demand high availability.\n\nA defining characteristic of Aurora is the separation of the storage layer and the compute layer. The storage layer is automatically replicated across six copies spanning three AZs, providing data loss tolerance (writes continue with up to two copies lost, reads continue with up to three copies lost) and fast recovery times. Writes are processed by a single primary instance, while up to 15 Aurora Replicas distribute the read workload. For SaaS workloads with rapidly growing traffic or workloads with large demand fluctuations, Aurora Serverless v2 automatically increases and decreases compute capacity based on usage.\n\nCLF-C02 / SAA-C03 frequently ask questions such as \"Which RDS variant is MySQL/PostgreSQL compatible?\", \"What configuration is used to distribute read workload? (→ Aurora Replica)\", and \"What is the difference between Multi-AZ and Read Replica?\". The exam centers on understanding that Multi-AZ is a standby configuration for availability (the standby cannot be used for reads), while a Read Replica is a replica for read performance (writes cannot be performed on it). It is also worth noting that Aurora is positioned as one of the options within RDS.",
+    "officialDocs": [
+      {
+        "label": "Amazon Aurora (AWS Official)",
+        "url": "https://aws.amazon.com/jp/rds/aurora/"
+      },
+      {
+        "label": "Overview of Amazon Aurora (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html"
+      },
+      {
+        "label": "Aurora Replication (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html"
+      }
+    ]
   },
   {
     "termId": "auto-scaling",
@@ -310,7 +381,18 @@
       "Restrict permissions of the instance profile"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Auto Scaling is a mechanism that automatically adjusts the number of resources in response to demand. The most widely used form is EC2 Auto Scaling (Auto Scaling Group), which uses CloudWatch metrics (CPU utilization, request count, custom metrics, etc.) as triggers to scale EC2 instances within a minimum, desired, and maximum capacity range. In practice, standard adoption patterns include placing Auto Scaling Groups behind an ALB to provide load distribution and automatic scaling for the web tier, reducing instance counts at night or on weekends to lower costs, and implementing self-healing configurations that automatically replace failed instances.\n\nBeyond EC2, the AWS Auto Scaling brand provides cross-resource scaling management (AWS Auto Scaling Plans) for ECS services, DynamoDB read/write capacity, Aurora Read Replicas, and other resource types. Scaling policies include target tracking scaling (deciding scale changes based on metric thresholds), step scaling (incremental adjustments), and scheduled scaling (based on time of day or schedules). Auto Scaling and ELB (ALB / NLB) are designed together as a fundamental pair: ELB handles health checks and traffic distribution, and Auto Scaling handles capacity adjustments.\n\nCLF-C02 asks questions such as \"Which mechanism automatically scales EC2 instances based on load?\" and \"Which service is combined with Auto Scaling to achieve high availability? (→ ELB)\". Distractor options often plant unrelated services such as \"a service that takes storage backups\" or \"a service that provides DNS\" — services from entirely different domains than scaling. Starting at SAA-C03, settings for minimum, desired, and maximum capacity, the design of Auto Scaling Groups spanning multiple AZs, and the distinction between target tracking scaling and step scaling are explored more deeply.",
+    "officialDocs": [
+      {
+        "label": "AWS Auto Scaling (AWS Official)",
+        "url": "https://aws.amazon.com/jp/autoscaling/"
+      },
+      {
+        "label": "What is Amazon EC2 Auto Scaling (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      }
+    ]
   },
   {
     "termId": "aws-backup",
@@ -360,7 +442,22 @@
       "Do not over-trust backups without restore testing"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Backup is a managed service that centralizes backup management across multiple AWS services. It allows backup policies (frequency, retention, cross-region copy settings) to be defined collectively as backup plans across supported services — RDS, Aurora, DynamoDB, EFS, FSx, EBS, S3, Storage Gateway, and more — and executed automatically. In practice, consolidating backups (previously managed separately as RDS snapshots, EBS snapshots, and DynamoDB on-demand backups) under AWS Backup reduces operational overhead by enabling unified management of retention periods that satisfy compliance requirements, centralized audit logs of who restored what and when, and consolidated restoration testing.\n\nBackup design centers on RPO (Recovery Point Objective: how much data loss is tolerable) and RTO (Recovery Time Objective: how long can recovery take). For workloads with short RPO (a few minutes or less), service-specific fine-grained backup features such as Aurora continuous backup or DynamoDB Point-in-Time Recovery are often used in combination. For disaster recovery (DR), the standard approach uses AWS Backup's cross-region copy feature to replicate backups to another region. Backups should not only be taken but also tested periodically to confirm that recovery is actually possible.\n\nCLF-C02 asks questions such as \"Which service centralizes backup management?\" and \"For what is backup frequency determined based on RPO/RTO?\". Starting at SAA-C03, the focus shifts to AWS Backup's role within DR strategies (Backup & Restore / Pilot Light / Warm Standby / Multi-Site Active-Active), retention period design that aligns with compliance requirements (SOC / HIPAA / PCI DSS), and protection mechanisms such as deletion permission restrictions and Vault Lock.",
+    "officialDocs": [
+      {
+        "label": "AWS Backup (AWS Official)",
+        "url": "https://aws.amazon.com/jp/backup/"
+      },
+      {
+        "label": "What is AWS Backup (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/whatisbackup.html"
+      },
+      {
+        "label": "Cross-Region Backup Copy (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/cross-region-backup.html"
+      }
+    ]
   },
   {
     "termId": "aws-budgets",
@@ -413,7 +510,22 @@
       "Limit who can view billing information"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Budgets is a cost management service that lets you set budgets for AWS costs and usage, sending notifications or triggering actions when thresholds are exceeded. Beyond alerts based on actual values, it supports alerts based on forecasted values (how much month-end spending will be at the current usage pace), allowing budget overruns to be detected during the month rather than only when receiving the bill. In practice, it is used to set a low monthly budget (e.g., USD 10) on a sandbox account to prevent learning-related cost incidents, to set per-service budgets on production accounts to detect sudden cost spikes in specific services, and to enforce organization-wide cost governance by combining with Organizations.\n\nBudgets supports multiple types. In addition to cost budgets (amount-based) and usage budgets (hour / GB / transfer-based), it also supports coverage budgets and utilization budgets for Reserved Instances and Savings Plans. With Action-enabled Budgets (Budgets Actions), automatic responses are possible when thresholds are exceeded — such as attaching IAM policies to stop resource creation for specific users, or stopping specific EC2 instances. However, to avoid business impact from false triggers, validate behavior in a staging environment before enabling Actions in production. Cost Explorer handles cost analysis and trend tracking, while Budgets handles threshold-based monitoring and notification — this role separation is the key distinction.\n\nCLF-C02 asks questions such as \"Which service detects AWS overspending?\" and \"Which service can alert on both actual and forecasted values?\". Distractor options often plant \"Cost Explorer (analytics)\" or \"CloudWatch (metrics monitoring)\". The respective scope of each service must be understood separately. Starting at SAA-C03, the distinction from Cost Anomaly Detection (which uses machine learning to detect cost anomalies), organization-wide budget aggregation via Organizations, and permission design for Action-enabled Budgets are explored in more depth.",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets (AWS Official)",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "Managing Costs with AWS Budgets (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "Creating a Budget (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-create.html"
+      }
+    ]
   },
   {
     "termId": "aws-config",
@@ -465,7 +577,22 @@
       "Decide notification destinations for compliance violations"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Config is a service that records the configuration change history of AWS resources and evaluates compliance based on defined rules. It continuously captures configuration snapshots of each resource (EC2 / S3 / IAM / security groups, etc.) and tracks who changed which item, when, and how, in chronological order. Using Config Rules (managed rules and custom rules), compliance conditions can be continuously checked — for example, \"Is the public access setting of an S3 bucket disabled?\", \"Is the EBS volume encrypted?\", \"Are there any security groups that allow all ports from 0.0.0.0/0?\" — with notifications or automated remediation triggered when violations are detected.\n\nIn practice, AWS Config is adopted for continuous evaluation of security baselines (CIS Benchmark / AWS Foundational Security Best Practices compliance), providing evidence trails during compliance audits, and detecting configuration drift (identifying where manual changes have diverged from the IaC-defined state). The difference from similar services: CloudTrail records \"API call logs (who called which API)\", while Config records \"the state and change history of resource configurations\" — a different area of coverage. CloudWatch is a monitoring service for \"metrics and logs\" and operates in yet another dimension from Config's role. For cross-account governance, the standard design uses Config Aggregator to consolidate records from multiple accounts and regions into a single account.\n\nCLF-C02 asks \"Which service evaluates the history and compliance state of resource configurations?\". A common exam topic is distinguishing among three services — Config, CloudTrail (API call logs), and CloudWatch (metrics monitoring) — by clarifying what each one records. This makes it easier to narrow down to the correct answer. Starting at SAA-C03, the focus expands to baseline violation detection with Config Rules, organization-wide aggregation, and cost optimization through scope-narrowed resource recording.",
+    "officialDocs": [
+      {
+        "label": "AWS Config (AWS Official)",
+        "url": "https://aws.amazon.com/jp/config/"
+      },
+      {
+        "label": "What is AWS Config (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/WhatIsConfig.html"
+      },
+      {
+        "label": "Evaluating Resources with AWS Config (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/evaluate-config.html"
+      }
+    ]
   },
   {
     "termId": "cdk",
@@ -515,7 +642,18 @@
       "Restrict deployment permissions to production environments"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS CDK (Cloud Development Kit) is an Infrastructure as Code (IaC) tool that lets you define AWS infrastructure using general-purpose programming languages such as TypeScript, Python, Java, C#, or Go. Code written with CDK (a CDK app) is internally synthesized (synth) into CloudFormation templates and deployed as CloudFormation stacks. In practice, CDK is adopted for standardizing complex resource configurations by extracting them into reusable Constructs (components), parameterizing per-environment differences (dev / staging / prod) to provision multiple environments from a single codebase, and consolidating Lambda function code and infrastructure definitions into a single language.\n\nCompared with writing CloudFormation templates (YAML / JSON) directly, the advantages include IDE completion and type checking, the ability to express loops and conditionals using the syntax of a programming language, and the ability to incorporate best practices as code via reusable Construct libraries (L1 / L2 / L3 Constructs / AWS Solutions Constructs). On the other hand, directly editing a CloudFormation stack that was deployed via CDK without going through CDK breaks synchronization. As an operational rule, the principle that CDK-managed targets are modified only via CDK must be enforced. CDK itself is not charged for, but the created AWS resources incur normal charges. To avoid accidentally creating high-cost resources, it is recommended to enforce a PR review checkpoint.\n\nCLF-C02 asks questions such as \"Which option allows infrastructure to be managed as code?\" and \"Which tool generates CloudFormation to manage resources?\". A common point of discussion is the differentiation among CloudFormation, CDK, and Terraform (a third-party tool). CDK should be remembered as \"AWS's official IaC tool that supports general-purpose languages\". Starting at SAA-C03, the focus shifts to stack-splitting granularity, the CDK Construct hierarchy (L1 = thin wrappers around CloudFormation resources / L2 = with safe defaults / L3 = bundled best practices), and deployment permission control for production environments.",
+    "officialDocs": [
+      {
+        "label": "AWS Cloud Development Kit (AWS Official)",
+        "url": "https://aws.amazon.com/jp/cdk/"
+      },
+      {
+        "label": "AWS Cloud Development Kit (AWS CDK) v2 Developer Guide (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/home.html"
+      }
+    ]
   },
   {
     "termId": "cloudformation",
@@ -565,7 +703,22 @@
       "Review templates that have IAM creation permissions"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS CloudFormation is an Infrastructure as Code (IaC) service that defines AWS resources declaratively as templates (YAML or JSON) and manages creation, updates, and deletion collectively in units called stacks. Templates can define virtually any AWS resource — VPCs, subnets, EC2 instances, IAM roles, RDS, S3 buckets, and more — and executing a stack provisions resources in a consistent order while resolving dependencies. In practice, standard patterns include provisioning stacks from the same template for each environment (dev / staging / prod), using change sets to verify changes before applying them to production, and using StackSets to deploy across multiple accounts and regions at once.\n\nThe advantages of CloudFormation include the fact that the resource configuration is retained in a repository as code, making change history trackable in Git; that the drift detection feature can detect configuration drift caused by manual console operations; and that the rollback feature can automatically revert to the previous state on deployment failure. Instead of writing templates directly, higher-level abstractions such as AWS CDK (writing IaC in general-purpose programming languages) or AWS SAM (serverless-focused) are also synthesized internally into CloudFormation. There is no charge for CloudFormation itself, but the created resources incur normal charges. Forgetting to stop them or mistakenly defining expensive resources can lead to cost incidents.\n\nCLF-C02 asks questions such as \"Which service defines and manages AWS resources as code?\" and \"Which service creates resources collectively from a template?\". Terraform (HashiCorp's third-party IaC) is sometimes mentioned alongside it, but CloudFormation should be remembered as the official, AWS-managed IaC. Starting at SAA-C03, the focus shifts to cross-stack references (Export / ImportValue), nested stacks, organization-wide deployments via StackSets, and the details of rollback behavior on deployment failure.",
+    "officialDocs": [
+      {
+        "label": "AWS CloudFormation (AWS Official)",
+        "url": "https://aws.amazon.com/jp/cloudformation/"
+      },
+      {
+        "label": "What is AWS CloudFormation (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Template Anatomy (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/template-anatomy.html"
+      }
+    ]
   },
   {
     "termId": "cloudfront",
@@ -620,7 +773,18 @@
       "Restrict S3 origins with OAC"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "A typical real-world configuration where CloudFront is heavily used is the \"S3 + CloudFront\" static site pattern. HTML, CSS, JavaScript, and images are placed in S3 and delivered via CloudFront in front. This setup eliminates the cost of a continuously running server during idle periods while delivering content with low latency to users worldwide. It is adopted across all scales — from personal portfolio sites to corporate campaign sites.\n\nFor dynamic applications as well, the common pattern is to place CloudFront in front, cache static assets (images, JS, CSS) at the edge, and pass only API requests through to origins (ALB or API Gateway). This offloads delivery of unchanging assets to the edge and concentrates origin processing on requests that actually require it.\n\nSecurity and cost perspectives should also be kept in mind. CloudFront includes AWS Shield Standard automatically, providing standard, baseline protection against DDoS attacks. When combined with AWS WAF, application-layer protections such as IP address restrictions, rate limiting, and SQL injection mitigation can be applied at the CloudFront edge. For S3 origins, the standard design uses OAC (Origin Access Control) so that the S3 bucket is not exposed directly and accepts only access via CloudFront. On the cost side, charges are incurred per data transfer volume, HTTP request count, and per Invalidation (cache eviction), but a free tier provides 1 TB of data transfer and 10 million requests per month.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon CloudFront (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "Using OAC (Origin Access Control) with CloudFront (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+      }
+    ]
   },
   {
     "termId": "cloudtrail",
@@ -672,7 +836,22 @@
       "Verify that it is enabled on important accounts"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS CloudTrail is an audit log service that records all API calls within an AWS account. It captures who (IAM principal), what service was called, when (timestamp), where from (source IP), and what operation (API name, request parameters, response) was executed. This data is used in post-incident security investigations, compliance audits, and operational troubleshooting. Enabling it across all regions is a security baseline, and combining it with AWS Organizations allows centralized management of events across multiple accounts.\n\nCloudTrail events are roughly divided into three types. Management events (control plane operations such as EC2 instance launches and IAM policy changes) are by default viewable in the \"Event history\" for the last 90 days. Data events such as S3 object GET/PUT operations are disabled by default; enabling them increases cost. By configuring a Trail, events can be stored long-term in an S3 bucket, exported to CloudWatch Logs, or analyzed via Amazon Athena.\n\nCLF-C02 frequently asks about CloudTrail as a service for \"recording AWS API operations\" or \"investigating who modified resources\". Because CloudWatch (metrics, alarms) and AWS Config (recording resource configuration changes and rule compliance) are easy to confuse, clearly distinguishing the roles of these three services is important.",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail (AWS Official)",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      },
+      {
+        "label": "AWS CloudTrail User Guide (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "How CloudTrail Works (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/how-cloudtrail-works.html"
+      }
+    ]
   },
   {
     "termId": "cloudwatch",
@@ -727,7 +906,22 @@
       "Limit log viewing permissions"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon CloudWatch is a monitoring service that integrates metrics, logs, and alarms for AWS resources and applications. Standard metrics such as EC2 CPU utilization, RDS connection counts, and Lambda execution times are collected automatically and can be used for dashboards and alarms without additional configuration. CloudWatch Logs is a service that collects and stores application logs, allowing centralized management of Lambda standard output, application logs on EC2, VPC Flow Logs, and more.\n\nCloudWatch Alarms send notifications via Amazon SNS to email, Slack, PagerDuty, and similar destinations when metrics exceed configured thresholds. Alarms can also trigger EC2 Auto Scaling to automatically scale instances up or down. Dashboards visualize metrics across multiple resources, and combining with Amazon EventBridge enables event-driven operational automation. On the cost side, custom metrics are charged based on the number of metrics and API requests. When ingesting large numbers of custom metrics, cost estimation is required in advance.\n\nCLF-C02 asks about CloudWatch as \"the service that collects metrics and sends alarm notifications\". A common topic is the three-service comparison among CloudTrail (API operation logs) and AWS Config (recording resource configuration changes and rule compliance). Clearly differentiating each service's role is important. Starting at SAA-C03, advanced usage patterns are tested — including query analysis with CloudWatch Logs Insights, using metric filters to generate custom metrics from logs, and top-N analysis via Contributor Insights.",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch (AWS Official)",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "What is Amazon CloudWatch (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "What is Amazon CloudWatch Logs (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+      }
+    ]
   },
   {
     "termId": "codebuild",
@@ -777,7 +971,18 @@
       "Use least-privilege IAM roles for builds"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS CodeBuild is a fully managed build service that compiles, tests, and packages source code. Each build runs in an isolated Docker container, ensuring no environmental contamination and high reproducibility. It integrates directly with repositories such as GitHub, CodeCommit, and Bitbucket, and can output build artifacts (binaries, ZIP files, Docker images) to Amazon S3 or Amazon ECR. No server management is required, and pricing is consumption-based according to actual build time.\n\nThe build process is defined per phase in a buildspec.yml file placed at the project root. The basic structure consists of four phases: install (installing dependencies), pre_build (preparing tests), build (compiling and running tests), and post_build (packaging and pushing artifacts). Each phase's commands are described in YAML. The build image can be selected from AWS-provided managed images (Node.js, Java, Python, Go, etc.) or custom images registered in ECR. For environment variables, integration with SSM Parameter Store and AWS Secrets Manager is provided, allowing API keys and other secret information to be injected safely without exposing them in build logs.\n\nCLF-C02 asks questions such as \"Which is AWS's continuous integration (CI) service?\". It is important to organize and remember the roles of four services: CodeCommit (source management), CodeBuild (build and test), CodeDeploy (deployment), and CodePipeline (pipeline integration).",
+    "officialDocs": [
+      {
+        "label": "AWS CodeBuild (AWS Official)",
+        "url": "https://aws.amazon.com/jp/codebuild/"
+      },
+      {
+        "label": "What is AWS CodeBuild (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/welcome.html"
+      }
+    ]
   },
   {
     "termId": "codepipeline",
@@ -827,7 +1032,22 @@
       "Define approval rules for production deployments"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS CodePipeline is an orchestration service that visually constructs and manages CI/CD pipelines, from source code commits through build, test, and deployment. Pipelines are composed of stages and actions; each stage can incorporate AWS services (CodeBuild, CodeDeploy, CloudFormation, ECS, Lambda) or third-party services (GitHub Actions, Jenkins) as actions.\n\nThe standard configuration is a three-stage pipeline: a source stage (triggered by pushes to CodeCommit or GitHub) → a build stage (compilation and tests via CodeBuild) → a deploy stage (production rollout via CodeDeploy or CloudFormation). Inserting a manual approval action between stages can make approver confirmation mandatory before production deployment. Promotion across multiple environments (dev → staging → prod) can be implemented by simply adding more stages. Pricing is based on a fixed monthly fee per active pipeline, with the first pipeline included in the free tier.\n\nCLF-C02 asks questions such as \"Which service manages CI/CD pipelines?\". It is important to organize and remember the roles of four services: CodeCommit, CodeBuild, CodeDeploy, and CodePipeline. While CodeBuild handles individual build and test processing, CodePipeline orchestrates them and the entire pipeline as a whole. Starting at SAA-C03, design patterns for blue/green deployments, canary releases, and cross-account pipelines fall within the exam scope.",
+    "officialDocs": [
+      {
+        "label": "AWS CodePipeline (AWS Official)",
+        "url": "https://aws.amazon.com/jp/codepipeline/"
+      },
+      {
+        "label": "What is AWS CodePipeline (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/welcome.html"
+      },
+      {
+        "label": "CodePipeline Concepts (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/concepts.html"
+      }
+    ]
   },
   {
     "termId": "cognito",
@@ -879,7 +1099,22 @@
       "Verify identity using JWT-verified claims"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Cognito is a fully managed service for adding **user authentication and authorization infrastructure** to web and mobile applications. It has two main components with different roles.\n\n**User Pool** is an authentication directory that manages user sign-up, sign-in, password reset, and MFA. After successful authentication, it issues JWTs (ID token / access token / refresh token) and returns them to the client. When combined with API Gateway's JWT Authorizer, authentication checks for requests reaching Lambda can be performed at the gate stage.\n\n**Identity Pool (formerly: Federated Identities)** issues temporary AWS credentials (essentially IAM role credentials) to authenticated users (authenticated via Cognito User Pool or external IdPs such as Google or Facebook). It is used in configurations where users access S3 buckets or DynamoDB tables directly (e.g., direct SDK calls from a Mobile SDK).\n\nA critical implementation note: when verifying ownership of personal data returned from an API, use the JWT claim `sub` (subject). The `userId` included in the request body or URL path can be tampered with and must not be used as a trusted identifier. Only claims verified by a Lambda Authorizer or JWT Authorizer must be used in the backend's authorization logic — this design is essential.\n\nCLF-C02 asks about Cognito as \"the service used for application user authentication\" or \"the managed service that handles user login\". SAA-C03 covers the distinction between User Pool and Identity Pool, JWT Authorizer integration with API Gateway, and the design of external IdP federation.",
+    "officialDocs": [
+      {
+        "label": "Amazon Cognito (AWS Official)",
+        "url": "https://aws.amazon.com/jp/cognito/"
+      },
+      {
+        "label": "What is Amazon Cognito (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/what-is-amazon-cognito.html"
+      },
+      {
+        "label": "Amazon Cognito User Pools (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/cognito-user-pools.html"
+      }
+    ]
   },
   {
     "termId": "cost-explorer",
@@ -928,7 +1163,18 @@
       "When you find a cost anomaly, also check CloudTrail"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Cost Explorer is a tool for **visualizing and analyzing** AWS usage costs. Accessible directly from the console, it allows you to view up to 13 months of cost data by service, region, tag, and account. It also has a forecasting feature that predicts costs up to 12 months ahead.\n\nThe **distinction in roles from AWS Budgets** is frequently tested. Cost Explorer is a tool for \"visualizing and analyzing past and current costs\" and does not have alerting or notification features. Budgets is a tool for \"sending alerts against a set budget\" and supports email and SNS notifications. The rule of thumb is: use Cost Explorer when you want to understand costs, and use Budgets when you want to be notified when costs are exceeded.\n\nIn practice, cost analysis is often performed in combination with CloudTrail — when investigating which IAM user or role created an unexpected resource, Cost Explorer detects the cost surge, and CloudTrail provides the operational history for deeper investigation. By thoroughly enforcing tagging, cost allocation by project or environment (dev/staging/prod) becomes possible, which can also be used for chargeback between departments.\n\nCLF-C02 asks about Cost Explorer as the correct answer to \"Which service analyzes costs?\" or \"Which one is used to view cost trends over the past 12 months?\". Distractor options typically include Budgets (for notification purposes), CloudTrail (for operation logs), and CloudWatch (for performance monitoring).",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer (AWS Official)",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      },
+      {
+        "label": "What is AWS Cost Explorer (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      }
+    ]
   },
   {
     "termId": "dynamodb",
@@ -982,7 +1228,22 @@
       "When storing personal data, pay attention to logging output and access permissions"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon DynamoDB is a fully managed NoSQL database service provided by AWS. AWS handles server provisioning, OS patching, and cluster management, allowing developers to focus on table design and application code.\n\n**The core of the design is access-pattern-driven**. DynamoDB identifies data using a partition key (PK) and an optional sort key (SK). Items with the same partition key are stored in the same partition, making Query operations over sort key ranges fast. Table design proceeds in the order of \"first enumerate the access patterns, then express those patterns through the key structure\". You do not take the RDB approach of normalizing first and then JOINing.\n\n**The use of Query versus Scan** is an important optimization point. Query specifies the partition key and uses an index, so it is fast and low-cost. Scan sequentially scans the entire table, becoming slower and more expensive as data volume grows. Avoid frequent Scan operations in production environments; the standard design pattern is to create a GSI (Global Secondary Index) and resolve the problem with a Query.\n\n**There are two capacity modes**. On-demand mode automatically scales according to access volume and does not charge for unused capacity. Provisioned mode requires you to specify RCU (Read Capacity Units) and WCU (Write Capacity Units) in advance, often combined with Auto Scaling.\n\n**DynamoDB Streams** is an event stream feature that captures changes to the table (INSERT / MODIFY / REMOVE) in real time. By integrating with Lambda, you can implement event-driven processing such as replication, notifications, and aggregation.\n\n**Access control via IAM** is granted at the action level (`PutItem` / `GetItem` / `Query` / `Scan`, etc.) rather than at the table level. Following the principle of least privilege, assign an IAM role to a Lambda function that allows only the necessary operations.\n\nSAA-C03 asks about the design of GSI / LSI (Local Secondary Index), in-memory caching with DAX (DynamoDB Accelerator), DynamoDB Streams + Lambda integration patterns, and the criteria for choosing between DynamoDB and RDS.",
+    "officialDocs": [
+      {
+        "label": "Amazon DynamoDB (AWS Official)",
+        "url": "https://aws.amazon.com/jp/dynamodb/"
+      },
+      {
+        "label": "What is Amazon DynamoDB (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/Introduction.html"
+      },
+      {
+        "label": "Amazon DynamoDB Core Components (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html"
+      }
+    ]
   },
   {
     "termId": "ebs",
@@ -1036,7 +1297,22 @@
       "Check the sharing scope of snapshots"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon EBS (Elastic Block Store) is a **block storage** service that is attached to an EC2 instance. From the OS perspective, it is recognized as an ordinary disk drive, and data can be read and written by mounting a file system on it. EBS volumes must be located in the same Availability Zone (AZ) as the EC2 instance, and **cannot be attached across AZs**.\n\n**The differences from object storage (S3) and file storage (EFS)** are frequently asked about. EBS is suited for high-speed I/O scenarios where it is attached to a single EC2 instance as a block device. S3 is accessed per object via HTTP API, so it cannot be used as a disk from EC2. EFS is a shared file system that can be mounted simultaneously from multiple EC2 instances.\n\n**Volume types** are selected according to the workload. General purpose SSD gp3 is the most common choice and offers good cost efficiency. Provisioned IOPS SSD io2 is used for database workloads that require high IOPS. Throughput-optimized HDD (st1) suits large-volume sequential read/write workloads (logs, big data processing), and Cold HDD (sc1) is a low-cost option for infrequently accessed large volumes of data.\n\n**Snapshots** are a feature that stores point-in-time copies of EBS volumes in S3. Users can perform the operation without being aware of the underlying S3 bucket. Snapshots use an incremental backup approach: after the initial full snapshot, only the changed differences are stored, making the process efficient. You can restore a new EBS volume from a snapshot or copy it to another region for DR purposes.\n\nAn important note: **even if you stop the EC2 instance, the attached EBS volume continues to incur charges**. Unused volumes will continue to generate costs unless they are explicitly deleted.\n\nCLF-C02 asks questions such as \"which storage is used as the disk for EC2?\" and \"which is a block storage tied to an AZ?\". SAA-C03 asks about the criteria for selecting volume types, Multi-Attach (a limited feature of io1/io2), encryption (integration with KMS), and snapshot lifecycle management.",
+    "officialDocs": [
+      {
+        "label": "Amazon EBS (AWS Official)",
+        "url": "https://aws.amazon.com/jp/ebs/"
+      },
+      {
+        "label": "What is Amazon EBS (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/what-is-ebs.html"
+      },
+      {
+        "label": "Amazon EBS Volume Types (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/ebs-volume-types.html"
+      }
+    ]
   },
   {
     "termId": "ec2",
@@ -1091,7 +1367,22 @@
       "Do not place SSH private keys in public repositories"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon EC2 (Elastic Compute Cloud) is an IaaS service that allows you to launch and manage virtual servers (instances) in the AWS cloud. By selecting an AMI (Amazon Machine Image), you can start an instance with the OS and initial software pre-configured.\n\n**Instance types** are selected according to the workload. They are divided into families such as general purpose (M / T series), compute optimized (C series), memory optimized (R / X series), storage optimized (I / D series), and accelerated computing (P / G series / GPU). CLF asks for the basic understanding of \"selecting a combination of vCPU count and RAM\".\n\n**Purchase options** are the key to cost optimization and are frequently asked about in both CLF-C02 and SAA-C03.\n- **On-Demand**: per-second billing, no commitment, suitable for short-term unpredictable workloads\n- **Reserved Instances (RI)**: up to 75% discount with a 1-year or 3-year commitment. Suited for steady-state workloads\n- **Savings Plans**: a newer mechanism that applies discount rates equivalent to RIs more flexibly (regardless of instance type)\n- **Spot Instances**: utilize AWS spare capacity at up to 90% discount. Subject to interruption risk. Suited for fault-tolerant distributed workloads (batch, ML training, etc.)\n- **Dedicated Host**: occupy a physical server. Supports BYOL (Bring Your Own License)\n\n**The combination of Auto Scaling and ELB** is the standard configuration for web applications. Auto Scaling increases or decreases the number of instances in response to traffic, while ELB (Elastic Load Balancing) distributes requests across each instance. This configuration requires a **stateless design** (no session information stored inside an instance), and the standard pattern is to externalize sessions to ElastiCache (Redis / Memcached) or DynamoDB.\n\nFrom the perspective of the **shared responsibility model**, EC2 places the management of the layers above the hypervisor (OS / middleware / applications) on the user (the \"security in the cloud\" domain).\n\nCLF-C02 asks questions such as \"which service provides virtual servers?\" and \"which is an EC2 billing model?\". SAA-C03 asks about how to choose among purchase options, the architecture design of Auto Scaling + ELB, AMI customization and horizontal deployment, and the use of instance metadata and user data.",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 (AWS Official)",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      },
+      {
+        "label": "What is Amazon EC2 (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "label": "Amazon EC2 Instance Purchase Options (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/instance-purchasing-options.html"
+      }
+    ]
   },
   {
     "termId": "ecr",
@@ -1141,7 +1432,22 @@
       "Do not include API keys or .env files in images"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon ECR (Elastic Container Registry) is a fully managed container registry service that stores and manages Docker container images and OCI-format artifacts. It provides two types of registries: private registries (closed for sharing within an account / IAM) and public registries (open to the internet). It integrates closely with AWS container execution platforms such as ECS, EKS, App Runner, and Lambda (running container images). From the Docker CLI, it can be operated with `docker push` / `docker pull` like an ordinary registry, with authentication using temporary tokens issued via IAM.\n\nTypical use cases in practice include image push from CI/CD pipelines and automatic pull from ECS / EKS tasks. The flow involves building images with CodeBuild or GitHub Actions, pushing them to ECR, and having the ECS service update pull the latest image from ECR into the new task definition for execution. ECR provides image scanning features (Basic scanning and Enhanced scanning) that automatically detect and notify of known vulnerabilities (CVEs) at push time. By setting lifecycle policies, you can automatically delete old images (based on tag count or creation date) to prevent storage cost bloat.\n\nIn security operations, repository policies (resource-based IAM) control which IAM principals can push or pull to prevent unauthorized writes to production images. It is fundamental to not include API keys, `.env` files, or private keys in container images (inject them at runtime from environment variables, Secrets Manager, or Parameter Store). CLF-C02 asks questions such as \"a service that stores container images\" and \"a registry to combine with ECS / EKS\", while SAA-C03 and beyond ask in depth about integration of Enhanced scanning with Amazon Inspector, cross-account replication, and image pull via private endpoints (VPC endpoints).",
+    "officialDocs": [
+      {
+        "label": "Amazon ECR (AWS Official)",
+        "url": "https://aws.amazon.com/jp/ecr/"
+      },
+      {
+        "label": "What is Amazon ECR (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/what-is-ecr.html"
+      },
+      {
+        "label": "Amazon ECR Image Scanning (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/image-scanning.html"
+      }
+    ]
   },
   {
     "termId": "ecs",
@@ -1210,7 +1516,22 @@
       "In production, verify ECR image scanning and least-privilege IAM"
     ],
     "updatedAt": "2026-06-08",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon ECS (Elastic Container Service) is a fully managed container orchestration service that runs and manages Docker containers on AWS. It is operated with the following components: task definitions (blueprints bundling container images, CPU / memory, network, IAM roles, log destinations, and so on), tasks (one or more container execution units launched from a task definition), services (logical units that maintain a specified number of tasks and integrate with ALB / NLB as needed), and clusters (logical boundaries that group tasks and services).\n\nYou can choose between two launch types: \"ECS on EC2\" and \"ECS on Fargate\". With the EC2 launch type, users manage the EC2 instances that serve as container hosts, allowing flexible instance type selection, the use of GPU / specialized instances, and cost optimization with Spot instances. With the Fargate launch type, container host management is abstracted away to AWS, and users only need to specify CPU / memory requirements. This reduces server management at the cost of a higher per-unit-time execution cost compared to EC2 with self-management.\n\nThe standard configuration in practice is a three-tier setup where ECS tasks are placed in private subnets and only an ALB placed in a public subnet is reachable from the internet. The standard design includes dynamic port mapping from ALB to ECS service, container log output to CloudWatch Logs, and automatic scaling of task count via Auto Scaling (based on CPU / memory / ALB request count). Tasks have two types of IAM roles: the \"task execution role\" is used by ECS itself for AWS API operations such as pulling images from ECR and outputting CloudWatch Logs, while the \"task role\" is used when the containerized application accesses AWS APIs (S3 / DynamoDB, etc.). Confusing the two is a common cause of permission incidents, so they should be clearly separated in the design.\n\nCLF-C02 asks questions such as \"a container orchestration service that runs containers\" and \"a container execution platform to combine with ECR\". SAA-C03 and beyond ask in depth about choosing between Fargate and EC2 launch types, the design of service desired count, capacity providers, ECS Service Connect / Service Discovery, and how to differentiate between ECS and EKS (Kubernetes compatible).",
+    "officialDocs": [
+      {
+        "label": "Amazon ECS (AWS Official)",
+        "url": "https://aws.amazon.com/jp/ecs/"
+      },
+      {
+        "label": "What is Amazon ECS (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/Welcome.html"
+      },
+      {
+        "label": "Amazon ECS Launch Types (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/ecs-configuration.html"
+      }
+    ]
   },
   {
     "termId": "efs",
@@ -1264,7 +1585,22 @@
       "Consider encryption and access points"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon EFS (Elastic File System) is a fully managed NFS (Network File System) file storage service that can be mounted and shared simultaneously by multiple EC2 instances and Lambda functions. From the OS perspective, it is mounted as an ordinary file system, allowing multiple clients to read from and write to the same files concurrently. Capacity grows and shrinks automatically based on usage, eliminating the need to provision storage in advance. The major difference from EBS is that by placing a \"mount target\" in each subnet across multiple AZs, EC2 instances in multiple AZs can access the same file system.\n\nThe storage classes have a two-tier structure: \"Standard\" (multi-AZ redundancy / standard for typical web and application workloads) and \"One Zone\" (single-AZ redundancy / lower cost / suited for development and testing), each combined with Infrequent Access (IA) lifecycle management that automatically migrates infrequently accessed data to a lower-cost tier. With Lifecycle Management, you can set rules such as \"move to the IA tier if not accessed for 30 days\", reducing costs for datasets with skewed access patterns. Throughput modes can be chosen from Bursting (auto-scales proportionally to capacity), Elastic, or Provisioned (explicitly reserved).\n\nTypical configurations in practice include shared media file storage across multiple EC2 instances, shared web content, CMS `uploads/` directory sharing, shared scratch space for Linux workloads, and shared model files read from Lambda container images. The differentiation among the three options of S3 (object storage / accessed via HTTP API), EBS (block storage attached to a single EC2 instance), and EFS (file storage NFS-mounted from multiple EC2 instances) is a frequent organizing point both in exams and in practice. In security operations, restrict NFS (TCP 2049) traffic to only the necessary clients via Security Groups, enable encryption at rest (with KMS integration) and encryption in transit (TLS), and use EFS access points to control subpath and user permissions within the file system.",
+    "officialDocs": [
+      {
+        "label": "Amazon EFS (AWS Official)",
+        "url": "https://aws.amazon.com/jp/efs/"
+      },
+      {
+        "label": "What is Amazon EFS (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/whatisefs.html"
+      },
+      {
+        "label": "Amazon EFS Performance (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/performance.html"
+      }
+    ]
   },
   {
     "termId": "elastic-beanstalk",
@@ -1316,7 +1652,22 @@
       "Do not hard-code secrets in environment variables"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Elastic Beanstalk is a deployment service that leans toward PaaS (Platform as a Service): simply by uploading the application source code (zip / war / Docker image, etc.), it automatically builds and operates the underlying runtime environment of EC2, Auto Scaling group, ELB, security groups, health checks, and so on. It supports a wide range of languages and runtimes including Java, .NET, Node.js, Python, Ruby, Go, PHP, and Docker, and allows you to choose between two environment types: web application (HTTP request processing) and worker (SQS queue processing).\n\nA characteristic of Elastic Beanstalk is that \"it does not completely hide infrastructure control; the user can override EC2 or Auto Scaling settings as needed\". Unlike fully serverless services like Lambda or App Runner, EC2 instances are kept running underneath, so fixed costs for EC2 / EBS / ELB are incurred even when there is no traffic. For personal-development MVPs and validation use cases, this fixed cost can become a cost blind spot, and for static-content sites S3 + CloudFront is often more cost-efficient, while for intermittent workloads Lambda + API Gateway tends to be advantageous.\n\nTypical use cases in practice are mid-sized web applications that want a Heroku-like simple deployment experience on AWS, migration of existing applications that want to run on EC2 but reduce the construction and operation cost of Auto Scaling and ELB, and internal applications with the requirement of \"reducing infrastructure construction effort while retaining EC2-level customizability\". CLF-C02 asks questions such as \"a service that creates and manages the runtime environment simply by uploading the application code\" and \"a PaaS-oriented service\", while SAA-C03 and beyond ask in depth about Blue/Green deployment of environment settings, fine-grained override with `.ebextensions`, custom AMIs, VPC placement, and operational integration with CloudWatch.",
+    "officialDocs": [
+      {
+        "label": "AWS Elastic Beanstalk (AWS Official)",
+        "url": "https://aws.amazon.com/jp/elasticbeanstalk/"
+      },
+      {
+        "label": "What is AWS Elastic Beanstalk (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/Welcome.html"
+      },
+      {
+        "label": "AWS Elastic Beanstalk Basic Concepts (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/concepts.html"
+      }
+    ]
   },
   {
     "termId": "elasticache",
@@ -1369,7 +1720,22 @@
       "Do not allow direct access from the internet"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon ElastiCache is a service that provides Redis-compatible or Memcached-compatible in-memory caches / in-memory data stores in a managed manner. Because it holds data in RAM and supports sub-millisecond read/write latency, it is used to offload high-frequency access to relational databases (RDS) and NoSQL databases (DynamoDB) onto a cache to reduce database load and response latency. Two engine families are available: Redis-compatible (based on Redis OSS / Valkey) and Memcached, to be selected according to the use case.\n\nThe Redis-compatible engine provides rich data structures such as strings, hashes, lists, sets, sorted sets, and streams, as well as persistence (snapshot / AOF), replication, cluster configuration (sharding), pub/sub, and transactions. It is chosen for scenarios that require more complex data operations than a simple KV store, such as session management, ranking aggregation, messaging, and real-time leaderboards. The Memcached-compatible engine narrows the functionality to a simple KV cache but can deliver high throughput via multi-threading, making it suited for the use case of simply caching a large number of DB query results. The dichotomy is: choose the Redis-compatible engine when persistence or replication is needed, and choose Memcached for purely caching purposes that need to scale horizontally.\n\nTypical use cases in practice include session stores for stateless web applications, query result caches for SaaS applications where \"the same user opens the same screen repeatedly\", rankings / real-time aggregation, rate limit counters, and inter-component coordination via pub/sub. Place ElastiCache nodes inside a VPC and use Security Groups to permit traffic only from the connecting applications (EC2 / ECS / Lambda) so that they are not directly reachable from the internet. Because nodes incur per-hour charges while running, they tend to become a fixed-cost blind spot for personal-development MVPs, and it is often rational to defer adoption until requirements become clear. CLF-C02 asks questions such as \"an in-memory caching service\" and \"a service that reduces DB access to speed up responses\", while SAA-C03 and beyond ask in depth about Redis cluster mode, Multi-AZ replication, failover design, and how to differentiate ElastiCache from DAX (DynamoDB Accelerator).",
+    "officialDocs": [
+      {
+        "label": "Amazon ElastiCache (AWS Official)",
+        "url": "https://aws.amazon.com/jp/elasticache/"
+      },
+      {
+        "label": "What is Amazon ElastiCache (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/WhatIs.html"
+      },
+      {
+        "label": "Selecting an Engine in ElastiCache (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/SelectEngine.html"
+      }
+    ]
   },
   {
     "termId": "elb",
@@ -1424,7 +1790,18 @@
       "Restrict ingress with Security Groups"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Elastic Load Balancing (ELB) is an AWS managed load balancer service that automatically distributes incoming traffic across multiple targets (EC2 instances / containers / Lambda functions / IP addresses). It comes in four types: ALB (Application Load Balancer), NLB (Network Load Balancer), GWLB (Gateway Load Balancer), and CLB (Classic Load Balancer), to be selected based on the layer and use case. ALB targets HTTP / HTTPS (Layer 7) and supports path-based, host-based, HTTP header, and query string routing. NLB targets TCP / UDP / TLS (Layer 4) and is suited for workloads that require ultra-low latency, high throughput, or static IP addresses. GWLB is a service specialized in inserting third-party virtual appliances (firewalls / IDS / IPS), while CLB is a legacy general-purpose load balancer.\n\nA typical configuration is to place an ALB in front of a group of EC2 instances spanning multiple AZs, combined with Auto Scaling, to ensure high availability and scalability for a web application. Health checks are performed per ALB target group, and instances that fail to respond are automatically removed. It is common to configure HTTPS listeners and associate ACM certificates so that TLS termination is performed at the ALB. In microservices architectures, it is widely adopted to associate multiple target groups with a single ALB and use path-based routing to dispatch /api to an API server, /static to static content, and the rest to a web server.\n\nIn the exam context, CLF-C02 asks questions such as \"which service distributes traffic across multiple servers?\" and \"which service is used at the entry point of a Multi-AZ configuration to improve availability?\". SAA-C03 asks in depth about choosing between ALB and NLB (ALB for HTTP/HTTPS, NLB for ultra-low latency TCP/UDP), enabling cross-zone load balancing, sticky sessions, target group health check design, and combinations with WAF / CloudFront / Route 53.",
+    "officialDocs": [
+      {
+        "label": "Elastic Load Balancing (AWS Official)",
+        "url": "https://aws.amazon.com/jp/elasticloadbalancing/"
+      },
+      {
+        "label": "What is Elastic Load Balancing (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/userguide/what-is-load-balancing.html"
+      }
+    ]
   },
   {
     "termId": "eventbridge",
@@ -1478,7 +1855,18 @@
       "Verify trusted sources for external event integrations"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon EventBridge is a serverless event bus service that aggregates events from AWS services, custom applications, and SaaS partner applications, and routes them to targets (Lambda / Step Functions / SQS / SNS / Kinesis Data Streams / API Gateway / EventBridge in another account, etc.) based on rules. Positioned as the successor of CloudWatch Events, it is characterized by being able to uniformly handle both AWS service integration and SaaS event ingestion. It also supports scheduled execution via schedule expressions (cron / rate expressions) and is widely used as a trigger for scheduled batches and daily deliveries.\n\nThe core concepts of EventBridge are the three elements of event bus, rules, and targets. Events from AWS services automatically flow into the default event bus, while custom event buses can be used to send application-specific events. Rules narrow down the target events using event patterns (matching conditions in JSON format) and deliver events to up to five targets in parallel. When delivery fails, automatic retries and routing to a DLQ (Dead Letter Queue) are supported, with a retry window of up to 24 hours.\n\nCommonly used patterns in practice include monitoring use cases that detect EC2 state changes (start / stop / terminate) and send notifications, CI/CD use cases that detect CodePipeline / CodeBuild state changes and notify Slack or Teams, scheduled execution of daily and weekly batches with EventBridge Scheduler, and integration use cases that ingest events from SaaS (Datadog / PagerDuty / Auth0, etc.) into AWS-side workflows. In the exam context, CLF-C02 asks questions such as \"which service is used in event-driven architectures?\" and \"which service can be used for scheduled execution?\". SAA-C03 frequently asks about how to differentiate among SNS / SQS / EventBridge (SNS for pub-sub, SQS for queuing, and EventBridge for event routing).",
+    "officialDocs": [
+      {
+        "label": "Amazon EventBridge (AWS Official)",
+        "url": "https://aws.amazon.com/jp/eventbridge/"
+      },
+      {
+        "label": "What is Amazon EventBridge (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/eventbridge/latest/userguide/eb-what-is.html"
+      }
+    ]
   },
   {
     "termId": "fargate",
@@ -1528,7 +1916,18 @@
       "Do not include secrets in container images"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Fargate is a \"serverless\" compute engine for running containers on Amazon ECS and Amazon EKS. With traditional ECS / EKS, users had to launch and manage EC2 instances as container hosts, but with Fargate, users no longer need to be aware of the EC2 instances that run the containers. When you specify vCPU, memory, and network settings in the task definition (or Pod definition), AWS automatically provisions the capacity and launches the containers. OS patching, host management, and capacity reservation become unnecessary, significantly reducing the operational burden.\n\nThe main differences between Fargate and the EC2 launch type lie in the billing model and the scope of management. The EC2 launch type charges per instance per unit of time, and idle capacity is also billed. Fargate charges per task based on vCPU, memory, and execution time, so charges are incurred only for what is needed per container. The cost tends to be lower than the EC2 launch type when resource utilization is high, and higher when it is low. SAA-C03 asks about which Fargate is suited for among patterns such as \"always-on API\", \"short-running batch\", and \"irregular processing\", and how to choose between Fargate and the EC2 launch type.\n\nTypical use cases include serverless container execution for web APIs, short-running batch jobs triggered by CI/CD pipelines, machine learning inference container execution, and one-off execution of third-party images (OSS tools). The differentiation from Lambda lies in the constraints: Lambda has a maximum execution time of 15 minutes and per-function limits, while Fargate's strength is its ability to handle long-running processes and arbitrary container images. In the exam context, CLF-C02 asks questions such as \"which service runs containers without managing EC2?\" and tests whether you confuse the relationships among ECS / EKS / Fargate.",
+    "officialDocs": [
+      {
+        "label": "AWS Fargate (AWS Official)",
+        "url": "https://aws.amazon.com/jp/fargate/"
+      },
+      {
+        "label": "AWS Fargate (Amazon ECS Developer Guide / AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/AWS_Fargate.html"
+      }
+    ]
   },
   {
     "termId": "fsx",
@@ -1581,7 +1980,22 @@
       "Minimize file share permissions"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon FSx is a family of services that provides industry-standard file systems as fully managed offerings. It includes four variants: FSx for Windows File Server (SMB protocol / Active Directory integration / NTFS-compliant ACL), FSx for Lustre (a massively parallel file system for HPC and machine learning), FSx for NetApp ONTAP (using NetApp features on AWS), and FSx for OpenZFS (leveraging OpenZFS snapshot and replication features), each optimized for different workloads. It differs in purpose and characteristics from S3 and EFS, and is chosen when a specific file system feature or protocol is essential.\n\nFSx for Windows File Server is widely used for on-premises migration of Windows workloads. It is accessed via the SMB protocol and can integrate with Active Directory (AWS Managed Microsoft AD or self-managed AD) to provide user / group authentication and access control via NTFS ACL. Because existing Windows shared folders can be migrated as-is, it is well suited for lift-and-shift of file servers.\n\nFSx for Lustre is designed for workloads that require ultra-high throughput and low latency, such as machine learning training and HPC (High-Performance Computing). It features \"data repository integration\" with S3 buckets, which transparently exposes objects in S3 through the Lustre file system. A common pattern is to keep machine learning datasets in S3 and access them at high speed via Lustre only during training. In the exam context, CLF-C02 asks at the level of \"it is a file storage service\" and \"there are options such as Windows File Server and Lustre\". SAA-C03 frequently asks about differentiating among S3 / EBS / EFS / FSx (object / block / NFS / SMB or Lustre).",
+    "officialDocs": [
+      {
+        "label": "Amazon FSx (AWS Official)",
+        "url": "https://aws.amazon.com/jp/fsx/"
+      },
+      {
+        "label": "What is Amazon FSx for Windows File Server (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "What is Amazon FSx for Lustre (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/LustreGuide/what-is.html"
+      }
+    ]
   },
   {
     "termId": "glue",
@@ -1631,7 +2045,18 @@
       "Do not include personal data in the data being analyzed"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Glue is a data integration service that runs ETL (Extract / Transform / Load) processing and manages data catalogs in a serverless manner for data lakes and data warehouses. Its core components include Glue Data Catalog (a central repository of metadata), Glue Crawler (scans data sources to automatically infer schemas and register them in the catalog), Glue ETL jobs (run transformations on Apache Spark or in a Python shell environment), Glue Studio (designs jobs in a GUI), and Glue DataBrew (a no-code data preparation tool). Because AWS provides the Apache Spark-based job execution infrastructure as a fully managed offering, cluster management is unnecessary.\n\nA typical configuration is the \"serverless analytics foundation\" that aggregates data such as logs, CSV, and Parquet in S3 as a data lake, infers schemas with Glue Crawler, registers them in Glue Data Catalog, and queries them with SQL from Amazon Athena. Because Athena references Glue Data Catalog as its metastore, tables cataloged with Glue can be queried directly from Athena. Amazon Redshift Spectrum and Amazon EMR can also reference the same Data Catalog, with the major advantage of being able to share metadata across multiple analytics tools.\n\nA typical pattern in ETL jobs is to read CSV or JSON from S3, apply column type conversions, missing value imputation, JOINs, and aggregations, and then convert the data into columnar formats such as Parquet or ORC and write it back to S3. In the exam context, CLF-C02 asks at the level of \"it is an ETL service\", \"Glue Data Catalog can manage metadata\", and \"it can be combined with Athena or Redshift\". SAA-C03 asks in depth about the configuration of S3 data lake + Glue + Athena, role division with Lake Formation, and cost optimization of Glue jobs (DPU count and job execution time).",
+    "officialDocs": [
+      {
+        "label": "AWS Glue (AWS Official)",
+        "url": "https://aws.amazon.com/jp/glue/"
+      },
+      {
+        "label": "What is AWS Glue (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/glue/latest/dg/what-is-glue.html"
+      }
+    ]
   },
   {
     "termId": "guardduty",
@@ -1681,7 +2106,18 @@
       "Respond immediately to high-severity detections"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon GuardDuty is a managed threat detection service that continuously detects suspicious activities and known attack patterns within AWS environments. It ingests AWS CloudTrail event logs, Amazon VPC Flow Logs, DNS query logs, Amazon S3 data events, and Amazon EKS audit logs as analysis targets, and uses machine learning and threat intelligence to perform anomaly detection. Users can start using it simply by enabling it from the console, without installing agents or configuring individual log collection.\n\nDetection results are notified as \"Findings\" with severity (Low / Medium / High) attached and can be linked via Amazon EventBridge to SNS notifications, automated Lambda responses, and aggregation in Security Hub. Representative detection examples include suspicious API calls via Tor, communication patterns suggestive of cryptocurrency mining, abnormal operations by compromised credentials, and access from unexpected regions.\n\nIn the exam context, the question is asked in the form of \"which service continuously detects signs of suspicious operations or attacks in the AWS environment?\" and GuardDuty is the answer. Because its role is easily confused with Inspector (vulnerability scanning), Macie (sensitive data detection in S3), and Security Hub (aggregation of multiple security services), the differences in detection targets need to be organized and memorized. Pricing is usage-based according to the volume of analyzed data, and adoption is typically judged at the timing of commercialization or increased traffic.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon GuardDuty (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/guardduty/latest/ug/what-is-guardduty.html"
+      },
+      {
+        "label": "Amazon GuardDuty (AWS Official)",
+        "url": "https://aws.amazon.com/jp/guardduty/"
+      }
+    ]
   },
   {
     "termId": "iam",
@@ -1736,7 +2172,22 @@
       "Do not commit AWS access keys to GitHub"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Identity and Access Management (IAM) is a service for authenticating and authorizing access to AWS resources. By combining the four elements of IAM users, IAM groups, IAM roles, and IAM policies, it controls \"who is allowed to perform which operations against which AWS resources\". IAM policies are written in JSON and specify Action (API operations to allow or deny), Resource (target resources), and Condition (additional conditions).\n\nIAM roles are a mechanism for delegating permissions not directly to IAM users but to AWS services (EC2, Lambda, etc.), other AWS accounts, or external identity federation (SAML / OIDC). For example, when a Lambda function writes an object to S3, instead of hard-coding access keys in the function, you assign an IAM role with PutObject permission for S3 to the Lambda. This reduces the risk of access key leakage and also lowers the operational burden of key rotation.\n\nIn CLF-C02, frequent topics include the differences between the root user and IAM users, the importance of MFA, the principle of least privilege, and permission delegation via IAM roles. From SAA-C03 onward, more advanced design topics are asked, such as designing trust policies for cross-account access, the priority among IAM policies and S3 bucket policies / KMS key policies, and organization-wide single sign-on using IAM Identity Center. IAM itself incurs no additional charges, but permission mistakes can lead to unintended resource creation or unintended API calls that result in billing incidents, so the importance of operational design is high.",
+    "officialDocs": [
+      {
+        "label": "What is AWS Identity and Access Management (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/introduction.html"
+      },
+      {
+        "label": "IAM Roles (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles.html"
+      },
+      {
+        "label": "IAM Security Best Practices (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
   },
   {
     "termId": "inspector",
@@ -1786,7 +2237,18 @@
       "Remediate high-severity vulnerabilities first"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Inspector is a managed vulnerability management service that continuously detects vulnerabilities and unexpected network reachability for Amazon EC2 instances, container images stored in Amazon ECR, and AWS Lambda functions. Once the service is enabled, target resources are automatically discovered, and software vulnerability detection based on the CVE database runs continuously. Detection results are presented with severity (Critical / High / Medium / Low / Informational) attached, and can be linked to notifications and automated responses via Security Hub or Amazon EventBridge.\n\nIn ECR container image scanning, in addition to one-off scans at image push time, continuous scanning of already-registered images is possible, enabling assessment of impact scope retroactively when new CVEs are published. In Lambda function scanning, the function code and dependent libraries are subject to detection. EC2 scanning requires integration with the SSM agent, and instances without the agent installed are excluded from scanning.\n\nIn the exam context, the difference in roles from GuardDuty is frequently asked. The difference is that GuardDuty \"detects suspicious operations and communications in the environment\", while Inspector \"detects the vulnerabilities of resources themselves\". In container operations, the differentiation between ECR's standard scanning (Basic scanning) and Inspector's extended scanning (Enhanced scanning) is also often asked. Pricing is usage-based according to the number of scan target resources and scan frequency. For MVPs, the common practice is to judge adoption after confirming the cost-effectiveness.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon Inspector (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/inspector/latest/user/what-is-inspector.html"
+      },
+      {
+        "label": "Amazon Inspector (AWS Official)",
+        "url": "https://aws.amazon.com/jp/inspector/"
+      }
+    ]
   },
   {
     "termId": "kinesis",
@@ -1838,7 +2300,18 @@
       "Be careful when log data includes personal information"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Kinesis is the general name for a family of services that collect, process, and analyze streaming data in real time. Amazon Kinesis Data Streams is an order-preserving stream storage that holds data at shard-level throughput and can extend the retention period up to 365 days. Amazon Data Firehose (formerly Kinesis Data Firehose) is a fully managed delivery pipeline that automatically delivers streams to S3, Redshift, OpenSearch Service, and so on. Amazon Managed Service for Apache Flink (formerly Kinesis Data Analytics) is an analytics platform that can execute real-time aggregation on streams using SQL or Apache Flink.\n\nRepresentative use cases include clickstream analysis on websites, ingestion of sensor data from IoT devices, aggregation and transport of application logs, and real-time fraud detection. When combined with Lambda, you can execute arbitrary processing triggered by the arrival of new records in the stream, allowing you to construct stream processing without keeping servers running.\n\nIn the exam context, the difference in roles from SQS, SNS, and EventBridge is asked. The way Kinesis Data Streams differs from other messaging services is that it provides an \"order-preserving, replayable stream\". SQS is centered on \"one-shot processing where messages are retrieved and deleted\", SNS is centered on \"delivery to multiple subscribers via pub/sub\", and EventBridge is centered on \"rule-based event routing\". Pricing is usage-based on shard hours and data volume, making it unsuitable for use cases like small-scale form submissions or delivering a handful of messages.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon Kinesis Data Streams (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/streams/latest/dev/introduction.html"
+      },
+      {
+        "label": "Amazon Kinesis (AWS Official)",
+        "url": "https://aws.amazon.com/jp/kinesis/"
+      }
+    ]
   },
   {
     "termId": "kms",
@@ -1889,7 +2362,18 @@
       "Use key policies to separate administrators from users"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Key Management Service (KMS) is a managed service for creating, managing, and using keys for data encryption. KMS keys created in KMS (formerly known as CMKs / customer master keys) are broadly divided into three types: AWS-managed keys managed by AWS, customer-managed keys created and managed by the user, and AWS-owned keys. KMS is integrated with many AWS services (S3, EBS, RDS, DynamoDB, Secrets Manager, etc.) and can be used as keys for encryption at rest.\n\nAccess control to KMS keys is performed by combining \"key policies\" and \"IAM policies\". A key policy is a JSON document configured per KMS key, defining who can administer the key and who can use it for encryption / decryption. When sharing a KMS key across accounts, it is a frequently asked exam point that explicit permission must be granted not only in the IAM policy on the consuming account side but also in the key policy. Customer-managed keys can be configured for automatic key rotation (yearly, etc.).\n\nIn the exam context, questions such as \"which service manages keys used for encryption at rest?\" and \"how should key management be designed when sharing encrypted data across accounts?\" are asked. AWS-managed keys incur no charges and are easy to start using, but their key policies cannot be customized, so when cross-organizational fine-grained access control is required, customer-managed keys are the choice. Customer-managed keys incur monthly key storage charges and usage-based charges based on the number of API requests. When you delete a KMS key, data encrypted with that key can no longer be decrypted, so the deletion operation has a minimum waiting period of 7 days.",
+    "officialDocs": [
+      {
+        "label": "What is AWS Key Management Service (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "AWS Key Management Service (AWS Official)",
+        "url": "https://aws.amazon.com/jp/kms/"
+      }
+    ]
   },
   {
     "termId": "lambda",
@@ -1944,7 +2428,18 @@
       "Do not output personal or secret information in logs"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Lambda is a serverless compute service that runs code without the need to provision or manage servers. Users register the function code they want to run, along with the runtime, memory, timeout, and other settings, and AWS automatically provisions and scales the execution environment. The code is triggered by events such as HTTP requests from API Gateway, S3 object creation, DynamoDB Streams, EventBridge schedules, and SQS message reception.\n\nPricing is based on a combination of the number of requests and the execution time multiplied by the allocated memory. Because no resources run during idle periods, no charges accrue when there are no requests. The free tier provides one million requests and 400,000 GB-seconds of execution time per month.\n\nMajor use cases include serverless APIs combined with API Gateway, data processing that responds to S3 or DynamoDB events, scheduled jobs triggered by EventBridge, and use as a single step within a Step Functions workflow. Supported runtimes include managed runtimes for Python, Node.js, Java, Go, .NET, and Ruby, with additional support for custom runtimes and container images. Each request has an execution time limit of up to 15 minutes, and constraints exist on deployment package size and the size of the ephemeral storage (/tmp). For long-running batch processing or large file processing, alternative services such as AWS Batch, ECS, or combinations with Step Functions become candidates.",
+    "officialDocs": [
+      {
+        "label": "What is AWS Lambda (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda (AWS Official)",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      }
+    ]
   },
   {
     "termId": "organizations",
@@ -1993,7 +2488,18 @@
       "Use SCPs to restrict risky regions or services"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Organizations is a service for centrally managing multiple AWS accounts as a single organization. Under the organization, organizational units (OUs) can be created, with member accounts placed beneath them. Organizing accounts in a hierarchical structure makes it easier to manage them by purpose (production, staging, sandbox), department, or project.\n\nMajor features include the programmatic creation of new AWS accounts, the use of Service Control Policies (SCPs) to enforce upper-bound access permissions across the entire organization or specific OUs, consolidated billing that aggregates the bills of all member accounts under the management account, and centralized deployment and aggregation of services such as AWS CloudTrail, AWS Config, Security Hub, and GuardDuty across the entire organization.\n\nA typical use case is serving as the foundation for a multi-account strategy used by enterprises and individual developers who operate multiple accounts. For example, production workloads and development or testing workloads can be separated into different accounts, with SCPs structurally preventing access from the development account to production resources. From a pricing perspective, Organizations itself is available at no additional cost, and consolidated billing allows Reserved Instances, Savings Plans, and free tier benefits to be shared and optimized across the entire organization, which simplifies cost management in multi-account operations.",
+    "officialDocs": [
+      {
+        "label": "What is AWS Organizations (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/organizations/latest/userguide/orgs_introduction.html"
+      },
+      {
+        "label": "AWS Organizations (AWS Official)",
+        "url": "https://aws.amazon.com/jp/organizations/"
+      }
+    ]
   },
   {
     "termId": "quicksight",
@@ -2043,7 +2549,18 @@
       "Misconfigured sharing can lead to data leaks"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon QuickSight is a cloud-native business intelligence (BI) service provided by AWS. It connects to data sources and enables users to create and share dashboards and reports. Supported data sources include AWS data stores such as Amazon S3, Amazon Redshift, Amazon RDS, Amazon Athena, and Amazon Aurora, as well as Salesforce, on-premises SQL databases, and CSV or Excel file uploads.\n\nMajor features include drag-and-drop visualization creation, high-speed aggregation through an in-memory engine called SPICE (Super-fast, Parallel, In-memory Calculation Engine), dashboard sharing within an organization and embedding into web applications, and built-in machine learning capabilities for forecasting, anomaly detection, and natural language queries (Amazon Q in QuickSight).\n\nThe pricing model is divided between Author and Reader users on a per-user monthly basis, with readers also having the option of a session-based plan billed only for actual viewing sessions. SPICE capacity is billed separately on a monthly basis. No server provisioning or dedicated BI infrastructure is required, and usage can begin simply by registering users and connecting to data sources. Typical use cases include dashboarding internal KPIs, visualizing analysis results from S3 logs queried via Athena, and serving as an internal BI platform that delivers aggregated Redshift data to executives and sales teams.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon QuickSight (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/quick/latest/userguide/what-is.html"
+      },
+      {
+        "label": "Amazon QuickSight (AWS Official)",
+        "url": "https://aws.amazon.com/quick/quicksight/"
+      }
+    ]
   },
   {
     "termId": "rds",
@@ -2098,7 +2615,18 @@
       "Verify at-rest encryption and backup settings"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Relational Database Service (Amazon RDS) is a managed relational database service. AWS takes over operational tasks such as OS patching, minor version upgrades of the database engine, automated backups, snapshot creation, and automatic failover during failures, allowing users to focus on schema design, query tuning, and application-side logic.\n\nSupported database engines include Amazon Aurora (MySQL/PostgreSQL compatible), MySQL, PostgreSQL, MariaDB, Oracle Database, and Microsoft SQL Server, for a total of six engines. Instance type, storage type, and storage capacity can be chosen to fit the workload, and an option for automatic storage scaling based on usage is also available.\n\nMajor features for availability and fault tolerance include Multi-AZ deployment (placing a primary and a synchronous standby in different AZs, with automatic failover during failures), read replicas (load balancing for read queries and certain cross-region configurations), point-in-time recovery via automated backups, and manual snapshots for point-in-time preservation. Pricing is based on a combination of DB instance running time multiplied by instance type, storage capacity, backup capacity, and data transfer volume. Long-term commitment discounts via Reserved Instances are also available. In CLF-C02, a frequent topic is the division of responsibilities under the shared responsibility model (who handles patching and backups) when comparing self-managed databases on EC2 with using RDS.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon RDS (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS (AWS Official)",
+        "url": "https://aws.amazon.com/jp/rds/"
+      }
+    ]
   },
   {
     "termId": "redshift",
@@ -2149,7 +2677,18 @@
       "Consider masking when analyzed data includes personal information"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Redshift is a cloud data warehouse service provided by AWS. It is designed to execute analytical queries against petabyte-scale data at high speed, using a columnar storage and Massively Parallel Processing (MPP) architecture that distributes processing across multiple nodes for parallel execution. Because it offers a SQL interface, existing BI tools and SQL clients can connect directly without modification.\n\nAvailable deployment models include a provisioned configuration in which users specify the node type and node count to run a cluster, and Amazon Redshift Serverless, which automatically provisions compute resources on demand. Redshift Spectrum extends the service by enabling direct SQL queries against data stored in Amazon S3 without first loading it into Redshift, enabling integrated analysis across data lakes and the data warehouse.\n\nMajor use cases include building an enterprise data warehouse by aggregating large volumes of data collected from multiple systems, serving as the analytical backend for BI tools (Amazon QuickSight, Tableau, Power BI, and others), integrated analysis with Amazon S3 data lakes, and aggregating data for machine learning preprocessing. While general-purpose relational databases for OLTP workloads (Amazon RDS / Aurora) handle transactional application processing, Redshift is optimized for aggregation and analytical queries. This division of roles is repeatedly tested in CLF-C02.",
+    "officialDocs": [
+      {
+        "label": "Amazon Redshift Management Guide (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/redshift/latest/mgmt/welcome.html"
+      },
+      {
+        "label": "Amazon Redshift (AWS Official)",
+        "url": "https://aws.amazon.com/jp/redshift/"
+      }
+    ]
   },
   {
     "termId": "route53",
@@ -2201,7 +2740,18 @@
       "Protect the domain management account with MFA"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Route 53 is a highly available and scalable cloud DNS (Domain Name System) service provided by AWS. It delivers domain registration, DNS record hosting (Hosted Zone), health checks, and traffic routing through a single service. Alias records for AWS resources allow name resolution to point to CloudFront distributions, Application Load Balancers, S3 static website hosting, API Gateway, and other AWS services at no additional cost.\n\nMajor routing policies include simple routing (a single record), weighted routing (distribution based on specified weights), latency-based routing (routing to the region with the lowest latency), failover routing (switching to a secondary when the primary fails), geolocation routing (routing based on the client's geographic location), geoproximity routing, and multi-value answer routing, for a total of seven options. Combined with health checks, automatic DNS failover during outages can be configured.\n\nTypical use cases include pointing custom domains to CloudFront distributions or ALBs, DNS-level load distribution across multiple regions, failover configurations for disaster recovery (DR), and operating private DNS (Private Hosted Zones) for internal applications. Pricing is composed of a monthly fixed fee per Hosted Zone, the number of DNS queries, the number of health checks, and domain registration fees (annual, varying by TLD). Queries to AWS resource Alias records are free of charge.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon Route 53 (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon Route 53 (AWS Official)",
+        "url": "https://aws.amazon.com/jp/route53/"
+      }
+    ]
   },
   {
     "termId": "s3",
@@ -2256,7 +2806,18 @@
       "Use OAC when distributing via CloudFront"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Simple Storage Service (Amazon S3) is an object storage service provided by AWS. It stores files (objects) in buckets (bucket names are globally unique across AWS) and can hold any kind of data, including HTML, CSS, JavaScript, images, videos, logs, backups, and data lake files. The standard Amazon S3 Standard class provides 99.999999999% (eleven nines) of object durability, with redundant storage across multiple AZs built in.\n\nMajor storage classes include S3 Standard for frequently accessed data, S3 Standard-IA (Infrequent Access) and S3 One Zone-IA for infrequently accessed data, S3 Intelligent-Tiering for data with unknown access patterns, and S3 Glacier Instant Retrieval, S3 Glacier Flexible Retrieval, and S3 Glacier Deep Archive for archival storage. By configuring lifecycle policies, objects can be automatically transitioned to cheaper classes after a set period or deleted once no longer needed.\n\nTypical use cases include static website delivery combined with CloudFront, long-term storage of logs, backups, and snapshots, data lake foundations integrated with Amazon Athena, Amazon EMR, and Amazon Redshift Spectrum, and serving as the output destination for various AWS services (CloudTrail, VPC Flow Logs, ELB access logs, and others). Pricing is composed of storage capacity multiplied by the storage class rate, request counts, data transfer volume, and lifecycle transition request counts. From a security perspective, Block Public Access is enabled by default, providing protection against unintended public exposure. When serving content through CloudFront, the recommended configuration uses Origin Access Control (OAC) to restrict direct access to the bucket.",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 User Guide (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3 (AWS Official)",
+        "url": "https://aws.amazon.com/jp/s3/"
+      }
+    ]
   },
   {
     "termId": "secrets-manager",
@@ -2305,7 +2866,18 @@
       "Restrict retrieval permission to the target Lambda only"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Secrets Manager is a managed service for securely storing, retrieving, and rotating secrets such as database credentials, API keys, OAuth tokens, and other secret information. Secrets are encrypted at rest using AWS KMS, and retrieval permissions can be controlled at a fine granularity through IAM policies. Application code retrieves secrets through the AWS SDK by calling an API (GetSecretValue), eliminating the need to write them in plaintext within code, environment variables, or configuration files.\n\nA major feature is automatic rotation. For Amazon RDS, Amazon Redshift, Amazon DocumentDB, and Amazon ElastiCache, AWS provides Lambda function templates for rotation that can update secrets automatically on a defined schedule once configured. For arbitrary secrets, similar automatic rotation can be implemented by writing a custom rotation Lambda function. Version management of secrets is built in, so older versions remain referenceable for a period during rotation.\n\nTypical use cases include retrieving RDS connection passwords from Lambda functions or ECS tasks, securely storing API keys for external SaaS integration, and centrally managing credentials used in CI/CD pipelines. Pricing is composed of a monthly fixed fee per secret and the number of API calls. Compared to AWS Systems Manager Parameter Store, Parameter Store has a free Standard tier but lacks automatic rotation, while Secrets Manager is positioned as a paid service that includes rotation. From SAA-C03 onward, the choice between Parameter Store and Secrets Manager is a frequent topic.",
+    "officialDocs": [
+      {
+        "label": "What is AWS Secrets Manager (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/intro.html"
+      },
+      {
+        "label": "AWS Secrets Manager (AWS Official)",
+        "url": "https://aws.amazon.com/jp/secrets-manager/"
+      }
+    ]
   },
   {
     "termId": "shield",
@@ -2357,7 +2929,18 @@
       "Prepare contact and recovery procedures for attacks"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Shield is a managed service that protects applications on AWS from distributed denial of service (DDoS) attacks. It is offered in two tiers, Shield Standard and Shield Advanced, with Standard automatically applied to all AWS users at no additional cost. For workloads that use edge and boundary services such as CloudFront, Route 53, AWS Global Accelerator, and Elastic Load Balancing, basic protection against network-layer (L3/L4) attacks such as SYN floods and UDP reflection attacks is always enabled.\n\nShield Advanced is a paid upper-tier plan that is used by explicitly registering protected resources (CloudFront distributions, Route 53 hosted zones, ALBs/NLBs, Global Accelerator, and Elastic IPs). It adds more advanced L3/L4 attack mitigation, Layer 7 attack defense (such as HTTP floods), 24/7 access to the AWS Shield Response Team (SRT) during attacks, cost protection against EC2, ELB, CloudFront, and Route 53 billing spikes caused by DDoS attacks, and bundled AWS WAF usage fees (for protected resources).\n\nTypical use cases include standard DDoS protection for CloudFront + S3 / ALB delivery based on Shield Standard, as well as contracting Shield Advanced for large-scale public services that require advanced defense and 24/7 support. From a pricing perspective, Shield Advanced incurs a monthly fixed organizational fee with a one-year commitment, so individual developers and MVP-stage projects typically rely on Shield Standard. In CLF-C02, the differences between Shield Standard and Advanced, and the division of roles with AWS WAF (which provides rule-based defense at the application layer through Web ACLs) — Shield for DDoS protection and WAF for application-layer rules — are frequent topics.",
+    "officialDocs": [
+      {
+        "label": "What are AWS WAF, AWS Shield, and AWS Firewall Manager (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/ddos-overview.html"
+      },
+      {
+        "label": "AWS Shield (AWS Official)",
+        "url": "https://aws.amazon.com/jp/shield/"
+      }
+    ]
   },
   {
     "termId": "sns",
@@ -2409,7 +2992,18 @@
       "Do not include personal information in external notifications"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon Simple Notification Service (Amazon SNS) is a fully managed publish/subscribe (Pub/Sub) messaging service provided by AWS. When a publisher sends a message to a topic, the same message is delivered to all subscribers of that topic. Fan-out delivery, which simultaneously delivers a single message to multiple destinations, is a major role of SNS, and it is used as a foundation for loosely coupling components.\n\nSubscriptions (delivery destinations) support a wide range of endpoints. Supported targets include Amazon SQS queues, AWS Lambda functions, HTTP/HTTPS endpoints, email, SMS (mobile phone short message), mobile push notifications (Apple, Google, and Amazon push notification services), and AWS Event Fork Pipelines. By using subscription filter policies, each subscriber can receive only messages with specific attributes from those sent to the topic.\n\nTypical use cases include email notifications to operations staff from CloudWatch alarms, fan-out patterns that simultaneously deliver messages to multiple SQS queues, asynchronous event linkage between microservices, and push notification delivery to mobile applications. Pricing is composed of publish request counts, delivery notification counts, and data transfer volume, with usage-based rates that differ by delivery protocol (SMS has a higher unit price, while SQS and Lambda delivery have lower unit prices). In CLF-C02, the division of roles between SNS (Pub/Sub, push delivery to multiple subscribers) and SQS (queue-based, with each message consumed by a single subscriber), and the SNS + SQS fan-out configuration, are frequent topics.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon SNS (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/sns/latest/dg/welcome.html"
+      },
+      {
+        "label": "Amazon Simple Notification Service (AWS Official)",
+        "url": "https://aws.amazon.com/jp/sns/"
+      }
+    ]
   },
   {
     "termId": "sqs",
@@ -2461,7 +3055,18 @@
       "Do not place secrets directly inside messages"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon SQS is a fully managed message queue service from AWS. By separating the side that sends messages to the queue (the producer) from the side that receives them (the consumer), it asynchronizes processing and loosely couples the system as a whole. Senders can dispatch messages without being aware of consumer availability, and receivers can retrieve and process messages at their own pace, providing a buffer against sudden load spikes. SQS offers two queue types: Standard Queue and FIFO Queue. Standard provides at-least-once delivery without strict ordering, while FIFO provides exactly-once processing with ordering guarantees.\n\nIn practice, SQS is used for asynchronous order processing, distributing work to Lambda, buffering retries during failures, and passing jobs between ECS tasks. The visibility timeout is an important concept in SQS: it is the period during which a message becomes invisible to other consumers after one consumer has retrieved it but before processing has completed (and the message has been deleted). If processing does not complete within the timeout, the message becomes visible again and can be retrieved by another consumer. This guarantees at-least-once processing, but it requires consumers to ensure idempotency.\n\nPricing is based on the number of API requests, with data transfer volume billed separately. Configuring a dead-letter queue (DLQ) allows messages that fail processing beyond a specified number of attempts to be moved to a separate queue for later investigation. In CLF-C02, the basic concept of SQS as a means of loose coupling through message queues, the distinction between Standard and FIFO, and the visibility timeout are frequent topics.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon Simple Queue Service (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon SQS (AWS Official)",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      }
+    ]
   },
   {
     "termId": "step-functions",
@@ -2515,7 +3120,18 @@
       "Avoid dumping too much input data into logs on failure"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Step Functions is a fully managed orchestration service that allows multiple processing steps to be defined as a workflow and executed with state management, retry control, conditional branching, and parallel execution combined. Following a definition called a state machine (written in Amazon States Language, a JSON-based DSL), it executes tasks such as Lambda functions, ECS tasks, DynamoDB operations, and SNS notifications sequentially or in parallel, tracking the success, failure, and output of each step as state.\n\nIn practice, Step Functions is used for batch processing that invokes multiple Lambda functions in sequence, approval flows, ETL pipelines, and orchestration between microservices. Compared to a configuration in which Lambda functions invoke each other directly without Step Functions, the advantages include visualization of the execution history of each step in the console, declarative definition of retry and catch handling on failure, and state management of workflows lasting up to one year. Two types are offered: Express Workflow (for short-duration, high-throughput use) and Standard Workflow (for long-duration use with state history retention), to be chosen according to the requirements.\n\nPricing is based on state transition counts for Standard, and execution time and request counts for Express, with the caveat that waiting steps are also subject to charges. A common pattern is combining Step Functions with EventBridge to enable scheduled or event-driven execution. In CLF-C02, the framing of Step Functions as a workflow orchestration service, its combination with Lambda for serverless architectures, and visualization of state transitions are frequent topics.",
+    "officialDocs": [
+      {
+        "label": "What is AWS Step Functions (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Step Functions (AWS Official)",
+        "url": "https://aws.amazon.com/jp/step-functions/"
+      }
+    ]
   },
   {
     "termId": "systems-manager",
@@ -2565,7 +3181,18 @@
       "Configure IAM permissions and logging when using Session Manager"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Systems Manager (SSM) is a suite of services for integrated operational management of AWS resources and on-premises servers. Rather than being a single service, it is provided as a collection of multiple capabilities, including Parameter Store, Session Manager, Run Command, Patch Manager, State Manager, and Automation. By installing the SSM Agent on EC2 instances or on-premises servers, each server becomes a manageable target for these capabilities.\n\nThe most commonly used features in practice are as follows. Parameter Store manages configuration values, connection strings, and encrypted secrets in a hierarchical structure, allowing retrieval from Lambda or EC2 (it is cheaper than Secrets Manager and is well suited to configuration values that are not sensitive secrets). Session Manager provides terminal access to EC2 without SSH keys or open inbound ports, eliminating the need for bastion hosts. Run Command allows scripts or commands to be executed simultaneously against multiple EC2 instances and is used to automate routine operational tasks. Patch Manager handles OS patching, and State Manager manages configuration drift.\n\nPricing varies by capability, with the Standard tier of Session Manager, Run Command, and Parameter Store available at no cost (Advanced Parameter Store and on-premises management extensions are paid). In CLF-C02, Systems Manager as a whole is asked as a suite of operational management services, with Parameter Store-based configuration management and Session Manager's SSH-less access being especially frequent topics. The choice between Secrets Manager and Parameter Store (Secrets Manager when high confidentiality and automatic rotation are required, Parameter Store when cost is the priority and plaintext or SecureString management is sufficient) is also worth keeping organized for quicker elimination of choices.",
+    "officialDocs": [
+      {
+        "label": "What is AWS Systems Manager (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/what-is-systems-manager.html"
+      },
+      {
+        "label": "AWS Systems Manager (AWS Official)",
+        "url": "https://aws.amazon.com/jp/systems-manager/"
+      }
+    ]
   },
   {
     "termId": "trusted-advisor",
@@ -2615,7 +3242,18 @@
       "Do not ignore findings about public settings or excessive permissions"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS Trusted Advisor is a service that inspects an AWS environment across five categories — cost optimization, security, fault tolerance, performance, and service quotas — and provides improvement recommendations aligned with best practices. The checks are automatically executed based on items predefined by AWS, and the results can be reviewed by category in the management console. Representative check items include enabling MFA on the IAM root user, S3 bucket public access, unused EC2 Elastic IPs, low-utilization EC2 instances, and service quota usage.\n\nThe number of available check items differs depending on the support plan. Basic Support and Developer Support provide selected items in the security and fault tolerance categories (MFA on root account, S3 bucket permissions, public EBS/RDS snapshots, security group port openings, and others) along with all items in the service quotas category. Business Support and above provide all categories and all check items (refer to the official documentation for the latest count), with additional capabilities such as automated retrieval through the API and weekly improvement reports. In exam contexts, the point that the scope of checks varies by support plan is repeatedly asked, so it helps to remember that Basic and Developer cover some security and fault tolerance checks plus all service quota checks, while Business and above cover all items.\n\nIn practice, typical use cases include leveraging the cost optimization category of Trusted Advisor to surface unused resources (EBS volumes attached to stopped EC2 instances, unused Elastic IPs, low-utilization RDS) and reduce costs, and using the security category to continuously monitor for misconfigurations in IAM, S3, and security groups. While its role partially overlaps with AWS Config Rules and AWS Security Hub, the distinct value of Trusted Advisor lies in providing evaluations specifically against AWS best practices.",
+    "officialDocs": [
+      {
+        "label": "AWS Trusted Advisor (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS Trusted Advisor (AWS Official)",
+        "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      }
+    ]
   },
   {
     "termId": "vpc",
@@ -2669,7 +3307,18 @@
       "Do not place private resources in public subnets"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "Amazon VPC is a service that creates a logically isolated network space (a virtual private cloud) within an AWS account. The address space is defined by a CIDR block (such as 10.0.0.0/16), within which multiple subnets (public subnets and private subnets) are partitioned and placed per availability zone. Routing between subnets is controlled by route tables, the exit to the internet is provided by an Internet Gateway, and outbound communication from private subnets is realized through a NAT Gateway. By combining these building blocks, a structure similar to on-premises network designs can be reproduced on AWS.\n\nCommunication control is performed in two layers: Security Groups (instance-level, stateful, allow-only rules) and Network ACLs (subnet-level, stateless, supporting both allow and deny rules). Security Groups define, in an allow-list style, where traffic may enter and exit an instance, while Network ACLs handle coarser control at the subnet level. The two are used together, with a common configuration combining fine-grained control via Security Groups and broader blocking via Network ACLs.\n\nIn practice, a typical design builds a three-tier web architecture on a VPC, placing the ALB in public subnets, EC2 or ECS in private subnets, and RDS in database subnets. To connect multiple VPCs, VPC Peering is used, while Transit Gateway aggregates multiple accounts and multiple VPCs, and VPC Endpoints (Gateway type or Interface type) provide private access to AWS services. Creation of the VPC itself, subnets, route tables, the Internet Gateway, Security Groups, and Network ACLs is free of charge, while charges accrue for NAT Gateways, VPC Endpoints, and data transfer. In CLF-C02, the division of roles among the basic VPC components (subnets, route tables, IGW, NAT, Security Groups, Network ACLs) is repeatedly asked.",
+    "officialDocs": [
+      {
+        "label": "What is Amazon Virtual Private Cloud (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/what-is-amazon-vpc.html"
+      },
+      {
+        "label": "Amazon Virtual Private Cloud (AWS Official)",
+        "url": "https://aws.amazon.com/jp/vpc/"
+      }
+    ]
   },
   {
     "termId": "waf",
@@ -2718,7 +3367,18 @@
       "Restrict permissions to change rules"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS WAF (Web Application Firewall) is a managed firewall service that detects and blocks malicious requests against web applications based on rules. It evaluates requests such as SQL injection, cross-site scripting (XSS), large volumes of requests from specific IP addresses, and access from specific geographic regions according to the configured rules. WAF does not operate on its own; instead, it is deployed by being associated with a protected resource such as CloudFront, Application Load Balancer (ALB), API Gateway, or AWS AppSync.\n\nThree types of rules are available: managed rules (rule sets provided by AWS or AWS Marketplace partners), custom rules (where conditions are written by the user), and rate-based rules (which block based on request counts within a given time window). Managed rules include frequently used rule sets such as OWASP Top 10 protection, bot management, and protection against known malicious IPs, and basic protection can be initiated simply by enabling them. These are bundled as rule groups within a Web ACL (Access Control List), and the Web ACL is then associated with the protected resource.\n\nPricing is based on a combination of the number of Web ACLs, the number of rules, and the number of processed requests, with additional charges per managed rule group. The relationship with AWS Shield Standard should also be kept in mind: Shield Standard provides L3/L4 DDoS protection to all AWS users at no cost, while WAF handles rule-based defense at L7 (HTTP/HTTPS). Because the two cover different domains, using WAF together with Shield Standard is the baseline approach for protecting web applications. In CLF-C02, framings such as WAF as L7 web application protection, integration with CloudFront and ALB, and the ability to defend against SQL injection and XSS through managed rules are frequent topics.",
+    "officialDocs": [
+      {
+        "label": "What is AWS WAF (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/waf-chapter.html"
+      },
+      {
+        "label": "AWS WAF (AWS Official)",
+        "url": "https://aws.amazon.com/jp/waf/"
+      }
+    ]
   },
   {
     "termId": "x-ray",
@@ -2772,6 +3432,17 @@
       "Restrict the data scope captured in production"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "en"
+    "locale": "en",
+    "practicalNote": "AWS X-Ray is a distributed tracing service that visualizes the request paths and processing times of distributed applications. For serverless architectures such as API Gateway → Lambda → DynamoDB, or microservice architectures such as ALB → ECS → RDS, it records the path that a single request takes through each component, along with processing time (latency) and error information for each component. In the X-Ray console, the overall picture is visualized as a service map, and it becomes possible to track, on a per-request basis, which inter-service calls are slow and where errors are occurring.\n\nTo enable X-Ray, either the X-Ray SDK must be integrated into the application code, or the X-Ray tracing feature of the target service must be enabled. Major services such as Lambda, API Gateway, ALB, SQS, and SNS can send data to X-Ray simply by enabling tracing in the console. When the SDK is integrated, custom subsegments (for external API calls, DB queries, and the like) can be recorded, allowing bottlenecks to be identified at a finer granularity. The sampling rate can be configured to control the proportion of requests captured as traces, helping to manage costs.\n\nIt is important to organize the role differences with CloudWatch Logs. CloudWatch Logs aggregates text logs from individual services, while X-Ray visualizes the execution path and processing times of requests that span multiple services. During incident investigations, the two are commonly used together: X-Ray helps identify which segments are slow or failing, while CloudWatch Logs provides the detailed logs for the relevant segments. Pricing is based on the number of traces recorded and retrieved, with a fixed free tier each month. In CLF-C02, framings such as X-Ray as distributed tracing, its use for investigating latency in Lambda or API Gateway, and the difference in roles compared to CloudWatch Logs are frequent topics.",
+    "officialDocs": [
+      {
+        "label": "What is AWS X-Ray (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/aws-xray.html"
+      },
+      {
+        "label": "AWS X-Ray Concepts (AWS Official Documentation)",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-concepts.html"
+      }
+    ]
   }
 ]

@@ -2,6 +2,7 @@ import termsEnData from "../../../../contents/terms/terms.en.json";
 import termsJaData from "../../../../contents/terms/terms.ja.json";
 import termsZhData from "../../../../contents/terms/terms.zh.json";
 import type { PageMetadataInput } from "@/lib/seo";
+import type { OfficialDoc } from "@/types/official-doc";
 
 export type TermDetailLocale = "ja" | "en" | "zh";
 
@@ -38,6 +39,8 @@ export type AwsTerm = {
   tags?: string[];
   costNotes?: string[];
   securityNotes?: string[];
+  practicalNote?: string;
+  officialDocs?: OfficialDoc[];
   updatedAt: string;
   locale?: TermDetailLocale;
 };
@@ -57,6 +60,8 @@ export type TermDetailLabels = {
   useCasesTitle: string;
   clfPointsTitle: string;
   saaPointsTitle: string;
+  practicalNoteTitle: string;
+  officialDocsTitle: string;
   costNotesTitle: string;
   securityNotesTitle: string;
   relatedServicesTitle: string;
@@ -96,6 +101,8 @@ export const termDetailLabelsByLocale: Record<
     useCasesTitle: "主な用途",
     clfPointsTitle: "CLF-C02 試験ポイント",
     saaPointsTitle: "SAA-C03 試験ポイント",
+    practicalNoteTitle: "実際の使いどころ",
+    officialDocsTitle: "公式ドキュメント",
     costNotesTitle: "コスト注意点",
     securityNotesTitle: "セキュリティ注意点",
     relatedServicesTitle: "関連サービス",
@@ -136,6 +143,8 @@ export const termDetailLabelsByLocale: Record<
     useCasesTitle: "Common use cases",
     clfPointsTitle: "CLF-C02 exam points",
     saaPointsTitle: "SAA-C03 exam points",
+    practicalNoteTitle: "Practical Use",
+    officialDocsTitle: "Official Documentation",
     costNotesTitle: "Cost notes",
     securityNotesTitle: "Security notes",
     relatedServicesTitle: "Related services",
@@ -174,6 +183,8 @@ export const termDetailLabelsByLocale: Record<
     useCasesTitle: "主要用途",
     clfPointsTitle: "CLF-C02 考試重點",
     saaPointsTitle: "SAA-C03 考試重點",
+    practicalNoteTitle: "實際使用情境",
+    officialDocsTitle: "官方文件",
     costNotesTitle: "成本注意事項",
     securityNotesTitle: "安全性注意事項",
     relatedServicesTitle: "相關服務",

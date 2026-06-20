@@ -50,7 +50,22 @@
       "秘密鍵を外部に出さない"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "ACM は SSL/TLS 証明書を発行・管理するサービスであり、CloudFront や ALB、API Gateway\nなどの AWS サービスと統合して、HTTPS 通信を簡単に設定できるようにする。実務でもっとも\nよく使われる場面は、独自ドメインを使った Web サイトの HTTPS 化である。Route 53 で\n取得したドメインに対し、ACM でパブリック証明書を発行し、CloudFront や ALB のリスナーに\n紐付けるだけで、証明書の自動更新を含めた HTTPS 配信が完成する。証明書の有効期限が\n近づくと AWS 側で自動的に更新されるため、期限切れ事故を構造的に減らせる点が、自前で\n証明書を管理する方式と比較した最大の利点である。\n\nACM を扱ううえで注意が必要なのは、証明書のリージョン制約である。ALB に紐付ける証明書\nは、ALB と同じリージョンで発行する必要がある。一方、CloudFront に紐付ける証明書は\nグローバルサービスである CloudFront の性質上、必ず us-east-1（バージニア北部）で発行\nしなければならない。リージョンを間違えて発行した証明書は CloudFront のディストリ\nビューションから選択できず、初学者が詰まりやすいポイントになっている。また、ACM が\n発行するのはパブリック証明書とプライベート証明書の 2 種類で、インターネット向けには\nパブリック証明書を、社内システム向けには ACM Private CA で発行するプライベート証明書\nを使い分ける。\n\nCLF-C02 / SAA-C03 では、「HTTPS 化に使うサービスは何か」「CloudFront 用の証明書は\nどのリージョンで発行するか」という形で問われる。検証方式の DNS 検証とメール検証の\n違いも頻出ポイントで、DNS 検証は Route 53 と組み合わせれば自動更新まで含めて完結する\nため、実務では DNS 検証が推奨される。",
+    "officialDocs": [
+      {
+        "label": "AWS Certificate Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/certificate-manager/"
+      },
+      {
+        "label": "AWS Certificate Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/acm-overview.html"
+      },
+      {
+        "label": "DNS 検証を使用した ACM 証明書の発行（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/dns-validation.html"
+      }
+    ]
   },
   {
     "termId": "api-gateway",
@@ -102,7 +117,22 @@
       "入力値検証をLambda側でも行う"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon API Gateway は、HTTP API や REST API、WebSocket API を公開・管理するためのマネージド\nサービスである。実務でもっとも多い使い方は、Lambda と組み合わせたサーバーレス API の\n構築である。フロントエンドからのリクエストを API Gateway で受け、認証・認可・レート\n制限・CORS 制御などをこの層で処理してから、バックエンドの Lambda 関数や EC2 上の\nサービスに転送する構成になる。サーバーを常駐させないため、アクセスがない時間帯の\nコストが抑えられ、トラフィックの急増にも自動的にスケールする。\n\nAPI Gateway には HTTP API と REST API の 2 種類があり、用途に応じて選び分ける。HTTP API は\n低レイテンシ・低コストで、JWT 認証や CORS など基本的な機能が揃っており、ほとんどの\nモダンな Web/モバイルアプリ向け API にはこちらが第一候補となる。REST API はリクエスト\nバリデーション、API キー管理、AWS WAF との統合、プライベート API といった高度な機能を\n備えており、エンタープライズ用途や細かい制御が必要な API ではこちらが選ばれる。\nWebSocket API はチャットやリアルタイム通知のような双方向通信に使われる。\n\nCLF-C02 / SAA-C03 では、「サーバーレス API の入口として使うサービスは何か」「Lambda と\n連携してフロントエンドに API を提供するサービスは何か」という形で問われる。CORS の\n設定、認証方式（IAM 認証、Cognito Authorizer、Lambda Authorizer）、レート制限と\nスロットリングの設計は、SAA-C03 以降で踏み込んで出題される。本番運用では\nAccess-Control-Allow-Origin にワイルドカード（`*`）を設定したまま放置しない、API キー\nや認証トークンをログに出さないといった、セキュリティ上の基本も問われやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon API Gateway（AWS公式）",
+        "url": "https://aws.amazon.com/jp/api-gateway/"
+      },
+      {
+        "label": "Amazon API Gateway とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/welcome.html"
+      },
+      {
+        "label": "HTTP API と REST API の選択（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/http-api-vs-rest.html"
+      }
+    ]
   },
   {
     "termId": "app-runner",
@@ -152,7 +182,18 @@
       "ECRイメージの権限を制限する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS App Runner は、コンテナイメージまたはソースコードリポジトリから Web アプリケーション\nや API を直接デプロイできるマネージドサービスである。VPC・ロードバランサー・Auto Scaling\nグループといった基盤を個別に構成することなく、コンテナイメージを指定するだけで HTTPS\nエンドポイント付きの実行環境が払い出される。実務では、ECS や EKS を使うほど運用負荷を\nかけたくない小〜中規模の Web アプリ・API 公開や、社内ツールのコンテナ化、プロトタイプの\n本番運用といった場面で採用される。\n\nApp Runner は運用負荷を下げる代わりに、いくつかのトレードオフがある。常時稼働を前提と\nした料金体系（アクティブな vCPU・メモリ時間に対する課金）であるため、まったくアクセスが\nない時間帯でも一定の最小コストが発生する。一方、Lambda + API Gateway 構成はリクエストが\nないときの課金がほぼゼロになるが、コンテナ実行モデルではなく関数実行モデルである点で\nアプリケーションの作り方が変わる。常時稼働の Web サーバーをコンテナで動かしたいが ECS の\n複雑さは避けたい、というニーズに対しては App Runner が、リクエスト単位の軽量処理を\nサーバーレスで動かしたいなら Lambda + API Gateway が、それぞれ適している。\n\nCLF-C02 / SAA-C03 では、「コンテナアプリケーションをマネージドに実行できるサービス」\n「ECS や EKS と比べて運用負荷を下げられるサービス」という文脈で問われる。ECS（Fargate）、\nEKS、App Runner、Lambda の比較は、運用負荷、課金モデル、対応するワークロードの種類で\n整理しておくと、SAA-C03 のアーキテクチャ設計問題に対応しやすい。静的サイトしか公開\nしない場合は、App Runner よりも S3 + CloudFront 構成の方がコストと適合性の両面で\n優位である。",
+    "officialDocs": [
+      {
+        "label": "AWS App Runner（AWS公式）",
+        "url": "https://aws.amazon.com/jp/apprunner/"
+      },
+      {
+        "label": "AWS App Runner とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/what-is-apprunner.html"
+      }
+    ]
   },
   {
     "termId": "athena",
@@ -203,7 +244,22 @@
       "クエリ結果保存先のS3権限を管理する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Athena は、S3 に保存されたデータに対して標準 SQL でクエリを実行できる\nサーバーレスの分析サービスである。事前にデータベースサーバーをプロビジョニングする\n必要がなく、データを S3 に置き、Glue Data Catalog 等でテーブル定義を登録するだけで\nすぐにクエリを実行できる。実務では、CloudFront や ALB のアクセスログ分析、CloudTrail の\n監査ログ分析、CSV や JSON 形式で蓄積された業務データのアドホック調査、データレイク上\nでのデータ探索といった用途で使われる。\n\nAthena のコストはクエリでスキャンした S3 データ量に対して課金される（1 TB あたり数 USD\n程度）。このため、データ形式とパーティショニングの設計がコスト最適化の中心的な課題に\nなる。CSV や JSON のような行指向フォーマットを、Parquet や ORC のような列指向\nフォーマットに変換すると、必要なカラムだけを読み出せるためスキャン量が大幅に減る。\nまた、日付やリージョンなど検索条件に頻出するキーでパーティションを切ると、不要な\nパーティションのスキャンを Athena 側で自動的にスキップできる。Glue Data Catalog で\nテーブル定義（スキーマとパーティション情報）を集中管理し、Athena と他の分析サービス\n（Redshift Spectrum、EMR など）で共有する設計が標準的である。\n\nCLF-C02 / SAA-C03 では、「S3 上のデータを SQL で分析できるサーバーレスサービス」という\n形で問われる。EMR（マネージド Hadoop/Spark）や Redshift（データウェアハウス）との\n使い分けも頻出で、Athena はアドホックなクエリ・小〜中規模のログ分析向き、EMR は大規模\nバッチ処理向き、Redshift は定常的な BI 分析向きという棲み分けを覚えておくと判断しやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena（AWS公式）",
+        "url": "https://aws.amazon.com/jp/athena/"
+      },
+      {
+        "label": "Amazon Athena とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/what-is.html"
+      },
+      {
+        "label": "列指向ストレージ形式（Parquet / ORC）の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/columnar-storage.html"
+      }
+    ]
   },
   {
     "termId": "aurora",
@@ -258,7 +314,22 @@
       "認証情報をコードへ直書きしない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Aurora は、MySQL および PostgreSQL 互換のリレーショナルデータベースサービスで、\nAWS が独自に設計した分散ストレージレイヤーの上に構築されている。同じインスタンス\nクラスの RDS for MySQL / RDS for PostgreSQL と比較して、スループットや可用性、復旧\n時間の面で優位性があるとされる。実務では、Web アプリケーションのメイン RDB、SaaS\nバックエンド、高い可用性を求められる業務システムの DB レイヤーといった、書き込み・\n読み取りの両方が継続的に発生するワークロードで採用される。\n\nAurora の特徴は、ストレージレイヤーとコンピュートレイヤーが分離されている点にある。\nストレージは 3 つの AZ にまたがる 6 個のコピーで自動的に冗長化され、データ損失耐性\n（最大 2 つのコピー喪失まで書き込み継続、3 つのコピー喪失まで読み取り継続）と高速な\nリカバリ時間を実現している。書き込みは 1 つのプライマリインスタンスが処理し、Aurora\nReplica（最大 15 台）で読み取り負荷を分散する。トラフィックが急増する SaaS や、需要\n変動の大きいワークロードでは、Aurora Serverless v2 を使うことで利用量に応じて\nコンピュート容量が自動的に増減する。\n\nCLF-C02 / SAA-C03 では、「RDS の中で MySQL/PostgreSQL 互換のサービスは何か」「読み取り\n負荷を分散するために使う構成は何か（→ Aurora Replica）」「Multi-AZ と Read Replica の\n違い」が頻出する。Multi-AZ は可用性向上のためのスタンバイ構成（読み取りには使えない）、\nRead Replica は読み取り性能向上のためのレプリカ（書き込みはできない）という整理が\n出題の中心になる。Aurora は RDS のいち選択肢に位置付けられている点も押さえておく。",
+    "officialDocs": [
+      {
+        "label": "Amazon Aurora（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/aurora/"
+      },
+      {
+        "label": "Amazon Aurora の概要（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html"
+      },
+      {
+        "label": "Aurora のレプリケーション（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html"
+      }
+    ]
   },
   {
     "termId": "auto-scaling",
@@ -310,7 +381,18 @@
       "インスタンスプロファイルの権限を絞る"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Auto Scaling は、需要の増減に合わせてリソース数を自動的に調整する仕組みである。\nもっとも広く使われるのは EC2 Auto Scaling（Auto Scaling Group）で、CloudWatch メトリクス\n（CPU 使用率・リクエスト数・カスタムメトリクスなど）をトリガに、最小・希望・最大\nキャパシティの範囲内で EC2 インスタンスを増減させる。実務では、ALB の背後に Auto\nScaling Group を配置して Web 層の負荷分散と自動拡張を実現する構成、夜間や週末に台数を\n減らしてコストを下げる構成、障害が起きたインスタンスを自動置換するセルフヒーリング\n構成といった用途で標準的に採用される。\n\nEC2 以外にも、AWS Auto Scaling というブランド名のもとで ECS サービス、DynamoDB の\n読み書きキャパシティ、Aurora Read Replica など、複数のリソース種別のスケーリングを\n横断的に管理できるサービス（AWS Auto Scaling Plans）が提供されている。スケーリング\nポリシーには、メトリクスのしきい値で増減を判断するターゲット追跡スケーリング、\n段階的なステップスケーリング、時間帯やスケジュールに基づくスケジュールドスケーリング\nがある。Auto Scaling と ELB（ALB / NLB）はセットで設計されるのが基本で、ELB が\nヘルスチェックとトラフィック分散を担い、Auto Scaling が台数調整を担う。\n\nCLF-C02 では、「負荷に応じて EC2 を自動で増減させる仕組みは何か」「高可用性を実現\nするために組み合わせるサービスは何か（→ ELB と組み合わせる）」という形で問われる。\n誤答として「ストレージのバックアップを取るサービス」「DNS を提供するサービス」など、\nスケーリングとは別領域のサービスを当て込んでくるパターンが多い。SAA-C03 以降では、\n最小・希望・最大キャパシティの設定、複数 AZ にまたがる Auto Scaling Group の構成、\nターゲット追跡スケーリングとステップスケーリングの使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Auto Scaling（AWS公式）",
+        "url": "https://aws.amazon.com/jp/autoscaling/"
+      },
+      {
+        "label": "Amazon EC2 Auto Scaling とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      }
+    ]
   },
   {
     "termId": "aws-backup",
@@ -360,7 +442,22 @@
       "復元テストを行わないバックアップは信用しすぎない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Backup は、複数の AWS サービスのバックアップを一元管理できるマネージドサービスで\nある。RDS、Aurora、DynamoDB、EFS、FSx、EBS、S3、Storage Gateway など、対応サービスに\nまたがるバックアップポリシー（バックアップ頻度・保持期間・リージョン間コピー設定）を\nバックアップ計画として一括定義し、自動実行する。実務では、サービスごとに個別の\nバックアップ仕組みを持つ運用（RDS スナップショット / EBS スナップショット / DynamoDB\nオンデマンドバックアップを別々に管理）から、AWS Backup に統合することで、コンプライ\nアンス要件を満たす保持期間の統一管理、誰がいつ何を復元したかの監査ログの一元化、\n復元テストの集約といった運用負荷削減が実現できる。\n\nバックアップ設計には RPO（Recovery Point Objective: どこまでデータ損失を許容できるか）\nと RTO（Recovery Time Objective: どれくらいの時間で復旧する必要があるか）の指標が\n中心となる。RPO が短い（数分以内）ワークロードでは、Aurora の継続的バックアップや\nDynamoDB の Point-in-Time Recovery といった、サービス固有の細粒度バックアップ機能を\n併用することが多い。災害対策（DR）目的では、AWS Backup のリージョン間コピー機能を\n使って別リージョンにバックアップを複製しておく構成が標準的である。バックアップは\n取得するだけでなく、定期的に復元テストを行い、実際に復旧できることを確認する運用が\n重要となる。\n\nCLF-C02 では、「バックアップを一元管理できるサービスは何か」「RPO/RTO に応じてバック\nアップ頻度を決める対象は何か」という形で問われる。SAA-C03 以降では、災害対策戦略\n（バックアップ&リストア / パイロットライト / ウォームスタンバイ / マルチサイト\nアクティブアクティブ）における AWS Backup の位置付け、コンプライアンス要件\n（SOC / HIPAA / PCI DSS）に対応する保持期間設計、削除権限の制限と Vault Lock による\n保護といった、より踏み込んだ設計判断が問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Backup（AWS公式）",
+        "url": "https://aws.amazon.com/jp/backup/"
+      },
+      {
+        "label": "AWS Backup とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/whatisbackup.html"
+      },
+      {
+        "label": "バックアップのリージョン間コピー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/cross-region-backup.html"
+      }
+    ]
   },
   {
     "termId": "aws-budgets",
@@ -413,7 +510,22 @@
       "請求情報の閲覧権限を限定する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Budgets は、AWS の利用料金や使用量に対して予算を設定し、しきい値を超えた場合に\n通知やアクションを実行できるコスト管理サービスである。実績値に基づくアラートに加え、\n予測値（このままの利用ペースで月末にいくらになるか）に基づくアラートも設定できるため、\n月末に請求書を見て初めて気付くのではなく、月の途中で予算オーバーの兆候を検知できる。\n実務では、検証用アカウントの月額予算を低額（例: USD 10）で設定して学習中の課金事故を\n防ぐ用途、本番アカウントでサービス別予算を設定して特定サービスのコスト急増を検知する\n用途、組織全体予算を Organizations と組み合わせて全社コストガバナンスを敷く用途で\n利用される。\n\nBudgets には複数の種類がある。コスト予算（金額ベース）と使用量予算（時間・GB・転送量\nベース）に加え、リザーブドインスタンスや Savings Plans のカバレッジ予算・使用率予算も\n設定可能である。アクション付き Budget（Budgets Actions）を使うと、しきい値超過時に\nIAM ポリシーをアタッチして特定ユーザーの追加リソース作成を停止する、特定の EC2 を\n停止するといった自動対処も可能だが、誤発火による業務影響を避けるため、本番環境で\n有効化する前に検証環境で挙動を確認する運用が望ましい。Cost Explorer はコストの分析と\n傾向把握を担い、Budgets はしきい値ベースの監視と通知を担うという役割分担になる。\n\nCLF-C02 では、「AWS の使いすぎを検知するサービスは何か」「実績値だけでなく予測値でも\nアラートを設定できるサービスは何か」という形で問われる。誤答として「Cost Explorer\n（分析担当）」「CloudWatch（メトリクス監視担当）」を当て込んでくるパターンがあり、\nそれぞれの守備範囲を分けて理解する必要がある。SAA-C03 以降では、Cost Anomaly Detection\n（機械学習でコスト異常を検知）との使い分け、Organizations を使った組織全体予算の集約、\nアクション付き Budget の権限設計が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "AWS Budgets による費用管理（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "予算の作成（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-create.html"
+      }
+    ]
   },
   {
     "termId": "aws-config",
@@ -465,7 +577,22 @@
       "準拠違反の通知先を決める"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Config は、AWS リソースの設定変更履歴を記録し、定義したルールに基づいて準拠状態を\n評価するサービスである。各リソース（EC2 / S3 / IAM / セキュリティグループ等）の設定\nスナップショットを継続的に取得し、「いつ・誰が・どの項目を・どう変更したか」を時系列\nで追跡できる。Config Rules（マネージドルールおよびカスタムルール）を使うと、たとえば\n「S3 バケットの公開設定がオフになっているか」「EBS ボリュームが暗号化されているか」\n「セキュリティグループに 0.0.0.0/0 からの全ポート許可がないか」といった準拠条件を\n継続的にチェックし、違反を検出した時点で通知や自動修復を実行できる。\n\n実務では、セキュリティベースラインの継続評価（CIS Benchmark / AWS Foundational\nSecurity Best Practices 準拠）、コンプライアンス監査時の証跡提供、構成ドリフト検出\n（IaC で定義した状態から手動変更で逸脱した箇所の検出）といった用途で採用される。\n類似サービスとの違いとして、CloudTrail は「API 呼び出しログ（誰が何の API を呼んだか）」\nを記録するのに対し、Config は「リソース設定の状態と変更履歴」を記録する点で守備範囲\nが異なる。CloudWatch は「メトリクスとログ」を扱う監視サービスであり、Config の役割\nとはさらに別軸となる。組織横断で集約管理する場合は、Config Aggregator を使って複数\nアカウント・複数リージョンの記録を 1 アカウントに集約する設計が標準である。\n\nCLF-C02 では、「リソース設定の履歴や準拠状態を評価するサービスは何か」という形で\n問われる。CloudTrail（API 呼び出しログ）/ CloudWatch（メトリクス監視）との 3 つの\n使い分けが頻出ポイントであり、それぞれ「何を記録対象とするか」を整理しておくと\n正答に絞りやすい。SAA-C03 以降では、Config Rules によるベースライン違反検出、組織\n全体での集約、記録対象リソースの絞り込みによるコスト最適化が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Config（AWS公式）",
+        "url": "https://aws.amazon.com/jp/config/"
+      },
+      {
+        "label": "AWS Config とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/WhatIsConfig.html"
+      },
+      {
+        "label": "AWS Config によるリソースの評価（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/evaluate-config.html"
+      }
+    ]
   },
   {
     "termId": "cdk",
@@ -515,7 +642,18 @@
       "本番環境へのデプロイ権限を制限する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS CDK（Cloud Development Kit）は、TypeScript / Python / Java / C# / Go などの\n汎用プログラミング言語で AWS インフラを定義できる Infrastructure as Code（IaC）\nツールである。CDK で書いたコード（CDK アプリ）は内部的に CloudFormation テンプレート\nに合成（synth）され、CloudFormation スタックとしてデプロイされる。実務では、複雑な\nリソース構成を再利用可能な Construct（コンポーネント）に切り出して標準化する用途、\n環境ごと（dev / staging / prod）の差分をパラメータ化して同一コードから複数環境を\n払い出す用途、Lambda 関数のコードとインフラ定義を 1 つの言語で完結させる用途で\n採用される。\n\nCloudFormation テンプレート（YAML / JSON）を直接書く場合と比べたメリットは、IDE 補完\nや型チェックが効く、ループや条件分岐をプログラミング言語の構文で記述できる、再利用\n可能な Construct ライブラリ（L1 / L2 / L3 Constructs / AWS Solutions Constructs）で\nベストプラクティスをコードとして取り込める、といった点である。一方、CDK 経由でデプロイ\nされた CloudFormation スタックを CDK を介さずに直接編集すると同期が崩れるため、運用\nルールとして「CDK 管理対象は CDK 経由でのみ変更する」原則を守る必要がある。CDK 自体\nには課金されないが、作成された AWS リソースには通常通り料金が発生するため、誤って\n高額リソースを作らないよう PR レビューでチェックする運用が望ましい。\n\nCLF-C02 では、「インフラをコードで管理する選択肢は何か」「CloudFormation を生成して\nリソースを管理するツールは何か」という形で問われる。CloudFormation / CDK / Terraform\n（サードパーティ）の使い分けが論点になりやすく、CDK は「AWS 公式の IaC ツールで\n汎用言語が使える」という位置付けを押さえておく。SAA-C03 以降では、スタック分割の\n粒度、CDK Construct の階層（L1 = CloudFormation リソースの薄いラッパー / L2 = 安全な\nデフォルト付き / L3 = ベストプラクティスを束ねた高レベル）、本番環境へのデプロイ権限\n制御が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Cloud Development Kit（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cdk/"
+      },
+      {
+        "label": "AWS Cloud Development Kit (AWS CDK) v2 開発者ガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/home.html"
+      }
+    ]
   },
   {
     "termId": "cloudformation",
@@ -565,7 +703,22 @@
       "IAM作成権限を持つテンプレートはレビューする"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS CloudFormation は、AWS リソースをテンプレート（YAML または JSON）として宣言的に\n定義し、「スタック」という単位で作成・更新・削除を一括管理する Infrastructure as\nCode（IaC）サービスである。テンプレートには VPC、サブネット、EC2、IAM ロール、\nRDS、S3 バケットなど、ほぼすべての AWS リソースが定義でき、スタックを実行するだけで\n依存関係を解決しながら一貫した順序でリソースをプロビジョニングできる。実務では、\n環境（dev / staging / prod）ごとに同一テンプレートからスタックを払い出すパターン、\nチェンジセットで変更内容を事前確認してから本番に適用するパターン、StackSet で複数\nアカウント・複数リージョンへ一括展開するパターンが標準的に採用される。\n\nCloudFormation のメリットは、リソース構成がコードとしてリポジトリに残るため変更履歴\nを Git で追跡できる点、手動でコンソール操作した場合に起きやすい構成ドリフトを\nドリフト検出機能で検知できる点、ロールバック機能でデプロイ失敗時に自動的に元の\n状態へ戻せる点である。テンプレートを直接書く代わりに、より高レベルな抽象を提供する\nAWS CDK（汎用プログラミング言語で IaC を記述）や AWS SAM（サーバーレス特化）も内部\n的に CloudFormation へ合成される。CloudFormation 自体の利用料金は発生しないが、作成\nされたリソースには通常の料金が課金されるため、停止し忘れ・誤った高額リソース定義は\nコスト事故につながる。\n\nCLF-C02 では、「AWS リソースをコードで定義・管理するサービスは何か」「テンプレート\nからリソースを一括作成するサービスは何か」という形で問われる。Terraform（HashiCorp\n製のサードパーティ IaC）と並列で扱われることがあるが、CloudFormation は AWS 公式\nのマネージド IaC である点を押さえておく。SAA-C03 以降では、スタック間参照（Export /\nImportValue）、ネストスタック、StackSet による組織横断デプロイ、デプロイ失敗時の\nロールバック挙動の詳細が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudFormation（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudformation/"
+      },
+      {
+        "label": "AWS CloudFormation とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "テンプレートの構造（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/template-anatomy.html"
+      }
+    ]
   },
   {
     "termId": "cloudfront",
@@ -620,7 +773,18 @@
       "S3オリジンはOACで制限する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "CloudFront が実務でよく使われる典型構成は、静的サイトの「S3 + CloudFront」である。\nS3 に HTML・CSS・JavaScript・画像を置き、CloudFront を前面に立てて配信する。この構成は\nサーバーを常駐させないため、アクセスがない時間帯のコストを抑えつつ、世界中のユーザーへ\n低遅延で配信できる。個人開発のポートフォリオサイトから企業のキャンペーンサイトまで、\n規模を問わず採用される。\n\n動的なアプリケーションでも、CloudFront をフロントに置いて静的アセット（画像・JS・CSS）を\nキャッシュ配信し、API リクエストだけをオリジン（ALB や API Gateway）へ通す構成が一般的\nである。これにより、変化しないアセットの配信をエッジに任せ、オリジンの負荷を本来処理が\n必要なリクエストに集中させられる。\n\nセキュリティと費用の観点も押さえておく必要がある。CloudFront には AWS Shield Standard\nが自動的に組み込まれており、DDoS 攻撃に対する基本的な保護が標準で提供される。\nAWS WAF と組み合わせれば、IP アドレス制限・レートリミット・SQL インジェクション対策\nといったアプリケーション層の防御を CloudFront のエッジで適用できる。S3 オリジンの\n場合は OAC（Origin Access Control）を使い、S3 バケットを直接公開せず CloudFront\n経由のアクセスのみ許可する構成が標準である。費用面では、データ転送量・HTTPリクエスト\n数・Invalidation（キャッシュ削除）ごとに課金が発生するが、無料利用枠として毎月\n1 TB のデータ転送と 1,000 万件のリクエストが提供される。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "CloudFront での OAC（Origin Access Control）の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+      }
+    ]
   },
   {
     "termId": "cloudtrail",
@@ -672,7 +836,22 @@
       "重要アカウントでは有効化状態を確認する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS CloudTrail は、AWS アカウント内のすべての API 呼び出しを記録する監査ログ\nサービスである。誰が（IAM プリンシパル）、どのサービスに対して、いつ（日時）、\nどこから（ソース IP）、どのような操作（API 名・リクエストパラメータ・レスポンス）\nを実行したかを記録し、セキュリティインシデントの事後調査、コンプライアンス監査、\n運用トラブルシュートに活用される。すべてのリージョンで有効化しておくことが\nセキュリティ上の基本であり、AWS Organizations と組み合わせることで複数アカウントの\nイベントを一元管理できる。\n\nCloudTrail のイベントは大きく 3 種類に分かれる。管理イベント（マネジメントイベント）\nは EC2 インスタンス起動・IAM ポリシー変更などのコントロールプレーン操作で、デフォルト\nで 90 日分が「イベント履歴」として閲覧可能。S3 オブジェクトの GET/PUT などの\nデータイベントはデフォルト無効で、有効化するとコストが増加する。証跡（Trail）を\n設定することで長期的に S3 バケットへ保存でき、CloudWatch Logs へのエクスポートや\nAmazon Athena による分析にも連携できる。\n\nCLF-C02 では「AWS API 操作を記録するサービスは何か」「誰がリソースを変更したか\n調査するサービスは何か」という形で問われる頻出サービスである。CloudWatch（メトリクス・\nアラーム）、AWS Config（リソース構成変更の記録・ルール準拠チェック）と混同しやすい\nため、3 サービスの役割を明確に区別しておくことが重要である。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      },
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "CloudTrail の仕組み（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/how-cloudtrail-works.html"
+      }
+    ]
   },
   {
     "termId": "cloudwatch",
@@ -727,7 +906,22 @@
       "ログ閲覧権限を限定する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon CloudWatch は、AWS リソースおよびアプリケーションのメトリクス・ログ・\nアラームを統合して管理するモニタリングサービスである。EC2 CPU 使用率・RDS 接続数・\nLambda 実行時間などの標準メトリクスは自動で収集され、追加設定不要でダッシュボードや\nアラームに使える。CloudWatch Logs はアプリケーションのログを収集・保存するサービスで、\nLambda の標準出力・EC2 上のアプリケーションログ・VPC フローログなどを一元管理できる。\n\nCloudWatch Alarms は、メトリクスが設定したしきい値を超えた際に Amazon SNS 経由で\nメール・Slack・PagerDuty などへ通知を送ったり、EC2 Auto Scaling をトリガーして\nインスタンスを増減させる自動対応ができる。ダッシュボードでは複数リソースのメトリクスを\n可視化でき、Amazon EventBridge と組み合わせてイベント駆動の運用自動化も実現できる。\nコスト軸では、カスタムメトリクスはメトリクス数・API リクエスト数に応じて課金されるため、\n多量のカスタムメトリクスを投入する際は事前にコスト試算が必要である。\n\nCLF-C02 では「メトリクス収集・アラーム通知を行うサービスは何か」という形で問われる。\nCloudTrail（API 操作ログ）、AWS Config（リソース構成変更の記録・ルール準拠チェック）\nとの 3 サービス比較が頻出であり、それぞれの役割を明確に区別しておくことが重要である。\nSAA-C03 以降では、CloudWatch Logs Insights によるクエリ分析、メトリクスフィルターで\nログから独自メトリクスを生成するパターン、Contributor Insights によるトップ N 分析\nなどの高度な活用パターンが問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "Amazon CloudWatch とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch Logs とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+      }
+    ]
   },
   {
     "termId": "codebuild",
@@ -777,7 +971,18 @@
       "ビルド用IAMロールを最小権限にする"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS CodeBuild は、ソースコードのコンパイル・テスト・パッケージングを実行する\nフルマネージドのビルドサービスである。ビルドごとに独立した Docker コンテナが起動\nするため、環境の汚染がなく再現性が高い。GitHub・CodeCommit・Bitbucket などのリポジトリ\nと直接連携でき、ビルド成果物（バイナリ・ZIP・Docker イメージ）を Amazon S3 や\nAmazon ECR に出力できる。サーバーの管理は不要で、実際のビルド時間に応じた従量課金\nが採用されている。\n\nビルド処理は、プロジェクトルートに配置する buildspec.yml でフェーズ単位に定義する。\ninstall（依存関係インストール）、pre_build（テスト準備）、build（コンパイル・テスト\n実行）、post_build（成果物のパッケージング・プッシュ）の 4 フェーズが基本構成で、\n各フェーズのコマンドを YAML で記述する。ビルドに使うイメージは AWS 提供のマネージド\nイメージ（Node.js・Java・Python・Go など）か、ECR に登録したカスタムイメージを選択\nできる。環境変数には SSM Parameter Store や AWS Secrets Manager との統合が用意されており、\nAPIキーなどの秘密情報をビルドログに露出させずに安全に注入できる。\n\nCLF-C02 では「AWS の継続的インテグレーション（CI）サービスはどれか」という形で、\nCodeCommit（ソース管理）・CodeBuild（ビルド・テスト）・CodeDeploy（デプロイ）・\nCodePipeline（パイプライン統合）の 4 サービスの役割を整理して覚えることが重要である。",
+    "officialDocs": [
+      {
+        "label": "AWS CodeBuild（AWS公式）",
+        "url": "https://aws.amazon.com/jp/codebuild/"
+      },
+      {
+        "label": "AWS CodeBuild とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/welcome.html"
+      }
+    ]
   },
   {
     "termId": "codepipeline",
@@ -827,7 +1032,22 @@
       "本番デプロイの承認ルールを決める"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS CodePipeline は、ソースコードのコミットからビルド・テスト・デプロイまでの\nCI/CD パイプラインを視覚的に構築・管理するオーケストレーションサービスである。\nパイプラインはステージとアクションで構成され、各ステージに CodeBuild・CodeDeploy・\nCloudFormation・ECS・Lambda などの AWS サービスや、GitHub Actions・Jenkins などの\nサードパーティサービスをアクションとして組み込める。\n\n標準的な構成は、ソースステージ（CodeCommit または GitHub でのプッシュをトリガー）→\nビルドステージ（CodeBuild でのコンパイル・テスト）→デプロイステージ（CodeDeploy または\nCloudFormation による本番反映）という 3 ステージ構成である。ステージ間に手動承認\nアクションを挟むことで、本番デプロイ前に承認者の確認を必須化できる。複数環境\n（dev → staging → prod）へのプロモーションも、ステージを増やすだけで実現できる。\n料金はパイプライン 1 本あたりの月額固定料金が基本で、最初の 1 本は無料利用枠がある。\n\nCLF-C02 では「CI/CD パイプラインを管理するサービスはどれか」という形で、\nCodeCommit・CodeBuild・CodeDeploy・CodePipeline の 4 サービスの役割を整理して覚える\nことが重要である。CodeBuild が個々のビルド・テスト処理を担うのに対し、CodePipeline は\nそれらを統合してパイプライン全体をオーケストレーションする役割を担う。SAA-C03 以降では、\nブルー・グリーンデプロイ・カナリアリリース・クロスアカウントパイプラインの設計パターン\nが出題範囲に含まれる。",
+    "officialDocs": [
+      {
+        "label": "AWS CodePipeline（AWS公式）",
+        "url": "https://aws.amazon.com/jp/codepipeline/"
+      },
+      {
+        "label": "AWS CodePipeline とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/welcome.html"
+      },
+      {
+        "label": "CodePipeline の概念（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/concepts.html"
+      }
+    ]
   },
   {
     "termId": "cognito",
@@ -879,7 +1099,22 @@
       "JWT検証済みのclaimsを使って本人確認する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Cognito は、Web アプリやモバイルアプリに**ユーザー認証・認可基盤**を追加するための\nフルマネージドサービスである。主要な構成要素は 2 つあり、役割が異なる。\n\n**User Pool** は、ユーザーのサインアップ・サインイン・パスワードリセット・MFA を管理する\n認証ディレクトリである。認証成功後に JWT（ID トークン / アクセストークン / リフレッシュ\nトークン）を発行し、クライアントに返す。API Gateway の JWT Authorizer と組み合わせると、\nLambda に届くリクエストの認証チェックをゲート段階で行える。\n\n**Identity Pool（旧称: フェデレーション ID）** は、認証済みユーザー（Cognito User Pool や\nGoogle / Facebook などの外部 IdP で認証）に対して一時的な AWS 認証情報（IAM ロール\n相当のアクセスキー）を払い出す。S3 バケットや DynamoDB テーブルへユーザーが直接\nアクセスする構成（Mobile SDK からの直接 SDK 呼び出しなど）で使われる。\n\n実装上の重要な注意点として、API から返す個人データの所有権確認には JWT クレームの\n`sub`（subject）を使う。リクエスト Body や URL パスに含まれる `userId` は改ざん可能\nであるため、信頼できる識別子として使ってはならない。Lambda オーソライザーや JWT\nAuthorizer で検証済みのクレームのみをバックエンドの認可ロジックに使う設計が必須\nである。\n\nCLF-C02 では「アプリのユーザー認証に使うサービスはどれか」「ユーザーログインを\n管理するマネージドサービスはどれか」として問われる。SAA-C03 では User Pool と\nIdentity Pool の使い分け、API Gateway との JWT Authorizer 連携、外部 IdP フェデレー\nションの設計が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Cognito（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cognito/"
+      },
+      {
+        "label": "Amazon Cognito とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/what-is-amazon-cognito.html"
+      },
+      {
+        "label": "Amazon Cognito ユーザープール（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/cognito-user-pools.html"
+      }
+    ]
   },
   {
     "termId": "cost-explorer",
@@ -928,7 +1163,18 @@
       "コスト異常を見つけたらCloudTrailも確認する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Cost Explorer は、AWS の利用料金を**可視化・分析**するためのツールである。\nコンソールから直接アクセスでき、過去 13 か月分の費用データをサービス別・リージョン\n別・タグ別・アカウント別に確認できる。また 12 か月先の費用を予測するフォーキャスト\n機能も持つ。\n\n**AWS Budgets との役割の違い**が試験でよく問われる。Cost Explorer は「過去と現在の\nコストを可視化して分析する」ツールであり、アラートや通知機能を持たない。Budgets は\n「設定した予算に対してアラートを送る」ツールであり、メールや SNS 通知が可能である。\n費用を把握したい場合は Cost Explorer、費用を超過したときに通知を受けたい場合は\nBudgets、という使い分けになる。\n\nコスト分析の実践では、CloudTrail と組み合わせることで「どの IAM ユーザー・ロールが\n予期せぬリソースを作成したか」を調査する際に Cost Explorer でコスト急増を検知し、\nCloudTrail でオペレーション履歴を掘り下げる、というワークフローが一般的である。\nタグ付けを徹底することで、プロジェクト別・環境別（dev/staging/prod）のコスト配賦\nが可能になり、部門間のチャージバックにも活用できる。\n\nCLF-C02 では「コストを分析するサービスはどれか」「過去 12 か月のコスト推移を確認\nするにはどれを使うか」として正答になる。誤答として Budgets（通知目的）/ CloudTrail\n（操作ログ目的）/ CloudWatch（パフォーマンス監視目的）が並ぶ。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      },
+      {
+        "label": "AWS Cost Explorer とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      }
+    ]
   },
   {
     "termId": "dynamodb",
@@ -982,7 +1228,22 @@
       "個人情報を保存する場合はログ出力とアクセス権限に注意する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon DynamoDB は AWS が提供するフルマネージドの NoSQL データベースである。\nサーバーのプロビジョニング、OS パッチ、クラスタ管理は AWS が担う。開発者は\nテーブル設計とアプリケーションコードに集中できる。\n\n**設計の核心はアクセスパターン駆動**である。DynamoDB はパーティションキー（PK）と\nオプションのソートキー（SK）でデータを識別する。パーティションキーが同一のアイテム\nは同一のパーティションに格納され、ソートキー範囲での Query が高速になる。テーブル\n設計は「最初にアクセスパターンを列挙し、そのパターンをキー構造で表現する」という\n順序で進める。RDB のように正規化してから JOIN するアプローチは取らない。\n\n**Query と Scan の使い分け**は重要な最適化ポイントである。Query はパーティション\nキーを指定してインデックスを使うため高速かつ低コスト。Scan は全テーブルを順次\nスキャンするため、データ量が増えるに従って低速・高コストになる。本番環境での\nScan 多用は避け、GSI（グローバルセカンダリインデックス）を作成して Query で\n解決するのが標準的な設計パターンである。\n\n**キャパシティモード**は 2 種類ある。オンデマンドモードはアクセス量に応じて自動\nスケールし、未使用分の課金がない。プロビジョンドモードは事前に RCU（読み取り\nキャパシティユニット）/ WCU（書き込みキャパシティユニット）を指定し、Auto\nScaling と組み合わせて使う。\n\n**DynamoDB Streams** は、テーブルへの変更（INSERT / MODIFY / REMOVE）をリアル\nタイムで取得できるイベントストリーム機能である。Lambda と連携してイベント駆動\n処理（レプリケーション・通知・集計）を実装できる。\n\n**IAM によるアクセス制御**は、テーブル単位ではなくアクション単位（`PutItem` /\n`GetItem` / `Query` / `Scan` 等）で付与する。最小権限の原則に従い、Lambda 関数に\n必要な操作だけを許可した IAM ロールを付与する。\n\nSAA-C03 では、GSI / LSI（ローカルセカンダリインデックス）の設計、DAX（DynamoDB\nAccelerator）によるインメモリキャッシュ、DynamoDB Streams + Lambda の連携パターン、\nRDS との使い分け判断軸が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon DynamoDB（AWS公式）",
+        "url": "https://aws.amazon.com/jp/dynamodb/"
+      },
+      {
+        "label": "Amazon DynamoDB とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/Introduction.html"
+      },
+      {
+        "label": "Amazon DynamoDB のコアコンポーネント（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html"
+      }
+    ]
   },
   {
     "termId": "ebs",
@@ -1036,7 +1297,22 @@
       "スナップショット共有範囲を確認する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon EBS（Elastic Block Store）は、EC2 インスタンスにアタッチして使う\n**ブロックストレージ**サービスである。OS からは通常のディスクドライブとして認識され、\nファイルシステムをマウントしてデータの読み書きができる。EC2 インスタンスと同じ\nアベイラビリティゾーン（AZ）に配置される必要があり、**AZ をまたいでのアタッチは\nできない**。\n\n**オブジェクトストレージ（S3）・ファイルストレージ（EFS）との違い**はよく問われる。\nEBS はブロックデバイスとして 1 つの EC2 にアタッチして高速な I/O を提供する用途に\n向く。S3 はオブジェクト単位で HTTP API によりアクセスするため、EC2 からディスク\nとして使うことはできない。EFS は複数の EC2 から同時にマウントできる共有ファイル\nシステムである。\n\n**ボリュームタイプ**はワークロードに応じて選択する。汎用 SSD の gp3 は最も一般的\nな選択肢でコスト効率に優れる。プロビジョンド IOPS SSD の io2 は高 IOPS が必要な\nデータベース用途に使う。スループット最適化 HDD（st1）は大容量の順次読み書きに向き\n（ログ・ビッグデータ処理）、コールド HDD（sc1）は低頻度アクセスの大容量データに\n向く低コスト選択肢である。\n\n**スナップショット**は EBS ボリュームの時点コピーを S3 に保存する機能である。ユーザー\nは S3 バケットを意識せずに操作できる。スナップショットは増分バックアップ方式で、\n初回フル取得後は変更差分のみが保存されるため効率的である。スナップショットから\n新しい EBS ボリュームを復元したり、別のリージョンへコピーして DR 対策をとったり\nすることができる。\n\n重要な注意点として、**EC2 インスタンスを停止してもアタッチされた EBS ボリュームには\n課金が継続する**。不要なボリュームは明示的に削除しないとコストが発生し続ける。\n\nCLF-C02 では「EC2 のディスクとして使うストレージはどれか」「AZ に紐づくブロック\nストレージはどれか」として問われる。SAA-C03 では ボリュームタイプの選定基準、\nMulti-Attach（io1/io2 の限定機能）、暗号化（KMS との連携）、スナップショットの\nライフサイクル管理が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EBS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ebs/"
+      },
+      {
+        "label": "Amazon EBS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/what-is-ebs.html"
+      },
+      {
+        "label": "Amazon EBS ボリュームタイプ（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/ebs-volume-types.html"
+      }
+    ]
   },
   {
     "termId": "ec2",
@@ -1091,7 +1367,22 @@
       "SSH秘密鍵を公開リポジトリに置かない"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon EC2（Elastic Compute Cloud）は、AWS クラウド上で仮想サーバー（インスタンス）\nを起動・管理できる IaaS サービスである。AMI（Amazon Machine Image）を選択することで\nOS と初期ソフトウェアが構成済みの状態でインスタンスを起動できる。\n\n**インスタンスタイプ**はワークロードに応じて選択する。汎用（M 系・T 系）、コンピューティング\n最適化（C 系）、メモリ最適化（R 系・X 系）、ストレージ最適化（I 系・D 系）、\n高速コンピューティング（P 系・G 系 / GPU）などのファミリーに分かれる。CLF では\n「vCPU 数と RAM の組み合わせを選ぶ」という基本理解が問われる。\n\n**購入オプション**はコスト最適化の要であり、CLF-C02・SAA-C03 ともに頻出である。\n- **オンデマンド**: 秒単位課金・コミットなし・短期の予測不能なワークロードに適する\n- **リザーブドインスタンス（RI）**: 1 年または 3 年のコミットで最大 75% 割引。定常ワークロード向け\n- **Savings Plans**: RI と同等の割引率を柔軟に（インスタンスタイプ問わず）適用できる新しい仕組み\n- **スポットインスタンス**: AWS の余剰容量を最大 90% 割引で利用。中断リスクあり。耐障害性の高い分散ワークロード（バッチ・ML 学習など）向け\n- **Dedicated Host**: 物理サーバーを占有。BYOL（ライセンス持ち込み）対応\n\n**Auto Scaling と ELB の組み合わせ**は Web アプリの標準構成である。Auto Scaling が\nトラフィックに応じてインスタンス数を増減させ、ELB（Elastic Load Balancing）が\nリクエストを各インスタンスへ分散する。この構成では**ステートレスな設計**（インスタンス\n内部にセッション情報を持たない）が必要であり、セッションは ElastiCache（Redis/\nMemcached）や DynamoDB に外出しするのが標準パターンである。\n\n**責任共有モデル**の観点では、EC2 はハイパーバイザーより上（OS / ミドルウェア / \nアプリ）の管理が利用者責任になる（「クラウド内のセキュリティ」領域）。\n\nCLF-C02 では「仮想サーバーを提供するサービスはどれか」「EC2 の課金モデルはどれか」\nとして問われる。SAA-C03 では購入オプションの使い分け判断、Auto Scaling + ELB の\nアーキテクチャ設計、AMI のカスタマイズと横展開、インスタンスメタデータとユーザー\nデータの活用が問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      },
+      {
+        "label": "Amazon EC2 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "label": "Amazon EC2 インスタンスの購入オプション（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/instance-purchasing-options.html"
+      }
+    ]
   },
   {
     "termId": "ecr",
@@ -1141,7 +1432,22 @@
       "イメージにAPIキーや.envを含めない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon ECR（Elastic Container Registry）は、Docker コンテナイメージと OCI 形式の\nアーティファクトを保存・管理するフルマネージドのコンテナレジストリサービスである。\nプライベートレジストリ（アカウント / IAM で閉じた共有）とパブリックレジストリ\n（インターネット公開）の 2 種類があり、ECS / EKS / App Runner / Lambda（コンテナ\nイメージ実行）など、AWS 上のコンテナ実行基盤と密接に連携する。Docker CLI からは\n通常のレジストリと同じく `docker push` / `docker pull` で操作でき、認証は IAM 経由\nで発行された一時トークンを使う。\n\n実務での代表的な利用シナリオは、CI/CD パイプラインからのイメージ push と、ECS /\nEKS タスクからの自動 pull である。CodeBuild や GitHub Actions でイメージをビルド\nして ECR に push し、ECS サービス更新で新しいタスク定義が ECR から最新イメージを\npull して実行する流れになる。ECR にはイメージスキャン機能（Basic スキャンと\nEnhanced スキャン）があり、push 時に既知の脆弱性（CVE）を自動検出して通知できる。\nライフサイクルポリシーを設定すると、古いイメージ（タグ数や作成日基準）を自動削除\nでき、ストレージコストの肥大化を防げる。\n\nセキュリティ運用ではリポジトリポリシー（リソースベース IAM）で「どの IAM プリンシ\nパルが push / pull できるか」を制御し、本番イメージへの不正書き込みを防止する。\nコンテナイメージに API キー・`.env` ファイル・秘密鍵を含めない（環境変数や Secrets\nManager / Parameter Store から実行時注入する）のが基本となる。CLF-C02 では「コンテナ\nイメージを保存するサービス」「ECS / EKS と組み合わせるレジストリ」という形で問われ、\nSAA-C03 以降では Enhanced スキャンと Amazon Inspector との統合、クロスアカウント\nレプリケーション、Private endpoint（VPC エンドポイント）経由でのイメージ pull が\n踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon ECR（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ecr/"
+      },
+      {
+        "label": "Amazon ECR とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/what-is-ecr.html"
+      },
+      {
+        "label": "Amazon ECR イメージスキャン（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/image-scanning.html"
+      }
+    ]
   },
   {
     "termId": "ecs",
@@ -1210,7 +1516,22 @@
       "本番環境ではECRイメージスキャンや最小権限IAMを確認する"
     ],
     "updatedAt": "2026-06-08",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon ECS（Elastic Container Service）は、Docker コンテナを AWS 上で実行・管理する\nフルマネージドのコンテナオーケストレーションサービスである。タスク定義（コンテナ\nイメージ・CPU / メモリ・ネットワーク・IAM ロール・ログ出力先などをまとめた設計図）、\nタスク（タスク定義から起動された 1 つ以上のコンテナ実行単位）、サービス（タスクを\n指定数維持し、必要に応じて ALB / NLB と連携する論理単位）、クラスター（タスク・\nサービスを束ねる論理境界）という構成要素で運用される。\n\n実行基盤として「ECS on EC2」と「ECS on Fargate」の 2 種類が選べる。EC2 起動タイプ\nではコンテナホストとなる EC2 インスタンスを利用者が管理し、インスタンスタイプの\n柔軟な選定や GPU / 特殊用途インスタンスの利用、Spot インスタンスによるコスト最適化\nが可能となる。Fargate 起動タイプではコンテナホスト管理が AWS 側に隠蔽され、利用者\nは CPU / メモリ要件を指定するだけでよく、サーバー管理を削減できる代わりに単位時間\nあたりの実行コストは EC2 + 自前管理より高めになる。\n\n実務での標準構成は、ECS タスクをプライベートサブネットに配置し、パブリックサブネット\nに置いた ALB だけがインターネットから到達可能にする 3 層構成である。ALB → ECS\nサービスへの動的ポートマッピング、CloudWatch Logs へのコンテナログ出力、Auto Scaling\n（CPU / メモリ / ALB リクエスト数ベース）でタスク数を自動増減させる設計が標準と\nなる。タスクには 2 種類の IAM ロールがあり、「タスク実行ロール」は ECR からのイメージ\npull や CloudWatch Logs 出力など ECS 自体が必要とする AWS API 操作に使い、「タスク\nロール」はコンテナ内アプリケーションが AWS API（S3 / DynamoDB 等）にアクセスする\nときに使う。両者の混同は権限事故の原因となるため、明確に分けて設計する。\n\nCLF-C02 では「コンテナを実行するオーケストレーションサービス」「ECR と組み合わせる\nコンテナ実行基盤」という形で問われる。SAA-C03 以降では Fargate と EC2 起動タイプ\nの選定、サービスの Desired Count 設計、Capacity Provider、ECS Service Connect / Service\nDiscovery、EKS（Kubernetes 互換）との使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon ECS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ecs/"
+      },
+      {
+        "label": "Amazon ECS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/Welcome.html"
+      },
+      {
+        "label": "Amazon ECS 起動タイプ（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/ecs-configuration.html"
+      }
+    ]
   },
   {
     "termId": "efs",
@@ -1264,7 +1585,22 @@
       "暗号化とアクセスポイントを検討する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon EFS（Elastic File System）は、複数の EC2 インスタンスや Lambda 関数から同時に\nマウントして共有できるフルマネージドの NFS（Network File System）ファイルストレージ\nである。OS から見ると通常のファイルシステムとしてマウントされ、複数クライアントが\n同じファイルへ同時に読み書きできる。容量は利用に応じて自動的に伸縮し、事前に\nプロビジョニングする必要がない。複数 AZ にまたがる「マウントターゲット」を各サブ\nネットに配置することで、複数 AZ の EC2 から同じファイルシステムにアクセスできる\n点が EBS との大きな違いである。\n\nストレージクラスは「Standard」（複数 AZ 冗長 / 通常の Web ・アプリケーションで標準）と\n「One Zone」（単一 AZ 冗長 / 低コスト / 開発・テスト用途）の 2 階層に、それぞれ\nアクセス頻度が低いデータを自動的に低コスト階層へ移行する Infrequent Access（IA）の\nライフサイクル管理が組み合わさる構造になっている。Lifecycle Management で「30 日\nアクセスがなければ IA 階層へ移動」のようなルールを設定でき、アクセス頻度の偏った\nデータセットでコストを抑えられる。スループットモードはバースト（容量比例で自動\nスケール）と Elastic / Provisioned（明示確保）から選ぶ。\n\n実務での典型構成は、複数 EC2 から共有するメディアファイル置き場、Web コンテンツの\n共有、CMS の `uploads/` ディレクトリ共有、Linux ワークロードでの共有スクラッチ\n領域、Lambda コンテナイメージから読み出す共有モデルファイルなどである。S3\n（オブジェクトストレージ / HTTP API 経由）/ EBS（単一 EC2 にアタッチするブロック\nストレージ）/ EFS（複数 EC2 から NFS マウントするファイルストレージ）の 3 つの\n使い分けは試験でも実務でも頻出整理ポイントとなる。セキュリティ運用では\nSecurity Group で NFS（TCP 2049）通信を必要なクライアントだけに制限し、保存時暗号化\n（KMS 連動）と転送時暗号化（TLS）の有効化、EFS アクセスポイントによるファイル\nシステム内のサブパス・ユーザー権限制御を行う。",
+    "officialDocs": [
+      {
+        "label": "Amazon EFS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/efs/"
+      },
+      {
+        "label": "Amazon EFS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/whatisefs.html"
+      },
+      {
+        "label": "Amazon EFS のパフォーマンス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/performance.html"
+      }
+    ]
   },
   {
     "termId": "elastic-beanstalk",
@@ -1316,7 +1652,22 @@
       "環境変数に秘密情報を直書きしない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Elastic Beanstalk は、アプリケーションのソースコード（zip / war / Docker\nイメージ等）をアップロードするだけで、裏側の EC2・Auto Scaling グループ・ELB・\nセキュリティグループ・ヘルスチェックなどの実行環境一式を自動構築・運用してくれる\nPaaS（Platform as a Service）寄りのデプロイサービスである。対応言語・ランタイムは\nJava / .NET / Node.js / Python / Ruby / Go / PHP / Docker と幅広く、Web アプリ\nケーション（HTTP リクエスト処理型）とワーカー（SQS キュー処理型）の 2 種類の環境\nタイプから選択する。\n\nElastic Beanstalk の特徴は「インフラ制御を完全に隠蔽せず、必要に応じて利用者が\nEC2 や Auto Scaling 設定を上書きできる」点である。Lambda / App Runner のような\n完全サーバーレスとは異なり、裏側で EC2 が常駐するため、トラフィックがない時間帯\nでも EC2 / EBS / ELB の固定費が発生する。個人開発の MVP や検証用途では、この\n固定費がコスト盲点になりやすく、静的サイト中心であれば S3 + CloudFront、間欠的\nワークロードであれば Lambda + API Gateway の方がコスト効率で優位になることが多い。\n\n実務での代表的な利用シナリオは、Heroku 的なシンプルなデプロイ体験を AWS 上で\n得たい中規模 Web アプリケーション、EC2 ベースで運用したいが Auto Scaling や ELB\nの構築・運用コストを下げたい既存アプリケーションの移行、社内アプリで「インフラ\n構築の手間を下げつつ EC2 レベルのカスタマイズ余地は残したい」要件である。CLF-C02\nでは「アプリケーションコードのアップロードだけで実行環境を作成・管理してくれる\nサービス」「PaaS 寄りのサービス」という形で問われ、SAA-C03 以降では環境設定の\nBlue/Green デプロイ、`.ebextensions` による細かい設定上書き、カスタム AMI、VPC\n配置、CloudWatch との運用連携が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Elastic Beanstalk（AWS公式）",
+        "url": "https://aws.amazon.com/jp/elasticbeanstalk/"
+      },
+      {
+        "label": "AWS Elastic Beanstalk とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/Welcome.html"
+      },
+      {
+        "label": "AWS Elastic Beanstalk の基本概念（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/concepts.html"
+      }
+    ]
   },
   {
     "termId": "elasticache",
@@ -1369,7 +1720,22 @@
       "インターネットから直接接続させない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon ElastiCache は、Redis 互換または Memcached 互換のインメモリキャッシュ /\nインメモリデータストアをマネージドで提供するサービスである。データを RAM 上に\n保持してミリ秒未満のレイテンシで読み書きできるため、リレーショナル DB（RDS）\nや NoSQL DB（DynamoDB）への高頻度アクセスをキャッシュで肩代わりして、データベース\n負荷とレスポンス遅延を抑える用途で使われる。エンジンは Redis 互換（Redis OSS /\nValkey ベース）と Memcached の 2 系統があり、用途に応じて選び分ける。\n\nRedis 互換エンジンは、文字列・ハッシュ・リスト・セット・ソート済みセット・ストリーム\nなどの豊富なデータ構造、永続化（スナップショット / AOF）、レプリケーション、\nクラスター構成（シャーディング）、Pub/Sub、トランザクション機能を持つ。セッション\n管理、ランキング集計、メッセージング、リアルタイムリーダーボードなど、単純な KV\nを超える複雑なデータ操作が必要な場面で選ばれる。Memcached 互換エンジンは機能を\n単純な KV キャッシュに絞った代わりに、マルチスレッドで高スループットを出せるため、\n大量の DB クエリ結果を単純にキャッシュしたい用途に向く。永続化やレプリケーション\nが必要なら Redis 互換、純粋なキャッシュ用途で水平スケールしたいなら Memcached\nという整理になる。\n\n実務での代表的な利用シナリオは、ステートレスな Web アプリケーションのセッション\nストア、SaaS アプリの「同じユーザーが同じ画面を何度も開く」場面のクエリ結果\nキャッシュ、ランキング / リアルタイム集計、レート制限カウンタ、Pub/Sub による\nコンポーネント間連携である。ElastiCache ノードは VPC 内に配置し、Security Group\nで接続元アプリケーション（EC2 / ECS / Lambda）からの通信のみ許可してインターネット\nから直接到達できないようにする。ノード起動中は時間単価で課金されるため、個人\n開発の MVP では固定費盲点になりやすく、要件が見えるまで導入を遅らせる判断が\n合理的なケースが多い。CLF-C02 では「インメモリキャッシュサービス」「DB アクセス\nを減らしてレスポンスを速くするサービス」という形で問われ、SAA-C03 以降では Redis\nクラスターモード、Multi-AZ レプリケーション、フェイルオーバー設計、DAX\n（DynamoDB Accelerator）との使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon ElastiCache（AWS公式）",
+        "url": "https://aws.amazon.com/jp/elasticache/"
+      },
+      {
+        "label": "Amazon ElastiCache とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/WhatIs.html"
+      },
+      {
+        "label": "ElastiCache でエンジンを選択する（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/SelectEngine.html"
+      }
+    ]
   },
   {
     "termId": "elb",
@@ -1424,7 +1790,18 @@
       "Security Groupで入口を制限する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Elastic Load Balancing（ELB）は、受信したトラフィックを複数のターゲット（EC2 インスタンス /\nコンテナ / Lambda 関数 / IP アドレス）へ自動的に分散する AWS のマネージドロード\nバランサーサービスである。ALB（Application Load Balancer）/ NLB（Network Load Balancer）/\nGWLB（Gateway Load Balancer）/ CLB（Classic Load Balancer）の 4 種類があり、レイヤーや\n用途に応じて選択する。ALB は HTTP / HTTPS（レイヤー 7）向けで、パスベース・ホストベース・\nHTTP ヘッダー・クエリ文字列によるルーティングに対応する。NLB は TCP / UDP / TLS\n（レイヤー 4）向けで、超低遅延・高スループット・固定 IP が必要なワークロードに適する。\nGWLB はサードパーティ製仮想アプライアンス（ファイアウォール / IDS / IPS）の挿入に\n特化したサービスで、CLB は旧世代の汎用ロードバランサーである。\n\n代表的な構成は、複数 AZ にまたがる EC2 群の前面に ALB を配置し、Auto Scaling と組み\n合わせて Web アプリケーションの高可用性とスケーラビリティを確保する形である。ALB の\nターゲットグループ単位でヘルスチェックを実施し、応答しないインスタンスを自動で切り\n離す。リスナーには HTTPS リスナーを設定し、ACM 証明書を関連付けて TLS 終端を ALB で\n行う設計が一般的である。マイクロサービス構成では、1 つの ALB に複数のターゲット\nグループを紐付け、パスベースルーティングで /api を API サーバー、/static を静的\n配信、それ以外を Web サーバーへ振り分ける設計が広く採用される。\n\n試験文脈では、CLF-C02 で「トラフィックを複数サーバーに分散するサービスはどれか」\n「Multi-AZ 構成で可用性を上げる入口に使うサービスはどれか」という形で出題される。\nSAA-C03 では ALB / NLB の選定（HTTP/HTTPS なら ALB、超低遅延 TCP/UDP なら NLB）、\nクロスゾーン負荷分散の有効化、ステッキーセッション、ターゲットグループのヘルス\nチェック設計、WAF / CloudFront / Route 53 との組み合わせが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Elastic Load Balancing（AWS公式）",
+        "url": "https://aws.amazon.com/jp/elasticloadbalancing/"
+      },
+      {
+        "label": "Elastic Load Balancing とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/userguide/what-is-load-balancing.html"
+      }
+    ]
   },
   {
     "termId": "eventbridge",
@@ -1478,7 +1855,18 @@
       "外部イベント連携では信頼元を確認する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon EventBridge は、AWS サービス・カスタムアプリケーション・SaaS パートナー\nアプリケーションから発生するイベントを集約し、ルールに基づいてターゲット（Lambda /\nStep Functions / SQS / SNS / Kinesis Data Streams / API Gateway / 他アカウントの\nEventBridge など）へルーティングするサーバーレスのイベントバスサービスである。\nCloudWatch Events の後継として位置付けられており、AWS サービス連携と SaaS イベント\n取り込みの両方を統一的に扱える点が特徴である。スケジュール式（cron 式 / rate 式）に\nよる定期実行もサポートし、定時バッチや日次配信などのトリガーとして広く使われる。\n\nEventBridge の中核概念はイベントバス・ルール・ターゲットの 3 要素である。デフォルト\nイベントバスには AWS サービスのイベントが自動で流れ込み、カスタムイベントバスには\n独自のアプリケーションイベントを送信できる。ルールはイベントパターン（JSON 形式の\nマッチング条件）で対象イベントを絞り込み、最大 5 つのターゲットへ並列にイベントを\n配信する。配信失敗時には自動リトライと DLQ（Dead Letter Queue）への退避が可能で、\n最大 24 時間の再試行ウィンドウが設定できる。\n\n実務でよく使われるパターンは、EC2 の状態変化（起動・停止・終了）を検知して通知を\n送る監視ユースケース、CodePipeline / CodeBuild の状態変化を検知して Slack や Teams へ\n通知する CI/CD ユースケース、EventBridge Scheduler を使った日次・週次バッチの定期\n実行、SaaS（Datadog / PagerDuty / Auth0 等）からのイベントを AWS 側ワークフローへ\n取り込む統合ユースケースなどである。試験文脈では、CLF-C02 で「イベント駆動アーキテクチャ\nで使うサービスはどれか」「スケジュール実行に使えるサービスはどれか」という形で出題\nされる。SAA-C03 では SNS / SQS / EventBridge の使い分け（pub-sub なら SNS、キューイング\nなら SQS、イベントルーティングなら EventBridge）が頻出する。",
+    "officialDocs": [
+      {
+        "label": "Amazon EventBridge（AWS公式）",
+        "url": "https://aws.amazon.com/jp/eventbridge/"
+      },
+      {
+        "label": "Amazon EventBridge とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/eventbridge/latest/userguide/eb-what-is.html"
+      }
+    ]
   },
   {
     "termId": "fargate",
@@ -1528,7 +1916,18 @@
       "コンテナイメージに秘密情報を含めない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Fargate は、Amazon ECS および Amazon EKS でコンテナを実行する際の「サーバーレス」\nコンピュートエンジンである。従来の ECS / EKS では EC2 インスタンスを起動してコンテナ\nホストとして管理する必要があったが、Fargate を使うとコンテナを動かす EC2 インスタンスを\nユーザーが意識する必要がなくなる。タスク定義（または Pod 定義）で vCPU・メモリ・\nネットワーク設定を指定すると、AWS 側が自動でキャパシティをプロビジョニングしてコンテナを\n起動する。OS パッチ適用・ホスト管理・キャパシティ確保が不要になり、運用負荷を大幅に\n削減できる。\n\nFargate と EC2 起動タイプの主な違いは、課金モデルと管理範囲である。EC2 起動タイプは\nインスタンスごとの時間課金で、空きキャパシティの分も課金対象になる。Fargate はタスク\nごとに vCPU・メモリ・実行時間で課金されるため、コンテナ単位で必要な分だけ課金され、\nリソース利用率が高ければ EC2 起動タイプより安く、低ければ高くなる傾向がある。SAA-C03\nでは「常時稼働 API」「短時間バッチ」「不定期な処理」のどのパターンで Fargate が向くか、\nEC2 起動タイプとどちらを選ぶかの判断が問われる。\n\n代表的なユースケースは、Web API のサーバーレスコンテナ実行、CI/CD パイプラインから\n起動する短時間バッチジョブ、機械学習の推論コンテナ実行、サードパーティイメージ\n（OSS ツール）の単発実行などである。Lambda との使い分けは、Lambda は最大実行時間\n15 分・関数単位の制約があるのに対し、Fargate は長時間処理や任意のコンテナイメージを\n扱える点が強みになる。試験文脈では、CLF-C02 で「EC2 を管理せずにコンテナを実行する\nサービスはどれか」という形で出題され、ECS / EKS / Fargate の関係を取り違えないかが\n問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Fargate（AWS公式）",
+        "url": "https://aws.amazon.com/jp/fargate/"
+      },
+      {
+        "label": "AWS Fargate（Amazon ECS 開発者ガイド / AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/AWS_Fargate.html"
+      }
+    ]
   },
   {
     "termId": "fsx",
@@ -1581,7 +1980,22 @@
       "ファイル共有権限を最小化する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon FSx は、業界標準のファイルシステムをフルマネージドで提供するサービス群である。\nFSx for Windows File Server（SMB プロトコル / Active Directory 統合 / NTFS 準拠 ACL）、\nFSx for Lustre（HPC・機械学習向け超並列ファイルシステム）、FSx for NetApp ONTAP\n（NetApp の機能を AWS で利用）、FSx for OpenZFS（OpenZFS のスナップショット・複製機能を\n活用）の 4 種類が提供されており、それぞれ異なるワークロードに最適化されている。S3 や\nEFS とは用途と特性が異なり、特定のファイルシステム機能やプロトコルが必須な場面で選択\nされる。\n\nFSx for Windows File Server は、Windows ワークロードのオンプレミス移行で広く使われる。\nSMB プロトコルでアクセスでき、Active Directory（AWS Managed Microsoft AD またはセルフ\nマネージド AD）と統合してユーザー・グループの認証と NTFS ACL によるアクセス制御を\n実現できる。既存の Windows 共有フォルダーをそのまま移行できるため、ファイルサーバーの\nリフト & シフトに適する。\n\nFSx for Lustre は、機械学習トレーニングや HPC（High-Performance Computing）など、超高\nスループット・低遅延が必要なワークロード向けに設計されている。S3 バケットと統合して\nS3 上のオブジェクトを Lustre ファイルシステム経由で透過的にアクセスできる「データ\nリポジトリ統合」が特徴で、機械学習データセットを S3 に置きつつ、トレーニング時のみ\nLustre 経由で高速アクセスする使い方がよく取られる。試験文脈では、CLF-C02 で「ファイル\nストレージサービスである」「Windows File Server や Lustre の選択肢がある」程度が\n問われる。SAA-C03 では S3 / EBS / EFS / FSx の使い分け（オブジェクト / ブロック / NFS /\nSMB・Lustre）が頻出する。",
+    "officialDocs": [
+      {
+        "label": "Amazon FSx（AWS公式）",
+        "url": "https://aws.amazon.com/jp/fsx/"
+      },
+      {
+        "label": "Amazon FSx for Windows File Server とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "Amazon FSx for Lustre とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/LustreGuide/what-is.html"
+      }
+    ]
   },
   {
     "termId": "glue",
@@ -1631,7 +2045,18 @@
       "分析対象データに個人情報を含めない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Glue は、データレイクやデータウェアハウス向けの ETL（Extract / Transform / Load）\n処理とデータカタログ管理をサーバーレスで実行できるデータ統合サービスである。中核\nコンポーネントは Glue Data Catalog（メタデータの中央リポジトリ）、Glue Crawler（データ\nソースをスキャンしてスキーマを自動推論しカタログ登録）、Glue ETL ジョブ（Spark または\nPython シェル環境で変換処理を実行）、Glue Studio（GUI でジョブを設計）、Glue\nDataBrew（コード不要のデータ前処理ツール）などである。Apache Spark ベースのジョブ実行\n基盤を AWS 側がフルマネージドで提供するため、クラスタ管理が不要となる。\n\n代表的な構成は、S3 にログ・CSV・Parquet などのデータを集約してデータレイクとし、\nGlue Crawler でスキーマを推論して Glue Data Catalog に登録、Amazon Athena から SQL で\nクエリする「サーバーレス分析基盤」である。Athena は Glue Data Catalog をメタストアと\nして参照するため、Glue でカタログ化したテーブルをそのまま Athena でクエリできる。\nAmazon Redshift Spectrum や Amazon EMR からも同じ Data Catalog を参照でき、複数の分析\nツール間でメタデータを共有できる点が大きな利点となる。\n\nETL ジョブでは、S3 上の CSV や JSON を読み込み、列の型変換・欠損値補完・JOIN・集計を\n施したうえで、Parquet や ORC などの列指向フォーマットへ変換して S3 に書き戻す、と\nいったパターンが典型的に使われる。試験文脈では、CLF-C02 で「ETL サービスである」\n「Glue Data Catalog でメタデータ管理ができる」「Athena や Redshift と組み合わせられる」\n程度が問われる。SAA-C03 では S3 データレイク + Glue + Athena の構成、Lake Formation との\n役割分担、Glue ジョブのコスト最適化（DPU 数とジョブ実行時間）が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Glue（AWS公式）",
+        "url": "https://aws.amazon.com/jp/glue/"
+      },
+      {
+        "label": "AWS Glue とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/glue/latest/dg/what-is-glue.html"
+      }
+    ]
   },
   {
     "termId": "guardduty",
@@ -1681,7 +2106,18 @@
       "高重大度の検知は即時対応する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon GuardDuty は、AWS 環境内の不審なアクティビティや既知の攻撃パターンを継続的に\n検知するマネージド型の脅威検知サービスである。AWS CloudTrail のイベントログ、\nAmazon VPC Flow Logs、DNS クエリログ、Amazon S3 データイベント、Amazon EKS 監査ログ\nなどを分析対象として取り込み、機械学習と脅威インテリジェンスを使って異常検知を行う。\n利用者はエージェントのインストールや個別ログ収集の設定をせずに、コンソールから有効化\nするだけで利用を開始できる。\n\n検出結果は重大度（Low / Medium / High）付きで「Findings」として通知され、Amazon\nEventBridge 経由で SNS 通知、Lambda 自動対応、Security Hub への集約などへ連携できる。\n代表的な検出例には、Tor 経由の不審な API 呼び出し、暗号通貨マイニングを示唆する\n通信パターン、侵害された認証情報による異常な操作、想定外のリージョンからのアクセス\nなどがある。\n\n試験文脈では「AWS 環境内の不審な操作や攻撃の兆候を継続的に検知するサービスはどれか」\nという形で出題され、GuardDuty が選ばれる。Inspector（脆弱性スキャン）、Macie（S3 内の\n機密データ検出）、Security Hub（複数セキュリティサービスの集約）と役割が混同されやすい\nため、検出対象の違いを整理して覚える必要がある。料金は分析対象データの量に応じた\n従量課金で、商用化やアクセス増加に伴って導入を判断するのが一般的である。",
+    "officialDocs": [
+      {
+        "label": "Amazon GuardDuty とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/guardduty/latest/ug/what-is-guardduty.html"
+      },
+      {
+        "label": "Amazon GuardDuty（AWS公式）",
+        "url": "https://aws.amazon.com/jp/guardduty/"
+      }
+    ]
   },
   {
     "termId": "iam",
@@ -1736,7 +2172,22 @@
       "AWSアクセスキーをGitHubにコミットしない"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Identity and Access Management（IAM）は、AWS リソースへのアクセスを認証・認可する\nためのサービスである。IAM ユーザー、IAM グループ、IAM ロール、IAM ポリシーという\n4 つの要素を組み合わせて、「誰が、どの AWS リソースに対して、どの操作を許可されているか」\nを制御する。IAM ポリシーは JSON 形式で記述し、Action（許可・拒否する API 操作）と\nResource（対象リソース）と Condition（追加条件）を指定する。\n\nIAM ロールは、IAM ユーザーに直接付与するのではなく、AWS サービス（EC2、Lambda など）、\n別 AWS アカウント、外部 ID 連携（SAML / OIDC）などに対して権限を委任する仕組みである。\nたとえば Lambda 関数が S3 にオブジェクトを書き込む場合、関数にアクセスキーを直書きする\nのではなく、S3 への PutObject 権限を持つ IAM ロールを Lambda に割り当てて利用する。\nこれによりアクセスキーの漏洩リスクを抑え、キーローテーションの運用負荷も減らせる。\n\nCLF-C02 では root ユーザーと IAM ユーザーの違い、MFA の重要性、最小権限の原則、IAM\nロールによる権限委任が頻出論点となる。SAA-C03 以降ではクロスアカウントアクセスにおける\n信頼ポリシーの設計、IAM ポリシーと S3 バケットポリシー・KMS キーポリシーの優先順位、\nIAM Identity Center を使った組織横断のシングルサインオンなど、より踏み込んだ設計が\n問われる。IAM 自体の利用に追加料金はかからないが、権限ミスによる不要リソース作成や\n意図しない API 呼び出しは課金事故につながるため、運用設計の重要度は高い。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/introduction.html"
+      },
+      {
+        "label": "IAM ロール（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles.html"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
   },
   {
     "termId": "inspector",
@@ -1786,7 +2237,18 @@
       "重大度の高い脆弱性から修正する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Inspector は、Amazon EC2 インスタンス、Amazon ECR に保存されたコンテナイメージ、\nAWS Lambda 関数に対して、脆弱性および予期しないネットワーク到達可能性を継続的に検出\nするマネージド型の脆弱性管理サービスである。サービスを有効化すると対象リソースが自動的に\n検出され、CVE データベースを基準としたソフトウェア脆弱性の検出が継続的に実行される。\n検出結果は重大度（Critical / High / Medium / Low / Informational）付きで提示され、\nSecurity Hub や Amazon EventBridge を経由した通知・自動対応に連携できる。\n\nECR コンテナイメージスキャンでは、イメージプッシュ時の単発スキャンに加え、登録済み\nイメージに対する継続的スキャンが可能であり、新規 CVE が公開された際にも遡って影響範囲を\n把握できる。Lambda 関数のスキャンでは、関数コードと依存ライブラリの脆弱性が検出対象と\nなる。EC2 のスキャンには SSM エージェントとの連携が必要であり、エージェント未導入の\nインスタンスはスキャン対象外となる。\n\n試験文脈では GuardDuty との役割の違いがよく問われる。GuardDuty は「環境の不審な操作・\n通信を検知する」のに対し、Inspector は「リソースの脆弱性そのものを検出する」という違い\nがある。コンテナ運用では ECR の標準スキャン（Basic scanning）と Inspector の拡張スキャン\n（Enhanced scanning）の使い分けも問われやすい。料金はスキャン対象のリソース数と\nスキャン頻度に応じた従量課金で、MVP では費用対効果を確認したうえで導入を判断する運用が\n一般的である。",
+    "officialDocs": [
+      {
+        "label": "Amazon Inspector とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/inspector/latest/user/what-is-inspector.html"
+      },
+      {
+        "label": "Amazon Inspector（AWS公式）",
+        "url": "https://aws.amazon.com/jp/inspector/"
+      }
+    ]
   },
   {
     "termId": "kinesis",
@@ -1838,7 +2300,18 @@
       "ログデータに個人情報を含める場合は扱いに注意する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Kinesis は、ストリーミングデータをリアルタイムで収集・処理・分析するための\nサービス群の総称である。Amazon Kinesis Data Streams は順序保証付きのストリーム\nストレージで、シャード単位のスループットでデータを保持し、最大 365 日まで保持期間を\n延長できる。Amazon Data Firehose（旧 Kinesis Data Firehose）は、ストリームを S3 や\nRedshift、OpenSearch Service などへ自動配信するフルマネージドの配信パイプラインである。\nAmazon Managed Service for Apache Flink（旧 Kinesis Data Analytics）は、ストリーム上で\nSQL や Apache Flink によるリアルタイム集計を実行できる分析基盤である。\n\n代表的なユースケースには、Web サイトのクリックストリーム解析、IoT デバイスからの\nセンサーデータ取り込み、アプリケーションログの集約と転送、リアルタイム不正検知などが\nある。Lambda と組み合わせると、ストリームの新規レコード到着をトリガーに任意の処理を\n実行でき、サーバーを常駐させずにストリーム処理を構成できる。\n\n試験文脈では SQS、SNS、EventBridge との役割の違いが問われる。Kinesis Data Streams は\n「順序保証付きの再生可能なストリーム」を提供する点が他のメッセージングサービスと\n異なる。SQS は「メッセージを取得して削除する一回限りの処理」、SNS は「pub/sub による\n複数購読者への配信」、EventBridge は「ルールベースのイベントルーティング」がそれぞれの\n中心的な役割となる。料金はシャード時間とデータ量に基づく従量課金で、小規模なフォーム\n送信や数件のメッセージ配送のような用途には不向きである。",
+    "officialDocs": [
+      {
+        "label": "Amazon Kinesis Data Streams とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/streams/latest/dev/introduction.html"
+      },
+      {
+        "label": "Amazon Kinesis（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kinesis/"
+      }
+    ]
   },
   {
     "termId": "kms",
@@ -1889,7 +2362,18 @@
       "キーポリシーで管理者と利用者を分ける"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Key Management Service（KMS）は、データ暗号化に使うキーを作成・管理・利用する\nためのマネージドサービスである。KMS で作成する KMS キー（旧称: CMK / カスタマー\nマスターキー）は、AWS が管理する AWS 管理キー、利用者が作成・管理するカスタマー管理キー、\nAWS 所有キーの 3 種類に大別される。AWS が提供する多くのサービス（S3、EBS、RDS、\nDynamoDB、Secrets Manager など）と統合されており、保存時暗号化（encryption at rest）の\nキーとして利用できる。\n\nKMS キーへのアクセス制御は「キーポリシー」と「IAM ポリシー」の組み合わせで行う。\nキーポリシーは KMS キーごとに設定する JSON で、誰がそのキーを管理できるか・誰が\n暗号化／復号に使えるかを定義する。クロスアカウントで KMS キーを共有する場合、\n利用側アカウントの IAM ポリシーだけでなく、キーポリシー側でも明示的に許可する必要が\nある点が試験で頻出する。カスタマー管理キーは自動キーローテーション（年次など）を\n設定できる。\n\n試験文脈では「保存時の暗号化に使うキーを管理するサービスはどれか」「クロスアカウントで\n暗号化データを共有する場合のキー管理はどう設計すべきか」という形で出題される。\nAWS 管理キーは料金がかからず簡単に使い始められるが、キーポリシーをカスタマイズできない\nため、組織横断の細かな権限制御が必要な場合はカスタマー管理キーを選ぶことになる。\nカスタマー管理キーには月額のキー保管料と API リクエスト数に応じた従量課金が発生する。\nKMS キーを削除すると、そのキーで暗号化されたデータは復号できなくなるため、削除操作に\nは最短 7 日間の待機期間が設けられている。",
+    "officialDocs": [
+      {
+        "label": "AWS Key Management Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "AWS Key Management Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kms/"
+      }
+    ]
   },
   {
     "termId": "lambda",
@@ -1944,7 +2428,18 @@
       "ログに個人情報や秘密情報を出さない"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Lambda は、サーバーをプロビジョニング・管理することなくコードを実行できる\nサーバーレスコンピューティングサービスである。利用者は実行したい関数コードと\n実行環境（ランタイム）、メモリ・タイムアウトなどの設定を登録するだけで、AWS 側が\n実行基盤を自動で確保・スケールする。コードはイベント（API Gateway からの HTTP\nリクエスト、S3 のオブジェクト作成、DynamoDB Streams、EventBridge スケジュール、\nSQS メッセージ受信など）をトリガーとして起動する。\n\n料金は「リクエスト数」と「実行時間 × 割り当てメモリ量」の組み合わせで課金される。\nアイドル時はリソースが起動しないため、リクエストが無い時間帯の料金は発生しない。\n無料利用枠として、毎月 100 万リクエストと 40 万 GB 秒の実行時間が用意されている。\n\n主要なユースケースは、API Gateway と組み合わせたサーバーレス API、S3 や DynamoDB\nイベントに応答するデータ処理、EventBridge スケジュールによる定期ジョブ、Step\nFunctions によるワークフローの 1 ステップとしての利用などである。サポートされる\nランタイムは Python・Node.js・Java・Go・.NET・Ruby のマネージドランタイムに加え、\nカスタムランタイム・コンテナイメージにも対応する。実行時間の上限は 1 リクエストあたり\n最大 15 分、デプロイパッケージサイズや一時ストレージ（/tmp）のサイズなどに制約がある\nため、長時間バッチや巨大ファイル処理には別サービス（AWS Batch、ECS、Step Functions\nの組み合わせなど）が選択肢となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda（AWS公式）",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      }
+    ]
   },
   {
     "termId": "organizations",
@@ -1993,7 +2488,18 @@
       "SCPで危険なリージョンやサービスを制限できる"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Organizations は、複数の AWS アカウントを 1 つの組織として一元管理するための\nサービスである。組織（Organization）の下に組織単位（OU: Organizational Unit）を\n作成し、その配下にメンバーアカウントを配置できる。アカウントを階層構造で整理する\nことで、用途別（本番・検証・サンドボックス）・部門別・プロジェクト別といった切り口で\n管理しやすくなる。\n\n主要な機能としては、新規 AWS アカウントのプログラム的な作成、サービスコントロール\nポリシー（SCP: Service Control Policy）による組織全体やOU 単位のアクセス権限の\n上限制御、すべてのメンバーアカウントの請求を組織の管理アカウントに集約する一括請求\n（Consolidated Billing）、AWS CloudTrail / AWS Config / Security Hub / GuardDuty\nなどの組織全体への一括展開と集約管理が挙げられる。\n\n典型的なユースケースは、企業や個人開発者が複数アカウントを使い分けるマルチアカウント\n戦略の基盤として用いるケースである。たとえば本番ワークロードと開発・検証ワークロードを\n別アカウントに分離し、SCP で開発アカウントから本番リソースへのアクセスを構造的に\n禁止する、といった統制が組める。料金面では、Organizations 自体は追加料金なしで利用\nでき、一括請求によりリザーブドインスタンスや Savings Plans、無料利用枠が組織全体で\n共有・最適化されるため、複数アカウント運用時のコスト管理が単純化される。",
+    "officialDocs": [
+      {
+        "label": "AWS Organizations とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/organizations/latest/userguide/orgs_introduction.html"
+      },
+      {
+        "label": "AWS Organizations（AWS公式）",
+        "url": "https://aws.amazon.com/jp/organizations/"
+      }
+    ]
   },
   {
     "termId": "quicksight",
@@ -2043,7 +2549,18 @@
       "公開範囲を誤るとデータ漏えいにつながる"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon QuickSight は、AWS が提供するクラウドネイティブのビジネスインテリジェンス\n（BI）サービスである。データソースに接続し、ダッシュボードやレポートを作成・共有\nできる。データソースとしては、Amazon S3、Amazon Redshift、Amazon RDS、Amazon\nAthena、Amazon Aurora といった AWS のデータストアに加え、Salesforce やオンプレミス\nの SQL データベース、CSV/Excel ファイルのアップロードにも対応する。\n\n主要な機能としては、ドラッグ&ドロップ操作によるビジュアル作成、SPICE（Super-fast,\nParallel, In-memory Calculation Engine）と呼ばれるインメモリエンジンによる高速集計、\nダッシュボードの組織内共有や Web アプリケーションへの埋め込み、機械学習を組み込んだ\n予測・異常検知・自然言語クエリ（Amazon Q in QuickSight）などが挙げられる。\n\n料金モデルは作成者（Author）と閲覧者（Reader）でユーザー単位の月額課金が分かれており、\n閲覧者は閲覧した分だけのセッション課金プランも選択できる。SPICE 容量は別途月額課金と\nなる。サーバープロビジョニングや BI 専用基盤の構築は不要で、ユーザー登録とデータ\nソース接続のみで利用を開始できる点が特徴である。典型的なユースケースは、社内 KPI の\nダッシュボード化、Athena による S3 上のログ分析結果の可視化、Redshift の集計データを\n経営層・営業現場へ配信する社内 BI 基盤などである。",
+    "officialDocs": [
+      {
+        "label": "Amazon QuickSight とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/quick/latest/userguide/what-is.html"
+      },
+      {
+        "label": "Amazon QuickSight（AWS公式）",
+        "url": "https://aws.amazon.com/quick/quicksight/"
+      }
+    ]
   },
   {
     "termId": "rds",
@@ -2098,7 +2615,18 @@
       "保存時暗号化とバックアップ設定を確認する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Relational Database Service（Amazon RDS）は、リレーショナルデータベースを\nマネージドで提供するサービスである。OS パッチ適用・DB エンジンのマイナーバージョン\nアップ・自動バックアップ・スナップショット取得・障害時のフェイルオーバーといった\n運用作業を AWS 側が肩代わりするため、利用者はスキーマ設計・クエリチューニング・\nアプリケーション側のロジックに集中できる。\n\nサポートする DB エンジンは、Amazon Aurora（MySQL/PostgreSQL 互換）、MySQL、\nPostgreSQL、MariaDB、Oracle Database、Microsoft SQL Server の 6 種類である。\nインスタンスタイプ・ストレージタイプ・ストレージ容量はワークロードに合わせて選択でき、\nストレージは利用に応じて自動拡張するオプションも提供される。\n\n可用性と耐障害性の主要機能としては、マルチ AZ 配置（プライマリと同期スタンバイを\n異なる AZ に配置し、障害時に自動フェイルオーバー）、リードレプリカ（参照クエリの\n負荷分散と一部のクロスリージョン構成）、自動バックアップによるポイントインタイム\nリカバリ、手動スナップショットによる時点指定の保存が挙げられる。料金は「DB インスタンス\nの稼働時間 × インスタンスタイプ」「ストレージ容量」「バックアップ容量」「データ\n転送量」などの組み合わせで課金される。リザーブドインスタンスによる長期コミット割引も\n利用できる。CLF-C02 では、自前で EC2 上に DB を構築する場合と RDS を使う場合の責任\n共有モデル上の役割分担（パッチ・バックアップを誰が担うか）が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/"
+      }
+    ]
   },
   {
     "termId": "redshift",
@@ -2149,7 +2677,18 @@
       "分析対象データに個人情報が含まれる場合はマスキングを検討する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Redshift は、AWS が提供するクラウドデータウェアハウスサービスである。\nペタバイト級のデータに対する分析クエリを高速に実行することを目的とした列指向\n（カラムナ）ストレージ + MPP（Massively Parallel Processing）アーキテクチャを\n採用しており、複数ノードに処理を分散させて並列実行する。SQL インターフェースで\n扱えるため、既存の BI ツールや SQL クライアントからそのまま接続できる。\n\n提供形態としては、利用者がノードタイプとノード数を指定してクラスターを稼働させる\nプロビジョンド構成と、必要なときに必要な計算リソースを自動で確保する Amazon\nRedshift Serverless がある。Redshift Spectrum を使えば、Amazon S3 上に配置した\nデータを Redshift にロードせずに直接 SQL でクエリすることもでき、データレイクと\nデータウェアハウスを跨いだ分析が可能になる。\n\n主要なユースケースは、複数システムから収集した大量データを集約してエンタープライズ\nデータウェアハウスを構築するケース、BI ツール（Amazon QuickSight、Tableau、Power BI\nなど）の分析基盤として使うケース、Amazon S3 のデータレイクと連携した分析、機械学習\n向け前処理データの集計などである。OLTP 向けの汎用リレーショナルデータベース（Amazon\nRDS / Aurora）が「アプリケーションのトランザクション処理」を担うのに対し、Redshift は\n「集計・分析クエリ」に最適化されたサービスである、という役割分担が CLF-C02 でも\n繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Redshift 管理ガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/redshift/latest/mgmt/welcome.html"
+      },
+      {
+        "label": "Amazon Redshift（AWS公式）",
+        "url": "https://aws.amazon.com/jp/redshift/"
+      }
+    ]
   },
   {
     "termId": "route53",
@@ -2201,7 +2740,18 @@
       "ドメイン管理アカウントをMFAで保護する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Route 53 は、AWS が提供する可用性とスケーラビリティに優れたクラウド DNS\n（Domain Name System）サービスである。ドメイン名の登録（Domain Registration）・\nDNS レコードのホスティング（Hosted Zone）・ヘルスチェック・トラフィックルーティングを\n1 つのサービスで提供する。AWS リソース向けの Alias レコードを使えば、CloudFront\nディストリビューション・Application Load Balancer・S3 静的ウェブサイトホスティング・\nAPI Gateway などへ追加課金なしで名前解決を向けられる。\n\n主要なルーティングポリシーとして、シンプルルーティング（単一レコード）、加重ルーティング\n（指定した重みで分散）、レイテンシールーティング（最も低レイテンシのリージョンへ振り分け）、\nフェイルオーバールーティング（プライマリ障害時にセカンダリへ切り替え）、位置情報\nルーティング（クライアントの地理位置に基づく振り分け）、地理的近接性ルーティング、\n複数値回答ルーティングの 7 種類が提供される。ヘルスチェック機能と組み合わせることで、\n障害発生時の自動 DNS フェイルオーバーを構成できる。\n\n典型的なユースケースは、独自ドメインを CloudFront ディストリビューションや ALB に\n向ける構成、複数リージョンへの DNS レベルでの負荷分散、フェイルオーバーによる DR\n（災害復旧）構成、社内アプリケーション用のプライベート DNS（Private Hosted Zone）の\n運用などである。料金は Hosted Zone 1 つあたりの月額固定費 + DNS クエリ回数 + ヘルス\nチェック数 + ドメイン登録費（年額・TLD ごとに異なる）の組み合わせで課金される。\nAWS リソース向け Alias レコードへのクエリは無料となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      }
+    ]
   },
   {
     "termId": "s3",
@@ -2256,7 +2806,18 @@
       "CloudFront経由で配信する場合はOACを利用する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Simple Storage Service（Amazon S3）は、AWS が提供するオブジェクトストレージ\nサービスである。ファイル（オブジェクト）をバケット（バケット名は AWS 全体で一意）に\n保存する形式を取り、HTML・CSS・JavaScript・画像・動画・ログ・バックアップ・データ\nレイク用ファイルなど、あらゆる種類のデータを保存できる。標準の Amazon S3 Standard\nクラスでは 99.999999999%（イレブンナイン）のオブジェクト耐久性を持ち、複数 AZ への\n冗長保存が組み込みで行われる。\n\n主要なストレージクラスとして、頻繁にアクセスする S3 Standard、アクセス頻度の低い\nデータ向けの S3 Standard-IA（Infrequent Access）と S3 One Zone-IA、アクセスパターンが\n不明なデータ向けの S3 Intelligent-Tiering、アーカイブ用途の S3 Glacier Instant Retrieval /\nS3 Glacier Flexible Retrieval / S3 Glacier Deep Archive が提供される。ライフサイクル\nポリシーを設定すれば、オブジェクトを一定期間後に自動で安価なクラスへ移行したり、\n不要になった時点で削除したりできる。\n\n典型的なユースケースは、CloudFront と組み合わせた静的ウェブサイト配信、ログ・\nバックアップ・スナップショットの長期保管、Amazon Athena / Amazon EMR / Amazon\nRedshift Spectrum と連携したデータレイク基盤、各種 AWS サービス（CloudTrail / VPC\nFlow Logs / ELB アクセスログ等）の出力先などである。料金は「保存容量 × ストレージ\nクラス単価」「リクエスト数」「データ転送量」「ライフサイクル移行リクエスト数」などの\n組み合わせで課金される。セキュリティ面では、デフォルトでブロックパブリックアクセス\nが有効になっており、意図しない公開を防ぐ設計となっている。CloudFront 経由配信時は\nOrigin Access Control（OAC）でバケットへの直接アクセスを制限する構成が推奨される。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      }
+    ]
   },
   {
     "termId": "secrets-manager",
@@ -2305,7 +2866,18 @@
       "取得権限を対象Lambdaだけに絞る"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Secrets Manager は、データベース認証情報・API キー・OAuth トークン・その他の\nシークレット（秘密情報）を安全に保存・取得・ローテーションするためのマネージド\nサービスである。シークレットは AWS KMS で暗号化されて保管され、IAM ポリシーで\n取得権限を細かく制御できる。アプリケーションコードからは AWS SDK 経由で API\n（GetSecretValue）でシークレットを取得する形となり、コード内や環境変数・設定ファイルへ\n平文で書き込む必要がなくなる。\n\n主要な機能として、自動ローテーション機能がある。Amazon RDS / Amazon Redshift /\nAmazon DocumentDB / Amazon ElastiCache 向けには AWS が提供するローテーション用\nLambda 関数のテンプレートが用意されており、設定するだけで定期的にシークレットが\n自動更新される。任意のシークレットについても、カスタムローテーション用 Lambda 関数を\n書けば同様の自動更新が可能である。シークレットのバージョン管理が組み込まれて\nおり、ローテーション中の旧バージョンも一定期間参照できる。\n\n典型的なユースケースは、Lambda 関数や ECS タスクから RDS への接続パスワードを\n取得するケース、外部 SaaS 連携用 API キーを安全に保管するケース、CI/CD パイプライン\n内で利用するクレデンシャルの一元管理などである。料金は「シークレット数 × 月額固定費」\n+「API コール数」の組み合わせで課金される。類似サービスの AWS Systems Manager\nParameter Store と比較した場合、Parameter Store は無料の Standard ティアがある一方で\n自動ローテーション機能がなく、Secrets Manager はローテーション機能を含む有償サービス\nとして位置づけられる。SAA-C03 以降では Parameter Store との使い分けが頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Secrets Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/intro.html"
+      },
+      {
+        "label": "AWS Secrets Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/secrets-manager/"
+      }
+    ]
   },
   {
     "termId": "shield",
@@ -2357,7 +2929,18 @@
       "攻撃時の連絡・復旧手順を用意する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Shield は、AWS 上のアプリケーションを分散型サービス拒否（DDoS: Distributed\nDenial of Service）攻撃から保護するマネージドサービスである。Shield Standard と\nShield Advanced の 2 つの提供形態があり、Standard はすべての AWS 利用者に追加料金\nなしで自動的に適用される。CloudFront・Route 53・AWS Global Accelerator・Elastic Load\nBalancing といったエッジ・境界サービスを利用するワークロードでは、ネットワーク層\n（L3/L4）の SYN フラッド・UDP リフレクション攻撃などへの基本保護が常時有効化されている。\n\nShield Advanced は有料の上位プランで、保護対象リソース（CloudFront ディストリ\nビューション・Route 53 ホストゾーン・ALB / NLB・Global Accelerator・Elastic IP）を\n明示的に登録することで利用する。Standard より高度な L3/L4 攻撃緩和、Layer 7 攻撃\n（HTTP フラッド等）への対応、攻撃発生時に AWS Shield Response Team（SRT）への\n24/7 アクセス、DDoS 攻撃に起因する EC2 / ELB / CloudFront / Route 53 料金スパイクの\nコスト保護、AWS WAF の利用料金（保護対象リソース分）の組み込み提供などが追加される。\n\n典型的なユースケースは、Shield Standard をベースとした CloudFront + S3 / ALB 配信の\n標準的な DDoS 防御、Shield Advanced を契約した大規模公開サービスでの高度な防御と\n24/7 サポートの確保である。料金面では Shield Advanced は組織単位で月額固定費が\n発生し、1 年間のコミットメントが必要となるため、個人開発や MVP 段階では Shield\nStandard で対応するのが基本となる。CLF-C02 では Shield Standard と Advanced の違い、\nおよび AWS WAF（アプリケーション層の Web ACL によるルールベース防御）との役割\n分担（Shield = DDoS 対策、WAF = アプリケーション層ルール）が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS WAF, AWS Shield, AWS Firewall Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/ddos-overview.html"
+      },
+      {
+        "label": "AWS Shield（AWS公式）",
+        "url": "https://aws.amazon.com/jp/shield/"
+      }
+    ]
   },
   {
     "termId": "sns",
@@ -2409,7 +2992,18 @@
       "外部通知に個人情報を含めない"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon Simple Notification Service（Amazon SNS）は、AWS が提供するフルマネージドの\nパブリッシュ/サブスクライブ型（Pub/Sub 型）メッセージングサービスである。発行者\n（パブリッシャー）がトピック（Topic）にメッセージを送信すると、そのトピックを購読\n（サブスクライブ）しているすべての受信先へ同じメッセージが配信される。1 つのメッセージを\n複数の宛先へ同時に届ける Fan-out 配信が主要な役割であり、コンポーネント間を疎結合化\nする基盤として用いられる。\n\nサブスクリプション（購読先）として指定できるエンドポイントは多岐にわたる。Amazon\nSQS キュー、AWS Lambda 関数、HTTP/HTTPS エンドポイント、E メール、SMS（携帯電話\nショートメッセージ）、モバイルプッシュ通知（Apple/Google/Amazon の各種プッシュ通知\nサービス）、AWS Event Fork Pipelines などに対応する。サブスクリプションフィルター\nポリシーを使えば、トピックへ送信されたメッセージのうち特定の属性を持つものだけを\n受け取るよう、購読先ごとに条件を絞り込める。\n\n典型的なユースケースは、CloudWatch アラームから運用担当者へのメール通知、複数の\nSQS キューへ同時にメッセージを配信する Fan-out パターン、マイクロサービス間の非同期\nイベント連携、モバイルアプリへのプッシュ通知配信などである。料金は「発行リクエスト\n数」「配信通知数」「データ転送量」などの組み合わせで課金され、配信先プロトコル\n（SMS は単価が高い、SQS / Lambda 配信は単価が低い）によって従量課金単価が異なる。\nCLF-C02 では SNS（Pub/Sub 型・複数受信者へプッシュ配信）と SQS（キュー型・1 メッセージは\n1 受信者で消費）の役割分担、および SNS + SQS の Fan-out 構成が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon SNS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/sns/latest/dg/welcome.html"
+      },
+      {
+        "label": "Amazon Simple Notification Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sns/"
+      }
+    ]
   },
   {
     "termId": "sqs",
@@ -2461,7 +3055,18 @@
       "メッセージに秘密情報を直接入れない"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon SQS は、AWS のフルマネージドなメッセージキューサービスである。メッセージを\nキューに送信する側（プロデューサー）と受信する側（コンシューマー）を分離することで、\n処理を非同期化し、システム全体の疎結合化を実現する。送信側はコンシューマーの稼働\n状況を意識せずメッセージを送れ、受信側は自身のペースでメッセージを取り出して処理\nできるため、瞬間的な負荷変動に対する緩衝（バッファ）として機能する。SQS には\nStandard Queue と FIFO Queue の 2 種類があり、Standard は順序保証なし・少なくとも\n1 回配信、FIFO は順序保証あり・正確に 1 回処理を提供する。\n\n実務では、注文処理の非同期化、Lambda への処理分散、障害時のリトライバッファ、\nECS タスク間のジョブ受け渡しなどに利用される。可視性タイムアウト（Visibility\nTimeout）は SQS の重要概念で、コンシューマーがメッセージを取り出してから処理完了\n（delete）するまでの間、そのメッセージを他のコンシューマーから見えなくする時間である。\n処理がタイムアウト内に完了しなければメッセージは再び可視化され、別のコンシューマー\nが取り出せる。これにより少なくとも 1 回の処理が保証される代わりに、コンシューマー\n側で冪等性（idempotency）を担保する必要がある。\n\n料金はリクエスト数（API 呼び出し回数）に応じた従量課金で、データ転送量は別途課金\nされる。デッドレターキュー（DLQ）を設定することで、規定回数を超えて処理に失敗した\nメッセージを別キューに退避し、後続調査に回せる。CLF-C02 では「SQS = メッセージ\nキューによる疎結合化」という基本概念と、Standard / FIFO の使い分け、可視性タイム\nアウトが頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Simple Queue Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon SQS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      }
+    ]
   },
   {
     "termId": "step-functions",
@@ -2515,7 +3120,18 @@
       "失敗時の入力データをログに出しすぎない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Step Functions は、複数の処理ステップをワークフローとして定義し、状態管理・\nリトライ制御・条件分岐・並列実行を組み合わせて実行できるフルマネージドな\nオーケストレーションサービスである。ステートマシンと呼ばれる定義（Amazon States\nLanguage という JSON 形式の DSL で記述）に従い、Lambda 関数・ECS タスク・DynamoDB\n操作・SNS 通知などの「タスク」を順次または並列に実行し、各ステップの成功・失敗・\n出力を状態として追跡する。\n\n実務では、複数 Lambda を順序立てて呼び出すバッチ処理、承認フロー、ETL パイプライン、\nマイクロサービス間のオーケストレーションなどに利用される。Step Functions を使わず\nLambda 同士を直接呼び出す構成と比較した利点は、各ステップの実行履歴がコンソールで\n可視化される点、失敗時のリトライ・キャッチ処理を宣言的に書ける点、長時間（最大\n1 年）にわたるワークフローを状態管理できる点である。Express Workflow（短時間・\n高スループット向け）と Standard Workflow（長時間・状態履歴保持向け）の 2 種類が\nあり、用途に応じて選択する。\n\n料金は状態遷移数（Standard）または実行時間とリクエスト数（Express）に応じた\n従量課金で、待機ステップ中も課金対象になる点に留意する。EventBridge と組み合わせて\nスケジュール起動やイベント駆動実行を構成するパターンが一般的である。CLF-C02 では\n「Step Functions = ワークフローオーケストレーション」「Lambda と組み合わせて\nサーバーレス構成を組める」「状態遷移を可視化できる」という整理が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Step Functions とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Step Functions（AWS公式）",
+        "url": "https://aws.amazon.com/jp/step-functions/"
+      }
+    ]
   },
   {
     "termId": "systems-manager",
@@ -2565,7 +3181,18 @@
       "Session Manager利用時はIAM権限とログ出力を設定する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Systems Manager（SSM）は、AWS リソースとオンプレミスサーバーの運用管理を統合\n的に行うサービス群である。単一のサービスではなく、Parameter Store・Session Manager・\nRun Command・Patch Manager・State Manager・Automation など複数の機能（Capability）\nの集合体として提供される。EC2 インスタンスや オンプレサーバーに SSM Agent を導入する\nことで、これらの機能から各サーバーを管理対象として扱えるようになる。\n\n実務でよく使われる機能は次の通りである。Parameter Store は設定値・接続文字列・\n暗号化済みシークレットを階層構造で管理し、Lambda や EC2 から取得できる（Secrets\nManager より安価で、機密情報を扱わない設定値に向く）。Session Manager は SSH キーや\nインバウンドポート開放なしに EC2 へターミナル接続できる仕組みで、踏み台サーバー\nを不要にする。Run Command は複数の EC2 に対して一斉にスクリプトやコマンドを実行\nできる仕組みで、定型運用作業の自動化に使われる。Patch Manager は OS パッチ適用、\nState Manager は構成ドリフト管理を担う。\n\n料金は機能ごとに異なり、Session Manager・Run Command・Parameter Store の Standard\nティアは無料で利用できる（Advanced Parameter Store やオンプレ管理拡張は有料）。\nCLF-C02 では Systems Manager 全体が「運用管理サービス群」として問われ、特に\nParameter Store による設定値管理と Session Manager による SSH 不要接続が頻出\n論点となる。Secrets Manager との使い分け（機密性が高く自動ローテーションが必要なら\nSecrets Manager、コスト優先で平文・SecureString での管理で十分なら Parameter Store）\nも整理しておくと選択肢の絞り込みが速くなる。",
+    "officialDocs": [
+      {
+        "label": "AWS Systems Manager とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/what-is-systems-manager.html"
+      },
+      {
+        "label": "AWS Systems Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/systems-manager/"
+      }
+    ]
   },
   {
     "termId": "trusted-advisor",
@@ -2615,7 +3242,18 @@
       "公開設定や権限過多の指摘を放置しない"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS Trusted Advisor は、AWS 環境を「コスト最適化」「セキュリティ」「耐障害性」\n「パフォーマンス」「サービスクォータ」の 5 つのカテゴリでチェックし、ベスト\nプラクティスに沿った改善提案を行うサービスである。チェックは AWS があらかじめ\n用意した項目に基づいて自動実行され、結果はマネジメントコンソールでカテゴリ別に\n確認できる。代表的なチェック項目には、IAM ルートユーザーの MFA 有効化、S3 バケットの\nパブリックアクセス、未使用の EC2 Elastic IP、低稼働率の EC2 インスタンス、サービス\nクォータの使用状況などがある。\n\n利用できるチェック項目数はサポートプランによって異なる。Basic Support と Developer\nSupport では、セキュリティカテゴリと耐障害性カテゴリの選択された項目（MFA on root\naccount、S3 バケット権限、EBS/RDS パブリックスナップショット、セキュリティグループの\nポート開放状況など）とサービスクォータカテゴリの全項目が利用できる。Business Support\n以上で全カテゴリ・全項目（最新の項目数は公式ドキュメント参照）が利用可能になり、\nAPI による自動取得や週次の改善レポート送信なども提供される。試験文脈では「サポート\nプランによりチェック範囲が異なる」点が繰り返し問われるため、Basic / Developer は\n一部のセキュリティ・耐障害性チェックと全サービスクォータチェック、Business 以上は\n全項目という対応関係を押さえておく。\n\n実務では、Trusted Advisor の「コスト最適化」カテゴリで未使用リソース（停止 EC2 に\n付随する EBS、未使用 Elastic IP、低稼働 RDS）を洗い出してコスト削減に繋げる運用、\n「セキュリティ」カテゴリで IAM・S3・セキュリティグループの設定不備を継続監視する\n運用が典型的である。AWS Config Rules や AWS Security Hub と役割が一部重なるが、\nTrusted Advisor は「AWS のベストプラクティスに対する評価」を提供する点が固有の\n価値である。",
+    "officialDocs": [
+      {
+        "label": "AWS Trusted Advisor（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS Trusted Advisor（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      }
+    ]
   },
   {
     "termId": "vpc",
@@ -2669,7 +3307,18 @@
       "プライベートリソースはパブリックサブネットに置かない"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "Amazon VPC は、AWS アカウント内に論理的に分離されたネットワーク空間（仮想プライベート\nクラウド）を作成するサービスである。CIDR ブロック（例: 10.0.0.0/16）でアドレス空間を\n定義し、その中に複数のサブネット（パブリックサブネット / プライベートサブネット）を\nアベイラビリティゾーン単位で切り分けて配置する。サブネット間のルーティングはルート\nテーブルで制御し、インターネットへの出口は Internet Gateway、プライベートサブネット\nからの外向き通信は NAT Gateway で実現する。これらの構成要素を組み合わせることで、\nオンプレミスのネットワーク設計に近い構造を AWS 上に再現できる。\n\n通信制御は Security Group（インスタンスレベル・ステートフル・許可ルールのみ）と\nNetwork ACL（サブネットレベル・ステートレス・許可と拒否の両方を記述可能）の 2 層で\n行う。Security Group は「このインスタンスにどこから入って来てよいか」「どこへ\n出ていってよいか」を許可型で定義し、Network ACL はサブネット単位での粗い制御を担う。\n両者は併用され、Security Group での細かい制御と Network ACL での包括的な遮断を\n組み合わせる構成が一般的である。\n\n実務では、Web 三層構成（パブリックサブネットに ALB、プライベートサブネットに\nEC2・ECS、データベースサブネットに RDS）を VPC 上に構築する設計が典型的である。\n複数の VPC を接続する場合は VPC Peering、複数アカウント・複数 VPC を集約する場合は\nTransit Gateway、AWS サービスへの閉域アクセスは VPC Endpoint（Gateway 型 / Interface\n型）を使う。VPC 本体・サブネット・ルートテーブル・Internet Gateway・Security Group・\nNetwork ACL の作成自体は無料で、NAT Gateway・VPC Endpoint・データ転送量に課金が\n発生する。CLF-C02 では VPC の基本構成要素（サブネット・ルートテーブル・IGW・NAT・\nSecurity Group・Network ACL）の役割分担が繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Virtual Private Cloud とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/what-is-amazon-vpc.html"
+      },
+      {
+        "label": "Amazon Virtual Private Cloud（AWS公式）",
+        "url": "https://aws.amazon.com/jp/vpc/"
+      }
+    ]
   },
   {
     "termId": "waf",
@@ -2718,7 +3367,18 @@
       "ルール変更権限を限定する"
     ],
     "updatedAt": "2026-06-01",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS WAF（Web Application Firewall）は、Web アプリケーションに対する悪意あるリクエストを\nルールベースで検知・ブロックするマネージドファイアウォールサービスである。SQL\nインジェクション・クロスサイトスクリプティング（XSS）・特定 IP アドレスからの大量\nリクエスト・特定地域からのアクセスなどを、ルールに従って評価する。WAF はそれ単体で\n動作するのではなく、CloudFront・Application Load Balancer（ALB）・API Gateway・\nAWS AppSync など「保護対象のリソース」に紐づけて配備する。\n\nルールには 3 種類ある。マネージドルール（AWS や AWS Marketplace パートナーが提供する\nルールセット）、カスタムルール（自分で条件を記述）、レートベースルール（一定期間内の\nリクエスト数に基づくブロック）である。マネージドルールには OWASP Top 10 対策・Bot\n管理・既知の悪意ある IP 対策など、よく使うルールセットが含まれており、有効化するだけで\n基本的な保護を開始できる。これらをルールグループとして Web ACL（Access Control List）\nに束ね、Web ACL を保護対象リソースに関連付ける構成となる。\n\n料金は Web ACL 数・ルール数・処理リクエスト数による従量課金で、マネージドルールには\n別途ルールグループごとの料金が加算される。AWS Shield Standard との関係も整理して\nおく必要があり、Shield Standard は L3/L4 の DDoS 対策を全 AWS ユーザーに無料で提供する\nのに対し、WAF は L7（HTTP/HTTPS）層のルールベース防御を担う。両者は守備範囲が異なる\nため、Web アプリの保護には WAF と Shield Standard を併用するのが基本である。CLF-C02\nでは「WAF = L7 の Web アプリ保護」「CloudFront / ALB と連携」「マネージドルールで\nSQL インジェクションや XSS を防げる」という整理が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS WAF とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/waf-chapter.html"
+      },
+      {
+        "label": "AWS WAF（AWS公式）",
+        "url": "https://aws.amazon.com/jp/waf/"
+      }
+    ]
   },
   {
     "termId": "x-ray",
@@ -2772,6 +3432,17 @@
       "本番で取得するデータ範囲を制限する"
     ],
     "updatedAt": "2026-06-07",
-    "locale": "ja"
+    "locale": "ja",
+    "practicalNote": "AWS X-Ray は、分散アプリケーションのリクエスト経路と処理時間を可視化する分散トレー\nシングサービスである。API Gateway → Lambda → DynamoDB のようなサーバーレス構成や、\nALB → ECS → RDS のようなマイクロサービス構成において、1 つのリクエストが各コンポー\nネントを通過する経路と、各コンポーネントでの処理時間（レイテンシ）・エラー情報を\n記録する。X-Ray コンソールではサービスマップとして全体像を可視化でき、どのサービス\n間呼び出しが遅いか・どこでエラーが発生しているかをリクエスト単位で追跡できる。\n\nX-Ray を有効化するには、アプリケーションコード側に X-Ray SDK を組み込むか、対象\nサービスの X-Ray トレース機能を有効化する。Lambda・API Gateway・ALB・SQS・SNS など\n主要サービスはコンソール側でトレースを有効化するだけで X-Ray にデータが送られる。\nSDK を組み込んだ場合は、独自のサブセグメント（外部 API 呼び出しや DB クエリ等）を\n記録でき、より細かい粒度でボトルネックを特定できる。サンプリングレートを設定する\nことで、トレース対象とするリクエスト割合を制御し、コストを抑えられる。\n\nCloudWatch Logs との役割の違いを整理しておく必要がある。CloudWatch Logs は「個別\nサービスのテキストログ」を集約するのに対し、X-Ray は「複数サービスにまたがる\nリクエストの実行経路と処理時間」を可視化する。障害調査では両者を併用し、X-Ray で\nどこが遅いか・どこで失敗しているかを特定し、CloudWatch Logs で該当箇所の詳細ログを\n確認する流れが一般的である。料金は記録トレース数と取得トレース数の従量課金で、毎月\n一定量の無料利用枠がある。CLF-C02 では「X-Ray = 分散トレーシング」「Lambda や API\nGateway の遅延調査に使う」「CloudWatch Logs とは役割が異なる」という整理が頻出\n論点となる。",
+    "officialDocs": [
+      {
+        "label": "AWS X-Ray とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/aws-xray.html"
+      },
+      {
+        "label": "AWS X-Ray の概念（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-concepts.html"
+      }
+    ]
   }
 ]
