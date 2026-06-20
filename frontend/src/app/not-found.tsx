@@ -3,6 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactElement } from "react";
+import { Fredoka } from "next/font/google";
+import { NotFoundIllustration } from "@/components/ui/NotFoundIllustration";
+
+const fredoka = Fredoka({
+  weight: "700",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 type Locale = "ja" | "en" | "zh";
 
@@ -15,7 +23,11 @@ type NotFoundLink = {
 type NotFoundContent = {
   eyebrow: string;
   title: string;
+  subtitle: string;
   description: string;
+  balloonLine1: string;
+  balloonLine2: string;
+  svgAriaLabel: string;
   links: NotFoundLink[];
   nextStepTitle: string;
   nextStepDescription: string;
@@ -24,9 +36,14 @@ type NotFoundContent = {
 const notFoundContent: Record<Locale, NotFoundContent> = {
   ja: {
     eyebrow: "404 Not Found",
-    title: "ページが見つかりません",
+    title: "Coming Soon",
+    subtitle: "このページは準備中です",
     description:
-      "URLが変更されたか、ページが削除された可能性があります。下のリンクから、AWS資格ロードマップラボの主要コンテンツへ戻れます。",
+      "このページはまだ整備されていないか、URLが変更された可能性があります。下のリンクから学習を続けてください。",
+    balloonLine1: "下のリンクから",
+    balloonLine2: "学べるよ！",
+    svgAriaLabel:
+      "ロードマップの道の上にComing Soonのピンが立っており、雲のキャラクターが手を振っている",
     links: [
       {
         href: "/",
@@ -49,15 +66,20 @@ const notFoundContent: Record<Locale, NotFoundContent> = {
         description: "AWS学習記事から読み直す",
       },
     ],
-    nextStepTitle: "学習を続けるなら",
+    nextStepTitle: "次はどこへ？",
     nextStepDescription:
-      "AWSサービスの違いで迷った場合は用語集、試験対策を進めたい場合は模擬問題、学習の全体像を確認したい場合はトップページから再開してください。",
+      "用語集・模擬問題・ブログから学習を再開できます。迷ったらトップページへどうぞ。",
   },
   en: {
     eyebrow: "404 Not Found",
-    title: "Page not found",
+    title: "Coming Soon",
+    subtitle: "This page is coming soon.",
     description:
-      "The page may have moved, been deleted, or the URL may be incorrect. Use the links below to return to the main AWS Cert Roadmap Lab pages.",
+      "This page is still being built, or the URL may have changed. Use the links below to keep learning.",
+    balloonLine1: "Learn from the",
+    balloonLine2: "links below!",
+    svgAriaLabel:
+      "A road map path with a Coming Soon pin, and a cloud character waving its hand.",
     links: [
       {
         href: "/en",
@@ -72,7 +94,7 @@ const notFoundContent: Record<Locale, NotFoundContent> = {
       {
         href: "/en/contact",
         label: "Contact",
-        description: "Send feedback, report an issue, or contact the site owner.",
+        description: "Send feedback or report an issue.",
       },
       {
         href: "/en/disclaimer",
@@ -80,15 +102,20 @@ const notFoundContent: Record<Locale, NotFoundContent> = {
         description: "Review the notice for non-official learning content.",
       },
     ],
-    nextStepTitle: "Continue learning",
+    nextStepTitle: "Where to next?",
     nextStepDescription:
-      "If you are not sure where to go next, return to the home page first. From there, you can explore AWS terms, service comparisons, architecture diagrams, and exam-focused learning content.",
+      "Return to the home page to explore AWS terms, service comparisons, and exam-ready questions.",
   },
   zh: {
     eyebrow: "404 Not Found",
-    title: "找不到頁面",
+    title: "Coming Soon",
+    subtitle: "此頁面準備中。",
     description:
-      "此頁面可能已移動、刪除，或網址輸入有誤。你可以從下方連結回到 AWS Cert Roadmap Lab 的主要頁面。",
+      "此頁面尚未建置完成，或網址可能已更動。請從下方連結繼續學習。",
+    balloonLine1: "從下方連結",
+    balloonLine2: "開始學習！",
+    svgAriaLabel:
+      "一條路線圖小路上立著「準備中」的旗幟，旁邊有雲朵角色揮手。",
     links: [
       {
         href: "/zh",
@@ -103,7 +130,7 @@ const notFoundContent: Record<Locale, NotFoundContent> = {
       {
         href: "/zh/contact",
         label: "聯絡我們",
-        description: "回報錯誤、提出建議或聯絡站長。",
+        description: "回報錯誤或提出建議。",
       },
       {
         href: "/zh/disclaimer",
@@ -111,9 +138,9 @@ const notFoundContent: Record<Locale, NotFoundContent> = {
         description: "確認本站為非官方學習內容。",
       },
     ],
-    nextStepTitle: "繼續學習",
+    nextStepTitle: "接下來去哪？",
     nextStepDescription:
-      "如果你不確定下一步要去哪裡，請先返回首頁。你可以從首頁進入 AWS 術語、服務比較、架構圖與考試學習內容。",
+      "回到首頁，可以繼續瀏覽 AWS 術語、服務比較與考試題目。",
   },
 };
 
@@ -142,27 +169,44 @@ export default function NotFound(): ReactElement {
     <main className="mx-auto flex min-h-[calc(100vh-160px)] w-full max-w-5xl flex-col justify-center px-4 py-16 sm:px-6 lg:px-8">
       <section className="rounded-3xl border border-slate-200 bg-white px-6 py-10 shadow-sm sm:px-10 sm:py-14">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+          {/* イラスト */}
+          <NotFoundIllustration
+            balloonLine1={content.balloonLine1}
+            balloonLine2={content.balloonLine2}
+          />
+
+          {/* eyebrow */}
+          <p className="mt-[-2px] text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
             {content.eyebrow}
           </p>
 
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+          {/* POP 表題 */}
+          <h1
+            className={`${fredoka.className} mt-3 text-5xl text-[#0284c7] sm:text-6xl`}
+          >
             {content.title}
           </h1>
 
+          {/* ロケール別副題 */}
+          <p className="mt-2 text-lg font-semibold text-slate-800">
+            {content.subtitle}
+          </p>
+
+          {/* 説明文 */}
           <p className="mt-4 text-base leading-7 text-slate-600">
             {content.description}
           </p>
         </div>
 
+        {/* リンクカード */}
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           {content.links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white hover:shadow-sm"
+              className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white hover:shadow-sm active:translate-y-0 active:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2"
             >
-              <span className="text-base font-semibold text-slate-950 group-hover:text-blue-700">
+              <span className="text-base font-semibold text-slate-950 group-hover:text-sky-700">
                 {link.label}
               </span>
               <span className="mt-2 block text-sm leading-6 text-slate-600">
@@ -172,7 +216,8 @@ export default function NotFound(): ReactElement {
           ))}
         </div>
 
-        <div className="mt-10 rounded-2xl bg-blue-50 p-5">
+        {/* 次の学習へバナー */}
+        <div className="mt-10 rounded-2xl bg-sky-50 p-5">
           <h2 className="text-base font-semibold text-slate-950">
             {content.nextStepTitle}
           </h2>

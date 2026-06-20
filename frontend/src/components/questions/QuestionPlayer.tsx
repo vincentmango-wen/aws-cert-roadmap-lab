@@ -4,16 +4,34 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
 
+/**
+ * サーバー側で解決済みの関連リンク情報。
+ * server component (`questions/[questionId]/page.tsx`) が存在チェックを行い、
+ * この型で QuestionPlayer に渡す。
+ * これにより "use client" な QuestionPlayer が termGuards (terms.ja.json 85KB) を
+ * client bundle に引き込まない。
+ */
+export type ResolvedLink = {
+  id: string;
+  exists: boolean;
+};
+
 type QuestionPlayerProps = {
   question: Question;
   previousQuestionId?: string;
   nextQuestionId?: string;
+  resolvedServices?: ResolvedLink[];
+  resolvedTerms?: ResolvedLink[];
+  resolvedComparisons?: ResolvedLink[];
 };
 
 export function QuestionPlayer({
   question,
   previousQuestionId,
   nextQuestionId,
+  resolvedServices,
+  resolvedTerms,
+  resolvedComparisons,
 }: QuestionPlayerProps): React.JSX.Element {
   const [selectedChoiceId, setSelectedChoiceId] = useState<ChoiceId | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -244,45 +262,68 @@ export function QuestionPlayer({
         <h2 className="mb-4 text-lg font-bold text-slate-950">関連リンク</h2>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <h3 className="mb-3 text-sm font-bold text-slate-700">関連サービス</h3>
-            {question.relatedServices && question.relatedServices.length > 0 ? (
+          {/* 関連サービス: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {resolvedServices && resolvedServices.some(({ exists }) => exists) ? (
+            <div>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">関連サービス</h3>
               <ul className="flex flex-wrap gap-2">
-                {question.relatedServices.map((serviceId) => (
-                  <li key={serviceId}>
-                    <Link
-                      href={`/terms/${serviceId}`}
-                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
-                    >
-                      {serviceId.toUpperCase()}
-                    </Link>
-                  </li>
-                ))}
+                {resolvedServices
+                  .filter(({ exists }) => exists)
+                  .map(({ id: serviceId }) => (
+                    <li key={serviceId}>
+                      <Link
+                        href={`/terms/${serviceId}`}
+                        className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
+                      >
+                        {serviceId.toUpperCase()}
+                      </Link>
+                    </li>
+                  ))}
               </ul>
-            ) : (
-              <p className="text-sm text-slate-500">関連サービスは未設定です。</p>
-            )}
-          </div>
+            </div>
+          ) : null}
 
-          <div>
-            <h3 className="mb-3 text-sm font-bold text-slate-700">関連用語</h3>
-            {question.relatedTerms && question.relatedTerms.length > 0 ? (
+          {/* 関連用語: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {resolvedTerms && resolvedTerms.some(({ exists }) => exists) ? (
+            <div>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">関連用語</h3>
               <ul className="flex flex-wrap gap-2">
-                {question.relatedTerms.map((termId) => (
-                  <li key={termId}>
-                    <Link
-                      href={`/terms/${termId}`}
-                      className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
-                    >
-                      {termId}
-                    </Link>
-                  </li>
-                ))}
+                {resolvedTerms
+                  .filter(({ exists }) => exists)
+                  .map(({ id: termId }) => (
+                    <li key={termId}>
+                      <Link
+                        href={`/terms/${termId}`}
+                        className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
+                      >
+                        {termId}
+                      </Link>
+                    </li>
+                  ))}
               </ul>
-            ) : (
-              <p className="text-sm text-slate-500">関連用語は未設定です。</p>
-            )}
-          </div>
+            </div>
+          ) : null}
+
+          {/* 関連比較記事: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {resolvedComparisons && resolvedComparisons.some(({ exists }) => exists) ? (
+            <div>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">関連比較記事</h3>
+              <ul className="flex flex-wrap gap-2">
+                {resolvedComparisons
+                  .filter(({ exists }) => exists)
+                  .map(({ id: slug }) => (
+                    <li key={slug}>
+                      <Link
+                        href={`/comparisons/${slug}`}
+                        className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
+                      >
+                        {slug}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </section>
 

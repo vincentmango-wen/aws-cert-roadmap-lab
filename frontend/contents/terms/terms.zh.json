@@ -1,0 +1,3448 @@
+[
+  {
+    "termId": "acm",
+    "name": "AWS Certificate Manager",
+    "shortName": "ACM",
+    "category": "Security",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "簽發與管理 SSL/TLS 憑證的服務。用於在 CloudFront 或 ALB 上實現 HTTPS 通訊。",
+    "oneLine": "管理 HTTPS 所需憑證的服務。",
+    "useCases": [
+      "為 CloudFront 自訂網域啟用 HTTPS",
+      "ALB 的 HTTPS 監聽器",
+      "憑證更新的自動化"
+    ],
+    "examPoints": [
+      "管理 SSL/TLS 憑證",
+      "與 AWS 服務整合以啟用 HTTPS",
+      "可簽發公開憑證"
+    ],
+    "saaPoints": [
+      "CloudFront 使用的憑證需在 us-east-1 簽發",
+      "使用 DNS 驗證以便自動更新",
+      "注意憑證所屬區域"
+    ],
+    "relatedServices": [
+      "cloudfront",
+      "route53",
+      "elb"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "static-site-s3-cloudfront",
+      "high-availability-web-app"
+    ],
+    "tags": [
+      "security",
+      "tls",
+      "certificate"
+    ],
+    "costNotes": [
+      "CloudFront 與 ALB 使用的公開憑證基本上免費",
+      "網域取得費用另計"
+    ],
+    "securityNotes": [
+      "使用 DNS 驗證以避免過期",
+      "勿將私鑰外洩"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "ACM 是用於簽發與管理 SSL/TLS 憑證的服務，與 CloudFront、ALB、API Gateway\n等 AWS 服務整合，可輕鬆設定 HTTPS 通訊。實務上最常用的場景是將使用獨有網域的\n網站轉為 HTTPS。針對在 Route 53 取得的網域，透過 ACM 簽發公開憑證並綁定至\nCloudFront 或 ALB 的監聽器,即可完成包含憑證自動更新在內的 HTTPS 配送。當憑證有效\n期限接近時,AWS 端會自動更新,因此相較於自行管理憑證的方式,能從結構上減少憑證\n過期事故,這是其最大的優勢。\n\n使用 ACM 時需要注意憑證的區域限制。綁定至 ALB 的憑證必須在與 ALB 相同的區域\n簽發。另一方面,綁定至 CloudFront 的憑證,由於 CloudFront 屬於全球服務的性質,\n必須在 us-east-1(北維吉尼亞)簽發。在錯誤區域簽發的憑證無法從 CloudFront 的\n發布中選取,是初學者容易卡關的地方。此外,ACM 簽發的憑證有公開憑證與私有憑證\n兩種,面向網際網路時使用公開憑證,面向內部系統時則使用以 ACM Private CA 簽發\n的私有憑證,需依用途區分使用。\n\n在 CLF-C02 / SAA-C03 中,題目會以「用於 HTTPS 化的服務是什麼」「CloudFront\n用的憑證要在哪個區域簽發」等形式出題。驗證方式 DNS 驗證與電子郵件驗證的差異\n也是常考點,DNS 驗證若與 Route 53 結合,可完成包含自動更新在內的全流程,因此\n實務上推薦採用 DNS 驗證。",
+    "officialDocs": [
+      {
+        "label": "AWS Certificate Manager (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/certificate-manager/"
+      },
+      {
+        "label": "什麼是 AWS Certificate Manager (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/acm-overview.html"
+      },
+      {
+        "label": "使用 DNS 驗證簽發 ACM 憑證 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/acm/latest/userguide/dns-validation.html"
+      }
+    ]
+  },
+  {
+    "termId": "api-gateway",
+    "name": "Amazon API Gateway",
+    "shortName": "API Gateway",
+    "category": "Networking",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "用於公開 HTTP API 或 REST API 的服務。可與 Lambda 整合以建構無伺服器 API。",
+    "oneLine": "從前端呼叫 Lambda 的 API 入口。",
+    "useCases": [
+      "聯絡表單送出 API",
+      "無伺服器 REST API",
+      "搭配 Cognito 認證的 API"
+    ],
+    "examPoints": [
+      "作為 API 的入口使用",
+      "可與 Lambda 整合",
+      "可設定認證、CORS、速率限制"
+    ],
+    "saaPoints": [
+      "理解 HTTP API 與 REST API 的差異",
+      "將 CORS 限制為正式環境的 Origin",
+      "規劃 429 或 5xx 等錯誤設計"
+    ],
+    "relatedServices": [
+      "lambda",
+      "cognito",
+      "cloudwatch"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "api",
+      "serverless",
+      "networking"
+    ],
+    "costNotes": [
+      "依 API 呼叫次數與資料傳輸計費",
+      "MVP 階段僅限於 POST /contact"
+    ],
+    "securityNotes": [
+      "正式環境的 Access-Control-Allow-Origin 不可使用 *",
+      "在 Lambda 端也要進行輸入值驗證"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon API Gateway 是用於發布與管理 HTTP API、REST API 與 WebSocket API 的代管\n服務。實務上最常見的用法,是與 Lambda 結合建構無伺服器 API。前端的請求由\nAPI Gateway 接收,在此層處理認證、授權、速率限制、CORS 控制等,然後再轉發至\n後端的 Lambda 函式或 EC2 上的服務。由於不需常駐伺服器,在沒有存取的時間帶能\n壓低成本,也能對流量驟增自動擴展。\n\nAPI Gateway 有 HTTP API 與 REST API 兩種,需依用途區分選用。HTTP API 具備低延遲、\n低成本的特性,提供 JWT 認證、CORS 等基本功能,對大多數現代 Web/行動應用程式的\nAPI 而言是首選。REST API 則具備請求驗證、API 金鑰管理、與 AWS WAF 的整合、\n私有 API 等進階功能,在企業用途或需要細緻控制的 API 中會選用此項。WebSocket\nAPI 則用於聊天或即時通知等雙向通訊。\n\n在 CLF-C02 / SAA-C03 中,題目會以「作為無伺服器 API 入口使用的服務是什麼」\n「與 Lambda 結合,向前端提供 API 的服務是什麼」等形式出題。CORS 設定、認證\n方式(IAM 認證、Cognito Authorizer、Lambda Authorizer)、速率限制與節流的設計,\n在 SAA-C03 以後會更深入出題。在正式運作中,將 Access-Control-Allow-Origin 設為\n萬用字元(`*`)後不處理、將 API 金鑰或認證權杖輸出至記錄等,這類安全層面的基本\n事項也容易被問到。",
+    "officialDocs": [
+      {
+        "label": "Amazon API Gateway (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/api-gateway/"
+      },
+      {
+        "label": "什麼是 Amazon API Gateway (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/welcome.html"
+      },
+      {
+        "label": "HTTP API 與 REST API 的選擇 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/http-api-vs-rest.html"
+      }
+    ]
+  },
+  {
+    "termId": "app-runner",
+    "name": "AWS App Runner",
+    "shortName": "App Runner",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS App Runner 是可從容器或原始碼輕鬆部署 Web 應用程式的代管服務。",
+    "oneLine": "以較低營運負擔公開容器 Web 應用的服務。",
+    "useCases": [
+      "公開容器化的 Web API",
+      "小型 Web 應用的營運",
+      "減少基礎設施管理的應用公開"
+    ],
+    "examPoints": [
+      "可代管方式執行 Web 應用",
+      "支援以容器為基礎的部署",
+      "可減少 EC2 管理"
+    ],
+    "saaPoints": [
+      "在某些情境下比 ECS 更易於營運",
+      "需確認長時間運行的成本",
+      "若僅為靜態網站,則 S3 + CloudFront 更合適"
+    ],
+    "relatedServices": [
+      "ecr",
+      "ecs",
+      "fargate"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "compute",
+      "container",
+      "web-app"
+    ],
+    "costNotes": [
+      "依所使用的運算資源計費",
+      "靜態網站 MVP 不使用"
+    ],
+    "securityNotes": [
+      "確認公開範圍與環境變數",
+      "限制 ECR 映像的權限"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS App Runner 是可從容器映像檔或原始碼存放庫直接部署 Web 應用程式或 API 的代管\n服務。無需個別設定 VPC、負載平衡器、Auto Scaling 群組等基礎設施,只需指定容器\n映像檔,系統就會配發附帶 HTTPS 端點的執行環境。實務上會在以下場景採用:不想以\nECS 或 EKS 帶來的高運作負擔來處理的小到中規模 Web 應用程式 / API 發布、內部\n工具的容器化、原型的正式運作等。\n\nApp Runner 在降低運作負擔的代價是若干權衡。由於採用以常駐運行為前提的計費架構\n(對啟用中 vCPU、記憶體時間計費),即使在完全沒有存取的時間帶,也會產生一定的\n最低成本。另一方面,Lambda + API Gateway 架構在沒有請求時計費幾乎為零,但執行\n模型是函式執行而非容器執行,應用程式的撰寫方式因此不同。對於「想以容器運行常駐\nWeb 伺服器,但想避開 ECS 的複雜性」的需求,App Runner 較為合適;對於「想以無\n伺服器方式運行以請求為單位的輕量處理」的需求,Lambda + API Gateway 則較為合適。\n\n在 CLF-C02 / SAA-C03 中,題目會以「能以代管方式執行容器應用程式的服務」「相較於\nECS 或 EKS 可降低運作負擔的服務」的脈絡出題。ECS(Fargate)、EKS、App Runner、\nLambda 的比較,從運作負擔、計費模型、對應工作負載的種類三個面向整理,有助於\n應對 SAA-C03 的架構設計題。若僅發布靜態網站,以 S3 + CloudFront 架構在成本與\n適配性兩方面皆優於 App Runner。",
+    "officialDocs": [
+      {
+        "label": "AWS App Runner (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/apprunner/"
+      },
+      {
+        "label": "什麼是 AWS App Runner (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/what-is-apprunner.html"
+      }
+    ]
+  },
+  {
+    "termId": "athena",
+    "name": "Amazon Athena",
+    "shortName": "Athena",
+    "category": "Analytics",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon Athena 是可對 S3 上的資料以 SQL 進行分析的無伺服器查詢服務。",
+    "oneLine": "以 SQL 查詢 S3 上日誌或 CSV 的服務。",
+    "useCases": [
+      "S3 日誌分析",
+      "CSV 或 Parquet 的簡易分析",
+      "資料湖上的隨選查詢"
+    ],
+    "examPoints": [
+      "是無伺服器的分析服務",
+      "可以 SQL 搜尋 S3 上的資料",
+      "依掃描量產生費用"
+    ],
+    "saaPoints": [
+      "將資料格式轉為 Parquet 等可減少掃描量",
+      "與 Glue Data Catalog 結合以管理資料表定義",
+      "適合作為 CloudFront 或 S3 日誌分析的選項"
+    ],
+    "relatedServices": [
+      "s3",
+      "glue",
+      "cloudfront"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "analytics",
+      "serverless",
+      "sql",
+      "s3"
+    ],
+    "costNotes": [
+      "依查詢所掃描的資料量計費",
+      "避免不必要的全量掃描"
+    ],
+    "securityNotes": [
+      "區分 S3 儲存貯體權限與 Athena 執行權限",
+      "管理查詢結果儲存位置的 S3 權限"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon Athena 是可對儲存於 S3 的資料以標準 SQL 執行查詢的無伺服器分析服務。\n無需事先配置資料庫伺服器,只要將資料放入 S3,並透過 Glue Data Catalog 等註冊\n資料表定義,即可立即執行查詢。實務上會用於:CloudFront 或 ALB 的存取記錄分析、\nCloudTrail 的稽核記錄分析、以 CSV 或 JSON 格式累積的業務資料臨時調查、資料湖\n上的資料探索等用途。\n\nAthena 的成本依查詢所掃描的 S3 資料量計費(每 1 TB 約數 USD)。因此,資料格式\n與分區設計就成為成本最佳化的核心課題。將 CSV 或 JSON 等以列為導向的格式,\n轉換為 Parquet 或 ORC 等以欄為導向的格式,因可只讀取所需欄位,掃描量會大幅\n減少。此外,以日期或區域等查詢條件常用的鍵建立分區,Athena 端會自動略過不需要\n的分區掃描。以 Glue Data Catalog 集中管理資料表定義(結構與分區資訊),並讓\nAthena 與其他分析服務(Redshift Spectrum、EMR 等)共用是標準的設計。\n\n在 CLF-C02 / SAA-C03 中,題目會以「可對 S3 上的資料以 SQL 進行分析的無伺服器\n服務」的形式出題。與 EMR(代管 Hadoop/Spark)或 Redshift(資料倉儲)的區分也\n是常考點,Athena 適合臨時查詢與小到中規模的記錄分析,EMR 適合大規模批次處理,\nRedshift 適合常態性 BI 分析,記住這樣的分工有助於判斷。",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/athena/"
+      },
+      {
+        "label": "什麼是 Amazon Athena (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/what-is.html"
+      },
+      {
+        "label": "使用欄式儲存格式 (Parquet / ORC) (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/columnar-storage.html"
+      }
+    ]
+  },
+  {
+    "termId": "aurora",
+    "name": "Amazon Aurora",
+    "shortName": "Aurora",
+    "category": "Database",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon Aurora 是與 MySQL 及 PostgreSQL 相容的 AWS 關聯式資料庫服務。",
+    "oneLine": "在 AWS 代管環境下使用高效能 RDB 的資料庫服務。",
+    "useCases": [
+      "Web 應用程式的 RDB",
+      "需要高可用性的業務系統",
+      "MySQL 或 PostgreSQL 相容的遷移目標"
+    ],
+    "examPoints": [
+      "屬於 RDS 系列的代管資料庫",
+      "與 MySQL/PostgreSQL 相容",
+      "易於建構高可用性架構"
+    ],
+    "saaPoints": [
+      "可透過 Aurora Replica 分散讀取負載",
+      "可透過 Multi-AZ 架構提升可用性",
+      "Aurora Serverless 適合需求變動較大的工作負載"
+    ],
+    "relatedServices": [
+      "rds",
+      "dynamodb",
+      "vpc"
+    ],
+    "comparisonSlugs": [
+      "rds-vs-dynamodb"
+    ],
+    "architectureSlugs": [
+      "three-tier-vpc"
+    ],
+    "tags": [
+      "database",
+      "rdb",
+      "mysql",
+      "postgresql"
+    ],
+    "costNotes": [
+      "依執行個體、儲存、I/O、備份等項目計費",
+      "MVP 階段為避免固定成本而不使用"
+    ],
+    "securityNotes": [
+      "部署於 VPC 內以限制存取來源",
+      "勿將認證資訊寫死在程式碼中"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon Aurora 是與 MySQL 及 PostgreSQL 相容的關聯式資料庫服務,建立在 AWS\n自行設計的分散式儲存層之上。相較於相同執行個體類別的 RDS for MySQL / RDS for\nPostgreSQL,在輸送量、可用性、復原時間等方面具有優勢。實務上會應用於:Web 應用\n程式的主要 RDB、SaaS 後端、要求高可用性的業務系統的 DB 層等,寫入與讀取持續\n發生的工作負載。\n\nAurora 的特色在於儲存層與運算層分離。儲存以橫跨 3 個 AZ 的 6 個副本自動冗餘,\n實現資料損失耐受性(最多容許 2 個副本喪失仍能持續寫入,最多容許 3 個副本喪失\n仍能持續讀取)與快速復原時間。寫入由 1 個主要執行個體處理,Aurora Replica\n(最多 15 台)分散讀取負載。在流量驟增的 SaaS 或需求變動大的工作負載中,透過\nAurora Serverless v2 可依使用量自動增減運算容量。\n\n在 CLF-C02 / SAA-C03 中,題目常以「RDS 中與 MySQL/PostgreSQL 相容的服務是什麼」\n「為了分散讀取負載而使用的架構是什麼(→ Aurora Replica)」「Multi-AZ 與 Read\nReplica 的差異」等形式出題。Multi-AZ 是為提升可用性的待機架構(無法用於讀取),\nRead Replica 是為提升讀取效能的副本(無法寫入),這樣的整理是出題的中心點。\n也需掌握 Aurora 位於 RDS 的諸多選項之一這個定位。",
+    "officialDocs": [
+      {
+        "label": "Amazon Aurora (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/rds/aurora/"
+      },
+      {
+        "label": "Amazon Aurora 概觀 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html"
+      },
+      {
+        "label": "Aurora 的複寫 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html"
+      }
+    ]
+  },
+  {
+    "termId": "auto-scaling",
+    "name": "AWS Auto Scaling",
+    "shortName": "Auto Scaling",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "依需求自動增減 EC2 等資源數量的機制。用於可用性與成本最佳化。",
+    "oneLine": "依負載自動調整伺服器數量的機制。",
+    "useCases": [
+      "Web 伺服器數量的自動增減",
+      "故障執行個體的替換",
+      "存取量增加時的橫向擴展"
+    ],
+    "examPoints": [
+      "依負載調整資源數量",
+      "有助於高可用性與成本最佳化",
+      "與 ELB 結合使用"
+    ],
+    "saaPoints": [
+      "設定最小、預期、最大容量",
+      "依 CloudWatch 指標進行擴縮",
+      "使用跨多個 AZ 的 Auto Scaling Group"
+    ],
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "cloudwatch"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "high-availability-web-app"
+    ],
+    "tags": [
+      "compute",
+      "scaling",
+      "high-availability"
+    ],
+    "costNotes": [
+      "增加的 EC2 會產生額外費用",
+      "勿將最大數量設為無上限"
+    ],
+    "securityNotes": [
+      "勿將機密資訊嵌入啟動範本",
+      "限縮執行個體設定檔的權限"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Auto Scaling 是配合需求增減自動調整資源數量的機制。應用最廣的是 EC2 Auto\nScaling(Auto Scaling Group),以 CloudWatch 指標(CPU 使用率、請求數、自訂\n指標等)為觸發,在最小、期望、最大容量的範圍內增減 EC2 執行個體。實務上,將\nAuto Scaling Group 配置於 ALB 之後實現 Web 層的負載分散與自動擴展、夜間或週末\n減少台數以降低成本、自動置換發生故障的執行個體實現自我修復等架構,都是標準的\n採用方式。\n\n除了 EC2 以外,在 AWS Auto Scaling 這個品牌名下,也提供能橫跨多種資源類別\n(ECS 服務、DynamoDB 的讀寫容量、Aurora Read Replica 等)管理擴展的服務\n(AWS Auto Scaling Plans)。擴展政策有以指標臨界值判斷增減的目標追蹤擴展、\n階段式的逐步擴展、依時間帶或排程的排程擴展。Auto Scaling 與 ELB(ALB / NLB)\n以成對方式設計為基本,ELB 負責健康檢查與流量分散,Auto Scaling 負責台數調整。\n\n在 CLF-C02 中,題目會以「依負載自動增減 EC2 的機制是什麼」「為實現高可用性,\n要與哪個服務組合(→ 與 ELB 組合)」等形式出題。誤答模式常會放入「進行儲存體\n備份的服務」「提供 DNS 的服務」等與擴展不同領域的服務。SAA-C03 以後,最小、\n期望、最大容量的設定、橫跨多 AZ 的 Auto Scaling Group 架構、目標追蹤擴展與\n逐步擴展的區分使用,都會被深入出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Auto Scaling (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/autoscaling/"
+      },
+      {
+        "label": "什麼是 Amazon EC2 Auto Scaling (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      }
+    ]
+  },
+  {
+    "termId": "aws-backup",
+    "name": "AWS Backup",
+    "shortName": "AWS Backup",
+    "category": "Management",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS Backup 是可集中管理多項 AWS 服務備份的代管服務。",
+    "oneLine": "統一管理 AWS 資源備份計畫的服務。",
+    "useCases": [
+      "RDS 備份管理",
+      "EFS 備份管理",
+      "備份政策的統一"
+    ],
+    "examPoints": [
+      "是集中管理備份的服務",
+      "可設定備份政策",
+      "需與復原需求一同考量"
+    ],
+    "saaPoints": [
+      "依 RPO/RTO 決定備份頻率",
+      "可考慮跨區域複製以做災害應變",
+      "保留期間越長成本越高"
+    ],
+    "relatedServices": [
+      "rds",
+      "efs",
+      "dynamodb"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "backup",
+      "disaster-recovery",
+      "management"
+    ],
+    "costNotes": [
+      "依備份儲存量與還原計費",
+      "避免不必要的長期保留"
+    ],
+    "securityNotes": [
+      "限制備份的刪除權限",
+      "未進行還原測試的備份不可過度信任"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS Backup 是可集中管理多個 AWS 服務備份的代管服務。能以一個備份計畫,統整\n定義並自動執行橫跨對應服務(RDS、Aurora、DynamoDB、EFS、FSx、EBS、S3、\nStorage Gateway 等)的備份政策(備份頻率、保留期間、跨區域複製設定)。實務上,\n從各個服務各自持有備份機制的運作(分別管理 RDS 快照 / EBS 快照 / DynamoDB\n隨選備份)整合至 AWS Backup 後,可實現:統一管理符合合規要求的保留期間、集中\n稽核「誰、何時、復原了什麼」的稽核記錄、集中復原測試等運作負擔削減。\n\n備份設計以 RPO(Recovery Point Objective: 能容忍多少資料損失)與 RTO\n(Recovery Time Objective: 需要在多久時間內復原)為中心指標。對 RPO 短(數分鐘\n以內)的工作負載,經常會併用 Aurora 的連續備份或 DynamoDB 的 Point-in-Time\nRecovery 等服務專屬的細粒度備份功能。災難復原(DR)用途時,使用 AWS Backup\n的跨區域複製功能將備份複製到別的區域是標準架構。備份不僅要取得,還需定期執行\n復原測試,確認確實能復原的運作非常重要。\n\n在 CLF-C02 中,題目會以「能集中管理備份的服務是什麼」「依 RPO/RTO 決定備份頻率\n的對象是什麼」等形式出題。SAA-C03 以後,在災難復原戰略(備份與還原 / 試點燈塔\n/ 暖待機 / 多站點主動主動)中 AWS Backup 的定位、符合合規要求(SOC / HIPAA /\nPCI DSS)的保留期間設計、以刪除權限限制與 Vault Lock 進行保護等,更深入的設計\n判斷會被出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Backup (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/backup/"
+      },
+      {
+        "label": "什麼是 AWS Backup (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/whatisbackup.html"
+      },
+      {
+        "label": "備份的跨區域複製 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/cross-region-backup.html"
+      }
+    ]
+  },
+  {
+    "termId": "aws-budgets",
+    "name": "AWS Budgets",
+    "shortName": "Budgets",
+    "category": "Management",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "對 AWS 使用費用或使用量設定預算,並在超過閾值時發送通知的服務。",
+    "oneLine": "以郵件通知 AWS 使用過量的計費監控服務。",
+    "useCases": [
+      "每月 1 美元預算的通知",
+      "預測超額警示",
+      "學習期間的計費事故預防"
+    ],
+    "examPoints": [
+      "是成本管理服務",
+      "可依實績值與預測值設定警示",
+      "僅靠免費額度無法預防計費事故"
+    ],
+    "saaPoints": [
+      "作為成本異常偵測的初期對策使用",
+      "與各服務的成本確認結合運用",
+      "帶有動作的 Budget 需注意權限設計"
+    ],
+    "relatedServices": [
+      "cost-explorer",
+      "organizations",
+      "cloudwatch"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "static-site-s3-cloudfront",
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "cost",
+      "management",
+      "billing"
+    ],
+    "costNotes": [
+      "Budget 通知有免費額度",
+      "首先設定低額預算"
+    ],
+    "securityNotes": [
+      "也有助於偵測存取金鑰外洩時的費用激增",
+      "限縮帳單資訊的檢視權限"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Budgets 是可對 AWS 利用費用或使用量設定預算,並在超過臨界值時發出通知或\n執行動作的成本管理服務。除了依實績值的警示之外,也能設定依預測值(以目前的\n利用步調至月底會達多少金額)的警示,因此不必等到月底看到帳單才察覺,在月中就\n能偵測到預算超支的徵兆。實務上會用於以下用途:將驗證用帳號的月度預算設為低額\n(例:USD 10)以防止學習中的計費事故、在正式帳號中設定服務別預算以偵測特定\n服務的成本暴增、與 Organizations 結合設定組織整體預算以建立全公司成本治理等。\n\nBudgets 有多種類型。除了成本預算(以金額為基礎)與使用量預算(以時間、GB、\n傳輸量為基礎)之外,也能設定保留執行個體或 Savings Plans 的覆蓋率預算、使用率\n預算。使用含動作的 Budget(Budgets Actions)時,可在超過臨界值時附加 IAM\n政策以停止特定使用者的額外資源建立、停止特定 EC2 等自動處置,但為避免誤觸發\n造成業務影響,在正式環境啟用前先在驗證環境確認行為的運作較為理想。Cost Explorer\n負責成本的分析與趨勢掌握,Budgets 負責以臨界值為基礎的監控與通知,角色分工\n如此。\n\n在 CLF-C02 中,題目會以「偵測 AWS 過度使用的服務是什麼」「不僅依實績值,也能\n以預測值設定警示的服務是什麼」等形式出題。誤答模式中會放入「Cost Explorer\n(負責分析)」「CloudWatch(負責指標監控)」,需區分各自的守備範圍來理解。\nSAA-C03 以後,與 Cost Anomaly Detection(以機器學習偵測成本異常)的區分使用、\n使用 Organizations 集中組織整體預算、含動作的 Budget 的權限設計都會被深入出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "使用 AWS Budgets 管理費用 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "建立預算 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-create.html"
+      }
+    ]
+  },
+  {
+    "termId": "aws-config",
+    "name": "AWS Config",
+    "shortName": "AWS Config",
+    "category": "Monitoring",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "記錄 AWS 資源設定變更歷史,並依規則評估合規狀態的服務。",
+    "oneLine": "確認 AWS 資源設定是否符合規則的服務。",
+    "useCases": [
+      "偵測 S3 公開設定",
+      "偵測未設定加密的資源",
+      "追蹤設定變更歷史"
+    ],
+    "examPoints": [
+      "用於資源設定的歷史與合規評估",
+      "與 CloudTrail 或 CloudWatch 角色不同",
+      "可透過 Config Rules 進行檢查"
+    ],
+    "saaPoints": [
+      "偵測安全基準違規",
+      "考量整個組織的 Config 集中匯整",
+      "規劃記錄對象資源與成本"
+    ],
+    "relatedServices": [
+      "cloudwatch",
+      "cloudtrail",
+      "s3"
+    ],
+    "comparisonSlugs": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "architectureSlugs": [],
+    "tags": [
+      "monitoring",
+      "compliance",
+      "governance"
+    ],
+    "costNotes": [
+      "依記錄項目數與規則評估計費",
+      "MVP 階段並非必要"
+    ],
+    "securityNotes": [
+      "有助於偵測公開的 S3 或未加密設定",
+      "決定合規違規的通知對象"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Config 是記錄 AWS 資源的設定變更歷史,並依定義的規則評估合規狀態的服務。\n持續取得各資源(EC2 / S3 / IAM / 安全群組等)的設定快照,並以時序追蹤「何時、\n由誰、變更了哪個項目、如何變更」。使用 Config Rules(代管規則與自訂規則)時,\n可持續檢查例如「S3 儲存貯體的公開設定是否關閉」「EBS 磁碟區是否已加密」「安全\n群組是否沒有來自 0.0.0.0/0 的全埠允許」等合規條件,在偵測到違規的時點執行通知\n或自動修復。\n\n實務上會應用於:安全基準的持續評估(符合 CIS Benchmark / AWS Foundational\nSecurity Best Practices)、合規稽核時的證跡提供、設定偏移偵測(偵測 IaC 中定義\n的狀態因手動變更而偏離的部分)等用途。與類似服務的差異是:CloudTrail 記錄\n「API 呼叫記錄(由誰呼叫了什麼 API)」,而 Config 記錄「資源設定的狀態與變更\n歷史」,守備範圍不同。CloudWatch 是處理「指標與記錄」的監控服務,其角色又是\n另一個面向。橫跨組織集中管理時,使用 Config Aggregator 將多個帳號、多個區域\n的記錄集中至 1 個帳號的設計為標準做法。\n\n在 CLF-C02 中,題目會以「評估資源設定的歷史與合規狀態的服務是什麼」的形式\n出題。CloudTrail(API 呼叫記錄)/ CloudWatch(指標監控)三者的區分使用是常考\n點,各自整理「以什麼為記錄對象」有助於選出正解。SAA-C03 以後,以 Config Rules\n偵測基準違規、組織整體集中管理、依記錄對象資源篩選達成的成本最佳化等,會被\n深入出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Config (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/config/"
+      },
+      {
+        "label": "什麼是 AWS Config (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/WhatIsConfig.html"
+      },
+      {
+        "label": "以 AWS Config 評估資源 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/evaluate-config.html"
+      }
+    ]
+  },
+  {
+    "termId": "cdk",
+    "name": "AWS Cloud Development Kit",
+    "shortName": "AWS CDK",
+    "category": "Management",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS CDK 是可使用 TypeScript、Python 等程式語言定義 AWS 基礎設施的 IaC 工具。",
+    "oneLine": "用程式碼建立與管理 AWS 基礎設施的開發套件。",
+    "useCases": [
+      "IaC 管理",
+      "環境重現",
+      "多項 AWS 資源的一次性建構"
+    ],
+    "examPoints": [
+      "是 Infrastructure as Code 的選項之一",
+      "產生 CloudFormation 以管理 AWS 資源",
+      "可用開發語言定義基礎設施"
+    ],
+    "saaPoints": [
+      "可對環境差異進行程式碼審查",
+      "可以堆疊為單位管理資源",
+      "需理解刪除操作的影響範圍"
+    ],
+    "relatedServices": [
+      "cloudformation",
+      "iam",
+      "lambda"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "iac",
+      "cloudformation",
+      "devops"
+    ],
+    "costNotes": [
+      "CDK 本身不額外收費,但所建立的 AWS 資源會產生費用",
+      "進行審查以避免誤建高額資源"
+    ],
+    "securityNotes": [
+      "確認所建立的 IAM 權限",
+      "限制正式環境的部署權限"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS CDK(Cloud Development Kit)是可使用 TypeScript / Python / Java / C# / Go\n等通用程式語言定義 AWS 基礎設施的 Infrastructure as Code(IaC)工具。以 CDK\n撰寫的程式碼(CDK 應用程式)在內部會被合成(synth)為 CloudFormation 範本,\n以 CloudFormation 堆疊的形式部署。實務上會應用於:將複雜的資源架構切分為可重複\n使用的 Construct(元件)以實現標準化、將各環境(dev / staging / prod)的差異\n參數化以從同一份程式碼配發多個環境、將 Lambda 函式的程式碼與基礎設施定義以一個\n語言整合等用途。\n\n相較於直接撰寫 CloudFormation 範本(YAML / JSON)的優點是:IDE 自動完成與型別\n檢查有效、可用程式語言的語法撰寫迴圈或條件分支、可使用可重複利用的 Construct\n函式庫(L1 / L2 / L3 Constructs / AWS Solutions Constructs)將最佳實務納入\n程式碼等。另一方面,若不透過 CDK 直接編輯經 CDK 部署的 CloudFormation 堆疊\n會破壞同步,因此運作規則上需遵守「CDK 管理對象只透過 CDK 變更」的原則。CDK\n本身不計費,但建立的 AWS 資源會照常產生費用,因此在 PR 審查中檢查避免誤建立\n高額資源的運作較為理想。\n\n在 CLF-C02 中,題目會以「以程式碼管理基礎設施的選項是什麼」「產生 CloudFormation\n以管理資源的工具是什麼」等形式出題。CloudFormation / CDK / Terraform(第三方)\n的區分使用容易成為論點,需掌握 CDK 為「AWS 官方的 IaC 工具,可使用通用語言」\n的定位。SAA-C03 以後,堆疊切分的粒度、CDK Construct 的階層(L1 = CloudFormation\n資源的薄包裝 / L2 = 附帶安全預設值 / L3 = 整合最佳實務的高階)、正式環境的部署\n權限控制都會被深入出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Cloud Development Kit (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/cdk/"
+      },
+      {
+        "label": "AWS Cloud Development Kit (AWS CDK) v2 開發者指南 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/home.html"
+      }
+    ]
+  },
+  {
+    "termId": "cloudformation",
+    "name": "AWS CloudFormation",
+    "shortName": "CloudFormation",
+    "category": "Management",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "以範本定義 AWS 資源,並以堆疊形式建立、更新、刪除的 Infrastructure as Code 服務。",
+    "oneLine": "以程式碼建立並管理 AWS 架構的服務。",
+    "useCases": [
+      "S3 或 Lambda 等的架構管理",
+      "重新建立相同環境",
+      "變更歷史的審查"
+    ],
+    "examPoints": [
+      "實現 Infrastructure as Code",
+      "從範本建立堆疊",
+      "可減少手動操作造成的設定錯誤"
+    ],
+    "saaPoints": [
+      "透過 Change Set 確認變更內容",
+      "透過 StackSets 部署至多帳號、多區域",
+      "以刪除政策規劃資料保護"
+    ],
+    "relatedServices": [
+      "lambda",
+      "s3",
+      "dynamodb"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "iac",
+      "management",
+      "deployment"
+    ],
+    "costNotes": [
+      "CloudFormation 本身不額外收費",
+      "所建立的 AWS 資源會產生費用"
+    ],
+    "securityNotes": [
+      "勿將機密資訊寫入範本",
+      "對具有 IAM 建立權限的範本進行審查"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS CloudFormation 是將 AWS 資源以範本(YAML 或 JSON)宣告式定義,並以「堆疊」\n為單位集中管理建立、更新、刪除的 Infrastructure as Code(IaC)服務。範本中可\n定義 VPC、子網路、EC2、IAM 角色、RDS、S3 儲存貯體等幾乎所有 AWS 資源,只要\n執行堆疊就能在解決相依關係的同時,以一致的順序配置資源。實務上,從同一份範本\n針對各環境(dev / staging / prod)配發堆疊的模式、以變更集事先確認變更內容\n再套用至正式環境的模式、以 StackSet 一次部署至多個帳號、多個區域的模式,都是\n標準採用的方式。\n\nCloudFormation 的優點是:資源架構以程式碼形式留存於存放庫中,變更歷史可透過\nGit 追蹤;在手動操作主控台時容易發生的設定偏移,可用偏移偵測功能偵測;以\n復原功能可在部署失敗時自動回到原始狀態。除了直接撰寫範本之外,提供更高階\n抽象的 AWS CDK(以通用程式語言撰寫 IaC)或 AWS SAM(專注於無伺服器)在內部\n也會合成為 CloudFormation。CloudFormation 本身不收費,但建立的資源會照一般\n費率計費,因此忘記停用、誤定義高額資源都會導致成本事故。\n\n在 CLF-C02 中,題目會以「以程式碼定義、管理 AWS 資源的服務是什麼」「從範本\n一次建立資源的服務是什麼」等形式出題。雖會與 Terraform(HashiCorp 製的第三方\nIaC)並列被處理,但需掌握 CloudFormation 為 AWS 官方的代管 IaC 這一點。SAA-C03\n以後,堆疊間的參照(Export / ImportValue)、巢狀堆疊、以 StackSet 進行的跨組織\n部署、部署失敗時的復原行為的詳細內容會被深入出題。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudFormation (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/cloudformation/"
+      },
+      {
+        "label": "什麼是 AWS CloudFormation (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "範本的結構 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/template-anatomy.html"
+      }
+    ]
+  },
+  {
+    "termId": "cloudfront",
+    "name": "Amazon CloudFront",
+    "shortName": "CloudFront",
+    "category": "Networking",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "從全球邊緣節點分發內容的 CDN 服務。可將 S3 或 ALB 作為來源以高速分發。",
+    "oneLine": "從靠近使用者的位置高速且安全地分發 Web 內容的 CDN。",
+    "useCases": [
+      "S3 靜態網站的 HTTPS 分發",
+      "圖片或 JavaScript 的快取分發",
+      "防止 S3 直接公開"
+    ],
+    "examPoints": [
+      "是 CDN 服務",
+      "可透過快取加速並減輕來源負載",
+      "可用於 HTTPS 分發"
+    ],
+    "saaPoints": [
+      "S3 來源使用 OAC 以進行非公開分發",
+      "規劃快取 TTL 與 Invalidation",
+      "CloudFront 上的 ACM 憑證需在 us-east-1 使用"
+    ],
+    "relatedServices": [
+      "s3",
+      "acm",
+      "route53",
+      "waf"
+    ],
+    "comparisonSlugs": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "architectureSlugs": [
+      "static-site-s3-cloudfront"
+    ],
+    "tags": [
+      "cdn",
+      "networking",
+      "static-site"
+    ],
+    "costNotes": [
+      "依傳輸量、請求數、Invalidation 計費",
+      "透過圖片輕量化抑制傳輸量"
+    ],
+    "securityNotes": [
+      "以 Viewer Protocol Policy 重新導向至 HTTPS",
+      "以 OAC 限制 S3 來源"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "CloudFront 在實務上最常使用的典型架構,是靜態網站的「S3 + CloudFront」。將\nHTML、CSS、JavaScript、圖片放置於 S3,並讓 CloudFront 立於前端進行配送。此架構\n因不需常駐伺服器,在沒有存取的時間帶能壓低成本,同時能向全球使用者進行低延遲\n配送。從個人開發的作品集網站到企業的活動網站,不論規模都廣為採用。\n\n在動態應用程式中,將 CloudFront 置於前端以快取配送靜態資產(圖片、JS、CSS),\n僅將 API 請求轉至來源(ALB 或 API Gateway)的架構也很常見。如此可將不會變動的\n資產配送交由邊緣處理,將來源的負擔集中於本應處理的請求。\n\n安全性與費用的觀點也需掌握。CloudFront 自動內建 AWS Shield Standard,標準提供\n針對 DDoS 攻擊的基本防護。若與 AWS WAF 結合,可在 CloudFront 的邊緣套用 IP\n位址限制、速率限制、SQL 注入對策等應用程式層的防禦。在 S3 來源的情況下,使用\nOAC(Origin Access Control)不直接公開 S3 儲存貯體,僅允許透過 CloudFront\n存取的架構為標準做法。在費用方面,資料傳輸量、HTTP 請求數、Invalidation\n(快取刪除)各自會產生費用,但免費利用範圍提供每月 1 TB 的資料傳輸與 1,000\n萬筆請求。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon CloudFront (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "在 CloudFront 使用 OAC (Origin Access Control) (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+      }
+    ]
+  },
+  {
+    "termId": "cloudtrail",
+    "name": "AWS CloudTrail",
+    "shortName": "CloudTrail",
+    "category": "Monitoring",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "記錄 AWS 帳戶內 API 操作歷史的服務。可追蹤誰在何時變更了什麼。",
+    "oneLine": "記錄 AWS 上操作歷史的稽核日誌服務。",
+    "useCases": [
+      "追蹤 IAM 設定變更",
+      "確認可疑的 API 操作",
+      "稽核因應"
+    ],
+    "examPoints": [
+      "記錄使用者或服務的 API 操作歷史",
+      "用於安全稽核",
+      "與 CloudWatch 目的不同"
+    ],
+    "saaPoints": [
+      "可集中整個組織的紀錄",
+      "可將日誌儲存至 S3",
+      "考量日誌竄改偵測與 KMS 加密"
+    ],
+    "relatedServices": [
+      "cloudwatch",
+      "aws-config",
+      "iam"
+    ],
+    "comparisonSlugs": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "architectureSlugs": [],
+    "tags": [
+      "monitoring",
+      "audit",
+      "security"
+    ],
+    "costNotes": [
+      "管理事件的記錄有可作為基本功能使用的範圍",
+      "資料事件或長期保存需注意費用"
+    ],
+    "securityNotes": [
+      "限制紀錄日誌的刪除權限",
+      "重要帳戶須確認啟用狀態"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS CloudTrail 是記錄 AWS 帳號內所有 API 呼叫的稽核記錄服務。記錄由誰(IAM\n主體)、對哪個服務、何時(日期時間)、從何處(來源 IP)、執行了什麼操作\n(API 名稱、請求參數、回應),活用於安全事件的事後調查、合規稽核、運作疑難排解。\n在所有區域啟用是安全層面的基本,與 AWS Organizations 結合可集中管理多個帳號\n的事件。\n\nCloudTrail 的事件大致分為 3 種。管理事件(管理事件)是 EC2 執行個體啟動、IAM\n政策變更等控制平面操作,預設可作為「事件歷史」瀏覽 90 天份。S3 物件的 GET/PUT\n等資料事件預設停用,啟用後成本會增加。設定證跡(Trail)後,可長期儲存至 S3\n儲存貯體,也能匯出至 CloudWatch Logs 或連動至 Amazon Athena 進行分析。\n\n在 CLF-C02 中是「記錄 AWS API 操作的服務是什麼」「調查誰變更了資源時要用哪個\n服務」的常考服務。容易與 CloudWatch(指標、警示)、AWS Config(資源架構變更\n的記錄、規則合規檢查)混淆,因此明確區分 3 個服務的角色非常重要。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      },
+      {
+        "label": "AWS CloudTrail 使用者指南 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "CloudTrail 的運作機制 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/how-cloudtrail-works.html"
+      }
+    ]
+  },
+  {
+    "termId": "cloudwatch",
+    "name": "Amazon CloudWatch",
+    "shortName": "CloudWatch",
+    "category": "Monitoring",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "管理 AWS 資源指標、日誌、警示的監控服務。用於確認 Lambda 日誌或 CloudFront 指標。",
+    "oneLine": "查看 AWS 資源狀態與日誌的監控服務。",
+    "useCases": [
+      "確認 Lambda 的錯誤日誌",
+      "監控 API Gateway 或 DynamoDB 的指標",
+      "警示通知"
+    ],
+    "examPoints": [
+      "處理指標與日誌",
+      "可透過警示在超過閾值時通知",
+      "用於營運監控"
+    ],
+    "saaPoints": [
+      "設定 CloudWatch Logs 的保留期間",
+      "可依指標驅動 Auto Scaling",
+      "規劃異常偵測與警示通知"
+    ],
+    "relatedServices": [
+      "lambda",
+      "api-gateway",
+      "cloudtrail",
+      "aws-config"
+    ],
+    "comparisonSlugs": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "architectureSlugs": [
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "monitoring",
+      "logs",
+      "metrics"
+    ],
+    "costNotes": [
+      "依日誌擷取量與儲存量計費",
+      "MVP 階段將日誌保留期間設定較短"
+    ],
+    "securityNotes": [
+      "勿將郵件本文或聯絡表單全文寫入日誌",
+      "限縮日誌檢視權限"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon CloudWatch 是整合管理 AWS 資源及應用程式的指標、記錄、警示的監控服務。\nEC2 CPU 使用率、RDS 連線數、Lambda 執行時間等標準指標會自動收集,無需額外設定\n即可用於儀表板或警示。CloudWatch Logs 是收集、儲存應用程式記錄的服務,可集中\n管理 Lambda 的標準輸出、EC2 上的應用程式記錄、VPC 流程記錄等。\n\nCloudWatch Alarms 在指標超過設定的臨界值時,可透過 Amazon SNS 發送通知至電子\n郵件、Slack、PagerDuty,或觸發 EC2 Auto Scaling 增減執行個體進行自動處置。\n儀表板可視覺化多個資源的指標,與 Amazon EventBridge 結合也能實現事件驅動的\n運作自動化。在成本方面,自訂指標會依指標數、API 請求數計費,因此投入大量\n自訂指標時,事前需做成本試算。\n\n在 CLF-C02 中會以「進行指標收集、警示通知的服務是什麼」的形式出題。與 CloudTrail\n(API 操作記錄)、AWS Config(資源架構變更的記錄、規則合規檢查)的 3 個服務\n比較是常考點,明確區分各自的角色非常重要。SAA-C03 以後,CloudWatch Logs Insights\n進行的查詢分析、以指標篩選從記錄產生獨自指標的模式、Contributor Insights 進行\n的 Top N 分析等進階活用模式會被出題。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "什麼是 Amazon CloudWatch (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "什麼是 Amazon CloudWatch Logs (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+      }
+    ]
+  },
+  {
+    "termId": "codebuild",
+    "name": "AWS CodeBuild",
+    "shortName": "CodeBuild",
+    "category": "Management",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS CodeBuild 是執行原始碼建置或測試的全代管建置服務。",
+    "oneLine": "用於建置與測試程式碼的 AWS 代管服務。",
+    "useCases": [
+      "應用程式的建置",
+      "自動測試",
+      "建立容器映像"
+    ],
+    "examPoints": [
+      "用於 CI/CD 的建置階段",
+      "可使用代管的建置環境",
+      "可與 CodePipeline 整合"
+    ],
+    "saaPoints": [
+      "以 buildspec.yml 定義建置步驟",
+      "以 IAM 角色控制建置時的 AWS 權限",
+      "考量與 GitHub Actions 的分工"
+    ],
+    "relatedServices": [
+      "codepipeline",
+      "ecr",
+      "iam"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "cicd",
+      "build",
+      "devops"
+    ],
+    "costNotes": [
+      "依建置時間與運算類型計費",
+      "本專案以 GitHub Actions 為主,故非必要"
+    ],
+    "securityNotes": [
+      "勿在建置日誌中輸出機密資訊",
+      "將建置用的 IAM 角色設為最小權限"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS CodeBuild 是執行原始碼編譯、測試、封裝的全代管組建服務。由於每次組建會啟動\n獨立的 Docker 容器,因此無環境污染、再現性高。可直接與 GitHub、CodeCommit、\nBitbucket 等存放庫整合,並能將組建成品(二進位檔、ZIP、Docker 映像檔)輸出至\nAmazon S3 或 Amazon ECR。無需管理伺服器,採用依實際組建時間計費的隨用即付模式。\n\n組建處理透過位於專案根目錄的 buildspec.yml 以階段為單位定義。install(相依關係\n安裝)、pre_build(測試準備)、build(編譯、測試執行)、post_build(成品的\n封裝、推送)為基本的 4 階段架構,各階段的指令以 YAML 描述。組建使用的映像檔\n可選擇 AWS 提供的代管映像檔(Node.js、Java、Python、Go 等)或註冊在 ECR 的\n自訂映像檔。環境變數已準備好與 SSM Parameter Store 或 AWS Secrets Manager 的\n整合,可安全地注入 API 金鑰等機密資訊,而不將其暴露於組建記錄。\n\n在 CLF-C02 中,題目會以「AWS 的持續整合(CI)服務是哪個」的形式出題,整理\n並記住 CodeCommit(原始碼管理)、CodeBuild(組建、測試)、CodeDeploy(部署)、\nCodePipeline(管線整合)這 4 個服務的角色非常重要。",
+    "officialDocs": [
+      {
+        "label": "AWS CodeBuild (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/codebuild/"
+      },
+      {
+        "label": "什麼是 AWS CodeBuild (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/welcome.html"
+      }
+    ]
+  },
+  {
+    "termId": "codepipeline",
+    "name": "AWS CodePipeline",
+    "shortName": "CodePipeline",
+    "category": "Management",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS CodePipeline 是串接原始碼、建置、測試、部署的 CI/CD 管道服務。",
+    "oneLine": "將程式碼變更到部署的流程自動化的服務。",
+    "useCases": [
+      "自動部署",
+      "帶有核准的發佈",
+      "與 CodeBuild 或 CodeDeploy 的整合"
+    ],
+    "examPoints": [
+      "是建構 CI/CD 管道的服務",
+      "可串接多個階段",
+      "在開發營運自動化的脈絡中出現"
+    ],
+    "saaPoints": [
+      "可在正式環境反映前加入核准階段",
+      "規劃並區分各階段的 IAM 權限",
+      "可能與 GitHub Actions 的角色重疊"
+    ],
+    "relatedServices": [
+      "codebuild",
+      "iam",
+      "s3"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "cicd",
+      "pipeline",
+      "devops"
+    ],
+    "costNotes": [
+      "依作用中的管道數量等計費",
+      "個人 MVP 階段多數情況下使用 GitHub Actions 已足夠"
+    ],
+    "securityNotes": [
+      "將部署權限限縮至對象資源",
+      "決定正式環境部署的核准規則"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS CodePipeline 是視覺化建構、管理從原始碼提交到組建、測試、部署的 CI/CD\n管線的編排服務。管線由階段與動作組成,各階段可組入 CodeBuild、CodeDeploy、\nCloudFormation、ECS、Lambda 等 AWS 服務,以及 GitHub Actions、Jenkins 等第三方\n服務作為動作。\n\n標準架構是來源階段(以 CodeCommit 或 GitHub 的推送為觸發)→組建階段(以\nCodeBuild 進行的編譯、測試)→部署階段(透過 CodeDeploy 或 CloudFormation\n進行正式環境反映)的 3 階段架構。在階段之間插入手動核准動作,可在正式環境部署\n前強制取得核准者的確認。橫跨多個環境(dev → staging → prod)的晉升,也只需\n增加階段即可實現。費用以每條管線的月度固定費用為基本,最初的 1 條有免費利用\n範圍。\n\n在 CLF-C02 中,題目會以「管理 CI/CD 管線的服務是哪個」的形式出題,整理並記住\nCodeCommit、CodeBuild、CodeDeploy、CodePipeline 這 4 個服務的角色非常重要。\nCodeBuild 負責個別的組建、測試處理,而 CodePipeline 則扮演整合這些並編排整條\n管線的角色。SAA-C03 以後,藍綠部署、金絲雀發布、跨帳號管線的設計模式都包含\n在出題範圍內。",
+    "officialDocs": [
+      {
+        "label": "AWS CodePipeline (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/codepipeline/"
+      },
+      {
+        "label": "什麼是 AWS CodePipeline (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/welcome.html"
+      },
+      {
+        "label": "CodePipeline 的概念 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/concepts.html"
+      }
+    ]
+  },
+  {
+    "termId": "cognito",
+    "name": "Amazon Cognito",
+    "shortName": "Cognito",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "處理使用者註冊、登入、認證權杖簽發的服務。作為 Web 應用或行動應用的認證基礎使用。",
+    "oneLine": "管理應用程式使用者註冊與登入的認證服務。",
+    "useCases": [
+      "學習網站的登入功能",
+      "API Gateway 的 JWT 認證",
+      "保護個別使用者的學習歷程"
+    ],
+    "examPoints": [
+      "用於使用者認證",
+      "分為 User Pool 與 Identity Pool",
+      "可整合 MFA 或外部 IdP"
+    ],
+    "saaPoints": [
+      "可與 API Gateway 的 JWT Authorizer 整合",
+      "User Pool 用於認證,Identity Pool 用於 AWS 授權",
+      "從權杖取得 userId 以控制資料存取"
+    ],
+    "relatedServices": [
+      "api-gateway",
+      "iam",
+      "lambda"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "security",
+      "authentication",
+      "user-management"
+    ],
+    "costNotes": [
+      "依 MAU 與進階功能計費",
+      "MVP 階段不建立登入,故非適用對象"
+    ],
+    "securityNotes": [
+      "勿信任請求 Body 中的使用者 ID",
+      "使用通過 JWT 驗證的 claims 進行本人確認"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon Cognito 是為 Web 應用程式或行動應用程式加入**使用者認證、授權基礎**的\n全代管服務。主要的構成元素有 2 個,角色不同。\n\n**User Pool** 是管理使用者註冊、登入、密碼重設、MFA 的認證目錄。在認證成功後\n發行 JWT(ID 權杖 / 存取權杖 / 重新整理權杖),回傳給用戶端。若與 API Gateway\n的 JWT Authorizer 組合,可在閘道階段對抵達 Lambda 的請求進行認證檢查。\n\n**Identity Pool(舊稱:聯合身分)** 對已認證的使用者(以 Cognito User Pool 或\nGoogle / Facebook 等外部 IdP 認證者)配發臨時的 AWS 認證資訊(相當於 IAM 角色\n的存取金鑰)。用於使用者直接存取 S3 儲存貯體或 DynamoDB 資料表的架構(從\nMobile SDK 直接呼叫 SDK 等)。\n\n實作上重要的注意事項是,API 回傳的個人資料的所有權確認需使用 JWT 宣告的 `sub`\n(subject)。包含於請求 Body 或 URL 路徑的 `userId` 因可竄改,不可作為可信任的\n識別碼使用。將 Lambda 授權器或 JWT Authorizer 驗證過的宣告作為後端授權邏輯\n所使用的設計是必須的。\n\n在 CLF-C02 中會以「用於應用程式的使用者認證的服務是哪個」「管理使用者登入的\n代管服務是哪個」被出題。在 SAA-C03 中,User Pool 與 Identity Pool 的區分使用、\n與 API Gateway 的 JWT Authorizer 整合、外部 IdP 聯合的設計會被出題。",
+    "officialDocs": [
+      {
+        "label": "Amazon Cognito (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/cognito/"
+      },
+      {
+        "label": "什麼是 Amazon Cognito (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/what-is-amazon-cognito.html"
+      },
+      {
+        "label": "Amazon Cognito 使用者池 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/cognito-user-pools.html"
+      }
+    ]
+  },
+  {
+    "termId": "cost-explorer",
+    "name": "AWS Cost Explorer",
+    "shortName": "Cost Explorer",
+    "category": "Management",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "將 AWS 使用費用以服務別、期間別、標籤別視覺化的服務。用於成本分析。",
+    "oneLine": "查看 AWS 費用發生於哪些服務的分析服務。",
+    "useCases": [
+      "確認各服務的費用",
+      "確認月度成本走勢",
+      "調查不必要的資源"
+    ],
+    "examPoints": [
+      "用於成本的視覺化與分析",
+      "可確認過去的使用費用",
+      "與 Budgets 角色不同"
+    ],
+    "saaPoints": [
+      "結合標籤掌握各專案的費用",
+      "成為 Rightsizing 或 Savings Plans 評估的入口",
+      "用於預算超支時的原因調查"
+    ],
+    "relatedServices": [
+      "aws-budgets",
+      "organizations"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "cost",
+      "billing",
+      "management"
+    ],
+    "costNotes": [
+      "Cost Explorer 的部分功能依使用情況可能產生費用",
+      "每週確認以找出不必要的費用"
+    ],
+    "securityNotes": [
+      "限縮可存取帳單資訊的使用者",
+      "發現成本異常時同時確認 CloudTrail"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Cost Explorer 是為**視覺化、分析** AWS 利用費用的工具。可從主控台直接\n存取,可確認過去 13 個月的費用資料,並依服務別、區域別、標籤別、帳號別查看。\n也具備預測未來 12 個月費用的預測功能。\n\n**與 AWS Budgets 的角色差異**在考試中常被問到。Cost Explorer 是「視覺化並分析\n過去與現在成本」的工具,不具備警示或通知功能。Budgets 是「對設定的預算發送\n警示」的工具,可進行電子郵件或 SNS 通知。想掌握費用時使用 Cost Explorer,想在\n費用超支時收到通知則使用 Budgets,這就是它們的區分使用方式。\n\n在成本分析的實踐中,與 CloudTrail 結合,在調查「哪個 IAM 使用者、角色建立了\n非預期的資源」時,以 Cost Explorer 偵測到成本暴增,再以 CloudTrail 深入挖掘\n操作歷史的工作流程很常見。徹底進行標籤化後,可依專案別、環境別(dev/staging/\nprod)分配成本,也可活用於部門間的內部計費。\n\n在 CLF-C02 中,題目會以「分析成本的服務是哪個」「要確認過去 12 個月的成本\n趨勢要用哪個」的形式成為正解。誤答中會並列 Budgets(通知目的)、CloudTrail\n(操作記錄目的)、CloudWatch(效能監控目的)。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      },
+      {
+        "label": "什麼是 AWS Cost Explorer (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      }
+    ]
+  },
+  {
+    "termId": "dynamodb",
+    "name": "Amazon DynamoDB",
+    "shortName": "DynamoDB",
+    "category": "Database",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "無伺服器的 NoSQL 資料庫。可依鍵值設計進行高速讀寫,容易應對容量與存取量增加。",
+    "oneLine": "無需管理伺服器即可使用的 AWS NoSQL 資料庫。",
+    "useCases": [
+      "儲存諮詢資料",
+      "儲存使用者設定",
+      "存取模式明確的應用程式資料"
+    ],
+    "examPoints": [
+      "為 NoSQL 的受管資料庫",
+      "可選擇按需計費",
+      "以分割鍵為核心進行設計"
+    ],
+    "saaPoints": [
+      "依存取模式進行資料表設計",
+      "避免大量使用 Scan,以 Query 為主",
+      "理解 DAX 與 GSI 的用途後再使用"
+    ],
+    "relatedServices": [
+      "lambda",
+      "api-gateway",
+      "rds"
+    ],
+    "comparisonSlugs": [
+      "rds-vs-dynamodb"
+    ],
+    "architectureSlugs": [
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "database",
+      "nosql",
+      "serverless"
+    ],
+    "costNotes": [
+      "按需模式適合小規模與存取量變動的情境",
+      "大量使用 Scan 在資料量增加時會導致成本上升"
+    ],
+    "securityNotes": [
+      "透過 IAM 僅允許 PutItem 等必要操作",
+      "儲存個人資訊時須留意日誌輸出與存取權限"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon DynamoDB 是 AWS 提供的全託管 NoSQL 資料庫服務。伺服器的佈建、OS 修補、叢集管理皆由 AWS 負責,開發者可專注於資料表設計與應用程式程式碼。\n\n**設計的核心是以存取模式驅動**。DynamoDB 透過分區鍵(PK)與選用的排序鍵(SK)來識別資料。分區鍵相同的項目會儲存於同一分區,基於排序鍵範圍的 Query 可達到高速。資料表設計應依「先列舉存取模式,再以鍵結構表現這些模式」的順序進行,不採取像 RDB 般正規化後再 JOIN 的做法。\n\n**Query 與 Scan 的區分使用**是重要的最佳化要點。Query 指定分區鍵並使用索引,因此快速且低成本;Scan 則順序掃描整個資料表,隨資料量增加而變得緩慢且高成本。在正式環境中應避免大量使用 Scan,標準的設計模式是建立 GSI(全域次要索引)並以 Query 解決。\n\n**容量模式**有 2 種。隨需模式依存取量自動擴展,未使用部分不計費。預先佈建模式則需事先指定 RCU(讀取容量單位)/ WCU(寫入容量單位),並搭配 Auto Scaling 使用。\n\n**DynamoDB Streams** 是可即時取得資料表變更(INSERT / MODIFY / REMOVE)的事件串流功能。可與 Lambda 連動,實作事件驅動的處理(複寫、通知、彙總)。\n\n**透過 IAM 進行存取控制**時,應以動作為單位(`PutItem` / `GetItem` / `Query` / `Scan` 等)而非資料表為單位授予權限。遵循最小權限原則,僅授予 Lambda 函式所需操作的 IAM 角色。\n\nSAA-C03 會考 GSI / LSI(本地次要索引)的設計、DAX(DynamoDB Accelerator)所提供的記憶體內快取、DynamoDB Streams + Lambda 的整合模式,以及與 RDS 的區分選用判斷基準。",
+    "officialDocs": [
+      {
+        "label": "Amazon DynamoDB (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/dynamodb/"
+      },
+      {
+        "label": "什麼是 Amazon DynamoDB (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/Introduction.html"
+      },
+      {
+        "label": "Amazon DynamoDB 的核心元件 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html"
+      }
+    ]
+  },
+  {
+    "termId": "ebs",
+    "name": "Amazon Elastic Block Store",
+    "shortName": "EBS",
+    "category": "Storage",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "掛載到 EC2 使用的區塊儲存體。作為作業系統磁碟或資料磁碟使用。",
+    "oneLine": "作為 EC2 磁碟使用的區塊儲存體。",
+    "useCases": [
+      "EC2 的根磁碟區",
+      "資料庫用磁碟",
+      "透過快照進行備份"
+    ],
+    "examPoints": [
+      "為掛載至 EC2 的區塊儲存體",
+      "可透過快照進行備份",
+      "與可用區綁定"
+    ],
+    "saaPoints": [
+      "依效能需求選擇磁碟區類型",
+      "快照儲存於 S3 但使用者無法直接操作",
+      "需檢討加密設定"
+    ],
+    "relatedServices": [
+      "s3",
+      "efs",
+      "ec2"
+    ],
+    "comparisonSlugs": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "architectureSlugs": [
+      "three-tier-vpc"
+    ],
+    "tags": [
+      "storage",
+      "block-storage",
+      "ec2"
+    ],
+    "costNotes": [
+      "依預先配置的容量計費",
+      "注意未使用磁碟區的閒置情形"
+    ],
+    "securityNotes": [
+      "啟用 EBS 加密",
+      "確認快照的共用範圍"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon EBS(Elastic Block Store)是掛載至 EC2 執行個體使用的**區塊儲存**服務。從作業系統角度看,它被識別為一般的磁碟機,可掛載檔案系統進行資料讀寫。它必須與 EC2 執行個體配置於同一可用區域(AZ),**無法跨 AZ 掛載**。\n\n**與物件儲存(S3)、檔案儲存(EFS)的差異**經常被考。EBS 作為區塊裝置掛載至單一 EC2,適合提供高速 I/O 的用途。S3 以物件為單位透過 HTTP API 存取,因此無法從 EC2 當作磁碟使用。EFS 則是可從多個 EC2 同時掛載的共用檔案系統。\n\n**磁碟區類型**應依工作負載選擇。一般用途 SSD 的 gp3 是最常見選擇,具備優異的成本效益。佈建 IOPS SSD 的 io2 用於需要高 IOPS 的資料庫用途。輸送量最佳化 HDD(st1)適合大容量的順序讀寫(日誌、大數據處理),冷存取 HDD(sc1)則是適合低頻率存取大量資料的低成本選項。\n\n**快照**是將 EBS 磁碟區的時間點副本儲存至 S3 的功能。使用者操作時無須意識到 S3 儲存體。快照採增量備份方式,初次完整擷取後僅儲存變更差異,效率高。可從快照還原為新的 EBS 磁碟區,或複製至其他區域作為 DR 對策。\n\n重要注意事項是,**即使停止 EC2 執行個體,所掛載的 EBS 磁碟區仍會持續計費**。不需要的磁碟區若不明確刪除,費用將持續產生。\n\nCLF-C02 會以「EC2 的磁碟使用何種儲存體」、「哪種區塊儲存與 AZ 綁定」等形式出題。SAA-C03 則會考磁碟區類型的選定基準、Multi-Attach(io1/io2 的限定功能)、加密(與 KMS 的整合)、快照的生命週期管理等內容。",
+    "officialDocs": [
+      {
+        "label": "Amazon EBS (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/ebs/"
+      },
+      {
+        "label": "什麼是 Amazon EBS (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/what-is-ebs.html"
+      },
+      {
+        "label": "Amazon EBS 磁碟區類型 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/ebs-volume-types.html"
+      }
+    ]
+  },
+  {
+    "termId": "ec2",
+    "name": "Amazon Elastic Compute Cloud",
+    "shortName": "EC2",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "可在 AWS 上啟動虛擬伺服器的服務。可選擇作業系統、執行個體類型、儲存體與網路進行使用。",
+    "oneLine": "可在 AWS 上自由使用的虛擬伺服器。",
+    "useCases": [
+      "建構 Web 伺服器",
+      "批次處理伺服器",
+      "既有應用程式的遷移目的地"
+    ],
+    "examPoints": [
+      "依執行時間與執行個體類型計費",
+      "與 Auto Scaling 及 ELB 組合使用",
+      "依共同責任模型,作業系統以上由使用者管理"
+    ],
+    "saaPoints": [
+      "採用 Multi-AZ 架構提升可用性",
+      "設計為無狀態以便進行 Auto Scaling",
+      "透過執行個體購買選項進行成本最佳化"
+    ],
+    "relatedServices": [
+      "elb",
+      "auto-scaling",
+      "ebs",
+      "vpc"
+    ],
+    "comparisonSlugs": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "architectureSlugs": [
+      "three-tier-vpc",
+      "high-availability-web-app"
+    ],
+    "tags": [
+      "compute",
+      "virtual-server"
+    ],
+    "costNotes": [
+      "忘記停止會持續產生費用",
+      "Elastic IP 與 EBS 也可能產生費用"
+    ],
+    "securityNotes": [
+      "透過 Security Group 僅允許必要通訊",
+      "勿將 SSH 私鑰放入公開儲存庫"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon EC2(Elastic Compute Cloud)是可在 AWS 雲端上啟動與管理虛擬伺服器(執行個體)的 IaaS 服務。透過選擇 AMI(Amazon Machine Image),即可在已預先配置作業系統與初始軟體的狀態下啟動執行個體。\n\n**執行個體類型**應依工作負載選擇。可分為一般用途(M 系列、T 系列)、運算最佳化(C 系列)、記憶體最佳化(R 系列、X 系列)、儲存最佳化(I 系列、D 系列)、加速運算(P 系列、G 系列 / GPU)等系列。CLF 考試會考「選擇 vCPU 數量與 RAM 組合」的基本概念。\n\n**購買選項**是成本最佳化的關鍵,CLF-C02、SAA-C03 都會頻繁出題。\n- **隨需執行個體**: 以秒為單位計費、無承諾、適合短期且無法預測的工作負載\n- **預留執行個體(RI)**: 承諾 1 年或 3 年可享最高 75% 折扣。適合固定工作負載\n- **Savings Plans**: 可彈性套用與 RI 同等折扣率(不限執行個體類型)的新機制\n- **競價型執行個體**: 以最高 90% 折扣使用 AWS 的閒置容量,有中斷風險,適合容錯能力高的分散式工作負載(批次處理、ML 訓練等)\n- **Dedicated Host**: 獨占實體伺服器,支援 BYOL(自帶授權)\n\n**Auto Scaling 與 ELB 的組合**是 Web 應用的標準架構。Auto Scaling 依流量增減執行個體數量,ELB(Elastic Load Balancing)則將請求分散至各執行個體。此架構需採用**無狀態設計**(執行個體內部不保留工作階段資訊),標準模式是將工作階段外部化至 ElastiCache(Redis/Memcached)或 DynamoDB。\n\n從**責任共擔模型**角度來看,EC2 是由使用者負責管理 hypervisor 以上的部分(作業系統 / 中介軟體 / 應用程式)(屬「雲端內的安全」領域)。\n\nCLF-C02 會以「提供虛擬伺服器的服務是哪一個」、「EC2 的計費模式為何」等形式出題。SAA-C03 則會考購買選項的區分判斷、Auto Scaling + ELB 的架構設計、AMI 自訂與橫向擴展、執行個體中繼資料與使用者資料的活用等。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      },
+      {
+        "label": "什麼是 Amazon EC2 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "label": "Amazon EC2 執行個體購買選項 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/instance-purchasing-options.html"
+      }
+    ]
+  },
+  {
+    "termId": "ecr",
+    "name": "Amazon Elastic Container Registry",
+    "shortName": "ECR",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon ECR 是用於儲存與管理 Docker 容器映像的容器登錄服務。",
+    "oneLine": "在 AWS 上保管容器映像的服務。",
+    "useCases": [
+      "儲存 ECS 用的映像",
+      "儲存 App Runner 用的映像",
+      "保管 CI/CD 建立的容器"
+    ],
+    "examPoints": [
+      "為容器映像的儲存位置",
+      "與 ECS 或 EKS 組合使用",
+      "可作為私有登錄使用"
+    ],
+    "saaPoints": [
+      "透過映像掃描檢查弱點",
+      "以生命週期政策刪除過舊映像",
+      "與 CI/CD 管線整合"
+    ],
+    "relatedServices": [
+      "ecs",
+      "fargate",
+      "app-runner"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "container",
+      "registry",
+      "ecr"
+    ],
+    "costNotes": [
+      "依儲存容量與資料傳輸計費",
+      "勿持續保留不需要的舊映像"
+    ],
+    "securityNotes": [
+      "透過 IAM 限制儲存庫權限",
+      "勿在映像中包含 API 金鑰或 .env"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon ECR(Elastic Container Registry)是用於儲存與管理 Docker 容器映像和 OCI 格式產物的全託管容器登錄服務。分為私有登錄(在帳戶 / IAM 範圍內封閉共享)與公開登錄(網際網路公開)2 種,並與 ECS / EKS / App Runner / Lambda(以容器映像執行)等 AWS 上的容器執行基礎緊密整合。從 Docker CLI 可以與一般登錄相同的 `docker push` / `docker pull` 進行操作,認證則透過 IAM 發行的暫時權杖。\n\n實務上的代表性使用情境是 CI/CD 管線推送映像,以及 ECS / EKS 任務自動拉取。CodeBuild 或 GitHub Actions 建置映像並推送至 ECR,然後 ECS 服務更新時新的任務定義從 ECR 拉取最新映像並執行。ECR 具備映像掃描功能(Basic 掃描與 Enhanced 掃描),可在推送時自動偵測已知漏洞(CVE)並通知。設定生命週期政策可自動刪除舊映像(以標籤數或建立日期為基準),防止儲存成本膨脹。\n\n安全運維方面,可透過儲存庫政策(基於資源的 IAM)控制「哪些 IAM 主體可推送 / 拉取」,防止未授權寫入正式環境映像。基本原則是不在容器映像中包含 API 金鑰、`.env` 檔案、私密金鑰(改用環境變數或從 Secrets Manager / Parameter Store 在執行時注入)。CLF-C02 會以「儲存容器映像的服務」、「與 ECS / EKS 組合使用的登錄」等形式出題。SAA-C03 以上則會進一步考 Enhanced 掃描與 Amazon Inspector 的整合、跨帳戶複寫、透過 Private endpoint(VPC 端點)拉取映像等內容。",
+    "officialDocs": [
+      {
+        "label": "Amazon ECR (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/ecr/"
+      },
+      {
+        "label": "什麼是 Amazon ECR (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/what-is-ecr.html"
+      },
+      {
+        "label": "Amazon ECR 映像掃描 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECR/latest/userguide/image-scanning.html"
+      }
+    ]
+  },
+  {
+    "termId": "ecs",
+    "name": "Amazon Elastic Container Service",
+    "shortName": "ECS",
+    "category": "Compute",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon ECS 是在 AWS 上執行與管理 Docker 容器的容器編排服務。可以使用 EC2 或 Fargate 作為執行基礎。",
+    "oneLine": "在 AWS 上執行與管理容器化應用程式的服務。",
+    "useCases": [
+      "執行容器化的 Web 應用程式",
+      "API 伺服器的容器運維",
+      "批次處理容器的執行",
+      "微服務架構的管理"
+    ],
+    "examPoints": [
+      "為容器編排服務",
+      "有 ECS on EC2 與 ECS on Fargate 兩種執行方式",
+      "使用 Fargate 可減少 EC2 執行個體管理",
+      "容器映像的儲存使用 ECR",
+      "可與 ALB 組合公開 Web 應用程式"
+    ],
+    "saaPoints": [
+      "想避免伺服器管理的容器執行情境可考慮 Fargate",
+      "基本架構是將 ECS 任務放置於私有子網路,僅 ALB 為公開",
+      "理解任務執行角色與任務角色的差異",
+      "以服務的 Desired Count 維持任務數量",
+      "可透過 CloudWatch Logs 確認容器日誌"
+    ],
+    "relatedServices": [
+      "fargate",
+      "ecr",
+      "elb",
+      "vpc",
+      "cloudwatch",
+      "iam"
+    ],
+    "comparisonSlugs": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "architectureSlugs": [
+      "ecs-fargate-web-app"
+    ],
+    "tags": [
+      "compute",
+      "container",
+      "orchestration",
+      "ecs",
+      "fargate"
+    ],
+    "costNotes": [
+      "ECS on EC2 會對 EC2 執行個體、EBS、ALB 等收費",
+      "ECS on Fargate 依 vCPU、記憶體與執行時間計費",
+      "搭配 ALB 時也會產生負載平衡器費用",
+      "以靜態網站為主的 MVP 採用 S3 + CloudFront 較易維持低成本"
+    ],
+    "securityNotes": [
+      "任務角色僅允許應用程式所需的 AWS 操作",
+      "任務執行角色需賦予從 ECR 取得映像與輸出 CloudWatch Logs 所需的權限",
+      "ECS 任務的 Security Group 僅允許來自 ALB 的通訊",
+      "勿在容器映像中包含 API 金鑰或 .env 檔案",
+      "正式環境須確認 ECR 映像掃描與最小權限 IAM"
+    ],
+    "updatedAt": "2026-06-08",
+    "locale": "zh",
+    "practicalNote": "Amazon ECS(Elastic Container Service)是在 AWS 上執行與管理 Docker 容器的全託管容器編排服務。運維時的組成元素包括:任務定義(整合容器映像、CPU / 記憶體、網路、IAM 角色、日誌輸出目的地等的設計圖)、任務(從任務定義啟動的 1 個或多個容器執行單元)、服務(維持指定數量的任務,並依需要與 ALB / NLB 連動的邏輯單元)、叢集(集合任務、服務的邏輯邊界)。\n\n執行基礎可選擇「ECS on EC2」與「ECS on Fargate」2 種。EC2 啟動類型由使用者管理作為容器主機的 EC2 執行個體,可彈性選擇執行個體類型、使用 GPU / 特殊用途執行個體、透過 Spot 執行個體進行成本最佳化。Fargate 啟動類型則由 AWS 端隱藏容器主機管理,使用者僅需指定 CPU / 記憶體需求即可,可削減伺服器管理工作,但相對地每單位時間執行成本會比 EC2 + 自行管理略高。\n\n實務上的標準架構是 3 層結構: ECS 任務配置於私有子網路,僅將位於公有子網路的 ALB 從網際網路開放存取。標準設計包括 ALB → ECS 服務的動態連接埠對應、容器日誌輸出至 CloudWatch Logs、Auto Scaling(以 CPU / 記憶體 / ALB 請求數為基礎)自動增減任務數。任務有 2 種 IAM 角色:「任務執行角色」用於 ECS 自身所需的 AWS API 操作,如從 ECR 拉取映像、輸出至 CloudWatch Logs;「任務角色」則用於容器內應用程式存取 AWS API(S3 / DynamoDB 等)。兩者混淆會導致權限事故,因此應明確區分後再設計。\n\nCLF-C02 會以「執行容器的編排服務」、「與 ECR 組合使用的容器執行基礎」等形式出題。SAA-C03 以上則會考 Fargate 與 EC2 啟動類型的選定、服務的 Desired Count 設計、Capacity Provider、ECS Service Connect / Service Discovery,以及與 EKS(Kubernetes 相容)的區分使用等內容。",
+    "officialDocs": [
+      {
+        "label": "Amazon ECS (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/ecs/"
+      },
+      {
+        "label": "什麼是 Amazon ECS (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/Welcome.html"
+      },
+      {
+        "label": "Amazon ECS 啟動類型 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/ecs-configuration.html"
+      }
+    ]
+  },
+  {
+    "termId": "efs",
+    "name": "Amazon Elastic File System",
+    "shortName": "EFS",
+    "category": "Storage",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "可供多個 EC2 或 Lambda 共用的受管 NFS 檔案儲存體。可依檔案單位讀寫。",
+    "oneLine": "可供多台伺服器共用的檔案儲存體。",
+    "useCases": [
+      "多台 EC2 共用的檔案存放區",
+      "內容共享",
+      "Linux 工作負載的共享儲存體"
+    ],
+    "examPoints": [
+      "為檔案儲存體",
+      "可從多個可用區存取",
+      "透過 NFS 使用"
+    ],
+    "saaPoints": [
+      "在各子網路設計掛載目標",
+      "依用途選擇 EFS Standard 或 One Zone",
+      "理解輸送量模式"
+    ],
+    "relatedServices": [
+      "s3",
+      "ebs",
+      "ec2"
+    ],
+    "comparisonSlugs": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "architectureSlugs": [
+      "three-tier-vpc"
+    ],
+    "tags": [
+      "storage",
+      "file-storage",
+      "shared-storage"
+    ],
+    "costNotes": [
+      "依儲存容量計費",
+      "存取頻率較低的資料可考慮 IA"
+    ],
+    "securityNotes": [
+      "透過 Security Group 限制 NFS 通訊",
+      "考慮加密與存取點"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon EFS(Elastic File System)是可從多個 EC2 執行個體或 Lambda 函式同時掛載並共用的全託管 NFS(Network File System)檔案儲存。從作業系統角度看,它被掛載為一般檔案系統,多個用戶端可同時對相同檔案進行讀寫。容量會依使用量自動伸縮,無須事先佈建。透過在各子網路配置跨越多個 AZ 的「掛載目標」,可從多個 AZ 的 EC2 存取相同檔案系統,這是與 EBS 的最大差異。\n\n儲存類別由「Standard」(多 AZ 冗餘 / 一般 Web、應用程式的標準)與「One Zone」(單一 AZ 冗餘 / 低成本 / 開發、測試用途)2 層結構,搭配將存取頻率較低的資料自動移轉至低成本層級的 Infrequent Access(IA)生命週期管理組合而成。透過 Lifecycle Management 可設定「30 天未存取就移至 IA 層級」之類的規則,在存取頻率不均的資料集中可節省成本。輸送量模式可選擇 burst(依容量比例自動擴展)或 Elastic / Provisioned(明確保留)。\n\n實務上的典型架構包括從多個 EC2 共用的媒體檔案存放處、Web 內容共用、CMS 的 `uploads/` 目錄共用、Linux 工作負載中的共用暫存區域、Lambda 容器映像所讀取的共用模型檔案等。S3(物件儲存 / 透過 HTTP API)/ EBS(掛載至單一 EC2 的區塊儲存)/ EFS(從多個 EC2 透過 NFS 掛載的檔案儲存)三者的區分使用,無論考試或實務都是頻繁的整理重點。安全運維方面應在 Security Group 中將 NFS(TCP 2049)通訊限制為僅必要的用戶端,啟用靜態加密(與 KMS 連動)與傳輸加密(TLS),並透過 EFS 存取點控制檔案系統內子路徑與使用者權限。",
+    "officialDocs": [
+      {
+        "label": "Amazon EFS (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/efs/"
+      },
+      {
+        "label": "什麼是 Amazon EFS (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/whatisefs.html"
+      },
+      {
+        "label": "Amazon EFS 效能 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/performance.html"
+      }
+    ]
+  },
+  {
+    "termId": "elastic-beanstalk",
+    "name": "AWS Elastic Beanstalk",
+    "shortName": "Elastic Beanstalk",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS Elastic Beanstalk 是只需上傳應用程式程式碼,即可建立與管理執行環境的服務。",
+    "oneLine": "減少伺服器架構細部管理以運行 Web 應用程式的服務。",
+    "useCases": [
+      "Web 應用程式的簡易部署",
+      "EC2 基礎的應用程式維運",
+      "學習用應用程式公開"
+    ],
+    "examPoints": [
+      "屬於 PaaS 性質的服務",
+      "會為您管理應用程式執行環境",
+      "底層使用 EC2 等資源"
+    ],
+    "saaPoints": [
+      "可保留基礎架構控制並簡化部署",
+      "並非無伺服器,需注意固定成本",
+      "小規模靜態網站較適合 S3 + CloudFront"
+    ],
+    "relatedServices": [
+      "ec2",
+      "auto-scaling",
+      "elb"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "three-tier-vpc"
+    ],
+    "tags": [
+      "compute",
+      "paas",
+      "deployment"
+    ],
+    "costNotes": [
+      "並非 Elastic Beanstalk 本身,而是對所建立的 EC2 或 ELB 等計費",
+      "MVP 階段為避免固定成本而不使用"
+    ],
+    "securityNotes": [
+      "確認所建立的 Security Group",
+      "勿將機密資訊直接寫入環境變數"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS Elastic Beanstalk 是只要上傳應用程式原始碼(zip / war / Docker 映像等),即可自動建構與運維後端 EC2、Auto Scaling 群組、ELB、安全群組、健康檢查等執行環境的 PaaS(Platform as a Service)導向部署服務。支援的語言與執行階段涵蓋 Java / .NET / Node.js / Python / Ruby / Go / PHP / Docker,可從 Web 應用程式(HTTP 請求處理型)與 Worker(SQS 佇列處理型)2 種環境類型中選擇。\n\nElastic Beanstalk 的特點在於「不完全隱藏基礎設施控制權,必要時使用者可覆寫 EC2 或 Auto Scaling 設定」。與 Lambda / App Runner 等完全無伺服器架構不同,後端持續運行 EC2,因此即使在無流量時段,仍會產生 EC2 / EBS / ELB 的固定費用。在個人開發的 MVP 或驗證用途中,此固定費用容易成為成本盲點,若以靜態網站為主,則 S3 + CloudFront 較具優勢;若為間歇性工作負載,則 Lambda + API Gateway 在成本效益方面通常較佳。\n\n實務上的代表性使用情境包括: 希望在 AWS 上獲得類似 Heroku 簡易部署體驗的中規模 Web 應用程式、希望以 EC2 為基礎運維但降低 Auto Scaling 與 ELB 建構運維成本的既有應用程式移轉、企業內部應用程式中「希望降低基礎設施建構工作量但保留 EC2 等級自訂空間」的需求等。CLF-C02 會以「只要上傳應用程式程式碼即可建立與管理執行環境的服務」、「PaaS 導向的服務」等形式出題。SAA-C03 以上則會進一步考環境設定的 Blue/Green 部署、透過 `.ebextensions` 進行細部設定覆寫、自訂 AMI、VPC 配置、與 CloudWatch 的運維整合等內容。",
+    "officialDocs": [
+      {
+        "label": "AWS Elastic Beanstalk (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/elasticbeanstalk/"
+      },
+      {
+        "label": "什麼是 AWS Elastic Beanstalk (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/Welcome.html"
+      },
+      {
+        "label": "AWS Elastic Beanstalk 的基本概念 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/concepts.html"
+      }
+    ]
+  },
+  {
+    "termId": "elasticache",
+    "name": "Amazon ElastiCache",
+    "shortName": "ElastiCache",
+    "category": "Database",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon ElastiCache 是以受管方式提供 Redis 相容或 Memcached 相容的記憶體內快取服務。",
+    "oneLine": "用於減少資料庫存取並加快回應的快取服務。",
+    "useCases": [
+      "工作階段管理",
+      "資料庫查詢結果快取",
+      "排行榜與暫存資料的高速取得"
+    ],
+    "examPoints": [
+      "為記憶體內快取服務",
+      "可選擇 Redis 相容或 Memcached 相容",
+      "用於需要低延遲的情境"
+    ],
+    "saaPoints": [
+      "在讀取負載高的系統可降低資料庫負荷",
+      "需設計快取故障時的備援機制",
+      "於 VPC 內使用"
+    ],
+    "relatedServices": [
+      "rds",
+      "dynamodb",
+      "vpc"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "three-tier-vpc"
+    ],
+    "tags": [
+      "cache",
+      "redis",
+      "memcached",
+      "performance"
+    ],
+    "costNotes": [
+      "節點啟動期間皆會計費",
+      "個人 MVP 容易變成固定成本而不使用"
+    ],
+    "securityNotes": [
+      "透過 Security Group 限制連線來源",
+      "勿允許從網際網路直接連線"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon ElastiCache 是以託管方式提供 Redis 相容或 Memcached 相容的記憶體內快取 / 記憶體內資料儲存的服務。由於資料保存於 RAM 並可在毫秒以下的延遲進行讀寫,因此用於以快取替代對關聯式資料庫(RDS)或 NoSQL 資料庫(DynamoDB)的高頻率存取,以抑制資料庫負載與回應延遲。引擎分為 Redis 相容(基於 Redis OSS / Valkey)與 Memcached 2 個系列,可依用途區分選用。\n\nRedis 相容引擎具備字串、雜湊、清單、集合、排序集合、串流等豐富的資料結構、持久化(快照 / AOF)、複寫、叢集架構(分片)、Pub/Sub、交易功能等。會在需要工作階段管理、排名彙總、訊息傳遞、即時排行榜等超越單純 KV 的複雜資料操作場景中被選用。Memcached 相容引擎則將功能限定於單純的 KV 快取,改以多執行緒實現高輸送量,適合單純大量快取 DB 查詢結果的用途。若需要持久化或複寫則選 Redis 相容,若為純粹快取用途並希望水平擴展則選 Memcached,這是基本的區分原則。\n\n實務上的代表性使用情境是無狀態 Web 應用程式的工作階段儲存、SaaS 應用程式中「同一使用者多次開啟同一畫面」場景下的查詢結果快取、排名 / 即時彙總、速率限制計數器、透過 Pub/Sub 進行元件間連動等。ElastiCache 節點應配置於 VPC 內,並在 Security Group 中僅允許來自連線應用程式(EC2 / ECS / Lambda)的通訊,使其無法從網際網路直接到達。節點運行期間以時間單價計費,個人開發的 MVP 容易成為固定費用盲點,在需求未明確前延後導入通常是合理的判斷。CLF-C02 會以「記憶體內快取服務」、「減少 DB 存取以加速回應的服務」等形式出題,SAA-C03 以上則會進一步考 Redis 叢集模式、Multi-AZ 複寫、容錯移轉設計,以及與 DAX(DynamoDB Accelerator)的區分使用等內容。",
+    "officialDocs": [
+      {
+        "label": "Amazon ElastiCache (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/elasticache/"
+      },
+      {
+        "label": "什麼是 Amazon ElastiCache (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/WhatIs.html"
+      },
+      {
+        "label": "在 ElastiCache 中選擇引擎 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/SelectEngine.html"
+      }
+    ]
+  },
+  {
+    "termId": "elb",
+    "name": "Elastic Load Balancing",
+    "shortName": "ELB",
+    "category": "Networking",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "將流量分散至多個目標的負載平衡器服務。包含 ALB、NLB、GWLB。",
+    "oneLine": "將存取分散到多台伺服器的服務。",
+    "useCases": [
+      "Web 應用程式的負載分散",
+      "Multi-AZ 架構的入口",
+      "透過健康檢查切離異常伺服器"
+    ],
+    "examPoints": [
+      "將流量分散至多個目標",
+      "ALB 適用於 HTTP/HTTPS",
+      "NLB 適用於高效能的 TCP/UDP"
+    ],
+    "saaPoints": [
+      "ALB 支援以路徑與主機為基礎的路由",
+      "設計目標群組與健康檢查",
+      "理解跨可用區負載分散"
+    ],
+    "relatedServices": [
+      "ec2",
+      "auto-scaling",
+      "cloudfront"
+    ],
+    "comparisonSlugs": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "architectureSlugs": [
+      "high-availability-web-app",
+      "three-tier-vpc"
+    ],
+    "tags": [
+      "load-balancer",
+      "networking",
+      "high-availability"
+    ],
+    "costNotes": [
+      "依負載平衡器執行時間與 LCU/NLCU 計費",
+      "MVP 的靜態網站不使用"
+    ],
+    "securityNotes": [
+      "使用 HTTPS 監聽器與 ACM 憑證",
+      "透過 Security Group 限制入口"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Elastic Load Balancing(ELB)是將接收到的流量自動分散至多個目標(EC2 執行個體 / 容器 / Lambda 函式 / IP 位址)的 AWS 託管負載平衡器服務。分為 ALB(Application Load Balancer)/ NLB(Network Load Balancer)/ GWLB(Gateway Load Balancer)/ CLB(Classic Load Balancer)4 種,可依層級與用途選擇。ALB 適用於 HTTP / HTTPS(第 7 層),支援基於路徑、主機、HTTP 標頭、查詢字串的路由。NLB 適用於 TCP / UDP / TLS(第 4 層),適合需要超低延遲、高輸送量、固定 IP 的工作負載。GWLB 是專門用於插入第三方虛擬設備(防火牆 / IDS / IPS)的服務,CLB 則是舊世代的通用負載平衡器。\n\n代表性架構是將 ALB 配置於跨多個 AZ 的 EC2 群組前端,並結合 Auto Scaling 來確保 Web 應用程式的高可用性與擴展性。以 ALB 的目標群組為單位執行健康檢查,並自動移除無回應的執行個體。監聽器通常會設定 HTTPS 監聽器並關聯 ACM 憑證,於 ALB 端進行 TLS 終結。在微服務架構中,廣泛採用將多個目標群組與一個 ALB 關聯,並透過路徑路由將 /api 導向 API 伺服器、/static 導向靜態內容、其他則導向 Web 伺服器的設計。\n\n在考試方面,CLF-C02 會以「將流量分散至多個伺服器的服務」、「在 Multi-AZ 架構中提升可用性的入口所使用的服務」等形式出題。SAA-C03 則會進一步考 ALB / NLB 的選定(HTTP/HTTPS 為 ALB,超低延遲 TCP/UDP 為 NLB)、跨可用區域負載平衡的啟用、黏性工作階段、目標群組的健康檢查設計,以及與 WAF / CloudFront / Route 53 的組合等內容。",
+    "officialDocs": [
+      {
+        "label": "Elastic Load Balancing (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/elasticloadbalancing/"
+      },
+      {
+        "label": "什麼是 Elastic Load Balancing (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/userguide/what-is-load-balancing.html"
+      }
+    ]
+  },
+  {
+    "termId": "eventbridge",
+    "name": "Amazon EventBridge",
+    "shortName": "EventBridge",
+    "category": "Integration",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "用於建構事件驅動應用程式的服務。可依規則分派 AWS 服務或自訂應用程式的事件。",
+    "oneLine": "以事件作為觸發來執行 Lambda 等的事件匯流排服務。",
+    "useCases": [
+      "每日一題配信的定期執行",
+      "SaaS 事件整合",
+      "以狀態變化為觸發的自動處理"
+    ],
+    "examPoints": [
+      "用於事件驅動架構",
+      "也可用於排程執行",
+      "與 SQS 或 SNS 角色不同"
+    ],
+    "saaPoints": [
+      "以事件模式篩選目標事件",
+      "透過 Event Bus 可進行跨帳號整合",
+      "設計重試與 DLQ"
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "sns"
+    ],
+    "comparisonSlugs": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "architectureSlugs": [
+      "eventbridge-lambda-batch"
+    ],
+    "tags": [
+      "integration",
+      "event-driven",
+      "scheduler"
+    ],
+    "costNotes": [
+      "依事件數量計費",
+      "定期執行的頻率應控制在必要的最小範圍"
+    ],
+    "securityNotes": [
+      "限制規則建立與目標變更權限",
+      "整合外部事件時須確認信任來源"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon EventBridge 是收集來自 AWS 服務、自訂應用程式、SaaS 合作夥伴應用程式所發生的事件,並基於規則路由至目標(Lambda / Step Functions / SQS / SNS / Kinesis Data Streams / API Gateway / 其他帳戶的 EventBridge 等)的無伺服器事件匯流排服務。其定位是 CloudWatch Events 的後繼者,可統一處理 AWS 服務連動與 SaaS 事件擷取兩者的特點。也支援透過排程運算式(cron 運算式 / rate 運算式)定期執行,廣泛用作定時批次或每日配信的觸發器。\n\nEventBridge 的核心概念是事件匯流排、規則、目標 3 個要素。預設事件匯流排會自動接收 AWS 服務的事件,自訂事件匯流排則可發送獨自的應用程式事件。規則以事件模式(JSON 格式的比對條件)篩選對象事件,並可將事件並行配送至最多 5 個目標。配送失敗時可自動重試並退避至 DLQ(死信佇列),可設定最長 24 小時的重試窗口。\n\n實務上常用的模式包括:偵測 EC2 狀態變化(啟動、停止、終止)並發送通知的監控用例、偵測 CodePipeline / CodeBuild 狀態變化並通知 Slack 或 Teams 的 CI/CD 用例、使用 EventBridge Scheduler 進行每日、每週批次的定期執行、將來自 SaaS(Datadog / PagerDuty / Auth0 等)的事件擷取至 AWS 端工作流程的整合用例等。在考試方面,CLF-C02 會以「在事件驅動架構中使用的服務」、「可用於排程執行的服務」等形式出題。SAA-C03 則會頻繁考 SNS / SQS / EventBridge 的區分使用(pub-sub 為 SNS、佇列化為 SQS、事件路由為 EventBridge)。",
+    "officialDocs": [
+      {
+        "label": "Amazon EventBridge (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/eventbridge/"
+      },
+      {
+        "label": "什麼是 Amazon EventBridge (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/eventbridge/latest/userguide/eb-what-is.html"
+      }
+    ]
+  },
+  {
+    "termId": "fargate",
+    "name": "AWS Fargate",
+    "shortName": "Fargate",
+    "category": "Compute",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS Fargate 是讓 ECS 或 EKS 執行容器時不需管理伺服器的運算引擎。",
+    "oneLine": "不需管理 EC2 即可執行容器的機制。",
+    "useCases": [
+      "ECS 容器執行",
+      "減少伺服器管理的 API 維運",
+      "批次容器處理"
+    ],
+    "examPoints": [
+      "為容器執行基礎",
+      "不需管理 EC2 執行個體",
+      "與 ECS 或 EKS 組合使用"
+    ],
+    "saaPoints": [
+      "以容器為單位指定 CPU 與記憶體",
+      "常時運行 API 時需試算成本",
+      "比 Lambda 更適合長時間處理或對容器依賴較強的處理"
+    ],
+    "relatedServices": [
+      "ecs",
+      "ecr",
+      "lambda"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "compute",
+      "container",
+      "serverless-container"
+    ],
+    "costNotes": [
+      "依 vCPU、記憶體與執行時間計費",
+      "靜態網站 MVP 不需要"
+    ],
+    "securityNotes": [
+      "區分任務角色與執行角色",
+      "勿在容器映像中包含機密資訊"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS Fargate 是在 Amazon ECS 與 Amazon EKS 上執行容器時的「無伺服器」運算引擎。傳統的 ECS / EKS 需要啟動 EC2 執行個體並作為容器主機管理,而使用 Fargate 則無須使用者意識到執行容器的 EC2 執行個體。在任務定義(或 Pod 定義)中指定 vCPU、記憶體、網路設定後,AWS 端就會自動佈建容量並啟動容器。OS 修補、主機管理、容量保留皆變得不必要,可大幅減少運維工作量。\n\nFargate 與 EC2 啟動類型的主要差異在於計費模式與管理範圍。EC2 啟動類型以執行個體為單位按時間計費,閒置容量部分也是計費對象。Fargate 則以任務為單位按 vCPU、記憶體、執行時間計費,因此以容器為單位僅按需計費,當資源使用率高時可能比 EC2 啟動類型便宜,反之則較貴。SAA-C03 會考在「持續運作 API」、「短時間批次」、「不定期處理」哪種模式下 Fargate 較合適,以及應如何在 Fargate 與 EC2 啟動類型之間做選擇。\n\n代表性使用情境包括 Web API 的無伺服器容器執行、由 CI/CD 管線啟動的短時間批次工作、機器學習的推論容器執行、第三方映像(OSS 工具)的單次執行等。與 Lambda 的區分上,Lambda 有最長執行時間 15 分鐘與函式單位的限制,而 Fargate 則可處理長時間處理或任意容器映像,這是其優勢。在考試方面,CLF-C02 會以「無須管理 EC2 即可執行容器的服務」形式出題,並考察是否能正確認識 ECS / EKS / Fargate 之間的關係。",
+    "officialDocs": [
+      {
+        "label": "AWS Fargate (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/fargate/"
+      },
+      {
+        "label": "AWS Fargate (Amazon ECS 開發者指南 / AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/AWS_Fargate.html"
+      }
+    ]
+  },
+  {
+    "termId": "fsx",
+    "name": "Amazon FSx",
+    "shortName": "FSx",
+    "category": "Storage",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon FSx 是提供 Windows File Server 或 Lustre 等完全受管檔案系統的服務。",
+    "oneLine": "在 AWS 上使用各用途專屬高機能檔案系統的服務。",
+    "useCases": [
+      "Windows 檔案共享",
+      "適用於 HPC 的高速檔案系統",
+      "地端遷移"
+    ],
+    "examPoints": [
+      "為檔案儲存體服務",
+      "提供 Windows File Server 或 Lustre 等選擇",
+      "與 S3 或 EFS 用途不同"
+    ],
+    "saaPoints": [
+      "Windows 工作負載遷移可考慮 FSx for Windows File Server",
+      "HPC 可考慮 FSx for Lustre",
+      "依存取需求與效能需求進行選擇"
+    ],
+    "relatedServices": [
+      "s3",
+      "efs",
+      "ec2"
+    ],
+    "comparisonSlugs": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "architectureSlugs": [],
+    "tags": [
+      "storage",
+      "file-system",
+      "windows",
+      "hpc"
+    ],
+    "costNotes": [
+      "依檔案系統容量或輸送量計費",
+      "個人 MVP 的靜態網站不需要"
+    ],
+    "securityNotes": [
+      "設計 VPC 內存取與驗證",
+      "將檔案共享權限降至最低"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon FSx 是以全託管方式提供業界標準檔案系統的服務群組。提供 FSx for Windows File Server(SMB 通訊協定 / Active Directory 整合 / 符合 NTFS 的 ACL)、FSx for Lustre(HPC、機器學習用的超並行檔案系統)、FSx for NetApp ONTAP(在 AWS 上使用 NetApp 功能)、FSx for OpenZFS(運用 OpenZFS 的快照、複寫功能)4 種,各自針對不同工作負載最佳化。與 S3 或 EFS 在用途與特性上不同,會在需要特定檔案系統功能或通訊協定的場景中被選用。\n\nFSx for Windows File Server 廣泛用於 Windows 工作負載的本地端移轉。可透過 SMB 通訊協定存取,並與 Active Directory(AWS Managed Microsoft AD 或自行管理的 AD)整合,實現使用者、群組的認證與透過 NTFS ACL 的存取控制。由於可直接移轉既有的 Windows 共用資料夾,適合檔案伺服器的搬遷與沿用(lift & shift)。\n\nFSx for Lustre 是針對機器學習訓練、HPC(High-Performance Computing)等需要超高輸送量、低延遲的工作負載所設計。其特色是「資料儲存庫整合」,可透過與 S3 儲存貯體整合,以透通方式經由 Lustre 檔案系統存取 S3 上的物件,常用於將機器學習資料集存放於 S3,僅在訓練時透過 Lustre 高速存取的使用方式。在考試方面,CLF-C02 會考「是檔案儲存服務」、「有 Windows File Server 或 Lustre 等選項」程度的內容。SAA-C03 則會頻繁考 S3 / EBS / EFS / FSx 的區分使用(物件 / 區塊 / NFS / SMB、Lustre)。",
+    "officialDocs": [
+      {
+        "label": "Amazon FSx (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/fsx/"
+      },
+      {
+        "label": "什麼是 Amazon FSx for Windows File Server (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "什麼是 Amazon FSx for Lustre (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/fsx/latest/LustreGuide/what-is.html"
+      }
+    ]
+  },
+  {
+    "termId": "glue",
+    "name": "AWS Glue",
+    "shortName": "Glue",
+    "category": "Analytics",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS Glue 是進行資料擷取、轉換、載入與目錄管理的無伺服器資料整合服務。",
+    "oneLine": "整理分析用資料並轉換為易用形式的服務。",
+    "useCases": [
+      "ETL 處理",
+      "資料目錄管理",
+      "S3 資料湖的前處理"
+    ],
+    "examPoints": [
+      "為 ETL 服務",
+      "可透過 Glue Data Catalog 進行中繼資料管理",
+      "可與 Athena 或 Redshift 組合使用"
+    ],
+    "saaPoints": [
+      "用於批次分析平台",
+      "可用於轉換 S3 上的資料",
+      "需考量任務執行時間對應的成本"
+    ],
+    "relatedServices": [
+      "s3",
+      "athena",
+      "redshift"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "analytics",
+      "etl",
+      "data-catalog"
+    ],
+    "costNotes": [
+      "依任務執行時間與爬蟲程式執行計費",
+      "小規模網站的一般運作不需要"
+    ],
+    "securityNotes": [
+      "限制 Glue 執行角色的 S3 存取範圍",
+      "分析對象資料不可包含個人資訊"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS Glue 是可針對資料湖或資料倉儲執行 ETL(Extract / Transform / Load)處理與資料目錄管理的無伺服器資料整合服務。核心元件包括 Glue Data Catalog(中繼資料的中央存放區)、Glue Crawler(掃描資料來源並自動推斷結構描述後註冊至目錄)、Glue ETL 工作(在 Spark 或 Python shell 環境中執行轉換處理)、Glue Studio(以 GUI 設計工作)、Glue DataBrew(不需程式碼的資料前置處理工具)等。由於 AWS 端以全託管方式提供基於 Apache Spark 的工作執行基礎,因此無須管理叢集。\n\n代表性架構是將日誌、CSV、Parquet 等資料彙集至 S3 形成資料湖,以 Glue Crawler 推斷結構描述並註冊至 Glue Data Catalog,再從 Amazon Athena 以 SQL 查詢的「無伺服器分析基礎」。Athena 會將 Glue Data Catalog 作為中繼資料存放區參照,因此可直接對在 Glue 中目錄化的資料表使用 Athena 查詢。Amazon Redshift Spectrum 或 Amazon EMR 也可參照相同的 Data Catalog,可在多個分析工具間共用中繼資料,這是一大優勢。\n\n在 ETL 工作中,典型的模式是讀取 S3 上的 CSV 或 JSON,進行欄位的型別轉換、缺失值補齊、JOIN、彙總,然後轉換為 Parquet 或 ORC 等列式格式後寫回 S3。在考試方面,CLF-C02 會考「是 ETL 服務」、「可透過 Glue Data Catalog 進行中繼資料管理」、「可與 Athena 或 Redshift 組合使用」程度的內容。SAA-C03 則會進一步考 S3 資料湖 + Glue + Athena 的架構、與 Lake Formation 的角色分工、Glue 工作的成本最佳化(DPU 數量與工作執行時間)等內容。",
+    "officialDocs": [
+      {
+        "label": "AWS Glue (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/glue/"
+      },
+      {
+        "label": "什麼是 AWS Glue (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/glue/latest/dg/what-is-glue.html"
+      }
+    ]
+  },
+  {
+    "termId": "guardduty",
+    "name": "Amazon GuardDuty",
+    "shortName": "GuardDuty",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon GuardDuty 是檢測 AWS 帳號或工作負載可疑活動的威脅偵測服務。",
+    "oneLine": "偵測 AWS 環境中可疑操作或攻擊跡象的服務。",
+    "useCases": [
+      "偵測可疑的 API 操作",
+      "偵測疑似入侵",
+      "安全監控"
+    ],
+    "examPoints": [
+      "為威脅偵測服務",
+      "可分析 CloudTrail 或 VPC Flow Logs 等",
+      "與 Inspector 角色不同"
+    ],
+    "saaPoints": [
+      "準備偵測後的通知與應變流程",
+      "可與 Security Hub 整合彙總",
+      "個人 MVP 需考量與成本的平衡"
+    ],
+    "relatedServices": [
+      "cloudtrail",
+      "security-hub",
+      "iam"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "security",
+      "threat-detection",
+      "monitoring"
+    ],
+    "costNotes": [
+      "依分析對象資料量計費",
+      "於商業化或存取量增加後判斷是否導入"
+    ],
+    "securityNotes": [
+      "設計透過 Email 或 SNS 通知偵測結果",
+      "高嚴重度偵測須即時應變"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon GuardDuty 是持續偵測 AWS 環境內可疑活動或已知攻擊模式的託管型威脅偵測服務。將 AWS CloudTrail 的事件日誌、Amazon VPC Flow Logs、DNS 查詢日誌、Amazon S3 資料事件、Amazon EKS 稽核日誌等納入分析對象,並運用機器學習與威脅情報進行異常偵測。使用者無須安裝代理程式或進行個別日誌收集設定,僅需在主控台啟用即可開始使用。\n\n偵測結果會以「Findings」形式並附上嚴重性(Low / Medium / High)通知,可透過 Amazon EventBridge 連動至 SNS 通知、Lambda 自動回應、彙整至 Security Hub 等。代表性偵測案例包括:透過 Tor 的可疑 API 呼叫、暗示加密貨幣挖礦的通訊模式、被入侵的憑證所進行的異常操作、來自非預期區域的存取等。\n\n在考試方面,會以「持續偵測 AWS 環境內可疑操作或攻擊跡象的服務」形式出題,GuardDuty 為選項中的正確答案。容易與 Inspector(漏洞掃描)、Macie(S3 內機敏資料偵測)、Security Hub(多個安全服務的彙整)混淆,因此需整理各服務偵測對象的差異後記住。費用為依分析對象資料量計算的依用量計費,通常會在商用化或存取量增加時才判斷導入。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon GuardDuty (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/guardduty/latest/ug/what-is-guardduty.html"
+      },
+      {
+        "label": "Amazon GuardDuty (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/guardduty/"
+      }
+    ]
+  },
+  {
+    "termId": "iam",
+    "name": "AWS Identity and Access Management",
+    "shortName": "IAM",
+    "category": "Security",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "管理 AWS 資源存取權限的服務。透過使用者、群組、角色、政策控制誰可以執行什麼操作。",
+    "oneLine": "在 AWS 中管理「對誰允許哪些操作」的安全核心服務。",
+    "useCases": [
+      "管理者與開發者的權限管理",
+      "賦予 Lambda 或 EC2 的執行角色管理",
+      "最小權限政策設計"
+    ],
+    "examPoints": [
+      "避免日常使用 root 使用者",
+      "為 IAM 使用者設定 MFA",
+      "IAM 角色用於將權限委派給 AWS 服務或外部 ID 整合"
+    ],
+    "saaPoints": [
+      "應用程式存取 AWS 服務時使用 IAM 角色,而非直接寫入存取金鑰",
+      "權限須限縮 Action 與 Resource",
+      "跨帳號存取時須理解信任政策"
+    ],
+    "relatedServices": [
+      "cognito",
+      "kms",
+      "organizations"
+    ],
+    "comparisonSlugs": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "architectureSlugs": [
+      "static-site-s3-cloudfront",
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "security",
+      "identity",
+      "access-control"
+    ],
+    "costNotes": [
+      "IAM 本身使用無額外費用",
+      "因權限錯誤而建立非預期資源會導致計費事故"
+    ],
+    "securityNotes": [
+      "避免常態使用 AdministratorAccess",
+      "勿將 AWS 存取金鑰提交至 GitHub"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Identity and Access Management(IAM)是針對 AWS 資源進行存取認證與授權的服務。透過組合 IAM 使用者、IAM 群組、IAM 角色、IAM 政策 4 個要素,控制「誰、對哪個 AWS 資源、被允許執行哪些操作」。IAM 政策以 JSON 格式描述,指定 Action(允許 / 拒絕的 API 操作)、Resource(對象資源)、Condition(附加條件)。\n\nIAM 角色不是直接賦予 IAM 使用者,而是用來將權限委派給 AWS 服務(EC2、Lambda 等)、其他 AWS 帳戶、外部 ID 連動(SAML / OIDC)等的機制。例如當 Lambda 函式要寫入物件到 S3 時,不應在函式中直接寫死存取金鑰,而應將具備 S3 PutObject 權限的 IAM 角色指派給 Lambda 使用。如此可降低存取金鑰外洩風險,亦能減少金鑰輪換的運維負擔。\n\nCLF-C02 會頻繁考 root 使用者與 IAM 使用者的差異、MFA 的重要性、最小權限原則、透過 IAM 角色進行權限委派等論點。SAA-C03 以上則會考跨帳戶存取時的信任政策設計、IAM 政策與 S3 儲存貯體政策、KMS 金鑰政策的優先順序、透過 IAM Identity Center 進行的組織級單一登入等更深入的設計問題。IAM 自身的使用不會產生額外費用,但因權限錯誤造成的不必要資源建立或非預期 API 呼叫可能導致計費事故,因此運維設計的重要性很高。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Identity and Access Management (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/introduction.html"
+      },
+      {
+        "label": "IAM 角色 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles.html"
+      },
+      {
+        "label": "IAM 的安全最佳實務 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
+  },
+  {
+    "termId": "inspector",
+    "name": "Amazon Inspector",
+    "shortName": "Inspector",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon Inspector 是偵測 EC2、容器映像、Lambda 等弱點的安全評估服務。",
+    "oneLine": "自動發現 AWS 資源弱點的服務。",
+    "useCases": [
+      "EC2 弱點診斷",
+      "ECR 映像掃描",
+      "確認 Lambda 相依性"
+    ],
+    "examPoints": [
+      "為弱點管理服務",
+      "用於安全評估",
+      "與 GuardDuty 的偵測對象不同"
+    ],
+    "saaPoints": [
+      "容器維運須與 ECR 掃描一併考量",
+      "可將偵測結果彙總至 Security Hub",
+      "需建立決定修正優先順序的維運流程"
+    ],
+    "relatedServices": [
+      "ecr",
+      "lambda",
+      "guardduty"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "security",
+      "vulnerability",
+      "inspector"
+    ],
+    "costNotes": [
+      "依掃描對象與使用量計費",
+      "MVP 階段導入前須確認成本效益"
+    ],
+    "securityNotes": [
+      "建立不放任偵測結果的維運規範",
+      "從高嚴重度的弱點開始修正"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon Inspector 是針對 Amazon EC2 執行個體、儲存於 Amazon ECR 的容器映像、AWS Lambda 函式持續偵測漏洞與非預期網路可達性的託管型漏洞管理服務。啟用服務後會自動偵測對象資源,並基於 CVE 資料庫持續執行軟體漏洞偵測。偵測結果會以嚴重性(Critical / High / Medium / Low / Informational)呈現,可透過 Security Hub 或 Amazon EventBridge 連動至通知與自動回應。\n\n在 ECR 容器映像掃描方面,除了映像推送時的單次掃描外,還可對已註冊映像進行持續掃描,當有新 CVE 公開時也能回溯掌握影響範圍。在 Lambda 函式的掃描方面,函式程式碼與相依函式庫皆為偵測對象。EC2 的掃描需要與 SSM 代理程式連動,未安裝代理程式的執行個體則不在掃描範圍內。\n\n在考試方面,經常被問到與 GuardDuty 的角色差異。GuardDuty 是「偵測環境的可疑操作、通訊」,而 Inspector 則是「偵測資源本身的漏洞」,這是兩者的差異。在容器運維方面,也會考 ECR 的標準掃描(Basic scanning)與 Inspector 的進階掃描(Enhanced scanning)的區分使用。費用為依掃描對象資源數量與掃描頻率計算的依用量計費,MVP 階段通常會在確認費用效益後再判斷導入與否。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon Inspector (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/inspector/latest/user/what-is-inspector.html"
+      },
+      {
+        "label": "Amazon Inspector (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/inspector/"
+      }
+    ]
+  },
+  {
+    "termId": "kinesis",
+    "name": "Amazon Kinesis",
+    "shortName": "Kinesis",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon Kinesis 是用於收集、處理與分析串流資料的服務群。",
+    "oneLine": "用於處理即時流入資料的服務。",
+    "useCases": [
+      "點擊串流分析",
+      "IoT 資料處理",
+      "日誌串流"
+    ],
+    "examPoints": [
+      "用於串流資料處理",
+      "於即時分析的情境登場",
+      "與批次處理的用途不同"
+    ],
+    "saaPoints": [
+      "處理大量事件時須考量順序性與輸送量",
+      "可透過 Lambda 整合實作串流處理",
+      "與 SQS 在資料保留與處理模式上有所不同"
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "eventbridge"
+    ],
+    "comparisonSlugs": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "architectureSlugs": [],
+    "tags": [
+      "streaming",
+      "realtime",
+      "analytics"
+    ],
+    "costNotes": [
+      "依分片數量或資料量計費",
+      "勿用於小規模的表單送出"
+    ],
+    "securityNotes": [
+      "透過 IAM 限制串流的 Put/Get 權限",
+      "日誌資料含個人資訊時須注意處理方式"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon Kinesis 是用於即時收集、處理、分析串流資料的服務群組總稱。Amazon Kinesis Data Streams 是具備順序保證的串流儲存,以分片為單位的輸送量保留資料,並可延長最長保留期間至 365 天。Amazon Data Firehose(舊稱 Kinesis Data Firehose)則是將串流自動配送至 S3、Redshift、OpenSearch Service 等的全託管配送管線。Amazon Managed Service for Apache Flink(舊稱 Kinesis Data Analytics)則是可在串流上以 SQL 或 Apache Flink 執行即時彙總的分析基礎。\n\n代表性的使用情境包括網站點擊串流分析、IoT 裝置感測器資料擷取、應用程式日誌的彙整與轉送、即時詐欺偵測等。與 Lambda 組合後,可在串流的新記錄到達時觸發任意處理,無須讓伺服器持續運行即可構成串流處理。\n\n在考試方面,經常被問到與 SQS、SNS、EventBridge 的角色差異。Kinesis Data Streams 與其他訊息傳遞服務的不同之處在於它提供「具備順序保證且可重播的串流」。SQS 是「取得訊息後刪除的一次性處理」,SNS 是「透過 pub/sub 配送至多個訂閱者」,EventBridge 則是「基於規則的事件路由」,這些分別是各服務的中心角色。費用為基於分片時間與資料量的依用量計費,不適合小規模表單提交或數筆訊息配送等用途。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon Kinesis Data Streams (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/streams/latest/dev/introduction.html"
+      },
+      {
+        "label": "Amazon Kinesis (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/kinesis/"
+      }
+    ]
+  },
+  {
+    "termId": "kms",
+    "name": "AWS Key Management Service",
+    "shortName": "KMS",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "建立與管理加密金鑰的服務。可用於 S3、EBS、RDS、DynamoDB 等的靜態加密。",
+    "oneLine": "管理 AWS 上資料加密金鑰的服務。",
+    "useCases": [
+      "S3 物件的加密",
+      "EBS 磁碟區加密",
+      "DynamoDB 與 RDS 的靜態加密"
+    ],
+    "examPoints": [
+      "用於靜態加密的金鑰管理服務",
+      "提供 AWS 受管金鑰與客戶受管金鑰",
+      "存取控制透過金鑰政策與 IAM 進行"
+    ],
+    "saaPoints": [
+      "跨帳號使用時金鑰政策非常重要",
+      "理解金鑰輪替",
+      "設計與加密對象服務的整合"
+    ],
+    "relatedServices": [
+      "s3",
+      "ebs",
+      "rds",
+      "dynamodb"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "security",
+      "encryption",
+      "key-management"
+    ],
+    "costNotes": [
+      "客戶受管金鑰與 API 請求會產生費用",
+      "MVP 階段在許多情境下使用 AWS 受管金鑰即可"
+    ],
+    "securityNotes": [
+      "金鑰刪除無法回復,須謹慎處理",
+      "透過金鑰政策區分管理者與使用者"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Key Management Service(KMS)是用於建立、管理、使用資料加密金鑰的託管服務。在 KMS 建立的 KMS 金鑰(舊稱 CMK / 客戶主金鑰)大致分為 AWS 管理的 AWS 管理金鑰、由使用者建立與管理的客戶管理金鑰、AWS 擁有的金鑰 3 類。它與 AWS 提供的眾多服務(S3、EBS、RDS、DynamoDB、Secrets Manager 等)整合,可作為靜態加密(encryption at rest)的金鑰使用。\n\n針對 KMS 金鑰的存取控制透過「金鑰政策」與「IAM 政策」的組合來執行。金鑰政策是為每個 KMS 金鑰設定的 JSON,定義誰可管理該金鑰、誰可用於加密 / 解密。當跨帳戶共用 KMS 金鑰時,除了使用方帳戶的 IAM 政策之外,還需要在金鑰政策端明確允許,這在考試中經常出現。客戶管理金鑰可設定自動金鑰輪換(年度等)。\n\n在考試方面,會以「管理用於靜態加密的金鑰的服務是哪個」、「跨帳戶共用加密資料時的金鑰管理應如何設計」等形式出題。AWS 管理金鑰無費用且易於開始使用,但無法自訂金鑰政策,因此當需要組織級的細緻權限控制時,會選擇客戶管理金鑰。客戶管理金鑰會產生每月金鑰保管費與依 API 請求數計算的依用量計費。當刪除 KMS 金鑰時,以該金鑰加密的資料將無法解密,因此刪除操作設有最短 7 天的等待期間。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Key Management Service (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "AWS Key Management Service (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/kms/"
+      }
+    ]
+  },
+  {
+    "termId": "lambda",
+    "name": "AWS Lambda",
+    "shortName": "Lambda",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "無需管理伺服器即可執行程式碼的無伺服器運算服務。可由請求或事件觸發處理。",
+    "oneLine": "無需啟動伺服器,僅在必要時執行程式碼的服務。",
+    "useCases": [
+      "聯絡表單送出處理",
+      "圖片轉換或檔案處理",
+      "與 EventBridge 結合的定期批次"
+    ],
+    "examPoints": [
+      "依執行次數與執行時間計費",
+      "無需伺服器管理",
+      "與 API Gateway 及 DynamoDB 搭配良好"
+    ],
+    "saaPoints": [
+      "適合短時間、事件驅動的處理",
+      "連接 VPC 時須注意網路設計",
+      "需考量冷啟動與逾時"
+    ],
+    "relatedServices": [
+      "api-gateway",
+      "dynamodb",
+      "eventbridge",
+      "cloudwatch"
+    ],
+    "comparisonSlugs": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "architectureSlugs": [
+      "serverless-api-basic",
+      "eventbridge-lambda-batch"
+    ],
+    "tags": [
+      "compute",
+      "serverless"
+    ],
+    "costNotes": [
+      "縮短執行時間有助於壓低成本",
+      "Provisioned Concurrency 在 MVP 階段不使用"
+    ],
+    "securityNotes": [
+      "執行角色僅授予必要的 DynamoDB 資料表權限",
+      "勿在日誌中輸出個資或機密資訊"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Lambda 是無需佈建與管理伺服器即可執行程式碼的無伺服器運算服務。使用者只需註冊欲執行的函式程式碼、執行環境(Runtime)、記憶體與逾時等設定,AWS 端會自動確保並擴展執行基礎建設。程式碼會以事件(來自 API Gateway 的 HTTP 請求、S3 的物件建立、DynamoDB Streams、EventBridge 排程、SQS 訊息接收等)作為觸發來啟動。\n\n費用以「請求數」與「執行時間 × 配置記憶體量」的組合計費。閒置時資源不會啟動,因此無請求的時段不會產生費用。免費使用額度為每月 100 萬請求與 40 萬 GB 秒的執行時間。\n\n主要使用案例包含與 API Gateway 結合的無伺服器 API、回應 S3 或 DynamoDB 事件的資料處理、EventBridge 排程的定期作業、作為 Step Functions 工作流程中的單一步驟使用等。支援的 Runtime 除了 Python、Node.js、Java、Go、.NET、Ruby 的託管 Runtime 外,也支援自訂 Runtime 與容器映像。\n\n執行時間上限為單一請求最多 15 分鐘,部署套件大小、暫存儲存體(/tmp)大小等均有限制,因此長時間批次處理或巨大檔案處理需選擇其他服務(如 AWS Batch、ECS、Step Functions 的組合等)。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Lambda (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      }
+    ]
+  },
+  {
+    "termId": "organizations",
+    "name": "AWS Organizations",
+    "shortName": "Organizations",
+    "category": "Management",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "集中管理多個 AWS 帳號的服務。可使用組織單位、SCP 及合併帳單等功能。",
+    "oneLine": "統一管理多個 AWS 帳號的服務。",
+    "useCases": [
+      "正式與開發帳號的分離",
+      "合併帳單",
+      "以 SCP 限制使用範圍"
+    ],
+    "examPoints": [
+      "用於多帳號管理",
+      "可進行合併帳單",
+      "可透過 SCP 限制帳號的最大權限"
+    ],
+    "saaPoints": [
+      "依工作負載分離帳號",
+      "理解 SCP 為權限上限而非授權",
+      "理解與 Control Tower 的關係"
+    ],
+    "relatedServices": [
+      "iam",
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "account-management",
+      "governance"
+    ],
+    "costNotes": [
+      "Organizations 本身無額外費用",
+      "須留意多帳號中遺留資源所造成的費用"
+    ],
+    "securityNotes": [
+      "管理帳號必須啟用 MFA",
+      "可透過 SCP 限制危險的區域或服務"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Organizations 是將多個 AWS 帳戶作為單一組織進行集中管理的服務。可在組織(Organization)下建立組織單位(OU: Organizational Unit),並在其下配置成員帳戶。透過階層結構整理帳戶,能以用途別(正式、驗證、沙箱)、部門別、專案別等切角進行管理。\n\n主要功能包含新 AWS 帳戶的程式化建立、透過服務控制原則(SCP: Service Control Policy)對組織整體或 OU 單位進行存取權限的上限控制、將所有成員帳戶的帳單集中至組織管理帳戶的彙整帳單(Consolidated Billing)、AWS CloudTrail / AWS Config / Security Hub / GuardDuty 等對組織整體的一括部署與彙整管理。\n\n典型使用案例為企業或個人開發者作為多帳戶策略基礎使用的情境。例如將正式工作負載與開發、驗證工作負載分離至不同帳戶,並透過 SCP 結構性地禁止從開發帳戶存取正式環境資源等統制設計。費用方面,Organizations 本身可免費使用,透過彙整帳單,保留執行個體、Savings Plans、免費使用額度可在組織整體共享與最佳化,簡化多帳戶運用時的成本管理。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Organizations (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/organizations/latest/userguide/orgs_introduction.html"
+      },
+      {
+        "label": "AWS Organizations (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/organizations/"
+      }
+    ]
+  },
+  {
+    "termId": "quicksight",
+    "name": "Amazon QuickSight",
+    "shortName": "QuickSight",
+    "category": "Analytics",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon QuickSight 是以圖表與儀表板將資料視覺化的 BI 服務。",
+    "oneLine": "將資料視覺化並建立儀表板的服務。",
+    "useCases": [
+      "營收儀表板",
+      "存取分析的視覺化",
+      "業務指標的共享"
+    ],
+    "examPoints": [
+      "屬於 BI 服務",
+      "用於建立儀表板",
+      "可與 Athena 或 Redshift 等分析基礎建設整合"
+    ],
+    "saaPoints": [
+      "適合將分析結果分享給業務使用者",
+      "資料來源權限與使用者權限須分開規劃",
+      "依使用者人數確認費用"
+    ],
+    "relatedServices": [
+      "athena",
+      "redshift",
+      "s3"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "analytics",
+      "bi",
+      "dashboard"
+    ],
+    "costNotes": [
+      "依使用者數與使用模式計費",
+      "個人 MVP 導入前先確認費用"
+    ],
+    "securityNotes": [
+      "依使用者限制可檢視的儀表板",
+      "公開範圍設定錯誤可能造成資料外洩"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon QuickSight 是 AWS 提供的雲端原生商業智慧(BI)服務。可連接資料來源並建立、共享儀表板與報告。資料來源支援 Amazon S3、Amazon Redshift、Amazon RDS、Amazon Athena、Amazon Aurora 等 AWS 資料儲存體,以及 Salesforce、地端 SQL 資料庫、CSV/Excel 檔案上傳。\n\n主要功能包含拖放操作建立視覺化、稱為 SPICE(Super-fast, Parallel, In-memory Calculation Engine)的記憶體內引擎高速彙總、儀表板的組織內共享與內嵌至 Web 應用程式、納入機器學習的預測、異常偵測、自然語言查詢(Amazon Q in QuickSight)等。\n\n計費模式按建立者(Author)與檢視者(Reader)分為使用者單位月費,檢視者也可選擇按檢視量計費的工作階段計費方案。SPICE 容量另外按月計費。無需伺服器佈建或建置專用 BI 基礎建設,僅需使用者註冊與資料來源連接即可開始使用為其特點。典型使用案例為公司內部 KPI 的儀表板化、將 Athena 對 S3 上日誌的分析結果視覺化、將 Redshift 的彙總資料配送給經營層、業務現場的公司內部 BI 基礎建設等。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon QuickSight (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/quick/latest/userguide/what-is.html"
+      },
+      {
+        "label": "Amazon QuickSight (AWS 官方)",
+        "url": "https://aws.amazon.com/quick/quicksight/"
+      }
+    ]
+  },
+  {
+    "termId": "rds",
+    "name": "Amazon Relational Database Service",
+    "shortName": "RDS",
+    "category": "Database",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "以代管方式提供 MySQL、PostgreSQL 等關聯式資料庫的服務。可設定備份與 Multi-AZ 等。",
+    "oneLine": "由 AWS 協助維運的關聯式資料庫。",
+    "useCases": [
+      "訂單資料與使用者資料的儲存",
+      "使用 SQL 的業務應用程式",
+      "需要交易的應用程式"
+    ],
+    "examPoints": [
+      "適合結構化資料與 SQL",
+      "以 Multi-AZ 提升可用性",
+      "可透過 Read Replica 提升讀取效能"
+    ],
+    "saaPoints": [
+      "Multi-AZ 用於可用性,Read Replica 用於提升讀取效能",
+      "須考量備份保存期間與儲存費用",
+      "需設計子網路群組與 Security Group"
+    ],
+    "relatedServices": [
+      "dynamodb",
+      "vpc",
+      "cloudwatch"
+    ],
+    "comparisonSlugs": [
+      "rds-vs-dynamodb",
+      "multi-az-vs-read-replica"
+    ],
+    "architectureSlugs": [
+      "three-tier-vpc",
+      "high-availability-web-app"
+    ],
+    "tags": [
+      "database",
+      "relational"
+    ],
+    "costNotes": [
+      "依執行個體運作時數與儲存空間計費",
+      "個人 MVP 容易成為固定費用負擔"
+    ],
+    "securityNotes": [
+      "勿將資料庫公開於網際網路",
+      "確認靜態加密與備份設定"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon Relational Database Service(Amazon RDS)是以託管形式提供關聯式資料庫的服務。AWS 端會代為處理 OS 修補程式套用、DB 引擎次要版本升級、自動備份、快照取得、故障時的容錯移轉等運用工作,因此使用者可專注於資料表結構設計、查詢調校、應用程式端的邏輯。\n\n支援的 DB 引擎有 Amazon Aurora(MySQL/PostgreSQL 相容)、MySQL、PostgreSQL、MariaDB、Oracle Database、Microsoft SQL Server 共 6 種。執行個體類型、儲存體類型、儲存體容量可配合工作負載選擇,儲存體也提供依使用情況自動擴展的選項。\n\n可用性與容錯性的主要功能包含多 AZ 配置(將主要執行個體與同步待命執行個體配置於不同 AZ,故障時自動容錯移轉)、讀取複本(分散參照查詢的負載與部分跨區域構成)、自動備份的時間點復原、手動快照的時間點儲存等。\n\n費用以「DB 執行個體的執行時間 × 執行個體類型」「儲存體容量」「備份容量」「資料傳輸量」等的組合計費。也可使用保留執行個體的長期承諾折扣。CLF-C02 中,自行在 EC2 上建置 DB 的情況與使用 RDS 的情況下,責任共擔模型上的角色分擔(修補程式、備份由誰負責)為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon RDS (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/rds/"
+      }
+    ]
+  },
+  {
+    "termId": "redshift",
+    "name": "Amazon Redshift",
+    "shortName": "Redshift",
+    "category": "Analytics",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Amazon Redshift 是以 SQL 分析大量資料的資料倉儲服務。",
+    "oneLine": "面向大量資料分析的 AWS 代管資料倉儲。",
+    "useCases": [
+      "BI 分析",
+      "營收資料分析",
+      "日誌與業務資料的彙總"
+    ],
+    "examPoints": [
+      "用於資料倉儲用途",
+      "適合大量資料的分析",
+      "非 OLTP,而是面向分析用途"
+    ],
+    "saaPoints": [
+      "可與 S3 資料湖整合建構分析架構",
+      "分析基礎建設中常與 QuickSight 或 Glue 結合",
+      "對小規模 MVP 容易過度設計"
+    ],
+    "relatedServices": [
+      "s3",
+      "athena",
+      "glue",
+      "quicksight"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "analytics",
+      "data-warehouse",
+      "sql"
+    ],
+    "costNotes": [
+      "依叢集或無伺服器使用量計費",
+      "學習用 MVP 容易造成成本上升"
+    ],
+    "securityNotes": [
+      "資料存取權限以 IAM 與 DB 權限分開管理",
+      "若分析對象含個資,須考量遮罩處理"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "Amazon Redshift 是 AWS 提供的雲端資料倉儲服務。為了高速執行對 PB 級資料的分析查詢,採用了列指向(Columnar)儲存體 + MPP(Massively Parallel Processing)架構,將處理分散至多個節點並行執行。可透過 SQL 介面操作,因此既有的 BI 工具或 SQL 用戶端可直接連接。\n\n提供形態包含使用者指定節點類型與節點數來執行叢集的佈建構成,以及在需要時自動確保所需運算資源的 Amazon Redshift Serverless。使用 Redshift Spectrum,可不將 Amazon S3 上的資料載入 Redshift 即可直接以 SQL 進行查詢,使跨資料湖與資料倉儲的分析成為可能。\n\n主要使用案例為將從多個系統收集的大量資料彙總以建立企業資料倉儲、作為 BI 工具(Amazon QuickSight、Tableau、Power BI 等)的分析基礎建設使用、與 Amazon S3 資料湖結合的分析、機器學習用前處理資料的彙總等。OLTP 用的通用關聯式資料庫(Amazon RDS / Aurora)負責「應用程式的交易處理」,而 Redshift 是針對「彙總、分析查詢」最佳化的服務,此角色分擔在 CLF-C02 中也會反覆被詢問。",
+    "officialDocs": [
+      {
+        "label": "Amazon Redshift 管理指南 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/redshift/latest/mgmt/welcome.html"
+      },
+      {
+        "label": "Amazon Redshift (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/redshift/"
+      }
+    ]
+  },
+  {
+    "termId": "route53",
+    "name": "Amazon Route 53",
+    "shortName": "Route 53",
+    "category": "Networking",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS 的 DNS 服務。用於將網域名稱導向 CloudFront、ALB、S3 等 AWS 資源。",
+    "oneLine": "將網域名稱與 AWS 資源連結的 DNS 服務。",
+    "useCases": [
+      "將自訂網域導向 CloudFront",
+      "DNS 記錄管理",
+      "健康檢查與 DNS 容錯移轉"
+    ],
+    "examPoints": [
+      "屬於 DNS 服務",
+      "可透過 Alias 記錄導向 AWS 資源",
+      "可選擇路由策略"
+    ],
+    "saaPoints": [
+      "依情況選用延遲路由或容錯移轉路由",
+      "用於 CloudFront 的自訂網域整合",
+      "Hosted Zone 會產生月費"
+    ],
+    "relatedServices": [
+      "cloudfront",
+      "acm",
+      "elb"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "static-site-s3-cloudfront"
+    ],
+    "tags": [
+      "dns",
+      "networking",
+      "domain"
+    ],
+    "costNotes": [
+      "依 Hosted Zone 與 DNS 查詢次數計費",
+      "MVP 階段自訂網域導入可視為選用"
+    ],
+    "securityNotes": [
+      "限制 DNS 記錄變更權限",
+      "網域管理帳號須以 MFA 保護"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon Route 53 是 AWS 提供的具備優異可用性與擴展性的雲端 DNS(Domain Name System)服務。在單一服務中提供網域名稱的登錄(Domain Registration)、DNS 紀錄的代管(Hosted Zone)、健康檢查、流量路由。使用面向 AWS 資源的 Alias 紀錄,即可將名稱解析無額外費用地指向 CloudFront 發佈、Application Load Balancer、S3 靜態網站代管、API Gateway 等。\n\n主要的路由原則包含 7 種:簡單路由(單一紀錄)、加權路由(以指定權重分散)、延遲路由(分配至延遲最低的區域)、容錯移轉路由(主要故障時切換至次要)、地理位置路由(基於用戶端地理位置分配)、地理鄰近性路由、多值答覆路由。與健康檢查功能結合,可構成故障發生時的自動 DNS 容錯移轉。\n\n典型使用案例為將自有網域指向 CloudFront 發佈或 ALB 的構成、跨多區域的 DNS 層級負載分散、透過容錯移轉的 DR(災害復原)構成、公司內部應用程式用私有 DNS(Private Hosted Zone)的運用等。費用以每個 Hosted Zone 的固定月費 + DNS 查詢次數 + 健康檢查數 + 網域註冊費(年費、依 TLD 而異)的組合計費。對面向 AWS 資源的 Alias 紀錄的查詢為免費。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon Route 53 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon Route 53 (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/route53/"
+      }
+    ]
+  },
+  {
+    "termId": "s3",
+    "name": "Amazon Simple Storage Service",
+    "shortName": "S3",
+    "category": "Storage",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "物件儲存服務。可儲存 HTML、圖片、日誌、備份及靜態網站檔案等。",
+    "oneLine": "安全且低成本儲存檔案的 AWS 代表性儲存服務。",
+    "useCases": [
+      "靜態網站檔案的部署",
+      "圖片、PDF、日誌的儲存",
+      "備份與資料湖"
+    ],
+    "examPoints": [
+      "屬於物件儲存",
+      "具備高耐久性",
+      "可透過儲存等級與生命週期規則進行成本最佳化"
+    ],
+    "saaPoints": [
+      "靜態網站傳遞時與 CloudFront 結合",
+      "勿直接公開 S3,須透過 OAC 或儲存貯體政策控制",
+      "依用途選擇 Standard、IA、Glacier 系列"
+    ],
+    "relatedServices": [
+      "cloudfront",
+      "ebs",
+      "efs",
+      "iam"
+    ],
+    "comparisonSlugs": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "architectureSlugs": [
+      "static-site-s3-cloudfront"
+    ],
+    "tags": [
+      "storage",
+      "object-storage",
+      "static-site"
+    ],
+    "costNotes": [
+      "依儲存容量、請求次數與資料傳輸量計費",
+      "勿持續放置不必要的大容量檔案"
+    ],
+    "securityNotes": [
+      "勿輕易將儲存貯體公開",
+      "透過 CloudFront 傳遞時須使用 OAC"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon Simple Storage Service(Amazon S3)是 AWS 提供的物件儲存體服務。採用將檔案(物件)儲存於儲存貯體(儲存貯體名稱在整個 AWS 中唯一)的形式,可儲存 HTML、CSS、JavaScript、圖片、影片、日誌、備份、資料湖用檔案等各種資料。標準的 Amazon S3 Standard 類別具備 99.999999999%(11 個 9)的物件耐久性,並內建跨多 AZ 的冗餘儲存。\n\n主要的儲存體類別包含經常存取的 S3 Standard、存取頻率較低的資料用 S3 Standard-IA(Infrequent Access)與 S3 One Zone-IA、存取模式不明的資料用 S3 Intelligent-Tiering、封存用途的 S3 Glacier Instant Retrieval / S3 Glacier Flexible Retrieval / S3 Glacier Deep Archive。設定生命週期原則後,可在一定期間後自動將物件移轉至較便宜的類別,或在不需要時自動刪除。\n\n典型使用案例為與 CloudFront 結合的靜態網站發佈、日誌、備份、快照的長期保存、與 Amazon Athena / Amazon EMR / Amazon Redshift Spectrum 結合的資料湖基礎建設、各種 AWS 服務(CloudTrail / VPC Flow Logs / ELB 存取日誌等)的輸出目的地等。費用以「儲存容量 × 儲存體類別單價」「請求數」「資料傳輸量」「生命週期移轉請求數」等的組合計費。安全性方面,預設啟用封鎖公開存取,設計上可防止意外公開。透過 CloudFront 發佈時,建議使用來源存取控制(OAC)限制對儲存貯體的直接存取。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 使用者指南 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3 (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/s3/"
+      }
+    ]
+  },
+  {
+    "termId": "secrets-manager",
+    "name": "AWS Secrets Manager",
+    "shortName": "Secrets Manager",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "可安全儲存資料庫密碼或 API 金鑰等機密資訊,並進行輪替的服務。",
+    "oneLine": "安全管理 API 金鑰與密碼的服務。",
+    "useCases": [
+      "資料庫認證資訊的儲存",
+      "外部 API 金鑰的管理",
+      "機密資訊的自動輪替"
+    ],
+    "examPoints": [
+      "屬於機密資訊管理服務",
+      "具備輪替功能",
+      "可能與 Parameter Store 的差異一同被考"
+    ],
+    "saaPoints": [
+      "用於 Lambda 取得機密資訊的設計",
+      "與 KMS 整合進行加密",
+      "理解支援輪替的資料庫"
+    ],
+    "relatedServices": [
+      "kms",
+      "systems-manager",
+      "lambda"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "security",
+      "secret-management"
+    ],
+    "costNotes": [
+      "依機密資訊數量與 API 呼叫次數計費",
+      "MVP 階段若無外部機密資訊則不使用"
+    ],
+    "securityNotes": [
+      "勿將機密資訊直接寫入環境變數或 Git",
+      "取得權限僅限於對應的 Lambda"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Secrets Manager 是用於安全儲存、取得、輪替資料庫認證資訊、API 金鑰、OAuth 權杖及其他機密資訊的託管服務。機密資訊以 AWS KMS 加密後保管,可透過 IAM 原則細緻控制取得權限。應用程式程式碼透過 AWS SDK 經由 API(GetSecretValue)取得機密資訊,不再需要在程式碼內、環境變數或設定檔中以明文寫入。\n\n主要功能包含自動輪替功能。針對 Amazon RDS / Amazon Redshift / Amazon DocumentDB / Amazon ElastiCache,AWS 提供輪替用 Lambda 函式範本,僅需設定即可定期自動更新機密資訊。對於任意機密資訊,撰寫自訂輪替用 Lambda 函式即可進行同樣的自動更新。內建機密資訊的版本管理,輪替中的舊版本也可在一定期間內參照。\n\n典型使用案例為從 Lambda 函式或 ECS 任務取得對 RDS 的連線密碼、安全保管外部 SaaS 連動用 API 金鑰、CI/CD 管線內使用的憑證的集中管理等。費用以「機密資訊數 × 月固定費」+「API 呼叫數」的組合計費。與類似服務 AWS Systems Manager Parameter Store 相比,Parameter Store 有免費的 Standard 層級但無自動輪替功能,Secrets Manager 則定位為包含輪替功能的付費服務。SAA-C03 以後與 Parameter Store 的使用區分為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Secrets Manager (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/intro.html"
+      },
+      {
+        "label": "AWS Secrets Manager (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/secrets-manager/"
+      }
+    ]
+  },
+  {
+    "termId": "shield",
+    "name": "AWS Shield",
+    "shortName": "Shield",
+    "category": "Security",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS Shield 是保護 AWS 上應用程式免於 DDoS 攻擊的服務。",
+    "oneLine": "保護 AWS 服務免於 DDoS 攻擊的防護服務。",
+    "useCases": [
+      "CloudFront 傳遞的 DDoS 防護",
+      "公開 Web 應用程式的保護",
+      "對高流量攻擊的準備"
+    ],
+    "examPoints": [
+      "屬於 DDoS 防護服務",
+      "Shield Standard 可免額外費用使用",
+      "Shield Advanced 面向進階防護"
+    ],
+    "saaPoints": [
+      "與 CloudFront 或 Route 53 結合,在邊緣端防禦",
+      "與 WAF 的防護對象不同",
+      "Advanced 須確認費用後再決定導入"
+    ],
+    "relatedServices": [
+      "cloudfront",
+      "route53",
+      "waf"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [
+      "static-site-s3-cloudfront"
+    ],
+    "tags": [
+      "security",
+      "ddos",
+      "edge"
+    ],
+    "costNotes": [
+      "Shield Standard 無額外費用",
+      "Shield Advanced 固定費用較高,個人 MVP 不使用"
+    ],
+    "securityNotes": [
+      "DDoS 對策須與 CloudFront、Route 53、WAF 一同規劃",
+      "事先準備攻擊時的聯絡與復原程序"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS Shield 是保護 AWS 上應用程式免受分散式阻斷服務(DDoS: Distributed Denial of Service)攻擊的託管服務。有 Shield Standard 與 Shield Advanced 兩種提供形態,Standard 對所有 AWS 使用者自動套用且無額外費用。在使用 CloudFront、Route 53、AWS Global Accelerator、Elastic Load Balancing 等邊緣、邊界服務的工作負載中,針對網路層(L3/L4)的 SYN flood、UDP 反射攻擊等的基本保護會持續啟用。\n\nShield Advanced 是付費的上位方案,需明確登錄保護對象資源(CloudFront 發佈、Route 53 託管區域、ALB / NLB、Global Accelerator、Elastic IP)後使用。會追加比 Standard 更進階的 L3/L4 攻擊緩解、針對 Layer 7 攻擊(HTTP flood 等)的對應、攻擊發生時對 AWS Shield Response Team(SRT)的 24/7 存取、因 DDoS 攻擊導致的 EC2 / ELB / CloudFront / Route 53 費用突增的成本保護、AWS WAF 的使用費用(保護對象資源部分)的內建提供等。\n\n典型使用案例為以 Shield Standard 為基礎的 CloudFront + S3 / ALB 發佈的標準 DDoS 防禦、簽約 Shield Advanced 的大規模公開服務中的進階防禦與 24/7 支援的確保。費用方面 Shield Advanced 會以組織單位產生月固定費,需要 1 年的承諾,因此個人開發或 MVP 階段以 Shield Standard 對應為基本。CLF-C02 中,Shield Standard 與 Advanced 的差異,以及與 AWS WAF(L7 透過 Web ACL 的規則式防禦)的角色分擔(Shield = DDoS 對策、WAF = 應用程式層規則)為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS WAF, AWS Shield, AWS Firewall Manager (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/ddos-overview.html"
+      },
+      {
+        "label": "AWS Shield (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/shield/"
+      }
+    ]
+  },
+  {
+    "termId": "sns",
+    "name": "Amazon Simple Notification Service",
+    "shortName": "SNS",
+    "category": "Integration",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "Pub/Sub 形式的通知服務。可將一則訊息傳送至多個訂閱端。",
+    "oneLine": "將事件或通知分送至多個目的地的服務。",
+    "useCases": [
+      "電子郵件通知",
+      "對 SQS 的扇出傳遞",
+      "系統警示通知"
+    ],
+    "examPoints": [
+      "屬於 Pub/Sub 型通知服務",
+      "可傳遞至多個訂閱端",
+      "可與 SQS 結合達成鬆耦合"
+    ],
+    "saaPoints": [
+      "以 Fanout 模式傳遞至多個佇列",
+      "可透過篩選政策過濾訂閱端",
+      "理解傳遞失敗時的重試機制"
+    ],
+    "relatedServices": [
+      "sqs",
+      "eventbridge",
+      "cloudwatch"
+    ],
+    "comparisonSlugs": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "architectureSlugs": [],
+    "tags": [
+      "integration",
+      "notification",
+      "pubsub"
+    ],
+    "costNotes": [
+      "依傳遞請求次數與通知端類型計費",
+      "勿增加不必要的通知端"
+    ],
+    "securityNotes": [
+      "限制主題的發佈權限",
+      "勿在對外通知中包含個資"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon Simple Notification Service(Amazon SNS)是 AWS 提供的完全託管發佈/訂閱型(Pub/Sub 型)訊息傳遞服務。當發佈者(Publisher)向主題(Topic)發送訊息時,訂閱該主題的所有接收方都會收到相同的訊息。將同一訊息同時送達多個目的地的 Fan-out 發佈為其主要角色,作為使元件間鬆耦合化的基礎建設使用。\n\n可指定為訂閱(Subscription)端點的對象多元。支援 Amazon SQS 佇列、AWS Lambda 函式、HTTP/HTTPS 端點、Email、SMS(手機簡訊)、行動推播通知(Apple/Google/Amazon 各種推播通知服務)、AWS Event Fork Pipelines 等。使用訂閱篩選器原則,可對送達主題的訊息中具有特定屬性的訊息,按訂閱端點縮小接收條件。\n\n典型使用案例為從 CloudWatch 警示向運用負責人的電子郵件通知、同時向多個 SQS 佇列發佈訊息的 Fan-out 模式、微服務間的非同步事件連動、向行動應用程式的推播通知發佈等。費用以「發佈請求數」「發佈通知數」「資料傳輸量」等的組合計費,依發佈目的地通訊協定(SMS 單價較高、SQS / Lambda 發佈單價較低)而從量計費單價不同。CLF-C02 中,SNS(Pub/Sub 型、向多個接收者推播發佈)與 SQS(佇列型、1 訊息由 1 接收者消費)的角色分擔,以及 SNS + SQS 的 Fan-out 構成為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon SNS (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/sns/latest/dg/welcome.html"
+      },
+      {
+        "label": "Amazon Simple Notification Service (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/sns/"
+      }
+    ]
+  },
+  {
+    "termId": "sqs",
+    "name": "Amazon Simple Queue Service",
+    "shortName": "SQS",
+    "category": "Integration",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "訊息佇列服務。將處理端與請求端分離,使非同步處理更穩定。",
+    "oneLine": "安全暫存待處理訊息的佇列服務。",
+    "useCases": [
+      "訂單處理的非同步化",
+      "對 Lambda 的處理分散",
+      "故障時的重試緩衝"
+    ],
+    "examPoints": [
+      "可透過佇列達成鬆耦合",
+      "有 Standard Queue 與 FIFO Queue",
+      "須理解可見性逾時"
+    ],
+    "saaPoints": [
+      "以無效訊息佇列(DLQ)隔離失敗訊息",
+      "若需處理順序則考慮使用 FIFO",
+      "可作為 Lambda 觸發來源"
+    ],
+    "relatedServices": [
+      "sns",
+      "eventbridge",
+      "lambda"
+    ],
+    "comparisonSlugs": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "architectureSlugs": [],
+    "tags": [
+      "integration",
+      "queue",
+      "messaging"
+    ],
+    "costNotes": [
+      "依請求次數計費",
+      "過長的保留期間會留下不必要的資料"
+    ],
+    "securityNotes": [
+      "佇列操作權限以送信與接收分開設定",
+      "勿將機密資訊直接放入訊息"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon SQS 是 AWS 的完全託管訊息佇列服務。透過將傳送訊息至佇列的一方(生產者)與接收的一方(消費者)分離,使處理非同步化,實現整個系統的鬆耦合化。傳送方可不必意識消費者的執行狀況即可發送訊息,接收方可按自身步調取出訊息並處理,因此可作為對瞬間負載變動的緩衝(Buffer)。SQS 有 Standard Queue 與 FIFO Queue 兩種,Standard 提供無順序保證、至少一次發佈,FIFO 提供有順序保證、精確一次處理。\n\n實務上用於訂單處理的非同步化、向 Lambda 的處理分散、故障時的重試緩衝、ECS 任務間的工作交接等。可見度逾時(Visibility Timeout)為 SQS 的重要概念,是消費者取出訊息後到處理完成(delete)為止,該訊息對其他消費者隱藏的時間。若處理在逾時內未完成,訊息會再次可見,可被其他消費者取出。藉此保證至少一次處理,作為代價,消費者端需確保等冪性(idempotency)。\n\n費用為依請求數(API 呼叫次數)從量計費,資料傳輸量另外計費。透過設定無效信件佇列(DLQ),可將超過規定次數仍處理失敗的訊息退避至另一佇列,用於後續調查。CLF-C02 中,「SQS = 透過訊息佇列的鬆耦合化」的基本概念、Standard / FIFO 的使用區分、可見度逾時為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon Simple Queue Service (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon SQS (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      }
+    ]
+  },
+  {
+    "termId": "step-functions",
+    "name": "AWS Step Functions",
+    "shortName": "Step Functions",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS Step Functions 是將多個處理串成工作流程並進行狀態管理執行的服務。",
+    "oneLine": "以順序或條件分支串接 Lambda 等處理的工作流程服務。",
+    "useCases": [
+      "批次處理的控制",
+      "多個 Lambda 的串接",
+      "審核流程或重試控制"
+    ],
+    "examPoints": [
+      "屬於管理工作流程的服務",
+      "可定義狀態轉移",
+      "可與 Lambda 及 EventBridge 整合"
+    ],
+    "saaPoints": [
+      "可將長時間或多步驟處理視覺化",
+      "可定義重試與錯誤處理",
+      "為非同步處理設計的候選方案"
+    ],
+    "relatedServices": [
+      "lambda",
+      "eventbridge",
+      "sqs"
+    ],
+    "comparisonSlugs": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "architectureSlugs": [
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "workflow",
+      "serverless",
+      "integration"
+    ],
+    "costNotes": [
+      "依狀態轉移次數與執行模式計費",
+      "單純的查詢 API 不需要"
+    ],
+    "securityNotes": [
+      "執行角色權限僅限定於各整合對象",
+      "勿在失敗時將過多輸入資料寫入日誌"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS Step Functions 是將多個處理步驟定義為工作流程,組合狀態管理、重試控制、條件分支、並行執行來執行的完全託管編排服務。依照稱為狀態機的定義(以 Amazon States Language 這個 JSON 格式的 DSL 撰寫),依序或並行執行 Lambda 函式、ECS 任務、DynamoDB 操作、SNS 通知等「任務」,並將各步驟的成功、失敗、輸出作為狀態追蹤。\n\n實務上用於依序呼叫多個 Lambda 的批次處理、簽核流程、ETL 管線、微服務間的編排等。與不使用 Step Functions 而直接呼叫 Lambda 間的構成相比,優點為各步驟的執行歷程在主控台可視化、失敗時的重試、攔截處理可宣告式撰寫、可對長時間(最多 1 年)的工作流程進行狀態管理。有 Express Workflow(短時間、高吞吐量用)與 Standard Workflow(長時間、保留狀態歷程用)兩種,依用途選擇。\n\n費用以狀態轉換數(Standard)或執行時間與請求數(Express)的從量計費,需留意等待步驟中也為計費對象。與 EventBridge 結合構成排程啟動或事件驅動執行的模式很常見。CLF-C02 中,「Step Functions = 工作流程編排」「與 Lambda 結合可組成無伺服器構成」「可將狀態轉換視覺化」的整理為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Step Functions (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Step Functions (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/step-functions/"
+      }
+    ]
+  },
+  {
+    "termId": "systems-manager",
+    "name": "AWS Systems Manager",
+    "shortName": "Systems Manager",
+    "category": "Management",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "管理 AWS 資源與伺服器維運的服務群組。包含 Parameter Store、Session Manager、Run Command 等。",
+    "oneLine": "統一管理 AWS 環境與伺服器維運的服務。",
+    "useCases": [
+      "以 Parameter Store 管理設定值",
+      "以 Session Manager 安全連線至 EC2",
+      "以 Run Command 執行維運作業"
+    ],
+    "examPoints": [
+      "屬於維運管理服務",
+      "可透過 Parameter Store 管理設定值",
+      "可透過 Session Manager 進行無 SSH 連線"
+    ],
+    "saaPoints": [
+      "可考慮以 Session Manager 取代跳板伺服器",
+      "Parameter Store SecureString 與 KMS 整合",
+      "可透過自動化文件標準化維運作業"
+    ],
+    "relatedServices": [
+      "secrets-manager",
+      "kms",
+      "ec2"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "management",
+      "operations",
+      "parameter-store"
+    ],
+    "costNotes": [
+      "Parameter Store 有標準與進階參數的差異",
+      "MVP 若設定值不多,使用 .env.example 管理即足夠"
+    ],
+    "securityNotes": [
+      "勿將正式機密資訊放入 Git",
+      "使用 Session Manager 時須設定 IAM 權限與日誌輸出"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS Systems Manager(SSM)是統合進行 AWS 資源與地端伺服器運用管理的服務群。並非單一服務,而是作為 Parameter Store、Session Manager、Run Command、Patch Manager、State Manager、Automation 等多個功能(Capability)的集合體提供。在 EC2 執行個體或地端伺服器導入 SSM Agent,即可將各伺服器作為管理對象使用這些功能。\n\n實務上常用的功能如下。Parameter Store 以階層結構管理設定值、連線字串、加密的機密資訊,可從 Lambda 或 EC2 取得(比 Secrets Manager 便宜,適合不處理機密資訊的設定值)。Session Manager 為無需 SSH 金鑰或開啟輸入埠即可終端機連線至 EC2 的機制,使跳板伺服器變得不必要。Run Command 為可對多個 EC2 一齊執行指令碼或命令的機制,用於例行運用工作的自動化。Patch Manager 負責 OS 修補程式套用,State Manager 負責構成偏離管理。\n\n費用因功能而異,Session Manager、Run Command、Parameter Store 的 Standard 層級可免費使用(進階 Parameter Store 或地端管理擴充為付費)。CLF-C02 中,Systems Manager 整體會以「運用管理服務群」被詢問,特別是透過 Parameter Store 的設定值管理與透過 Session Manager 的無 SSH 連線為常見論點。與 Secrets Manager 的使用區分(機密性高且需要自動輪替則用 Secrets Manager,優先成本且以明文、SecureString 管理即可則用 Parameter Store)也整理好,選項的篩選會更快。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Systems Manager (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/what-is-systems-manager.html"
+      },
+      {
+        "label": "AWS Systems Manager (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/systems-manager/"
+      }
+    ]
+  },
+  {
+    "termId": "trusted-advisor",
+    "name": "AWS Trusted Advisor",
+    "shortName": "Trusted Advisor",
+    "category": "Management",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS Trusted Advisor 是從成本、安全性、效能、容錯能力等觀點檢查 AWS 環境的服務。",
+    "oneLine": "提示 AWS 環境改善要點的檢查服務。",
+    "useCases": [
+      "成本削減檢查",
+      "安全性設定確認",
+      "未使用資源的確認"
+    ],
+    "examPoints": [
+      "依最佳實務進行檢查",
+      "用於成本最佳化與安全性觀點",
+      "可使用的檢查範圍因支援方案而異"
+    ],
+    "saaPoints": [
+      "可作為維運改善的入口",
+      "依 Trusted Advisor 的提示重新檢視成本與可用性",
+      "正式環境中須定期確認"
+    ],
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer",
+      "iam"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "management",
+      "cost",
+      "best-practice"
+    ],
+    "costNotes": [
+      "可用功能範圍取決於支援方案",
+      "成本削減檢查對個人開發也十分有用"
+    ],
+    "securityNotes": [
+      "確認安全性警示",
+      "勿忽視公開設定或權限過大的提示"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS Trusted Advisor 是以「成本最佳化」「安全性」「容錯性」「效能」「服務配額」5 個類別檢查 AWS 環境,並按最佳實務進行改善建議的服務。檢查依 AWS 預先準備的項目自動執行,結果可在管理主控台按類別確認。代表性的檢查項目包含 IAM 根使用者的 MFA 啟用、S3 儲存貯體的公開存取、未使用的 EC2 Elastic IP、低執行率的 EC2 執行個體、服務配額的使用狀況等。\n\n可使用的檢查項目數因支援方案而異。Basic Support 與 Developer Support 中,可使用安全性類別與容錯性類別的選定項目(MFA on root account、S3 儲存貯體權限、EBS/RDS 公開快照、安全群組的連接埠開放狀況等)與服務配額類別的所有項目。Business Support 以上可使用所有類別、所有項目(最新的項目數請參照官方文件),也提供透過 API 自動取得或每週的改善報告發送等。在考試文脈中,「依支援方案檢查範圍不同」的點會反覆被詢問,因此 Basic / Developer 為部分安全性、容錯性檢查與所有服務配額檢查,Business 以上為所有項目的對應關係需確實掌握。\n\n實務上,以 Trusted Advisor 的「成本最佳化」類別找出未使用資源(停止 EC2 附隨的 EBS、未使用 Elastic IP、低執行 RDS)並導向成本削減的運用、以「安全性」類別持續監視 IAM、S3、安全群組的設定缺失的運用為典型。雖然角色與 AWS Config Rules 或 AWS Security Hub 部分重疊,但 Trusted Advisor 提供「對 AWS 最佳實務的評估」為其特有的價值。",
+    "officialDocs": [
+      {
+        "label": "AWS Trusted Advisor (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS Trusted Advisor (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      }
+    ]
+  },
+  {
+    "termId": "vpc",
+    "name": "Amazon Virtual Private Cloud",
+    "shortName": "VPC",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "在 AWS 上建立邏輯隔離網路空間的服務。可結合子網路、路由表、Internet Gateway 與 NAT Gateway 等。",
+    "oneLine": "在 AWS 內建立專屬網路的服務。",
+    "useCases": [
+      "Web 應用程式的網路隔離",
+      "公開子網路與私有子網路的劃分",
+      "RDS 與 EC2 的封閉式部署"
+    ],
+    "examPoints": [
+      "子網路以可用區域為單位建立",
+      "以 Security Group 與 NACL 控制通訊",
+      "Internet Gateway 用於連接網際網路"
+    ],
+    "saaPoints": [
+      "高可用性需使用多可用區域的子網路",
+      "若需從私有子網路對外通訊則使用 NAT Gateway",
+      "可透過 VPC 端點最佳化 AWS 服務連線"
+    ],
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "auto-scaling"
+    ],
+    "comparisonSlugs": [
+      "security-group-vs-nacl"
+    ],
+    "architectureSlugs": [
+      "three-tier-vpc",
+      "high-availability-web-app"
+    ],
+    "tags": [
+      "networking",
+      "vpc"
+    ],
+    "costNotes": [
+      "VPC 本身無額外費用",
+      "NAT Gateway 容易產生固定費用"
+    ],
+    "securityNotes": [
+      "勿將管理用連接埠開放給 0.0.0.0/0",
+      "私有資源勿放置於公開子網路"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "Amazon VPC 是在 AWS 帳戶內建立邏輯隔離網路空間(虛擬私有雲)的服務。以 CIDR 區塊(例:10.0.0.0/16)定義位址空間,在其中將多個子網路(公用子網路 / 私有子網路)按可用區域單位切分配置。子網路間的路由以路由表控制,通往網際網路的出口以網際網路閘道實現,從私有子網路的對外通訊以 NAT 閘道實現。組合這些構成元素,可在 AWS 上重現接近地端網路設計的結構。\n\n通訊控制以安全群組(執行個體層級、具狀態、僅允許規則)與網路 ACL(子網路層級、無狀態、可記述允許與拒絕兩者)兩層進行。安全群組以允許型定義「可從何處進入此執行個體」「可往何處出去」,網路 ACL 負責子網路單位的粗略控制。兩者並用,組合安全群組的細緻控制與網路 ACL 的全面阻擋的構成很常見。\n\n實務上,在 VPC 上建置 Web 三層構成(公用子網路放 ALB、私有子網路放 EC2、ECS、資料庫子網路放 RDS)的設計為典型。連接多個 VPC 時用 VPC 對等互連,彙整多帳戶、多 VPC 時用 Transit Gateway,對 AWS 服務的閉域存取用 VPC 端點(閘道型 / 介面型)。VPC 本體、子網路、路由表、網際網路閘道、安全群組、網路 ACL 的建立本身免費,NAT 閘道、VPC 端點、資料傳輸量會產生費用。CLF-C02 中,VPC 的基本構成元素(子網路、路由表、IGW、NAT、安全群組、網路 ACL)的角色分擔會反覆被詢問。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon Virtual Private Cloud (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/what-is-amazon-vpc.html"
+      },
+      {
+        "label": "Amazon Virtual Private Cloud (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/vpc/"
+      }
+    ]
+  },
+  {
+    "termId": "waf",
+    "name": "AWS WAF",
+    "shortName": "WAF",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "以規則控制對 Web 應用程式的攻擊性請求的服務。可與 CloudFront 或 ALB 整合。",
+    "oneLine": "以規則防止對 Web 之不正存取的服務。",
+    "useCases": [
+      "SQL 注入對策",
+      "Bot 與大量存取的控制",
+      "CloudFront 傳遞網站的保護"
+    ],
+    "examPoints": [
+      "保護 Web 應用程式的防火牆",
+      "與 CloudFront 或 ALB 整合",
+      "可使用代管規則"
+    ],
+    "saaPoints": [
+      "以 Rate-based rule 限制大量存取",
+      "關聯至 CloudFront 時屬於全域範圍",
+      "比較成本與防護範圍"
+    ],
+    "relatedServices": [
+      "cloudfront",
+      "elb",
+      "api-gateway"
+    ],
+    "comparisonSlugs": [],
+    "architectureSlugs": [],
+    "tags": [
+      "security",
+      "web-firewall"
+    ],
+    "costNotes": [
+      "依 Web ACL、規則與請求次數計費",
+      "MVP 階段待存取量增加後再判斷是否導入"
+    ],
+    "securityNotes": [
+      "確認日誌以避免誤判封鎖正常使用者",
+      "限制規則變更權限"
+    ],
+    "updatedAt": "2026-06-01",
+    "locale": "zh",
+    "practicalNote": "AWS WAF(Web Application Firewall)是基於規則偵測、阻擋對 Web 應用程式惡意請求的託管防火牆服務。會依規則評估 SQL 注入、跨網站指令碼(XSS)、來自特定 IP 位址的大量請求、來自特定地區的存取等。WAF 並非單獨運作,而是綁定至 CloudFront、Application Load Balancer(ALB)、API Gateway、AWS AppSync 等「保護對象的資源」進行部署。\n\n規則有 3 種。託管規則(AWS 或 AWS Marketplace 合作夥伴提供的規則集)、自訂規則(自行記述條件)、速率型規則(基於一定期間內請求數的阻擋)。託管規則包含 OWASP Top 10 對策、Bot 管理、已知惡意 IP 對策等常用規則集,僅需啟用即可開始基本保護。將這些以規則群組綁定至 Web ACL(Access Control List),並將 Web ACL 關聯至保護對象資源的構成。\n\n費用為依 Web ACL 數、規則數、處理請求數的從量計費,託管規則會另外加算各規則群組的費用。也需整理與 AWS Shield Standard 的關係,Shield Standard 為所有 AWS 使用者免費提供 L3/L4 的 DDoS 對策,WAF 則負責 L7(HTTP/HTTPS)層的規則式防禦。兩者守備範圍不同,Web 應用程式的保護以 WAF 與 Shield Standard 並用為基本。CLF-C02 中,「WAF = L7 的 Web 應用程式保護」「與 CloudFront / ALB 連動」「以託管規則可防範 SQL 注入或 XSS」的整理為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS WAF (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/waf-chapter.html"
+      },
+      {
+        "label": "AWS WAF (AWS 官方)",
+        "url": "https://aws.amazon.com/jp/waf/"
+      }
+    ]
+  },
+  {
+    "termId": "x-ray",
+    "name": "AWS X-Ray",
+    "shortName": "X-Ray",
+    "category": "Monitoring",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "summary": "AWS X-Ray 是將分散式應用程式的請求路徑與處理時間視覺化的追蹤服務。",
+    "oneLine": "追蹤 API 或 Lambda 處理在何處變慢的服務。",
+    "useCases": [
+      "無伺服器 API 的追蹤",
+      "微服務的延遲調查",
+      "故障時的根因分析"
+    ],
+    "examPoints": [
+      "屬於分散式追蹤服務",
+      "用於效能問題的調查",
+      "與 CloudWatch Logs 的角色不同"
+    ],
+    "saaPoints": [
+      "可與 API Gateway 及 Lambda 整合",
+      "可將服務之間的瓶頸視覺化",
+      "MVP 階段多半使用 CloudWatch Logs 即足夠"
+    ],
+    "relatedServices": [
+      "lambda",
+      "api-gateway",
+      "cloudwatch"
+    ],
+    "comparisonSlugs": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "architectureSlugs": [
+      "serverless-api-basic"
+    ],
+    "tags": [
+      "monitoring",
+      "tracing",
+      "performance"
+    ],
+    "costNotes": [
+      "依追蹤記錄數與取得數計費",
+      "僅查詢 API 階段並非必要"
+    ],
+    "securityNotes": [
+      "勿在追蹤中包含個資或請求內文",
+      "限制正式環境的取得資料範圍"
+    ],
+    "updatedAt": "2026-06-07",
+    "locale": "zh",
+    "practicalNote": "AWS X-Ray 是將分散式應用程式的請求路徑與處理時間視覺化的分散式追蹤服務。在 API Gateway → Lambda → DynamoDB 的無伺服器構成,或 ALB → ECS → RDS 的微服務構成中,記錄 1 個請求通過各元件的路徑,以及各元件的處理時間(延遲)、錯誤資訊。在 X-Ray 主控台可將整體圖像以服務地圖視覺化,以請求單位追蹤哪個服務間呼叫較慢、何處發生錯誤。\n\n啟用 X-Ray 需在應用程式程式碼端納入 X-Ray SDK,或啟用對象服務的 X-Ray 追蹤功能。Lambda、API Gateway、ALB、SQS、SNS 等主要服務僅需在主控台端啟用追蹤,資料即會送至 X-Ray。納入 SDK 時,可記錄獨自的子區段(外部 API 呼叫或 DB 查詢等),以更細緻粒度找出瓶頸。透過設定取樣率,可控制作為追蹤對象的請求比例,抑制成本。\n\n需整理與 CloudWatch Logs 角色的差異。CloudWatch Logs 彙整「各別服務的文字日誌」,X-Ray 則將「跨多個服務的請求執行路徑與處理時間」視覺化。故障調查時兩者並用,以 X-Ray 找出何處較慢、何處失敗,以 CloudWatch Logs 確認對應位置的詳細日誌的流程很常見。費用為記錄追蹤數與取得追蹤數的從量計費,每月有一定量的免費使用額度。CLF-C02 中,「X-Ray = 分散式追蹤」「用於 Lambda 或 API Gateway 的延遲調查」「與 CloudWatch Logs 角色不同」的整理為常見論點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS X-Ray (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/aws-xray.html"
+      },
+      {
+        "label": "AWS X-Ray 的概念 (AWS 官方文件)",
+        "url": "https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-concepts.html"
+      }
+    ]
+  }
+]
