@@ -28,6 +28,7 @@ type MdxContentMeta = {
   slug: string;
   updatedAt?: string;
   published: boolean;
+  noIndex: boolean;
 };
 
 const CONTENT_ROOT = path.join(process.cwd(), "contents");
@@ -91,6 +92,7 @@ function readMdxContentMetas(directoryName: string): MdxContentMeta[] {
       const frontmatter = extractFrontmatter(fileContent);
 
       const publishedValue = readFrontmatterValue(frontmatter, "published");
+      const noIndexValue = readFrontmatterValue(frontmatter, "noIndex");
       const updatedAt =
         readFrontmatterValue(frontmatter, "updatedAt") ??
         readFrontmatterValue(frontmatter, "publishedAt");
@@ -99,9 +101,10 @@ function readMdxContentMetas(directoryName: string): MdxContentMeta[] {
         slug,
         updatedAt,
         published: publishedValue !== "false",
+        noIndex: noIndexValue === "true",
       };
     })
-    .filter((meta) => meta.slug.length > 0)
+    .filter((meta) => meta.slug.length > 0 && meta.published && !meta.noIndex)
     .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
