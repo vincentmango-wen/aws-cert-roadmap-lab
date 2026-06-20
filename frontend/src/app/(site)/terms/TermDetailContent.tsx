@@ -16,6 +16,7 @@ import {
   isExistingComparisonForLocale,
   isExistingArchitectureForLocale,
 } from "@/lib/termGuards";
+import { filterValidOfficialDocs } from "@/lib/official-doc";
 
 type TermDetailContentProps = {
   locale: TermDetailLocale;
@@ -180,6 +181,35 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
             <EmptyMessage>{labels.noSaaPoints}</EmptyMessage>
           )}
         </Section>
+
+        {term.practicalNote ? (
+          <Section title={labels.practicalNoteTitle}>
+            <p className="whitespace-pre-line leading-8">{term.practicalNote}</p>
+          </Section>
+        ) : null}
+
+        {(() => {
+          const validDocs = filterValidOfficialDocs(term.officialDocs);
+          if (validDocs.length === 0) return null;
+          return (
+            <Section title={labels.officialDocsTitle}>
+              <ul className="space-y-2">
+                {validDocs.map((doc) => (
+                  <li key={doc.url}>
+                    <a
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-700 underline hover:text-blue-900"
+                    >
+                      {doc.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          );
+        })()}
 
         <section className="grid gap-6 lg:grid-cols-2">
           <Section title={labels.costNotesTitle}>
