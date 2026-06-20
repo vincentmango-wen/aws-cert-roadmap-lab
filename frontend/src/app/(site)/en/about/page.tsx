@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createPageMetadata } from "../../../lib/seo";
-import type { PageMetadataInput } from "../../../lib/seo";
+import { createPageMetadata } from "@/lib/seo";
+import type { PageMetadataInput } from "@/lib/seo";
 
 const aboutEnSeo: PageMetadataInput = {
   title: "About | AWS Cert Roadmap Lab",

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { createPageMetadata } from "../../../../lib/seo";
+import { createPageMetadata } from "@/lib/seo";
 import { TermDetailContent } from "../../../terms/TermDetailContent";
 import {
   createTermDetailMetadataInput,
@@ -17,7 +17,7 @@ type PageProps = {
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getTermStaticParams("en");
+  return getTermStaticParams("zh");
 }
 
 export async function generateMetadata({
@@ -25,16 +25,16 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { termId } = await params;
 
-  return createPageMetadata(createTermDetailMetadataInput("en", termId));
+  return createPageMetadata(createTermDetailMetadataInput("zh", termId));
 }
 
-export default async function EnglishTermDetailPage({ params }: PageProps) {
+export default async function ChineseTermDetailPage({ params }: PageProps) {
   const { termId } = await params;
-  const term = getTermById("en", termId);
+  const term = getTermById("zh", termId);
 
   if (!term) {
     notFound();
   }
 
-  return <TermDetailContent locale="en" term={term} />;
+  return <TermDetailContent locale="zh" term={term} />;
 }

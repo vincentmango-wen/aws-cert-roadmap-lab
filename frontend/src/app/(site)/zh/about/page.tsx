@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createPageMetadata, siteConfig } from "../../../lib/seo";
-import type { PageMetadataInput } from "../../../lib/seo";
+import { createPageMetadata, siteConfig } from "@/lib/seo";
+import type { PageMetadataInput } from "@/lib/seo";
 
 const aboutZhSeo: PageMetadataInput = {
   title: "關於本站 | AWS證照路線圖實驗室",

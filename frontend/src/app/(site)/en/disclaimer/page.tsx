@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactElement } from "react";
 import Link from "next/link";
-import { createPageMetadata } from "../../../lib/seo";
-import type { PageMetadataInput } from "../../../lib/seo";
+import { createPageMetadata } from "@/lib/seo";
+import type { PageMetadataInput } from "@/lib/seo";
 
 type DisclaimerSection = {
   id: string;

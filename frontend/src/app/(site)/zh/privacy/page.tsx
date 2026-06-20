@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactElement } from "react";
 import Link from "next/link";
-import { createAbsoluteUrl, siteConfig } from "../../../lib/seo";
+import { createAbsoluteUrl, siteConfig } from "@/lib/seo";
 
 type PolicySection = {
   id: string;

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { createPageMetadata } from "../../../lib/seo";
+import { createPageMetadata } from "@/lib/seo";
 import { TermsListClient } from "../../terms/TermsListClient";
 import {
   getTermsPageData,
