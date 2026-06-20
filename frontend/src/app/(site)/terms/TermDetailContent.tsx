@@ -12,7 +12,7 @@ import {
   type AwsTerm,
   type TermDetailLocale,
 } from "./term-detail-data";
-import { isExistingComparison, isExistingArchitecture } from "../../lib/termGuards";
+import { isExistingComparison, isExistingArchitecture } from "@/lib/termGuards";
 
 type TermDetailContentProps = {
   locale: TermDetailLocale;

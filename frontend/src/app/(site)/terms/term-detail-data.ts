@@ -1,7 +1,7 @@
-import termsEnData from "../../../contents/terms/terms.en.json";
-import termsJaData from "../../../contents/terms/terms.ja.json";
-import termsZhData from "../../../contents/terms/terms.zh.json";
-import type { PageMetadataInput } from "../../lib/seo";
+import termsEnData from "../../../../contents/terms/terms.en.json";
+import termsJaData from "../../../../contents/terms/terms.ja.json";
+import termsZhData from "../../../../contents/terms/terms.zh.json";
+import type { PageMetadataInput } from "@/lib/seo";
 
 export type TermDetailLocale = "ja" | "en" | "zh";
 

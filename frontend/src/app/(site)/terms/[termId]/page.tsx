@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { createPageMetadata } from "../../../lib/seo";
+import { createPageMetadata } from "@/lib/seo";
 import { TermDetailContent } from "../TermDetailContent";
 import {
   createTermDetailMetadataInput,
