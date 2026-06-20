@@ -12,7 +12,10 @@ import {
   type AwsTerm,
   type TermDetailLocale,
 } from "./term-detail-data";
-import { isExistingComparison, isExistingArchitecture } from "@/lib/termGuards";
+import {
+  isExistingComparisonForLocale,
+  isExistingArchitectureForLocale,
+} from "@/lib/termGuards";
 
 type TermDetailContentProps = {
   locale: TermDetailLocale;
@@ -222,13 +225,15 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
           <Section title={labels.comparisonArticlesTitle}>
             {(() => {
               const existingSlugs =
-                term.comparisonSlugs?.filter(isExistingComparison) ?? [];
+                term.comparisonSlugs?.filter((slug) =>
+                  isExistingComparisonForLocale(locale, slug),
+                ) ?? [];
               return existingSlugs.length > 0 ? (
                 <div className="space-y-3">
                   {existingSlugs.map((slug) => (
                     <Link
                       key={slug}
-                      href={`/comparisons/${slug}`}
+                      href={createLocalizedPath(locale, `/comparisons/${slug}`)}
                       className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
                     >
                       {formatSlugLabel(slug)}
@@ -245,13 +250,18 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
           <Section title={labels.architectureArticlesTitle}>
             {(() => {
               const existingSlugs =
-                term.architectureSlugs?.filter(isExistingArchitecture) ?? [];
+                term.architectureSlugs?.filter((slug) =>
+                  isExistingArchitectureForLocale(locale, slug),
+                ) ?? [];
               return existingSlugs.length > 0 ? (
                 <div className="space-y-3">
                   {existingSlugs.map((slug) => (
                     <Link
                       key={slug}
-                      href={`/architectures/${slug}`}
+                      href={createLocalizedPath(
+                        locale,
+                        `/architectures/${slug}`,
+                      )}
                       className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
                     >
                       {formatSlugLabel(slug)}
