@@ -218,11 +218,14 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
         </Section>
 
         <section className="grid gap-6 lg:grid-cols-2">
+          {/* 関連比較記事: 実在する slug のみ表示。1件もなければ EmptyMessage */}
           <Section title={labels.comparisonArticlesTitle}>
-            {term.comparisonSlugs && term.comparisonSlugs.length > 0 ? (
-              <div className="space-y-3">
-                {term.comparisonSlugs.map((slug) =>
-                  isExistingComparison(slug) ? (
+            {(() => {
+              const existingSlugs =
+                term.comparisonSlugs?.filter(isExistingComparison) ?? [];
+              return existingSlugs.length > 0 ? (
+                <div className="space-y-3">
+                  {existingSlugs.map((slug) => (
                     <Link
                       key={slug}
                       href={`/comparisons/${slug}`}
@@ -230,27 +233,22 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
                     >
                       {formatSlugLabel(slug)}
                     </Link>
-                  ) : (
-                    <div
-                      key={slug}
-                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
-                    >
-                      {formatSlugLabel(slug)}
-                      <span className="ml-2 text-xs font-normal">準備中</span>
-                    </div>
-                  ),
-                )}
-              </div>
-            ) : (
-              <EmptyMessage>{labels.noComparisonArticles}</EmptyMessage>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <EmptyMessage>{labels.noComparisonArticles}</EmptyMessage>
+              );
+            })()}
           </Section>
 
+          {/* 関連構成図: 実在する slug のみ表示。1件もなければ EmptyMessage */}
           <Section title={labels.architectureArticlesTitle}>
-            {term.architectureSlugs && term.architectureSlugs.length > 0 ? (
-              <div className="space-y-3">
-                {term.architectureSlugs.map((slug) =>
-                  isExistingArchitecture(slug) ? (
+            {(() => {
+              const existingSlugs =
+                term.architectureSlugs?.filter(isExistingArchitecture) ?? [];
+              return existingSlugs.length > 0 ? (
+                <div className="space-y-3">
+                  {existingSlugs.map((slug) => (
                     <Link
                       key={slug}
                       href={`/architectures/${slug}`}
@@ -258,20 +256,12 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
                     >
                       {formatSlugLabel(slug)}
                     </Link>
-                  ) : (
-                    <div
-                      key={slug}
-                      className="block rounded-2xl border border-slate-100 bg-slate-100 p-4 font-semibold text-slate-400"
-                    >
-                      {formatSlugLabel(slug)}
-                      <span className="ml-2 text-xs font-normal">準備中</span>
-                    </div>
-                  ),
-                )}
-              </div>
-            ) : (
-              <EmptyMessage>{labels.noArchitectureArticles}</EmptyMessage>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <EmptyMessage>{labels.noArchitectureArticles}</EmptyMessage>
+              );
+            })()}
           </Section>
         </section>
 
