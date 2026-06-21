@@ -1,0 +1,145 @@
+# RDS Multi-AZ、Read Replica 的差異
+
+## 結論
+
+RDS Multi-AZ 與 Read Replica 都與資料庫複製有關。
+
+不過，兩者的目的並不相同。
+
+- 想強化容錯與高可用性時使用 Multi-AZ
+- 想提升讀取效能時使用 Read Replica
+
+在 AWS 考試中，這項差異相當重要。
+
+## 比較表
+
+| 項目 | Multi-AZ | Read Replica |
+|---|---|---|
+| 主要目的 | 高可用性、容錯 | 提升讀取效能 |
+| 複寫方式 | 預設採同步複寫 | 非同步複寫 |
+| 讀取分散 | 標準配置下，待命機不可讀取 | 可從複本讀取 |
+| 容錯切換 | 自動容錯切換 | 並非以自動容錯切換為目的 |
+| 部署位置 | 在不同 AZ 建立待命機 | 可在同一 Region 或不同 Region 建立 |
+| 寫入 | 僅寫入主要執行個體 | 僅寫入主要執行個體 |
+| 讀取 | 從主要執行個體讀取 | 從複本讀取 |
+| 考試關鍵字 | high availability、failover、standby | read scaling、read-heavy workload |
+| 成本 | 增加待命機的成本 | 增加每個複本的成本 |
+
+## 初學者導向說明
+
+Multi-AZ 是為了在主要 DB 發生故障時提供備援的機制。
+
+```text
+Primary DB
+↓ 同步
+Standby DB
+```
+
+平時應用程式會連線到 Primary DB。
+發生故障時，則會切換到 Standby DB。
+
+Read Replica 則是用來分散讀取流量的資料庫複本。
+
+```text
+Primary DB
+↓ 非同步
+Read Replica
+```
+
+應用程式可以把寫入導向 Primary DB，把讀取導向 Read Replica。
+
+## 考試常考重點
+
+### 容易選 Multi-AZ 的情境
+
+- 希望提升資料庫的可用性
+- 想為 AZ 故障做準備
+- 需要自動容錯切換
+- 想為正式環境的 DB 加強容錯
+- 想縮短 RTO
+
+### 容易選 Read Replica 的情境
+
+- 讀取存取量很高
+- 想把報表或分析查詢從正式 DB 移開
+- 想提升讀取吞吐量
+- 想在不同 Region 放置讀取用 DB
+
+## 實務上的使用方式
+
+### 正式環境 DB 的容錯設計
+
+採用 Multi-AZ。
+
+```text
+Application
+↓
+RDS Primary
+↓ 同步
+RDS Standby
+```
+
+在正式環境中，通常會使用 Multi-AZ，以避免 DB 形成單點故障。
+
+### 讀取負載較高的服務
+
+採用 Read Replica。
+
+```text
+寫入請求 → Primary DB
+讀取請求 → Read Replica
+```
+
+例如電商網站的商品瀏覽、媒體網站的文章閱讀、管理後台的報表彙整等，讀取量較大的場景都很適合。
+
+### 同時需要高可用性與讀取效能時
+
+可同時使用 Multi-AZ 與 Read Replica。
+
+```text
+Primary DB
+├─ Standby DB
+└─ Read Replica
+```
+
+但這樣做也會增加成本，因此個人開發 MVP 階段通常不會採用這種組合。
+
+## 常見誤解
+
+### 誤解 1:把 Read Replica 當作容錯的首選
+
+Read Replica 的主要目的是提升讀取效能。
+
+容錯設計的首選仍是 Multi-AZ。
+
+### 誤解 2:以為 Multi-AZ 可以提升讀取效能
+
+在標準的 RDS Multi-AZ DB 執行個體配置中，待命機不會被用來分擔讀取流量。
+
+若希望提升讀取效能，建議考慮 Read Replica。
+
+### 誤解 3:在個人開發 MVP 階段就使用 RDS
+
+本專案在 MVP 階段並不採用 RDS。
+
+原因在於 RDS 容易產生固定費用，而僅需要儲存使用者諮詢資料時，使用 Amazon DynamoDB 就已足夠。
+
+## 相關用語
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS Budgets](/terms/aws-budgets)
+
+## 相關題目
+
+- [CLF 模擬試題](/questions/clf)
+
+## 總結
+
+RDS Multi-AZ 與 Read Replica，從「目的」來區分最容易記憶。
+
+- Multi-AZ:容錯與高可用性
+- Read Replica:提升讀取效能
+
+考試中看到「high availability」時可懷疑 Multi-AZ，看到「read-heavy workload」時則可懷疑 Read Replica。

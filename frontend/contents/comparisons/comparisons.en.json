@@ -1,0 +1,317 @@
+[
+  {
+    "comparisonId": "cmp-001",
+    "slug": "s3-vs-ebs-vs-efs",
+    "title": "Differences between S3, EBS, and EFS, explained for beginners",
+    "description": "Organizes the differences between Amazon S3, Amazon EBS, and Amazon EFS — representative AWS storage services — along with exam-relevant points and how to use each in practice.",
+    "category": "Storage",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "s3",
+      "ebs",
+      "efs"
+    ],
+    "tags": [
+      "storage",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-002",
+    "slug": "rds-vs-dynamodb",
+    "title": "Differences between RDS and DynamoDB, explained for beginners",
+    "description": "Organizes the differences between Amazon RDS and Amazon DynamoDB — representative AWS database services — along with exam-relevant points and how to use each in practice.",
+    "category": "Database",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "rds",
+      "dynamodb"
+    ],
+    "tags": [
+      "database",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-003",
+    "slug": "sns-vs-sqs-vs-eventbridge",
+    "title": "Differences between SNS, SQS, and EventBridge, explained for beginners",
+    "description": "Organizes the differences between Amazon SNS, Amazon SQS, and Amazon EventBridge — AWS application integration services — along with exam-relevant points and how to use each in practice.",
+    "category": "Integration",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "sns",
+      "sqs",
+      "eventbridge"
+    ],
+    "tags": [
+      "integration",
+      "messaging",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-004",
+    "slug": "iam-user-vs-role-vs-policy",
+    "title": "Differences between IAM users, IAM roles, and IAM policies, explained for beginners",
+    "description": "Organizes the differences between IAM users, IAM roles, and IAM policies — central to AWS permission management — along with exam-relevant points and how to use each in practice.",
+    "category": "Security",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "iam"
+    ],
+    "tags": [
+      "security",
+      "iam",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-005",
+    "slug": "cloudwatch-vs-cloudtrail-vs-config",
+    "title": "Differences between CloudWatch, CloudTrail, and AWS Config, explained for beginners",
+    "description": "Organizes the differences between Amazon CloudWatch, AWS CloudTrail, and AWS Config — central to AWS operational monitoring — along with exam-relevant points and how to use each in practice.",
+    "category": "Monitoring",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "cloudwatch",
+      "cloudtrail",
+      "config"
+    ],
+    "tags": [
+      "monitoring",
+      "governance",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-006",
+    "slug": "alb-vs-nlb-vs-cloudfront",
+    "title": "Differences between ALB, NLB, and CloudFront, explained for beginners",
+    "description": "Organizes the differences between Application Load Balancer, Network Load Balancer, and Amazon CloudFront — easily-confused AWS traffic entry points — along with exam-relevant points and how to use each in practice.",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "elb",
+      "cloudfront"
+    ],
+    "tags": [
+      "networking",
+      "load-balancer",
+      "cloudfront",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-007",
+    "slug": "multi-az-vs-read-replica",
+    "title": "Differences between RDS Multi-AZ and Read Replica, explained for beginners",
+    "description": "Organizes the differences between Amazon RDS Multi-AZ deployments and Read Replicas — easily confused — across availability, read performance, failover, and exam-relevant points.",
+    "category": "Database",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "rds"
+    ],
+    "tags": [
+      "database",
+      "rds",
+      "multi-az",
+      "read-replica",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-008",
+    "slug": "security-group-vs-nacl",
+    "title": "Differences between Security Groups and Network ACLs, explained for beginners",
+    "description": "Organizes the differences between Security Groups and Network ACLs in Amazon VPC — easily confused — across scope, stateful vs. stateless behavior, allow and deny rules, and exam-relevant points.",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "vpc"
+    ],
+    "tags": [
+      "security",
+      "vpc",
+      "security-group",
+      "nacl",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-009",
+    "slug": "api-gateway-vs-alb-vs-cloudfront",
+    "title": "Differences between API Gateway, ALB, and CloudFront, explained for beginners",
+    "description": "Organizes the differences between Amazon API Gateway, Application Load Balancer, and Amazon CloudFront — AWS entry points for APIs and web applications — across serverless, load balancing, CDN, and exam-relevant points.",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "api-gateway",
+      "elb",
+      "cloudfront"
+    ],
+    "tags": [
+      "api",
+      "serverless",
+      "networking",
+      "cloudfront",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-010",
+    "slug": "secrets-manager-vs-parameter-store",
+    "title": "Differences between Secrets Manager and Parameter Store, explained for beginners",
+    "description": "Organizes the differences between AWS Secrets Manager and AWS Systems Manager Parameter Store — for managing configuration values and secrets — across purpose, encryption, automatic rotation, cost, and exam-relevant points.",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "secrets-manager",
+      "systems-manager",
+      "kms"
+    ],
+    "tags": [
+      "security",
+      "secrets",
+      "parameter-store",
+      "kms",
+      "comparison",
+      "saa"
+    ],
+    "priority": "medium",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-011",
+    "slug": "route53-vs-cloudfront-vs-global-accelerator",
+    "title": "Differences between Route 53, CloudFront, and Global Accelerator, explained for beginners",
+    "description": "Organizes the differences between Amazon Route 53, Amazon CloudFront, and AWS Global Accelerator — all 'global' services and easily confused — along with exam-relevant points and how to use each in practice.",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "route53",
+      "cloudfront"
+    ],
+    "tags": [
+      "networking",
+      "dns",
+      "cdn",
+      "cloudfront",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-16",
+    "updatedAt": "2026-06-21",
+    "locale": "en"
+  }
+]

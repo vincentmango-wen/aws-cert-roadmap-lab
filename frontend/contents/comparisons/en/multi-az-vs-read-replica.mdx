@@ -1,0 +1,145 @@
+# Differences between RDS Multi-AZ and Read Replica
+
+## Bottom line
+
+RDS Multi-AZ and Read Replica both involve copying a database.
+
+However, the purpose is different.
+
+- Use Multi-AZ when the goal is fault tolerance and higher availability
+- Use Read Replica when the goal is to scale read performance
+
+This distinction matters a lot on AWS exams.
+
+## Comparison table
+
+| Item | Multi-AZ | Read Replica |
+|---|---|---|
+| Main purpose | High availability and fault tolerance | Better read performance |
+| Replication | Synchronous replication by default | Asynchronous replication |
+| Read distribution | The standby is not readable in the standard setup | The replica is readable |
+| Failover | Automatic failover | Not intended for automatic failover |
+| Placement | Standby in a different AZ | Same Region, or a different Region |
+| Writes | Primary only | Primary only |
+| Reads | Read from the primary | Read from the replica |
+| Exam keywords | high availability, failover, standby | read scaling, read-heavy workload |
+| Cost | Adds the cost of the standby | Adds the cost of each replica |
+
+## Beginner-friendly explanation
+
+Multi-AZ is the mechanism that prepares the database for a failure on the main DB.
+
+```text
+Primary DB
+↓ synchronous
+Standby DB
+```
+
+In normal operation, the application talks to the Primary DB.
+When a failure happens, traffic switches over to the Standby DB.
+
+Read Replica is a copy of the DB used to absorb read traffic.
+
+```text
+Primary DB
+↓ asynchronous
+Read Replica
+```
+
+The application can route writes to the Primary DB and reads to the Read Replica.
+
+## Exam points
+
+### Cases where Multi-AZ is the likely answer
+
+- Improve database availability
+- Prepare for an AZ failure
+- Automatic failover is required
+- Add fault tolerance to a production DB
+- Shorten the RTO
+
+### Cases where Read Replica is the likely answer
+
+- A lot of read access
+- Move reporting or analytics queries away from the production DB
+- Increase read throughput
+- Place a read-only DB in a different Region
+
+## How to choose in practice
+
+### Fault tolerance for a production DB
+
+Use Multi-AZ.
+
+```text
+Application
+↓
+RDS Primary
+↓ synchronous
+RDS Standby
+```
+
+In production, Multi-AZ is commonly used to avoid a single point of failure on the DB.
+
+### A service with heavy read load
+
+Use Read Replica.
+
+```text
+Write request → Primary DB
+Read request  → Read Replica
+```
+
+It fits read-heavy workloads such as product browsing on an e-commerce site, article reading on a media site, or dashboard aggregations in an admin console.
+
+### When both high availability and read performance are needed
+
+Combine Multi-AZ and Read Replica.
+
+```text
+Primary DB
+├─ Standby DB
+└─ Read Replica
+```
+
+That said, the cost also goes up, so this combination is not used in an indie MVP by default.
+
+## Common misunderstandings
+
+### Misunderstanding 1: treating Read Replica as the first answer for fault tolerance
+
+The main purpose of Read Replica is to improve read performance.
+
+The first answer for fault tolerance is Multi-AZ.
+
+### Misunderstanding 2: expecting Multi-AZ to improve read performance
+
+In the standard RDS Multi-AZ DB instance setup, the standby is not used to serve reads.
+
+To scale read performance, consider Read Replica.
+
+### Misunderstanding 3: using RDS in an indie MVP
+
+This project does not use RDS in the MVP.
+
+The reason is that the fixed cost ramps up quickly, and if the only need is to store inquiry submissions, Amazon DynamoDB is enough.
+
+## Related terms
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS Budgets](/terms/aws-budgets)
+
+## Related questions
+
+- [CLF practice questions](/questions/clf)
+
+## Summary
+
+The clearest way to remember RDS Multi-AZ and Read Replica is by purpose.
+
+- Multi-AZ: fault tolerance and high availability
+- Read Replica: better read performance
+
+On the exam, when "high availability" appears in the question, suspect Multi-AZ; when "read-heavy workload" appears, suspect Read Replica.

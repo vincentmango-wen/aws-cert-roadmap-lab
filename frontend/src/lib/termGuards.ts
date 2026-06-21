@@ -50,12 +50,13 @@ const architectureSlugSet: Set<string> = new Set(
   publishedArchitectures.map((a) => a.slug),
 );
 
-// locale 別 published セット (P5-033)
-// en/zh は現時点で comparisons/architectures ページが存在しないため空セット
+// locale 別 published セット (P5-033 / P5-034 で comparison 系を 3 言語公開化)
+// comparisons は P5-034 で en/zh ページを追加し、11 slug すべてを 3 言語公開する。
+// architectures は引き続き ja 限定 (別 issue で対応).
 const comparisonSlugSetByLocale: Record<Locale, Set<string>> = {
   ja: comparisonSlugSet,
-  en: new Set<string>(),
-  zh: new Set<string>(),
+  en: comparisonSlugSet,
+  zh: comparisonSlugSet,
 };
 
 const architectureSlugSetByLocale: Record<Locale, Set<string>> = {

@@ -1,0 +1,155 @@
+# CloudWatch、CloudTrail、AWS Config 的差異
+
+## 結論
+
+Amazon CloudWatch、AWS CloudTrail、AWS Config 是 AWS 維運中很容易被混淆的服務。
+
+可以依「要看的是什麼」來區分這三者。
+
+| 服務 | 一句話描述 | 主要使用情境 |
+|---|---|---|
+| Amazon CloudWatch | 查看指標、日誌、警示 | CPU 使用率、AWS Lambda 錯誤、日誌確認 |
+| AWS CloudTrail | 查看誰執行了什麼操作 | API 操作歷史、稽核、可疑操作調查 |
+| AWS Config | 查看資源設定如何被變更 | 設定變更歷史、規則評估、合規確認 |
+
+判斷不清時，先依以下方式判斷。
+
+- 查看系統狀態:Amazon CloudWatch
+- 查看操作歷史:AWS CloudTrail
+- 查看設定變更:AWS Config
+
+## 比較表
+
+| 項目 | Amazon CloudWatch | AWS CloudTrail | AWS Config |
+|---|---|---|---|
+| 主要目的 | 監控 | 稽核 | 組態管理 |
+| 觀察對象 | 指標、日誌、警示 | API 操作歷史 | 資源設定與變更歷史 |
+| 代表範例 | AWS Lambda Errors、Amazon API Gateway 5xx、日誌 | IAM 使用者變更 Amazon S3 儲存貯體的歷史 | Amazon S3 Public Access Block 是否啟用 |
+| 故障調查 | 擅長 | 作為輔助 | 若起因於設定則有幫助 |
+| 安全調查 | 視日誌而定 | 擅長 | 擅長確認設定違規 |
+| 合規確認 | 部分支援 | 操作軌跡 | 擅長以規則評估 |
+| 在本專案中的用途 | AWS Lambda 日誌、Amazon API Gateway 指標、Amazon CloudFront 確認 | 視需要用於確認可疑操作 | 未來設定檢查的候選 |
+
+## 初學者向解說
+
+### Amazon CloudWatch
+
+Amazon CloudWatch 是監控 AWS 資源狀態的服務。
+
+可確認 AWS Lambda 的執行次數、錯誤數、執行時間，以及 Amazon API Gateway 的 4xx/5xx、Amazon CloudFront 的請求數等。
+
+在本專案中，用於確認聯絡表單 API 的 AWS Lambda 日誌。
+
+### AWS CloudTrail
+
+AWS CloudTrail 是記錄 AWS 帳戶內誰執行了什麼操作的服務。
+
+例如可以確認 IAM 使用者變更 Amazon S3 儲存貯體政策、更新 AWS Lambda 函式、建立 IAM 角色等操作歷史。
+
+對於可疑操作或設定變更的原因調查相當重要。
+
+### AWS Config
+
+AWS Config 是記錄 AWS 資源的設定狀態與變更歷史，並依規則進行評估的服務。
+
+例如可用於確認 Amazon S3 儲存貯體是否被公開、AWS CloudTrail 是否啟用、Security Group 是否有危險的開放設定等。
+
+在 MVP 階段並非必要，但未來在強化安全性時可納入考量。
+
+## 考試會問到的重點
+
+### CLF-C02 常問的重點
+
+- Amazon CloudWatch 負責監控、指標、日誌、警示
+- AWS CloudTrail 負責 API 操作歷史
+- AWS Config 負責資源設定的記錄與評估
+- 故障偵測使用 Amazon CloudWatch
+- 稽核軌跡使用 AWS CloudTrail
+- 設定合規確認使用 AWS Config
+
+### SAA-C03 常問的重點
+
+- 調查 AWS Lambda 或 Amazon API Gateway 的錯誤時使用 Amazon CloudWatch Logs
+- 想了解誰變更了資源時使用 AWS CloudTrail
+- 確認資源設定是否符合規則時使用 AWS Config
+- Amazon CloudWatch Alarm 可在異常時發送通知
+- AWS CloudTrail 在安全調查與稽核中相當重要
+- AWS Config Rules 可偵測設定違規
+
+## 實務上的使用區分
+
+### 選擇 Amazon CloudWatch 的情境
+
+- 想確認 AWS Lambda 的錯誤
+- 想確認 Amazon API Gateway 的 5xx
+- 想確認 Amazon CloudFront 的請求數
+- 想透過 Amazon CloudWatch Alarm 進行故障通知
+- 想確認應用程式日誌
+
+在本專案中，Phase 2 建立聯絡表單 API 之後，會在 Amazon CloudWatch Logs 中確認 AWS Lambda 日誌。
+
+### 選擇 AWS CloudTrail 的情境
+
+- 想確認誰變更了 IAM 權限
+- 想調查 Amazon S3 儲存貯體政策的變更者
+- 想追蹤可疑的 AWS 操作
+- 懷疑存取金鑰外洩時想確認操作歷史
+- 想保留稽核日誌
+
+即使是個人開發，在計費事故或可疑操作的調查上也很有幫助。
+
+### 選擇 AWS Config 的情境
+
+- 想持續確認 Amazon S3 儲存貯體是否未被公開
+- 想偵測 Security Group 是否有危險的開放
+- 想查看資源設定的變更歷史
+- 想確認是否符合合規規則
+- 在團隊開發或正式營運中想強化設定管理
+
+在 MVP 階段為了抑制成本與管理負擔，不將其列為必要項目。
+
+## 常見誤解
+
+### 誤解 1:認為 Amazon CloudWatch 連「誰執行了操作」都能看到
+
+Amazon CloudWatch 主要是查看指標與日誌的服務。
+
+若要調查誰操作了 AWS 資源，請使用 AWS CloudTrail。
+
+### 誤解 2:使用 AWS CloudTrail 確認應用程式日誌
+
+AWS CloudTrail 是確認 AWS API 操作歷史的服務。
+
+若要查看 AWS Lambda 的應用程式日誌，請使用 Amazon CloudWatch Logs。
+
+### 誤解 3:把 AWS Config 當成故障監控服務記憶
+
+AWS Config 是管理設定狀態與變更歷史的服務。
+
+CPU 使用率或錯誤數的監控是 Amazon CloudWatch 的角色。
+
+### 誤解 4:從 MVP 階段就全部啟用
+
+Amazon CloudWatch Logs 即使在 MVP 階段也是必要的。
+
+不過，AWS Config 或更細緻的監控功能，應視成本與管理負擔分階段導入。
+
+## 相關用語
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS CloudTrail](/terms/cloudtrail)
+- [AWS Config](/terms/config)
+- [AWS IAM](/terms/iam)
+- [AWS Budgets](/terms/aws-budgets)
+
+## 相關練習題
+
+- [CLF 模擬題列表](/questions/clf)
+
+## 總結
+
+Amazon CloudWatch、AWS CloudTrail、AWS Config 在 AWS 維運中各自扮演不同角色。
+
+Amazon CloudWatch 負責狀態監控，AWS CloudTrail 負責操作歷史，AWS Config 負責設定管理。
+
+能說明這個差異，就能更清楚地說明 AWS 工作負載的維運、監控與安全設計。

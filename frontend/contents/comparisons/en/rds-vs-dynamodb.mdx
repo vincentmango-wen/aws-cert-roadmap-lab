@@ -1,0 +1,159 @@
+# Differences between RDS and DynamoDB
+
+## Bottom line
+
+Amazon RDS and Amazon DynamoDB are both AWS database services.
+
+However, the way they store data and the workloads they fit are different.
+
+| Service | In one line | Main use cases |
+|---|---|---|
+| Amazon RDS | Managed relational database | SQL, tabular data, complex queries, transactions |
+| Amazon DynamoDB | Serverless NoSQL database | Fast key lookups, high-volume access, simple data shapes |
+
+When in doubt, use this quick test:
+
+- Need complex SQL queries: RDS
+- Want serverless and low operations: DynamoDB
+- Need to join tables together: RDS
+- Need fast key-based reads and writes: DynamoDB
+
+## Comparison table
+
+| Item | RDS | DynamoDB |
+|---|---|---|
+| Official name | Amazon Relational Database Service | Amazon DynamoDB |
+| Type | Relational database | NoSQL database |
+| Data structure | Tables, rows, columns | Tables, items, attributes |
+| Main interface | SQL | API, SDK, CLI |
+| Server management | AWS manages most of it, but DB instance sizing is still required | Serverless, no instance management |
+| Scaling | Instance size, Read Replica, Amazon Aurora, and similar options | Read/write capacity units or on-demand mode |
+| Complex queries | Strong | Depends on design. Key access is the default pattern |
+| JOIN | Supported | Not used as a default approach |
+| Transactions | Strong | Supported, but design needs care |
+| Fixed cost | Easy to incur because instances run continuously | Low cost is easy to achieve at small scale |
+| Use in this project | Not used in the MVP | Planned for inquiry data storage |
+
+## Beginner-friendly explanation
+
+### Amazon RDS
+
+RDS makes relational databases such as MySQL, PostgreSQL, MariaDB, Oracle, and SQL Server easy to run on AWS.
+
+Think of it as running the kind of "tabular database" that traditional web apps depend on, but managed by AWS.
+
+It fits apps where relationships between multiple tables matter — users, orders, products, payments, and so on.
+
+### Amazon DynamoDB
+
+DynamoDB is the serverless NoSQL database on AWS.
+
+There is no server or DB instance to manage, and data can be read and written quickly through keys.
+
+In this project, DynamoDB is the planned storage backend for the inquiry form.
+
+Inquiry data does not need complex joins, and saving and reading single records is enough, which matches DynamoDB well.
+
+## Exam points to remember
+
+### Points that often show up in CLF-C02
+
+- RDS is a managed service for relational databases
+- DynamoDB is a NoSQL database
+- RDS uses SQL
+- DynamoDB is serverless and low operations
+- DynamoDB fits fast key-based access
+- RDS Multi-AZ improves availability
+
+### Points that often show up in SAA-C03
+
+- Choose RDS when complex SQL or JOIN is required
+- Choose DynamoDB for high-scale, simple key access
+- Use Multi-AZ for RDS high availability
+- Use Read Replica to spread read load on RDS
+- Partition key design is critical in DynamoDB
+- Avoid heavy Scan operations in DynamoDB and design around Query
+- DynamoDB is often the first choice for serverless architectures
+
+## How to choose in practice
+
+### When to pick RDS
+
+- Need to search with SQL
+- Many relationships between tables
+- JOIN is required
+- Transactional consistency matters
+- Existing app already uses MySQL or PostgreSQL
+- Building an admin console or back-office system
+
+Examples:
+
+- E-commerce site
+- Reservation system
+- Internal admin system
+- Accounting system
+- Order management system
+
+### When to pick DynamoDB
+
+- Want a serverless architecture
+- Access patterns are simple
+- Need fast key-based reads
+- Need to handle high-volume access
+- Want to reduce infrastructure operations
+- Want to combine with AWS Lambda
+
+Examples:
+
+- Inquiry storage
+- Session management
+- User preference storage
+- Learning history storage
+- Event log storage
+- Notification settings storage
+
+## Common misunderstandings
+
+### Misunderstanding 1: DynamoDB is a full replacement for RDS
+
+DynamoDB is not a drop-in replacement for RDS.
+
+When the design relies on JOIN or complex queries, RDS is the more natural fit.
+
+### Misunderstanding 2: RDS is serverless
+
+RDS is a managed service, but DB instance size, storage, and availability still need to be planned.
+
+"Managed" and "serverless" are not the same thing.
+
+### Misunderstanding 3: Scan in DynamoDB is good enough
+
+Heavy use of Scan in DynamoDB leads to cost and performance issues as data grows.
+
+In DynamoDB, the right path is to settle on access patterns first and then design keys around them.
+
+### Misunderstanding 4: Use RDS from the start for an indie MVP
+
+RDS is feature-rich, but its fixed cost adds up quickly.
+
+To keep costs down, this project uses DynamoDB for inquiry storage in the MVP.
+
+## Related terms
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## Related questions
+
+- [CLF practice questions](/questions/clf)
+
+## Summary
+
+The difference between RDS and DynamoDB becomes easier to sort out when framed as "SQL-centric" versus "key-access-centric."
+
+RDS is a relational database, and DynamoDB is a serverless NoSQL database.
+
+In this project, simple dynamic data such as inquiry records is stored in DynamoDB.

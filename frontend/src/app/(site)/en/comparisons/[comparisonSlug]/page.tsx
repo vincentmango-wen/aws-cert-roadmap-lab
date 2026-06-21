@@ -5,10 +5,10 @@ import {
   createComparisonDetailMetadataInput,
   getComparisonBySlug,
   getComparisonStaticParams,
-} from "../comparison-detail-data";
+} from "../../../comparisons/comparison-detail-data";
 import { ComparisonDetailContent } from "@/components/comparisons/ComparisonDetailContent";
 
-type ComparisonPageProps = {
+type PageProps = {
   params: Promise<{
     comparisonSlug: string;
   }>;
@@ -18,28 +18,28 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getComparisonStaticParams("ja");
+  return getComparisonStaticParams("en");
 }
 
 export async function generateMetadata({
   params,
-}: ComparisonPageProps): Promise<Metadata> {
+}: PageProps): Promise<Metadata> {
   const { comparisonSlug } = await params;
 
   return createPageMetadata(
-    createComparisonDetailMetadataInput("ja", comparisonSlug),
+    createComparisonDetailMetadataInput("en", comparisonSlug),
   );
 }
 
-export default async function ComparisonDetailPage({
+export default async function EnglishComparisonDetailPage({
   params,
-}: ComparisonPageProps) {
+}: PageProps) {
   const { comparisonSlug } = await params;
-  const comparison = getComparisonBySlug("ja", comparisonSlug);
+  const comparison = getComparisonBySlug("en", comparisonSlug);
 
   if (!comparison) {
     notFound();
   }
 
-  return <ComparisonDetailContent locale="ja" comparison={comparison} />;
+  return <ComparisonDetailContent locale="en" comparison={comparison} />;
 }

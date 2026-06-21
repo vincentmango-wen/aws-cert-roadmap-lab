@@ -1,0 +1,173 @@
+# Differences between SNS, SQS, and EventBridge
+
+## Bottom line
+
+Amazon SNS, Amazon SQS, and Amazon EventBridge are AWS services that connect systems together.
+
+Their roles are different.
+
+| Service | In one line | Main use case |
+|---|---|---|
+| Amazon SNS | Delivers notifications to multiple destinations | Email notifications, triggering Lambda, fan-out to multiple systems |
+| Amazon SQS | A queue that buffers messages temporarily | Asynchronous processing, work backlog, load smoothing |
+| Amazon EventBridge | An event bus that triggers actions based on events | SaaS integration, AWS event integration, scheduled execution |
+
+When in doubt, decide like this:
+
+- Want to deliver a notification to multiple destinations: SNS
+- Want to buffer work and process it in order: SQS
+- Want to route processing based on event conditions: EventBridge
+- Want to run something on a schedule: EventBridge
+
+## Comparison table
+
+| Item | SNS | SQS | EventBridge |
+|---|---|---|---|
+| Full name | Amazon Simple Notification Service | Amazon Simple Queue Service | Amazon EventBridge |
+| Type | Pub/Sub notifications | Message queue | Event bus |
+| Main purpose | Deliver notifications | Buffer messages | Trigger processing from events |
+| Destination | Multiple subscribers | A consumer that reads the queue | Targets that match a rule |
+| Message retention | Notification-oriented | Held in the queue | Routing-oriented |
+| Delivery model | Push | Pull | Rule-based |
+| Typical use | Email notifications, triggering multiple Lambda functions | Asynchronous jobs, work backlog | Scheduled execution, event-driven integration |
+| Ordering | Available with FIFO topics | Available with FIFO queues | Not designed for ordering guarantees |
+| Use in this project | Future candidate for notifications | Future candidate for asynchronous processing | Future candidate for the daily one-question delivery |
+
+## Beginner-friendly explanation
+
+### Amazon SNS
+
+SNS is a notification service that delivers messages to multiple destinations.
+
+When you publish a message to a topic, every subscriber of that topic — email, Lambda, SQS, and so on — receives the notification.
+
+Use it when you want to tell multiple recipients about a single event.
+
+### Amazon SQS
+
+SQS is a queue that buffers messages temporarily.
+
+The consumer side reads messages from the queue and processes them in order.
+
+Use it when you want to defer work that cannot be processed right now and handle it safely later.
+
+### Amazon EventBridge
+
+EventBridge is a service that runs actions in response to events.
+
+It receives events from AWS services, application events, and SaaS sources, then routes them to targets that match the rule.
+
+It can also handle scheduled execution.
+
+In this project, EventBridge is a candidate for the future "daily one question" delivery.
+
+## What the exam asks
+
+### Points that often appear on CLF-C02
+
+- SNS is a notification delivery service
+- SQS is a message queue
+- EventBridge is an event-driven integration service
+- SQS helps decouple systems
+- SNS can notify multiple subscribers
+- EventBridge can also run on a schedule
+
+### Points that often appear on SAA-C03
+
+- Use SQS when asynchronous processing needs a work backlog
+- Use SNS when a single event needs to be delivered to multiple consumers
+- Use EventBridge when AWS service events or SaaS events should trigger processing
+- Placing SQS in front of Lambda absorbs failures and traffic spikes
+- Combining SNS and SQS produces a fan-out pattern
+- EventBridge can route based on event patterns
+
+## When to use which in practice
+
+### Choose SNS when
+
+- You want to deliver a single notification to multiple destinations
+- You want to send system failure notifications to email or Lambda
+- You want to distribute a single event to multiple services
+- You want to build a fan-out pattern by combining it with SQS
+
+Examples:
+
+- Notify multiple systems about an order-complete event
+- Send CloudWatch Alarm notifications to email
+- Deliver to Lambda and SQS at the same time
+
+### Choose SQS when
+
+- You want processing to be asynchronous
+- You want to buffer requests when traffic spikes
+- You want to retry when the consumer side fails
+- You want to control the throughput of Lambda or worker processes
+
+Examples:
+
+- Image conversion processing
+- Email sending
+- Report generation
+- Waiting for external API calls
+
+### Choose EventBridge when
+
+- You want to branch processing based on event conditions
+- You want to react to state changes in AWS services
+- You want to integrate SaaS events with AWS
+- You want to trigger Lambda on a daily or hourly schedule
+
+Examples:
+
+- Start a job every morning at 8 AM
+- Run processing in response to S3 or EC2 events
+- Forward external SaaS events to Lambda
+- Notify the daily one question on a learning site
+
+## Common mistakes
+
+### Mistake 1: Treating SNS and SQS as both being notification services
+
+SNS is a service that delivers notifications.
+
+SQS is a service that buffers messages.
+
+Keeping this distinction in mind makes exam questions easier to answer.
+
+### Mistake 2: Assuming SQS executes processing automatically
+
+SQS is a queue.
+
+It buffers messages, but the actual processing is performed by Lambda or worker processes.
+
+### Mistake 3: Treating EventBridge as just a scheduler
+
+EventBridge can run on a schedule, but its core role is event-driven integration.
+
+The important point is that it can route to targets based on event patterns.
+
+### Mistake 4: Wiring everything directly with Lambda alone
+
+In small systems, calling Lambda directly works.
+
+As the workload grows, however, decoupling with SQS, SNS, or EventBridge makes the system more resilient to failures.
+
+## Related terms
+
+- [Amazon SNS](/terms/sns)
+- [Amazon SQS](/terms/sqs)
+- [Amazon EventBridge](/terms/eventbridge)
+- [AWS Lambda](/terms/lambda)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## Related practice questions
+
+- [CLF practice question list](/questions/clf)
+
+## Summary
+
+SNS, SQS, and EventBridge are important services that appear often in system integration.
+
+SNS handles notifications, SQS handles queuing, and EventBridge handles event routing.
+
+Once these three are clearly distinguished, serverless architectures on AWS become much easier to understand.

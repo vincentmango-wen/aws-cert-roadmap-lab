@@ -1,0 +1,155 @@
+# Differences between CloudWatch, CloudTrail, and AWS Config
+
+## Conclusion
+
+Amazon CloudWatch, AWS CloudTrail, and AWS Config are services that are often confused in AWS operations.
+
+The three can be distinguished by what they let you observe.
+
+| Service | In one line | Main use cases |
+|---|---|---|
+| Amazon CloudWatch | Look at metrics, logs, and alarms | CPU utilization, AWS Lambda errors, log review |
+| AWS CloudTrail | Look at who performed which operations | API operation history, auditing, investigating suspicious activity |
+| AWS Config | Look at how resource configurations have changed | Configuration change history, rule evaluation, compliance checks |
+
+When in doubt, decide as follows.
+
+- Observe system state: Amazon CloudWatch
+- Observe operation history: AWS CloudTrail
+- Observe configuration changes: AWS Config
+
+## Comparison table
+
+| Item | Amazon CloudWatch | AWS CloudTrail | AWS Config |
+|---|---|---|---|
+| Main purpose | Monitoring | Auditing | Configuration management |
+| What you look at | Metrics, logs, alarms | API operation history | Resource configurations and change history |
+| Typical examples | AWS Lambda errors, Amazon API Gateway 5xx, logs | History of an IAM user changing an Amazon S3 bucket | Whether Amazon S3 Public Access Block is enabled |
+| Incident investigation | Strong | Used as a complement | Useful when the cause is configuration related |
+| Security investigation | Depends on the logs | Strong | Strong for detecting configuration violations |
+| Compliance | Partially supported | Operation trails | Strong with rule evaluation |
+| Use in this project | AWS Lambda logs, Amazon API Gateway metrics, Amazon CloudFront checks | Optional checks for suspicious activity | A future candidate for configuration checks |
+
+## Explanations for beginners
+
+### Amazon CloudWatch
+
+Amazon CloudWatch is a service that monitors the state of AWS resources.
+
+It can show AWS Lambda invocation counts, error counts, and execution time, as well as Amazon API Gateway 4xx/5xx rates and Amazon CloudFront request counts.
+
+In this project, it is used to review AWS Lambda logs for the inquiry-submission API.
+
+### AWS CloudTrail
+
+AWS CloudTrail is a service that records who performed which operations within an AWS account.
+
+For example, it can show the history of an IAM user changing an Amazon S3 bucket policy, updating an AWS Lambda function, or creating an IAM role.
+
+It is important for investigating suspicious operations and the root cause of configuration changes.
+
+### AWS Config
+
+AWS Config is a service that records the configuration state and change history of AWS resources and evaluates them against rules.
+
+For example, it can be used to check whether an Amazon S3 bucket is exposed publicly, whether AWS CloudTrail is enabled, or whether a security group is open in a risky way.
+
+It is not required for an MVP, but it can be considered for future security hardening.
+
+## Points that appear on the exam
+
+### Points commonly asked on CLF-C02
+
+- Amazon CloudWatch covers monitoring, metrics, logs, and alarms
+- AWS CloudTrail covers API operation history
+- AWS Config covers recording and evaluating resource configurations
+- For incident detection, use Amazon CloudWatch
+- For audit trails, use AWS CloudTrail
+- For configuration-compliance checks, use AWS Config
+
+### Points commonly asked on SAA-C03
+
+- Use Amazon CloudWatch Logs to investigate errors in AWS Lambda or Amazon API Gateway
+- Use AWS CloudTrail when you need to find out who changed a resource
+- Use AWS Config to confirm whether resource configurations comply with rules
+- Amazon CloudWatch Alarms can send notifications when anomalies occur
+- AWS CloudTrail is important for security investigations and audits
+- AWS Config Rules can detect configuration violations
+
+## When to use each in practice
+
+### When to use Amazon CloudWatch
+
+- You want to check AWS Lambda errors
+- You want to check Amazon API Gateway 5xx errors
+- You want to check Amazon CloudFront request counts
+- You want to be notified of incidents through Amazon CloudWatch Alarms
+- You want to review application logs
+
+In this project, after building the inquiry-submission API in Phase 2, AWS Lambda logs are reviewed in Amazon CloudWatch Logs.
+
+### When to use AWS CloudTrail
+
+- You want to check who changed IAM permissions
+- You want to find out who changed an Amazon S3 bucket policy
+- You want to track suspicious AWS operations
+- You want to review operation history when access-key leakage is suspected
+- You want to keep audit logs
+
+Even for individual development, it helps when investigating billing incidents or suspicious operations.
+
+### When to use AWS Config
+
+- You want to continuously confirm that Amazon S3 buckets are not exposed publicly
+- You want to detect risky openings in security groups
+- You want to see the change history of resource configurations
+- You want to confirm that compliance rules are met
+- You want to strengthen configuration management in team development or full-scale operation
+
+For the MVP, this is not made mandatory in order to keep costs and management overhead low.
+
+## Common mistakes
+
+### Mistake 1: Assuming that Amazon CloudWatch shows even "who performed which operation"
+
+Amazon CloudWatch is mainly a service for looking at metrics and logs.
+
+To find out who operated which AWS resource, use AWS CloudTrail.
+
+### Mistake 2: Using AWS CloudTrail to review application logs
+
+AWS CloudTrail is a service for reviewing the history of AWS API operations.
+
+To look at AWS Lambda application logs, use Amazon CloudWatch Logs.
+
+### Mistake 3: Remembering AWS Config as an incident-monitoring service
+
+AWS Config is a service that manages configuration state and change history.
+
+Monitoring CPU utilization and error counts is the role of Amazon CloudWatch.
+
+### Mistake 4: Enabling everything from the MVP stage
+
+Amazon CloudWatch Logs is required even for the MVP.
+
+However, AWS Config and finer-grained monitoring features are introduced incrementally while watching cost and management overhead.
+
+## Related terms
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS CloudTrail](/terms/cloudtrail)
+- [AWS Config](/terms/config)
+- [AWS IAM](/terms/iam)
+- [AWS Budgets](/terms/aws-budgets)
+
+## Related questions
+
+- [CLF practice question list](/questions/clf)
+
+## Summary
+
+Amazon CloudWatch, AWS CloudTrail, and AWS Config play different roles in AWS operations.
+
+Amazon CloudWatch is for state monitoring, AWS CloudTrail is for operation history, and AWS Config is for configuration management.
+
+Being able to explain this distinction makes it much easier to discuss the operations, monitoring, and security design of an AWS workload.
