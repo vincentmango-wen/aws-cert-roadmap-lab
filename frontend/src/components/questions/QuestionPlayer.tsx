@@ -18,7 +18,14 @@ export type ResolvedLink = {
   exists: boolean;
 };
 
+/**
+ * UI 文言のローカライズに使う locale。E5 では 'ja' 既定で、E6 で dictionaries 経由に切替予定。
+ */
+export type QuestionPlayerLocale = "ja" | "en" | "zh";
+
 type QuestionPlayerProps = {
+  /** E5 で導入。未指定なら 'ja'（既存呼び出しの互換性維持）。E6 で labels と合わせて辞書化予定。 */
+  locale?: QuestionPlayerLocale;
   question: Question;
   previousQuestionId?: string;
   nextQuestionId?: string;
@@ -29,7 +36,22 @@ type QuestionPlayerProps = {
   resolvedComparisons: ResolvedLink[];
 };
 
+const LOCALE_PREFIX: Record<QuestionPlayerLocale, "" | "/en" | "/zh"> = {
+  ja: "",
+  en: "/en",
+  zh: "/zh",
+};
+
+function localizePath(
+  locale: QuestionPlayerLocale,
+  path: `/${string}`,
+): string {
+  const prefix = LOCALE_PREFIX[locale];
+  return prefix === "" ? path : `${prefix}${path}`;
+}
+
 export function QuestionPlayer({
+  locale = "ja",
   question,
   previousQuestionId,
   nextQuestionId,
@@ -103,19 +125,25 @@ export function QuestionPlayer({
       <nav className="mb-8 text-sm text-slate-600" aria-label="パンくず">
         <ol className="flex flex-wrap gap-2">
           <li>
-            <Link href="/" className="hover:underline">
+            <Link href={localizePath(locale, "/")} className="hover:underline">
               ホーム
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link href="/questions" className="hover:underline">
+            <Link
+              href={localizePath(locale, "/questions")}
+              className="hover:underline"
+            >
               模擬問題
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link href="/questions/clf" className="hover:underline">
+            <Link
+              href={localizePath(locale, "/questions/clf")}
+              className="hover:underline"
+            >
               CLF-C02
             </Link>
           </li>
@@ -310,7 +338,7 @@ export function QuestionPlayer({
                   .map(({ id: serviceId }) => (
                     <li key={serviceId}>
                       <Link
-                        href={`/terms/${serviceId}`}
+                        href={localizePath(locale, `/terms/${serviceId}`)}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
                         {formatSlugLabel(serviceId)}
@@ -331,7 +359,7 @@ export function QuestionPlayer({
                   .map(({ id: termId }) => (
                     <li key={termId}>
                       <Link
-                        href={`/terms/${termId}`}
+                        href={localizePath(locale, `/terms/${termId}`)}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
                         {formatSlugLabel(termId)}
@@ -352,7 +380,7 @@ export function QuestionPlayer({
                   .map(({ id: slug }) => (
                     <li key={slug}>
                       <Link
-                        href={`/comparisons/${slug}`}
+                        href={localizePath(locale, `/comparisons/${slug}`)}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
                         {formatSlugLabel(slug)}
@@ -372,7 +400,7 @@ export function QuestionPlayer({
         <div>
           {previousQuestionId ? (
             <Link
-              href={`/questions/${previousQuestionId}`}
+              href={localizePath(locale, `/questions/${previousQuestionId}`)}
               className="inline-flex rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
             >
               前の問題へ
@@ -385,7 +413,7 @@ export function QuestionPlayer({
         </div>
 
         <Link
-          href="/questions/clf"
+          href={localizePath(locale, "/questions/clf")}
           className="inline-flex justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
         >
           一覧に戻る
@@ -394,7 +422,7 @@ export function QuestionPlayer({
         <div>
           {nextQuestionId ? (
             <Link
-              href={`/questions/${nextQuestionId}`}
+              href={localizePath(locale, `/questions/${nextQuestionId}`)}
               className="inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800"
             >
               次の問題へ

@@ -142,6 +142,11 @@ function getStaticRoutes(): SitemapRouteInput[] {
       changeFrequency: "weekly",
     },
     {
+      pathname: "/questions/saa",
+      priority: 0.8,
+      changeFrequency: "weekly",
+    },
+    {
       pathname: "/comparisons",
       priority: 0.8,
       changeFrequency: "weekly",
@@ -193,10 +198,19 @@ function getTermRoutes(): SitemapRouteInput[] {
     }));
 }
 
+/**
+ * CLF (50問) + SAA (30問) を ja JSON SSoT から読み、3 言語 × 80 問 = 240 URL を
+ * 生成するための入力を返す。
+ *
+ * en/zh の専用 JSON が未生成でも `createLocalizedSitemapItems` が自動で locale prefix
+ * を付与した URL を出力するため、stub JSON を待たずに sitemap に並べられる
+ * (P5-E6 / .en.json / .zh.json 空配列 stub 戦略と整合)。
+ */
 function getQuestionRoutes(): SitemapRouteInput[] {
-  const questions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.ja.json");
+  const clfQuestions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.ja.json");
+  const saaQuestions = readRequiredJsonArray<QuestionContent>("questions/saa-c03.ja.json");
 
-  return questions
+  return [...clfQuestions, ...saaQuestions]
     .filter((question) => question.published !== false)
     .filter((question) => isNonEmptyString(question.questionId))
     .map((question) => ({

@@ -30,6 +30,37 @@ export type TermCategoryKey =
 
 export type TermLevelKey = "beginner" | "intermediate" | "advanced";
 
+export type QuestionDifficultyKey = "easy" | "normal" | "hard";
+
+export type QuestionsDictionary = {
+  breadcrumbHome: string;
+  breadcrumbQuestions: string;
+  examLabel: string;
+  difficultyLabels: Record<QuestionDifficultyKey, string>;
+  categoryLabel: string;
+  choicesLabel: string;
+  submitButtonLabel: string;
+  retryButtonLabel: string;
+  resultCorrect: string;
+  resultIncorrect: string;
+  yourAnswerLabel: string;
+  correctAnswerLabel: string;
+  explanationTitle: string;
+  choiceExplanationsTitle: string;
+  practicalNoteTitle: string;
+  officialDocsTitle: string;
+  relatedLinksTitle: string;
+  relatedServicesLabel: string;
+  relatedTermsLabel: string;
+  relatedComparisonsLabel: string;
+  previousQuestionLabel: string;
+  nextQuestionLabel: string;
+  backToListLabel: string;
+  noPreviousQuestion: string;
+  noNextQuestion: string;
+  examDumpDisclaimer: string;
+};
+
 export type UiDictionary = {
   site: {
     name: string;
@@ -133,6 +164,7 @@ export type UiDictionary = {
     description: string;
     backHome: string;
   };
+  questions: QuestionsDictionary;
 };
 
 export const jaDictionary: UiDictionary = {
@@ -288,5 +320,37 @@ export const jaDictionary: UiDictionary = {
     title: "ページが見つかりません",
     description: "URLが変更されたか、ページが削除された可能性があります。",
     backHome: "トップページへ戻る",
+  },
+  questions: {
+    breadcrumbHome: "ホーム",
+    breadcrumbQuestions: "模擬問題",
+    examLabel: "試験区分",
+    difficultyLabels: {
+      easy: "やさしい",
+      normal: "標準",
+      hard: "難しい",
+    },
+    categoryLabel: "カテゴリ",
+    choicesLabel: "選択肢",
+    submitButtonLabel: "回答する",
+    retryButtonLabel: "もう一度選ぶ",
+    resultCorrect: "正解です。",
+    resultIncorrect: "不正解です。",
+    yourAnswerLabel: "あなたの回答",
+    correctAnswerLabel: "正解",
+    explanationTitle: "解説",
+    choiceExplanationsTitle: "選択肢ごとの解説",
+    practicalNoteTitle: "実務での使いどころ",
+    officialDocsTitle: "公式ドキュメント",
+    relatedLinksTitle: "関連リンク",
+    relatedServicesLabel: "関連サービス",
+    relatedTermsLabel: "関連用語",
+    relatedComparisonsLabel: "関連比較",
+    previousQuestionLabel: "前の問題",
+    nextQuestionLabel: "次の問題",
+    backToListLabel: "一覧に戻る",
+    noPreviousQuestion: "前の問題はありません",
+    noNextQuestion: "次の問題はありません",
+    examDumpDisclaimer: "本サイトの問題はオリジナルであり、実際の試験問題（試験ダンプ）ではありません。",
   },
 };
