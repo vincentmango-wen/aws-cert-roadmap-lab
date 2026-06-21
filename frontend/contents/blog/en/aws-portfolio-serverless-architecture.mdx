@@ -1,0 +1,69 @@
+---
+postId: "blog-021"
+slug: "aws-portfolio-serverless-architecture"
+title: "Why Choose a Serverless Architecture for Your AWS Portfolio"
+description: "We explain why S3, CloudFront, API Gateway, Lambda, and DynamoDB are the right fit for a personal portfolio project."
+category: "Portfolio"
+tags:
+  - "Portfolio"
+  - "Serverless"
+  - "S3"
+  - "CloudFront"
+  - "Lambda"
+targetKeywords:
+  - "AWS portfolio serverless"
+  - "AWS personal project architecture"
+  - "AWS free tier portfolio"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Why Choose a Serverless Architecture for Your AWS Portfolio
+
+When you build a portfolio with AWS, you do not need a full EC2 and RDS setup from the start. For a personal MVP, a serverless architecture is the practical choice.
+
+## Summary
+
+For a learning site that is mostly static content, use S3 and CloudFront as the foundation. Then add API Gateway, Lambda, and DynamoDB only for the dynamic parts you actually need.
+
+## You Avoid Fixed Monthly Costs
+
+The biggest risk in a personal project is paying for resources you are not using. EC2, RDS, NAT Gateway, and ALB are great for learning, but in an MVP they bring fixed costs and the risk of forgetting to stop them.
+
+A serverless-first approach keeps costs low while traffic is small.
+
+## It Maps Directly to AWS Certification Topics
+
+S3, CloudFront, Lambda, API Gateway, DynamoDB, IAM, and CloudWatch are important for both Cloud Practitioner and SAA.
+
+If you build this stack yourself, you can talk about certification topics as real implementation experience, not just memorized facts.
+
+## It Is Easy to Explain in Interviews
+
+In a portfolio, explaining *why* you made a design choice matters more than what you built.
+
+For example, you can say: "I used CloudFront with OAC instead of exposing the S3 bucket directly. I only stored contact form data in DynamoDB. GitHub Actions uses OIDC with least-privilege IAM." These points are easy for interviewers to evaluate.
+
+## It Fits an MVP
+
+A learning site is mostly static content: a glossary, comparison articles, practice questions, architecture diagrams, and blog posts. You can serve all of this from S3 and CloudFront.
+
+Only the contact form needs to store user input, so you handle it with API Gateway, Lambda, and DynamoDB.
+
+## Things to Watch For
+
+Serverless does not mean you can ignore design. You still need to think about CORS, IAM, logging, DynamoDB key design, CloudFront caching, and cost monitoring.
+
+## Related Terms
+
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Lambda](/terms/lambda)
+
+## Read Next
+
+- [How to Build a Portfolio with the AWS Free Tier](/blog/aws-free-tier-portfolio)
+- [Serverless API Architecture with API Gateway, Lambda, and DynamoDB](/architectures/serverless-api-basic)

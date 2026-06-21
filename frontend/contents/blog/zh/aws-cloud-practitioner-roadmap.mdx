@@ -1,0 +1,185 @@
+---
+postId: "blog-001"
+slug: "aws-cloud-practitioner-roadmap"
+title: "AWS Cloud Practitioner 學習方法"
+description: "為剛開始學習 AWS Cloud Practitioner 的初學者解說考試範圍、學習順序、必須掌握的 AWS 服務,以及透過實作來理解的方法。"
+category: "CLF"
+tags:
+  - "aws"
+  - "clf-c02"
+  - "cloud-practitioner"
+  - "beginner"
+  - "roadmap"
+targetKeywords:
+  - "AWS Cloud Practitioner 學習方法"
+  - "CLF-C02 初學者"
+  - "AWS 證照 學習順序"
+author: "AWS 認證學習路線實驗室"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# AWS Cloud Practitioner 學習方法
+
+## 結論
+
+學習 AWS Cloud Practitioner 時,不建議一開始就把所有服務都背下來。
+
+應該先掌握的順序如下五項:
+
+1. 雲端的基本概念
+2. 責任共擔模型
+3. 主要 AWS 服務
+4. 費用、帳單與支援
+5. 透過模擬題確認理解程度
+
+Cloud Practitioner 並不是深入建構 AWS 架構的考試。
+
+它要確認的是「AWS 能做什麼」、「哪個服務用在什麼場景」、「是否理解費用與安全性的基本概念」。
+
+## 首先要理解的事
+
+最先要理解的不是 AWS 服務名稱本身,而是使用雲端的理由。
+
+使用雲端的理由主要有以下幾點:
+
+| 觀點 | 內容 |
+|---|---|
+| 降低初期費用 | 不需要事先購買實體伺服器 |
+| 可以馬上開始 | 能在短時間內建立所需資源 |
+| 易於擴展 | 可以隨著存取量增加調整架構 |
+| 用多少付多少 | 依照實際使用量計費 |
+| 全球佈署 | 可使用世界各地的 Region |
+
+理解了這個觀念後,EC2、S3、Lambda、DynamoDB 等服務的角色也會更容易記住。
+
+## 考試範圍的全貌
+
+Cloud Practitioner 考的並不是細節實作,而是 AWS 的基本思考方式。
+
+主要的出題領域如下:
+
+| 領域 | 學習內容 |
+|---|---|
+| Cloud Concepts | 雲端的優點、可擴展性、可用性 |
+| Security and Compliance | 責任共擔模型、IAM、MFA、加密 |
+| Cloud Technology and Services | EC2、S3、RDS、Lambda、VPC 等 |
+| Billing, Pricing, and Support | 免費方案、帳單、支援方案、成本管理 |
+
+把這四個領域分開學習,腦袋會更容易整理清楚。
+
+## 學習順序
+
+初學者建議按以下順序進行,會比較容易理解。
+
+### 1. 理解雲端的基本概念
+
+首先,理解地端(on-premises)與雲端的差異。
+
+地端是自己準備伺服器與網路設備來運作的方式。
+
+雲端則是使用 AWS 這類雲端服務商準備好的資源,依照需要的量來使用。
+
+這裡的重點不是「因為雲端免費所以用」,而是「因為可以在需要的時候用需要的量,所以用」。
+
+### 2. 理解責任共擔模型
+
+在 AWS 中,安全性的責任會在 AWS 與使用者之間劃分。
+
+AWS 負責的是雲端基礎設施本身。
+
+使用者負責的是設定、資料、帳號管理、存取權限等。
+
+舉例來說,如果把 S3 bucket 設成公開,那是使用者的責任。
+
+### 3. 依分類記憶主要服務
+
+如果只看名稱來記 AWS 服務,很容易混亂。
+
+請依分類整理。
+
+| 分類 | 代表服務 |
+|---|---|
+| Compute | EC2、Lambda、ECS |
+| Storage | S3、EBS、EFS |
+| Database | RDS、DynamoDB、Aurora |
+| Networking | VPC、Route 53、CloudFront |
+| Security | IAM、KMS、WAF |
+| Monitoring | CloudWatch、CloudTrail、AWS Config |
+| Integration | SQS、SNS、EventBridge |
+| Management | AWS Budgets、Cost Explorer、Organizations |
+
+依分類記憶後,就比較容易判斷「這題在問儲存」、「這題在問監控」。
+
+## 模擬題的使用方法
+
+只看模擬題的答對數,意義不大。
+
+請確認以下三點:
+
+1. 為什麼這個是正確答案
+2. 為什麼其他選項不對
+3. 這題跟哪個 AWS 服務有關
+
+特別是 Cloud Practitioner,容易混淆相似的服務。
+
+例如 CloudWatch、CloudTrail、AWS Config 就經常被搞混。
+
+| 服務 | 角色 |
+|---|---|
+| CloudWatch | 指標、日誌、警報 |
+| CloudTrail | AWS API 操作紀錄 |
+| AWS Config | 資源設定變更的紀錄與評估 |
+
+像這樣用比較的方式記憶,就比較容易刪除選項。
+
+## 透過實作來理解
+
+只靠考證照來學習,不如做一個簡單的網站來得更深入。
+
+例如,本站使用以下架構:
+
+| AWS 服務 | 角色 |
+|---|---|
+| S3 | 靜態檔案儲存 |
+| CloudFront | HTTPS 傳遞與快取 |
+| API Gateway | API 入口 |
+| Lambda | 處理諮詢請求 |
+| DynamoDB | 儲存諮詢內容 |
+| CloudWatch | 確認日誌 |
+| IAM | 權限管理 |
+| AWS Budgets | 費用監控 |
+
+這些都是 Cloud Practitioner 常出題的服務。
+
+實際使用後,就不再只是單字背誦,而能理解「在什麼場景使用」。
+
+## 常見的失誤
+
+初學者常犯的錯誤,是一開始就想記住細節服務規格。
+
+例如,一開始就深入研究 VPC 的 route table 或 NAT Gateway,反而會失去全貌。
+
+請先記住「這個服務是用來做什麼的」。
+
+之後再以 SAA 為目標,深入研究設計模式,這樣的順序比較好。
+
+## 本站的學習方法
+
+本站建議依以下順序學習:
+
+1. 在 [AWS 名詞集](/terms) 確認主要服務
+2. 在 [服務比較](/comparisons) 理解相似服務的差異
+3. 在 [模擬題](/questions) 確認理解程度
+4. 在 [架構圖](/architectures) 看服務之間的連結
+
+## 結語
+
+AWS Cloud Practitioner 是進入 AWS 學習領域的好證照。
+
+重要的不是把所有服務都死記硬背。
+
+而是依序理解雲端的思考方式、責任共擔模型、主要服務,以及費用管理。
+
+在此基礎上,再用 S3、CloudFront、Lambda、DynamoDB 等服務做出小型應用,證照知識也能延伸成作品集。

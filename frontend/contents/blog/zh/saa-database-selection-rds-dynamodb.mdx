@@ -1,0 +1,73 @@
+---
+postId: "blog-014"
+slug: "saa-database-selection-rds-dynamodb"
+title: "SAA 考試準備:RDS 與 DynamoDB 的選擇方式"
+description: "整理關聯式資料庫與 NoSQL 的差異,以及 RDS 與 DynamoDB 的使用時機,作為 SAA 考試準備。"
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "RDS"
+  - "DynamoDB"
+  - "Database"
+  - "NoSQL"
+targetKeywords:
+  - "RDS DynamoDB 差異"
+  - "SAA 資料庫 選擇"
+  - "AWS Database 初學者"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# SAA 考試準備:RDS 與 DynamoDB 的選擇方式
+
+在 SAA 考試中,經常會出現需要依據需求選擇合適資料庫的題目。其中,RDS 與 DynamoDB 的差異更是高頻考點。
+
+## 結論
+
+如果重視關聯式資料、SQL、複雜的 JOIN 查詢,或既有資料庫的遷移,選擇 RDS。如果重視可擴展的 Key-Value 存取、Serverless 架構,以及降低維運負擔,則可以考慮 DynamoDB。
+
+## 適合使用 RDS 的情境
+
+RDS 是關聯式資料庫的代管服務。當你想使用 MySQL、PostgreSQL 等資料庫時,就會選擇它。
+
+像是訂單、客戶、商品、請款等表格之間關係很重要的業務系統,適合使用 RDS。當你希望透過 SQL 進行彙總或 JOIN 查詢時,RDS 也是自然的選擇。
+
+## 適合使用 DynamoDB 的情境
+
+DynamoDB 是 NoSQL 類型的代管資料庫。它擅長以 Key 進行高速讀寫、處理大量存取,並與 Serverless 架構相容性良好。
+
+在本網站中,聯絡表單的資料會儲存到 ContactsTable。由於不需要複雜的 JOIN,只要能從 Lambda 執行 PutItem 即可,因此 DynamoDB 是合適的選擇。
+
+## 成本觀點
+
+對個人開發的 MVP 來說,RDS 容易成為固定費用,需要謹慎評估。DynamoDB 若使用 On-Demand Capacity 模式,在小規模、低頻率存取的場景下,比較容易起步。
+
+不過,即使是 DynamoDB,大量使用 Scan 或寫入量過大也會推升成本。建議先確定存取模式,再進行 Key 設計。
+
+## SAA 考試的重點
+
+- 需要 SQL 或複雜關聯時選擇 RDS
+- 需要 Serverless 且可擴展的 NoSQL 時選擇 DynamoDB
+- RDS Multi-AZ 提供高可用性
+- Read Replica 用於讀取流量分散
+- DynamoDB 的 Partition Key 設計非常重要
+
+## 實務上的注意事項
+
+DynamoDB 並不是「先放著再說」的資料庫。如果在搜尋條件或取得模式還不明確時就建立,後續很容易變成滿是 Scan 的狀況。
+
+RDS 雖然靈活,但需要考慮備份、修補、擴展與成本。在個人作品集中,要確認架構對於需求來說是否過度設計。
+
+## 相關名詞
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Lambda](/terms/lambda)
+
+## 延伸閱讀
+
+- [RDS 與 DynamoDB 的差異](/comparisons/rds-vs-dynamodb)
+- [API Gateway + Lambda + DynamoDB Serverless API 架構](/architectures/serverless-api-basic)

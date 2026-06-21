@@ -1,0 +1,74 @@
+---
+postId: "blog-010"
+slug: "clf-monitoring-cloudwatch-basics"
+title: "CloudWatch Basics for Cloud Practitioner Candidates"
+description: "Understand the roles of CloudWatch Logs, Metrics, and Alarms, connected to real-world monitoring in personal development projects."
+category: "CLF"
+tags:
+  - "CLF-C02"
+  - "CloudWatch"
+  - "Monitoring"
+  - "Logging"
+targetKeywords:
+  - "CloudWatch beginner guide"
+  - "AWS monitoring basics"
+  - "Cloud Practitioner CloudWatch"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# CloudWatch Basics for Cloud Practitioner Candidates
+
+Once you publish an application on AWS, you need to check whether it is running, whether errors are occurring, and whether costs are rising. Amazon CloudWatch is the entry point for these checks.
+
+## Summary
+
+CloudWatch is a monitoring service that handles metrics, logs, and alarms for AWS resources. Even in personal development, it helps you check Lambda errors and API invocation counts.
+
+## CloudWatch Metrics
+
+Metrics are numeric data. You can check Lambda invocation counts, error counts, execution time, API Gateway 4xx/5xx responses, CloudFront request counts, and more.
+
+When an incident occurs, start by using Metrics to see which service is showing increased errors.
+
+## CloudWatch Logs
+
+Logs let you view the output produced by applications or Lambda functions. If an error occurs in your contact API, you can investigate the cause by looking at the Lambda function's CloudWatch Logs.
+
+However, writing full email addresses or full contact form messages to logs is risky. Design your logging so that personal information and secrets are never written to logs.
+
+## CloudWatch Alarm
+
+Alarms notify you when a specified condition is met. For example, you can set an alarm to notify you when Lambda Errors exceed a certain threshold.
+
+Alarms are not required for an MVP, but they become more valuable as traffic grows.
+
+## Differences from CloudTrail and AWS Config
+
+CloudWatch focuses on monitoring and logging. CloudTrail focuses on API call history. AWS Config focuses on tracking changes to resource configurations. The exam often asks about these distinctions.
+
+## How This Project Uses CloudWatch
+
+On this site, the targets for monitoring are the Lambda logs of the contact API, Lambda Errors, API Gateway 4xx/5xx, and CloudFront 4xx/5xx. For billing, we use AWS Budgets and Cost Explorer rather than CloudWatch.
+
+## Key Points for the Exam
+
+- Use CloudWatch Logs to inspect logs
+- Use CloudWatch Metrics for numeric monitoring
+- Use CloudWatch Alarm for conditional notifications
+- Use CloudTrail for API call history
+- Use AWS Config to track configuration changes
+
+## Related Terms
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS CloudTrail](/terms/cloudtrail)
+- [AWS Config](/terms/aws-config)
+
+## Recommended Next Reads
+
+- [Differences Between CloudWatch, CloudTrail, and AWS Config](/comparisons/cloudwatch-vs-cloudtrail-vs-config)
+- [How to Check Lambda Logs in CloudWatch](/blog/lambda-cloudwatch-logs-check)

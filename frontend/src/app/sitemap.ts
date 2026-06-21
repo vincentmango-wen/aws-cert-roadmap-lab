@@ -209,22 +209,6 @@ function getQuestionRoutes(): SitemapRouteInput[] {
     }));
 }
 
-function getMdxRoutes(
-  directoryName: string,
-  routePrefix: string,
-  priority: number,
-  changeFrequency: ChangeFrequency,
-): SitemapRouteInput[] {
-  return readMdxContentMetas(directoryName)
-    .filter((meta) => meta.published)
-    .map((meta) => ({
-      pathname: `${routePrefix}/${meta.slug}`,
-      priority,
-      changeFrequency,
-      lastModified: meta.updatedAt,
-    }));
-}
-
 /**
  * locale 別 JSON SSoT を起点に detail URL を生成する。
  *
@@ -275,6 +259,26 @@ export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
   );
 }
 
+/**
+ * blog detail URL を ja MDX (`contents/blog/ja/<slug>.mdx`) の slug 集合から生成する。
+ *
+ * P5-050 で MDX を locale サブディレクトリ配下 (ja/en/zh) に移したため、旧
+ * `getMdxRoutes("blog", "/blog", ...)` は `contents/blog/` 直下を非再帰走査し
+ * 空配列を返すようになっていた。本関数は ja MDX を「公開されている全 slug」の
+ * 真の集合として扱い、`createLocalizedSitemapItems` が 3 言語の URL を一度に
+ * 生成する。
+ */
+export function getBlogSitemapRoutes(): SitemapRouteInput[] {
+  return readMdxContentMetas(path.join("blog", "ja"))
+    .filter((meta) => meta.published)
+    .map((meta) => ({
+      pathname: `/blog/${meta.slug}`,
+      priority: 0.7,
+      changeFrequency: "weekly",
+      lastModified: meta.updatedAt,
+    }));
+}
+
 function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
   const itemMap = new Map<string, SitemapItem>();
 
@@ -292,7 +296,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getQuestionRoutes(),
     ...getComparisonSitemapRoutes(),
     ...getArchitectureSitemapRoutes(),
-    ...getMdxRoutes("blog", "/blog", 0.7, "weekly"),
+    ...getBlogSitemapRoutes(),
   ];
 
   const sitemapItems = routes.flatMap(createLocalizedSitemapItems);

@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { useMemo, useState, type ReactElement } from "react";
-import type { BlogCategory, BlogPostMeta } from "../../types/blog";
+import type { BlogPostMeta } from "../../types/blog";
 
 type BlogListClientProps = {
   posts: BlogPostMeta[];
 };
 
-type CategoryFilter = "すべて" | BlogCategory;
+type CategoryFilter = string;
 
 function formatDate(dateText: string): string {
   const [year, month, day] = dateText.split("-");

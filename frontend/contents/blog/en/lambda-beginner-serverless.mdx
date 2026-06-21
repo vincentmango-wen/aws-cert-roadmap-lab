@@ -1,0 +1,72 @@
+---
+postId: "blog-017"
+slug: "lambda-beginner-serverless"
+title: "What Is AWS Lambda? A Beginner's Guide to Serverless"
+description: "Learn the basics of AWS Lambda, its benefits and limitations, and how it works with API Gateway and DynamoDB, explained for beginners."
+category: "AWS Services"
+tags:
+  - "Lambda"
+  - "Serverless"
+  - "API Gateway"
+  - "DynamoDB"
+targetKeywords:
+  - "What is AWS Lambda"
+  - "Lambda for beginners"
+  - "AWS serverless"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# What Is AWS Lambda? A Beginner's Guide to Serverless
+
+AWS Lambda is a service that lets you run code without managing servers. It is one of the core services to learn when you study serverless architectures.
+
+## Summary
+
+Lambda is a compute service that runs functions in response to events. It only runs when needed, which makes it a good fit for low-traffic personal MVPs.
+
+## What Does Serverless Mean?
+
+Serverless does not mean there are no servers. It means AWS manages the servers for you, so developers can focus on code and configuration.
+
+You do not need to manage an OS like you do with EC2, or run an always-on server.
+
+## When to Use Lambda
+
+Lambda is used for API processing, image conversion, scheduled batch jobs, event processing, and integration with services like DynamoDB.
+
+On this site, we use Lambda to receive contact form submissions, validate the input, and save it to DynamoDB.
+
+## Combining Lambda with API Gateway
+
+Lambda alone cannot serve as the entry point for a web API. You use API Gateway to accept HTTP requests, and API Gateway invokes Lambda.
+
+A typical setup is: the frontend calls `POST /contact`, API Gateway invokes Lambda, and Lambda saves the data to DynamoDB.
+
+## Things to Keep in Mind
+
+Lambda has limits on execution time, memory, and concurrency. Cold starts can also happen.
+
+For a personal MVP, keep your function short, reduce external dependencies, and avoid writing personal information to logs.
+
+## Key Points for the Exam
+
+- Lambda is serverless compute
+- It runs based on events (event-driven)
+- You can build APIs by combining it with API Gateway
+- It integrates easily with AWS services like DynamoDB
+- You do not manage always-on servers
+
+## Related Terms
+
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## What to Read Next
+
+- [Lambda and API Gateway Explained for Beginners](/blog/lambda-api-gateway-beginner)
+- [API Gateway + Lambda + DynamoDB Serverless API Architecture](/architectures/serverless-api-basic)

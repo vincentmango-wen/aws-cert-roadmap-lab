@@ -1,0 +1,74 @@
+---
+postId: "blog-009"
+slug: "clf-iam-basics"
+title: "IAM Basics for AWS Cloud Practitioner"
+description: "A clear overview of IAM users, IAM groups, IAM roles, and IAM policies, along with the principle of least privilege."
+category: "CLF"
+tags:
+  - "CLF-C02"
+  - "IAM"
+  - "Security"
+  - "Least Privilege"
+targetKeywords:
+  - "AWS IAM for beginners"
+  - "IAM role vs policy"
+  - "Cloud Practitioner IAM"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# IAM Basics for AWS Cloud Practitioner
+
+IAM is the permission management service in AWS. It is important for both Cloud Practitioner and SAA exams, and it is the foundation for using AWS safely.
+
+## Summary
+
+IAM controls "who" can do "what" on "which resources". Beginners should first understand the difference between IAM users, IAM groups, IAM roles, and IAM policies.
+
+## IAM User
+
+An IAM user is an identity that represents a person or an application that operates AWS. As a basic rule, you should not use the root user for daily work. Use IAM users instead.
+
+However, issuing long-term access keys creates a risk of leakage. Delete unused access keys and enable MFA.
+
+## IAM Group
+
+An IAM group lets you manage permissions for multiple users together. In personal projects, you rarely need groups, but in team development you can separate them into categories such as "developers" and "operations".
+
+## IAM Role
+
+An IAM role is a way to assume permissions temporarily. It is often used when you need to give permissions to AWS services.
+
+For example, when Lambda writes to DynamoDB, you attach DynamoDB PutItem permissions to the Lambda execution role. When you deploy to AWS from GitHub Actions, you can also use a setup that assumes an IAM role via OIDC.
+
+## IAM Policy
+
+An IAM policy is a JSON document that defines which actions are allowed or denied. You specify fields such as Action, Resource, and Effect.
+
+The important point is to avoid using `*` too casually. Limit the policy to only the services, actions, and resources that you actually need.
+
+## Principle of Least Privilege
+
+Least privilege means granting only the permissions required for the task. On this site, Lambda is granted only DynamoDB PutItem, and GitHub Actions is granted only the permissions needed for S3 sync and CloudFront invalidation.
+
+## Key Points for the Exam
+
+- Do not use the root user for daily work
+- Enable MFA
+- Define permissions with IAM policies
+- Use IAM roles for AWS services and temporary credentials
+- The principle of least privilege is essential
+
+## Related Terms
+
+- [IAM](/terms/iam)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## Recommended Next Reads
+
+- [Differences between IAM users, IAM roles, and IAM policies](/comparisons/iam-user-vs-role-vs-policy)
+- [Secure AWS deployment with GitHub OIDC](/blog/github-actions-oidc-deploy)

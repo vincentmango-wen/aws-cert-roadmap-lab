@@ -1,0 +1,72 @@
+---
+postId: "blog-020"
+slug: "cloudfront-beginner-cdn"
+title: "什麼是 Amazon CloudFront?給初學者的 CDN 解說"
+description: "為初學者整理 CloudFront 的基礎、CDN、快取、S3 發布、HTTPS 與 Invalidation 等概念。"
+category: "AWS 服務解說"
+tags:
+  - "CloudFront"
+  - "CDN"
+  - "S3"
+  - "Cache"
+targetKeywords:
+  - "CloudFront 是什麼"
+  - "CDN AWS 初學者"
+  - "CloudFront S3 發布"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 什麼是 Amazon CloudFront?給初學者的 CDN 解說
+
+Amazon CloudFront 是 AWS 的 CDN 服務。常用於靜態網站發布、圖片發布、API 加速等場景。
+
+## 結論
+
+CloudFront 從離使用者較近的邊緣站點(Edge Location)發布內容,提升顯示速度與可用性。
+
+## 什麼是 CDN
+
+CDN 是 Content Delivery Network 的縮寫。它將內容快取在離使用者較近的位置進行發布。
+
+舉例來說,若台灣的使用者每次都要連到美國的伺服器,速度會變慢。使用 CloudFront 後,可以從就近的邊緣站點回應快取內容,顯示速度因而改善。
+
+## 與 S3 的搭配
+
+在靜態網站中,常見的架構是把 HTML、CSS、JavaScript、圖片放在 S3,並透過 CloudFront 發布。
+
+此時不直接公開 S3,而是透過 CloudFront OAC 限制只能由 CloudFront 存取 S3,這樣比較安全。
+
+## HTTPS 發布
+
+CloudFront 也用於 HTTPS 發布。若要使用自訂網域,需要透過 ACM 發行憑證,並繫結到 CloudFront Distribution。
+
+CloudFront 使用的 ACM 憑證在區域(Region)的處理上需要特別留意。
+
+## 什麼是 Invalidation
+
+由於 CloudFront 會保留快取,即使將新檔案上傳到 S3,有時也不會立即反映出來。這時要使用的就是 Invalidation。
+
+在 CI/CD 流程中,通常會在 S3 sync 之後執行 CloudFront Invalidation,讓更新內容反映出來。
+
+## 考試會問到的重點
+
+- CloudFront 是 CDN 服務
+- 從邊緣站點(Edge Location)發布內容
+- 可與 S3 搭配發布靜態網站
+- 可用於 HTTPS 發布與快取控制
+- 更新反映需使用 Invalidation
+
+## 相關術語
+
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [AWS Certificate Manager](/terms/acm)
+
+## 延伸閱讀
+
+- [ALB、NLB 與 CloudFront 的差異](/comparisons/alb-vs-nlb-vs-cloudfront)
+- [使用 S3 與 CloudFront OAC 安全發布靜態網站的設計](/blog/saa-s3-cloudfront-oac-design)

@@ -1,0 +1,72 @@
+---
+postId: "blog-017"
+slug: "lambda-beginner-serverless"
+title: "什麼是 AWS Lambda？給初學者的 Serverless 入門解說"
+description: "為初學者整理 AWS Lambda 的基礎、優點、注意事項,以及與 API Gateway、DynamoDB 的組合應用。"
+category: "AWS 服務"
+tags:
+  - "Lambda"
+  - "Serverless"
+  - "API Gateway"
+  - "DynamoDB"
+targetKeywords:
+  - "AWS Lambda 是什麼"
+  - "Lambda 初學者"
+  - "Serverless AWS"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 什麼是 AWS Lambda？給初學者的 Serverless 入門解說
+
+AWS Lambda 是一種不需要管理伺服器就能執行程式碼的服務。在學習 Serverless 架構時,它是核心的服務之一。
+
+## 結論
+
+Lambda 是一種根據事件來執行函數的運算服務。它只在需要時才運作,因此非常適合存取頻率較低的個人開發 MVP。
+
+## 什麼是 Serverless
+
+Serverless 並不是指「沒有伺服器」。它的意思是把伺服器的管理交給 AWS,讓開發者能專注在程式碼和設定上。
+
+不像 EC2 那樣需要管理作業系統,也不需要維運常時運作的伺服器。
+
+## Lambda 的適用場景
+
+Lambda 常用於 API 處理、圖片轉換、定期批次作業、事件處理,以及與 DynamoDB 的整合等場景。
+
+在本網站中,我們會用 Lambda 來接收聯絡表單的送出內容,進行驗證後儲存到 DynamoDB。
+
+## 與 API Gateway 的組合
+
+Lambda 本身無法直接作為 Web API 的入口。HTTP 請求的入口要使用 API Gateway,再由 API Gateway 來呼叫 Lambda。
+
+典型的架構是:前端呼叫 POST /contact,API Gateway 觸發 Lambda,Lambda 再把資料寫入 DynamoDB。
+
+## 注意事項
+
+Lambda 有執行時間、記憶體、同時執行數等限制,而且可能會發生冷啟動 (Cold Start)。
+
+在個人 MVP 中,重點是讓處理保持簡短、減少外部相依,並避免在日誌中輸出個人資訊。
+
+## 考試的重點
+
+- Lambda 屬於 Serverless 運算
+- 採事件驅動執行
+- 可以搭配 API Gateway 建立 API
+- 容易與 DynamoDB 等 AWS 服務整合
+- 不需要管理常時運作的伺服器
+
+## 相關名詞
+
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 推薦延伸閱讀
+
+- [給初學者的 Lambda 與 API Gateway 解說](/blog/lambda-api-gateway-beginner)
+- [API Gateway + Lambda + DynamoDB Serverless API 架構](/architectures/serverless-api-basic)

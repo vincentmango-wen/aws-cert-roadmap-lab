@@ -1,0 +1,189 @@
+---
+postId: "blog-005"
+slug: "dynamodb-vs-rds-beginner"
+title: "DynamoDB vs RDS: Key Differences for Beginners"
+description: "A beginner-friendly comparison of Amazon DynamoDB and Amazon RDS, covering data structure, pricing, operations, use cases, and AWS certification exam topics."
+category: "AWS Services"
+tags:
+  - "aws"
+  - "dynamodb"
+  - "rds"
+  - "database"
+  - "comparison"
+targetKeywords:
+  - "DynamoDB vs RDS"
+  - "AWS database comparison"
+  - "DynamoDB for beginners"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# DynamoDB vs RDS: Key Differences for Beginners
+
+## Summary
+
+DynamoDB is a serverless NoSQL database.
+
+RDS is a managed service for relational databases such as MySQL and PostgreSQL.
+
+In short, you can think about the difference like this:
+
+| Service | Best for |
+|---|---|
+| DynamoDB | Simple data that you read and write quickly by key |
+| RDS | Data that needs relationships between tables or SQL queries |
+
+For the contact form storage on this site, we plan to use DynamoDB.
+
+The reason is that the data we store is simple and does not require complex relationships.
+
+## What is DynamoDB
+
+DynamoDB is a managed NoSQL database from AWS.
+
+You create a table and store data using a partition key as the central index.
+
+You do not need to manage servers yourself.
+
+It scales well with traffic and works smoothly with Lambda.
+
+## What is RDS
+
+RDS makes it easier to run a relational database on AWS.
+
+Common engines include MySQL, PostgreSQL, MariaDB, Oracle, and SQL Server.
+
+With SQL, you can join tables and use transactions.
+
+## Basic differences
+
+| Item | DynamoDB | RDS |
+|---|---|---|
+| Type | NoSQL | Relational DB |
+| Data structure | Key-Value, Document | Tables, rows, columns |
+| Query style | Mainly key-based design | SQL |
+| Server management | Serverless | Instance management required |
+| Scaling | Easy to scale horizontally | Scale by instance size or read replicas |
+| Relationships | Weak | Strong |
+| JOIN | Generally not used | Supported |
+| MVP cost | Low when usage is small | Tends to be a fixed cost |
+| Lambda integration | Works well | May need VPC and connection setup |
+
+## Which one should you use
+
+### Cases where DynamoDB fits well
+
+DynamoDB works well for cases like these:
+
+- Storing contact form submissions
+- Storing user settings
+- Storing answer history
+- Storing session data
+- Data that can be fetched by key
+- Data with clear access patterns
+- When you want a fully serverless architecture
+
+On this site, we only store contact form data, so DynamoDB is enough.
+
+### Cases where RDS fits well
+
+RDS works well for cases like these:
+
+- You want to JOIN multiple tables
+- You need flexible search with SQL
+- Transactions are important
+- Strong consistency matters, such as accounting or order management
+- You want to reuse existing MySQL or PostgreSQL knowledge
+- You need complex search in an admin dashboard
+
+For example, if you need to link orders, inventory, payments, and customers on an e-commerce site, RDS is a strong candidate.
+
+## Why we choose DynamoDB on this site
+
+In the MVP of this site, the only dynamic data we store is contact form messages.
+
+The fields we store are:
+
+| Field | Description |
+|---|---|
+| contactId | Contact ID |
+| createdAt | Creation timestamp |
+| name | Name |
+| email | Email address |
+| subject | Subject |
+| message | Body text |
+| status | Handling status |
+| sourcePage | Source page of the submission |
+
+This data does not require complex JOINs.
+
+The first priority is that the data can be saved at all.
+
+So we start with a simple setup: Lambda calls PutItem on DynamoDB.
+
+## Why we do not use RDS for the MVP
+
+RDS is powerful, but it tends to be heavy for a small personal MVP.
+
+The main reasons are:
+
+| Reason | Detail |
+|---|---|
+| Fixed cost | Cost is based on instance running time |
+| Operations | You need to think about backup, connections, and scaling |
+| Architecture | You need VPC, security groups, and connection management |
+| Overkill | Too many features just for storing contact forms |
+
+This does not mean RDS is bad.
+
+It is just too much for this specific MVP.
+
+## What the exams ask
+
+In the Cloud Practitioner exam, DynamoDB appears as a NoSQL database, and RDS appears as a relational database.
+
+In the SAA exam, topics include availability, scaling, read performance, Multi-AZ, read replicas, and key design.
+
+| Topic | DynamoDB | RDS |
+|---|---|---|
+| Availability | Managed and highly available by default | Consider Multi-AZ setup |
+| Scaling | Scales horizontally | Instance size or read replicas |
+| Design | Design keys based on access patterns | Normalization and SQL design |
+| Cost | Mainly requests and storage size | Mainly instance running cost |
+| Use case | Simple, high-volume read and write | Complex relational data |
+
+## Common misunderstandings
+
+### Thinking that NoSQL is always fast
+
+DynamoDB is powerful, but a poor key design makes it hard to use.
+
+You need to think about "how the data will be retrieved" before you design the table.
+
+### Thinking that RDS is outdated
+
+RDS is still important today.
+
+For systems that need SQL, JOINs, and transactions, RDS is a strong option.
+
+### Picking RDS by default
+
+In the early stages of personal development, RDS can be overkill.
+
+For contact form storage, learning history, or simple settings, starting with DynamoDB is often a reasonable choice.
+
+## Conclusion
+
+DynamoDB and RDS are not about which one is better.
+
+They are designed for different use cases.
+
+DynamoDB fits well when you want to handle simple data quickly in a serverless setup.
+
+RDS fits well for business data that needs SQL and relationships.
+
+For the MVP of this site, the only dynamic data is the contact form, so we adopt DynamoDB.
+
+Being able to explain this decision is itself a meaningful outcome for an AWS portfolio.

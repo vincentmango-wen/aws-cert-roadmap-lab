@@ -1,0 +1,79 @@
+---
+postId: "blog-024"
+slug: "serverless-contact-api-flow"
+title: "Building a Contact API with API Gateway + Lambda + DynamoDB"
+description: "A walkthrough of how a contact form is saved through a serverless API, from frontend submission to DynamoDB storage."
+category: "Serverless"
+tags:
+  - "API Gateway"
+  - "Lambda"
+  - "DynamoDB"
+  - "Contact Form"
+  - "Serverless"
+targetKeywords:
+  - "contact form AWS Lambda"
+  - "API Gateway Lambda DynamoDB"
+  - "serverless API for beginners"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Building a Contact API with API Gateway + Lambda + DynamoDB
+
+Even a static site needs a place to store user input such as contact form submissions. On this site, the contact API is built with API Gateway + Lambda + DynamoDB.
+
+## Summary
+
+The frontend calls `POST /contact`. API Gateway invokes Lambda. Lambda validates the input and saves it to DynamoDB.
+
+## End-to-end flow
+
+1. The user fills in the contact form.
+2. The frontend checks required fields and email format.
+3. The frontend sends a JSON request to `POST /contact` on API Gateway.
+4. Lambda parses the request body.
+5. Lambda checks the honeypot field.
+6. Lambda runs its own validation.
+7. Lambda calls `PutItem` on DynamoDB.
+8. Lambda returns a success response.
+9. The frontend shows a completion message.
+
+## Why not validate only on the frontend?
+
+Frontend checks exist to improve user experience. They cannot be trusted from a security point of view.
+
+Anyone can call the API directly, so Lambda also checks required fields, length limits, email format, and the honeypot.
+
+## Data saved to DynamoDB
+
+The stored items include `contactId`, `createdAt`, `name`, `email`, `subject`, `message`, `sourcePage`, `status`, and `userAgent`.
+
+CloudWatch Logs do not contain the full email address or full message body. Logs only keep the minimum information needed for troubleshooting, such as `requestId`, `contactId`, and the error type.
+
+## CORS handling
+
+In production, the allowed origin is limited to the production domain. `localhost` is allowed only during development.
+
+Avoid running production with CORS set to `*`.
+
+## Benefits of this setup
+
+- No EC2 to manage.
+- No server administration.
+- Low cost for low-traffic workloads.
+- Uses the core AWS services covered in AWS certification exams.
+- Easy to explain the design intent in a portfolio.
+
+## Related terms
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## Read next
+
+- [What is Amazon API Gateway? An HTTP API guide for beginners](/blog/apigateway-beginner-http-api)
+- [What is Amazon DynamoDB? A NoSQL guide for beginners](/blog/dynamodb-beginner-nosql)

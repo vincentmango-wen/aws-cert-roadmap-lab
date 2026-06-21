@@ -7,7 +7,7 @@ import {
   createBlogDetailMetadataInput,
   getBlogPostBySlug,
   getBlogStaticParams,
-} from "../blog-detail-data";
+} from "../../../blog/blog-detail-data";
 
 type PageProps = {
   params: Promise<{
@@ -19,19 +19,19 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getBlogStaticParams("ja");
+  return getBlogStaticParams("en");
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { postSlug } = await params;
-  return createPageMetadata(createBlogDetailMetadataInput("ja", postSlug));
+  return createPageMetadata(createBlogDetailMetadataInput("en", postSlug));
 }
 
-export default async function BlogPostPage({ params }: PageProps) {
+export default async function EnglishBlogPostPage({ params }: PageProps) {
   const { postSlug } = await params;
-  const post = getBlogPostBySlug("ja", postSlug);
+  const post = getBlogPostBySlug("en", postSlug);
 
   if (!post) {
     notFound();
@@ -39,9 +39,9 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <BlogPostContent
-      locale="ja"
+      locale="en"
       post={post}
-      labels={blogDetailLabelsByLocale.ja}
+      labels={blogDetailLabelsByLocale.en}
     />
   );
 }
