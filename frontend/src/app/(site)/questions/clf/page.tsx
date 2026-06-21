@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { QuestionListClient } from "@/components/questions/QuestionListClient";
-import rawQuestions from "../../../../../contents/questions/clf-c02.json";
+import rawQuestions from "../../../../../contents/questions/clf-c02.ja.json";
 import {
   getPublishedQuestions,
   getQuestionCategorySummaries,

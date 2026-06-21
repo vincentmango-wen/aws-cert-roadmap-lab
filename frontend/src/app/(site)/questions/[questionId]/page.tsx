@@ -5,8 +5,8 @@ import type { ResolvedLink } from "@/components/questions/QuestionPlayer";
 import { createPageMetadata } from "@/lib/seo";
 import { isExistingTerm, isExistingComparison } from "@/lib/termGuards";
 import type { Question } from "@/types/question";
-import rawClfQuestions from "../../../../../contents/questions/clf-c02.json";
-import rawSaaQuestions from "../../../../../contents/questions/saa-c03.json";
+import rawClfQuestions from "../../../../../contents/questions/clf-c02.ja.json";
+import rawSaaQuestions from "../../../../../contents/questions/saa-c03.ja.json";
 
 type QuestionDetailPageProps = {
   params: Promise<{

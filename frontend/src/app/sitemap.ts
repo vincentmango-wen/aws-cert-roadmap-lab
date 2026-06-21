@@ -194,7 +194,7 @@ function getTermRoutes(): SitemapRouteInput[] {
 }
 
 function getQuestionRoutes(): SitemapRouteInput[] {
-  const questions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.json");
+  const questions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.ja.json");
 
   return questions
     .filter((question) => question.published !== false)
