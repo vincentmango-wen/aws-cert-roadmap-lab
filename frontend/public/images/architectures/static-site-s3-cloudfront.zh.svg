@@ -1,0 +1,54 @@
+<svg width="1200" height="680" viewBox="0 0 1200 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="680" rx="32" fill="#F8FAFC"/>
+
+  <text x="600" y="58" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#0F172A">
+    S3 + CloudFront 靜態網站架構
+  </text>
+
+  <text x="600" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#475569">
+    不直接公開 S3,透過 CloudFront OAC 安全傳輸靜態檔案的架構
+  </text>
+
+  <rect x="70" y="240" width="210" height="120" rx="20" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+  <circle cx="175" cy="282" r="28" fill="#DBEAFE"/>
+  <text x="175" y="291" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#1D4ED8">U</text>
+  <text x="175" y="334" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">使用者</text>
+  <text x="175" y="362" fill="#64748B">瀏覽器存取</text>
+
+  <rect x="405" y="220" width="260" height="160" rx="24" fill="#FFFFFF" stroke="#38BDF8" stroke-width="3"/>
+  <rect x="440" y="252" width="190" height="52" rx="14" fill="#E0F2FE"/>
+  <text x="535" y="286" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0369A1">CloudFront</text>
+  <text x="535" y="332" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#475569">CDN / HTTPS / Cache</text>
+  <text x="535" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#475569">透過 OAC 存取 S3</text>
+
+  <rect x="820" y="220" width="260" height="160" rx="24" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
+  <rect x="872" y="252" width="156" height="52" rx="14" fill="#FFEDD5"/>
+  <text x="950" y="286" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#C2410C">Amazon S3</text>
+  <text x="950" y="332" text-anchor="middle" font-family="Arial" font-size="16" fill="#475569">Static Files</text>
+  <text x="950" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#475569">HTML / CSS / JS / Images</text>
+
+  <path d="M280 300H388" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+  <path d="M378 288L398 300L378 312" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="340" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#1D4ED8">HTTPS</text>
+
+  <path d="M665 300H803" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+  <path d="M793 288L813 300L793 312" stroke="#EA580C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="735" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#C2410C">OAC</text>
+
+  <rect x="405" y="470" width="260" height="100" rx="20" fill="#FFFFFF" stroke="#A78BFA" stroke-width="2"/>
+  <text x="535" y="512" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#6D28D9">IAM / OAC</text>
+  <text x="535" y="544" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#64748B">僅允許 CloudFront 存取 S3</text>
+
+  <rect x="820" y="470" width="260" height="100" rx="20" fill="#FFFFFF" stroke="#22C55E" stroke-width="2"/>
+  <text x="950" y="512" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#15803D">AWS Budgets</text>
+  <text x="950" y="544" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#64748B">偵測非預期的費用</text>
+
+  <path d="M535 380V452" stroke="#8B5CF6" stroke-width="3" stroke-dasharray="8 8"/>
+  <path d="M950 380V452" stroke="#22C55E" stroke-width="3" stroke-dasharray="8 8"/>
+
+  <rect x="120" y="610" width="960" height="40" rx="20" fill="#E2E8F0"/>
+  <text x="600" y="636" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
+    重點:S3 非公開,透過 CloudFront 進行 HTTPS 傳輸,靜態網站易於低成本營運
+  </text>
+
+</svg>
