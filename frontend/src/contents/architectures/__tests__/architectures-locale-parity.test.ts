@@ -37,6 +37,7 @@ import architecturesEn from "../../../../contents/architectures/architectures.en
 import architecturesJa from "../../../../contents/architectures/architectures.ja.json";
 import architecturesZh from "../../../../contents/architectures/architectures.zh.json";
 import type { ArchitectureMeta } from "../../../types/architecture";
+import { resolveDiagramPath } from "../../../app/(site)/architectures/architecture-detail-data";
 
 const jaList = architecturesJa as ArchitectureMeta[];
 const enList = architecturesEn as ArchitectureMeta[];
@@ -182,20 +183,9 @@ describe("architectures locale parity", () => {
   it.skipIf(isScaffoldMode)(
     "(6) diagramPath is identical across ja/en/zh per slug, and resolveDiagramPath(locale, meta) resolves to the file existence checked in (5)",
     () => {
-      // resolveDiagramPath はランタイム依存の path 解決ヘルパー (SSoT は
-      // architecture-detail-data.ts 1 箇所). テスト側は import せずに同じ規約
-      // (.svg → .<locale>.svg suffix insertion) を再現し、二重実装の差分が
-      // (5) で確認したファイル実在パスから乖離しないことを構造検証する.
-      const resolveDiagramPathForTest = (
-        locale: "ja" | "en" | "zh",
-        meta: ArchitectureMeta,
-      ): string | undefined => {
-        if (!meta.diagramPath) return undefined;
-        const suffix = locale === "ja" ? "" : `.${locale}`;
-        if (suffix === "") return meta.diagramPath;
-        return meta.diagramPath.replace(/\.svg$/, `${suffix}.svg`);
-      };
-
+      // CR1-M2 是正: 旧版はテスト内で resolveDiagramPath ロジックを再実装していたが、
+      // 二重実装の片肺バグが検出できないため、SSoT 関数を直接 import して検証する。
+      // 不変条件: 実 resolveDiagramPath(locale, meta) の戻りパスが (5) の存在ファイルと一致.
       for (const slug of jaMap.keys()) {
         const ja = jaMap.get(slug)!;
         const en = enMap.get(slug)!;
@@ -215,7 +205,7 @@ describe("architectures locale parity", () => {
         for (const locale of ["ja", "en", "zh"] as const) {
           const meta =
             locale === "ja" ? ja : locale === "en" ? en : zh;
-          const resolved = resolveDiagramPathForTest(locale, meta);
+          const resolved = resolveDiagramPath(locale, meta);
           expect(resolved, `resolveDiagramPath undefined slug=${slug} locale=${locale}`).toBeDefined();
 
           const expectedFsPath = svgPathFor(locale, slug);
