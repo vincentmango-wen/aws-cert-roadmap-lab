@@ -1,0 +1,80 @@
+---
+postId: "blog-025"
+slug: "lambda-cloudwatch-logs-check"
+title: "如何用 CloudWatch 查看 Lambda 的日誌"
+description: "整理在 CloudWatch Logs 中查看 Lambda 執行日誌的方法,並運用於聯絡表單 API 的錯誤調查流程。"
+category: "Serverless 實作"
+tags:
+  - "Lambda"
+  - "CloudWatch Logs"
+  - "維運監控"
+  - "Serverless"
+targetKeywords:
+  - "Lambda CloudWatch Logs 查看"
+  - "AWS Lambda 日誌"
+  - "CloudWatch Logs 入門"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 如何用 CloudWatch 查看 Lambda 的日誌
+
+當你用 Lambda 建立 API 之後,要讓 CloudWatch Logs 處於可查看日誌的狀態。在調查聯絡表單 API 的故障時,這是最先要查看的地方之一。
+
+## 結論
+
+Lambda 的執行日誌會輸出到 CloudWatch Logs。發生錯誤時,可以開啟 Lambda 的 Log Group,從 requestId 或錯誤訊息調查原因。
+
+## 在 CloudWatch Logs 中要看的內容
+
+在聯絡表單 API 中,需要確認以下類型的日誌。
+
+- Lambda 是否被呼叫
+- 是否出現驗證錯誤
+- DynamoDB PutItem 是否失敗
+- CORS 或 JSON 解析是否失敗
+- 是否發生逾時
+
+## Log Group
+
+執行 Lambda 之後,日誌通常會輸出到 `/aws/lambda/函式名稱` 的 Log Group。以本專案為例,需查看 contact-submit-prod 的 Log Group。
+
+Log Stream 會依執行單位或時間單位區分。找出最近的執行紀錄,確認錯誤訊息。
+
+## 可以輸出的日誌
+
+可以輸出的日誌包括:處理成功訊息、驗證錯誤的欄位名稱、DynamoDB 儲存失敗、requestId、contactId 等。
+
+舉例來說,像 `INFO contact submitted contactId=contact-xxxx` 這類日誌對調查很有幫助。
+
+## 不可以輸出的日誌
+
+不要將以下內容輸出到日誌:電子郵件完整位址、聯絡表單內文全文、AWS 認證資訊、API Key、JWT 等。
+
+日誌雖然是給維運人員看的,但保存期間一長,就會成為資訊外洩的風險。設計上必須避免輸出個人資料。
+
+## 保存期間
+
+如果 CloudWatch Logs 設成無限期保存,日誌量會持續累積。個人 MVP 建議設定較短的保存期間,以降低成本與資訊管理的風險。
+
+## 故障調查流程
+
+1. 確認前端的錯誤訊息
+2. 確認 API Gateway 的狀態碼
+3. 查看 Lambda 的 CloudWatch Logs
+4. 確認 DynamoDB 是否有寫入紀錄
+5. 確認 CORS、環境變數、IAM 權限
+
+## 相關詞彙
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+
+## 延伸閱讀
+
+- [針對 Cloud Practitioner 解說 CloudWatch 基礎](/blog/clf-monitoring-cloudwatch-basics)
+- [用 API Gateway + Lambda + DynamoDB 建立聯絡表單 API 的流程](/blog/serverless-contact-api-flow)

@@ -1,0 +1,70 @@
+---
+postId: "blog-022"
+slug: "aws-budgets-cost-guardrail"
+title: "用 AWS Budgets 防止個人開發的帳單事故"
+description: "針對個人開發者整理 AWS Budgets 的角色、應該設定的閾值,以及與 Cost Explorer 的搭配方式。"
+category: "AWS 免費方案・作品集"
+tags:
+  - "AWS Budgets"
+  - "Cost Explorer"
+  - "成本管理"
+  - "個人開發"
+targetKeywords:
+  - "AWS Budgets 設定"
+  - "AWS 帳單事故 防止"
+  - "個人開發 AWS 成本"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 用 AWS Budgets 防止個人開發的帳單事故
+
+開始 AWS 個人開發時,最先應該設定的服務之一就是 AWS Budgets。比起實作功能,更應該先建立能夠偵測帳單事故的環境。
+
+## 結論
+
+AWS Budgets 是當 AWS 使用費用接近設定的金額或比例時,會發出通知的服務。在個人開發中,建議設定較低的月度預算,並在 50%、80%、100% 以及預測 100% 時發送通知,這樣的運作方式比較安全。
+
+## 為什麼要最先設定
+
+AWS 採用按用量計費的方式。即使是小規模的驗證,如果把建立好的服務放著不管,費用也可能持續累積。
+
+特別是 NAT Gateway、RDS、ALB、EC2、OpenSearch 等服務,在個人 MVP 開發中容易產生預期外的成本。只要設定好 Budgets,就能在異常發生時提早察覺。
+
+## Budgets 要監控什麼
+
+在 Budgets 中,可以設定月度成本預算並接收通知。例如設定 1 USD 或更低的預算金額,然後在 Actual 50%、Actual 80%、Actual 100%、Forecasted 100% 時發送通知。
+
+重點是,通知用的電子郵件地址一定要是能確實收到信件的位址。
+
+## 與 Cost Explorer 的差異
+
+Budgets 是用來「通知預算是否快要超出」的服務。Cost Explorer 則是用來「分析哪個服務花了多少錢」的服務。
+
+收到帳單通知後,可以在 Cost Explorer 依服務別、區域別確認費用明細。
+
+## 本專案的使用方式
+
+本網站使用 S3、CloudFront、API Gateway、Lambda、DynamoDB、CloudWatch Logs。在存取量較少的階段以低成本為目標,但無法保證完全永久零元。
+
+因此將 Budgets 設為必備項目,讓系統能夠提早偵測預期外的費用。
+
+## 實務上的注意事項
+
+Budgets 並不是能夠自動停止計費的魔法。收到通知後,要立即確認 Billing Dashboard、Cost Explorer 以及已建立的資源。
+
+不需要的驗證用資源應該刪除,CloudWatch Logs 的保留期間也最好不要設成無限期,這樣比較安全。
+
+## 相關名詞
+
+- [AWS Budgets](/terms/aws-budgets)
+- [Cost Explorer](/terms/cost-explorer)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 延伸閱讀
+
+- [為 Cloud Practitioner 整理 AWS 費用基礎](/blog/clf-aws-pricing-basics)
+- [AWS 作品集為什麼選擇 Serverless 架構](/blog/aws-portfolio-serverless-architecture)

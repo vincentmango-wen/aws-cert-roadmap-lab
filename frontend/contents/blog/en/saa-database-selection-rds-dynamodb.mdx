@@ -1,0 +1,73 @@
+---
+postId: "blog-014"
+slug: "saa-database-selection-rds-dynamodb"
+title: "Choosing Between RDS and DynamoDB for the SAA Exam"
+description: "A guide to the differences between relational databases and NoSQL, and when to choose RDS or DynamoDB, organized for the SAA exam."
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "RDS"
+  - "DynamoDB"
+  - "Database"
+  - "NoSQL"
+targetKeywords:
+  - "RDS vs DynamoDB differences"
+  - "SAA database selection"
+  - "AWS database for beginners"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Choosing Between RDS and DynamoDB for the SAA Exam
+
+The SAA exam often asks you to pick the right database for a given requirement. The difference between RDS and DynamoDB is one of the most common topics.
+
+## Quick answer
+
+Choose RDS when you need relational data, SQL, complex joins, or migration from an existing relational database. Consider DynamoDB when you need scalable key-value access, a serverless architecture, and low operational overhead.
+
+## When RDS is a good fit
+
+RDS is a managed service for relational databases. Pick it when you want to use engines like MySQL or PostgreSQL.
+
+RDS fits business systems where relationships between tables matter, such as orders, customers, products, and invoices. It is also the natural choice when you want to use SQL for aggregations and joins.
+
+## When DynamoDB is a good fit
+
+DynamoDB is a managed NoSQL database. It works well for fast key-based reads and writes, high traffic, and serverless architectures.
+
+On this site, contact form data is stored in a `ContactsTable`. There is no need for complex joins, and Lambda only needs to call `PutItem`, so DynamoDB is a good match.
+
+## Cost considerations
+
+For a personal MVP, RDS tends to become a fixed cost, so treat it carefully. With on-demand capacity, DynamoDB is easy to start with for small-scale, low-frequency access.
+
+That said, heavy use of `Scan` or large write volumes on DynamoDB can also drive up cost. Decide your access patterns first, then design the keys.
+
+## Key points for the SAA exam
+
+- If you need SQL or complex relationships, choose RDS.
+- If you need a serverless, scalable NoSQL store, choose DynamoDB.
+- RDS Multi-AZ provides high availability.
+- Read Replicas distribute read traffic.
+- For DynamoDB, partition key design is critical.
+
+## Practical notes
+
+DynamoDB is not a "just put it in" database. If you build it before clarifying your query and access patterns, you will end up relying on `Scan` everywhere.
+
+RDS is flexible, but you still need to think about backups, patching, scaling, and cost. For a personal portfolio, check that the configuration is not over-provisioned for the actual requirements.
+
+## Related terms
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Lambda](/terms/lambda)
+
+## Recommended next reads
+
+- [Differences between RDS and DynamoDB](/comparisons/rds-vs-dynamodb)
+- [API Gateway + Lambda + DynamoDB serverless API architecture](/architectures/serverless-api-basic)

@@ -1,0 +1,179 @@
+---
+postId: "blog-004"
+slug: "lambda-api-gateway-beginner"
+title: "Lambda and API Gateway Explained for Beginners"
+description: "A beginner-friendly guide to AWS Lambda and Amazon API Gateway: what each service does, how they differ, how they work together, and how to use them for a contact form API."
+category: "Serverless"
+tags:
+  - "aws"
+  - "lambda"
+  - "api-gateway"
+  - "serverless"
+  - "backend"
+targetKeywords:
+  - "Lambda API Gateway beginner"
+  - "What is AWS Lambda"
+  - "What is API Gateway"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# Lambda and API Gateway Explained for Beginners
+
+## Conclusion
+
+Lambda is the service that runs your code.
+
+API Gateway is the entry point that receives API requests from outside.
+
+By combining the two, you can build APIs without keeping a server running all the time.
+
+On this site, we use them to handle contact form submissions.
+
+## What is Lambda
+
+AWS Lambda is a serverless service that runs your code.
+
+Serverless does not mean there is no server.
+
+It means AWS manages the server for you.
+
+You do not have to manage an OS or keep a server running, as you would with EC2.
+
+## What is API Gateway
+
+API Gateway is the entry point that receives HTTP requests.
+
+When the frontend sends a request like `POST /contact`, API Gateway receives it.
+
+API Gateway then invokes Lambda.
+
+In other words, API Gateway is the front door, and Lambda is the worker.
+
+## Differences in Role
+
+| Service | Role |
+|---|---|
+| API Gateway | Exposes the API URL |
+| Lambda | Runs the actual processing |
+| DynamoDB | Stores results and data |
+| CloudWatch Logs | Lets you check execution logs |
+| IAM Role | Grants Lambda the permissions it needs |
+
+Once you understand this split of responsibilities, the overall picture of a serverless API becomes clear.
+
+## Using It for a Contact Form
+
+The flow for a contact form is as follows.
+
+| Step | Action |
+|---|---|
+| 1 | The user fills in the form |
+| 2 | The frontend validates the input |
+| 3 | A POST request is sent to API Gateway |
+| 4 | API Gateway invokes Lambda |
+| 5 | Lambda validates the input values |
+| 6 | Lambda writes to DynamoDB |
+| 7 | Lambda returns a success response |
+| 8 | The screen shows a confirmation message |
+
+For something like a form submission, you do not need a large backend server.
+
+## What Lambda Does
+
+In Lambda, you mainly handle the following.
+
+| Task | Description |
+|---|---|
+| JSON parsing | Read the request body |
+| Honeypot check | Filter out bot submissions |
+| Validation | Check name, email, subject, and message |
+| ID generation | Create a contactId |
+| Timestamp generation | Create createdAt |
+| DynamoDB write | Save the inquiry content |
+| Response building | Return success or error |
+
+The frontend also validates input, but frontend checks alone are not enough.
+
+Because an API can be called directly from outside, Lambda must validate as well.
+
+## What API Gateway Does
+
+In API Gateway, you mainly configure the following.
+
+| Setting | Description |
+|---|---|
+| Route | Create `POST /contact` |
+| Integration | Connect to Lambda |
+| CORS | Restrict the allowed frontend Origin |
+| Method | Handle POST and OPTIONS |
+| Logs | Review logs as needed |
+
+For the MVP, no authentication is used.
+
+If you add login functionality later, you can combine Cognito with a JWT Authorizer.
+
+## What is CORS
+
+CORS controls requests made by the browser to a different Origin.
+
+For example, if the frontend is at `https://example.com` and the API is at the API Gateway URL, the Origins differ.
+
+For this reason, you configure the allowed Origin on the API Gateway side.
+
+In production, do not use `*`. Allow only the URL of your production frontend.
+
+## Required IAM Permissions
+
+For Lambda to write to DynamoDB, it needs permission to access DynamoDB.
+
+However, you should not grant permissions that allow anything.
+
+What the contact form Lambda needs is `dynamodb:PutItem` on ContactsTable.
+
+If reads or deletes are not required, do not grant them.
+
+This least-privilege mindset matters for both AWS certifications and real-world work.
+
+## What to Check in CloudWatch Logs
+
+When Lambda runs, logs appear in CloudWatch Logs.
+
+However, you must not log the full inquiry body or the full email address.
+
+If you log information, keep it to things like the following.
+
+| Safe to log | Reason |
+|---|---|
+| contactId | Useful for tracking |
+| requestId | Useful for incident investigation |
+| Validation failure fields | Useful for identifying causes |
+| DynamoDB write failure | Useful for incident investigation |
+
+Do not log personal information or secrets.
+
+## Points Tested on Exams
+
+For Cloud Practitioner, understand Lambda as serverless compute and API Gateway as a service for publishing APIs.
+
+For SAA, you are stronger if you also understand serverless APIs, authentication, CORS, IAM, logging, and DynamoDB integration.
+
+| Perspective | Key Point |
+|---|---|
+| Cost | Lambda is billed by number of executions and execution time |
+| Availability | Use managed services |
+| Security | Use least privilege with IAM Roles |
+| Operations | Check CloudWatch Logs |
+| Extension | Extend with Cognito authentication or DynamoDB integration |
+
+## Summary
+
+With Lambda and API Gateway, you can build APIs without keeping a server running all the time.
+
+For small dynamic processing like a contact form, a serverless setup is a good fit.
+
+The key is to separate the roles: API Gateway as the entry point, Lambda as the worker, and DynamoDB as the storage destination.
+
+Once you can build this setup, it becomes easier to explain your AWS certification knowledge as real implementation experience.

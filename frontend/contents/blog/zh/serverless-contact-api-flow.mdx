@@ -1,0 +1,79 @@
+---
+postId: "blog-024"
+slug: "serverless-contact-api-flow"
+title: "使用 API Gateway + Lambda + DynamoDB 建立聯絡 API 的流程"
+description: "整理聯絡表單透過 Serverless API 儲存的流程，從前端到 DynamoDB 寫入。"
+category: "Serverless 實作"
+tags:
+  - "API Gateway"
+  - "Lambda"
+  - "DynamoDB"
+  - "Contact Form"
+  - "Serverless"
+targetKeywords:
+  - "聯絡表單 AWS Lambda"
+  - "API Gateway Lambda DynamoDB"
+  - "Serverless API 入門"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 使用 API Gateway + Lambda + DynamoDB 建立聯絡 API 的流程
+
+即使是靜態網站,像聯絡表單這類使用者輸入也需要儲存的地方。本網站使用 API Gateway + Lambda + DynamoDB 組成聯絡 API。
+
+## 結論
+
+前端呼叫 POST /contact,API Gateway 觸發 Lambda,Lambda 驗證輸入值後寫入 DynamoDB。
+
+## 整體流程
+
+1. 使用者在聯絡表單中輸入內容
+2. 前端進行必填檢查與 email 格式檢查
+3. 將 JSON 傳送至 API Gateway 的 POST /contact
+4. Lambda 解析 request body
+5. 檢查 honeypot
+6. Lambda 端也進行驗證
+7. PutItem 至 DynamoDB
+8. 回傳成功 response
+9. 前端顯示完成訊息
+
+## 為什麼不只在前端驗證
+
+前端的檢查是為了改善使用者體驗,在安全性上不可信任。
+
+由於 API 可能被直接呼叫,Lambda 端也會檢查必填項目、字數、email 格式與 honeypot。
+
+## DynamoDB 中儲存的資料
+
+儲存的項目包含 contactId、createdAt、name、email、subject、message、sourcePage、status、userAgent 等。
+
+不過,CloudWatch Logs 中不會輸出完整的 email 或訊息內文。Log 只輸出 requestId、contactId、錯誤類型等,調查所需的最小資訊。
+
+## CORS 的處理方式
+
+正式環境中,允許的 Origin 僅限定於正式網域。開發環境的 localhost 只在開發時允許。
+
+避免將 CORS 設為 `*` 直接上線運作。
+
+## 此架構的優點
+
+- 不使用 EC2
+- 無需管理伺服器
+- 低流量存取時容易控制成本
+- 可在實作中使用 AWS 認證學習的主要服務
+- 在作品集中容易說明設計意圖
+
+## 相關詞彙
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 延伸閱讀
+
+- [Amazon API Gateway 是什麼?寫給初學者的 HTTP API 解說](/blog/apigateway-beginner-http-api)
+- [Amazon DynamoDB 是什麼?寫給初學者的 NoSQL 解說](/blog/dynamodb-beginner-nosql)

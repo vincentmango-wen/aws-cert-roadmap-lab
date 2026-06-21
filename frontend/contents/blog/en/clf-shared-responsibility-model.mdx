@@ -1,0 +1,77 @@
+---
+postId: "blog-006"
+slug: "clf-shared-responsibility-model"
+title: "AWS Shared Responsibility Model Explained for Beginners"
+description: "A beginner-friendly overview of the AWS Shared Responsibility Model, a common topic on the Cloud Practitioner exam, covering what AWS is responsible for and what you are responsible for."
+category: "CLF"
+tags:
+  - "CLF-C02"
+  - "Shared Responsibility Model"
+  - "Security"
+  - "IAM"
+targetKeywords:
+  - "AWS Shared Responsibility Model"
+  - "Cloud Practitioner security"
+  - "AWS for beginners"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# AWS Shared Responsibility Model Explained for Beginners
+
+The Shared Responsibility Model is one of the first concepts you should learn for the AWS Cloud Practitioner exam. It does not mean "AWS takes care of everything for you." Instead, it is a framework that separates what AWS is responsible for from what you, the customer, are responsible for.
+
+## The Short Answer
+
+AWS is responsible for the cloud infrastructure itself. You are responsible for how you configure and use that infrastructure.
+
+In short, AWS is responsible for the "security of the cloud," and you are responsible for the "security in the cloud."
+
+## What AWS Is Responsible For
+
+AWS is responsible for the physical data centers, hardware, networking, and virtualization layers. You will never need to enter a data center to protect a server. AWS manages all of that.
+
+For example, AWS handles physical server failures, data center access control, power, and cooling.
+
+## What You Are Responsible For
+
+You are responsible for things like IAM user and IAM role permissions, S3 bucket access settings, EC2 OS configuration, application-level security, and the data you store on AWS.
+
+For example, if you accidentally make an S3 bucket public, that is generally your configuration mistake. Even though AWS operates the S3 service securely, an incorrect public access setting on your side can lead to a data leak.
+
+## Responsibilities Change Based on the Service
+
+The Shared Responsibility Model shifts depending on which AWS service you use.
+
+With EC2, you are still responsible for the OS and middleware. With managed services like Lambda or DynamoDB, AWS handles most of the server management for you.
+
+This is a common exam topic. The more managed a service is, the less you worry about infrastructure, and the more you focus on data, permissions, configuration, and your application.
+
+## Exam Topics to Remember
+
+For the Cloud Practitioner exam, expect questions on points like these:
+
+- AWS manages the data centers and physical infrastructure
+- You manage IAM, your data, and application configuration
+- For EC2, you have more responsibility (such as OS patching)
+- For managed services, AWS takes on more of the management
+
+## Practical Considerations
+
+In real-world use, the key idea is not "AWS is safe by default" but "Have I configured AWS securely?" IAM, S3, security groups, and CloudWatch Logs are common areas where beginners make mistakes.
+
+On this site, for example, we do not expose S3 directly. Instead, we serve content through CloudFront with OAC, and we limit the IAM permissions used by GitHub Actions to only S3 deploys and CloudFront invalidations.
+
+## Related Terms
+
+- [IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+
+## Recommended Next Reads
+
+- [IAM User vs IAM Role vs IAM Policy](/comparisons/iam-user-vs-role-vs-policy)
+- [Practice Questions for AWS Cloud Practitioner](/questions)

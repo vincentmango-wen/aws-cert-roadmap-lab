@@ -1,0 +1,203 @@
+---
+postId: "blog-003"
+slug: "s3-cloudfront-static-site"
+title: "用 S3 與 CloudFront 公開靜態網站的方法"
+description: "為初學者解說如何使用 Amazon S3 與 Amazon CloudFront,安全地公開 Next.js 靜態網站的基本架構。"
+category: "Serverless"
+tags:
+  - "aws"
+  - "s3"
+  - "cloudfront"
+  - "static-site"
+  - "oac"
+targetKeywords:
+  - "S3 CloudFront 靜態網站"
+  - "Next.js S3 CloudFront"
+  - "CloudFront OAC S3"
+author: "AWS 認證學習路線實驗室"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# 用 S3 與 CloudFront 公開靜態網站的方法
+
+## 結論
+
+要在 AWS 上公開靜態網站,S3 + CloudFront 架構是基本作法。
+
+把 HTML、CSS、JavaScript、圖片放在 S3 上,再透過 CloudFront 提供給使用者。
+
+在這個架構中,不會直接公開 S3,而是只允許從 CloudFront 存取 S3。
+
+為了實現這一點,要使用的就是 CloudFront Origin Access Control,也就是 OAC。
+
+## 整體架構
+
+整體流程如下。
+
+| 順序 | 處理 |
+|---|---|
+| 1 | 使用者用瀏覽器存取網站 |
+| 2 | CloudFront 接收請求 |
+| 3 | 如果 CloudFront 有快取就直接回傳 |
+| 4 | 沒有快取的話就從 S3 取得檔案 |
+| 5 | S3 只允許來自 CloudFront 的存取 |
+| 6 | 使用者看到網頁 |
+
+透過這個架構,不必啟動伺服器就能公開網站。
+
+## 為什麼不只用 S3 來公開
+
+S3 本身有靜態網站託管(Static Website Hosting)的功能。
+
+不過在這個專案中,方針是不直接公開 S3。
+
+理由是經由 CloudFront 可以得到以下優點。
+
+| 觀點 | 經由 CloudFront 的理由 |
+|---|---|
+| 安全性 | 不直接公開 S3 bucket |
+| HTTPS | 可以透過 CloudFront 提供 HTTPS |
+| 效能 | 透過快取可以加快顯示速度 |
+| 維運 | 可以集中管理快取控制與自訂網域設定 |
+| 作品集 | 可以解說 CDN 與 Origin 分離的設計 |
+
+## 使用的 AWS 服務
+
+### Amazon S3
+
+S3 是靜態檔案的存放位置。
+
+用 Next.js 進行靜態輸出時,會在 `out/` 目錄產生 HTML 與 JavaScript。
+
+把這些檔案上傳到 S3。
+
+S3 這邊維持 Public Access Block 啟用的狀態。
+
+### Amazon CloudFront
+
+CloudFront 是把檔案提供給使用者的入口。
+
+瀏覽器不是直接存取 S3,而是存取 CloudFront。
+
+CloudFront 會從 S3 取得檔案再回傳給使用者。
+
+### CloudFront OAC
+
+OAC 是讓 CloudFront 安全地存取 S3 的機制。
+
+透過 S3 bucket policy,只允許來自特定 CloudFront Distribution 的存取。
+
+這樣即使直接存取 S3 物件的 URL,也不會顯示內容。
+
+### IAM
+
+IAM 用來控制存取 S3 與 CloudFront 的權限。
+
+如果使用 GitHub Actions 部署,就建立一個只允許上傳到 S3 與執行 CloudFront Invalidation 的角色(Role)。
+
+## 實作步驟
+
+### 1. 將 Next.js 設定為靜態輸出
+
+在 `next.config.js` 或 `next.config.mjs` 中啟用靜態輸出。
+
+設定的目的是產生可以上傳到 S3 的 HTML 檔案。
+
+在這個專案中,目標是執行 `npm run build` 後產生 `out/` 目錄。
+
+### 2. 建立 S3 bucket
+
+S3 bucket 是靜態檔案的存放處。
+
+設定方針如下。
+
+| 項目 | 方針 |
+|---|---|
+| Public Access | 全部封鎖 |
+| Static website hosting | 不使用 |
+| 加密 | SSE-S3 |
+| 版本管理(Versioning) | MVP 階段可選 |
+
+不直接公開 S3 是重點。
+
+### 3. 建立 CloudFront Distribution
+
+在 CloudFront 中,將 Origin 指定為 S3 bucket。
+
+設定方針如下。
+
+| 項目 | 方針 |
+|---|---|
+| Origin | S3 bucket |
+| Origin access | OAC |
+| Viewer protocol policy | Redirect HTTP to HTTPS |
+| Allowed methods | GET, HEAD |
+| Default root object | index.html |
+| WAF | MVP 階段不使用 |
+
+### 4. 設定 S3 Bucket Policy
+
+在 S3 Bucket Policy 中,只允許 CloudFront 進行讀取。
+
+允許的操作是 `s3:GetObject`。
+
+對象範圍用 CloudFront Distribution 的 ARN 來限定。
+
+這樣就能讓其他路徑無法取得 S3 物件。
+
+### 5. 用 CloudFront URL 確認
+
+最後用 CloudFront 的網域確認網站。
+
+也要確認用 S3 的直接 URL 無法顯示。
+
+如果 S3 URL 還能顯示內容,請重新檢查 bucket policy 或 Public Access Block 的設定。
+
+## 考試會考的重點
+
+Cloud Practitioner 會考到 S3、CloudFront、IAM、費用、責任共擔模型(Shared Responsibility Model)等相關內容。
+
+SAA 則會考到靜態網站發布、快取、Origin 存取控制、HTTPS、自訂網域、可用性等。
+
+特別要記住的重點如下。
+
+| 重點 | 內容 |
+|---|---|
+| S3 | 物件儲存 |
+| CloudFront | CDN |
+| OAC | 從 CloudFront 到 S3 的安全存取控制 |
+| IAM | 權限管理 |
+| HTTPS | 透過 CloudFront 提供 |
+| 成本 | 不使用 EC2 因此容易壓低固定費用 |
+
+## 常見錯誤
+
+### 把 S3 設為公開存取
+
+這是學習過程中常見的錯誤。
+
+如果要使用 CloudFront,就不要直接公開 S3。
+
+### 忘記處理 CloudFront 的快取
+
+即使更新了檔案,CloudFront 上有時還會留有舊的快取。
+
+這時候要執行 Invalidation。
+
+不過每次都把所有路徑都失效化的話,會增加維運上的浪費。
+
+### 圖片檔案過大
+
+圖片太大會影響 S3 的儲存量與 CloudFront 的傳輸量。
+
+初期 MVP 階段,建議採取控制圖片張數與大小的方針比較安全。
+
+## 總結
+
+S3 + CloudFront 是在 AWS 上公開靜態網站的基本架構。
+
+重點是不直接公開 S3,而是使用 CloudFront OAC,把存取限定在經由 CloudFront 的路徑。
+
+理解這個架構之後,不只是 Cloud Practitioner 的服務理解,也能銜接到 SAA 會考的發布、安全性、成本最佳化的思考方式。

@@ -1,0 +1,73 @@
+---
+postId: "blog-012"
+slug: "saa-vpc-public-private-subnet"
+title: "為 SAA 整理 VPC 的 Public Subnet 與 Private Subnet"
+description: "針對 SAA 考試,整理 VPC、Public Subnet、Private Subnet、Internet Gateway 與 NAT Gateway 的角色與用途。"
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "VPC"
+  - "Subnet"
+  - "NAT Gateway"
+  - "Internet Gateway"
+targetKeywords:
+  - "VPC Public Subnet Private Subnet"
+  - "SAA VPC 基礎"
+  - "AWS 網路 初學者"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 為 SAA 整理 VPC 的 Public Subnet 與 Private Subnet
+
+要在 SAA 解答網路相關題目,必須先理解 VPC、子網路 (Subnet)、路由表、Internet Gateway 與 NAT Gateway 之間的關係。
+
+## 結論
+
+Public Subnet 是用來放置「需要從網際網路存取」資源的地方;Private Subnet 則是放置「不希望從外部直接存取」資源的地方。
+
+## 什麼是 VPC
+
+VPC 是在 AWS 上建立的虛擬網路。它是放置 EC2、RDS、ALB 等資源的網路基礎。
+
+如果是只用 S3、DynamoDB、Lambda、API Gateway 組成的小型 serverless MVP,也可以選擇不使用 VPC。本網站的聯絡表單 Lambda 只需要存取 DynamoDB,因此採用「不連線 VPC」的架構會更簡潔。
+
+## 什麼是 Public Subnet
+
+Public Subnet 是指在路由表中,擁有「指向 Internet Gateway 路由」的子網路。常用來放置需要從外部存取的 ALB,或作為跳板機 (bastion host) 用途的 EC2。
+
+不過要注意,放在 Public Subnet 並不代表一定會公開到網際網路。是否真的可被外部存取,還會受到 public IP、路由表、安全群組 (Security Group) 等因素影響。
+
+## 什麼是 Private Subnet
+
+Private Subnet 是指放置「不希望被網際網路直接存取」資源的子網路。常見的配置是把應用程式伺服器或 RDS 放在這裡。
+
+如果 Private Subnet 內的 EC2 需要對外進行更新等通訊,通常會搭配 NAT Gateway。不過 NAT Gateway 容易產生固定費用,個人 MVP 規模時要謹慎評估是否使用。
+
+## SAA 常考重點
+
+- Public Subnet 擁有指向 Internet Gateway 的路由
+- Private Subnet 內的資源不會被外部直接存取
+- NAT Gateway 用於 Private Subnet 對外發出通訊時
+- RDS 基本上會放在 Private Subnet
+- 多 AZ 架構時,子網路也要拆分到不同的 AZ
+
+## 實務上的注意事項
+
+VPC 的設計一旦做好,事後要修改會很麻煩。CIDR、子網路切分、AZ 配置、路由表、安全群組這些都要在一開始就整理清楚。
+
+對初學者的個人開發來說,盡量不要建立用不到的 VPC 連線或 NAT Gateway 會比較安全。即使是為了學習目的而建立,也要把「建立後的刪除確認」一起納入流程。
+
+## 相關術語
+
+- [Amazon VPC](/terms/vpc)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon RDS](/terms/rds)
+
+## 延伸閱讀
+
+- [Security Group 與 NACL 的差異](/comparisons/security-group-vs-nacl)
+- [VPC 內三層式 Web 應用架構](/architectures/three-tier-vpc)

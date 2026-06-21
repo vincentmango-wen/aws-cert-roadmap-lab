@@ -1,0 +1,189 @@
+---
+postId: "blog-005"
+slug: "dynamodb-vs-rds-beginner"
+title: "DynamoDB 與 RDS 的差異"
+description: "為初學者解說 Amazon DynamoDB 與 Amazon RDS 的差異,從資料結構、費用、維運、使用情境,到 AWS 認證考試會考的重點全面說明。"
+category: "AWS 服務"
+tags:
+  - "aws"
+  - "dynamodb"
+  - "rds"
+  - "database"
+  - "comparison"
+targetKeywords:
+  - "DynamoDB RDS 差異"
+  - "AWS 資料庫比較"
+  - "DynamoDB 初學者"
+author: "AWS 認證學習路線實驗室"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# DynamoDB 與 RDS 的差異
+
+## 結論
+
+DynamoDB 是 Serverless 的 NoSQL 資料庫。
+
+RDS 則是可以使用 MySQL、PostgreSQL 等的關聯式資料庫託管服務。
+
+簡單來說,兩者的使用情境如下。
+
+| 服務 | 適合的用途 |
+|---|---|
+| DynamoDB | 以 key 進行高速讀寫的簡單資料 |
+| RDS | 需要表格之間關聯或 SQL 的資料 |
+
+本網站的聯絡表單儲存功能,預計採用 DynamoDB。
+
+原因是要儲存的資料很單純,不需要複雜的關聯。
+
+## DynamoDB 是什麼
+
+DynamoDB 是 AWS 提供的託管 NoSQL 資料庫。
+
+建立 table,以 Partition Key 為核心儲存資料。
+
+不需要自己管理伺服器。
+
+它能依照存取量輕鬆擴展,而且與 Lambda 的搭配性也很好。
+
+## RDS 是什麼
+
+RDS 是讓你在 AWS 上更容易管理關聯式資料庫的服務。
+
+代表性的引擎包括 MySQL、PostgreSQL、MariaDB、Oracle、SQL Server 等。
+
+可以使用 SQL,進行表格之間的 JOIN,或處理交易(transaction)。
+
+## 基本差異
+
+| 項目 | DynamoDB | RDS |
+|---|---|---|
+| 種類 | NoSQL | 關聯式資料庫 |
+| 資料結構 | Key-Value、Document | Table、列、欄 |
+| 查詢 | 主要以 key 設計為基礎 | SQL |
+| 伺服器管理 | Serverless | 需管理執行個體 |
+| 擴充性 | 容易水平擴展 | 透過執行個體或 read replica 擴展 |
+| 關聯性 | 不擅長 | 擅長 |
+| JOIN | 基本上不使用 | 可使用 |
+| MVP 成本 | 小規模時容易壓低 | 容易變成固定費用 |
+| Lambda 整合 | 搭配性佳 | 可能需要處理 VPC 或連線管理 |
+
+## 應該選哪個
+
+### 適合 DynamoDB 的情境
+
+DynamoDB 適合以下情境。
+
+- 聯絡表單的儲存
+- 使用者設定的儲存
+- 回答紀錄的儲存
+- session 資訊的儲存
+- 可以用 key 取得的資料
+- 存取模式明確的資料
+- 想採用 Serverless 架構的情況
+
+本網站只需要儲存聯絡資料,DynamoDB 就夠了。
+
+### 適合 RDS 的情境
+
+RDS 適合以下情境。
+
+- 想要 JOIN 多個 table
+- 想用 SQL 彈性地查詢
+- 交易(transaction)很重要
+- 像會計或訂單管理那樣,資料一致性很重要
+- 想活用既有的 MySQL 或 PostgreSQL 知識
+- 想在管理後台做複雜的查詢
+
+例如,電商網站要將訂單、庫存、付款、客戶等細項串接起來時,RDS 就是選項之一。
+
+## 本網站選擇 DynamoDB 的理由
+
+本網站的 MVP 中,要儲存的動態資料只有聯絡表單內容。
+
+要儲存的欄位如下。
+
+| 項目 | 內容 |
+|---|---|
+| contactId | 聯絡 ID |
+| createdAt | 建立時間 |
+| name | 姓名 |
+| email | 電子郵件 |
+| subject | 主旨 |
+| message | 內容 |
+| status | 處理狀態 |
+| sourcePage | 送出來源頁面 |
+
+這些資料不需要複雜的 JOIN。
+
+最重要的是先「能夠儲存」。
+
+因此,先以從 Lambda 對 DynamoDB 執行 PutItem 的架構開始。
+
+## MVP 不採用 RDS 的理由
+
+RDS 雖然強大,但對個人開發的 MVP 來說容易顯得太重。
+
+理由如下。
+
+| 理由 | 內容 |
+|---|---|
+| 固定費用 | 費用會依執行個體運作時間累積 |
+| 維運 | 需要考慮備份、連線、擴展 |
+| 架構 | 需要 VPC、安全群組、連線管理 |
+| 過度配置 | 只是為了儲存聯絡資料,功能太多 |
+
+這並不是說 RDS 不好。
+
+只是對這次的 MVP 來說太過頭。
+
+## 考試會考的重點
+
+在 Cloud Practitioner 中,DynamoDB 會以 NoSQL、RDS 會以關聯式資料庫的形式出題。
+
+在 SAA 中,則會涉及可用性、擴展性、讀取效能、Multi-AZ、Read Replica、key 設計等主題。
+
+| 觀點 | DynamoDB | RDS |
+|---|---|---|
+| 可用性 | 託管服務本身具備高可用性 | 考慮 Multi-AZ 架構 |
+| 擴展性 | 容易水平擴展 | 透過執行個體大小或 read replica |
+| 設計 | 從存取模式反推 key 設計 | 正規化與 SQL 設計 |
+| 成本 | 以請求數與儲存容量為主 | 以執行個體運作費用為主 |
+| 用途 | 單純且大量的讀寫 | 複雜的關聯資料 |
+
+## 常見的誤解
+
+### 認為只要是 NoSQL 就一定快
+
+DynamoDB 雖然強大,但如果 key 設計錯誤就會變得難用。
+
+必須先想清楚「資料要怎麼取出」,再來設計 table。
+
+### 認為 RDS 已經過時
+
+RDS 至今仍然重要。
+
+在需要 SQL、JOIN、交易的系統中,RDS 仍是有力的選項。
+
+### 想說「總之先用 RDS」
+
+對學習初期的個人開發來說,RDS 有時會顯得太重。
+
+如果只是儲存聯絡資料、學習紀錄、簡單的設定,從 DynamoDB 開始也是合理的選擇。
+
+## 總結
+
+DynamoDB 與 RDS 並沒有誰比較好的問題。
+
+只是用途不同。
+
+DynamoDB 適合在 Serverless 架構下,高速處理單純的資料。
+
+RDS 則適合需要 SQL 或關聯的業務資料。
+
+本網站的 MVP 中,動態資料只有聯絡表單儲存,所以採用 DynamoDB。
+
+能夠說明清楚這個選擇的理由,本身就是 AWS 作品集中很重要的學習成果。

@@ -1,0 +1,185 @@
+---
+postId: "blog-001"
+slug: "aws-cloud-practitioner-roadmap"
+title: "How to Study for AWS Cloud Practitioner"
+description: "A beginner-friendly study guide for AWS Cloud Practitioner (CLF-C02): exam scope, learning order, key AWS services to remember, and how to deepen your understanding through hands-on practice."
+category: "CLF"
+tags:
+  - "aws"
+  - "clf-c02"
+  - "cloud-practitioner"
+  - "beginner"
+  - "roadmap"
+targetKeywords:
+  - "AWS Cloud Practitioner study guide"
+  - "CLF-C02 for beginners"
+  - "AWS certification learning order"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# How to Study for AWS Cloud Practitioner
+
+## Conclusion
+
+When you study for AWS Cloud Practitioner, do not try to memorize every service from the start.
+
+Cover these five areas in order first:
+
+1. Basic cloud concepts
+2. The shared responsibility model
+3. Core AWS services
+4. Pricing, billing, and support
+5. Practice questions to check your understanding
+
+Cloud Practitioner is not a deep architecture exam.
+
+It checks whether you understand what AWS can do, which service is used for what purpose, and the basics of pricing and security.
+
+## What to Understand First
+
+The first thing to understand is not the names of AWS services, but the reasons to use the cloud.
+
+The main reasons to use the cloud are:
+
+| Aspect | Description |
+|---|---|
+| Lower upfront cost | No need to buy physical servers in advance |
+| Quick to start | You can create the resources you need in a short time |
+| Easy to scale | You can expand your setup as traffic grows |
+| Pay-as-you-go | You pay only for what you use |
+| Global reach | You can use Regions around the world |
+
+Once you understand this mindset, the roles of EC2, S3, Lambda, DynamoDB, and other services become easier to remember.
+
+## Overview of the Exam Scope
+
+Cloud Practitioner focuses on the basic concepts of AWS, not on detailed implementation.
+
+The main exam domains are:
+
+| Domain | What You Learn |
+|---|---|
+| Cloud Concepts | Benefits of the cloud, scalability, availability |
+| Security and Compliance | Shared responsibility model, IAM, MFA, encryption |
+| Cloud Technology and Services | EC2, S3, RDS, Lambda, VPC, and more |
+| Billing, Pricing, and Support | Free Tier, billing, support plans, cost management |
+
+Studying these four domains separately helps you keep your knowledge organized.
+
+## Learning Order
+
+For beginners, the following order is easier to follow.
+
+### 1. Understand the Basics of the Cloud
+
+Start by understanding the difference between on-premises and the cloud.
+
+On-premises means you prepare and operate your own servers and network equipment.
+
+The cloud means you use resources prepared by a cloud provider such as AWS, only as much as you need.
+
+The key point here is not "use the cloud because it is free," but "use the cloud because you can use what you need, when you need it."
+
+### 2. Understand the Shared Responsibility Model
+
+In AWS, security responsibilities are divided between AWS and the customer.
+
+AWS is responsible for the cloud infrastructure itself.
+
+The customer is responsible for configuration, data, account management, access permissions, and more.
+
+For example, if you set an S3 bucket to public by mistake, that is the customer's responsibility.
+
+### 3. Learn Core Services by Category
+
+If you try to remember AWS services only by name, you will get confused.
+
+Organize them by category instead.
+
+| Category | Representative Services |
+|---|---|
+| Compute | EC2, Lambda, ECS |
+| Storage | S3, EBS, EFS |
+| Database | RDS, DynamoDB, Aurora |
+| Networking | VPC, Route 53, CloudFront |
+| Security | IAM, KMS, WAF |
+| Monitoring | CloudWatch, CloudTrail, AWS Config |
+| Integration | SQS, SNS, EventBridge |
+| Management | AWS Budgets, Cost Explorer, Organizations |
+
+When you learn by category, it becomes easier to judge that a question is about storage, or about monitoring, and so on.
+
+## How to Use Practice Questions
+
+Looking only at the number of correct answers on practice questions is not very useful.
+
+Check these three points for each question:
+
+1. Why is the correct answer correct
+2. Why are the other choices wrong
+3. Which AWS services are involved
+
+In Cloud Practitioner, similar services are easy to mix up.
+
+For example, CloudWatch, CloudTrail, and AWS Config are often confused.
+
+| Service | Role |
+|---|---|
+| CloudWatch | Metrics, logs, alarms |
+| CloudTrail | History of AWS API calls |
+| AWS Config | Recording and evaluating resource configuration changes |
+
+Comparing services like this makes it easier to eliminate wrong choices.
+
+## Deepen Your Understanding Through Hands-On Practice
+
+Studying only for the exam is fine, but building a simple website gives you a deeper understanding.
+
+For example, this site uses the following setup:
+
+| AWS Service | Role |
+|---|---|
+| S3 | Storing static files |
+| CloudFront | HTTPS delivery and caching |
+| API Gateway | Entry point for the API |
+| Lambda | Handling contact form submissions |
+| DynamoDB | Storing submitted messages |
+| CloudWatch | Checking logs |
+| IAM | Managing permissions |
+| AWS Budgets | Monitoring billing |
+
+These services often appear on the Cloud Practitioner exam.
+
+When you actually use them, you learn not just words, but the situations in which each service is used.
+
+## Common Mistakes
+
+A common mistake for beginners is to try to memorize detailed service specifications from the start.
+
+For example, if you dive into VPC route tables or NAT Gateways at the very beginning, you will lose sight of the big picture.
+
+First, learn what each service is used for.
+
+After that, you can move on to design patterns when you prepare for SAA.
+
+## How to Use This Site
+
+On this site, we recommend studying in the following order:
+
+1. Review the main services in the [AWS Glossary](/terms)
+2. Understand the differences between similar services in [Service Comparisons](/comparisons)
+3. Check your understanding with [Practice Questions](/questions)
+4. See how services connect to each other in [Architecture Diagrams](/architectures)
+
+## Summary
+
+AWS Cloud Practitioner is a good entry point into AWS learning.
+
+The important thing is not to memorize every service.
+
+It is to understand cloud concepts, the shared responsibility model, core services, and cost management in order.
+
+After that, building a small application using services such as S3, CloudFront, Lambda, and DynamoDB turns your exam knowledge into a portfolio piece as well.

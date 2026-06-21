@@ -1,0 +1,72 @@
+---
+postId: "blog-016"
+slug: "s3-beginner-object-storage"
+title: "What is Amazon S3? A Beginner's Guide to Object Storage"
+description: "An overview of Amazon S3 basics, common use cases, billing factors, and security considerations for AWS beginners."
+category: "AWS Services"
+tags:
+  - "S3"
+  - "Storage"
+  - "CLF-C02"
+  - "SAA-C03"
+targetKeywords:
+  - "What is Amazon S3"
+  - "S3 for beginners"
+  - "AWS object storage"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# What is Amazon S3? A Beginner's Guide to Object Storage
+
+Amazon S3 is one of the first storage services to learn when you start with AWS. It is used for many purposes, such as static websites, image storage, log storage, and backups.
+
+## Summary
+
+S3 is an object storage service. You store files as objects, and you manage them inside containers called buckets.
+
+## What is Object Storage?
+
+Object storage keeps the file content and its metadata together as a single object. This is different from EBS, which works as a disk for EC2, and from EFS, which is a file system shared by multiple EC2 instances.
+
+S3 is well suited for storing large numbers of files. Common uses include website images, static HTML files, logs, backups, and data lakes.
+
+## Buckets and Objects
+
+In S3, you first create a bucket and then store objects inside it. Each object has a key, which you can treat like a file path.
+
+For this site, the HTML, CSS, JavaScript, and images produced by Next.js static export are all stored in S3.
+
+## Security Considerations
+
+The most important point in S3 is the public access setting. If you make a bucket public by mistake, files you did not intend to share may be visible to anyone.
+
+For static website delivery, the safer design is to keep S3 private and serve content through CloudFront with Origin Access Control (OAC), instead of exposing S3 directly.
+
+## Cost Considerations
+
+S3 charges for storage size, requests, and data transfer. If you keep large images or videos in S3 without cleanup, costs can grow quickly.
+
+For a personal MVP, the simple approach is to compress images, avoid storing videos, and remove old build artifacts you no longer need.
+
+## Key Points for the Exam
+
+- S3 is an object storage service
+- You store objects inside buckets
+- It can be used for static websites and backups
+- Storage classes help optimize cost
+- It can be combined with CloudFront for content delivery
+
+## Related Terms
+
+- [Amazon S3](/terms/s3)
+- [Amazon EBS](/terms/ebs)
+- [Amazon EFS](/terms/efs)
+
+## Next Articles to Read
+
+- [Differences between S3, EBS, and EFS](/comparisons/s3-vs-ebs-vs-efs)
+- [Designing a Secure Static Site with S3 and CloudFront OAC](/blog/saa-s3-cloudfront-oac-design)

@@ -1,0 +1,70 @@
+---
+postId: "blog-018"
+slug: "apigateway-beginner-http-api"
+title: "什麼是 Amazon API Gateway？HTTP API 新手入門解說"
+description: "為 AWS 初學者整理 API Gateway 的角色、HTTP API、Lambda 整合與 CORS 的注意事項。"
+category: "AWS 服務"
+tags:
+  - "API Gateway"
+  - "HTTP API"
+  - "Lambda"
+  - "CORS"
+targetKeywords:
+  - "什麼是 API Gateway"
+  - "HTTP API AWS"
+  - "API Gateway Lambda 新手"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 什麼是 Amazon API Gateway？HTTP API 新手入門解說
+
+Amazon API Gateway 是用來建立 Web API 入口的服務。搭配 Lambda 一起使用,就能建構出無伺服器架構的 API。
+
+## 結論
+
+API Gateway 是接收瀏覽器與前端送來的 HTTP 請求,並將其轉送到 Lambda 等後端服務的入口。
+
+## API Gateway 的角色
+
+前端不會直接呼叫 Lambda,而是將 HTTP 請求送往 API Gateway 的端點。API Gateway 收到請求後,會呼叫設定好的 Lambda。
+
+在這個專案中,聯絡表單會呼叫 POST /contact,由 API Gateway 啟動 contact-submit Lambda。
+
+## HTTP API 與 REST API
+
+API Gateway 分為 HTTP API 與 REST API 兩種。在 MVP 階段,我們會優先使用較為簡單且成本較低的 HTTP API。
+
+REST API 的功能較為豐富,但對於小規模的聯絡 API 而言,HTTP API 通常已經足夠應付。
+
+## CORS 的注意事項
+
+當需要從瀏覽器呼叫 API 時,必須設定 CORS。在正式環境中,應將允許的 Origin 限制為自有網域或 CloudFront 網域。
+
+如果正式環境設定允許 `*`,將提高 API 被外部網站濫用的風險。即便在 MVP 階段,也應設計為僅允許正式環境的 Origin。
+
+## 速率限制與防垃圾訊息對策
+
+聯絡 API 容易成為垃圾訊息的攻擊目標。初期可先導入 honeypot 與輸入值限制,等流量上升後再考慮 API Gateway 端的限流或其他補強措施。
+
+## 考試重點
+
+- API Gateway 是 API 的入口
+- 可搭配 Lambda 建構無伺服器 API
+- HTTP API 適用於結構簡單的 API
+- 有時需要設定 CORS
+- 需要驗證時可使用 Cognito JWT Authorizer 等機制
+
+## 相關名詞
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 接下來推薦閱讀
+
+- [使用 API Gateway + Lambda + DynamoDB 建立聯絡 API 的流程](/blog/serverless-contact-api-flow)
+- [如何透過 CloudWatch 確認 Lambda 的日誌](/blog/lambda-cloudwatch-logs-check)

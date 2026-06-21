@@ -1,0 +1,203 @@
+---
+postId: "blog-003"
+slug: "s3-cloudfront-static-site"
+title: "How to Host a Static Site with S3 and CloudFront"
+description: "A beginner-friendly guide to the basic architecture for publishing a Next.js static site safely using Amazon S3 and Amazon CloudFront."
+category: "Serverless"
+tags:
+  - "aws"
+  - "s3"
+  - "cloudfront"
+  - "static-site"
+  - "oac"
+targetKeywords:
+  - "S3 CloudFront static site"
+  - "Next.js S3 CloudFront"
+  - "CloudFront OAC S3"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# How to Host a Static Site with S3 and CloudFront
+
+## Conclusion
+
+If you want to publish a static site on AWS, the S3 + CloudFront pattern is the standard choice.
+
+You place your HTML, CSS, JavaScript, and image files in S3, then deliver them to users through CloudFront.
+
+In this architecture, you do not expose S3 directly. Only CloudFront is allowed to access S3.
+
+The mechanism that enables this is CloudFront Origin Access Control, also known as OAC.
+
+## Architecture Overview
+
+Here is the overall request flow.
+
+| Step | What happens |
+|---|---|
+| 1 | The user opens the site in a browser |
+| 2 | CloudFront receives the request |
+| 3 | If CloudFront has a cached copy, it returns the cached file |
+| 4 | If not, CloudFront fetches the file from S3 |
+| 5 | S3 only allows access from CloudFront |
+| 6 | The web page is rendered for the user |
+
+With this design, you can publish a website without running any servers.
+
+## Why Not Publish Directly from S3?
+
+S3 has a built-in static website hosting feature.
+
+However, this project does not expose S3 directly. We always go through CloudFront.
+
+The reason is that putting CloudFront in front of S3 gives you several benefits.
+
+| Aspect | Why CloudFront in front of S3 |
+|---|---|
+| Security | The S3 bucket is not publicly exposed |
+| HTTPS | CloudFront can deliver content over HTTPS |
+| Performance | Caching makes pages load faster |
+| Operations | Cache control and custom domain settings are centralized |
+| Portfolio | You can explain a CDN + origin separation design |
+
+## AWS Services Used
+
+### Amazon S3
+
+S3 is the storage location for your static files.
+
+When you build a Next.js project as a static export, HTML and JavaScript files are generated in the `out/` directory.
+
+You upload those files to S3.
+
+On the S3 side, leave Public Access Block enabled.
+
+### Amazon CloudFront
+
+CloudFront is the entry point that delivers files to users.
+
+Browsers connect to CloudFront, not to S3.
+
+CloudFront fetches files from S3 and returns them to users.
+
+### CloudFront OAC
+
+OAC is the mechanism that lets CloudFront access S3 securely.
+
+In the S3 bucket policy, you allow access only from a specific CloudFront distribution.
+
+This setup ensures that direct access to S3 object URLs does not return the file.
+
+### IAM
+
+IAM controls who can access S3 and CloudFront.
+
+If you deploy with GitHub Actions, you create a role that only allows uploading to S3 and creating CloudFront invalidations.
+
+## Implementation Steps
+
+### 1. Configure Next.js for Static Export
+
+In `next.config.js` or `next.config.mjs`, enable static export.
+
+The goal of this setting is to generate HTML files that can be uploaded to S3.
+
+In this project, the target state is that `npm run build` produces an `out/` directory.
+
+### 2. Create an S3 Bucket
+
+The S3 bucket holds your static files.
+
+The configuration policy is as follows.
+
+| Item | Policy |
+|---|---|
+| Public Access | Block all |
+| Static website hosting | Not used |
+| Encryption | SSE-S3 |
+| Versioning | Optional for an MVP |
+
+The key point is to never expose S3 directly.
+
+### 3. Create a CloudFront Distribution
+
+In CloudFront, set the S3 bucket as the origin.
+
+The configuration policy is as follows.
+
+| Item | Policy |
+|---|---|
+| Origin | S3 bucket |
+| Origin access | OAC |
+| Viewer protocol policy | Redirect HTTP to HTTPS |
+| Allowed methods | GET, HEAD |
+| Default root object | index.html |
+| WAF | Not used for an MVP |
+
+### 4. Configure the S3 Bucket Policy
+
+In the S3 bucket policy, allow read access only from CloudFront.
+
+The allowed action is `s3:GetObject`.
+
+Restrict the source to the ARN of the CloudFront distribution.
+
+This makes sure that no other path can retrieve S3 objects.
+
+### 5. Verify Using the CloudFront URL
+
+Finally, check the site through the CloudFront domain.
+
+Also confirm that the direct S3 URL does not return the file.
+
+If the S3 URL still serves the file, review the bucket policy and the Public Access Block settings.
+
+## Exam Points to Remember
+
+On the Cloud Practitioner exam, the related topics are S3, CloudFront, IAM, pricing, and the shared responsibility model.
+
+On the SAA exam, the related topics are static site delivery, caching, origin access control, HTTPS, custom domains, and availability.
+
+The points you should especially remember are listed below.
+
+| Point | Description |
+|---|---|
+| S3 | Object storage |
+| CloudFront | CDN |
+| OAC | Secure access control from CloudFront to S3 |
+| IAM | Permission management |
+| HTTPS | Delivered through CloudFront |
+| Cost | You avoid EC2, which helps keep fixed costs low |
+
+## Common Mistakes
+
+### Making S3 Publicly Accessible
+
+This is a common mistake while learning.
+
+If you are using CloudFront, do not expose S3 directly.
+
+### Forgetting About CloudFront Caching
+
+Even after you update a file, CloudFront may still serve an old cached version.
+
+In that case, run an invalidation.
+
+However, invalidating every path every time creates unnecessary operational overhead.
+
+### Using Image Files That Are Too Large
+
+Large images increase both S3 storage usage and CloudFront data transfer.
+
+For an initial MVP, it is safer to limit the number and size of images.
+
+## Summary
+
+S3 + CloudFront is the standard pattern for publishing a static site on AWS.
+
+The key idea is to keep S3 private and use CloudFront OAC so that access goes only through CloudFront.
+
+Once you understand this architecture, it not only covers the service knowledge tested on Cloud Practitioner, but also connects to the delivery, security, and cost optimization concepts asked on SAA.

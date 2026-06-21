@@ -1,0 +1,76 @@
+---
+postId: "blog-008"
+slug: "clf-aws-pricing-basics"
+title: "為 Cloud Practitioner 整理 AWS 費用的基礎知識"
+description: "為初學者整理 AWS 費用基礎，包含按用量計費、免費方案、Reserved Instances、Savings Plans 等核心概念。"
+category: "CLF"
+tags:
+  - "CLF-C02"
+  - "費用"
+  - "AWS Budgets"
+  - "Cost Explorer"
+targetKeywords:
+  - "AWS 費用 基礎"
+  - "AWS 免費方案"
+  - "Cloud Practitioner 帳單"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 為 Cloud Practitioner 整理 AWS 費用的基礎知識
+
+學習 AWS 時無法避開的主題就是費用。Cloud Practitioner 認證考試不只考技術服務,也會考帳單、費用、技術支援與成本管理等內容。
+
+## 結論
+
+AWS 費用的基本原則是「用多少付多少」。不過,每項服務的計費依據都不同,必須了解每項服務是依據儲存容量、請求數、傳輸量、執行時間等哪一個項目來計費。
+
+## 按用量計費
+
+AWS 多數服務都是按用量計費。例如 S3 依儲存容量與請求數計費,Lambda 依執行次數與執行時間計費,CloudFront 則依資料傳輸量與請求數計費。
+
+重點是要區分:有些服務只要建立就容易產生固定費用,而有些服務則是真正按使用量計費。
+
+## 免費方案
+
+AWS 提供免費方案,但「免費方案」並不代表所有項目都永久免費。它有期間、用量上限與適用服務的限制。
+
+在個人開發中,與其完全依賴免費方案,不如設定 AWS Budgets,讓自己能夠察覺意料之外的費用。
+
+## 容易產生固定費用的服務
+
+初學者要特別注意的代表性服務包含 NAT Gateway、RDS、ALB、EC2、OpenSearch 等。這些服務會因為架構或運行狀態而持續產生費用,在個人 MVP 階段應該謹慎使用。
+
+本專案的 MVP 階段不使用 EC2、RDS、NAT Gateway、ALB,而是以 S3、CloudFront、API Gateway、Lambda、DynamoDB 為主。
+
+## 成本管理使用的服務
+
+AWS Budgets 用於預算警示,Cost Explorer 則用於各服務的費用分析。Budgets 的角色是「超過時提醒」,Cost Explorer 的角色是「查詢費用花在哪裡」。
+
+## 考試重點
+
+- AWS 的基本原則是按用量計費
+- 免費方案有使用條件
+- Budgets 用於預算管理
+- Cost Explorer 用於成本分析
+- Savings Plans 與 Reserved Instances 與長期使用的折扣相關
+
+## 實務上的注意事項
+
+費用不能放到設計階段之後再考慮。當你決定要使用哪些服務時,就應該同時確認該服務的計費依據。
+
+在個人開發中,建議先設定 Budgets,避開容易產生固定費用的服務,並以靜態檔案傳遞與 Serverless 架構為優先選擇。
+
+## 相關詞彙
+
+- [AWS Budgets](/terms/aws-budgets)
+- [Cost Explorer](/terms/cost-explorer)
+- [AWS Lambda](/terms/lambda)
+
+## 推薦延伸閱讀
+
+- [如何用 AWS 免費方案打造作品集](/blog/aws-free-tier-portfolio)
+- [用 AWS Budgets 預防個人開發的費用意外](/blog/aws-budgets-cost-guardrail)
