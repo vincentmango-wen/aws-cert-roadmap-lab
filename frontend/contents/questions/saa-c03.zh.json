@@ -1,1 +1,1982 @@
-[]
+[
+  {
+    "questionId": "saa-001",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "某個 Web 應用程式將儲存於 Amazon S3 的靜態檔案透過 CloudFront 進行傳遞。若希望不直接公開 S3 儲存貯體，僅允許來自 CloudFront 的存取,最為適切的組態為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "停用 S3 儲存貯體的 Block Public Access,並於儲存貯體政策中允許所有使用者執行 GetObject"
+      },
+      {
+        "choiceId": "B",
+        "text": "使用 CloudFront Origin Access Control,並於 S3 儲存貯體政策中僅允許來自 CloudFront Distribution 的 GetObject"
+      },
+      {
+        "choiceId": "C",
+        "text": "啟用 S3 靜態網站託管,並將 CloudFront 的來源設定為網站端點"
+      },
+      {
+        "choiceId": "D",
+        "text": "對每個 S3 物件設定公開讀取的 ACL"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "若要避免直接公開 S3 並限制僅能透過 CloudFront 存取,適合採用 CloudFront Origin Access Control,並於 S3 儲存貯體政策中僅允許特定 CloudFront Distribution 的存取。",
+    "choiceExplanations": {
+      "A": "錯誤。會公開儲存貯體,違反避免 S3 直接公開的要求。",
+      "B": "正確。透過 OAC 即可在保持 S3 非公開的狀態下,安全地經由 CloudFront 傳遞。",
+      "C": "錯誤。S3 靜態網站端點無法與 OAC 搭配使用,且容易需要將儲存貯體公開。",
+      "D": "錯誤。透過物件 ACL 公開的方式,違反最小公開的設計原則。"
+    },
+    "practicalNote": "CloudFront Origin Access Control(OAC)是用於在不公開 S3 儲存貯體的前提下,僅允許透過 CloudFront 進行傳遞的機制。將 S3 儲存貯體的 Block Public Access 維持啟用狀態,並於儲存貯體政策中明確指定「僅允許來自特定 CloudFront Distribution 的 GetObject」,即可從結構上阻擋對 S3 的直接存取。若搭配簽章 URL 或簽章 Cookie,還可在 CloudFront 層進一步疊加存取控制。OAC 被定位為舊有的 Origin Access Identity(OAI)的後繼方案,於新建構的環境中建議採用 OAC。\n\n設計上需注意的是,S3 靜態網站託管的端點無法與 OAC 搭配使用。網站端點以 HTTP 公開為前提,因此當有透過 OAC 進行保護的要求時,必須將 REST API 端點(儲存貯體 FQDN)指定為來源。此外,標準組態為將 CloudFront 的 Behaviors 中的 Viewer Protocol Policy 設為 Redirect HTTP to HTTPS,並綁定 ACM 憑證(於 us-east-1 核發),以強制使用 HTTPS 進行傳遞。\n\nSAA-C03 中,在「希望在 S3 非公開的狀態下透過 CloudFront 傳遞」「希望遵守最小公開原則」的情境下,OAC 經常作為正解出現。誤答則會列出停用 Block Public Access、設定物件 ACL 為公開、使用 S3 網站端點等,容易使儲存貯體公開的選項。OAI 與 OAC 的差異(OAC 更新,並支援 SSE-KMS 與 SigV4 區域簽章)也是常見的考點。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront(AWS 官方)",
+        "url": "https://aws.amazon.com/cloudfront/"
+      },
+      {
+        "label": "透過 Origin Access Control 限制對 S3 來源的存取(CloudFront 開發人員指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+      },
+      {
+        "label": "Amazon S3 Block Public Access(S3 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "cloudfront",
+      "iam"
+    ],
+    "relatedTerms": [
+      "origin-access-control",
+      "bucket-policy"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "cloudfront",
+      "security",
+      "oac"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-002",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "Lambda 函式需要將查詢資料寫入 DynamoDB 資料表。最符合最小權限原則的 IAM 政策為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "對所有 DynamoDB 資料表允許 dynamodb:*"
+      },
+      {
+        "choiceId": "B",
+        "text": "僅允許對目標資料表執行 dynamodb:PutItem"
+      },
+      {
+        "choiceId": "C",
+        "text": "對 Lambda 執行角色授予 AdministratorAccess"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 DynamoDB 的存取金鑰儲存於 Lambda 環境變數"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "若 Lambda 僅執行查詢儲存的作業,僅允許對目標 DynamoDB 資料表執行 PutItem 才符合最小權限。",
+    "choiceExplanations": {
+      "A": "錯誤。dynamodb:* 屬於權限過大。",
+      "B": "正確。已將對象資料表與必要的操作範圍限定。",
+      "C": "錯誤。AdministratorAccess 權限過於廣泛。",
+      "D": "錯誤。將 AWS 認證資訊儲存於環境變數的設計應予避免。應使用 Lambda 執行角色。"
+    },
+    "practicalNote": "對 Lambda 執行角色授予的 IAM 政策,最小權限原則為僅限定於函式實際所需的操作與目標資源。若函式僅負責將查詢寫入 DynamoDB 的特定資料表,適合採用 Action 僅為 `dynamodb:PutItem`、Resource 僅為對象資料表 ARN 的政策。若授予 `dynamodb:*` 或 AdministratorAccess,當函式遭入侵時影響範圍將大幅擴大,應予避免。\n\n實務上常見的反模式為,將 AWS 的存取金鑰(IAM 使用者的長期認證資訊)儲存於 Lambda 的環境變數的設計。Lambda 可透過執行角色自動取得暫時性的認證資訊,因此無需將長期金鑰帶入程式碼或環境變數。長期金鑰在外洩時需要進行輪替的運作,並使 IAM Access Analyzer 與 CloudTrail 的追蹤變得困難。即使要與 Secrets Manager 或 Systems Manager Parameter Store 搭配使用,儲存對象也應僅限於外部系統(DB 的 DSN、外部 API 金鑰等),對 AWS 的認證則應交由角色處理。\n\nSAA-C03 中,「最小權限」「IAM 角色 vs 存取金鑰」「將 Resource 限縮至 ARN 等級」等觀點經常出題。誤答模式為萬用字元 Action、AdministratorAccess、將存取金鑰儲存於 Lambda 環境變數等,皆違反最小權限與最佳實務,可據此排除。較高階的出題還會進一步考問,使用 Condition 限制來源 VPC 端點或 MFA、以 IAM Access Analyzer 監控實際使用權限等發展性題目。",
+    "officialDocs": [
+      {
+        "label": "IAM 最佳實務(IAM 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      },
+      {
+        "label": "AWS Lambda 執行角色(Lambda 開發人員指南,English)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html"
+      },
+      {
+        "label": "DynamoDB 的 IAM 政策範例(DynamoDB 開發人員指南,English)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/using-identity-based-policies.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "dynamodb",
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege",
+      "iam-role"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "iam",
+      "lambda",
+      "dynamodb",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-003",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "需要從私有子網路的 EC2 執行個體存取 Amazon S3。希望避免透過網際網路通訊,也不希望產生 NAT Gateway 的成本。最為適切的組態為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "建立 NAT Gateway,並將私有子網路的路由表中的 0.0.0.0/0 指向 NAT Gateway"
+      },
+      {
+        "choiceId": "B",
+        "text": "將 Internet Gateway 直接關聯至私有子網路"
+      },
+      {
+        "choiceId": "C",
+        "text": "建立 S3 Gateway VPC Endpoint,並關聯至目標子網路的路由表"
+      },
+      {
+        "choiceId": "D",
+        "text": "為 EC2 指派公有 IP,並以此存取 S3"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "使用 S3 Gateway VPC Endpoint 後,即可從私有子網路透過 AWS 內部網路存取 S3,且無需 NAT Gateway 的固定費用。",
+    "choiceExplanations": {
+      "A": "錯誤。會產生需求中希望避免的 NAT Gateway 成本。",
+      "B": "錯誤。Internet Gateway 是附加於 VPC 的,不會直接關聯至私有子網路。",
+      "C": "正確。針對 S3 的 Gateway VPC Endpoint 可以低成本實現私有存取。",
+      "D": "錯誤。指派公有 IP 將導致透過網際網路通訊,違反需求。"
+    },
+    "practicalNote": "從私有子網路上的 EC2 存取 S3 的路徑,存在透過 NAT Gateway(經由網際網路前往公開 S3 端點)與透過 VPC Endpoint(經由 AWS 內部網路)兩種方式。S3 與 DynamoDB 提供 Gateway 型 VPC Endpoint,Gateway Endpoint 本身不會產生額外費用。NAT Gateway 則以時間單價與資料處理量計費,因此光是將 S3 流量導至 VPC Endpoint,在資料傳輸量大的組態中,即可帶來顯著的成本削減。\n\nGateway Endpoint 與 Interface Endpoint(以 PrivateLink 為基礎,於各可用區域配置 ENI)為不同的機制,計費方式也不同。Gateway Endpoint 僅限 S3 與 DynamoDB 兩項服務,且免費;其他多數 AWS 服務則為 Interface Endpoint(ENI 時數計費與資料處理計費)。設計時,於端點政策中設定「僅允許對特定儲存貯體的操作」的限制,是實務上的基本做法,可堵住對非預期儲存貯體的迂迴存取路徑。由於路由表設定遺漏而導致部分子網路仍透過網際網路通訊的事故也容易發生,因此需確認對象 VPC 內的所有相關路由表皆已關聯 Endpoint。\n\nSAA-C03 中,在「希望從私有子網路以低成本存取 S3」「希望避免 NAT Gateway 的固定費用」等要求下,Gateway VPC Endpoint 為正解。Interface Endpoint 與 Gateway Endpoint 的區分使用、透過端點政策進行限縮、PrivateLink 的服務串接等,在較高階的考試也會出題。",
+    "officialDocs": [
+      {
+        "label": "VPC 端點(VPC 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html"
+      },
+      {
+        "label": "Amazon S3 的 Gateway 端點(VPC 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      },
+      {
+        "label": "NAT Gateway(VPC 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html"
+      }
+    ],
+    "relatedServices": [
+      "vpc",
+      "s3"
+    ],
+    "relatedTerms": [
+      "vpc-endpoint",
+      "private-subnet"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "vpc",
+      "s3",
+      "endpoint",
+      "security",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-004",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "應用程式需連線至 RDS for MySQL。不希望將 DB 認證資訊以明文儲存於原始碼或環境變數,且需要考量定期輪替。最為適切的服務為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Secrets Manager"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudWatch Logs"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon S3 的公開儲存貯體"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "DB 密碼等機密資訊可透過 AWS Secrets Manager 進行管理,並支援與 RDS 的整合與輪替。",
+    "choiceExplanations": {
+      "A": "正確。適合用於機密資訊管理與輪替。",
+      "B": "錯誤。CloudWatch Logs 為日誌儲存服務,並非機密資訊的儲存位置。",
+      "C": "錯誤。將機密資訊置於公開儲存貯體屬於重大資安風險。",
+      "D": "錯誤。AWS Budgets 為計費監控服務。"
+    },
+    "practicalNote": "AWS Secrets Manager 是用於安全儲存與取得資料庫密碼、API 金鑰、OAuth Token 等機密資訊的受管服務。針對 RDS / Aurora / Redshift 等資料庫,Secrets Manager 直接支援輪替功能,可透過 Lambda 為基礎的輪替函式定期變更密碼,並與 DB 端同步,使此運作標準化。應用程式可透過 Secrets Manager API(或 AWS SDK 的自動快取功能)取得機密資訊,使程式碼與環境變數中無需保留明文認證資訊。\n\n類似的服務有 AWS Systems Manager Parameter Store 的 SecureString 參數,其標準層級可免費使用,但標準上並未提供自動輪替(需自行構成 Lambda)。若機密數量較少,或對於不需輪替的靜態機密(如外部 API 金鑰)而言,Parameter Store 較為合適;若是 DB 之類需要自動輪替的情境,則建議使用 Secrets Manager。Secrets Manager 會產生每組機密的月度固定費用與 API 呼叫計費,因此需依成本與運作負擔取得平衡。\n\nSAA-C03 中,在「希望安全儲存 DB 認證資訊並定期輪替」「希望避免硬編碼或明文環境變數」等要求下,Secrets Manager 為正解。將 CloudWatch Logs 或 S3 公開儲存貯體列為儲存位置的誤答,是將日誌用途、公開儲存等別種目的的服務拿來套用的典型模式。與 Parameter Store SecureString 的比較,以及透過 IAM 政策對每組 Secret 進行存取控制等議題,在較高階的考試也會出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Secrets Manager(AWS 官方)",
+        "url": "https://aws.amazon.com/secrets-manager/"
+      },
+      {
+        "label": "什麼是 AWS Secrets Manager(使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html"
+      },
+      {
+        "label": "Secrets Manager 機密的輪替(使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "secrets-manager",
+      "iam"
+    ],
+    "relatedTerms": [
+      "credential-rotation",
+      "secret-management"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "secrets-manager",
+      "rds",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-005",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "希望讓內部使用者僅能讀取 S3 儲存貯體中的特定前置詞(prefix)。從最小權限的觀點來看,最為適切的設計為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "對整個目標儲存貯體允許 s3:*"
+      },
+      {
+        "choiceId": "B",
+        "text": "授予僅允許對目標前置詞下的物件執行 s3:GetObject 的 IAM 政策"
+      },
+      {
+        "choiceId": "C",
+        "text": "共用 AWS 帳戶的 root 使用者認證資訊"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 S3 儲存貯體公開"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "在僅需讀取特定前置詞的要求下,將 Resource 限定於目標前置詞、Action 限定於 s3:GetObject 才符合最小權限。",
+    "choiceExplanations": {
+      "A": "錯誤。s3:* 包含讀取以外的操作,屬於權限過多。",
+      "B": "正確。已限定目標範圍與操作。",
+      "C": "錯誤。共用 root 使用者認證資訊應絕對避免。",
+      "D": "錯誤。公開會產生非必要的公開範圍。"
+    },
+    "practicalNote": "S3 的存取控制,藉由將 Resource 限縮至前置詞單位、Action 僅限必要的操作,可實現最小權限。若需求為讓內部使用者僅讀取特定前置詞下的物件,IAM 政策中將 Resource 限定為 `arn:aws:s3:::bucket/prefix/*`、Action 僅限定為 `s3:GetObject` 即為適切設定。儲存貯體內的其他前置詞,以及寫入或刪除操作,於政策上仍維持拒絕狀態,因此可從結構上縮小誤操作或權限濫用的影響範圍。\n\n設計上,IAM 政策(身分為基礎)與 S3 儲存貯體政策(資源為基礎)的區分使用也很重要。若要將權限交給同一帳戶內的特定 IAM 使用者/角色,IAM 政策較容易處理;若是跨帳戶存取或需強制「對儲存貯體的共通方針」,則儲存貯體政策較為適合。當兩者同時存在時,需依據明確 Deny 最優先的評估邏輯來組合政策。此外,ListBucket 部分可於 `s3:ListBucket` 權限的 Condition 中限定 `s3:prefix`,即可控制使前置詞外的物件清單不被看見。\n\nSAA-C03 中,在「僅讀取特定前置詞」「以最小公開達成」的情境中,本模式經常出題。誤答則為授予 `s3:*`、共用 root 認證資訊、將儲存貯體整體公開等典型 3 種模式,分別對應「權限過多」「公開設計的誤用」「直接使用 root」,皆違反 IAM 最佳實務。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 的身分為基礎政策(S3 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/user-policies.html"
+      },
+      {
+        "label": "S3 儲存貯體政策與 IAM 政策的區分使用(S3 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-policy-alternatives-guidelines.html"
+      },
+      {
+        "label": "IAM 最佳實務(IAM 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege",
+      "prefix"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "iam",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-006",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "正在使用多個 AWS 帳戶。希望從稽核用帳戶集中確認各帳戶的設定變更歷程。最為適切的服務為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon ElastiCache"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EFS"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS CloudTrail 會記錄 AWS 帳戶內的 API 操作歷程。透過集中組織整體的證跡,即可用於稽核。",
+    "choiceExplanations": {
+      "A": "正確。可用於追蹤 API 操作歷程與設定變更。",
+      "B": "錯誤。SQS 為訊息佇列服務,並非以稽核日誌為主要目的的服務。",
+      "C": "錯誤。ElastiCache 為記憶體內快取服務。",
+      "D": "錯誤。EFS 為共用檔案儲存服務。"
+    },
+    "practicalNote": "AWS CloudTrail 是用於記錄 AWS 帳戶內所發生的 API 操作、主控台操作、透過 SDK 進行之操作的稽核日誌服務。管理事件(如建立 IAM 使用者、啟動 EC2、刪除 S3 儲存貯體等)預設保留 90 天,若另行建立將證跡儲存至 S3 儲存貯體的 Trail,即可對應更長期的稽核要求。與 AWS Organizations 搭配並啟用 Organization Trail 後,可將組織下所有帳戶的證跡集中至單一的 S3 儲存貯體(管理帳戶/委派管理帳戶),便可從稽核用帳戶橫向確認。\n\n與類似服務的區分使用為常見考點。CloudWatch 以收集與視覺化指標與日誌(應用程式日誌、系統日誌)為主要目的;AWS Config 以資源設定的變更歷程,以及「設定是否符合合規規則」的持續評估為主要目的;CloudTrail 則以「誰在何時呼叫了哪個 API」的操作證跡為主要目的。將三者組合,以偵測(CloudWatch Logs Insights / EventBridge 規則)、評估(Config Rules)、追蹤(CloudTrail)構成的,正是企業稽核的基本形態。\n\nSAA-C03 中,在「希望集中確認多帳戶的操作歷程」「希望集中 API 呼叫證跡以供稽核」等要求下,CloudTrail(Organization Trail)為正解。容易出現混淆 CloudWatch / Config 的誤答,尤其「設定變更歷程」的措辭會讓人聯想到 Config,但若希望連同 API 呼叫證跡一併「追蹤變更」,則需要 CloudTrail。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail(AWS 官方)",
+        "url": "https://aws.amazon.com/cloudtrail/"
+      },
+      {
+        "label": "什麼是 AWS CloudTrail(使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "建立組織的證跡(CloudTrail 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/creating-trail-organization.html"
+      }
+    ],
+    "relatedServices": [
+      "cloudtrail",
+      "organizations",
+      "s3"
+    ],
+    "relatedTerms": [
+      "audit-log",
+      "organization-trail"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudtrail",
+      "audit",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-007",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "不希望從網際網路直接以 HTTP 存取位於 Application Load Balancer 後方的 EC2 執行個體。最為適切的 Security Group 設定為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "於 EC2 的 Security Group 中允許來自 0.0.0.0/0 的 HTTP"
+      },
+      {
+        "choiceId": "B",
+        "text": "於 EC2 的 Security Group 中僅允許來自 ALB Security Group 的 HTTP"
+      },
+      {
+        "choiceId": "C",
+        "text": "於 ALB 的 Security Group 中僅允許來自 EC2 的 HTTP"
+      },
+      {
+        "choiceId": "D",
+        "text": "為 EC2 指派 Elastic IP 以便直接存取"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "ALB 後方的 EC2 應於 EC2 端的 Security Group 中,僅允許來自 ALB Security Group 的通訊。",
+    "choiceExplanations": {
+      "A": "錯誤。屬於將 EC2 直接公開於網際網路的設定。",
+      "B": "正確。可僅允許透過 ALB 的通訊。",
+      "C": "錯誤。ALB 為從用戶端接收的入口。即使僅允許從 EC2 至 ALB 的 HTTP 也無法滿足需求。",
+      "D": "錯誤。指派 Elastic IP 將提高直接存取的可能性。"
+    },
+    "practicalNote": "在 Application Load Balancer(ALB)後方的 EC2,於 EC2 端 Security Group(SG)中設定為「僅允許來自 ALB 的 SG 之輸入」,即可從結構上阻擋來自網際網路的直接存取。Security Group 的來源不僅可指定 CIDR,還可透過 ID 參照另一個 SG,因此將 ALB SG 的 ID 設為允許,即使 ALB 的 IP 變動,亦不必變更 EC2 端的規則。標準組態為兩段式:ALB 端 SG 接受來自 `0.0.0.0/0` 的 80/443,而 EC2 端 SG 則接受來自 ALB SG 的 80/8080 等。\n\nSecurity Group 屬於「僅允許規則、有狀態(stateful)」,而 Network ACL(NACL)則為「可寫入允許與拒絕、無狀態(stateless)」,兩者的區分使用也是 SAA-C03 的考點。一般組態為將 EC2 配置於 VPC 的私有子網路,並將 ALB 配置於公有子網路,EC2 無需指派公有 IP 或 Elastic IP。僅以私有 IP 與透過 ALB 的健康檢查、流量轉送即可使通訊成立。\n\nSAA-C03 中,在「不希望從網際網路直接存取 ALB 後方的 EC2」的要求下,經常出題僅允許 EC2 端 SG 來自 ALB SG 的模式。誤答則排列出開放 `0.0.0.0/0`、為 EC2 指派 Elastic IP、僅允許 ALB 端 SG 來自 EC2 的反向設定等,違反將入口集中至 ALB 之意圖的模式。SG 之間的相互參照僅限於同一 VPC 內(或 VPC Peering 的對端),也是實作時需注意的重點。",
+    "officialDocs": [
+      {
+        "label": "Application Load Balancer 的 Security Group(ELB 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html"
+      },
+      {
+        "label": "VPC 的 Security Group(VPC 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html"
+      },
+      {
+        "label": "什麼是 Application Load Balancer(ELB 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "security-group",
+      "alb"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "alb",
+      "ec2",
+      "security-group",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-008",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "希望將儲存於 S3 儲存貯體的物件,以自家管理的 KMS 金鑰(而非 AWS 受管的加密金鑰)進行加密。最為適切的加密方式為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "SSE-S3"
+      },
+      {
+        "choiceId": "B",
+        "text": "SSE-KMS"
+      },
+      {
+        "choiceId": "C",
+        "text": "於用戶端不加密直接儲存"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Transfer Acceleration"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "使用 SSE-KMS 可透過 AWS KMS 金鑰對 S3 物件進行伺服器端加密。透過使用客戶受管金鑰,可控制金鑰管理。",
+    "choiceExplanations": {
+      "A": "錯誤。SSE-S3 為以 S3 管理金鑰進行的加密,不符合自家管理 KMS 金鑰的要求。",
+      "B": "正確。為以 KMS 金鑰進行的伺服器端加密。",
+      "C": "錯誤。不加密違反需求。",
+      "D": "錯誤。Transfer Acceleration 為傳輸加速功能,並非加密方式。"
+    },
+    "practicalNote": "S3 的伺服器端加密有 SSE-S3(S3 受管金鑰)、SSE-KMS(AWS KMS 受管金鑰)、SSE-C(客戶提供金鑰)等 3 種。若希望使用自家管理的 KMS 金鑰(客戶受管 KMS 金鑰/CMK),則選擇 SSE-KMS,並於 KMS 金鑰政策中細緻地控制「哪些 IAM 主體可以進行加密/解密」。若與 CloudTrail 搭配,還可取得誰於何時使用 KMS 金鑰執行加密/解密的稽核證跡,因此適合對合規要求的業務資料保存。\n\nSSE-KMS 也有取捨。每次對 S3 物件的存取皆會呼叫 KMS API(Decrypt / GenerateDataKey),因此在發生大量 S3 請求的工作負載中,KMS 的請求計費會累積。為抑制此情形而提供的功能為 S3 Bucket Keys,啟用後 S3 會於本地端重複使用儲存貯體單位的資料金鑰,可大幅削減對 KMS 的呼叫次數(成本最多可削減約 99% 的情況也存在)。若使用預設的 SSE-S3 或 AWS 受管的 KMS 金鑰(`aws/s3`),管理可降至最低;若希望嚴密進行金鑰輪替控制或跨帳戶共用,則選擇客戶受管 CMK。\n\nSAA-C03 中,在「希望以自家管理的加密金鑰加密 S3」「合規要求需要 KMS 稽核」等情境下,SSE-KMS 為正解。誤答則排列出不加密、Transfer Acceleration(為傳輸加速功能,與加密無關)等。SSE-S3 與 SSE-KMS 的差異、透過 Bucket Keys 進行的成本最佳化、透過 CloudTrail 串接進行的稽核等議題,在較高階的考試也會出題。",
+    "officialDocs": [
+      {
+        "label": "透過 AWS KMS 金鑰進行的伺服器端加密(SSE-KMS)(S3 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html"
+      },
+      {
+        "label": "保護 Amazon S3 中的資料(S3 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html"
+      },
+      {
+        "label": "透過 S3 Bucket Keys 削減 SSE-KMS 成本(S3 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "kms"
+    ],
+    "relatedTerms": [
+      "sse-kms",
+      "customer-managed-key"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "kms",
+      "encryption",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-009",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "目前有一個於單一可用區域運作的 RDS for MySQL。希望即使在可用區域故障時,亦能提高 DB 的可用性。將應用程式端的變更降至最低的組態為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "將 RDS 改為 Multi-AZ 組態"
+      },
+      {
+        "choiceId": "B",
+        "text": "將 RDS 的儲存類型變更為 gp3"
+      },
+      {
+        "choiceId": "C",
+        "text": "停用 RDS 的自動備份"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 RDS 執行個體移至公有子網路"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "RDS Multi-AZ 透過同步複寫與自動容錯移轉,可提高可用區域故障時的可用性。",
+    "choiceExplanations": {
+      "A": "正確。為高可用性的代表性 RDS 組態。",
+      "B": "錯誤。雖與儲存效能或成本有關,但無法作為可用區域故障對策。",
+      "C": "錯誤。停用備份會降低復原性。",
+      "D": "錯誤。移至公有子網路並非提升可用性,反而會增加資安風險。"
+    },
+    "practicalNote": "RDS Multi-AZ 配置是於同一區域內的不同可用區域中自動建構待命 DB,並與主要 DB 之間進行同步複寫的組態。在主要可用區域故障時將自動發生容錯移轉,DB 端點(DNS 名稱)的參照位置會切換至待命端,因此應用程式無需變更連線字串即可復原。容錯移轉大致於 60〜120 秒左右完成,相較於單一可用區域的組態,RTO 可大幅縮短。\n\nMulti-AZ 與 Read Replica 的區分使用,為 SAA-C03 的常見考點。Multi-AZ 是為提升可用性而設置的待命組態,待命 DB 通常無法用於讀取(部分例外為 Multi-AZ DB Cluster 選項,可擁有 2 個可讀取的待命)。Read Replica 則是為提升讀取效能而設置的非同步副本,並非以提升可用性為主要目的,作為容錯移轉的目的地則需要手動升格。將兩者組合,以 Multi-AZ 保護寫入系統、以 Read Replica 擴展讀取系統,即為大規模 RDS 組態的標準形態。\n\nMulti-AZ 在成本方面也有取捨。由於會額外啟動待命 DB 執行個體,因此相較於單一可用區域,大致會產生 2 倍的運算費用。即使如此,因其具備無需變更應用程式連線即可進行容錯移轉的優點,於有可用性要求的工作負載中,標準上會被選擇。SAA-C03 中,在「可用區域故障時亦維持可用性」「應用程式變更最少」的要求下,Multi-AZ 為正解;誤答則排列出儲存類型變更、停用備份、移至公有子網路等與可用性不同軸線的操作。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS 的高可用性(Multi-AZ)組態(RDS 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "RDS Read Replica 的操作(RDS 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html"
+      },
+      {
+        "label": "Amazon RDS(AWS 官方)",
+        "url": "https://aws.amazon.com/rds/"
+      }
+    ],
+    "relatedServices": [
+      "rds"
+    ],
+    "relatedTerms": [
+      "multi-az",
+      "failover"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "rds",
+      "multi-az",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-010",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "希望將 Web 應用程式以分散於多個可用區域的 EC2 運作,且避免將流量送至有故障的執行個體。最為適切的組態為何?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "以多個可用區域組態 Application Load Balancer 與 Auto Scaling Group"
+      },
+      {
+        "choiceId": "B",
+        "text": "為單一可用區域的 EC2 執行個體指派 Elastic IP"
+      },
+      {
+        "choiceId": "C",
+        "text": "建立 S3 儲存貯體以取代 EC2"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅啟用 CloudWatch Logs"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "ALB 會透過健康檢查將流量分配給正常的目標。將 Auto Scaling Group 擴展至多個可用區域,即可構成對執行個體故障與可用區域故障皆具有耐受性的組態。",
+    "choiceExplanations": {
+      "A": "正確。為高可用性 Web 應用程式的基本組態。",
+      "B": "錯誤。單一可用區域組態於可用區域故障時較為脆弱。",
+      "C": "錯誤。S3 雖可用於儲存靜態檔案,但並非可直接取代 EC2 上動態 Web 應用程式的選項。",
+      "D": "錯誤。僅靠日誌收集無法實現流量控制或高可用性。"
+    },
+    "practicalNote": "將 Application Load Balancer(ALB)與 Auto Scaling Group(ASG)展開於多個可用區域的組態,是 AWS 中高可用性 Web 應用程式的基本模式。ALB 會依據設定的健康檢查(如 HTTP 回應碼等),向已登錄於目標群組的 EC2 執行個體分配流量。健康檢查失敗的執行個體會自動從目標中移除,並於復原後再次納入。將 ASG 以多個可用區域組態,即使於可用區域故障時,其他可用區域的執行個體仍會保留,可避免整體服務停止。\n\nASG 具備依據指標(CPU 使用率、請求數、自訂指標等)動態調整執行個體數量的擴展政策(Target Tracking、Step Scaling、Predictive Scaling)。此外,可於 Launch Template 中定義執行個體啟動時的使用者資料、IAM 角色、AMI 等,與 Immutable Infrastructure 式的運作搭配良好。ALB 於第 7 層支援路徑/主機為基礎的路由,並支援 HTTP/HTTPS / WebSocket / gRPC;而 Network Load Balancer(第 4 層,超低延遲)、CloudFront(CDN,邊緣傳遞)則依用途區分使用。\n\nSAA-C03 中,在「分散於多個可用區域」「不將流量送至故障執行個體」的要求下,ALB + ASG(Multi-AZ)為正解。單一可用區域 + Elastic IP 於可用區域故障時較為脆弱、以 S3 取代 EC2 的選項無法承擔動態處理、僅有 CloudWatch Logs 無法進行流量控制,誤答模式也容易整理。ALB / NLB / CloudFront 的區分使用、ASG 的擴展政策設計、Launch Template 與 Launch Configuration 的差異等,在較高階的考試會更深入考問。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Application Load Balancer(ELB 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"
+      },
+      {
+        "label": "什麼是 Amazon EC2 Auto Scaling(Auto Scaling 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "目標群組的健康檢查(ELB 使用者指南,English)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "multi-az",
+      "health-check"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "alb",
+      "auto-scaling",
+      "ec2",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "saa-011",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "在訂單處理系統中,希望讓訂單受理 API 與庫存更新處理達成鬆耦合。即使庫存更新處理暫時停擺,也不會遺失訂單訊息,並能於稍後處理,下列哪個架構最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "由 API 同步呼叫庫存更新 Lambda"
+      },
+      {
+        "choiceId": "B",
+        "text": "由 API 將訊息送至 SQS 佇列,庫存更新 Lambda 從 SQS 取出處理"
+      },
+      {
+        "choiceId": "C",
+        "text": "由 API 將訂單內容輸出至 CloudWatch Logs 即可"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅以 API Gateway 的 CORS 設定加以控制"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "使用 SQS 可讓訂單受理與庫存更新非同步且鬆耦合。即使處理端暫時停擺,訊息仍能保留於佇列中。",
+    "choiceExplanations": {
+      "A": "同步呼叫時,庫存更新端的故障容易影響訂單受理。",
+      "B": "正解。SQS 適合非同步處理與緩衝。",
+      "C": "CloudWatch Logs 並非處理佇列。",
+      "D": "CORS 為瀏覽器存取控制,並非提升非同步處理可靠性的功能。"
+    },
+    "relatedServices": [
+      "sqs",
+      "lambda",
+      "api-gateway"
+    ],
+    "relatedTerms": [
+      "decoupling",
+      "asynchronous-processing"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "lambda",
+      "decoupling",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Amazon SQS 是用於將訊息傳送端(生產者)與接收端(消費者)在時間與實體上加以分離的全受管佇列服務。當訂單受理 API 接收請求時即將訊息投入 SQS,庫存更新工作者則作為獨立行程依自身步調取出訊息處理,如此即便庫存更新端暫時停擺,訊息仍可在佇列中保留最多 14 天。標準佇列(Standard Queue)不保證順序,提供至少一次傳遞;FIFO 佇列則保證順序與精確一次處理。\n\n替代方案包括 SNS(pub/sub)與 EventBridge(事件匯流排),但 SNS 用於通知扇出,EventBridge 用於路由與結構描述管理,而由工作者主動拉取訊息的輪詢式作業佇列,以 SQS 最為直觀適配。運維面上有兩個定石:消費端的可見性逾時(Visibility Timeout)需設定得長於處理時間;對於超過重試次數的訊息,務必設定死信佇列(Dead Letter Queue, DLQ)加以隔離。\n\nSAA-C03 中,題幹若出現鬆耦合(decoupling)、非同步處理、容錯性等關鍵字,SAS 為第一候選。誤答選項常將論點偷換為「工作者端以同步 HTTP 呼叫」「直接寫入 DynamoDB」「以 Auto Scaling 擴增 EC2」等與鬆耦合無關的方向。SNS 與 SQS 的使用區分(通知派送 vs 工作者佇列)亦為高頻論點。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS(AWS 官方)",
+        "url": "https://aws.amazon.com/sqs/"
+      },
+      {
+        "label": "What is Amazon SQS(Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-012",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "希望保護存放於 S3 的重要資料免於誤刪,並能還原至過去狀態。下列哪項功能最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Versioning"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Select"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅啟用 S3 Event Notifications"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "啟用 S3 Versioning 後可保留物件的多個版本,有助於從誤刪或覆寫中復原。",
+    "choiceExplanations": {
+      "A": "正解。保留歷史版本可提升復原能力。",
+      "B": "Transfer Acceleration 用於遠距離上傳加速。",
+      "C": "S3 Select 用於擷取物件內的部分資料。",
+      "D": "僅靠事件通知無法還原過去的物件。"
+    },
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "versioning",
+      "data-protection"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "versioning",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "S3 Versioning 將對同一鍵的物件覆寫或刪除操作視為「建立新版本」,並持續保留歷史版本。以儲存貯體為單位啟用,啟用後的更新與刪除皆會以版本歷史保存。即使誤呼叫 `DeleteObject`,實際上也僅是新增刪除標記(Delete Marker),只要移除刪除標記,前一版本即可復活。在存放重要資料的正式儲存貯體中,將 Versioning 與 MFA Delete、以及透過生命週期規則定期刪除舊版本等機制成套設計,屬於標準做法。\n\n替代方案包括以 AWS Backup 對 S3 進行備份、或建立跨區域複寫(CRR)至另一儲存貯體。但這些屬於「在另一個保存位置建立副本」的思路,與 Versioning「在同一儲存貯體內保留過去狀態」的目的不同。可整理為:Versioning 對應誤操作與誤覆寫的即時復原,CRR/Backup 則對應區域故障或邏輯破壞的備援。啟用 Versioning 後舊版本亦會計入儲存費用,故需以生命週期原則於一定天數後刪除,或轉移至 Glacier 系儲存類別。\n\nSAA-C03 中,題幹若出現「為誤刪做準備」「還原至過去狀態」「保留物件歷史」等用語,通常以 Versioning 為考點。誤答常以「以生命週期原則防止刪除」「僅以 S3 Object Lock 還原」等替代功能混淆。Object Lock 屬 WORM(寫一次、讀多次)模型,用於防竄改;若目的是從誤操作中復原,則 Versioning 為第一選擇。",
+    "officialDocs": [
+      {
+        "label": "Using versioning in S3 buckets(S3 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-013",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "在全球使用的應用程式中,希望於主要區域發生故障時切換至其他區域。若重視關聯式資料庫的跨區域低延遲複寫,下列何者最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon Aurora Global Database"
+      },
+      {
+        "choiceId": "B",
+        "text": "單一 AZ 的 RDS MySQL"
+      },
+      {
+        "choiceId": "C",
+        "text": "僅手動取得 Amazon EBS 快照"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS Standard Queue"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Aurora Global Database 為全球分散式應用提供多區域組態與低延遲複寫。",
+    "choiceExplanations": {
+      "A": "正解。適合跨區域 DR 與全球讀取。",
+      "B": "單一 AZ 對區域故障或 AZ 故障較為脆弱。",
+      "C": "僅靠手動快照難以滿足低 RPO/RTO 要求。",
+      "D": "SQS 為訊息佇列,並非關聯式資料庫的跨區域複寫機制。"
+    },
+    "relatedServices": [
+      "rds",
+      "aurora"
+    ],
+    "relatedTerms": [
+      "global-database",
+      "disaster-recovery"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "aurora",
+      "global-database",
+      "dr",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Aurora Global Database 是將 Aurora MySQL / Aurora PostgreSQL 部署於多個區域,並以低於 1 秒的延遲將主要區域的寫入複寫至其他區域的功能。最多可設定 5 個次要區域,各次要區域以唯讀 DB 叢集運作。當主要區域整體不可用時,通常可在 1 分鐘內將次要區域提升為新的主要區域(受管計畫性故障轉移或非計畫性脫離),較易回應嚴格的 DR 在 RTO、RPO 上的要求。\n\n替代方案包括 RDS 跨區域唯讀複本、DynamoDB Global Tables、手動 DMS 複寫等。但若同時要求關聯式資料庫的「跨區域低延遲複寫」與「故障轉移時間短」,Aurora Global Database 為第一候選。成本面上,各區域需要 DB 叢集,並產生區域間資料傳輸費用,相較單一區域 Aurora 屬於較高價的方案。其 RPO 低於 1 秒、RTO 約 1 分鐘的效能,僅在能發揮此性能的業務上方具採用正當性。\n\nSAA-C03 中,題幹若同時出現「多區域」「災難復原」「全球分散式應用」「跨區域讀取」等關鍵字,Aurora Global Database 即為正答候選。誤答常以「Multi-AZ 組態」(同一區域內提升可用性)、「僅使用唯讀複本」(故障轉移自動化較弱)、「DynamoDB Global Tables」(非關聯式而為 NoSQL)等選項混淆。",
+    "officialDocs": [
+      {
+        "label": "Using Amazon Aurora Global Database(Aurora User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html"
+      },
+      {
+        "label": "Amazon Aurora Global Database(AWS 官方)",
+        "url": "https://aws.amazon.com/rds/aurora/global-database/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-014",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "希望讓 Lambda 函式處理失敗的事件能於日後調查與重新處理。對於非同步呼叫的失敗事件,以下哪個保存組態最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "設定 Dead-letter queue 或 Lambda Destinations"
+      },
+      {
+        "choiceId": "B",
+        "text": "務必將 Lambda 的記憶體設為最大值"
+      },
+      {
+        "choiceId": "C",
+        "text": "將 Lambda 部署於公用子網路"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 CloudFront 的快取 TTL 設為 0"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "非同步 Lambda 的失敗事件可透過 DLQ 或 Lambda Destinations 傳送至 SQS / SNS / EventBridge 等,便於後續調查與重新處理。",
+    "choiceExplanations": {
+      "A": "正解。可作為失敗事件的隔離保存目的地。",
+      "B": "增加記憶體有助於效能改善,但與保存失敗事件無關。",
+      "C": "屬於網路組態的議題,與保存失敗事件無關。",
+      "D": "CloudFront 的 TTL 與 Lambda 失敗事件保存無關。"
+    },
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "sns",
+      "eventbridge"
+    ],
+    "relatedTerms": [
+      "dead-letter-queue",
+      "lambda-destinations"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "lambda",
+      "dlq",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Lambda 的非同步呼叫(Event 型 invoke)中,經過指定次數重試仍失敗的事件,可透過 Dead Letter Queue(DLQ)或 Lambda Destinations 隔離至外部。DLQ 為傳統機制,將 SQS 佇列或 SNS 主題指定為失敗事件的目的地;Lambda Destinations 則是其擴充,可將成功與失敗各自的結果分別送至 SQS / SNS / EventBridge / 其他 Lambda 函式。失敗事件包含原始 payload、錯誤訊息與堆疊追蹤,便於組建後續的調查與重新處理管線。\n\n替代方案是在 Lambda 函式本體中加入 try/catch,自行通知 SNS。但要涵蓋重試控制與非同步呼叫的內部重試本身較為困難,且傳遞保證也需自行確保。改用受管的 DLQ / Destinations,Lambda 服務端會代為擔保重試、傳遞與順序。若於 Destinations 指定 EventBridge,即可宣告式地組建「以規則過濾失敗事件,再流向其他 Lambda 或 Step Functions」的管線。\n\nSAA-C03 中,題幹若出現「保留非同步 Lambda 的失敗事件」「希望日後調查與重新處理」「不遺失事件」等用語,DLQ / Destinations 即為正答。誤答常以「僅靠 CloudWatch Logs 即足」「以 X-Ray 追蹤即可重現失敗」「改用同步呼叫」等選項出現,將焦點轉至日誌功能或呼叫模型變更。日誌與追蹤屬於事後觀測,並非保留失敗事件本身的機制,此處需加以區分。",
+    "officialDocs": [
+      {
+        "label": "Invoking Lambda functions asynchronously(Lambda Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html"
+      },
+      {
+        "label": "Capturing records of Lambda asynchronous invocations(Lambda Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-retain-records.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-015",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "希望在 DynamoDB 資料表上,為誤更新或誤刪做準備,能還原至任意過去時點。下列哪項功能最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Point-in-time recovery"
+      },
+      {
+        "choiceId": "B",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "C",
+        "text": "僅啟用 DynamoDB Streams"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 Provisioned Capacity 設為最大值"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "啟用 DynamoDB 的 Point-in-time Recovery 後,可將資料表還原至過去特定時點。",
+    "choiceExplanations": {
+      "A": "正解。用於從誤操作中復原。",
+      "B": "DAX 為讀取快取,並非還原功能。",
+      "C": "Streams 用於擷取變更事件,僅靠其本身無法還原至任意時點。",
+      "D": "容量設定並非還原功能。"
+    },
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "point-in-time-recovery",
+      "backup"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "backup",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "DynamoDB 的 Point-in-time Recovery(PITR)是可將資料表還原至過去 35 天內任意秒級時點的功能。無需明示地取得備份,僅需依資料表啟用 PITR,服務端即會持續保留交易日誌。還原時會輸出為新的資料表,原資料表不會被變更。對於應用端錯誤改寫資料、希望倒回至特定時刻狀態等需求,可在不撰寫運維作業的情況下加以應對。\n\n替代方案包括 DynamoDB 的隨需備份(於任意時點取得快照)、以及透過 AWS Backup 進行跨區域、跨帳號備份。隨需備份僅能還原至取得時點的快照,若需「30 天前那一瞬間」這類精細的時點指定,則需 PITR。PITR 啟用期間會依寫入容量產生額外費用,但相較自行打造日誌收集與重放機制的工時,仍屬足夠便宜。\n\nSAA-C03 中,題幹若出現「希望還原至任意過去時點」「秒級還原」「從誤更新或誤刪中復原」等用語,DynamoDB PITR 即為正答。誤答常以「僅靠隨需備份即足」「使用 Streams 即可還原」「從 Global Tables 的複本還原」等選項出現,試圖代入其他功能。Streams 為變更事件派送,Global Tables 為多區域複寫,皆非任意時點還原的功能。",
+    "officialDocs": [
+      {
+        "label": "DynamoDB Point-in-time Recovery(DynamoDB Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-016",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "希望以低延遲將靜態內容派送至全球使用者,同時也希望減少對來源的請求數。下列哪項服務最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS IAM"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "CloudFront 可在邊緣節點快取內容,並以低延遲派送至全球使用者。",
+    "choiceExplanations": {
+      "A": "正解。適合靜態內容派送與快取。",
+      "B": "CloudTrail 為記錄 API 操作歷程的服務。",
+      "C": "RDS 為關聯式資料庫。",
+      "D": "IAM 為認證與授權的服務。"
+    },
+    "relatedServices": [
+      "cloudfront",
+      "s3"
+    ],
+    "relatedTerms": [
+      "cdn",
+      "edge-location",
+      "cache"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "cloudfront",
+      "performance",
+      "cdn"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Amazon CloudFront 是在分布於全球的邊緣節點快取內容,並由距使用者最近的邊緣回應的 CDN 服務。可指定 S3、ALB、API Gateway、EC2 等作為來源,初次請求時自來源取得的內容會保存於邊緣,第 2 次以後即由同一邊緣回應,如此即便對區域以外的使用者亦可實現低延遲回應。同時,對來源的請求數(來源請求)減少,來源端的擴展需求與成本亦隨之下降。\n\n實務上,常見將 S3 指定為靜態網站主機的來源,並以 Origin Access Control(OAC)讓 S3 保持非公開、僅能透過 CloudFront 存取的定型組態。對於動態內容,可採取縮短 TTL 或完全停用快取,僅享受 TLS 終結、WAF 整合、gzip/brotli 壓縮、HTTP/2、HTTP/3 等優勢。邊緣端的自訂邏輯則於 CloudFront Functions(輕量、JavaScript)與 Lambda@Edge(通用、Node.js/Python)兩者中擇一。\n\nSAA-C03 中,題幹若出現「以全球低延遲派送」「降低來源負載」「靜態內容快取」等關鍵字,CloudFront 即為正答。誤答常以「S3 Transfer Acceleration」(主要用於上傳加速而非下載)、「Global Accelerator」(任意 TCP/UDP 的 anycast 路徑最佳化,無快取功能)、「Route 53 的延遲路由」(DNS 層的最佳化,無內容快取)等選項混淆。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront(AWS 官方)",
+        "url": "https://aws.amazon.com/cloudfront/"
+      },
+      {
+        "label": "What is Amazon CloudFront(Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-017",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "有一個讀取負載偏高的 RDS for PostgreSQL。寫入負載較低,希望讓讀取查詢得以擴展。下列哪項組態最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "新增 Read Replica,並將讀取查詢分流至 Read Replica"
+      },
+      {
+        "choiceId": "B",
+        "text": "啟用 Multi-AZ,並將讀取查詢送至備用 DB"
+      },
+      {
+        "choiceId": "C",
+        "text": "停用 RDS 的自動備份"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 DB 移至公用子網路"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Read Replica 用於讀取擴展。由應用端將讀取分流至 Replica,可降低主要 DB 的讀取負載。",
+    "choiceExplanations": {
+      "A": "正解。適合讀取負載分散。",
+      "B": "RDS Multi-AZ 的備用 DB 通常不可作讀取用途。",
+      "C": "停用備份並非效能改善方案,反而降低復原能力。",
+      "D": "移至公用子網路並非效能改善,且會增加安全風險。"
+    },
+    "relatedServices": [
+      "rds"
+    ],
+    "relatedTerms": [
+      "read-replica",
+      "read-scaling"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "rds",
+      "read-replica",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "RDS 的唯讀複本是由主要 DB 透過非同步複寫所建立的唯讀 DB 執行個體,作為讀取查詢的分流目的地。支援 MySQL / MariaDB / PostgreSQL / Oracle / SQL Server / Aurora 各引擎。由應用端將寫入導向主要、讀取導向複本,即可降低主要的讀取負載,並透過橫向增加複本來水平擴展讀取吞吐量。若為 Aurora,可於同一叢集內最多持有 15 個複本,並由專屬端點(讀者端點)自動執行負載平衡。\n\n需注意,複本為非同步複寫,寫入後的資料未必能立即讀到(複寫延遲)。需強一致性的讀取應送往主要,或在寫入後短暫時間內僅自主要讀取。以可用性提升為目的的 Multi-AZ 組態中,備用 DB 不可作讀取用途(僅用於故障轉移),故可用性與擴展性屬不同軸的設計判斷。若需同時滿足兩者,則以「Multi-AZ + 唯讀複本」組合。\n\nSAA-C03 中,題幹若出現「讀取負載偏高」「希望讓讀取查詢擴展」「寫入負載不變」等用語,唯讀複本即為正答。誤答常以「以 Multi-AZ 組態即可分散讀取」「僅靠加大執行個體類型(垂直擴展)即可因應」「以 ElastiCache 快取所有查詢」等選項出現,試圖代入擴展方向或角色不同的服務。",
+    "officialDocs": [
+      {
+        "label": "Working with read replicas(RDS User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html"
+      },
+      {
+        "label": "Amazon RDS Read Replicas(AWS 官方)",
+        "url": "https://aws.amazon.com/rds/features/read-replicas/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-018",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "對某張 DynamoDB 資料表的讀取極為頻繁,且對同一鍵的存取反覆發生。若希望實現微秒級的低延遲讀取,下列哪項服務最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudFormation"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "DynamoDB Accelerator 是 DynamoDB 專用的記憶體內快取,可降低讀取延遲。",
+    "choiceExplanations": {
+      "A": "正解。作為 DynamoDB 的讀取快取使用。",
+      "B": "EBS 為提供給 EC2 的區塊儲存。",
+      "C": "CloudFormation 為 IaC 服務。",
+      "D": "Budgets 為計費監控服務。"
+    },
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "dax",
+      "cache"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "dax",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "DynamoDB Accelerator(DAX)是 DynamoDB 專用的全受管記憶體內快取叢集,可將原為毫秒級的 DynamoDB 讀取延遲降至微秒級。應用端只需透過 DAX 用戶端 SDK,即可沿用既有的 DynamoDB API(GetItem / Query / Scan 等),無需大幅改寫程式碼。對於對同一鍵反覆讀取(熱鍵)較多的工作負載,以及延遲要求極為嚴苛的遊戲排行榜、廣告派送、即時競價(RTB)等場景,效果尤為顯著。\n\n替代方案是將 ElastiCache for Redis / Memcached 置於 DynamoDB 之前。但此時需由應用自行管理快取與資料的一致性(寫入時的 invalidation、TTL 設計)。DAX 已針對 DynamoDB 最佳化,並以 write-through 方式同步快取與 DynamoDB,可減少應用端的一致性管理程式碼。另一方面,DAX 叢集的節點費用持續產生,對於讀取模式不熱、快取命中率低的工作負載,費效比較難浮現。\n\nSAA-C03 中,題幹若出現「DynamoDB 的微秒級讀取」「對同一鍵的反覆存取」「希望進一步降低延遲」等用語,DAX 即為正答。誤答常以「使用 ElastiCache」(通用快取,無 DynamoDB 專用最佳化)、「新增全域次要索引(GSI)」(用於擴展查詢模式,非縮短延遲)、「增加佈建容量」(吞吐量擴展,對縮短延遲較難直接貢獻)等選項出現。",
+    "officialDocs": [
+      {
+        "label": "DynamoDB Accelerator (DAX) and in-memory acceleration(DynamoDB Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.html"
+      },
+      {
+        "label": "Amazon DynamoDB Accelerator (DAX)(AWS 官方)",
+        "url": "https://aws.amazon.com/dynamodb/dax/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-019",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "在圖片上傳處理中,使用者從世界各地將大容量檔案上傳至 S3。若希望改善遠距離上傳的速度,下列哪項功能最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Versioning"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Object Lock"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Glacier Deep Archive"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Transfer Acceleration 利用 CloudFront 的邊緣節點,加速從遠距離往 S3 的上傳。",
+    "choiceExplanations": {
+      "A": "正解。用於全球規模的 S3 上傳加速。",
+      "B": "Versioning 為保留歷史版本的功能。",
+      "C": "Object Lock 用於防竄改與保留期管理。",
+      "D": "Glacier Deep Archive 為適用長期封存的低成本儲存類別。"
+    },
+    "relatedServices": [
+      "s3",
+      "cloudfront"
+    ],
+    "relatedTerms": [
+      "transfer-acceleration",
+      "edge-location"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "upload",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "S3 Transfer Acceleration 是透過 CloudFront 邊緣節點將上傳轉送至 S3 儲存貯體的功能,可加速遠距離、大容量的上傳。使用者改以專用端點(`bucket.s3-accelerate.amazonaws.com`)取代一般 S3 端點(`bucket.s3.amazonaws.com`),自使用者至最近的邊緣間以公用網際網路短距離抵達,邊緣以後則經由 AWS 骨幹送達儲存貯體所在區域。長距離區段可獲得穩定吞吐量,對於使用者分布於全球的上傳場景效果較為明顯。\n\n替代方案包括以多部分上傳並行化、改採 AWS DataSync 或 Snow Family 等其他路徑、將 S3 儲存貯體本身遷移至更接近使用者的區域。Transfer Acceleration 最為直觀地適配「不想變更 S3 儲存貯體的位置,但希望僅加速遠距離上傳」的場景。費用上會於一般 S3 資料傳輸之外額外產生加速費,因此實務定石為先以 Amazon 提供的 Speed Comparison Tool 量測效果,再決定是否採用。\n\nSAA-C03 中,題幹若出現「從世界各地往 S3 大容量上傳」「希望加速遠距離上傳」「不想搬移儲存貯體的區域」等用語,Transfer Acceleration 即為正答。誤答常以「使用 CloudFront 進行上傳」(CloudFront 主要面向下載派送,直接接收 PUT 的來源需另行準備)、「Direct Connect」(專供地端的專線,並非面向終端使用者)、「僅以多部分上傳解決」(無法縮短區段延遲本身)等選項出現。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 Transfer Acceleration(S3 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/transfer-acceleration.html"
+      },
+      {
+        "label": "Amazon S3 Transfer Acceleration(AWS 官方)",
+        "url": "https://aws.amazon.com/s3/transfer-acceleration/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-020",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "EC2 上的應用程式需要存取共用檔案系統。若希望由跨多個 AZ 的多台 EC2 同時存取相同檔案,下列哪項儲存最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Instance Store"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3 Glacier Deep Archive"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon EFS 為可由多台 EC2 共用存取的受管 NFS 檔案系統,適合來自多個 AZ 的共用檔案存取。",
+    "choiceExplanations": {
+      "A": "正解。適合共用檔案儲存。",
+      "B": "EBS 基本上為附加於單一 AZ 內 EC2 的區塊儲存。",
+      "C": "Instance Store 為臨時儲存,並非共用檔案系統。",
+      "D": "Glacier Deep Archive 適用於長期封存,不適合頻繁的共用存取。"
+    },
+    "relatedServices": [
+      "efs",
+      "ec2",
+      "ebs",
+      "s3"
+    ],
+    "relatedTerms": [
+      "file-storage",
+      "nfs"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "efs",
+      "ec2",
+      "storage",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Amazon EFS 是可由多台 EC2 透過 NFSv4 通訊協定同時掛載的全受管檔案系統。於各 AZ 建立掛載目標後,即可由跨多個 AZ 的多台 EC2 對同一檔案樹同時讀寫,而檔案系統本身於區域內冗餘化,即便發生 AZ 故障亦可持續使用。Web 伺服器的共用內容、CI/CD 的工作區、容器的資料磁碟區、機器學習的資料集共用等「多台同時讀同一份檔案」的需求,皆可直觀對應。\n\n替代候選為 EBS 與 S3。EBS 為附加於單一 EC2 的區塊儲存,即便啟用 Multi-Attach 功能用於共用,仍需位於同一 AZ 內並配合叢集檔案系統,不適合通用的多 AZ 共用。S3 為物件儲存,以鍵為單位的 API 操作,而非檔案系統 API(POSIX 相容),既有應用的「file open / read / write」無法直接沿用。EFS 的強項在於可幾乎不修改既有依賴 POSIX 檔案系統的應用,即達成多 AZ 共用。另一方面,若效能模式(通用 / 最大 I/O)與吞吐量模式(突發 / 佈建 / 彈性)選擇有誤,延遲與吞吐量可能無法達成需求,故需依工作負載特性進行設計。\n\nSAA-C03 中,題幹若出現「由多台 EC2 共用存取檔案」「跨多個 AZ 同時存取」「受管 NFS」等用語,EFS 即為正答。誤答常以「EBS Multi-Attach」(限同一 AZ + 須叢集檔案系統)、「掛載 S3 共用」(API 不相容與一致性模型不同)、「Instance Store」(揮發性儲存,EC2 停止即消失)等選項出現。",
+    "officialDocs": [
+      {
+        "label": "Amazon Elastic File System(AWS 官方)",
+        "url": "https://aws.amazon.com/efs/"
+      },
+      {
+        "label": "What is Amazon Elastic File System(EFS User Guide / English)",
+        "url": "https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-021",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "需要非同步處理數百萬筆小型訊息。處理順序不需嚴格,並儘可能重視高吞吐量。下列哪個佇列最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon SQS Standard Queue"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS FIFO Queue"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Config"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "SQS Standard Queue 適合高吞吐量的訊息處理。當不需嚴格保證順序時最為合適。",
+    "choiceExplanations": {
+      "A": "正解。適合高吞吐量的非同步處理。",
+      "B": "FIFO Queue 用於需要保證順序的情境,但相較於 Standard Queue,要求較為嚴苛。",
+      "C": "EFS 為共用檔案儲存。",
+      "D": "AWS Config 為資源設定的記錄與評估服務。"
+    },
+    "relatedServices": [
+      "sqs"
+    ],
+    "relatedTerms": [
+      "standard-queue",
+      "throughput"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "throughput",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Amazon SQS 包含 Standard Queue 與 FIFO Queue 兩種類型。Standard Queue 提供「近乎無限」的吞吐量(於區域上限內幾乎無限的 TPS),採用盡力而為的順序傳遞,並保證至少一次(at-least-once)的傳遞。雖然不保證順序,但藉由內部分散至多個節點以實現極高吞吐量,適合作為數百萬筆規模小型訊息處理的非同步緩衝。\n\nFIFO Queue 則提供嚴格的順序保證與重複排除(exactly-once 處理),但預設每個訊息群組上限為每秒 300 則訊息(批次模式可達每秒 3000 則)。啟用高吞吐量模式(High Throughput for FIFO)可擴展至數千 TPS,但若未妥善設計訊息群組 ID,吞吐量將無法提升。除非業務需求中明確要求順序,否則應選擇 Standard Queue,從成本與可擴展性兩方面皆較為有利。\n\nSAA-C03 中,題幹若出現「高吞吐量」「順序不嚴格」「數百萬筆規模」等關鍵字,Standard Queue 即為正解。反之,若出現「重複排除」「嚴格順序」「金融交易或庫存更新的決定性處理」等需求,則應選 FIFO Queue。與 SNS 或 EventBridge 的使用區分亦為高頻論點:Pub/Sub 型扇出選 SNS,事件驅動路由選 EventBridge,訊息緩衝與重試則選 SQS。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS(AWS 官方)",
+        "url": "https://aws.amazon.com/sqs/"
+      },
+      {
+        "label": "Amazon SQS standard and FIFO queues(SQS Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"
+      },
+      {
+        "label": "Amazon SQS quotas(SQS Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-022",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "Lambda 函式的處理時間較長且 CPU 負載亦高。在不變更程式碼的前提下希望提升 CPU 效能,應優先檢討下列哪項設定?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "增加 Lambda 的記憶體大小"
+      },
+      {
+        "choiceId": "B",
+        "text": "變更 Lambda 的函式名稱"
+      },
+      {
+        "choiceId": "C",
+        "text": "停用 CloudWatch Logs"
+      },
+      {
+        "choiceId": "D",
+        "text": "務必將 Lambda 連接至 VPC"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Lambda 在增加記憶體大小時,所分配的 CPU 效能亦會隨之提升。對於 CPU 負載高的處理,透過記憶體調整可能縮短處理時間。",
+    "choiceExplanations": {
+      "A": "正解。為 Lambda 效能調整時最先確認的設定。",
+      "B": "變更函式名稱不會影響效能。",
+      "C": "停用日誌並非根本性的 CPU 效能改善方法。",
+      "D": "VPC 連接僅在必要時使用,並非為提升效能而必須連接。"
+    },
+    "relatedServices": [
+      "lambda",
+      "cloudwatch"
+    ],
+    "relatedTerms": [
+      "memory-size",
+      "duration"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "lambda",
+      "performance",
+      "memory"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "AWS Lambda 的記憶體大小設定不僅決定所分配的記憶體量,同時亦同步決定按比例分配的 vCPU 效能與 I/O 頻寬。將記憶體從 128MB 提高至 1769MB 時,vCPU 約等於 1 核,對於 CPU 密集型處理(影像轉換、加密、JSON 解析、機器學習推論等),處理時間可能大幅縮短。由於計費依「GB 秒」計算,即使將記憶體加倍,只要處理時間降至原本的一半以下,總成本反而可能下降。\n\n進行系統化記憶體調校的工具有 AWS Lambda Power Tuning(OSS / 基於 Step Functions),可在多種記憶體設定下並行執行實際函式,取得成本與執行時間的關係圖。實務上會以此工具找出最佳設定,並結合 provisioned concurrency 抑制冷啟動。然而,若處理瓶頸在於網路 I/O 等待(如 DynamoDB 或外部 API 的呼叫等待),提升記憶體效果有限,此時應改採平行化或連線重複利用(於 handler 外初始化 client)等手法。\n\nSAA-C03 中,「Lambda 處理時間長」「CPU 負載高」「不變更程式碼提升效能」等情境下,記憶體大小調整即為正解。變更函式名稱、停用 CloudWatch Logs、必須連接 VPC 等誤答,皆與效能改善無關。Power Tuning、provisioned concurrency、SnapStart(Java 適用)等進階調校手法在進階考試中亦會出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda(AWS 官方)",
+        "url": "https://aws.amazon.com/lambda/"
+      },
+      {
+        "label": "Configuring Lambda function memory(Lambda Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html"
+      },
+      {
+        "label": "Best practices for working with AWS Lambda functions(Lambda Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-023",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "希望將存取頻率降低的 S3 物件自動移動至成本較低的儲存類別。下列哪項功能最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Lifecycle rules"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Object Lambda"
+      },
+      {
+        "choiceId": "D",
+        "text": "變更 S3 的儲存貯體名稱"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "使用 S3 Lifecycle rules 可在指定期間後,將物件從 S3 Standard 自動移轉至 S3 Standard-IA、Glacier 系列儲存類別。",
+    "choiceExplanations": {
+      "A": "正解。用於藉由儲存類別移轉達成成本最佳化。",
+      "B": "Transfer Acceleration 為上傳加速功能,並非用於降低保存成本。",
+      "C": "Object Lambda 為取得物件時進行資料轉換的功能。",
+      "D": "變更儲存貯體名稱並非成本最佳化策略。"
+    },
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "lifecycle",
+      "storage-class"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "lifecycle",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "S3 Lifecycle rules 為依物件建立日或最後存取日的經過天數,自動進行儲存類別移轉或自動刪除的機制。典型模式為:建立後 30 天從 S3 Standard 移至 Standard-IA(低頻存取),90 天後移至 Glacier Flexible Retrieval,180 天後移至 Glacier Deep Archive,最終於 7 年後刪除等階層化方式。對於存取頻率隨時間遞減的日誌、備份、法規遵循保存資料,可大幅降低保存成本。\n\nLifecycle 設定需注意:各儲存類別皆有最短保存期間(Standard-IA / One Zone-IA 為 30 天,Glacier 系列為 90 天或 180 天),若於此期間前刪除或移轉至其他類別,將被收取最短期間的費用。此外,將小型物件(小於 128KB)置於 IA 類別,可能因最小物件大小計費而比 Standard 更為昂貴,需依檔案特性進行設計。若存取模式難以預測,選擇 S3 Intelligent-Tiering 而非 Lifecycle 可能於運維負擔與成本兩方面皆更為有利。\n\nSAA-C03 中,題幹若出現「將存取頻率降低的資料自動移至低成本類別」「保存成本最佳化」「生命週期管理」等關鍵字,Lifecycle rules 即為正解。Transfer Acceleration(上傳加速)、Object Lambda(取得時轉換)、變更儲存貯體名稱等,皆為不同目的的功能或操作,屬誤答。與 Intelligent-Tiering 的使用區分、最短保存期間、與版本控制並用時的行為亦為出題重點。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 儲存類別(AWS 官方)",
+        "url": "https://aws.amazon.com/s3/storage-classes/"
+      },
+      {
+        "label": "Managing your storage lifecycle(S3 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html"
+      },
+      {
+        "label": "Examples of S3 Lifecycle configuration(S3 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-configuration-examples.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-024",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "有常時運行的 EC2 執行個體,預計未來 1 年以上使用量幾乎不變。希望相較於隨需(On-Demand)價格進一步降低成本,下列哪項購買選項最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Reserved Instances 或 Savings Plans"
+      },
+      {
+        "choiceId": "B",
+        "text": "僅使用 Spot Instances"
+      },
+      {
+        "choiceId": "C",
+        "text": "使用執行個體儲存(Instance Store)"
+      },
+      {
+        "choiceId": "D",
+        "text": "新增 Elastic IP"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "對於可預期長期穩定使用的工作負載,透過 Reserved Instances 或 Savings Plans 可較隨需價格降低成本。",
+    "choiceExplanations": {
+      "A": "正解。為適合長期使用的折扣選項。",
+      "B": "Spot Instances 可能被中斷,對於需要常時運行的穩定工作負載,單獨使用可能不適合。",
+      "C": "執行個體儲存為暫時性儲存,並非購買選項。",
+      "D": "新增 Elastic IP 並非降低成本的策略。"
+    },
+    "relatedServices": [
+      "ec2"
+    ],
+    "relatedTerms": [
+      "reserved-instances",
+      "savings-plans"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "cost",
+      "savings-plans"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Reserved Instances(RI)與 Savings Plans 皆為以 1 年或 3 年承諾換取隨需價格折扣的購買選項。RI 依 EC2 / RDS / ElastiCache / Redshift 等服務分別購買,並指定執行個體類型、區域、作業系統等。Savings Plans 則為承諾「每小時 N 美元的使用量」之方式,Compute Savings Plans 可彈性套用於 EC2 / Fargate / Lambda。對於穩定運行的工作負載,相較於隨需可獲得最高約 72% 的折扣。\n\n選擇指南為:若所使用的執行個體類型或服務可能變動,則選 Compute Savings Plans(彈性較高);若 DB 執行個體或 Redshift 叢集等架構固定,則選 RI。RI 又分為 Standard RI(折扣率高、變更受限)與 Convertible RI(折扣率略低、可變更執行個體類型),於 3 年期且全額預付時可獲最大折扣。另一方面,Spot Instances 適合可容忍中斷的批次或非同步處理,單獨使用不適合常時運行的工作負載。\n\nSAA-C03 中,「常時運行」「1 年以上的使用已確定」「希望低於隨需價格」等條件下,RI 或 Savings Plans 即為正解。僅用 Spot、執行個體儲存、新增 Elastic IP 等誤答,皆與穩定運行需求相悖或非成本削減手段。承諾期間(1 年 vs 3 年)、付款方式(全額預付、部分預付、無預付)、Standard 與 Convertible RI 的差異在進階考試中亦會出題。",
+    "officialDocs": [
+      {
+        "label": "AWS Savings Plans(AWS 官方)",
+        "url": "https://aws.amazon.com/savingsplans/"
+      },
+      {
+        "label": "Amazon EC2 Reserved Instances(AWS 官方)",
+        "url": "https://aws.amazon.com/ec2/pricing/reserved-instances/"
+      },
+      {
+        "label": "Savings Plans User Guide(AWS Documentation / English)",
+        "url": "https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-025",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "有僅短時間執行的批次處理,即使被中斷亦可重試。希望大幅降低 EC2 成本,下列哪項選擇最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "使用 Spot Instances"
+      },
+      {
+        "choiceId": "B",
+        "text": "僅使用 Dedicated Hosts"
+      },
+      {
+        "choiceId": "C",
+        "text": "始終使用最大規格的隨需執行個體"
+      },
+      {
+        "choiceId": "D",
+        "text": "新增 NAT Gateway"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Spot Instances 適合可容忍中斷的處理,相較於隨需可大幅降低成本。",
+    "choiceExplanations": {
+      "A": "正解。適合可中斷的批次處理。",
+      "B": "Dedicated Hosts 用於需要專用主機的授權需求等情境,並非以成本削減為目的。",
+      "C": "始終使用最大規格的隨需執行個體會使成本提升。",
+      "D": "新增 NAT Gateway 並非降低批次處理 EC2 成本的策略。"
+    },
+    "relatedServices": [
+      "ec2",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "spot-instances",
+      "batch-processing"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "spot",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "Spot Instances 為 AWS 將剩餘 EC2 容量以隨需價格最高 90% 折扣提供的購買選項。代價為當 AWS 端需要該容量時,執行個體將在 2 分鐘前通知(Spot Instance interruption notice)後被強制終止。基於此特性,適合可重試的批次處理、機器學習訓練、CI/CD 建置、繪圖渲染、資料處理管線等。透過於 EC2 Auto Scaling 群組中混入 Spot 並以混合執行個體政策指定多種類型,亦可避免特定類型容量不足的問題。\n\n設計重點為:應將 Spot 中斷時的處理設計為冪等,並結合檢查點機制(將處理中狀態保存至 S3 或 DynamoDB 以便重新開始)。實務常見作法為以 CloudWatch Events / EventBridge 接收中斷通知,並以 Auto Scaling Lifecycle Hook 執行 graceful shutdown。對於需常時可用的穩定運行情境,應與 On-Demand 或 RI / Savings Plans 結合,Spot 僅用於彈性增減的部分。\n\nSAA-C03 中,「短時間批次」「可容忍中斷」「大幅降低成本」等條件下,Spot 即為正解。Dedicated Hosts 適用於專用主機需求(自帶授權或實體隔離),並非以成本削減為主要目的。始終使用最大規格的隨需執行個體或新增 NAT Gateway,皆為增加成本或無關的選項,屬誤答。Spot Fleet、混合執行個體政策、中斷通知處理模式亦為進階考試重點。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Spot Instances(AWS 官方)",
+        "url": "https://aws.amazon.com/ec2/spot/"
+      },
+      {
+        "label": "Spot Instances(EC2 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html"
+      },
+      {
+        "label": "Spot Instance interruptions(EC2 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-interruptions.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-026",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "VPC 內的 Lambda 函式需存取 DynamoDB。希望避免 NAT Gateway 的固定費用,下列哪項架構最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "建立 DynamoDB Gateway VPC Endpoint"
+      },
+      {
+        "choiceId": "B",
+        "text": "在各可用區域建立 NAT Gateway"
+      },
+      {
+        "choiceId": "C",
+        "text": "將 Internet Gateway 直接關聯至 Lambda"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 DynamoDB 資料表部署於公用子網路"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "使用 DynamoDB Gateway VPC Endpoint 可讓 VPC 內資源以私有方式存取 DynamoDB,並可避免 NAT Gateway 的固定費用。",
+    "choiceExplanations": {
+      "A": "正解。存取 DynamoDB 時可免除 NAT Gateway。",
+      "B": "NAT Gateway 會產生固定費用。",
+      "C": "Lambda 無法直接關聯 Internet Gateway。",
+      "D": "DynamoDB 並非部署於 VPC 內子網路的服務。"
+    },
+    "relatedServices": [
+      "lambda",
+      "dynamodb",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "vpc-endpoint",
+      "gateway-endpoint"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "dynamodb",
+      "vpc-endpoint",
+      "lambda",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "S3 與 DynamoDB 在 AWS 中具有特殊地位,可透過 Gateway 型 VPC Endpoint 從 VPC 內資源經由 AWS 骨幹網路存取。Gateway Endpoint 本身免費,只要於同區域內亦不產生資料傳輸費用,因此對於 VPC 內 Lambda 或 EC2 呼叫 DynamoDB 的需求,相較於經過 NAT Gateway 可大幅降低成本。NAT Gateway 依小時單價(每可用區域每月數十美元)與資料處理量計費,VPC Lambda 的通訊量越大,Endpoint 化的效益越顯著。\n\n設計時的注意事項為:Gateway Endpoint 透過於路由表加入前綴清單而運作,若未將 Endpoint 關聯至目標 VPC 內所有相關子網路的路由表,容易發生部分 Lambda 仍經由 NAT Gateway 的事故。此外,結合 Endpoint Policy 設定「僅允許存取特定 DynamoDB 資料表」的限制,可於 VPC 層級阻擋對未預期資料表的存取。Gateway Endpoint 僅提供於 S3 與 DynamoDB 兩項服務,其他服務(如 Secrets Manager、KMS、SQS 等)則須採用 Interface Endpoint(基於 PrivateLink,須付 ENI 費用)。\n\nSAA-C03 中,「VPC 內 Lambda 存取 DynamoDB」「希望避免 NAT Gateway 固定費用」「以私有路徑連接」等需求下,Gateway VPC Endpoint 即為正解。新增 NAT Gateway、將 Internet Gateway 直接關聯至 Lambda、將 DynamoDB 部署於公用子網路等誤答,皆為增加成本、不存在的架構,或與服務特性矛盾,可排除。與 Interface Endpoint 的使用區分、藉由 Endpoint Policy 縮減範圍亦為進階考試重點。",
+    "officialDocs": [
+      {
+        "label": "AWS PrivateLink(AWS 官方)",
+        "url": "https://aws.amazon.com/privatelink/"
+      },
+      {
+        "label": "Gateway endpoints for Amazon DynamoDB(VPC User Guide / English)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-ddb.html"
+      },
+      {
+        "label": "Using Amazon VPC Endpoints to access DynamoDB(DynamoDB Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/vpc-endpoints-dynamodb.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-027",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "有存取模式無法預測的 S3 資料,其中頻繁存取與幾乎不存取的資料混雜。在不增加運維負擔的前提下希望最佳化儲存成本,下列哪項儲存類別最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Intelligent-Tiering"
+      },
+      {
+        "choiceId": "B",
+        "text": "持續僅使用 S3 Standard"
+      },
+      {
+        "choiceId": "C",
+        "text": "僅使用 S3 Glacier Deep Archive"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EBS gp3"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Intelligent-Tiering 會依存取模式自動移轉階層,適合存取頻率難以預測的資料之成本最佳化。",
+    "choiceExplanations": {
+      "A": "正解。在存取模式不明時最為有效。",
+      "B": "低頻存取資料的保存成本容易變高。",
+      "C": "Deep Archive 取出需耗時較久,不適合頻繁存取的資料。",
+      "D": "EBS gp3 為適用於 EC2 的區塊儲存,並非 S3 物件的儲存類別。"
+    },
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "intelligent-tiering",
+      "storage-class"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "intelligent-tiering",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "S3 Intelligent-Tiering 為按物件監測存取頻率,並自動移動儲存階層(Frequent Access、Infrequent Access、Archive Instant Access、Archive Access、Deep Archive Access)的儲存類別。對於存取模式不明或難以預測,且 Frequent 與 Infrequent 混雜的資料集(使用者上傳檔案、媒體封存、日誌資料等),可實現運維負擔為零的成本最佳化。不會產生取出費用,而是按物件單位產生最小物件大小計費(小於 128KB 視為單一階層)及少額的監測費用。\n\n與透過 Lifecycle rules 手動移轉階層相比,Intelligent-Tiering 在「事前無法掌握存取模式」時較具優勢。反之,「於 30 天後必然進入冷狀態」等存取模式明確的日誌或備份,則以 Lifecycle 直接移動至 Standard-IA 或 Glacier 更為划算,且不會產生監測費用。Archive Access 與 Deep Archive Access 取出需數小時至十幾小時,不適合頻繁存取的資料,此點亦須於設計時納入考量。\n\nSAA-C03 中,「存取模式無法預測」「不增加運維負擔且最佳化成本」「Frequent 與 Infrequent 混雜」等條件下,Intelligent-Tiering 即為正解。持續僅使用 Standard(未最佳化成本)、僅使用 Deep Archive(取出時間問題)、EBS gp3(並非 S3 儲存類別)皆與需求不符,屬誤答。與 Lifecycle 的使用區分、最短保存期間、各階層的取出時間與費用亦為進階考試重點。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 Intelligent-Tiering(AWS 官方)",
+        "url": "https://aws.amazon.com/s3/storage-classes/intelligent-tiering/"
+      },
+      {
+        "label": "Automatically optimizing storage class with S3 Intelligent-Tiering(S3 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/intelligent-tiering.html"
+      },
+      {
+        "label": "Amazon S3 pricing(AWS 官方)",
+        "url": "https://aws.amazon.com/s3/pricing/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-028",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "希望以低成本公開個人開發的靜態學習網站。在避免常時運行伺服器並以靜態檔案發布為主的情境下,下列哪項架構最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 + CloudFront"
+      },
+      {
+        "choiceId": "B",
+        "text": "EC2 + RDS + NAT Gateway"
+      },
+      {
+        "choiceId": "C",
+        "text": "EKS + ALB + RDS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Redshift + SageMaker"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "將靜態網站置於 S3 並透過 CloudFront 發布的架構,成本低且運維負擔亦小,並可避免常時運行的伺服器。",
+    "choiceExplanations": {
+      "A": "正解。為靜態網站發布的低成本架構。",
+      "B": "EC2、RDS、NAT Gateway 容易產生固定費用,對靜態網站而言過於繁複。",
+      "C": "EKS 對個人開發 MVP 而言,運維負擔與成本皆過重。",
+      "D": "Redshift 與 SageMaker 適用於分析與機器學習,並非靜態網站發布所需。"
+    },
+    "relatedServices": [
+      "s3",
+      "cloudfront",
+      "ec2",
+      "rds"
+    ],
+    "relatedTerms": [
+      "static-site",
+      "serverless"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "cloudfront",
+      "cost",
+      "portfolio"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "以低成本公開靜態網站的架構中,將內容置於 S3 並透過 CloudFront 發布的組合,為 AWS 的代表性模式。S3 作為物件儲存,單位儲存單價低,適合保存 HTML / CSS / JS / 影像等靜態資產。CloudFront 於全球邊緣節點進行快取發布,減少對原始端(S3)的直接存取,同時實現延遲降低與 S3 請求數減少的成本最佳化。結合 Origin Access Control,可在維持 S3 儲存貯體非公開的狀態下,僅經由 CloudFront 發布。\n\n此架構不持有常時運行的伺服器,因此不會產生 EC2、RDS、NAT Gateway 等按時間計費的固定費用。可完全採用按量計費(S3 儲存與請求數、CloudFront 資料傳輸量與請求數)運維,流量少的時期可以每月數百元至數千元的規模運作。HTTPS 化方面,透過將 ACM 憑證(於 us-east-1 簽發)綁定至 CloudFront,並以 Route 53 管理自訂網域的架構為常見作法。以 Next.js 等 SSG 框架建置的靜態網站亦可採用此架構發布。\n\nSAA-C03 中,「靜態網站」「個人開發」「低成本」「避免常時運行伺服器」等關鍵字下,S3 + CloudFront 即為正解。EC2 + RDS + NAT Gateway 架構固定費用多,對靜態網站而言過於繁複;EKS 運維負擔過重;Redshift + SageMaker 適用於分析與機器學習,並非用於網站發布。與無伺服器架構(Lambda + API Gateway)的結合,以及包含 SPA / SSR 的架構模式亦為進階考試重點。",
+    "officialDocs": [
+      {
+        "label": "Hosting a static website using Amazon S3(S3 User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html"
+      },
+      {
+        "label": "Delivering dynamic and static content with Amazon CloudFront(CloudFront Developer Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "Amazon S3(AWS 官方)",
+        "url": "https://aws.amazon.com/s3/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-029",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "向 CloudWatch Logs 大量輸出 Lambda 的詳細日誌,導致日誌保存成本增加。希望僅保留調查所需期間的日誌,並自動刪除舊日誌,下列哪項設定最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "為 CloudWatch Logs 的日誌群組設定 Retention period"
+      },
+      {
+        "choiceId": "B",
+        "text": "將 CloudWatch Logs 以 S3 儲存貯體公開"
+      },
+      {
+        "choiceId": "C",
+        "text": "將 Lambda 的逾時設為最大值"
+      },
+      {
+        "choiceId": "D",
+        "text": "停用 API Gateway 的 CORS"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "設定 CloudWatch Logs 的 Retention period 可自動刪除超過指定期間的日誌,有助於抑制日誌保存成本。",
+    "choiceExplanations": {
+      "A": "正解。可控制日誌保存期間。",
+      "B": "公開日誌的設計於安全性方面具危險性。",
+      "C": "將 Lambda 逾時設為最大值,並不能降低日誌保存成本。",
+      "D": "CORS 設定與日誌保存無關。"
+    },
+    "relatedServices": [
+      "cloudwatch",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "log-retention",
+      "cost-management"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudwatch",
+      "logs",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "CloudWatch Logs 的日誌群組可設定 Retention period(保存期間),範圍為 1 天至 10 年(或無限期)。預設為「Never Expire(無限期)」,持續使用 Lambda、ECS、API Gateway 等服務,日誌會持續累積,保存計費(GB 月)亦持續增加。實務上應於建立日誌群組時或運維開始後立即設定 Retention period,僅保留調查或稽核所需的期間(通常為 14 天至 90 天)。\n\n對於需長期保存的日誌(稽核需求、法規遵循需求等),可透過 Subscription Filter 或 Export 工作將日誌轉移至 S3,並以 S3 Lifecycle rules 階層化至 Glacier 或 Deep Archive 的模式為定石。S3 的長期保存單價較 CloudWatch Logs 大幅便宜,透過 Athena 查詢亦可進行日誌分析。CloudWatch Logs Insights 提供強大的分析查詢,但依掃描量計費,若預期會頻繁進行大規模查詢,需先進行成本試算。\n\nSAA-C03 中,「降低 CloudWatch Logs 成本」「管理日誌保存期間」「自動刪除」等需求下,設定 Retention period 即為正解。S3 公開(違反安全性)、將 Lambda 逾時設為最大值(無關)、停用 API Gateway CORS(CORS 為瀏覽器同源政策控制,屬不同目的)皆為誤答。將日誌長期匯出至 S3、Logs Insights 的掃描計費、透過 Subscription Filter 進行即時轉送亦為進階考試重點。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch Logs(AWS 官方)",
+        "url": "https://aws.amazon.com/cloudwatch/"
+      },
+      {
+        "label": "Change log data retention in CloudWatch Logs(CloudWatch Logs User Guide / English)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html"
+      },
+      {
+        "label": "Amazon CloudWatch pricing(AWS 官方)",
+        "url": "https://aws.amazon.com/cloudwatch/pricing/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-030",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "希望在每月 AWS 使用費可能超出預期時收到郵件通知。下列哪項服務最為合適?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Route 53 Resolver"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "透過 AWS Budgets 可依預算金額或預測超支設定郵件通知。在個人開發中為防止計費事故的基本設定。",
+    "choiceExplanations": {
+      "A": "正解。用於成本預算與警示。",
+      "B": "CloudTrail 用於 API 操作歷程的稽核。",
+      "C": "EFS 為共用檔案儲存。",
+      "D": "Route 53 Resolver 為 DNS 名稱解析相關服務。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "budget-alert",
+      "cost-monitoring"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "budgets",
+      "cost",
+      "monitoring"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22",
+    "practicalNote": "AWS Budgets 可設定每月、每季、每年的預算金額,或依特定服務、標籤、連結帳戶等單位設定預算門檻,並在實績值或預測值超過指定門檻時透過 SNS 或電子郵件通知。包含成本預算(Cost Budget)、使用量預算(Usage Budget)、RI / Savings Plans 覆蓋率或使用率預算等多種類型,從個人開發至大規模組織皆作為預算管理的基本工具使用。前 2 個支援 Action 的預算可免費使用,之後每個預算每日少額計費。\n\n類似服務有 AWS Cost Explorer,但 Cost Explorer 為視覺化分析過去至未來成本趨勢的儀表板,不具備門檻型的警示功能。Cost Anomaly Detection(成本異常偵測)為以機器學習偵測異常支出模式的服務,與 Budgets 結合可早期發現「未預期的服務突發使用」。個人開發中,於月初設定少額(例如:1000 元)預算,並透過 SNS 將 80% / 100% / 120% 三段警示寄送至郵件,即為防止計費事故的基本模式。\n\nSAA-C03 中,「預算超支通知」「成本監測」「郵件通知」等需求下,AWS Budgets 即為正解。CloudTrail(API 操作稽核)、EFS(共用檔案儲存)、Route 53 Resolver(DNS 名稱解析)皆為與成本管理不同目的之服務。與 Cost Explorer 的使用區分、Cost Anomaly Detection、Budgets Action(門檻超過時自動套用 IAM 政策或停止 EC2 等)等進階功能亦為進階考試重點。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets(AWS 官方)",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "Managing your costs with AWS Budgets(AWS Cost Management User Guide / English)",
+        "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "AWS Cost Explorer(AWS 官方)",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
+  }
+]

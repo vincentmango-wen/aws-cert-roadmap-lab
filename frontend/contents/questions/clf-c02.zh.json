@@ -1,1 +1,3234 @@
-[]
+[
+  {
+    "questionId": "clf-001",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "關於 AWS 雲端的主要優點，下列何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "必須先購買實體伺服器才能開始使用"
+      },
+      {
+        "choiceId": "B",
+        "text": "可依照需求擴充或縮減資源"
+      },
+      {
+        "choiceId": "C",
+        "text": "所有安全責任皆由 AWS 承擔"
+      },
+      {
+        "choiceId": "D",
+        "text": "所有 AWS 服務皆可永久免費使用"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "正確答案是 B。AWS 雲端最具代表性的優點，是「能依照需求增減資源」，\n也就是擴展性（Scalability）與彈性（Elasticity）。\n\n在地端環境中，通常會預先準備較多伺服器以應對尖峰時段的存取量。此方式在平常時段會\n讓多餘的伺服器閒置而成為固定成本，而當存取量超出預期時，處理能力又會不足。在 AWS 中，\n透過 Auto Scaling 或 Elastic Load Balancing 等機制，可隨著存取量增加自動增加 EC2\n執行個體，並隨著存取量減少自動縮減。再加上按使用量付費的計費模式，便能在平常時段\n以較小規模運作，僅於繁忙時段擴大資源。\n\n這裡需要區分的是，雲端的優點並非「便宜」本身，而是「能依照需要的量在需要的時點\n取得的彈性」。需求難以預測的工作負載，或是存取量起伏較大的工作負載，越能凸顯這種\n彈性的效益。CLF-C02 中，擴展性、彈性、敏捷性、按使用量付費等項目，會反覆以\n「雲端的優點」形式被考問。若選項中出現「購買實體伺服器」「AWS 承擔全部責任」「永久\n免費」等極端的斷言，通常因與雲端特性相互矛盾而為誤答。",
+    "choiceExplanations": {
+      "A": "錯誤。這反而較接近地端（自行持有實體伺服器的型態）的描述。\n在 AWS 中，無須自行購買或設置實體伺服器，可於需要時啟動 EC2 執行個體，\n不需要時即可停止或刪除。無須初期投資便能開始使用是雲端的優點，\n選項 A 是與「雲端的優點」相反方向的敘述。",
+      "B": "正確。能依照需求擴充或縮減資源（擴展性／彈性），是雲端最具代表性的優點。\n由於可配合存取尖峰自動增減資源，能同時抑制因資源過剩造成的浪費成本，\n以及因資源不足造成的機會損失。",
+      "C": "錯誤。AWS 的安全是基於「責任共擔模式」，由 AWS 與使用者分擔責任。\nAWS 負責資料中心或硬體等「雲端本身（of the cloud）」的安全，\n而使用者則負責 OS 更新、IAM 權限設定、資料加密等「雲端中的內容\n（in the cloud）」。「全部由 AWS 承擔」是針對責任共擔模式理解的典型誤答。",
+      "D": "錯誤。AWS 雖有免費額度（AWS Free Tier），但僅限部分服務在一定範圍內，\n且多半附帶從開始使用起 12 個月等條件。並非所有服務皆永久免費。\n「永久免費」「完全免費」等無條件斷言，多半為誤答。"
+    },
+    "practicalNote": "擴展性與彈性在實務上能發揮效益的場景，是需求變動較大的工作負載。\n例如因促銷活動或新聞刊載而暫時急速上升的網站、月底或特賣時處理量激增的批次／結帳\n系統、白天與夜間存取量差異明顯的內部系統等都是代表例。在這類工作負載中，常採用以\nAuto Scaling 自動增減 EC2 的架構，或是不長駐資源、依請求啟動的無伺服器架構\n（Lambda 等）。\n\n另一方面，彈性並非萬能。對於負載一直穩定的工作負載而言，比起隨需的按使用量付費，\n採用 Reserved Instances 或 Savings Plans 等長期承諾方式，反而會更便宜的情況也不少。\n受測者常見的誤解是將「雲端＝永遠便宜」畫上等號，但正確而言，「能配合需求減少浪費」\n才是優點，成本是否下降取決於工作負載的特性。在考試中，「以彈性抑制浪費」的情境，\n與「穩定負載則以承諾換取折扣」的情境，會分別作為不同主題被考問。",
+    "officialDocs": [
+      {
+        "label": "什麼是雲端運算（AWS 官方／English）",
+        "url": "https://aws.amazon.com/what-is-cloud-computing/"
+      },
+      {
+        "label": "什麼是 Amazon EC2 Auto Scaling（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "責任共擔模式（AWS 官方／English）",
+        "url": "https://aws.amazon.com/compliance/shared-responsibility-model/"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "scalability",
+      "elasticity"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "cloud-concepts",
+      "scalability",
+      "elasticity"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-002",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "關於雲端按使用量付費（Pay-as-you-go）模式的描述，下列何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "依使用量發生對應的費用"
+      },
+      {
+        "choiceId": "B",
+        "text": "永遠只發生固定金額的費用"
+      },
+      {
+        "choiceId": "C",
+        "text": "僅有初期費用，之後不會再發生使用費"
+      },
+      {
+        "choiceId": "D",
+        "text": "無論使用量多寡皆完全免費"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS 多數服務會依照所使用的資源量或請求次數產生費用，此即所謂按使用量付費。",
+    "choiceExplanations": {
+      "A": "正確。按使用量付費就是按所使用份量支付的概念。",
+      "B": "錯誤。雖然部分服務會有固定費用，但作為整體雲端的說明並不足夠。",
+      "C": "錯誤。雲端雖能抑制初期費用，但使用費仍會發生。",
+      "D": "錯誤。一旦超出免費額度範圍，便會產生費用。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "pay-as-you-go"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "pay-as-you-go"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "按使用量付費（Pay-as-you-go）是 AWS 多數服務所採用的計費體系，\n會依照所使用資源的種類與量發生費用，例如 EC2 的執行時間、S3 的儲存容量、Lambda\n的執行次數、資料傳輸量等。由於不要求預付或長期合約，因此非常適合僅短期啟動再銷毀\n的驗證用途，或是需求難以預測、先小規模啟動再分階段擴展的工作負載。\n\n另一方面，按使用量付費並不代表「永遠最便宜」。對於持續穩定運作的伺服器，或是長期\n下來使用量已經確定的工作負載而言，採用 Reserved Instances、Savings Plans 等長期承諾\n折扣，或是 Spot Instances 等利用閒置容量的方式，單價會比隨需的按使用量付費更低的\n情況不少。此外，若忘記停止資源而任其放置，即使沒有實際使用也會持續產生費用，因此\n搭配以 AWS Budgets 設定門檻、以 Cost Explorer 可視化實績的運用方式是必要的。\n\nCLF-C02 中，按使用量付費會以「僅針對所使用的部分支付（Pay only for what you use）」\n這類表述反覆考問。誤答的選項常為「無論使用量皆免費」「僅初期投資後即免費」「永遠\n定額」等斷言式描述，這些都與雲端的計費特性矛盾因此可被排除。也要注意混淆「免費額度\n（AWS Free Tier）」與「按使用量付費」的選項，免費額度是依各項服務設定上限與期間\n的限定性機制，這一點必須掌握。",
+    "officialDocs": [
+      {
+        "label": "AWS 的定價（AWS 官方／English）",
+        "url": "https://aws.amazon.com/pricing/"
+      },
+      {
+        "label": "AWS Overview 白皮書（AWS 官方／English）",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-overview/"
+      },
+      {
+        "label": "AWS 免費方案（AWS 官方／English）",
+        "url": "https://aws.amazon.com/free/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-003",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "關於 AWS 全球基礎架構中區域（Region）的描述，下列何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "包含一個以上可用區域（Availability Zone）的地理區域"
+      },
+      {
+        "choiceId": "B",
+        "text": "一台實體伺服器"
+      },
+      {
+        "choiceId": "C",
+        "text": "管理 IAM 使用者的單位"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 儲存貯體內的資料夾"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "區域是指像東京區域或北維吉尼亞區域這類的地理區域。每個區域內都有多個可用區域。",
+    "choiceExplanations": {
+      "A": "正確。區域是包含多個 AZ 的地理區域。",
+      "B": "錯誤。區域並非單一伺服器。",
+      "C": "錯誤。IAM 屬於全球性服務，與區域為不同的概念。",
+      "D": "錯誤。與 S3 類似資料夾的顯示無關。"
+    },
+    "relatedServices": [
+      "ec2",
+      "rds"
+    ],
+    "relatedTerms": [
+      "region",
+      "availability-zone"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "global-infrastructure",
+      "region",
+      "availability-zone"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "區域（Region）是 AWS 全球基礎架構的最高層級單位，指世界各地特定地理區域中所配置\n的獨立基礎設施群。東京（ap-northeast-1）、大阪（ap-northeast-3）、北維吉尼亞\n（us-east-1）、愛爾蘭（eu-west-1）等都是代表例。每個區域由多個可用區域（AZ）構成，\n區域之間在實體、電力、網路上彼此分離。實務上選擇區域的判斷軸，包含使用者地理上的\n距離（延遲）、與資料所在地相關的法規或內部政策、想使用服務的提供狀況，以及各區域\n的價差。\n\n選擇區域時，實務上特別需要注意的是各區域的服務提供狀況有所差異，以及部分服務屬於\n跨區域運作的全球性服務。IAM、Route 53、CloudFront、AWS Organizations 等被視為\n全球性服務，操作時不需指定區域，或必須在特定的固定區域進行（例如 CloudFront 用的\nACM 憑證需在 us-east-1）。此外，跨區域之間的資料傳輸會產生費用，因此在設計以備份\n為目的的跨區域複製時，需要估算傳輸量與頻率。\n\nCLF-C02 中，區域、AZ、邊緣站台之間的關係屬於高頻考點。區域被定義為「包含多個 AZ\n的地理區域」，AZ 為「由一個以上的資料中心所構成的獨立設施」，邊緣站台則為\n「CloudFront 等所使用的配送據點」，會被明確區分後出題。常見的誤答多為將概念層級\n完全不同的事物（例如「一台實體伺服器」「管理 IAM 使用者的單位」「S3 內的資料夾」）\n當作正解的選項。",
+    "officialDocs": [
+      {
+        "label": "AWS 全球基礎架構（AWS 官方／English）",
+        "url": "https://aws.amazon.com/about-aws/global-infrastructure/"
+      },
+      {
+        "label": "AWS 區域與可用區域（AWS 官方／English）",
+        "url": "https://aws.amazon.com/about-aws/global-infrastructure/regions_az/"
+      },
+      {
+        "label": "區域與可用區域（EC2 使用者指南／English）",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-004",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "使用多個可用區域（Availability Zone）的主要目的為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "降低單點故障並提高可用性"
+      },
+      {
+        "choiceId": "B",
+        "text": "增加 IAM 使用者數量"
+      },
+      {
+        "choiceId": "C",
+        "text": "讓所有 AWS 使用費皆免費"
+      },
+      {
+        "choiceId": "D",
+        "text": "停用 CloudWatch Logs"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "將資源配置於多個可用區域時，即使單一 AZ 發生故障，仍較容易維持服務不中斷。",
+    "choiceExplanations": {
+      "A": "正確。多 AZ 架構是提升可用性的基本做法。",
+      "B": "錯誤。與 IAM 使用者數量無關。",
+      "C": "錯誤。多 AZ 架構有時反而會增加成本。",
+      "D": "錯誤。與 CloudWatch Logs 的啟用或停用無關。"
+    },
+    "relatedServices": [
+      "ec2",
+      "rds",
+      "elb"
+    ],
+    "relatedTerms": [
+      "availability-zone",
+      "high-availability"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "high-availability",
+      "multi-az"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "使用多個可用區域（AZ）的 Multi-AZ 架構，是當單一實體資料中心發生故障（停電、網路\n設備故障、自然災害等）時，避免整體服務停止的基本設計。實務上，標準採用的架構包括\n以 Auto Scaling Group 將 EC2 配置於多個 AZ、於前端設置 ALB 分散流量的 Web 層架構；\n將 RDS 設為 Multi-AZ 配置、將備用 DB 放在另一個 AZ 的 DB 層架構；以及將檔案儲存\n放置於 EFS 這類於區域內完成備援的服務中的架構。\n\nMulti-AZ 架構也存在取捨。跨 AZ 之間的資料傳輸會產生費用，且 AZ 之間的延遲會高於\n同一 AZ 內的通訊。另外，由於 RDS 的 Multi-AZ 會額外啟動備用的 DB 執行個體，\n相較於單一 AZ 架構，計算成本大致會變成 2 倍左右。提升可用性的同時成本也會上升，\n因此需要依照工作負載所要求的 SLA（例如 99.9% / 99.99%），分階段判斷是單一 AZ 即可、\n還是需要 Multi-AZ，甚至擴大至多區域。\n\nCLF-C02 中，多 AZ 配置的目的會以「排除單點故障（SPOF）」「實現高可用性」的脈絡\n被考問。常見誤答的模式，是套用「降低成本」「增加 IAM 使用者數量」「無須監控」等\n與可用性無關的論點。此外，也要注意「Multi-AZ」與「多區域」的混淆，Multi-AZ 屬於\n同一區域內提升可用性的措施，多區域則被定位為地理性災害對策或延遲最佳化。",
+    "officialDocs": [
+      {
+        "label": "AWS 區域與可用區域（AWS 官方／English）",
+        "url": "https://aws.amazon.com/about-aws/global-infrastructure/regions_az/"
+      },
+      {
+        "label": "Amazon RDS Multi-AZ 配置（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "AWS Well-Architected Framework 可靠性支柱（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-005",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "關於雲端中擴展性（Scalability）的描述，下列何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "能依負載增減資源量的性質"
+      },
+      {
+        "choiceId": "B",
+        "text": "必定以紙本保存資料的性質"
+      },
+      {
+        "choiceId": "C",
+        "text": "所有通訊皆採人工核可的性質"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅以一台伺服器運作的性質"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "擴展性是指能依照負載或使用者數的增減，調整系統處理能力的性質。",
+    "choiceExplanations": {
+      "A": "正確。能配合負載變動增減資源。",
+      "B": "錯誤。與紙本保存無關。",
+      "C": "錯誤。並非通訊核可的描述。",
+      "D": "錯誤。單台架構容易成為單點故障，並非擴展性的描述。"
+    },
+    "relatedServices": [
+      "auto-scaling",
+      "ec2",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "scalability"
+    ],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "scalability",
+      "auto-scaling"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "擴展性是指能配合負載增減系統處理能力的性質。\n擴充方向大致分為 2 個軸：提升單台規格的垂直擴展（Scale Up／Scale Down），以及\n增減台數的水平擴展（Scale Out／Scale In）。AWS 將水平擴展自動化的機制相當完備，\nEC2 Auto Scaling Group 會以 CloudWatch 指標（CPU 使用率、請求次數等）為觸發點\n自動增減執行個體。Lambda 則因每一次請求皆會啟動執行環境，使用者幾乎不必意識\n擴展設定即可使用。\n\n容易與擴展性混淆的概念是彈性（Elasticity）。擴展性是指「能夠擴充的能力本身」這種\n靜態性質，而彈性則是「能依需求動態擴充或縮減，不抱持多餘資源」這種動態行為。\n兩者概念相近，但在考試中可能被區分後考問，特別是「需求下降時能減少資源」的脈絡，\n彈性會是更為適切的答案。即便在規格中標榜擴展性，若實作上仍將狀態保存在本機而成為\n有狀態的應用程式，便無法進行水平擴展，因此設計時需要考量將狀態無狀態化，或將工作\n階段儲存外置。\n\nCLF-C02 中，擴展性會以「能依負載增減資源量的性質」這種直接的定義被考問。常見誤答\n為「以紙本保存資料」「以人工核可通訊」「僅以一台伺服器運作」等與概念完全無關的\n選項，因此正解幾乎可唯一鎖定。另一方面，與 Well-Architected Framework 效能效率\n支柱結合的應用題中，會更深入考問擴展性與彈性的差異，以及 Auto Scaling 與無伺服器\n之間的搭配運用。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon EC2 Auto Scaling（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "AWS Auto Scaling（AWS 官方／English）",
+        "url": "https://aws.amazon.com/autoscaling/"
+      },
+      {
+        "label": "AWS Well-Architected Framework（AWS 官方／English）",
+        "url": "https://aws.amazon.com/architecture/well-architected/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-006",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "關於實現高可用性的設計，下列何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "將資源配置於多個可用區域"
+      },
+      {
+        "choiceId": "B",
+        "text": "將所有資料僅保存於一台 EC2 執行個體"
+      },
+      {
+        "choiceId": "C",
+        "text": "完全不進行備份"
+      },
+      {
+        "choiceId": "D",
+        "text": "停止所有監控服務"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "若要提升高可用性，採用多 AZ 或備援設計、降低單點故障的架構相當重要。",
+    "choiceExplanations": {
+      "A": "正確。分散至多個 AZ 後對故障的耐受度會提高。",
+      "B": "錯誤。集中於一台時，故障發生時容易導致停機。",
+      "C": "錯誤。備份對於復原而言相當重要。",
+      "D": "錯誤。停止監控會導致故障偵測延遲。"
+    },
+    "relatedServices": [
+      "elb",
+      "rds",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "high-availability",
+      "fault-tolerance"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "high-availability",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "高可用性（High Availability, HA）是指即使系統遭遇未預期的故障，仍能持續提供服務\n的性質。在 AWS 中實現高可用性的基本模式，是將資源分散至多個可用區域、以負載平衡\n器分配流量、納入備用節點的資料庫備援，並結合定期備份與監控。Web 層採用 ALB +\nAuto Scaling Group 並跨越 2 個以上 AZ；資料層則以 RDS 的 Multi-AZ 或 Aurora 的\n叢集架構，將寫入系統與讀取系統備援，這便是標準架構。\n\n與高可用性相關的概念包含容錯性（Fault Tolerance）、災難復原（Disaster Recovery）、\n備份與還原，三者目的與達成手段各有不同。高可用性以「即使單一元件發生故障，也不\n讓服務停止」為主要目標；而災難復原則以「發生區域規模的故障時，切換至其他區域」\n為主要目標，並以 RTO（目標復原時間）與 RPO（目標復原時點）等指標來設計。可用性\n越高，架構越複雜、成本也越高，因此在實務上的基本做法，是先明確商業需求所能容許\n的停機時間後再進行設計。\n\nCLF-C02 中，高可用性的設計以「分散至多個 AZ」作為正解的出題頻率較高。誤答的選項\n則排列「將所有資料集中於一台 EC2」「不取得備份」「停止監控」等直接損害可用性的\n極端選項。SAA-C03 等更高階的考試會深入考問 Multi-AZ 與 Read Replica 的搭配運用\n（前者為可用性、後者為讀取效能）、或是 Active-Passive 架構與 Active-Active 架構\n的差異等更為進階的設計判斷。",
+    "officialDocs": [
+      {
+        "label": "AWS Well-Architected Framework 可靠性支柱（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html"
+      },
+      {
+        "label": "Amazon RDS Multi-AZ 配置（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "AWS 區域與可用區域（AWS 官方／English）",
+        "url": "https://aws.amazon.com/about-aws/global-infrastructure/regions_az/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-007",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "下列何者屬於 AWS Well-Architected Framework 的支柱？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "成本最佳化"
+      },
+      {
+        "choiceId": "B",
+        "text": "紙本帳票管理"
+      },
+      {
+        "choiceId": "C",
+        "text": "人工伺服器調度"
+      },
+      {
+        "choiceId": "D",
+        "text": "固定費用保證"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Well-Architected Framework 包含營運卓越、安全、可靠性、效能效率、成本最佳化、永續性等支柱。",
+    "choiceExplanations": {
+      "A": "正確。成本最佳化是 Well-Architected Framework 的重要支柱。",
+      "B": "錯誤。紙本帳票管理並非支柱之一。",
+      "C": "錯誤。應重視自動化與雲端運用，而非人工調度。",
+      "D": "錯誤。AWS 多數服務皆採按使用量付費。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "well-architected-framework",
+      "cost-optimization"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "well-architected",
+      "cost-optimization"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Well-Architected Framework 是用於檢視雲端上工作負載設計的最佳實務集，目前由\n6 個支柱（營運卓越／安全／可靠性／效能效率／成本最佳化／永續性）所構成。在實務\n上，會作為新系統的設計檢視、既有系統重新架構的判斷依據，以及內部架構師審查時的\n共通語言。透過 AWS 免費提供的 Well-Architected Tool，可以針對各個工作負載依循\n各支柱的問題作答，將改善要點（High Risk Issue / Medium Risk Issue）整理為一覽表。\n\n各支柱的中心主題擔負著不同的角色。營運卓越聚焦於部署自動化與運維標準化；安全聚焦\n於 IAM 最低權限、加密、稽核紀錄；可靠性聚焦於 Multi-AZ 配置與備份；效能效率聚焦\n於選擇適切的執行個體類型與善用快取；成本最佳化聚焦於資源盤點與計費模式的最佳化；\n永續性則處理資源效率與降低環境負擔。支柱雖各自獨立，但彼此會相互影響，例如為了\n成本最佳化而過度縮小資源，可能會導致可靠性下降，因此需要意識到這類取捨。\n\nCLF-C02 中，會以「下列何者屬於 Well-Architected Framework 的支柱」「成本最佳化\n支柱所涵蓋的領域為何」等形式出題。常見誤答包括「紙本帳票管理」「人工伺服器調度」\n「固定費用保證」等明顯不適合作為雲端設計支柱的選項。SAA-C03 之後則會出現由特定\n情境出發、考問「應從哪個支柱的觀點進行改善」的應用題，因此必須精確對應 6 個支柱\n的名稱與各自的中心主題。",
+    "officialDocs": [
+      {
+        "label": "AWS Well-Architected Framework（AWS 官方／English）",
+        "url": "https://aws.amazon.com/architecture/well-architected/"
+      },
+      {
+        "label": "AWS Well-Architected Framework（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html"
+      },
+      {
+        "label": "成本最佳化支柱（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-008",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "與地端環境相比，透過使用 AWS 雲端較容易削減的項目為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "實體伺服器的購買、設置與維護作業"
+      },
+      {
+        "choiceId": "B",
+        "text": "應用程式設計的責任"
+      },
+      {
+        "choiceId": "C",
+        "text": "使用者帳號管理的責任"
+      },
+      {
+        "choiceId": "D",
+        "text": "資料分類的責任"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "使用 AWS 後，可將實體伺服器或資料中心設備的購買、設置、維護等工作交由 AWS 負責。",
+    "choiceExplanations": {
+      "A": "正確。可降低實體基礎設施的管理負擔。",
+      "B": "錯誤。應用程式設計屬於使用者方的責任。",
+      "C": "錯誤。使用者與權限管理屬於使用者方的責任。",
+      "D": "錯誤。資料的分類與處理由使用者方判斷。"
+    },
+    "relatedServices": [
+      "ec2",
+      "rds",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "cloud-computing",
+      "undifferentiated-heavy-lifting"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "cloud-benefits",
+      "managed-infrastructure"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "透過使用 AWS 雲端，與地端環境相比能大幅削減的項目，是實體伺服器的購買、資料中心\n的設備投資、硬體維護、網路設備的調度等「對應用程式差異化沒有直接貢獻的基礎設施\n作業」。AWS 將此領域稱為「Undifferentiated Heavy Lifting（無差異化的繁重工作）」，\n使用者可將這些交由 AWS 負責，將時間投入到原本應專注的應用程式設計、資料建模、\n使用者體驗設計上。EC2 的啟動、保存至 S3、建立 RDS 等操作，均可不經過實體機器調度\n流程而於數分鐘內完成。\n\n另一方面，可交由 AWS 負責的範圍僅止於「雲端本身（of the cloud）」，至於「雲端中\n的內容（in the cloud）」則仍會留在使用者方的責任範圍。具體而言，應用程式的設計與\n實作、資料的分類與加密方式的選擇、IAM 使用者與權限的管理、OS 修補套用（在 EC2\n的情況下）、網路設定（安全群組、VPC）等項目，即便 AWS 提供基礎設施，仍須由使用者\n方做決策並進行運維。這部分被整理為責任共擔模式，可作為切分可削減對象與不可削減\n對象的判斷依據。\n\nCLF-C02 中，會結合責任共擔模式考問「透過雲端化能削減的項目為何」。正解為\n「實體伺服器的購買、設置、維護作業」這類屬於基礎設施方的工作。誤答則會排列\n「應用程式設計的責任」「使用者帳號管理的責任」「資料分類的責任」等留在使用者方\n責任的項目。從資本支出（CapEx）轉換為營運支出（OpEx）、降低初期投資、縮短上市\n時間等關鍵字也會在同一脈絡下反覆出題。",
+    "officialDocs": [
+      {
+        "label": "AWS 雲端的經濟效益（AWS 官方／English）",
+        "url": "https://aws.amazon.com/economics/"
+      },
+      {
+        "label": "AWS Overview 白皮書（AWS 官方／English）",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-overview/"
+      },
+      {
+        "label": "責任共擔模式（AWS 官方／English）",
+        "url": "https://aws.amazon.com/compliance/shared-responsibility-model/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-009",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "在 AWS 責任共擔模式中，下列何者最適合作為使用者方的責任？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS 資料中心的實體安全"
+      },
+      {
+        "choiceId": "B",
+        "text": "IAM 使用者與權限的管理"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS 區域建物的管理"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS 全球網路設備的維護"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "IAM 使用者、IAM 角色、政策與存取權限的設定屬於使用者方的責任。",
+    "choiceExplanations": {
+      "A": "錯誤。實體安全屬於 AWS 方的責任。",
+      "B": "正確。IAM 權限管理屬於使用者方的責任。",
+      "C": "錯誤。資料中心或設施管理屬於 AWS 方的責任。",
+      "D": "錯誤。全球基礎設施的維護屬於 AWS 方的責任。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "shared-responsibility-model"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "security",
+      "shared-responsibility",
+      "iam"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS 的責任共擔模式（Shared Responsibility Model）是定義 AWS 與使用者之間如何分擔\n安全責任的基本框架。AWS 方負責「雲端本身的安全（Security OF the Cloud）」，責任\n範圍涵蓋資料中心的實體安全、硬體維護、Hypervisor 與受管服務基盤的運維等。另一方面，\n使用者方則負責「雲端中的安全（Security IN the Cloud）」，掌管 IAM 使用者與角色的\n管理、資料分類與加密、網路設定（安全群組、VPC 設定）、OS 修補套用（在 EC2 的情況\n下）、應用程式安全實作等。\n\n使用者方的責任範圍會依所使用的服務型態而有所變動。在 EC2 這類 IaaS 中，從 OS\n以上的所有層級皆會落於使用者責任；而 Lambda、DynamoDB 等受管服務則由 AWS 負責\nOS 與中介軟體的管理，因此使用者可專注於 IAM 權限、資料、應用程式邏輯的管理。\n實務上，IAM 政策的最低權限設計、S3 儲存貯體公開設定的確認、透過 Security Hub 或\nAWS Config 偵測設定漂移等項目，會作為實踐使用者責任的例行作業納入流程。\n\nCLF-C02 中，會以「下列哪一項屬於使用者方的責任」「下列哪一項屬於 AWS 方的責任」\n這類直接的形式高頻出題。使用者方責任的典型例子包括 IAM 使用者與權限的管理、資料\n的加密、應用程式安全實作。AWS 方責任的典型例子則為資料中心的實體安全、區域設施\n的管理、全球網路設備的維護。精確掌握「責任分界點」是邁向正解的捷徑。",
+    "officialDocs": [
+      {
+        "label": "責任共擔模式（AWS 官方／English）",
+        "url": "https://aws.amazon.com/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "IAM 安全最佳實務（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-010",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "關於 IAM 角色（IAM Role）的描述，下列何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "使用臨時認證資訊向 AWS 服務或使用者授與權限的機制"
+      },
+      {
+        "choiceId": "B",
+        "text": "壓縮 S3 儲存貯體內影像的服務"
+      },
+      {
+        "choiceId": "C",
+        "text": "顯示 EC2 執行個體 CPU 使用率的圖表"
+      },
+      {
+        "choiceId": "D",
+        "text": "Route 53 的網域註冊功能"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "IAM 角色是向 AWS 服務或使用者等，使用臨時認證資訊授與權限的機制。",
+    "choiceExplanations": {
+      "A": "正確。IAM 角色使用臨時認證資訊這一點相當重要。",
+      "B": "錯誤。並非影像壓縮服務。",
+      "C": "錯誤。指標的顯示屬於 CloudWatch 的領域。",
+      "D": "錯誤。網域註冊屬於 Route 53 的功能。"
+    },
+    "relatedServices": [
+      "iam",
+      "ec2",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "iam-role",
+      "temporary-credentials"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "role",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "IAM 角色是針對 AWS 資源或使用者，以發行臨時認證資訊的形式授與權限的機制。\nIAM 使用者擁有與「人」綁定的永久性憑證（密碼／存取金鑰），相對地，IAM 角色不與\n單一實體綁定，會於需要的時點透過 AssumeRole 取得臨時憑證（STS 所發行的存取金鑰\nID／密碼存取金鑰／工作階段權杖）。所發行的認證資訊設有有效期限，外洩時影響範圍\n會在時間軸上受到限制，這是與長期有效的存取金鑰相比最大的優點。\n\n實務上常見的運用模式有 3 種。第 1 種是 EC2 執行個體設定檔，於 EC2 上運作的應用\n程式存取 S3 或 DynamoDB 時，不將存取金鑰嵌入程式碼或環境變數，而是透過 IAM 角色\n取得權限的架構。第 2 種是 Lambda 執行角色，用於 Lambda 函式存取其他 AWS 服務時\n的認證。第 3 種是跨帳戶存取，透過允許其他 AWS 帳戶的 IAM 使用者或角色 AssumeRole，\n可在不共用長期憑證的情況下實現帳戶間的整合。Identity Center（舊 SSO）與 Cognito\n在內部也利用 IAM 角色的臨時憑證發行機制。\n\nCLF-C02 中，會以「關於 IAM 角色的描述，下列何者最為適切」「不使用存取金鑰由 EC2\n存取 S3 的方法為何」等形式被考問。常見誤答模式為將「影像壓縮服務」「指標顯示」\n「網域註冊功能」等與 IAM 不同領域的服務當作正解。SAA-C03 之後則會更深入地考問\nIAM 使用者／群組／角色／政策的搭配運用、信任政策與存取許可政策的差異、AssumeRole\n的授權流程等。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management（AWS 官方／English）",
+        "url": "https://aws.amazon.com/iam/"
+      },
+      {
+        "label": "IAM 角色（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html"
+      },
+      {
+        "label": "使用 IAM 角色（AWS 官方文件／English）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_manage-assume.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-011",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "對於 AWS 帳戶的 root 使用者，最適切的建議事項為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "不用於日常作業，並啟用 MFA"
+      },
+      {
+        "choiceId": "B",
+        "text": "建立存取金鑰並儲存於 GitHub"
+      },
+      {
+        "choiceId": "C",
+        "text": "由所有開發者共用密碼"
+      },
+      {
+        "choiceId": "D",
+        "text": "禁止任何人檢視帳單資訊"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "root 使用者擁有強大權限，因此建議避免日常使用、啟用 MFA，並且不建立存取金鑰。",
+    "choiceExplanations": {
+      "A": "正確。應保護 root 使用者並避免日常使用。",
+      "B": "錯誤。將存取金鑰儲存於 GitHub 相當危險。",
+      "C": "錯誤。應避免共用密碼。",
+      "D": "錯誤。檢視帳單資訊對於防止計費事故而言相當重要。"
+    },
+    "practicalNote": "AWS 帳戶的 root 使用者，是對該帳戶持有所有操作權限（包含帳戶解約、付款資訊變更、Support 方案變更等）的最高層特權帳戶。由於權限過於強大，並不建議於日常運用中使用。AWS 官方的最佳實務建議「root 使用者僅於有限的作業（例如首次註冊後建立 IAM 使用者、變更 Support 方案、特定的帳單設定）使用，其餘日常作業則使用 IAM 使用者或透過 IAM Identity Center 核發的使用者」。啟用 MFA（多因素認證）、設定強密碼、不建立存取金鑰（若已建立則刪除）等保護措施也屬於必要的位階。\n\n實務上，標準的做法是在初期設定完成後立即建立管理者用的 IAM 使用者（或 IAM Identity Center 的使用者），之後的所有作業均在該 IAM 使用者端進行。使用 AWS Organizations 時，成員帳戶的 root 使用者即使透過 Service Control Policy（SCP）也無法完全限制，因此需要對每個帳戶的 root 使用者啟用 MFA，並以保險箱或密碼管理工具嚴密管理認證資訊。曾經實際發生過 root 使用者的存取金鑰誤公開於 GitHub 等公開儲存庫，導致第三方接管帳戶並啟動高額資源的事故，因此「不建立存取金鑰」本身就是最確實的防禦措施。\n\nCLF-C02 中經常以「對 root 使用者的建議事項中，何者正確」的形式出題。正解為「不用於日常作業，並啟用 MFA」這類強化保護並限制使用的選項。誤答的典型則是「建立存取金鑰並儲存於 GitHub」「由所有開發者共用密碼」「禁止任何人檢視帳單資訊」等，明顯與安全最佳實務相互矛盾的模式。",
+    "officialDocs": [
+      {
+        "label": "AWS 帳戶的 root 使用者（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html"
+      },
+      {
+        "label": "僅能由 root 使用者執行的作業（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html#root-user-tasks"
+      },
+      {
+        "label": "啟用 root 使用者的 MFA（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/enable-virt-mfa-for-root.html"
+      }
+    ],
+    "relatedServices": [
+      "iam",
+      "aws-budgets"
+    ],
+    "relatedTerms": [
+      "root-user",
+      "mfa"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "root-user",
+      "mfa",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01"
+  },
+  {
+    "questionId": "clf-012",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "用於加密儲存資料的 AWS 服務，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Key Management Service"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon Route 53"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS KMS 可建立並管理加密金鑰，能用於 S3、DynamoDB 等多項 AWS 服務的加密用途。",
+    "choiceExplanations": {
+      "A": "正確。KMS 是金鑰管理服務。",
+      "B": "錯誤。Route 53 是 DNS 服務。",
+      "C": "錯誤。CloudFront 是 CDN。",
+      "D": "錯誤。AWS Budgets 是成本監控服務。"
+    },
+    "practicalNote": "在 AWS 中，承擔儲存資料（data at rest）加密核心職責的服務為 AWS Key Management Service（KMS）。KMS 是用於建立、保管、輪替加密金鑰（客戶主金鑰／KMS 金鑰）的受管服務，能從 S3、EBS、RDS、DynamoDB、Lambda、CloudWatch Logs、Secrets Manager、SNS、SQS 等多項 AWS 服務指定為「於儲存端進行加密的金鑰」。金鑰本身受到通過 FIPS 140-2 認證的硬體安全模組（HSM）保護，採用平文金鑰不會離開 KMS 的設計。\n\n實務上的運用模式大致分為兩類。其一是使用 AWS 受管金鑰（aws/s3、aws/ebs 等由 AWS 端為各項服務建立的金鑰），以預設方式啟用加密。若無特殊需求，原則上先以此方式對儲存資料進行加密。另一類則是自行建立客戶受管金鑰（CMK）來使用，當需要更細緻的統制時採用此方式，例如金鑰輪替政策、可使用金鑰的 IAM 主體權限控制，以及透過金鑰政策進行帳戶界線控制等。容易混淆的服務有 CloudFront（CDN）、Route 53（DNS）、AWS Budgets（成本監控），這些服務皆非加密的主要負責對象，先整理清楚便能更容易縮減選項。\n\nCLF-C02 中，會以「用於加密儲存資料的服務為何」「用於 S3 或 DynamoDB 儲存資料加密的金鑰管理服務是什麼」的形式出題。誤答經常以 CDN／DNS／成本監控服務等對位的模式出現。SAA-C03 以上則會深入考問 SSE-S3／SSE-KMS／SSE-C／用戶端加密的區分使用、金鑰政策與 IAM 政策的組合、Envelope Encryption 的機制等。",
+    "officialDocs": [
+      {
+        "label": "AWS Key Management Service（AWS 官方）",
+        "url": "https://aws.amazon.com/kms/"
+      },
+      {
+        "label": "什麼是 AWS Key Management Service（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "靜態資料與傳輸中資料的加密（AWS 官方白皮書 / English）",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/logical-separation/encrypting-data-at-rest-and--in-transit.html"
+      }
+    ],
+    "relatedServices": [
+      "kms",
+      "s3",
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "encryption",
+      "key-management"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "kms",
+      "encryption",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-013",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWS CloudTrail 的主要用途，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "記錄 AWS 帳戶內的 API 操作歷史"
+      },
+      {
+        "choiceId": "B",
+        "text": "配送靜態網站"
+      },
+      {
+        "choiceId": "C",
+        "text": "提供 NoSQL 資料庫"
+      },
+      {
+        "choiceId": "D",
+        "text": "提供 DNS 名稱解析"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "CloudTrail 會記錄 AWS 帳戶內所執行的 API 操作與使用者活動，可用於稽核用途。",
+    "choiceExplanations": {
+      "A": "正確。CloudTrail 用於記錄操作歷史並進行稽核。",
+      "B": "錯誤。靜態網站配送應使用 S3 或 CloudFront。",
+      "C": "錯誤。NoSQL 資料庫為 DynamoDB。",
+      "D": "錯誤。DNS 為 Route 53。"
+    },
+    "practicalNote": "AWS CloudTrail 是一項記錄 AWS 帳戶內發生的 API 呼叫與管理事件，讓「何人在何時對哪個資源執行了何種操作」可被追蹤的服務。透過 Management Console、AWS CLI、AWS SDK、AWS 服務間的自動呼叫等，所有經由 API 的操作皆為記錄對象。各事件均包含操作來源的 IAM 主體（使用者名稱、角色名稱）、來源 IP 位址、請求參數、回應，於安全事件調查、合規稽核、運用變更的原因追蹤上扮演核心角色。\n\nCloudTrail 大致有兩種使用形態。其一是「事件歷史」，無須額外設定即可從主控台搜尋過去 90 天的管理事件,於緊急時的初步調查中使用。另一種是「追蹤（Trail）」,以組織或帳戶為單位，將日誌持續寫入 S3 儲存貯體進行長期保存的設定,於合規要求需長期保管的正式環境中屬於必要。資料事件（S3 物件層級的操作、Lambda 函式呼叫等）預設不會記錄,需另行啟用,這點也是實務上的重要要點。\n\nCLF-C02 中,會以「記錄 AWS 帳戶內 API 操作歷史的服務為何」「取得稽核日誌的服務為何」的形式出題。誤答經常以 S3／CloudFront（靜態配送）、DynamoDB（NoSQL）、Route 53（DNS）等用途相異的服務對位出現。容易與 CloudWatch（指標與應用程式日誌監控）／AWS Config（資源設定狀態的評估）混淆,但 CloudTrail 為「API 呼叫的記錄」,CloudWatch 為「指標與應用程式日誌」,Config 為「資源設定的狀態與變更歷史」,守備範圍各自不同,三者的區分使用是常考要點。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail（AWS 官方）",
+        "url": "https://aws.amazon.com/cloudtrail/"
+      },
+      {
+        "label": "AWS CloudTrail 使用者指南（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      }
+    ],
+    "relatedServices": [
+      "cloudtrail",
+      "iam",
+      "cloudwatch"
+    ],
+    "relatedTerms": [
+      "audit",
+      "api-history"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudtrail",
+      "audit",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-014",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "啟用 MFA 的主要目的為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "不單靠密碼，以強化認證"
+      },
+      {
+        "choiceId": "B",
+        "text": "增加 S3 的儲存容量"
+      },
+      {
+        "choiceId": "C",
+        "text": "提升 EC2 的 CPU 效能"
+      },
+      {
+        "choiceId": "D",
+        "text": "刪除 CloudFront 的快取"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "MFA 除了密碼之外，還會使用認證應用程式等額外要素，能降低帳戶遭接管的風險。",
+    "choiceExplanations": {
+      "A": "正確。MFA 可強化認證。",
+      "B": "錯誤。與 S3 容量無關。",
+      "C": "錯誤。與 EC2 效能無關。",
+      "D": "錯誤。與 CloudFront 快取刪除無關。"
+    },
+    "practicalNote": "MFA（Multi-Factor Authentication, 多因素認證）是一種於登入時，除了密碼（知識要素）之外，還要求認證應用程式所產生的一次性代碼或硬體安全金鑰（持有要素）等多種不同類型要素的機制。在 AWS 中可對 IAM 使用者與 root 使用者兩者皆設定 MFA，一旦啟用,僅憑密碼外洩便無法接管帳戶。即使在認證資訊誤公開於 GitHub 等公開儲存庫的情況,或因網路釣魚遭竊密碼的情況下,只要攻擊者手上沒有第二項要素便能阻擋登入,此即為啟用 MFA 的最大目的。\n\n實務上使用的 MFA 裝置包括虛擬 MFA 裝置（Authy／Google Authenticator 等智慧型手機應用程式）、U2F／FIDO2 安全金鑰（YubiKey 等實體裝置）、硬體 TOTP 裝置。AWS 官方的最佳實務建議,對特權程度較高的帳戶（root 使用者、管理者 IAM 使用者、持有正式部署權限的 CI/CD 角色）務必啟用 MFA。此外,也經常採用以 IAM 政策的條件鍵（`aws:MultiFactorAuthPresent`）判定 MFA 狀態,僅允許通過 MFA 的工作階段執行機密操作的設計。\n\nCLF-C02 中,會以「啟用 MFA 的主要目的為何」「為了降低帳戶遭接管的風險可採取何種措施」的形式出題。正解為「不單靠密碼,強化認證」這類選項,誤答則經常以「增加 S3 容量」「提升 EC2 效能」「刪除 CloudFront 快取」等與強化認證無關的服務操作對位出現。",
+    "officialDocs": [
+      {
+        "label": "在 AWS Identity and Access Management 中使用 MFA（AWS 官方）",
+        "url": "https://aws.amazon.com/iam/features/mfa/"
+      },
+      {
+        "label": "在 AWS 中使用多因素認證（MFA）（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html"
+      },
+      {
+        "label": "IAM 安全最佳實務（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "mfa",
+      "authentication"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "mfa",
+      "authentication",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-015",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWS Artifact 的說明，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "可存取 AWS 合規報告與合約文件的服務"
+      },
+      {
+        "choiceId": "B",
+        "text": "建立 EC2 執行個體備份的服務"
+      },
+      {
+        "choiceId": "C",
+        "text": "排程執行 Lambda 函式的服務"
+      },
+      {
+        "choiceId": "D",
+        "text": "選擇 CloudFront 邊緣節點的服務"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "在 AWS Artifact 上，可存取與合規相關的報告與合約文件。",
+    "choiceExplanations": {
+      "A": "正確。AWS Artifact 用於確認合規相關資料。",
+      "B": "錯誤。EC2 備份應使用 AMI 或 EBS 快照等。",
+      "C": "錯誤。排程執行應使用 EventBridge。",
+      "D": "錯誤。並非用於個別選擇 CloudFront 邊緣節點的服務。"
+    },
+    "practicalNote": "AWS Artifact 是用於取得 AWS 合規相關文件的自助服務入口網站。內容包含 SOC 1／SOC 2／SOC 3 報告、ISO 認證相關文件、PCI DSS 的 AOC（Attestation of Compliance）、HIPAA 與 FedRAMP 相關文件、各國與地區特定的合規文件,以及與 AWS 之間的合約文件（BAA：商業夥伴合約、NDA 等）。這些文件可作為對第三方說明 AWS 安全與合規對應狀況時的第一手資料,可直接運用於內部稽核、外部稽核、提交給客戶的資料。\n\n實務上的使用情境包含：接受 SOC 2 稽核時,取得 SOC 2 報告作為 AWS 所運用的基礎設施部分的統制證據；建構對應 HIPAA 的醫療系統時,與 AWS 簽署 BAA；在 PCI DSS 的持卡人資料保存環境中,以 AOC 證明 AWS 的責任範圍等。AWS Artifact 本身的使用費用為免費,但文件係依 NDA 條件配發,因此下載時需同意合約條件。當組織使用 AWS Organizations 時,亦可從管理帳戶委派,於各成員帳戶分別取得。\n\nCLF-C02 中,會以「存取 AWS 合規報告的服務為何」「可取得稽核資料的服務為何」的形式出題。誤答經常以「EC2 備份服務」「Lambda 排程器」「CloudFront 邊緣選擇」等與合規資料配發相異領域的服務功能對位出現。雖然與 AWS Audit Manager（稽核證跡收集自動化）名稱相近,但 Artifact 為「取得 AWS 本身的合規資料」,Audit Manager 為「收集使用者環境的稽核證跡」,二者角色不同,須先行整理清楚。",
+    "officialDocs": [
+      {
+        "label": "AWS Artifact（AWS 官方）",
+        "url": "https://aws.amazon.com/artifact/"
+      },
+      {
+        "label": "什麼是 AWS Artifact（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/artifact/latest/ug/what-is-aws-artifact.html"
+      },
+      {
+        "label": "AWS 合規計畫（AWS 官方）",
+        "url": "https://aws.amazon.com/compliance/programs/"
+      }
+    ],
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "compliance",
+      "artifact"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "compliance",
+      "artifact",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-016",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "最小權限原則的說明，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "僅授予作業所需的權限"
+      },
+      {
+        "choiceId": "B",
+        "text": "對所有使用者授予 AdministratorAccess"
+      },
+      {
+        "choiceId": "C",
+        "text": "不進行權限管理"
+      },
+      {
+        "choiceId": "D",
+        "text": "由全員共用存取金鑰"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "在最小權限原則中，對使用者或服務僅授予業務所需範圍的權限。",
+    "choiceExplanations": {
+      "A": "正確。應將權限收斂至必要的操作與資源後再授予。",
+      "B": "錯誤。AdministratorAccess 的常態使用相當危險。",
+      "C": "錯誤。權限管理是安全的基礎。",
+      "D": "錯誤。應避免共用存取金鑰。"
+    },
+    "practicalNote": "最小權限原則（Principle of Least Privilege）是一項安全設計的基本原則,對使用者、角色、服務,僅授予「業務上所需操作與資源所對應的權限,除此之外不予授予」。在 AWS 中可透過 IAM 政策,從 Action（操作）／Resource（對象資源）／Condition（條件）三軸對權限進行細緻收斂。例如可以以「僅允許特定 S3 儲存貯體下物件的 `GetObject`,不允許寫入或刪除」「僅允許在特定區域啟動 EC2」「僅允許通過 MFA 的工作階段執行機密操作」等粒度進行控制。\n\n實務上運用此原則的標準做法,是採取階段性縮減：先以較寬的權限（AWS 受管政策或接近 `*:*` 的權限）使應用程式運作,以 CloudTrail 彙整實際呼叫的 API,再以該結果為基礎,透過 IAM Access Analyzer 的政策產生功能收斂至必要最小限度的政策。反之,若放任將 `AdministratorAccess` 授予全體使用者,內部不正、誤操作、認證資訊外洩時的影響範圍將無限制地擴大。共用存取金鑰則屬於更前一階段的禁止事項,應依每個人區分 IAM 使用者,並儘可能透過 IAM Identity Center 使用暫時性的認證資訊。\n\nCLF-C02 中,本內容會以「最小權限原則的說明中,何者最為適切」的直接定義題形式出題。正解為「僅授予業務所需的權限」這類選項,誤答則經常以「對全員授予 AdministratorAccess」「不進行權限管理」「由全員共用存取金鑰」等與原則完全相反的模式並列。SAA-C03 以上則會深入考問 IAM 政策的條件鍵、資源型政策與身分型政策的組合、Permissions Boundaries 或 SCP 的上限管理等。",
+    "officialDocs": [
+      {
+        "label": "IAM 安全最佳實務（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      },
+      {
+        "label": "透過 IAM 政策進行存取控制（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_controlling.html"
+      },
+      {
+        "label": "IAM 的政策與權限（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
+      }
+    ],
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "least-privilege",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-017",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "Amazon S3 的主要用途，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "以物件形式儲存檔案"
+      },
+      {
+        "choiceId": "B",
+        "text": "執行虛擬伺服器"
+      },
+      {
+        "choiceId": "C",
+        "text": "提供 DNS 名稱解析"
+      },
+      {
+        "choiceId": "D",
+        "text": "管理關聯式資料庫"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon S3 是物件儲存服務，可用於儲存圖片、HTML、日誌、備份等檔案。",
+    "choiceExplanations": {
+      "A": "正確。S3 是物件儲存。",
+      "B": "錯誤。虛擬伺服器為 EC2。",
+      "C": "錯誤。DNS 為 Route 53。",
+      "D": "錯誤。關聯式資料庫為 RDS。"
+    },
+    "practicalNote": "Amazon S3（Simple Storage Service）是一項以「物件」為單位儲存檔案的完全受管物件儲存服務。將物件以鍵名配置於儲存貯體（儲存目的地的邏輯容器）內,並透過 HTTP/HTTPS 進行讀寫。儲存容量無上限,每個物件最大可儲存 5 TB。耐久性以年度物件耐久性 11 個 9（99.999999999%）為設計目標,會自動複寫至多個實體據點。\n\n實務上代表性的用途包括：靜態網站資產（圖片、CSS、JavaScript、HTML）配送、資料湖（CSV／JSON／Parquet 等分析用原始資料保管）、備份與封存（EBS 快照或 RDS 快照的保管目的地內部亦使用 S3）、日誌彙整（CloudTrail／ALB／VPC Flow Logs 的儲存目的地）、CloudFront 的來源、軟體配送用套件的放置場所等。可依存取頻率選擇儲存類別（Standard／Standard-IA／Intelligent-Tiering／Glacier 系列),透過生命週期政策自動移轉至低成本類別以進行成本最佳化。由於 S3 不是區塊儲存（EBS／掛載至 EC2 而由 OS 看見的「磁碟」),也不是檔案儲存（EFS／NFS 掛載),須理解其用途各自不同。\n\nCLF-C02 中,會以「S3 的主要用途中何者最為適切」「適合儲存圖片或備份的服務為何」的形式出題。誤答經常並列 EC2（虛擬伺服器）／Route 53（DNS）／RDS（關聯式 DB）等非儲存用途的服務。SAA-C03 以上則會深入考問儲存類別的選定、版本控制、複寫、預先簽章 URL、儲存貯體政策與 IAM 政策的組合、加密方式（SSE-S3／SSE-KMS／SSE-C）的區分使用等。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3（AWS 官方）",
+        "url": "https://aws.amazon.com/s3/"
+      },
+      {
+        "label": "什麼是 Amazon S3（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "使用 Amazon S3 儲存類別（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "cloudfront"
+    ],
+    "relatedTerms": [
+      "object-storage"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "storage",
+      "object-storage"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-018",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "Amazon EC2 的說明，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "可於 AWS 上啟動虛擬伺服器的服務"
+      },
+      {
+        "choiceId": "B",
+        "text": "物件儲存服務"
+      },
+      {
+        "choiceId": "C",
+        "text": "DNS 服務"
+      },
+      {
+        "choiceId": "D",
+        "text": "成本預算通知服務"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon EC2 是可於 AWS 上啟動虛擬伺服器，並設定 OS 與中介軟體後使用的服務。",
+    "choiceExplanations": {
+      "A": "正確。EC2 是虛擬伺服器服務。",
+      "B": "錯誤。物件儲存為 S3。",
+      "C": "錯誤。DNS 為 Route 53。",
+      "D": "錯誤。預算通知為 AWS Budgets。"
+    },
+    "practicalNote": "Amazon EC2（Elastic Compute Cloud）是 AWS 所提供的 IaaS（Infrastructure as a Service）型虛擬伺服器服務。使用者需自行負責安裝、設定、管理 OS、中介軟體、執行階段、應用程式的所有層次,而硬體與虛擬化基礎（Hypervisor）的管理則由 AWS 承擔。依 AWS 的責任分擔模式,「雲端內的安全」（OS 以上）歸類於使用者端。\n\nEC2 的主要使用方式包括：將既有的內部部署伺服器直接遷移至雲端的「Lift and Shift」、建構 Web 伺服器／AP 伺服器／DB 伺服器、批次處理伺服器、機器學習模型訓練等。計費以執行個體的啟動時間為單位（秒單位）發生,停止中不會產生 EC2 執行個體費用,但已附加的 EBS 磁碟區（儲存）即使在停止中也會持續計費。\n\n購買選項備有多種,依使用狀況進行選擇。On-Demand 為依小時單位按需使用的基本形態。Reserved Instances（RI）以 1 年或 3 年的承諾換取大幅折扣。Savings Plans 為一種整合型折扣方式,可將 RI 同類的承諾折扣以不限執行個體類型的方式彈性套用。Spot Instances 為以市場價格使用 AWS 多餘容量的形態,最高可達 90% 折扣,但有因 AWS 因素中斷的風險。Dedicated Host 為獨占實體伺服器的形式,用於對應授權自帶（BYOL）。\n\nCLF-C02 中,會以「EC2 是何種服務」「虛擬伺服器為何者」的形式出題。誤答經常並列 S3（物件儲存）／Route 53（DNS）／Budgets（預算管理）。SAA-C03 以上則會深入考問與 Auto Scaling 群組、ELB 的組合、AMI 的機制、Security Group 與 Network ACL 的差異、購買選項的區分使用等。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2（AWS 官方）",
+        "url": "https://aws.amazon.com/ec2/"
+      },
+      {
+        "label": "什麼是 Amazon EC2（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "label": "Amazon EC2 執行個體類型（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "ebs",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "virtual-server",
+      "compute"
+    ],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "ec2",
+      "compute",
+      "virtual-server"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-019",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "AWS Lambda 的特徵，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "無須管理伺服器即可執行程式碼"
+      },
+      {
+        "choiceId": "B",
+        "text": "購買並安裝實體伺服器"
+      },
+      {
+        "choiceId": "C",
+        "text": "僅管理 DNS 紀錄"
+      },
+      {
+        "choiceId": "D",
+        "text": "郵寄使用者的帳單"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Lambda 是無伺服器架構運算服務，無須管理伺服器即可依事件執行程式碼。",
+    "choiceExplanations": {
+      "A": "正確。Lambda 可在無伺服器架構下執行程式碼。",
+      "B": "錯誤。無須購買實體伺服器。",
+      "C": "錯誤。DNS 管理為 Route 53。",
+      "D": "錯誤。並非郵寄帳單的服務。"
+    },
+    "practicalNote": "AWS Lambda 是完全無須調度與管理伺服器即可執行程式碼的無伺服器架構運算服務。以函式為單位部署,並以事件（傳送至 API Gateway 的請求、檔案上傳至 S3、訊息到達 SQS、CloudWatch Events 的排程等）作為觸發條件自動啟動。由於依實際使用的毫秒數計費（每次請求約 0.0000002 USD),於請求數較少的小規模工作負載或事件驅動處理,將遠較 EC2 便宜。\n\n主要特徵包括最大執行時間限制為 15 分鐘。並不適合長時間處理（批次或影片轉換等),此類情況的選項則為 EC2 或 ECS/Fargate。所支援的執行階段官方提供 Node.js／Python／Java／Go／Ruby／.NET 系列,使用自訂執行階段亦能執行任意語言。同時執行數的預設上限以區域為單位,對於急遽的流量增加可能產生因冷啟動而起的延遲。\n\nCLF-C02 中,會以「無須管理伺服器即可執行程式碼者為何」「Lambda 的特徵中何者正確」的形式出題。掌握無伺服器架構此一概念本身的理解（無須管理基礎設施、事件驅動、毫秒計費、有執行時間上限）相當重要。誤答經常並列 EC2（需管理伺服器）／ECS（需管理容器）。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda（AWS 官方）",
+        "url": "https://aws.amazon.com/lambda/"
+      },
+      {
+        "label": "什麼是 AWS Lambda（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "api-gateway",
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "serverless",
+      "event-driven"
+    ],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "lambda",
+      "serverless",
+      "compute"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-020",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "Amazon RDS 的說明，何者最為適切？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "可以受管方式使用關聯式資料庫的服務"
+      },
+      {
+        "choiceId": "B",
+        "text": "NoSQL 鍵值資料庫服務"
+      },
+      {
+        "choiceId": "C",
+        "text": "內容傳遞網路"
+      },
+      {
+        "choiceId": "D",
+        "text": "訊息佇列服務"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon RDS 是可以受管方式使用 MySQL、PostgreSQL、MariaDB、Oracle、SQL Server 等關聯式資料庫的服務。",
+    "choiceExplanations": {
+      "A": "正確。RDS 是關聯式資料庫的受管服務。",
+      "B": "錯誤。NoSQL 鍵值用途為 DynamoDB。",
+      "C": "錯誤。CDN 為 CloudFront。",
+      "D": "錯誤。訊息佇列為 SQS。"
+    },
+    "practicalNote": "Amazon RDS（Relational Database Service）是以受管方式提供關聯式資料庫（RDB）的建構、運用、規模調整的服務。OS 的修補程式套用、資料庫引擎升級、自動快照（備份）、容錯移轉（Multi-AZ 配置時的自動切換）皆由 AWS 承擔。使用者可專注於資料模型設計、SQL 調校、應用程式開發。\n\n所支援的引擎共有 Amazon Aurora（MySQL／PostgreSQL 相容）／MySQL／PostgreSQL／MariaDB／Oracle／Microsoft SQL Server 6 系列。Aurora 為 AWS 獨家的雲端原生引擎,號稱較一般 MySQL 具更高輸送量與更低延遲。與在 EC2 上自行安裝 RDB 的方式相比,RDS 可大幅節省運用心力,但相對的約束為無法進行 OS 層級的客製化。\n\n啟用 Multi-AZ 配置後,會在另一個可用區域建立待機副本,於主要的故障時自動容錯移轉。建立 Read Replica 則可實現讀取的橫向擴展。\n\nCLF-C02 中,會以「關聯式資料庫的受管服務為何」的直球題型登場。誤答經常並列 NoSQL 的 DynamoDB、CDN 的 CloudFront、訊息佇列的 SQS。只要掌握「RDS = 關聯式 DB 的受管」此一主軸,便能確實答對。SAA-C03 以上則會深入探討 Multi-AZ 與 Read Replica 的差異、Aurora 的特性、參數群組、加密、快照的共用與複製等。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS（AWS 官方）",
+        "url": "https://aws.amazon.com/rds/"
+      },
+      {
+        "label": "什麼是 Amazon RDS（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS DB 執行個體（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.DBInstance.html"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "relational-database",
+      "managed-service"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "rds",
+      "database",
+      "relational"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-021",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "下列何者最能說明 Amazon DynamoDB？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "全受管的 NoSQL 資料庫服務"
+      },
+      {
+        "choiceId": "B",
+        "text": "用來建立虛擬網路的服務"
+      },
+      {
+        "choiceId": "C",
+        "text": "用來啟動虛擬伺服器的服務"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅用於傳遞靜態檔案的 CDN"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon DynamoDB 是全受管的 NoSQL 資料庫服務，適合用於儲存鍵值或文件型資料。",
+    "choiceExplanations": {
+      "A": "正解。DynamoDB 為全受管的 NoSQL 資料庫。",
+      "B": "錯誤。建立虛擬網路屬於 VPC。",
+      "C": "錯誤。啟動虛擬伺服器屬於 EC2。",
+      "D": "錯誤。CDN 屬於 CloudFront。"
+    },
+    "relatedServices": [
+      "dynamodb",
+      "lambda",
+      "api-gateway"
+    ],
+    "relatedTerms": [
+      "nosql",
+      "key-value"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "database",
+      "nosql"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon DynamoDB 是 AWS 提供的全受管 NoSQL 資料庫服務。在 CLF-C02 的考試脈絡下，重點是把它理解為「該選用關聯式資料庫，還是 NoSQL」這個二選一判斷軸的一端。\n\n考試會考的 DynamoDB 特性可以收斂成 4 點：（1）屬於 NoSQL（無 schema，非關聯式）；（2）全受管（無需管理伺服器、自動擴展）；（3）高吞吐量與個位數毫秒延遲；（4）常與 Lambda 與 API Gateway 搭配，作為無伺服器架構的後端。\n\n判斷軸上，若是既有關聯式資料庫 schema 而且需要 JOIN 的系統，選 RDS；若是存取模式單純、需要大量讀寫，或本身為 NoSQL 取向的系統，選 DynamoDB。在 CLF 中，遇到「全受管的 NoSQL 鍵值型服務是哪一個」「與 Lambda 搭配於無伺服器架構中所使用的資料庫是哪一個」的題目時，可選 DynamoDB 為正解。錯誤選項常排列 RDS（關聯式資料庫）、VPC（虛擬網路）、EC2（虛擬伺服器）、CloudFront（CDN）。",
+    "officialDocs": [
+      {
+        "label": "Amazon DynamoDB（AWS 官方）",
+        "url": "https://aws.amazon.com/dynamodb/"
+      },
+      {
+        "label": "Amazon DynamoDB 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-022",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "下列何者最能說明 Amazon CloudFront 的主要用途？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "從靠近使用者的邊緣節點傳遞內容"
+      },
+      {
+        "choiceId": "B",
+        "text": "建立 IAM 使用者"
+      },
+      {
+        "choiceId": "C",
+        "text": "執行 RDS 的 SQL 查詢"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅執行 AWS 帳單金額的預算通知"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "CloudFront 是 CDN 服務，透過邊緣節點高速傳遞 Web 內容。",
+    "choiceExplanations": {
+      "A": "正解。CloudFront 從邊緣節點傳遞內容。",
+      "B": "錯誤。IAM 使用者管理屬於 IAM。",
+      "C": "錯誤。SQL 執行由 RDS 等資料庫負責。",
+      "D": "錯誤。預算通知屬於 AWS Budgets。"
+    },
+    "relatedServices": [
+      "cloudfront",
+      "s3",
+      "acm"
+    ],
+    "relatedTerms": [
+      "cdn",
+      "edge-location"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "cloudfront",
+      "cdn",
+      "edge"
+    ],
+    "practicalNote": "Amazon CloudFront 是 AWS 在全球各邊緣節點營運的 CDN（Content Delivery Network）服務。可將 S3 儲存貯體、ALB、API Gateway、自建來源伺服器等註冊為「來源」，由邊緣節點向來源取得內容後快取，再從靠近使用者的位置傳遞。如此可縮短地理距離造成的延遲，減少對來源的直接流量，降低來源端負載與資料傳輸成本。\n\n考試脈絡上，常以「從邊緣節點高速傳遞內容的服務是哪一個」「CDN 服務是哪一個」這類關鍵字考 CloudFront。常見錯誤選項包含 IAM（使用者 / 權限管理）、RDS（關聯式資料庫的 SQL 執行）、AWS Budgets（預算超支警示）等與傳遞無關的服務，屬於「是否誤判服務角色」的典型題型。需要掌握的 CLF-C02 重點是：CloudFront 本身並非「儲存」內容的服務，而是快取並傳遞的服務；用於 HTTPS 傳遞；常與 ACM 憑證搭配使用。\n\nSAA-C03 以上會進一步考：以 OAC（Origin Access Control）保護 S3 來源以維持儲存貯體不公開的設計；快取 TTL 與 Invalidation 的營運；CloudFront 使用 ACM 憑證時的區域限制（必須在 us-east-1）；與 WAF 搭配的攻擊緩解；以及透過簽名 URL 與簽名 Cookie 進行存取控制。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront（AWS 官方）",
+        "url": "https://aws.amazon.com/cloudfront/"
+      },
+      {
+        "label": "Amazon CloudFront 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-023",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "下列何者最能說明 Amazon Route 53 的主要角色？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "提供 DNS 名稱解析與網域相關功能"
+      },
+      {
+        "choiceId": "B",
+        "text": "自動產生 Lambda 函式的原始碼"
+      },
+      {
+        "choiceId": "C",
+        "text": "專門加密 S3 物件的服務"
+      },
+      {
+        "choiceId": "D",
+        "text": "刪除 CloudWatch Logs 的服務"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Route 53 是 DNS 服務，用於將網域名稱解析為 IP 位址或 CloudFront 等資源。",
+    "choiceExplanations": {
+      "A": "正解。Route 53 為 DNS 相關服務。",
+      "B": "錯誤。並非產生 Lambda 程式碼的服務。",
+      "C": "錯誤。加密金鑰管理屬於 KMS。",
+      "D": "錯誤。並非專門刪除日誌的服務。"
+    },
+    "relatedServices": [
+      "route53",
+      "cloudfront",
+      "acm"
+    ],
+    "relatedTerms": [
+      "dns",
+      "hosted-zone"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "route-53",
+      "dns",
+      "networking"
+    ],
+    "practicalNote": "Amazon Route 53 是 AWS 提供的受管權威 DNS 服務。核心功能有 3 項：網域名稱註冊（註冊機構功能）、DNS 名稱解析（權威 DNS 伺服器功能）、與健康檢查聯動的路由策略。使用者可建立「託管區域」並登記 DNS 紀錄（A、AAAA、CNAME、MX、TXT、Alias 等），AWS 的全球邊緣節點群將回應來自世界各地 DNS 解析器的查詢。\n\n路由策略包含：Simple（單純的 1 對 1 解析）、Weighted（加權，用於 A/B 測試）、Latency-based（將使用者導向延遲最低的區域）、Geolocation（依國家或地區分流）、Failover（健康檢查失敗時切換至備援）、Multivalue（回傳多個 IP）、Geoproximity（含流量偏置的地理鄰近策略），可依需求區分使用。Alias 紀錄是 Route 53 獨有的紀錄類型，可直接從 Apex（根網域）指向 AWS 資源（CloudFront、ALB、S3 靜態網站、API Gateway 等），無需透過 CNAME，這是與 CNAME 截然不同的重要特性。\n\n考試脈絡上，常以「DNS 名稱解析的服務是哪一個」「提供網域相關功能的服務是哪一個」的方式出題。錯誤選項常排列「自動產生 Lambda 程式碼」「加密 S3 物件」「刪除 CloudWatch Logs」等與 DNS 完全無關的角色，這是常見題型。CLF-C02 重點在於是否誤判服務角色；SAA-C03 以上則會進一步考：Alias 紀錄與 CNAME 的取捨、路由策略的選定、健康檢查與 DR 設計（Route 53 Failover）、Private Hosted Zone 與 VPC 的關係。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53（AWS 官方）",
+        "url": "https://aws.amazon.com/route53/"
+      },
+      {
+        "label": "Amazon Route 53 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Route 53 的路由策略（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-024",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "下列何者最能說明 Amazon SQS？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "在應用程式之間以佇列形式傳遞訊息的服務"
+      },
+      {
+        "choiceId": "B",
+        "text": "在全球各地快取並傳遞內容的服務"
+      },
+      {
+        "choiceId": "C",
+        "text": "預測 AWS 帳戶使用費用的服務"
+      },
+      {
+        "choiceId": "D",
+        "text": "建立虛擬私有網路的服務"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon SQS 是訊息佇列服務，可用於將系統之間鬆耦合化。",
+    "choiceExplanations": {
+      "A": "正解。SQS 為訊息佇列。",
+      "B": "錯誤。快取傳遞屬於 CloudFront。",
+      "C": "錯誤。費用分析可使用 Cost Explorer 等。",
+      "D": "錯誤。虛擬網路屬於 VPC。"
+    },
+    "relatedServices": [
+      "sqs",
+      "sns",
+      "eventbridge",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "message-queue",
+      "decoupling"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "queue",
+      "integration"
+    ],
+    "practicalNote": "Amazon SQS（Simple Queue Service）是全受管的訊息佇列服務。傳送端（producer）將訊息投入佇列，接收端（consumer）從佇列取出訊息進行處理。傳送端與接收端不直接通訊，因此能讓兩者達成「鬆耦合」，這是它最大的特徵。即使 consumer 暫時停止運作，訊息仍會保留在佇列中，恢復後可繼續處理，因此可提升整體系統的容錯能力。\n\n佇列有 2 種：標準佇列以「幾乎無限的吞吐量」「至少一次傳遞」「盡力而為的順序保證」為特徵，適合大多數的非同步工作負載。FIFO 佇列具有「順序保證」「重複排除」「吞吐量低於標準佇列」的性質，用於必須保證順序與排除重複的工作負載，例如訂單處理或結帳事件。每則訊息可設定可見性逾時（接收後對其他 consumer 的不可見期間），若該期間內未完成處理，訊息會回到佇列重新供其他 consumer 處理。\n\n考試脈絡上，常以「在應用程式之間以佇列方式傳遞訊息的服務是哪一個」「使系統鬆耦合的服務是哪一個」的方式出題。錯誤選項常包含 CloudFront（快取傳遞）、Cost Explorer（費用分析）、VPC（虛擬網路）等與訊息傳遞無關的服務。SNS（Pub/Sub）、EventBridge（事件路由）、SQS（訊息佇列）這 3 者的區分是常考的比較重點：1 對 1 輪詢型用 SQS、1 對 N 扇出用 SNS、規則化的事件分配用 EventBridge。SAA-C03 以上會進一步考可見性逾時設計、DLQ（Dead Letter Queue）、長輪詢、SNS+SQS 扇出架構。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS（AWS 官方）",
+        "url": "https://aws.amazon.com/sqs/"
+      },
+      {
+        "label": "Amazon SQS 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon SQS 佇列的類型（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-025",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "下列何者最能說明 Amazon CloudWatch 的主要用途？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "透過指標、日誌與警示監視 AWS 資源"
+      },
+      {
+        "choiceId": "B",
+        "text": "管理 DNS 紀錄"
+      },
+      {
+        "choiceId": "C",
+        "text": "自動產生 S3 儲存貯體名稱"
+      },
+      {
+        "choiceId": "D",
+        "text": "自動刪除 IAM 政策"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "CloudWatch 是用於管理 AWS 資源與應用程式之指標、日誌、警示的監視服務。",
+    "choiceExplanations": {
+      "A": "正解。CloudWatch 用於監視與日誌管理。",
+      "B": "錯誤。DNS 管理屬於 Route 53。",
+      "C": "錯誤。並非產生 S3 儲存貯體名稱的服務。",
+      "D": "錯誤。並非刪除 IAM 政策的服務。"
+    },
+    "relatedServices": [
+      "cloudwatch",
+      "lambda",
+      "ec2"
+    ],
+    "relatedTerms": [
+      "monitoring",
+      "metrics",
+      "logs"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudwatch",
+      "monitoring",
+      "logs"
+    ],
+    "practicalNote": "Amazon CloudWatch 是集中管理 AWS 資源與應用程式之指標、日誌、警示的監視服務。EC2、RDS、Lambda、ECS、API Gateway 等主要服務預設將指標（CPU 使用率、網路 I/O、請求數、執行時間等）送至 CloudWatch，使用者無須額外設定即可確認時序資料。應用程式端也可送出自訂指標，將業務指標（訂單數、錯誤率、計費金額等）整合可視化。\n\nCloudWatch Logs 可集中保存應用程式日誌，並提供 Logs Insights 查詢、保存期間（retention）設定、匯出至 S3 進行長期保存、透過 Metric Filter 從日誌中擷取指標。CloudWatch Alarms 在指標超出閾值時透過 SNS 發送 Email、Slack、PagerDuty 等通知，亦可作為 Auto Scaling 或 EC2 動作的觸發來源。CloudWatch Dashboards 可將以上整合於同一畫面，建立營運儀表板。\n\n考試脈絡上，常以「監視 AWS 資源的服務是哪一個」「管理指標與日誌的服務是哪一個」的方式出題。錯誤選項常包含 Route 53（DNS）、產生 S3 儲存貯體、刪除 IAM 政策等與監視、觀測完全無關的角色。CloudWatch（監視資源、應用程式的「動態」）、CloudTrail（AWS API 呼叫的稽核日誌）、AWS Config（資源組態變更歷程）這 3 者的區分在 CLF-C02 與 SAA-C03 皆為常考的比較重點。SAA-C03 以上會進一步考警示與 Auto Scaling 的聯動、複合警示、Logs Insights 查詢設計、與 X-Ray 的分散式追蹤整合。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch（AWS 官方）",
+        "url": "https://aws.amazon.com/cloudwatch/"
+      },
+      {
+        "label": "Amazon CloudWatch 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch Logs 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-026",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "下列何者最能說明 AWS Budgets 的主要用途？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "依設定的預算通知使用費用超支"
+      },
+      {
+        "choiceId": "B",
+        "text": "加密 S3 儲存貯體"
+      },
+      {
+        "choiceId": "C",
+        "text": "更新 EC2 執行個體的作業系統"
+      },
+      {
+        "choiceId": "D",
+        "text": "建立 DNS 紀錄"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Budgets 可設定月度預算或使用量閾值，並於超支或預測超支時發出通知。",
+    "choiceExplanations": {
+      "A": "正解。AWS Budgets 用於計費警示。",
+      "B": "錯誤。加密可使用 SSE 或 KMS 等。",
+      "C": "錯誤。並非更新作業系統的服務。",
+      "D": "錯誤。DNS 屬於 Route 53。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "budget",
+      "cost-alert"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "budget",
+      "cost-management"
+    ],
+    "practicalNote": "AWS Budgets 是針對使用費用與使用量設定預算（閾值），並於超支或預測超支時發出警示的預算管理服務。可建立的預算類型包含：成本預算（針對月、季、年計費金額設定閾值）、使用量預算（針對特定服務的使用量設定閾值）、保留執行個體使用率預算、Savings Plans 使用率預算。通知對象可指定 Email 或 SNS 主題。透過 Budgets Actions，亦可在超出閾值時自動指派 IAM 政策以抑止資源啟動等自動化動作。\n\n實務上代表性的用途，是個人開發、驗證用 AWS 帳戶的「不小心高額計費」事故防範。將月度預算設定為小金額閾值（例如 1,000 圓 / 5,000 圓），並於 50% 通過 / 80% 通過 / 100% 通過 / 預測超支等 4 階段發送 Email 通知，可及早察覺未預期的成本發生。在正式環境帳戶中，則常採用以專案標籤分群預算來進行各團隊預算管理。容易混淆的服務是 Cost Explorer：Cost Explorer 用於「將成本結構可視化、分析」，而 Budgets 用於「設定預算閾值，於超支時發送警示」，兩者角色不同。\n\n考試脈絡上，常以「設定預算並於超支時通知的服務是哪一個」「可設定計費警示的服務是哪一個」的方式出題。錯誤選項常包含加密 S3、更新 EC2 作業系統、建立 DNS 紀錄等與預算管理完全無關的角色。CLF-C02 的重點是是否誤判服務角色，AWS Budgets（預算警示）、Cost Explorer（成本可視化、分析）、Cost and Usage Report（將詳細的使用費用以 CSV 匯出至 S3）這 3 者的區分為常考的整理重點。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets（AWS 官方）",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "以 AWS Budgets 管理成本（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-027",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "下列何者最能說明 AWS Cost Explorer 的主要用途？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "分析 AWS 使用費用與使用量的趨勢"
+      },
+      {
+        "choiceId": "B",
+        "text": "重設 IAM 使用者的密碼"
+      },
+      {
+        "choiceId": "C",
+        "text": "儲存 Lambda 函式的程式碼"
+      },
+      {
+        "choiceId": "D",
+        "text": "停止 Route 53 的 DNS 查詢"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Cost Explorer 可將 AWS 使用費用與使用量可視化，並用於依服務別、期間別分析成本。",
+    "choiceExplanations": {
+      "A": "正解。Cost Explorer 用於成本分析。",
+      "B": "錯誤。IAM 操作於 IAM 中進行。",
+      "C": "錯誤。並非說明 Lambda 程式碼儲存。",
+      "D": "錯誤。並非停止 DNS 查詢的服務。"
+    },
+    "relatedServices": [
+      "cost-explorer",
+      "aws-budgets"
+    ],
+    "relatedTerms": [
+      "cost-analysis",
+      "billing"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "cost-explorer",
+      "cost-management"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Cost Explorer 是用於將 AWS 帳戶中發生的成本與使用量可視化、分析的免費 Management Console 功能。可透過圖表與表格查閱日度與月度的使用費用走勢、各服務的明細、各區域的明細、各連結帳戶的明細，以及依標籤或成本分配標籤進行分群。除了最多 13 個月的過去實績資料，還提供未來 12 個月的預測。\n\n考試脈絡上，常以「分析 AWS 使用費用與使用量趨勢的服務是哪一個」的方式出題，要求選 Cost Explorer。錯誤選項常排列「重設 IAM 使用者密碼」「儲存 Lambda 程式碼」「停止 Route 53 的 DNS 查詢」等與成本管理完全無關的角色。這是常見的「是否誤判服務角色」題型。\n\n實務上經常將 Cost Explorer 與 AWS Budgets 搭配使用。Cost Explorer 用於「分析」過去的趨勢，AWS Budgets 則用於針對事先決定的預算超支發送「警示」，兩者角色明確區分。CLF-C02 會反覆考這 2 者的角色區分。更深入的成本最佳化脈絡上，常見的用法是以 Cost Explorer 的報表為起點，確認 Savings Plans 的購買建議，或掌握保留執行個體的覆蓋率與使用率。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS 官方）",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-028",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "下列何者最能說明可在 AWS Trusted Advisor 中確認的內容？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "關於成本最佳化、安全性、容錯能力等的建議事項"
+      },
+      {
+        "choiceId": "B",
+        "text": "編輯 S3 物件的影像"
+      },
+      {
+        "choiceId": "C",
+        "text": "自動產生 EC2 的原始碼"
+      },
+      {
+        "choiceId": "D",
+        "text": "Lambda 函式的程式設計學習教材"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Trusted Advisor 會檢查 AWS 環境，並從成本最佳化、安全性、容錯能力、效能等觀點提示建議事項。",
+    "choiceExplanations": {
+      "A": "正解。Trusted Advisor 用於提供 AWS 環境的改善建議。",
+      "B": "錯誤。並非影像編輯服務。",
+      "C": "錯誤。並非原始碼產生服務。",
+      "D": "錯誤。並非教材服務。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "trusted-advisor",
+      "optimization"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "trusted-advisor",
+      "cost",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Trusted Advisor 會自動檢查 AWS 帳戶內的資源組態，並在成本最佳化、安全性、容錯能力、效能、服務配額等 5 個類別提出改善建議。代表性的檢查項目包括：未使用的 Elastic IP、使用率偏低的 EC2 執行個體、處於公開狀態的 S3 儲存貯體、IAM 是否設定 MFA、EBS 快照的世代管理狀況等。\n\n所提供的檢查項目會依支援方案而異。Basic 與 Developer 支援僅限於 Core Checks（安全性與服務配額的一部分）；訂閱 Business 以上的付費支援，則可使用全類別的完整檢查。CLF-C02 常考「依支援方案而異的功能差異」。\n\n考試脈絡上，常以「可確認 AWS 環境之成本、安全性、容錯能力改善建議的服務是哪一個」的方式出題。錯誤選項常包含「編輯 S3 物件影像」「自動產生 EC2 原始碼」「Lambda 學習教材」等與 Trusted Advisor 角色完全無關的選項。Trusted Advisor 屬於「提示建議事項」的服務，並非自動變更組態的服務，這一點也需要掌握。",
+    "officialDocs": [
+      {
+        "label": "AWS Trusted Advisor（AWS 官方）",
+        "url": "https://aws.amazon.com/premiumsupport/technology/trusted-advisor/"
+      },
+      {
+        "label": "使用 AWS Trusted Advisor（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-029",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "下列何者最能作為降低長期使用 EC2 工作負載成本的選項？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "考慮 Savings Plans 或 Reserved Instances"
+      },
+      {
+        "choiceId": "B",
+        "text": "永遠只使用隨需 (On-Demand) 費率"
+      },
+      {
+        "choiceId": "C",
+        "text": "將 CloudWatch Logs 無限期保存"
+      },
+      {
+        "choiceId": "D",
+        "text": "將所有資料固定於高頻存取用儲存"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "對長期且穩定使用的工作負載，使用 Savings Plans 或 Reserved Instances 有時可使成本低於 On-Demand。",
+    "choiceExplanations": {
+      "A": "正解。長期使用時應考量折扣選項。",
+      "B": "錯誤。On-Demand 雖具彈性，但長期固定使用時可能偏貴。",
+      "C": "錯誤。無限期保存日誌會導致成本上升。",
+      "D": "錯誤。應依存取頻率選擇儲存類型。"
+    },
+    "relatedServices": [
+      "ec2",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "savings-plans",
+      "reserved-instances"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "pricing",
+      "ec2",
+      "savings-plans"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "EC2 的計費模型有 4 種：On-Demand、Savings Plans、Reserved Instances（RI）、Spot Instances。On-Demand 為無預約的按秒、小時計費；Savings Plans 與 RI 為 1 年或 3 年承諾並折扣每小時單價的方式；Spot 則為以大幅折扣使用閒置容量，但帶有中斷風險。對長期穩定運轉的工作負載，搭配 Savings Plans 或 RI 可達成相對於 On-Demand 最多約 70% 的成本削減。\n\nSavings Plans 是跨 EC2、Fargate、Lambda 承諾每小時使用金額的方式；Compute Savings Plans 的特點在於可隨執行個體系列、區域、作業系統、租用形式的變更而靈活對應。RI 為 EC2 專用且需指定執行個體類型：Standard RI 提供最高折扣率，Convertible RI 提供系列變更的彈性。CLF-C02 大致只考「長期使用就考慮折扣選項」這個方向；SAA-C03 以上則會進一步考 Savings Plans 與 RI 的取捨，以及 Compute Savings Plans 與 EC2 Instance Savings Plans 的差異。\n\n錯誤選項常為「永遠只使用 On-Demand 費率」「將 CloudWatch Logs 無限期保存」「將資料固定於高頻存取用儲存」等並非降低成本而是增加成本的選項。應掌握以下對應關係：「長期固定使用 = 折扣承諾」「變動大 = On-Demand 或無伺服器」「可承受中斷 = Spot」。",
+    "officialDocs": [
+      {
+        "label": "AWS Savings Plans（AWS 官方）",
+        "url": "https://aws.amazon.com/savingsplans/"
+      },
+      {
+        "label": "Savings Plans 是什麼（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html"
+      },
+      {
+        "label": "Amazon EC2 Reserved Instances（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-reserved-instances.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-030",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "下列何者最能說明 AWS 支援方案？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "依用途與所需的支援等級，準備有多種方案"
+      },
+      {
+        "choiceId": "B",
+        "text": "所有支援方案皆必然會配置專任的技術客戶經理"
+      },
+      {
+        "choiceId": "C",
+        "text": "支援方案與 AWS 使用費用無關，皆完全免費"
+      },
+      {
+        "choiceId": "D",
+        "text": "使用支援方案後，所有 AWS 服務的使用費用都會變為免費"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS 提供 Basic、Developer、Business、Enterprise 系列等支援方案，可依用途與所需的支援等級選擇。",
+    "choiceExplanations": {
+      "A": "正解。應依所需的支援內容選擇方案。",
+      "B": "錯誤。是否配置專任負責人會依方案而異。",
+      "C": "錯誤。亦有付費支援方案。",
+      "D": "錯誤。支援方案並非使 AWS 使用費用變為免費的工具。"
+    },
+    "relatedServices": [],
+    "relatedTerms": [
+      "support-plan",
+      "basic-support",
+      "business-support"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "support",
+      "billing",
+      "clf-c02"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS 支援提供 Basic、Developer、Business、Enterprise On-Ramp、Enterprise 等多種方案。Basic 是隨所有帳戶免費附帶的最小方案，包含計費與帳戶相關詢問、AWS 文件、白皮書、社群論壇的存取、Trusted Advisor 的 Core Checks，以及 AWS Personal Health Dashboard。Developer 以上為付費方案，技術支援的案件建立、回應時間 SLA、Trusted Advisor 的完整檢查、第三方軟體支援等會依方案分階段擴充。Enterprise On-Ramp 與 Enterprise 則提供 Technical Account Manager（TAM）所進行的定期架構審查與營運支援。\n\n考試脈絡上，常見的中性正解選項為「依用途與所需的支援等級，準備有多種方案」，與其對照的錯誤選項則為「所有方案都必然配置 TAM」「支援方案皆完全免費」「使用支援方案後 AWS 使用費用會變為免費」等極端的斷言型錯誤。只要掌握以下 2 個事實，極端錯誤選項即可排除：Basic 屬於免費附帶；技術支援與 TAM 則依方案而異。\n\n實務上的方案選擇方向大致如下：只要擁有一個正式環境工作負載，就考慮 Business 以上；擁有任務關鍵級正式環境營運，則考慮 Enterprise On-Ramp 或 Enterprise；僅供學習、驗證使用，則停留在 Basic 或 Developer。支援方案的費用結構，為每月固定金額加上對 AWS 使用費用一定比例的合算，使用金額愈大、費用也隨之上升。",
+    "officialDocs": [
+      {
+        "label": "AWS 支援方案比較（AWS 官方）",
+        "url": "https://aws.amazon.com/premiumsupport/plans/"
+      },
+      {
+        "label": "使用 AWS Trusted Advisor（AWS 官方文件 / English）",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-031",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "在 AWS 責任共擔模型中，通常屬於使用者責任的項目為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS 全球基礎設施的實體保護"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS 資料中心電源設備的管理"
+      },
+      {
+        "choiceId": "C",
+        "text": "IAM 使用者與 IAM 角色的權限設計"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS 受管服務的底層硬體更換"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "在責任共擔模型中，AWS 負責雲端本身的安全性，使用者則負責雲端內的安全性。IAM 的權限設計與存取管理屬於使用者責任。",
+    "choiceExplanations": {
+      "A": "AWS 全球基礎設施的實體保護屬於 AWS 端責任。",
+      "B": "資料中心設備的管理屬於 AWS 端責任。",
+      "C": "正解。IAM 的權限設計屬於使用者執行的雲端內安全性。",
+      "D": "底層硬體的維護屬於 AWS 端責任。"
+    },
+    "practicalNote": "AWS 責任共擔模型（Shared Responsibility Model）是將 AWS 與使用者的責任範圍劃分為「雲端本身的安全性（Security of the Cloud）」與「雲端內的安全性（Security in the Cloud）」的思維。AWS 端負責資料中心的實體安全性、伺服器與儲存與網路設備等硬體、Hypervisor 與受管服務的基礎軟體，以及 AWS 全球基礎設施整體的運作。使用者端則負責 IAM 的權限設計、作業系統與中介軟體的修補（IaaS 的情況）、資料的加密、網路組態（VPC／Security Group／NACL）、應用程式程式碼，以及資料的分類與保護。\n\n責任範圍會依使用的服務類型而轉移。在 EC2 這類 IaaS 中，作業系統以上全部屬於使用者責任；在 RDS 這類受管服務中，作業系統與資料庫引擎本體會轉為 AWS 責任，使用者則承擔結構描述設計、資料、連線路徑、IAM 認證的責任。在 S3 或 DynamoDB 這類完全受管服務中，使用者責任會進一步縮小至資料與存取控制。在 Lambda 這類無伺服器架構服務中，函式程式碼與 IAM 角色同樣屬於使用者責任。\n\n在考試情境中，會以「下列何者屬於使用者端的責任」的形式出題，IAM 的權限設計／資料的加密／Security Group 的規則設定／來賓作業系統的修補等會作為正解選項。誤答則包含「資料中心電源設備管理」「全球基礎設施的實體保護」「受管服務的底層硬體更換」等明確屬於 AWS 端責任的項目。在 CLF-C02 中，是否會搞錯這條界線的問題會被反覆考問，屬於高頻領域。",
+    "officialDocs": [
+      {
+        "label": "責任共擔模型（AWS 官方）",
+        "url": "https://aws.amazon.com/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "什麼是 AWS Identity and Access Management（IAM）（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+      }
+    ],
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "security",
+      "shared-responsibility-model",
+      "iam",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07"
+  },
+  {
+    "questionId": "clf-032",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "當 AWS 使用費用可能超出預期時，用於接收通知的最適服務為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Shield"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Budgets 可針對預算金額或使用量設定門檻值，並在超過或預測將超過時接收通知。",
+    "choiceExplanations": {
+      "A": "正解。AWS Budgets 用於成本監控與預算警示。",
+      "B": "CloudTrail 是用於記錄 AWS 帳戶內 API 操作歷程的服務。",
+      "C": "CloudFront 是內容傳遞網路（CDN），並非預算通知服務。",
+      "D": "AWS Shield 是 DDoS 防護服務，並不用於成本通知。"
+    },
+    "practicalNote": "AWS Budgets 是針對 AWS 使用費用或使用量設定門檻值，並在超過或預測即將超過該門檻時接收通知的成本管理服務。可在多個軸上設定預算，包含月／季／年預算金額、Reserved Instances 或 Savings Plans 的涵蓋率與使用率，以及依特定服務或標籤切分的使用量等。通知對象可選擇 Amazon SNS 主題、電子郵件，或透過 AWS Chatbot 連動的 Slack／Microsoft Teams。\n\n在考試情境中，會以「當 AWS 使用費用可能超出預期時，用於接收通知的服務為何」的形式出題。誤答常以 CloudTrail（記錄 API 操作歷程）、CloudFront（CDN）、Shield（DDoS 防護）等服務並列。由於這些皆非以成本通知為主要目的的服務，只要沒有搞錯各服務的守備範圍即可輕易區辨。\n\n實務上經常會將 AWS Budgets 與 AWS Cost Explorer 組合使用。Cost Explorer 的用途在於「分析」過去到現在的成本，AWS Budgets 的用途則在於針對事先設定的門檻值進行「警示」，兩者職責劃分清楚。在 CLF-C02 中，這兩項服務的角色分工也是高頻論點。作為實際計費事故的預防，事先在 AWS Budgets 中設定一項涵蓋帳戶整體月度預算的警示，是成本最低的第一步。",
+    "officialDocs": [
+      {
+        "label": "使用 AWS Budgets 管理成本（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "AWS Budgets（AWS 官方）",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-budgets/"
+      }
+    ],
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "budgets",
+      "cost-management",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-033",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "若需以低成本保存靜態網站的 HTML、CSS、JavaScript、圖像檔案，最適合的 AWS 服務為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon S3"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS IAM"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon S3 是物件儲存體，適合保存 HTML、CSS、JavaScript、圖像等靜態檔案。與 CloudFront 結合即可達成高速且安全的傳遞。",
+    "choiceExplanations": {
+      "A": "正解。S3 是適合保存靜態檔案的物件儲存體。",
+      "B": "RDS 是關聯式資料庫，靜態檔案保存並非其主要用途。",
+      "C": "EBS 是連接 EC2 的區塊儲存體，靜態網站的公開用儲存體一般採用 S3。",
+      "D": "IAM 是權限管理服務，並非檔案保存服務。"
+    },
+    "practicalNote": "Amazon S3 是可存放 HTML、CSS、JavaScript、圖像等靜態檔案，並能透過 HTTP/HTTPS 直接傳遞的物件儲存服務。啟用靜態網站託管功能後，可將儲存貯體內的物件作為網站對外發佈，即使不常駐伺服器也能提供網頁內容。由於不需伺服器管理，且依據傳輸量與儲存量採用量計費，因此被廣泛用於靜態網站傳遞的基礎。\n\n在考試情境中，會以「用於存放靜態網站內容的服務為何」的形式出題，並以選擇 Amazon S3 為中心。誤答會並列 RDS（關聯式資料庫）、EBS（EC2 用的區塊儲存體）、IAM（認證與授權）等。這些皆非以靜態網站內容傳遞為主要目的的服務，只要沒有搞錯各服務的守備範圍即可區辨。\n\n實務上，比起單獨以 S3 公開靜態網站，更常採用 S3 + CloudFront 的組合。將 S3 作為來源、CloudFront 作為 CDN 置於前端，便可一併實現 HTTPS 傳遞、快取加速、自訂網域對應、WAF 連動等功能。在 CLF-C02 中，以詢問 S3 角色的題目為主；在 SAA-C03 以上則會反覆考問 S3 + CloudFront 組態，以及透過 Origin Access Control（OAC）防止 S3 直接被公開存取。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon S3（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "使用 Amazon S3 託管網站（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "cloudfront"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "static-site",
+      "storage",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-034",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "關於雲端「按用量計費」的說明，最適切的為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "與使用量無關，每月皆固定支付相同金額的方式"
+      },
+      {
+        "choiceId": "B",
+        "text": "依使用的資源量收取費用的方式"
+      },
+      {
+        "choiceId": "C",
+        "text": "所有 AWS 服務皆免費的方式"
+      },
+      {
+        "choiceId": "D",
+        "text": "一旦建立資源即必定變成一年合約的方式"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "按用量計費是指依使用的資源量、請求數、儲存容量、執行時間等收取費用的計費方式。",
+    "choiceExplanations": {
+      "A": "較接近固定費用的說明，並非按用量計費。",
+      "B": "正解。在 AWS 中，許多服務皆是依使用量計費。",
+      "C": "AWS 雖有免費方案，但並非所有服務皆免費。",
+      "D": "部分服務確實存在以長期合約取得折扣的購買選項，但這並非按用量計費的說明。"
+    },
+    "practicalNote": "按用量計費（Pay-as-you-go）是依據使用的資源量收取費用的計費模型。AWS 幾乎所有服務皆基於此思維設計，EC2 執行個體依啟動時間、S3 依存放的物件量與傳輸量、Lambda 依執行次數與執行時間等，全部以「使用多少」為基準收費。停止或刪除資源後，計費便會停止或下降。\n\n在考試情境中，會以「雲端的按用量計費是何種方式」的形式出題。誤答則包含「與使用量無關，每月皆固定支付相同金額的方式」「所有 AWS 服務皆免費的方式」「一旦建立資源即必定變成一年合約的方式」等。這些皆與按用量計費的定義相互矛盾，可進行區辨。「全部免費」「必定固定金額」「必定長期合約」這類極端的斷言往往與雲端的特性脫節，多半為誤答。\n\n實務上需注意的點在於，按用量計費「使用多少計費多少」的優勢，反過來說也意味著「使用過量時成本可能無限增加」的特性。因為資源忘記停止、超出免費方案、非預期的大量資料傳輸等，導致請求金額超出預期的事故並不罕見。一般的因應方式包括透過 AWS Budgets 設定預算警示、定期以 Cost Explorer 確認費用明細，以及刪除不使用的資源等。對於負載恆定的工作負載，也可選擇與 Reserved Instances 或 Savings Plans 等長期承諾型折扣相互搭配以降低成本。在 CLF-C02 中，這些計費模型也會被橫跨地考問。",
+    "officialDocs": [
+      {
+        "label": "AWS 的定價（AWS 官方）",
+        "url": "https://aws.amazon.com/pricing/"
+      },
+      {
+        "label": "什麼是雲端運算（AWS 官方白皮書）",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-overview/what-is-cloud-computing.html"
+      }
+    ],
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "cloud-concepts",
+      "pay-as-you-go",
+      "billing",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-035",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "若不需常時管理伺服器，僅希望在事件發生時執行程式碼，最具代表性的 AWS 服務為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Lambda"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EC2"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Route 53"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Lambda 是無伺服器運算服務，可依請求或事件執行程式碼。使用者不需要進行伺服器佈建或常時管理。",
+    "choiceExplanations": {
+      "A": "正解。Lambda 是以事件驅動執行程式碼的無伺服器架構服務。",
+      "B": "EC2 是虛擬伺服器，需要管理作業系統與執行個體。",
+      "C": "EFS 是檔案儲存服務。",
+      "D": "Route 53 是 DNS 服務，並非程式碼執行服務。"
+    },
+    "practicalNote": "AWS Lambda 是不需管理伺服器即可執行程式碼的無伺服器運算服務。將程式碼註冊為 Lambda 函式後，會以 API Gateway 的請求、S3 的物件建立、DynamoDB streams、EventBridge 的排程、SQS 的訊息等各種事件作為觸發來源自動執行。僅依執行時間（毫秒單位）與請求次數計費，等待中的時間不會產生成本。\n\n在考試情境中，會以「無需管理伺服器即可執行程式碼、以事件驅動的運算服務為何」的形式出題。誤答則並列 EC2（虛擬伺服器）、EFS（共享檔案儲存）、Route 53（DNS）等。EC2 需要進行執行個體的啟動、停止、修補套用等伺服器管理，並非無伺服器架構。EFS 與 Route 53 本身並非運算服務。\n\n實務上，Lambda 被廣泛運用於 API 後端、定期批次、檔案上傳時的影像處理、日誌加工、Slack 通知等輕量處理。對於長時間處理（預設上限 15 分鐘）、繁重的計算、需要大量記憶體的處理，Lambda 並不合適，需考慮 ECS／Fargate／EC2 等其他選項。在 CLF-C02 中，會以詢問「什麼是無伺服器架構」「Lambda 的角色為何」的題目為主，並反覆出現依使用量計費、低運作負擔、事件驅動等關鍵字。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Lambda（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda（AWS 官方）",
+        "url": "https://aws.amazon.com/lambda/"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "api-gateway",
+      "eventbridge"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "lambda",
+      "serverless",
+      "compute",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-036",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "對於 AWS 帳戶的 root 使用者，最初應實施的安全對策中最適切的為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "啟用 root 使用者的 MFA"
+      },
+      {
+        "choiceId": "B",
+        "text": "建立多組 root 使用者的存取金鑰"
+      },
+      {
+        "choiceId": "C",
+        "text": "將 root 使用者用於日常的開發作業"
+      },
+      {
+        "choiceId": "D",
+        "text": "對所有 IAM 使用者賦予 AdministratorAccess"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "由於 root 使用者擁有對 AWS 帳戶整體的強大權限，啟用 MFA 並避免將其用於日常作業相當重要。",
+    "choiceExplanations": {
+      "A": "正解。對 root 使用者務必設定 MFA。",
+      "B": "root 使用者的存取金鑰應避免建立，若不需要則應刪除，此為基本原則。",
+      "C": "root 使用者不應用於日常作業。",
+      "D": "對所有人賦予 AdministratorAccess 違反最小權限原則。"
+    },
+    "practicalNote": "AWS 帳戶的 root 使用者是以建立帳戶時的電子郵件位址與密碼登入的最高層特權使用者，擁有對所有 AWS 服務與資源的無限制存取權。一旦 root 使用者遭到入侵，可能會發生帳戶帳單資訊變更、所有資源遭刪除、非法資源被大量啟動等情形，因此保護的優先度最高。AWS 的最佳實務建議務必為 root 使用者啟用 MFA（多因素認證），不用於日常操作，並改以 IAM 使用者或 IAM Identity Center 的使用者進行作業。\n\n在考試情境中，會以「為了提升 AWS 帳戶安全性，最初應進行的設定為何」的形式出題，並選擇「啟用 root 使用者的 MFA」作為正解。誤答則並列「建立多組 root 使用者的存取金鑰」「將 root 使用者用於日常的開發作業」「對所有 IAM 使用者賦予 AdministratorAccess」等。這些皆與最小權限原則或 root 使用者保護方針完全相反的操作，只要理解最佳實務即可區辨。\n\n實務上，於帳戶開通後立即建議進行的初始設定，一般依序為：對 root 使用者設定 MFA、避免建立 root 使用者的存取金鑰、建立管理用 IAM 使用者或 IAM Identity Center 使用者、透過 AWS Budgets 設定預算警示、啟用 AWS CloudTrail 記錄 API 操作歷程。在 CLF-C02 中，詢問此種「帳戶開通後初始設定」的題目頻繁出現，root 使用者與 IAM 使用者的角色分工、MFA、最小權限這三項關鍵字會反覆出現。",
+    "officialDocs": [
+      {
+        "label": "AWS 帳戶的 root 使用者（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html"
+      },
+      {
+        "label": "IAM 的安全性最佳實務（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "security",
+      "root-user",
+      "mfa",
+      "iam",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-037",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "若要在多個 AWS 服務或應用程式之間將訊息存放於佇列中進行非同步處理，適合採用的服務為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon SQS"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SNS"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Route 53"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon SQS 是訊息佇列服務，可在處理端取得訊息之前先將訊息存放於佇列。常用於非同步處理與鬆耦合化。",
+    "choiceExplanations": {
+      "A": "正解。SQS 適合運用佇列進行非同步處理。",
+      "B": "SNS 是 pub/sub 型的通知服務，適合向多個訂閱者傳遞，但並非以佇列累積為主要目的。",
+      "C": "CloudTrail 是記錄 API 操作歷程的服務。",
+      "D": "Route 53 是 DNS 服務，並非訊息佇列。"
+    },
+    "practicalNote": "Amazon SQS（Simple Queue Service）是 AWS 提供的完全受管訊息佇列服務。傳送端（生產者）所送出的訊息會暫時存放於 SQS 佇列，接收端（消費者）則可在任意時機取得訊息進行處理。傳送端與接收端不需同時運作，即使其中一方停止仍可繼續處理，因此被作為使元件鬆耦合化的基礎而使用。\n\n在考試情境中，會以「若要在多個 AWS 服務或應用程式之間將訊息存放於佇列中進行非同步處理」「若要吸收處理尖峰、達成元件鬆耦合化」等情境，作為適合服務並選擇 Amazon SQS 的題目出現。誤答常以 Amazon SNS（發布／訂閱型通知）、AWS CloudTrail（記錄 API 操作歷程）、Amazon Route 53（DNS）等並列的模式出現。SNS 的用途在於「將相同訊息推送傳遞給多個接收者」，與將訊息存入佇列依序處理的 SQS 角色不同。\n\n實務上，SQS 經常用於將 EC2 工作節點群或 Lambda 置於後段以處理非同步任務的組態。SQS 分為標準佇列與 FIFO 佇列兩種，需要順序保證或重複排除的處理會選擇 FIFO。在 CLF-C02 中，較容易出現詢問佇列與 Pub/Sub 角色分工（SQS 與 SNS 的對比）的題目；在 SAA-C03 以上則會深入考問 SQS 的訊息可見性逾時、無效訊息佇列，以及與 SNS 搭配的 Fan-out 組態（SNS → 多個 SQS）。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon SQS（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon Simple Queue Service（AWS 官方）",
+        "url": "https://aws.amazon.com/sqs/"
+      }
+    ],
+    "relatedServices": [
+      "sqs",
+      "sns",
+      "eventbridge",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "messaging",
+      "decoupling",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-038",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "若要分析 AWS 各服務的使用費用，並確認哪些服務產生了費用，最適合的服務為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Cost Explorer"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS IAM"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon VPC"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Cost Explorer 是依服務別、期間別等將 AWS 使用費用與使用量視覺化並進行分析的服務。",
+    "choiceExplanations": {
+      "A": "正解。Cost Explorer 用於成本分析。",
+      "B": "CloudFront 是 CDN 服務，並非費用分析服務。",
+      "C": "IAM 是管理認證與授權的服務。",
+      "D": "VPC 是建立虛擬網路的服務。"
+    },
+    "practicalNote": "AWS Cost Explorer 是依服務別、期間別、帳戶別、標籤別等將 AWS 使用費用與使用量視覺化並進行分析的成本管理服務。可透過圖表或表格確認過去最多 12 個月的歷程，並可顯示最多 12 個月後的使用預測。Reserved Instances 與 Savings Plans 的涵蓋率與使用率分析亦可由此參照。\n\n在考試情境中，會以「用於分析 AWS 各服務使用費用，並確認哪些服務產生了費用的服務」的形式選擇 Cost Explorer。誤答常以 Amazon CloudFront（CDN）、AWS IAM（認證與授權）、Amazon VPC（網路）等與成本分析無關的服務並列出現，只要沒有搞錯各服務的守備範圍即可區辨。\n\n實務上會將 Cost Explorer 與 AWS Budgets 組合使用。Cost Explorer 的用途在於「分析」過去與現在的成本，AWS Budgets 的用途則在於針對事先設定的門檻值進行「警示」，兩者職責劃分清楚。在 CLF-C02 中，此兩項服務的角色分工，以及與 AWS Cost and Usage Report（將詳細明細輸出至 S3 的報告）的位置差異也屬於高頻論點。將 Cost Explorer 視為分析與視覺化、Budgets 視為通知、CUR 視為詳細明細資料的輸出來整理記憶，便較容易區辨三項服務而不混淆。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Cost Explorer（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS 官方）",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/"
+      }
+    ],
+    "relatedServices": [
+      "cost-explorer",
+      "aws-budgets"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "cost-explorer",
+      "cost-management",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-039",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "關於實現雲端高可用性的思維，最適切的為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "將所有處理集中於單一實體伺服器"
+      },
+      {
+        "choiceId": "B",
+        "text": "活用多個可用區域以降低故障的影響"
+      },
+      {
+        "choiceId": "C",
+        "text": "完全不取得備份"
+      },
+      {
+        "choiceId": "D",
+        "text": "將所有通訊固定為 HTTP"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "為提升高可用性，減少單一故障點，將資源分散至多個可用區域的設計相當重要。",
+    "choiceExplanations": {
+      "A": "集中於單一伺服器將形成單一故障點。",
+      "B": "正解。透過使用多個可用區域，可降低單一可用區域故障的影響。",
+      "C": "不取得備份的設計在故障復原方面相當脆弱。",
+      "D": "將通訊僅固定為 HTTP 並非高可用性的思維。"
+    },
+    "practicalNote": "高可用性（High Availability）是盡可能縮短整體系統停止時間的設計思維。在 AWS 中，各區域由多個可用區域（AZ）構成。可用區域是實體上獨立的資料中心群，電源、空調、網路皆已分離，因此即使某個可用區域發生故障，亦不會擴及其他可用區域。透過將資源分散於多個可用區域，便可避免因單一可用區域故障導致整體停止。\n\n在考試情境中，會以「實現雲端高可用性的思維」並選擇「活用多個可用區域以降低故障的影響」的題目出現。誤答則並列「將所有處理集中於單一實體伺服器」「完全不取得備份」「將所有通訊固定為 HTTP」等與高可用性定義明顯矛盾的選項。極端的集中、放棄備份、通訊協定固定，皆是增加單一故障點方向的設計，從可用性的觀點而言為錯誤。\n\n實務上，多個可用區域組態會以下列形式實作：將 ELB（Application/Network Load Balancer）下的 EC2 配置於多個可用區域、以 RDS 的多可用區域配置將備援置於不同可用區域，或選擇 S3 這類本身即將資料於多個可用區域進行冗餘保存的服務。在 CLF-C02 中，「區域」「可用區域」「邊緣節點」的角色差異，以及多可用區域／多區域的區分使用（可用區域故障對策 vs 大規模災害對策）會被反覆考問。",
+    "officialDocs": [
+      {
+        "label": "AWS 全球基礎設施（AWS 官方）",
+        "url": "https://aws.amazon.com/about-aws/global-infrastructure/"
+      },
+      {
+        "label": "區域與可用區域（AWS 官方）",
+        "url": "https://aws.amazon.com/about-aws/global-infrastructure/regions_az/"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "rds",
+      "auto-scaling",
+      "elb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "cloud-concepts",
+      "availability",
+      "multi-az",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-040",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "若要確認 AWS 帳戶內「誰、於何時、執行了哪些 API 操作」，應使用的服務為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon S3"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS CloudTrail 是記錄 AWS 帳戶內 API 操作歷程的服務，可用於稽核、安全調查與變更歷程確認。",
+    "choiceExplanations": {
+      "A": "正解。CloudTrail 會記錄 API 操作歷程。",
+      "B": "CloudFront 是 CDN 服務，並非以 API 操作歷程記錄為主要目的。",
+      "C": "S3 是物件儲存體，雖可作為日誌的存放目標，但操作歷程記錄服務本身為 CloudTrail。",
+      "D": "Budgets 是預算管理與成本通知的服務，並不用於確認 API 操作歷程。"
+    },
+    "practicalNote": "AWS CloudTrail 是記錄 AWS 帳戶內所執行的 API 操作歷程的服務。將從 AWS Management Console、AWS CLI、SDK、各 AWS 服務發出的 API 呼叫（「誰」「於何時」「從哪個 IP」「對哪個資源」「執行了哪項操作」）作為事件加以記錄，並可從主控台搜尋過去 90 天的事件歷程。若設定將 Trail 輸出至 S3 儲存貯體，便可進行更長期的保存與日誌分析。\n\n在考試情境中，會以「用於確認 AWS 帳戶內『誰、於何時、執行了哪些 API 操作』的服務」並選擇 CloudTrail。誤答常以 Amazon CloudFront（CDN）、Amazon S3（物件儲存體）、AWS Budgets（預算警示）等並列出現。這些皆非以 API 操作歷程記錄為主要目的的服務，只要沒有搞錯各服務的角色即可區辨。\n\n實務上，CloudTrail 用於稽核、安全調查與變更歷程確認。當發生非預期的資源變更時，便能事後追查「誰、於何時、做了什麼」的基礎。在 CLF-C02 中，CloudTrail（API 操作歷程）與 Amazon CloudWatch（量度、日誌、警示）、AWS Config（資源組態的變更歷程與合規評估）的角色分工屬於高頻論點。將 CloudTrail 視為「誰呼叫了 API」、CloudWatch 視為「資源的運作量度與營運日誌」、Config 視為「資源設定本身的狀態及其變化」來整理記憶，便能在不混淆三項服務之下進行區辨。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail 使用者指南（AWS 官方文件）",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "AWS CloudTrail（AWS 官方）",
+        "url": "https://aws.amazon.com/cloudtrail/"
+      }
+    ],
+    "relatedServices": [
+      "cloudtrail",
+      "cloudwatch",
+      "aws-config"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "security",
+      "cloudtrail",
+      "audit",
+      "compliance",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19"
+  },
+  {
+    "questionId": "clf-041",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "將靜態內容以低延遲傳遞給全球使用者時，最適合採用的 AWS 服務為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS IAM"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon CloudFront 是 CDN 服務，透過邊緣節點以低延遲傳遞靜態與動態內容。與 S3 搭配的靜態網站發佈也經常使用。",
+    "choiceExplanations": {
+      "A": "正確。CloudFront 作為 CDN，以高速方式傳遞內容。",
+      "B": "CloudTrail 是記錄 AWS API 操作歷程的服務。",
+      "C": "RDS 是關聯式資料庫服務。",
+      "D": "IAM 是管理認證與授權的服務。"
+    },
+    "relatedServices": [
+      "cloudfront",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "cloudfront",
+      "cdn",
+      "static-site",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon CloudFront 是 AWS 所提供的內容傳遞網路（CDN）服務，於世界各地的邊緣節點對\n內容進行快取，並從距離終端使用者地理上最近的邊緣節點進行傳遞，以降低延遲。來源\n（origin）可指定 Amazon S3 儲存貯體、EC2 上的應用程式、Application Load Balancer，\n或外部的 HTTP/HTTPS 伺服器。靜態與動態內容皆可作為傳遞對象。\n\n在考試的脈絡中，會出現選擇「將靜態內容以低延遲傳遞給全球使用者時所採用的 AWS\n服務」為 CloudFront 的題目。錯誤選項常見組合包含 AWS CloudTrail（API 操作歷程）、\nAmazon RDS（關聯式資料庫）、AWS IAM（認證與授權）。這些服務皆非以內容傳遞為\n主要用途，只要未誤判服務的職責範圍便可區分。\n\n實務上，將 S3 作為來源、於其前端配置 CloudFront 的「S3 + CloudFront」是靜態網站\n發佈的標準架構。可整合實現 HTTPS 傳遞、自訂網域支援、藉由快取降低傳輸量，以及與\nAWS WAF 整合進行請求保護。CLF-C02 會問到 CloudFront 的職責，以及邊緣節點、區域、\n可用區域之間的層級關係。SAA-C03 以上則會更深入考核 Origin Access Control（OAC）\n阻擋對 S3 的直接存取、藉由簽署 URL/Cookie 進行受限公開、利用 CloudFront Functions\n與 Lambda@Edge 進行邊緣處理等內容。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon CloudFront (English)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "Amazon CloudFront（AWS 官方）",
+        "url": "https://aws.amazon.com/cloudfront/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-042",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "下列何者為定義 AWS 資源存取權限的 JSON 格式文件？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "IAM 政策"
+      },
+      {
+        "choiceId": "B",
+        "text": "可用區域"
+      },
+      {
+        "choiceId": "C",
+        "text": "Reserved Instances"
+      },
+      {
+        "choiceId": "D",
+        "text": "區域"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "IAM 政策是以 JSON 格式定義對哪些 AWS 資源允許或拒絕哪些操作的文件。",
+    "choiceExplanations": {
+      "A": "正確。IAM 政策用來定義存取權限。",
+      "B": "可用區域是區域內彼此獨立的資料中心群。",
+      "C": "Reserved Instances 是依長期使用提供折扣的購買選項。",
+      "D": "區域是 AWS 提供服務的地理範圍。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "policy",
+      "security",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Identity and Access Management（IAM）中的政策（IAM 政策）是以 JSON 格式定義\n「誰」「對哪些資源」「執行哪些操作」「允許或拒絕」的文件。政策由 Version、Statement、\nEffect、Action、Resource、Condition 等要素組成，並以 Effect（Allow / Deny）、\nAction（API 動作名稱）、Resource（對象 ARN）的組合表達存取權限。政策必須附加於\nIAM 使用者、IAM 群組、IAM 角色之後才會生效。\n\n在考試的脈絡中，會出現選擇「以 JSON 格式定義對 AWS 資源的存取權限者」為 IAM 政策\n的題目。錯誤選項常見組合包含「可用區域（區域內的獨立資料中心群）」、「Reserved\nInstances（折扣購買選項）」、「區域（地理範圍）」等與存取控制職責不同的資源概念。\n當「JSON 格式」與「定義存取權限」兩項關鍵字同時出現時，可將 IAM 政策以外的選項\n直接排除。\n\n實務上，政策可分為 AWS 受管政策（由 AWS 事先準備）、客戶受管政策（由使用者自行\n建立並可重複利用）、行內政策（直接內嵌於特定主體上）三種。依最小權限原則，建議\n僅針對必要的 Action 對必要的 Resource 給予許可。CLF-C02 中，IAM 使用者、IAM 群組、\nIAM 角色、IAM 政策這四個概念的職責分工，以及責任共享模型中「IAM 屬於使用者責任\n範圍」一點，均為常見的考點。",
+    "officialDocs": [
+      {
+        "label": "IAM 中的政策與權限 (English)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
+      },
+      {
+        "label": "AWS Identity and Access Management (IAM)（AWS 官方）",
+        "url": "https://aws.amazon.com/iam/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-043",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "可於所有 AWS 帳戶使用、提供有關帳單與費用之基本支援的 AWS Support 方案為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Basic Support"
+      },
+      {
+        "choiceId": "B",
+        "text": "Developer Support"
+      },
+      {
+        "choiceId": "C",
+        "text": "Business Support"
+      },
+      {
+        "choiceId": "D",
+        "text": "Enterprise Support"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Basic Support 是所有 AWS 帳戶皆可使用的基本支援，可獲得有關帳戶、帳單、服務限制等的支援。",
+    "choiceExplanations": {
+      "A": "正確。Basic Support 包含於所有 AWS 帳戶中。",
+      "B": "Developer Support 為付費的開發人員支援方案。",
+      "C": "Business Support 為適用於正式工作負載的付費支援方案。",
+      "D": "Enterprise Support 為適用於大型組織的付費支援方案。"
+    },
+    "relatedServices": [],
+    "relatedTerms": [
+      "aws-support"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "support",
+      "billing",
+      "basic-support",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Support 共有 Basic、Developer、Business、Enterprise On-Ramp、Enterprise 五種\n方案。其中 Basic Support 是以標準形式包含於所有 AWS 帳戶中的免費支援方案。Basic\nSupport 的範圍涵蓋有關帳戶與帳單的 24/7 客戶服務、AWS Trusted Advisor 核心檢查\n（6 項）、AWS Personal Health Dashboard、服務配額提升申請，以及對說明文件、白皮書、\n支援論壇的存取，技術問題的處理與正式工作負載的 SLA 並未包含於其中。\n\n在考試的脈絡中，會出現選擇「可於所有 AWS 帳戶使用的基本支援方案」為 Basic Support\n的題目。錯誤選項常見組合包含 Developer Support（個人開發者與非正式工作負載適用）、\nBusiness Support（正式工作負載適用）、Enterprise Support（任務關鍵性工作負載適用）。\n除 Basic 之外的三種方案皆為付費，與「包含於所有帳戶中」此項條件相互矛盾。\n\n實務上，Developer Support 以上的方案可開立技術支援案件，案件回應 SLA、Trusted\nAdvisor 全部檢查項目（核心 6 項與全部 100 項以上）、Infrastructure Event Management、\nAWS 專屬人員（TAM：Technical Account Manager）等功能將依方案層級依序追加。\nCLF-C02 中，五種方案的職責範圍差異，特別是「Basic 無法開立技術案件」「Business\n以上提供 24/7 技術支援」「Enterprise 附帶 TAM」此層級結構為反覆出題的重點。\nAWS Trusted Advisor 的檢查項目數量（Basic 與 Developer 為核心 6 項、Business 以上\n為全部項目）亦為常見的考點。",
+    "officialDocs": [
+      {
+        "label": "AWS Support 方案比較（AWS 官方）",
+        "url": "https://aws.amazon.com/premiumsupport/plans/"
+      },
+      {
+        "label": "AWS Support 方案 (English)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/aws-support-plans.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-044",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "下列何者最適合用以說明雲端相較於地端環境的優點？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "可依需求擴增或縮減資源"
+      },
+      {
+        "choiceId": "B",
+        "text": "必須由公司自行購買實體伺服器"
+      },
+      {
+        "choiceId": "C",
+        "text": "所有安全性設定皆變得不必要"
+      },
+      {
+        "choiceId": "D",
+        "text": "所有服務皆可永久免費使用"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "在雲端可於必要時增加資源，並於不再需要時減少資源。藉此可更容易因應需求變動並降低初期投資。",
+    "choiceExplanations": {
+      "A": "正確。雲端的代表性優點為擴展性與彈性。",
+      "B": "在雲端不需要由公司自行購買實體伺服器。",
+      "C": "安全性設定仍然必要。需理解責任共享模型。",
+      "D": "AWS 雖有免費方案，但並非所有服務皆永久免費。"
+    },
+    "relatedServices": [
+      "ec2",
+      "lambda",
+      "auto-scaling"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "cloud-concepts",
+      "scalability",
+      "elasticity",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "雲端運算的代表性優點為可依需求擴增或縮減資源，即擴展性（scalability）與彈性\n（elasticity）。在地端環境中，必須事先以尖峰時段的存取量為基準準備較多的伺服器，\n平常時段多餘的伺服器則成為固定成本。在雲端則可透過 Auto Scaling、Elastic Load\nBalancing、無伺服器架構（AWS Lambda 等）自動依需求增減資源量，並與按使用量計費\n的方式組合運用，藉此抑制資源浪費。\n\n在考試的脈絡中，將「可依需求擴增或縮減資源」作為雲端相較於地端的優點的題目經常\n出現。錯誤選項常見組合包含「必須由公司自行購買實體伺服器（地端的說明）」、「所有\n安全性設定皆變得不必要（與責任共享模型相矛盾）」、「所有服務皆可永久免費使用\n（對免費方案的誤解）」等與雲端定義明顯矛盾的內容。包含「必須」「所有」「永遠」等\n極端用語的選項，多為錯誤選項的可能性較高。\n\n實務上，須評估彈性對哪些工作負載有效、對哪些工作負載無效，以作為選擇依據。對於\n需求變動大的網站、宣傳活動、批次處理而言，Auto Scaling 與無伺服器架構效果顯著；\n另一方面，對於負載恆定的工作負載而言，Reserved Instances 或 Savings Plans 等長期\n承諾折扣可進一步壓低單價。CLF-C02 要求避免「雲端＝永遠便宜」此種過度簡化，應以\n「可依需求減少浪費」這個較精確的定義來掌握。擴展性、彈性、敏捷性、按使用量計費\n此四項，是反覆作為「雲端優點」考核的重點。",
+    "officialDocs": [
+      {
+        "label": "什麼是雲端運算（AWS 官方）",
+        "url": "https://aws.amazon.com/what-is-cloud-computing/"
+      },
+      {
+        "label": "雲端運算的 6 項優點 (English)",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cloud-computing.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-045",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "若想於 AWS 上使用受管型關聯式資料庫，最適合選擇的服務為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon S3"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS CloudTrail"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon RDS 是可以受管方式使用 MySQL、PostgreSQL、MariaDB、Oracle、SQL Server 等關聯式資料庫的服務。",
+    "choiceExplanations": {
+      "A": "正確。RDS 為受管型關聯式資料庫服務。",
+      "B": "S3 為物件儲存。並非關聯式資料庫。",
+      "C": "CloudFront 為 CDN 服務。",
+      "D": "CloudTrail 為記錄 AWS API 操作歷程的服務。"
+    },
+    "relatedServices": [
+      "rds",
+      "dynamodb",
+      "aurora"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "rds",
+      "database",
+      "relational-database",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon RDS（Relational Database Service）是以受管方式提供關聯式資料庫的服務。\n除 MySQL、PostgreSQL、MariaDB、Oracle Database、Microsoft SQL Server 之外，亦支援\nAWS 自行開發的 Amazon Aurora（相容於 MySQL / PostgreSQL）等 6 種 DB 引擎。OS 修補、\nDB 引擎次要版本更新、自動備份、快照建立、故障時的容錯移轉等運作作業由 AWS 負責\n代為處理，使用者得以專注於資料結構設計、查詢調校、應用程式端的邏輯。\n\n在考試的脈絡中，會出現選擇「若想使用受管型關聯式資料庫所採用的服務」為 Amazon\nRDS 的題目。錯誤選項常見組合包含 Amazon S3（物件儲存）、Amazon CloudFront（CDN）、\nAWS CloudTrail（API 操作歷程記錄）等資料儲存以外的服務。當題目明確使用「關聯式」\n此項關鍵字時，文件型資料庫的 Amazon DocumentDB、鍵值 / 文件型的 Amazon DynamoDB、\n資料倉儲的 Amazon Redshift 皆屬不適合，即使列於選項中亦可直接排除。\n\n實務上，自行於 EC2 上建構 DB 與使用 RDS 之間的責任分擔差異為選擇的依據。在 EC2 上\n的自建 DB 中，修補套用、備份、容錯移轉設計皆由使用者負責；而 RDS 則將上述工作\n歸於 AWS 的責任範圍。CLF-C02 中，責任共享模型上「使用越多受管服務，使用者的維運\n負擔越少」此原則，以及 RDS 的 Multi-AZ 配置（高可用性）/ 唯讀複本（讀取負載分散）\n之職責差異，均為常見的考點。RDS 與 DynamoDB 的區分（關聯式 vs 鍵值 / NoSQL）亦\n需一併掌握。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon RDS (English)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS（AWS 官方）",
+        "url": "https://aws.amazon.com/rds/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-046",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "在 AWS 中用以建立與管理靜態資料加密金鑰的服務為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Key Management Service"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon Route 53"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Key Management Service 是建立與管理加密金鑰、並可用於 S3、EBS、RDS、DynamoDB 等加密的受管服務。",
+    "choiceExplanations": {
+      "A": "正確。KMS 用於加密金鑰的建立與管理。",
+      "B": "Route 53 為 DNS 服務。",
+      "C": "CloudFront 為 CDN 服務。",
+      "D": "Budgets 為預算管理與費用通知服務。"
+    },
+    "relatedServices": [
+      "kms",
+      "s3",
+      "ebs",
+      "rds",
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "kms",
+      "encryption",
+      "security",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Key Management Service（AWS KMS）是建立與管理加密金鑰（customer master key：\nCMK / 現稱 KMS 金鑰），並可運用於 AWS 各服務之資料加密的受管服務。KMS 金鑰保管\n於 Hardware Security Module（HSM）中，且採用平文金鑰絕不離開硬體之外的設計。\nAmazon S3、Amazon EBS、Amazon RDS、Amazon DynamoDB、AWS Secrets Manager、\nAWS Systems Manager Parameter Store 等主要服務皆可指定 KMS 金鑰來加密靜態資料。\n\n在考試的脈絡中，會出現選擇「在 AWS 中用以建立與管理靜態資料加密金鑰的服務」為\nAWS KMS 的題目。錯誤選項常見組合包含 Amazon Route 53（DNS）、Amazon CloudFront\n（CDN）、AWS Budgets（預算管理）等與加密無關的服務。當題目明確使用「加密金鑰的\n建立與管理」此項關鍵字時，雖然有時需要與 AWS CloudHSM（使用專屬 HSM）進行區分，\n但於 CLF-C02 層級中，僅需整理為「受管共享 HSM ＝ KMS」「專屬獨佔 HSM ＝ CloudHSM」\n即可作出區分。\n\n實務上，KMS 金鑰分為 AWS 受管金鑰（由 AWS 端管理之各服務專用金鑰）與客戶受管金鑰\n（由使用者建立與管理之金鑰）兩種。會搭配啟用金鑰輪替、藉由 IAM 政策與 KMS 金鑰\n政策控制金鑰使用權限，以及藉由 AWS CloudTrail 對金鑰使用記錄進行稽核等運作。\nCLF-C02 中，責任共享模型中「資料加密屬於使用者責任」此原則，以及 KMS 為靜態資料\n加密（at-rest encryption）的核心，均為常見的考點。用於傳輸中加密（in-transit\nencryption）的 AWS Certificate Manager（ACM）的職責分工亦需一併掌握。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Key Management Service (English)",
+        "url": "https://docs.aws.amazon.com/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "AWS Key Management Service（AWS 官方）",
+        "url": "https://aws.amazon.com/kms/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-047",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "處理 AWS 資源與應用程式之指標、日誌、警報的監控服務為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon CloudWatch"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Config"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon CloudWatch 是處理 AWS 資源與應用程式之指標、日誌、警報的監控服務。亦可用於 Lambda 的日誌確認與指標監控。",
+    "choiceExplanations": {
+      "A": "正確。CloudWatch 用於指標、日誌、警報。",
+      "B": "CloudTrail 用於記錄 API 操作歷程。容易與監控日誌混淆，須留意。",
+      "C": "AWS Config 是確認資源設定歷程與合規狀態的服務。",
+      "D": "SQS 為訊息佇列服務。"
+    },
+    "relatedServices": [
+      "cloudwatch",
+      "cloudtrail",
+      "aws-config",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudwatch",
+      "monitoring",
+      "logs",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon CloudWatch 是整合處理 AWS 資源以及於其上運行之應用程式的指標、日誌、事件、\n警報的監控服務。可將 EC2 的 CPU 使用率、ELB 的請求數、RDS 的連線數等標準指標，\n以及 Lambda 的執行日誌、應用程式輸出的自訂指標一併匯集於 CloudWatch 中。常見的\n架構是藉由 CloudWatch Alarms 於超過閾值時觸發 Amazon SNS 通知或 Auto Scaling 動作。\n\n在考試的脈絡中，會出現選擇「處理 AWS 資源的指標、日誌、警報的監控服務」為\nCloudWatch 的題目。錯誤選項常見組合包含 AWS CloudTrail（API 呼叫稽核）、AWS\nConfig（資源設定變更歷程與合規評估）、Amazon SQS（訊息佇列）。CloudTrail / Config\n與 CloudWatch 的「記錄對象不同」職責互異，CLF-C02 反覆考核此三項服務的職責範圍\n差異。\n\n實務上，將 Lambda、ECS、EC2 的應用程式日誌匯集於 CloudWatch Logs、於 CloudWatch\nMetrics 中累積時序指標、藉由 CloudWatch Alarms 偵測閾值違規的三層架構為基本作法。\nCloudWatch Logs Insights 提供日誌查詢、CloudWatch Dashboards 提供指標視覺化、\nCloudWatch Synthetics 提供外部監控等維運所需的觀測功能皆整合於同一個服務中。\n若將 CloudTrail 整理為「由誰呼叫了哪一個 API（稽核日誌）」、Config 整理為「資源\n設定如何變化、是否符合規則」、CloudWatch 整理為「資源與應用程式的運作狀態」，\n則更易於避開錯誤選項。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon CloudWatch (English)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch（AWS 官方）",
+        "url": "https://aws.amazon.com/cloudwatch/"
+      },
+      {
+        "label": "AWS CloudTrail 使用者指南 (English)",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-048",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "用以降低長期持續使用之 EC2 執行個體成本的購買選項，最適合的為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Reserved Instances"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon S3 Standard"
+      },
+      {
+        "choiceId": "D",
+        "text": "Security Group"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Reserved Instances 為以一定期間使用為前提，以低於隨需費用之價格使用 EC2 等服務的購買選項。",
+    "choiceExplanations": {
+      "A": "正確。用於降低持續使用之工作負載的成本。",
+      "B": "CloudTrail 為記錄 API 操作歷程的服務。",
+      "C": "S3 Standard 為 S3 的儲存類別，並非 EC2 購買選項。",
+      "D": "Security Group 為虛擬防火牆。並非降低成本的購買選項。"
+    },
+    "relatedServices": [
+      "ec2",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "reserved-instances"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "reserved-instances",
+      "cost-optimization",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Reserved Instances（RI）是藉由承諾使用 1 年或 3 年的期間，以較隨需費用大幅折扣的\n價格使用 EC2 等資源的購買選項。付款方式分為「全部預付（All Upfront）」「部分預付\n（Partial Upfront）」「無預付（No Upfront）」三種，預付比例越高，折扣率亦越高。\nRI 是針對執行個體類型、區域、作業系統、租用形式所做的預約，對於長期持續運行的工作\n負載而言相當有效。\n\n在考試的脈絡中，會出現選擇「用以降低長期持續使用之 EC2 成本的購買選項」為\nReserved Instances 的題目。錯誤選項常見組合包含 AWS CloudTrail（稽核日誌）、\nAmazon S3 Standard（儲存類別）、Security Group（虛擬防火牆）等。這些皆非購買選項，\n而是具有其他職責的服務或功能，因此可依「購買選項」「降低成本」此項關鍵字進行區分。\n\n實務上，EC2 的成本最佳化採用 Reserved Instances、Savings Plans、Spot Instances、\n隨需四種的組合進行。對於持續運行的正式工作負載分配 RI 或 Savings Plans、對於開發\n環境與批次分配 Spot、對於需求難以預測的工作負載分配隨需的配置方式為典型作法。\nSavings Plans 與 RI 同樣屬於長期承諾型折扣，但其特點在於不限執行個體類型而是承諾\n特定的使用金額（每小時美元），因此較 RI 具有更高的彈性。CLF-C02 中，Reserved\nInstances、Savings Plans、Spot Instances 三項選項的差異，以及各自適合的工作負載\n特性，均為常見的考點。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Reserved Instances (English)",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-reserved-instances.html"
+      },
+      {
+        "label": "Amazon EC2 Reserved Instances（AWS 官方）",
+        "url": "https://aws.amazon.com/ec2/pricing/reserved-instances/"
+      },
+      {
+        "label": "AWS Savings Plans（AWS 官方）",
+        "url": "https://aws.amazon.com/savingsplans/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-049",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "在 AWS 中將網域名稱對應至 IP 位址或 CloudFront Distribution 等的 DNS 服務為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon Route 53"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Lambda"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon DynamoDB"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon Route 53 是 AWS 的 DNS 服務。用以將自有網域對應至 CloudFront 或 ALB 等。",
+    "choiceExplanations": {
+      "A": "正確。Route 53 用於 DNS 管理。",
+      "B": "EBS 為連接於 EC2 的區塊儲存。",
+      "C": "Lambda 為以無伺服器方式執行程式碼的服務。",
+      "D": "DynamoDB 為 NoSQL 資料庫服務。"
+    },
+    "relatedServices": [
+      "route53",
+      "cloudfront",
+      "acm"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "route-53",
+      "dns",
+      "domain",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon Route 53 是 AWS 所提供的權威 DNS 服務。藉由取得與管理自有網域，並對該網域\n登錄 DNS 記錄（A / AAAA / CNAME / MX / TXT 等），可提供由網域名稱對 AWS 資源\n（CloudFront Distribution、ALB、S3 靜態網站、EC2 等）進行名稱解析的功能。對 AWS\n資源則提供 Route 53 特有的「別名記錄（Alias record）」機制，可將 CloudFront 或\nALB 的 DNS 名稱以 Alias 而非 CNAME 的形式登錄。Alias 可免費使用，且可設定於\nZONE APEX（example.com 本身）之上，此為與 CNAME 不同之處。\n\n在考試的脈絡中，會出現選擇「在 AWS 中提供 DNS 名稱解析的服務」為 Route 53 的題目。\n錯誤選項常見組合包含 Amazon EBS（區塊儲存）、AWS Lambda（無伺服器運算）、\nAmazon DynamoDB（NoSQL 資料庫）等與 DNS 無關的服務。當「DNS」「網域名稱」「名稱\n解析」此類關鍵字同時出現時，可將 Route 53 以外的選項直接排除。\n\n實務上，Route 53 的路由政策為選擇的重點。可使用簡易路由、加權路由（A/B 測試、\n階段性發佈）、延遲基準（將使用者導向距離最近的區域）、地理位置路由（依國家、地區\n區分路由目的地）、容錯移轉（依健康檢查結果切換故障目標）、多值回應等政策，並依\n工作負載的需求加以區分使用。CLF-C02 中除「Route 53 ＝ DNS」此基本要點之外，其\n同時具備網域註冊功能與健康檢查功能亦為常見的考點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 Amazon Route 53 (English)",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon Route 53（AWS 官方）",
+        "url": "https://aws.amazon.com/route53/"
+      },
+      {
+        "label": "選擇 Route 53 路由政策 (English)",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-050",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "用以確認 AWS 資源的設定變更歷程，以及設定是否符合規則的服務為下列何者？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Config"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Config 是記錄 AWS 資源的設定歷程，並可評估設定是否符合規則的服務。與 CloudWatch 或 CloudTrail 容易混淆。",
+    "choiceExplanations": {
+      "A": "正確。AWS Config 用於確認資源設定歷程與合規狀態。",
+      "B": "SQS 為訊息佇列服務。",
+      "C": "CloudFront 為 CDN 服務。",
+      "D": "Budgets 為費用預算與警示服務。"
+    },
+    "relatedServices": [
+      "aws-config",
+      "cloudwatch",
+      "cloudtrail"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "aws-config",
+      "compliance",
+      "configuration",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Config 是持續記錄 AWS 資源的設定資訊、保留設定變更歷程，並評估設定是否符合\n預先定義之規則（Config Rules）的服務。可將 EC2 的安全群組、S3 儲存貯體的加密設定、\nIAM 角色的政策等「資源的組態（設定值）」依時序記錄，並追蹤何時、由誰、變更了什麼。\n藉由啟用 Config Rules，可持續評估「封鎖 S3 儲存貯體的公開存取」「EBS 磁碟區已加密」\n等合規條件，並偵測違規資源。\n\n在考試的脈絡中，會出現選擇「記錄 AWS 資源設定變更歷程，並確認設定是否符合規則\n的服務」為 AWS Config 的題目。錯誤選項常見組合包含 Amazon SQS（訊息佇列）、\nAmazon CloudFront（CDN）、AWS Budgets（預算警示），上述皆與設定變更歷程與合規\n評估無關。與 CloudWatch、CloudTrail 的混淆為常見的考點，Config 負責「資源設定如何\n變化」與「設定是否符合規則」、CloudTrail 負責「由誰呼叫了哪一個 API」、CloudWatch\n負責「資源與應用程式的運作狀態」，三者的職責有所區分。\n\n實務上，Config 用於稽核與合規用途。受管規則中事先提供「s3-bucket-public-read-prohibited」\n「encrypted-volumes」「root-account-mfa-enabled」等 100 種以上的檢查，僅需啟用即可\n開始進行持續性的合規監控。亦常見與 AWS Security Hub 搭配，將整個組織的合規狀態\n進行集中彙整的架構。CLF-C02 中，Config、CloudTrail、CloudWatch 的職責分工，以及\n「以 Config Rules 進行合規監控」「以 CloudTrail 進行 API 稽核」「以 CloudWatch\n進行運作監控」此整理方式，均為反覆考核的重點。",
+    "officialDocs": [
+      {
+        "label": "什麼是 AWS Config (English)",
+        "url": "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html"
+      },
+      {
+        "label": "AWS Config（AWS 官方）",
+        "url": "https://aws.amazon.com/config/"
+      },
+      {
+        "label": "藉由 AWS Config 規則評估資源 (English)",
+        "url": "https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config.html"
+      }
+    ]
+  }
+]

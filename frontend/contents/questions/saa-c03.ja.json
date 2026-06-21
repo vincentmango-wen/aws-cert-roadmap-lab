@@ -1,1232 +1,1982 @@
 [
-    {
-      "questionId": "saa-001",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "normal",
-      "question": "あるWebアプリケーションがAmazon S3に保存された静的ファイルをCloudFront経由で配信しています。S3バケットを直接公開せず、CloudFrontからのアクセスだけを許可したい場合、最も適した構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "S3バケットのBlock Public Accessを無効化し、バケットポリシーで全ユーザーにGetObjectを許可する"
-        },
-        {
-          "choiceId": "B",
-          "text": "CloudFront Origin Access Controlを使い、S3バケットポリシーでCloudFront DistributionからのGetObjectのみ許可する"
-        },
-        {
-          "choiceId": "C",
-          "text": "S3静的Webサイトホスティングを有効化し、CloudFrontのオリジンにWebサイトエンドポイントを設定する"
-        },
-        {
-          "choiceId": "D",
-          "text": "S3オブジェクトごとにパブリック読み取りACLを設定する"
-        }
-      ],
-      "correctChoiceId": "B",
-      "explanation": "S3を直接公開せずCloudFront経由に限定するには、CloudFront Origin Access Controlを使用し、S3バケットポリシーで特定のCloudFront Distributionからのアクセスだけを許可する構成が適しています。",
-      "choiceExplanations": {
-        "A": "バケットを公開するため、S3直接公開を避ける要件に反します。",
-        "B": "正解です。OACによりS3を非公開のままCloudFront経由で安全に配信できます。",
-        "C": "S3静的WebサイトエンドポイントはOACと組み合わせられず、バケット公開が必要になりやすいです。",
-        "D": "オブジェクトACLで公開する方式は、最小公開の設計に反します。"
+  {
+    "questionId": "saa-001",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "あるWebアプリケーションがAmazon S3に保存された静的ファイルをCloudFront経由で配信しています。S3バケットを直接公開せず、CloudFrontからのアクセスだけを許可したい場合、最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3バケットのBlock Public Accessを無効化し、バケットポリシーで全ユーザーにGetObjectを許可する"
       },
-      "relatedServices": ["s3", "cloudfront", "iam"],
-      "relatedTerms": ["origin-access-control", "bucket-policy"],
-      "relatedComparisons": [],
-      "tags": ["s3", "cloudfront", "security", "oac"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "choiceId": "B",
+        "text": "CloudFront Origin Access Controlを使い、S3バケットポリシーでCloudFront DistributionからのGetObjectのみ許可する"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3静的Webサイトホスティングを有効化し、CloudFrontのオリジンにWebサイトエンドポイントを設定する"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3オブジェクトごとにパブリック読み取りACLを設定する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "S3を直接公開せずCloudFront経由に限定するには、CloudFront Origin Access Controlを使用し、S3バケットポリシーで特定のCloudFront Distributionからのアクセスだけを許可する構成が適しています。",
+    "choiceExplanations": {
+      "A": "バケットを公開するため、S3直接公開を避ける要件に反します。",
+      "B": "正解です。OACによりS3を非公開のままCloudFront経由で安全に配信できます。",
+      "C": "S3静的WebサイトエンドポイントはOACと組み合わせられず、バケット公開が必要になりやすいです。",
+      "D": "オブジェクトACLで公開する方式は、最小公開の設計に反します。"
     },
-    {
-      "questionId": "saa-002",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "normal",
-      "question": "Lambda関数がDynamoDBテーブルに問い合わせデータを書き込む必要があります。最小権限の原則に最も合うIAMポリシーはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "すべてのDynamoDBテーブルに対するdynamodb:*を許可する"
-        },
-        {
-          "choiceId": "B",
-          "text": "対象テーブルに対するdynamodb:PutItemのみを許可する"
-        },
-        {
-          "choiceId": "C",
-          "text": "Lambda実行ロールにAdministratorAccessを付与する"
-        },
-        {
-          "choiceId": "D",
-          "text": "DynamoDBへのアクセスキーをLambda環境変数に保存する"
-        }
-      ],
-      "correctChoiceId": "B",
-      "explanation": "Lambdaが問い合わせ保存だけを行うなら、対象DynamoDBテーブルへのPutItemだけを許可するのが最小権限です。",
-      "choiceExplanations": {
-        "A": "dynamodb:*は権限過多です。",
-        "B": "正解です。対象テーブルと必要な操作に限定しています。",
-        "C": "AdministratorAccessは権限が広すぎます。",
-        "D": "AWS認証情報を環境変数に保存する設計は避けるべきです。Lambda実行ロールを使います。"
+    "relatedServices": [
+      "s3",
+      "cloudfront",
+      "iam"
+    ],
+    "relatedTerms": [
+      "origin-access-control",
+      "bucket-policy"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "cloudfront",
+      "security",
+      "oac"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "CloudFront Origin Access Control（OAC）は、S3 バケットを公開せずに CloudFront 経由でのみ配信を許可するための仕組みである。S3 バケットの Block Public Access を有効のまま保ち、バケットポリシーで「特定の CloudFront Distribution からの GetObject だけを許可する」記述を行うことで、S3 直接アクセスを構造的に遮断できる。署名付き URL や署名付き Cookie と組み合わせれば、CloudFront 層で更にアクセス制御を重ねることもできる。OAC は旧来の Origin Access Identity（OAI）の後継として位置付けられており、新規構築では OAC が推奨される。\n\n設計上の注意点として、S3 静的 Web サイトホスティングのエンドポイントは OAC と組み合わせられない点がある。Web サイトエンドポイントは HTTP 公開を前提としているため、OAC で守る要件がある場合は REST API エンドポイント（バケット FQDN）をオリジンに指定する必要がある。また、CloudFront の Behaviors で Viewer Protocol Policy を Redirect HTTP to HTTPS にし、ACM 証明書（us-east-1 で発行）を紐付けて HTTPS 配信を強制するのが標準構成となる。\n\nSAA-C03 では「S3 を非公開のまま CloudFront 経由で配信したい」「最小公開の原則を守りたい」という文脈で OAC が正解として頻出する。誤答は Block Public Access の無効化、オブジェクト ACL の公開設定、S3 Web サイトエンドポイント利用など、バケットを公開してしまう方向の選択肢が並ぶ。OAI と OAC の違い（OAC はより新しく、SSE-KMS や SigV4 リージョン署名にも対応）も問われやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudfront/"
       },
-      "relatedServices": ["lambda", "dynamodb", "iam"],
-      "relatedTerms": ["least-privilege", "iam-role"],
-      "relatedComparisons": [],
-      "tags": ["iam", "lambda", "dynamodb", "security"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Origin Access Control による S3 オリジンへのアクセス制限（CloudFront 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+      },
+      {
+        "label": "Amazon S3 ブロックパブリックアクセス（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/access-control-block-public-access.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-002",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "Lambda関数がDynamoDBテーブルに問い合わせデータを書き込む必要があります。最小権限の原則に最も合うIAMポリシーはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "すべてのDynamoDBテーブルに対するdynamodb:*を許可する"
+      },
+      {
+        "choiceId": "B",
+        "text": "対象テーブルに対するdynamodb:PutItemのみを許可する"
+      },
+      {
+        "choiceId": "C",
+        "text": "Lambda実行ロールにAdministratorAccessを付与する"
+      },
+      {
+        "choiceId": "D",
+        "text": "DynamoDBへのアクセスキーをLambda環境変数に保存する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Lambdaが問い合わせ保存だけを行うなら、対象DynamoDBテーブルへのPutItemだけを許可するのが最小権限です。",
+    "choiceExplanations": {
+      "A": "dynamodb:*は権限過多です。",
+      "B": "正解です。対象テーブルと必要な操作に限定しています。",
+      "C": "AdministratorAccessは権限が広すぎます。",
+      "D": "AWS認証情報を環境変数に保存する設計は避けるべきです。Lambda実行ロールを使います。"
     },
-    {
-      "questionId": "saa-003",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "hard",
-      "question": "プライベートサブネットのEC2インスタンスからAmazon S3へアクセスする必要があります。インターネット経由の通信を避け、NAT Gatewayのコストも発生させたくありません。最も適した構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "NAT Gatewayを作成し、プライベートサブネットのルートテーブルから0.0.0.0/0をNAT Gatewayへ向ける"
-        },
-        {
-          "choiceId": "B",
-          "text": "Internet Gatewayをプライベートサブネットに直接関連付ける"
-        },
-        {
-          "choiceId": "C",
-          "text": "S3 Gateway VPC Endpointを作成し、対象サブネットのルートテーブルに関連付ける"
-        },
-        {
-          "choiceId": "D",
-          "text": "EC2にパブリックIPを付与してS3へアクセスする"
-        }
-      ],
-      "correctChoiceId": "C",
-      "explanation": "S3 Gateway VPC Endpointを使うと、プライベートサブネットからS3へAWSネットワーク内でアクセスできます。NAT Gatewayの固定費も不要です。",
-      "choiceExplanations": {
-        "A": "NAT Gatewayは要件上避けたいコストが発生します。",
-        "B": "Internet GatewayはVPCにアタッチするもので、プライベートサブネットに直接関連付けるものではありません。",
-        "C": "正解です。S3向けのGateway VPC Endpointは低コストでプライベートアクセスを実現できます。",
-        "D": "パブリックIPを付与するとインターネット経由になり、要件に反します。"
+    "relatedServices": [
+      "lambda",
+      "dynamodb",
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege",
+      "iam-role"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "iam",
+      "lambda",
+      "dynamodb",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Lambda 実行ロールに付与する IAM ポリシーは、関数が実際に必要とする操作と対象リソースだけに限定するのが最小権限の原則である。問い合わせを DynamoDB の特定テーブルに書き込むだけの関数であれば、Action は `dynamodb:PutItem` のみ、Resource は対象テーブルの ARN のみに絞ったポリシーが適切となる。`dynamodb:*` や AdministratorAccess を付与すると、関数が侵害された場合の影響範囲が一気に広がるため避ける。\n\n実務でやりがちな反パターンとしては、AWS のアクセスキー（IAM ユーザーの長期認証情報）を Lambda の環境変数に保存する設計がある。Lambda は実行ロールを通じて自動的に一時的な認証情報を受け取れるため、長期キーをコードや環境変数に持ち込む必要はない。長期キーは漏洩時のローテーション運用も発生し、IAM Access Analyzer や CloudTrail での追跡も難しくなる。Secrets Manager や Parameter Store と組み合わせる場合も、保存対象は外部システム（DB の DSN、外部 API キー等）に限定し、AWS への認証はロールに任せるのが基本となる。\n\nSAA-C03 では「最小権限」「IAM ロール vs アクセスキー」「Resource を ARN レベルで絞る」という観点が頻出する。誤答パターンは、ワイルドカード Action、AdministratorAccess、Lambda 環境変数へのアクセスキー保存などで、いずれも最小権限・ベストプラクティスに反するため除外できる。さらに上位の出題では、Condition で送信元 VPC エンドポイントや MFA を縛る、IAM Access Analyzer で実際の利用権限をモニタリングするといった発展も問われる。",
+    "officialDocs": [
+      {
+        "label": "IAM ベストプラクティス（IAM ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
       },
-      "relatedServices": ["vpc", "s3"],
-      "relatedTerms": ["vpc-endpoint", "private-subnet"],
-      "relatedComparisons": [],
-      "tags": ["vpc", "s3", "endpoint", "security", "cost"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "AWS Lambda 実行ロール（Lambda 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/lambda-intro-execution-role.html"
+      },
+      {
+        "label": "DynamoDB の IAM ポリシー例（DynamoDB 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/using-identity-based-policies.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-003",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "プライベートサブネットのEC2インスタンスからAmazon S3へアクセスする必要があります。インターネット経由の通信を避け、NAT Gatewayのコストも発生させたくありません。最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "NAT Gatewayを作成し、プライベートサブネットのルートテーブルから0.0.0.0/0をNAT Gatewayへ向ける"
+      },
+      {
+        "choiceId": "B",
+        "text": "Internet Gatewayをプライベートサブネットに直接関連付ける"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Gateway VPC Endpointを作成し、対象サブネットのルートテーブルに関連付ける"
+      },
+      {
+        "choiceId": "D",
+        "text": "EC2にパブリックIPを付与してS3へアクセスする"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "S3 Gateway VPC Endpointを使うと、プライベートサブネットからS3へAWSネットワーク内でアクセスできます。NAT Gatewayの固定費も不要です。",
+    "choiceExplanations": {
+      "A": "NAT Gatewayは要件上避けたいコストが発生します。",
+      "B": "Internet GatewayはVPCにアタッチするもので、プライベートサブネットに直接関連付けるものではありません。",
+      "C": "正解です。S3向けのGateway VPC Endpointは低コストでプライベートアクセスを実現できます。",
+      "D": "パブリックIPを付与するとインターネット経由になり、要件に反します。"
     },
-    {
-      "questionId": "saa-004",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "normal",
-      "question": "アプリケーションがRDS for MySQLへ接続します。DB認証情報をソースコードや環境変数に平文で保存したくありません。認証情報を安全に保存し、定期的なローテーションも考慮する場合、最も適したサービスはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "AWS Secrets Manager"
-        },
-        {
-          "choiceId": "B",
-          "text": "Amazon CloudWatch Logs"
-        },
-        {
-          "choiceId": "C",
-          "text": "Amazon S3の公開バケット"
-        },
-        {
-          "choiceId": "D",
-          "text": "AWS Budgets"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "DBパスワードなどの秘密情報はAWS Secrets Managerで管理できます。RDSとの統合やローテーションにも対応できます。",
-      "choiceExplanations": {
-        "A": "正解です。秘密情報管理とローテーションに向いています。",
-        "B": "CloudWatch Logsはログ保存サービスであり、秘密情報の保存先ではありません。",
-        "C": "公開バケットに秘密情報を置くのは重大なセキュリティリスクです。",
-        "D": "AWS Budgetsは課金監視サービスです。"
+    "relatedServices": [
+      "vpc",
+      "s3"
+    ],
+    "relatedTerms": [
+      "vpc-endpoint",
+      "private-subnet"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "vpc",
+      "s3",
+      "endpoint",
+      "security",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "プライベートサブネット上の EC2 から S3 へアクセスする経路には、NAT Gateway 経由（インターネット経由でパブリック S3 エンドポイントへ）と、VPC Endpoint 経由（AWS 内部ネットワーク経由）の 2 通りが存在する。S3 と DynamoDB は Gateway 型 VPC Endpoint を提供しており、Gateway Endpoint 自体には追加料金が発生しない。NAT Gateway は時間単価とデータ処理量で課金されるため、S3 トラフィックを VPC Endpoint に逃がすだけでも、データ転送量の多い構成では大きなコスト削減になる。\n\nGateway Endpoint と Interface Endpoint（PrivateLink ベース、ENI を AZ ごとに配置）は別物で、課金体系も異なる。Gateway Endpoint は S3 と DynamoDB の 2 サービス限定で無料、それ以外の多くの AWS サービスは Interface Endpoint（ENI 時間課金とデータ処理課金）となる。設計時には、エンドポイントポリシーで「特定バケットへの操作のみ許可」する制限をかけ、想定外バケットへの抜け道を塞ぐのが実務上の基本となる。ルートテーブル設定の漏れで一部サブネットだけがインターネット経由になる事故も起きやすいため、対象 VPC 内の全関連ルートテーブルに Endpoint を関連付けたか確認する。\n\nSAA-C03 では「プライベートサブネットから S3 へ低コストでアクセスしたい」「NAT Gateway の固定費を避けたい」という要件で Gateway VPC Endpoint が正解となる。Interface Endpoint と Gateway Endpoint の使い分け、エンドポイントポリシーによる絞り込み、PrivateLink によるサービス連携も上位試験では問われる。",
+    "officialDocs": [
+      {
+        "label": "VPC エンドポイント（VPC ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/privatelink/vpc-endpoints.html"
       },
-      "relatedServices": ["rds", "secrets-manager", "iam"],
-      "relatedTerms": ["credential-rotation", "secret-management"],
-      "relatedComparisons": [],
-      "tags": ["secrets-manager", "rds", "security"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon S3 のゲートウェイエンドポイント（VPC ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      },
+      {
+        "label": "NAT ゲートウェイ（VPC ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-nat-gateway.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-004",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "アプリケーションがRDS for MySQLへ接続します。DB認証情報をソースコードや環境変数に平文で保存したくありません。認証情報を安全に保存し、定期的なローテーションも考慮する場合、最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Secrets Manager"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudWatch Logs"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon S3の公開バケット"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "DBパスワードなどの秘密情報はAWS Secrets Managerで管理できます。RDSとの統合やローテーションにも対応できます。",
+    "choiceExplanations": {
+      "A": "正解です。秘密情報管理とローテーションに向いています。",
+      "B": "CloudWatch Logsはログ保存サービスであり、秘密情報の保存先ではありません。",
+      "C": "公開バケットに秘密情報を置くのは重大なセキュリティリスクです。",
+      "D": "AWS Budgetsは課金監視サービスです。"
     },
-    {
-      "questionId": "saa-005",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "normal",
-      "question": "社内ユーザーがS3バケット内の特定プレフィックスだけを読み取れるようにしたいです。最小権限の観点で最も適した設計はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "対象バケット全体に対するs3:*を許可する"
-        },
-        {
-          "choiceId": "B",
-          "text": "対象プレフィックス配下のオブジェクトに対するs3:GetObjectを許可するIAMポリシーを付与する"
-        },
-        {
-          "choiceId": "C",
-          "text": "AWSアカウントのrootユーザー認証情報を共有する"
-        },
-        {
-          "choiceId": "D",
-          "text": "S3バケットをパブリック公開する"
-        }
-      ],
-      "correctChoiceId": "B",
-      "explanation": "特定プレフィックスだけを読み取る要件では、Resourceを対象プレフィックスに限定し、Actionもs3:GetObjectに限定するのが最小権限です。",
-      "choiceExplanations": {
-        "A": "s3:*は読み取り以外の操作も含むため権限過多です。",
-        "B": "正解です。対象範囲と操作を限定しています。",
-        "C": "rootユーザー認証情報の共有は絶対に避けるべきです。",
-        "D": "パブリック公開は不要な公開範囲を生みます。"
+    "relatedServices": [
+      "rds",
+      "secrets-manager",
+      "iam"
+    ],
+    "relatedTerms": [
+      "credential-rotation",
+      "secret-management"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "secrets-manager",
+      "rds",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS Secrets Manager は、データベースパスワード、API キー、OAuth トークンといった機密情報を安全に保存・取得するためのマネージドサービスである。RDS / Aurora / Redshift などのデータベースに対しては、Secrets Manager がローテーションを直接サポートしており、Lambda ベースのローテーション関数を介して定期的にパスワードを変更し、DB 側と同期する運用が標準化されている。アプリケーションは Secrets Manager API（または AWS SDK の自動キャッシュ機能）でシークレットを取得し、コードや環境変数に平文の認証情報を持たせない構成にできる。\n\n類似サービスとして AWS Systems Manager Parameter Store の SecureString パラメータがあるが、こちらは標準ティアが無料で利用できる代わりに、自動ローテーションは標準では提供されない（自前で Lambda を構成する必要がある）。シークレット数が少ない場合や、ローテーションが不要な静的シークレット（外部 API キーなど）であれば Parameter Store、DB のような自動ローテーションが必要なケースでは Secrets Manager、と使い分けるのが一般的である。Secrets Manager はシークレットあたりの月額固定費と API コール課金が発生するため、コストと運用負荷のバランスで選ぶ。\n\nSAA-C03 では「DB 認証情報を安全に保存し、定期的にローテーションしたい」「ハードコードや平文環境変数を避けたい」という要件で Secrets Manager が正解となる。CloudWatch Logs や S3 公開バケットを保存先に挙げる誤答は、ログ用途・公開ストレージという別目的のサービスを当てる典型パターンである。Parameter Store SecureString との比較や、IAM ポリシーによる Secret 単位のアクセス制御も上位試験で問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Secrets Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/secrets-manager/"
       },
-      "relatedServices": ["s3", "iam"],
-      "relatedTerms": ["least-privilege", "prefix"],
-      "relatedComparisons": [],
-      "tags": ["s3", "iam", "security"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "AWS Secrets Manager とは（ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/intro.html"
+      },
+      {
+        "label": "Secrets Manager のシークレットのローテーション（ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/secretsmanager/latest/userguide/rotating-secrets.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-005",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "社内ユーザーがS3バケット内の特定プレフィックスだけを読み取れるようにしたいです。最小権限の観点で最も適した設計はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "対象バケット全体に対するs3:*を許可する"
+      },
+      {
+        "choiceId": "B",
+        "text": "対象プレフィックス配下のオブジェクトに対するs3:GetObjectを許可するIAMポリシーを付与する"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWSアカウントのrootユーザー認証情報を共有する"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3バケットをパブリック公開する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "特定プレフィックスだけを読み取る要件では、Resourceを対象プレフィックスに限定し、Actionもs3:GetObjectに限定するのが最小権限です。",
+    "choiceExplanations": {
+      "A": "s3:*は読み取り以外の操作も含むため権限過多です。",
+      "B": "正解です。対象範囲と操作を限定しています。",
+      "C": "rootユーザー認証情報の共有は絶対に避けるべきです。",
+      "D": "パブリック公開は不要な公開範囲を生みます。"
     },
-    {
-      "questionId": "saa-006",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "hard",
-      "question": "複数のAWSアカウントを利用しています。監査用アカウントから各アカウントの設定変更履歴を一元的に確認したいです。最も適したサービスはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "AWS CloudTrail"
-        },
-        {
-          "choiceId": "B",
-          "text": "Amazon SQS"
-        },
-        {
-          "choiceId": "C",
-          "text": "Amazon ElastiCache"
-        },
-        {
-          "choiceId": "D",
-          "text": "Amazon EFS"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "AWS CloudTrailはAWSアカウント内のAPI操作履歴を記録します。組織全体の証跡を集約することで監査に利用できます。",
-      "choiceExplanations": {
-        "A": "正解です。API操作履歴や設定変更の追跡に使います。",
-        "B": "SQSはメッセージキューであり、監査ログの主目的サービスではありません。",
-        "C": "ElastiCacheはインメモリキャッシュです。",
-        "D": "EFSは共有ファイルストレージです。"
+    "relatedServices": [
+      "s3",
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege",
+      "prefix"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "iam",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "S3 のアクセス制御では、Resource をプレフィックス単位、Action を必要な操作だけに絞ることで最小権限を実現する。社内ユーザーが特定プレフィックス配下のオブジェクトだけを読み取る要件であれば、IAM ポリシーで Resource を `arn:aws:s3:::bucket/prefix/*`、Action を `s3:GetObject` のみに限定する。バケット内の他プレフィックスや、書き込み・削除操作はポリシー上拒否されたままになるため、誤操作や権限濫用の影響範囲を構造的に小さくできる。\n\n設計上は、IAM ポリシー（ID ベース）と S3 バケットポリシー（リソースベース）の使い分けも重要となる。同一アカウント内の特定 IAM ユーザー／ロールに権限を渡すなら IAM ポリシーが扱いやすく、クロスアカウントアクセスや「バケットに対する共通方針」を強制するならバケットポリシーが適している。両者が同時に存在する場合は、明示的 Deny が最優先される評価ロジックを踏まえてポリシーを組み立てる。さらに ListBucket は `s3:ListBucket` 権限の Condition で `s3:prefix` を限定すると、プレフィックス外のオブジェクト一覧が見えないように制御できる。\n\nSAA-C03 では「特定プレフィックスだけ読み取らせる」「最小公開で済ませる」文脈で本パターンが頻出する。誤答は `s3:*` 付与、root 認証情報の共有、バケット全体のパブリック公開といった「権限過多」「公開設計の誤用」「root 直接利用」の典型 3 パターンで、いずれも IAM のベストプラクティスに反する。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 のアイデンティティベースのポリシー（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/user-policies.html"
       },
-      "relatedServices": ["cloudtrail", "organizations", "s3"],
-      "relatedTerms": ["audit-log", "organization-trail"],
-      "relatedComparisons": ["cloudwatch-vs-cloudtrail-vs-config"],
-      "tags": ["cloudtrail", "audit", "security"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "S3 バケットポリシーと IAM ポリシーの使い分け（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/access-policy-alternatives-guidelines.html"
+      },
+      {
+        "label": "IAM ベストプラクティス（IAM ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-006",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "複数のAWSアカウントを利用しています。監査用アカウントから各アカウントの設定変更履歴を一元的に確認したいです。最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon ElastiCache"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EFS"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS CloudTrailはAWSアカウント内のAPI操作履歴を記録します。組織全体の証跡を集約することで監査に利用できます。",
+    "choiceExplanations": {
+      "A": "正解です。API操作履歴や設定変更の追跡に使います。",
+      "B": "SQSはメッセージキューであり、監査ログの主目的サービスではありません。",
+      "C": "ElastiCacheはインメモリキャッシュです。",
+      "D": "EFSは共有ファイルストレージです。"
     },
-    {
-      "questionId": "saa-007",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "normal",
-      "question": "Application Load Balancerの背後にあるEC2インスタンスに対して、インターネットから直接HTTPアクセスさせたくありません。セキュリティグループの設定として最も適切なものはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "EC2のセキュリティグループで0.0.0.0/0からのHTTPを許可する"
-        },
-        {
-          "choiceId": "B",
-          "text": "EC2のセキュリティグループでALBのセキュリティグループからのHTTPのみ許可する"
-        },
-        {
-          "choiceId": "C",
-          "text": "ALBのセキュリティグループでEC2からのHTTPのみ許可する"
-        },
-        {
-          "choiceId": "D",
-          "text": "EC2にElastic IPを付与して直接アクセスできるようにする"
-        }
-      ],
-      "correctChoiceId": "B",
-      "explanation": "ALB配下のEC2は、EC2側のセキュリティグループでALBのセキュリティグループからの通信だけを許可する構成にします。",
-      "choiceExplanations": {
-        "A": "EC2をインターネットに直接公開する設定です。",
-        "B": "正解です。ALB経由の通信だけを許可できます。",
-        "C": "ALBはクライアントから受ける入口です。EC2からALBへのHTTPだけを許可しても要件を満たしません。",
-        "D": "Elastic IPを付与すると直接アクセスの可能性が高まります。"
+    "relatedServices": [
+      "cloudtrail",
+      "organizations",
+      "s3"
+    ],
+    "relatedTerms": [
+      "audit-log",
+      "organization-trail"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudtrail",
+      "audit",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS CloudTrail は AWS アカウント内で発生した API 操作・コンソール操作・SDK 経由の操作を記録する監査ログサービスである。マネジメントイベント（IAM ユーザー作成、EC2 起動、S3 バケット削除など）はデフォルトで 90 日間保持され、追加で S3 バケットに長期保管する Trail を作成することで、より長期間の監査要件にも対応できる。AWS Organizations と組み合わせて Organization Trail を有効化すると、組織配下の全アカウントの証跡を 1 つの S3 バケット（管理アカウント／委任管理アカウント）に集約でき、監査用アカウントから横断的に確認できる。\n\n類似サービスとの使い分けが頻出ポイントである。CloudWatch はメトリクスとログ（アプリケーションログ、システムログ）の収集・可視化が主目的、AWS Config はリソース設定の変更履歴と「設定がコンプライアンスルールを満たしているか」の継続評価が主目的、CloudTrail は「誰が、いつ、何の API を叩いたか」の操作証跡が主目的である。3 つを組み合わせて、検知（CloudWatch Logs Insights / EventBridge ルール）、評価（Config Rules）、追跡（CloudTrail）を構成するのがエンタープライズ監査の基本形となる。\n\nSAA-C03 では「マルチアカウントの操作履歴を一元的に確認したい」「監査用に API コール証跡を集約したい」要件で CloudTrail（Organization Trail）が正解となる。CloudWatch / Config との混同を狙う誤答が出やすく、特に「設定変更履歴」という言い回しは Config を想起させるが、API コール証跡まで含めて「変更を追跡」したい場合は CloudTrail が必要となる。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
       },
-      "relatedServices": ["ec2", "elb", "vpc"],
-      "relatedTerms": ["security-group", "alb"],
-      "relatedComparisons": ["alb-vs-nlb-vs-cloudfront"],
-      "tags": ["alb", "ec2", "security-group", "security"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "AWS CloudTrail とは（ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "組織の証跡の作成（CloudTrail ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/creating-trail-organization.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-007",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "Application Load Balancerの背後にあるEC2インスタンスに対して、インターネットから直接HTTPアクセスさせたくありません。セキュリティグループの設定として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "EC2のセキュリティグループで0.0.0.0/0からのHTTPを許可する"
+      },
+      {
+        "choiceId": "B",
+        "text": "EC2のセキュリティグループでALBのセキュリティグループからのHTTPのみ許可する"
+      },
+      {
+        "choiceId": "C",
+        "text": "ALBのセキュリティグループでEC2からのHTTPのみ許可する"
+      },
+      {
+        "choiceId": "D",
+        "text": "EC2にElastic IPを付与して直接アクセスできるようにする"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "ALB配下のEC2は、EC2側のセキュリティグループでALBのセキュリティグループからの通信だけを許可する構成にします。",
+    "choiceExplanations": {
+      "A": "EC2をインターネットに直接公開する設定です。",
+      "B": "正解です。ALB経由の通信だけを許可できます。",
+      "C": "ALBはクライアントから受ける入口です。EC2からALBへのHTTPだけを許可しても要件を満たしません。",
+      "D": "Elastic IPを付与すると直接アクセスの可能性が高まります。"
     },
-    {
-      "questionId": "saa-008",
-      "exam": "SAA-C03",
-      "category": "Secure Architectures",
-      "domain": "Design Secure Architectures",
-      "difficulty": "normal",
-      "question": "S3バケットに保存するオブジェクトをAWS管理の暗号化キーではなく、自社管理のKMSキーで暗号化したいです。最も適した暗号化方式はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "SSE-S3"
-        },
-        {
-          "choiceId": "B",
-          "text": "SSE-KMS"
-        },
-        {
-          "choiceId": "C",
-          "text": "クライアント側で暗号化せずに保存する"
-        },
-        {
-          "choiceId": "D",
-          "text": "S3 Transfer Acceleration"
-        }
-      ],
-      "correctChoiceId": "B",
-      "explanation": "SSE-KMSを使うと、AWS KMSキーを使ってS3オブジェクトをサーバー側暗号化できます。カスタマー管理キーを使うことでキー管理を制御できます。",
-      "choiceExplanations": {
-        "A": "SSE-S3はS3管理キーによる暗号化です。自社管理のKMSキー要件には合いません。",
-        "B": "正解です。KMSキーを使ったサーバー側暗号化です。",
-        "C": "暗号化しないため要件に反します。",
-        "D": "Transfer Accelerationは転送高速化機能であり、暗号化方式ではありません。"
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "security-group",
+      "alb"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "alb",
+      "ec2",
+      "security-group",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Application Load Balancer（ALB）配下の EC2 では、EC2 側のセキュリティグループ（SG）で「ALB の SG からのインバウンドのみ許可」する構成にすることで、インターネットからの直接アクセスを構造的に遮断できる。セキュリティグループは送信元として CIDR だけでなく、別の SG を ID 指定で参照できるため、ALB SG の ID を許可する設定にしておくと、ALB の IP が変動しても EC2 側のルールを変更せずに済む。ALB 側 SG では `0.0.0.0/0` からの 80/443 を受け、EC2 側 SG では ALB SG からの 80/8080 等を受ける、という二段構成が標準となる。\n\nセキュリティグループは「許可ルールのみ・ステートフル」、ネットワーク ACL（NACL）は「許可と拒否を書ける・ステートレス」という違いもあり、SAA-C03 では両者の使い分けが問われる。EC2 を VPC のプライベートサブネットに配置し、ALB をパブリックサブネットに配置するのが一般的構成で、EC2 にパブリック IP や Elastic IP を付与する必要はない。プライベート IP と ALB 経由のヘルスチェック・トラフィック転送だけで通信が成立する。\n\nSAA-C03 では「ALB 配下の EC2 にインターネットから直接アクセスさせない」要件で、EC2 側 SG に ALB SG からのみ許可するパターンが頻出する。誤答は `0.0.0.0/0` 開放、EC2 への Elastic IP 付与、ALB 側 SG を EC2 からのみ許可する逆方向設定など、入口を ALB に集約する意図に反するパターンが並ぶ。SG 同士の参照は同一 VPC 内（または VPC ピアリング先）に限られる点も実装時の注意ポイントとなる。",
+    "officialDocs": [
+      {
+        "label": "Application Load Balancer のセキュリティグループ（ELB ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html"
       },
-      "relatedServices": ["s3", "kms"],
-      "relatedTerms": ["sse-kms", "customer-managed-key"],
-      "relatedComparisons": [],
-      "tags": ["s3", "kms", "encryption", "security"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "VPC のセキュリティグループ（VPC ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-security-groups.html"
+      },
+      {
+        "label": "Application Load Balancer とは（ELB ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/application/introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-008",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "S3バケットに保存するオブジェクトをAWS管理の暗号化キーではなく、自社管理のKMSキーで暗号化したいです。最も適した暗号化方式はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "SSE-S3"
+      },
+      {
+        "choiceId": "B",
+        "text": "SSE-KMS"
+      },
+      {
+        "choiceId": "C",
+        "text": "クライアント側で暗号化せずに保存する"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Transfer Acceleration"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "SSE-KMSを使うと、AWS KMSキーを使ってS3オブジェクトをサーバー側暗号化できます。カスタマー管理キーを使うことでキー管理を制御できます。",
+    "choiceExplanations": {
+      "A": "SSE-S3はS3管理キーによる暗号化です。自社管理のKMSキー要件には合いません。",
+      "B": "正解です。KMSキーを使ったサーバー側暗号化です。",
+      "C": "暗号化しないため要件に反します。",
+      "D": "Transfer Accelerationは転送高速化機能であり、暗号化方式ではありません。"
     },
-    {
-      "questionId": "saa-009",
-      "exam": "SAA-C03",
-      "category": "Resilient Architectures",
-      "domain": "Design Resilient Architectures",
-      "difficulty": "normal",
-      "question": "単一AZで稼働しているRDS for MySQLがあります。AZ障害時にもDBの可用性を高めたいです。アプリケーション側の変更を最小にする構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "RDSをMulti-AZ構成にする"
-        },
-        {
-          "choiceId": "B",
-          "text": "RDSのストレージタイプをgp3に変更する"
-        },
-        {
-          "choiceId": "C",
-          "text": "RDSの自動バックアップを無効化する"
-        },
-        {
-          "choiceId": "D",
-          "text": "RDSインスタンスをパブリックサブネットに移動する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "RDS Multi-AZは同期レプリケーションと自動フェイルオーバーにより、AZ障害時の可用性を高めます。",
-      "choiceExplanations": {
-        "A": "正解です。高可用性のための代表的なRDS構成です。",
-        "B": "ストレージ性能やコストには関係しますが、AZ障害対策にはなりません。",
-        "C": "バックアップを無効化すると復旧性が下がります。",
-        "D": "パブリックサブネット移動は可用性向上ではなく、セキュリティリスクも増えます。"
+    "relatedServices": [
+      "s3",
+      "kms"
+    ],
+    "relatedTerms": [
+      "sse-kms",
+      "customer-managed-key"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "kms",
+      "encryption",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "S3 のサーバー側暗号化には、SSE-S3（S3 マネージドキー）、SSE-KMS（AWS KMS マネージドキー）、SSE-C（顧客提供キー）の 3 種類がある。自社管理の KMS キー（カスタマー管理 KMS キー / CMK）を使いたいケースでは SSE-KMS を選び、KMS キーポリシーで「どの IAM プリンシパルが暗号化／復号できるか」を細かく制御できる。CloudTrail と組み合わせれば、誰がいつ KMS キーを使って暗号化／復号したかの監査証跡も取得できるため、コンプライアンス要件のある業務データ保管に適している。\n\nSSE-KMS にはトレードオフもある。S3 オブジェクトへのアクセスごとに KMS API（Decrypt / GenerateDataKey）が呼ばれるため、大量の S3 リクエストが発生するワークロードでは KMS のリクエスト課金が積み上がる。これを抑える機能として S3 Bucket Keys があり、有効化すると S3 がバケット単位のデータキーをローカルで再利用し、KMS への呼び出し回数を大幅に削減できる（コストが最大 99% 程度減るケースもある）。デフォルトの SSE-S3 や AWS マネージド KMS キー（`aws/s3`）を使えば管理は最小で済むが、キーローテーション制御やクロスアカウント共有を厳密にしたい場合はカスタマー管理 CMK を選ぶ。\n\nSAA-C03 では「自社管理の暗号化キーで S3 を暗号化したい」「コンプライアンス要件で KMS 監査が必要」という文脈で SSE-KMS が正解となる。誤答として暗号化なし、Transfer Acceleration（転送高速化機能で暗号化とは無関係）が並ぶ。SSE-S3 と SSE-KMS の違い、Bucket Keys によるコスト最適化、CloudTrail 連携による監査も上位試験で問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS KMS キーによるサーバー側の暗号化（SSE-KMS）（S3 ユーザーガイド)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/UsingKMSEncryption.html"
       },
-      "relatedServices": ["rds"],
-      "relatedTerms": ["multi-az", "failover"],
-      "relatedComparisons": ["multi-az-vs-read-replica"],
-      "tags": ["rds", "multi-az", "resilience"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon S3 でデータを保護する（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/DataDurability.html"
+      },
+      {
+        "label": "S3 Bucket Keys による SSE-KMS コストの削減（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/bucket-key.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-009",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "単一AZで稼働しているRDS for MySQLがあります。AZ障害時にもDBの可用性を高めたいです。アプリケーション側の変更を最小にする構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "RDSをMulti-AZ構成にする"
+      },
+      {
+        "choiceId": "B",
+        "text": "RDSのストレージタイプをgp3に変更する"
+      },
+      {
+        "choiceId": "C",
+        "text": "RDSの自動バックアップを無効化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "RDSインスタンスをパブリックサブネットに移動する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "RDS Multi-AZは同期レプリケーションと自動フェイルオーバーにより、AZ障害時の可用性を高めます。",
+    "choiceExplanations": {
+      "A": "正解です。高可用性のための代表的なRDS構成です。",
+      "B": "ストレージ性能やコストには関係しますが、AZ障害対策にはなりません。",
+      "C": "バックアップを無効化すると復旧性が下がります。",
+      "D": "パブリックサブネット移動は可用性向上ではなく、セキュリティリスクも増えます。"
     },
-    {
-      "questionId": "saa-010",
-      "exam": "SAA-C03",
-      "category": "Resilient Architectures",
-      "domain": "Design Resilient Architectures",
-      "difficulty": "normal",
-      "question": "Webアプリケーションを複数AZに分散したEC2で稼働させ、障害のあるインスタンスへトラフィックを送らないようにしたいです。最も適した構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Application Load BalancerとAuto Scaling Groupを複数AZで構成する"
-        },
-        {
-          "choiceId": "B",
-          "text": "単一AZのEC2インスタンスにElastic IPを付与する"
-        },
-        {
-          "choiceId": "C",
-          "text": "S3バケットを作成してEC2の代わりにする"
-        },
-        {
-          "choiceId": "D",
-          "text": "CloudWatch Logsだけを有効化する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "ALBはヘルスチェックで正常なターゲットにトラフィックを振り分けます。Auto Scaling Groupを複数AZに広げることで、インスタンス障害やAZ障害に強い構成になります。",
-      "choiceExplanations": {
-        "A": "正解です。高可用性Webアプリの基本構成です。",
-        "B": "単一AZ構成ではAZ障害に弱いです。",
-        "C": "S3は静的ファイル保存には使えますが、EC2上の動的Webアプリをそのまま置き換える選択肢ではありません。",
-        "D": "ログ収集だけではトラフィック制御や高可用性は実現できません。"
+    "relatedServices": [
+      "rds"
+    ],
+    "relatedTerms": [
+      "multi-az",
+      "failover"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "rds",
+      "multi-az",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "RDS Multi-AZ 配置は、同一リージョン内の異なるアベイラビリティゾーンにスタンバイ DB を自動で構築し、プライマリ DB との間で同期レプリケーションを行う構成である。プライマリ AZ の障害時には自動的にフェイルオーバーが発生し、DB エンドポイント（DNS 名）の参照先がスタンバイ側に切り替わるため、アプリケーションは接続先文字列を変更せずに復旧できる。フェイルオーバーは概ね 60〜120 秒程度で完了し、シングル AZ 構成と比べて RTO が大幅に短縮される。\n\nMulti-AZ と Read Replica の使い分けが SAA-C03 の頻出論点である。Multi-AZ は可用性向上のためのスタンバイ構成であり、スタンバイ DB は通常読み取りには使えない（一部例外として Multi-AZ DB Cluster というオプションでは読み取り可能なスタンバイを 2 つ持つ）。Read Replica は読み取り性能向上のための非同期レプリカで、可用性向上が主目的ではなく、フェイルオーバー先としては手動昇格が必要となる。両者を組み合わせて、書き込み系は Multi-AZ で守り、読み取り系は Read Replica でスケールさせる、というのが大規模 RDS 構成の標準形である。\n\nMulti-AZ にはコスト面のトレードオフがある。スタンバイ DB インスタンスが追加で起動するため、シングル AZ と比較しておおむね 2 倍のコンピュート料金が発生する。それでもアプリ側の接続変更不要でフェイルオーバー対応できる点で、可用性要件のあるワークロードでは標準的に選ばれる。SAA-C03 では「AZ 障害時にも可用性を維持」「アプリ変更最小」要件で Multi-AZ が正解、誤答はストレージタイプ変更、バックアップ無効化、パブリックサブネット移動など、可用性とは別軸の操作が並ぶ。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS の高可用性（Multi-AZ）構成（RDS ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
       },
-      "relatedServices": ["ec2", "elb", "auto-scaling"],
-      "relatedTerms": ["multi-az", "health-check"],
-      "relatedComparisons": ["alb-vs-nlb-vs-cloudfront"],
-      "tags": ["alb", "auto-scaling", "ec2", "resilience"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "RDS Read Replica の操作（RDS ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_ReadRepl.html"
+      },
+      {
+        "label": "Amazon RDS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-010",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Webアプリケーションを複数AZに分散したEC2で稼働させ、障害のあるインスタンスへトラフィックを送らないようにしたいです。最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Application Load BalancerとAuto Scaling Groupを複数AZで構成する"
+      },
+      {
+        "choiceId": "B",
+        "text": "単一AZのEC2インスタンスにElastic IPを付与する"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3バケットを作成してEC2の代わりにする"
+      },
+      {
+        "choiceId": "D",
+        "text": "CloudWatch Logsだけを有効化する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "ALBはヘルスチェックで正常なターゲットにトラフィックを振り分けます。Auto Scaling Groupを複数AZに広げることで、インスタンス障害やAZ障害に強い構成になります。",
+    "choiceExplanations": {
+      "A": "正解です。高可用性Webアプリの基本構成です。",
+      "B": "単一AZ構成ではAZ障害に弱いです。",
+      "C": "S3は静的ファイル保存には使えますが、EC2上の動的Webアプリをそのまま置き換える選択肢ではありません。",
+      "D": "ログ収集だけではトラフィック制御や高可用性は実現できません。"
     },
-    {
-      "questionId": "saa-011",
-      "exam": "SAA-C03",
-      "category": "Resilient Architectures",
-      "domain": "Design Resilient Architectures",
-      "difficulty": "hard",
-      "question": "注文処理システムで、注文受付APIと在庫更新処理を疎結合にしたいです。在庫更新処理が一時的に停止しても注文メッセージを失わず、後で処理できる構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "APIから在庫更新Lambdaを同期呼び出しする"
-        },
-        {
-          "choiceId": "B",
-          "text": "APIからSQSキューへメッセージを送信し、在庫更新LambdaがSQSを処理する"
-        },
-        {
-          "choiceId": "C",
-          "text": "APIからCloudWatch Logsに注文内容を出力するだけにする"
-        },
-        {
-          "choiceId": "D",
-          "text": "API GatewayのCORS設定だけで制御する"
-        }
-      ],
-      "correctChoiceId": "B",
-      "explanation": "SQSを使うと、注文受付と在庫更新を非同期・疎結合にできます。処理側が一時停止してもメッセージをキューに保持できます。",
-      "choiceExplanations": {
-        "A": "同期呼び出しでは在庫更新側の障害が注文受付に影響しやすくなります。",
-        "B": "正解です。SQSは非同期処理とバッファリングに向いています。",
-        "C": "CloudWatch Logsは処理キューではありません。",
-        "D": "CORSはブラウザからのアクセス制御であり、非同期処理の信頼性を高める機能ではありません。"
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "multi-az",
+      "health-check"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "alb",
+      "auto-scaling",
+      "ec2",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Application Load Balancer（ALB）と Auto Scaling Group（ASG）を複数 AZ に展開する構成は、AWS における高可用性 Web アプリの基本パターンである。ALB はターゲットグループに登録された EC2 インスタンスへ、設定されたヘルスチェック（HTTP 応答コード等）に基づきトラフィックを振り分ける。ヘルスチェックに失敗したインスタンスは自動的にターゲットから外され、復旧後に再投入される。ASG を複数 AZ で構成しておくと、AZ 障害時にも別 AZ のインスタンスが残るため、サービス全体の停止を防げる。\n\nASG はメトリクス（CPU 使用率、リクエスト数、カスタムメトリクス等）に基づきインスタンス数を動的に調整するスケーリングポリシー（Target Tracking、Step Scaling、Predictive Scaling）を持つ。また、Launch Template でインスタンス起動時のユーザーデータ・IAM ロール・AMI 等を定義でき、Immutable Infrastructure 的な運用と相性が良い。ALB は Layer 7 でパスベース／ホストベースのルーティングや、HTTP/HTTPS / WebSocket / gRPC をサポートしており、Network Load Balancer（Layer 4、超低遅延）や CloudFront（CDN、エッジ配信）と用途で使い分ける。\n\nSAA-C03 では「複数 AZ に分散」「障害のあるインスタンスへトラフィックを送らない」要件で ALB + ASG（Multi-AZ）が正解となる。単一 AZ + Elastic IP は AZ 障害に弱い、S3 で EC2 を置き換える選択肢は動的処理を担えない、CloudWatch Logs だけではトラフィック制御ができない、と誤答パターンも整理しやすい。ALB / NLB / CloudFront の使い分け、ASG のスケーリングポリシー設計、Launch Template と Launch Configuration の違いは上位試験でさらに踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Application Load Balancer とは（ELB ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/application/introduction.html"
       },
-      "relatedServices": ["sqs", "lambda", "api-gateway"],
-      "relatedTerms": ["decoupling", "asynchronous-processing"],
-      "relatedComparisons": ["sns-vs-sqs-vs-eventbridge"],
-      "tags": ["sqs", "lambda", "decoupling", "resilience"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon EC2 Auto Scaling とは（Auto Scaling ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "ターゲットグループのヘルスチェック（ELB ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/application/target-group-health-checks.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-011",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "注文処理システムで、注文受付APIと在庫更新処理を疎結合にしたいです。在庫更新処理が一時的に停止しても注文メッセージを失わず、後で処理できる構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "APIから在庫更新Lambdaを同期呼び出しする"
+      },
+      {
+        "choiceId": "B",
+        "text": "APIからSQSキューへメッセージを送信し、在庫更新LambdaがSQSを処理する"
+      },
+      {
+        "choiceId": "C",
+        "text": "APIからCloudWatch Logsに注文内容を出力するだけにする"
+      },
+      {
+        "choiceId": "D",
+        "text": "API GatewayのCORS設定だけで制御する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "SQSを使うと、注文受付と在庫更新を非同期・疎結合にできます。処理側が一時停止してもメッセージをキューに保持できます。",
+    "choiceExplanations": {
+      "A": "同期呼び出しでは在庫更新側の障害が注文受付に影響しやすくなります。",
+      "B": "正解です。SQSは非同期処理とバッファリングに向いています。",
+      "C": "CloudWatch Logsは処理キューではありません。",
+      "D": "CORSはブラウザからのアクセス制御であり、非同期処理の信頼性を高める機能ではありません。"
     },
-    {
-      "questionId": "saa-012",
-      "exam": "SAA-C03",
-      "category": "Resilient Architectures",
-      "domain": "Design Resilient Architectures",
-      "difficulty": "normal",
-      "question": "S3に保存された重要データを誤削除から保護し、過去の状態へ戻せるようにしたいです。最も適した機能はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "S3 Versioning"
-        },
-        {
-          "choiceId": "B",
-          "text": "S3 Transfer Acceleration"
-        },
-        {
-          "choiceId": "C",
-          "text": "S3 Select"
-        },
-        {
-          "choiceId": "D",
-          "text": "S3 Event Notificationsだけを有効化する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "S3 Versioningを有効化すると、オブジェクトの複数バージョンを保持でき、誤削除や上書きからの復旧に役立ちます。",
-      "choiceExplanations": {
-        "A": "正解です。過去バージョンの保持により復旧性が高まります。",
-        "B": "Transfer Accelerationは遠距離アップロード高速化です。",
-        "C": "S3 Selectはオブジェクト内データの一部取得に使います。",
-        "D": "イベント通知だけでは過去のオブジェクトを復元できません。"
+    "relatedServices": [
+      "sqs",
+      "lambda",
+      "api-gateway"
+    ],
+    "relatedTerms": [
+      "decoupling",
+      "asynchronous-processing"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "lambda",
+      "decoupling",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Amazon SQS は、メッセージ送信側（プロデューサー）と受信側（コンシューマー）を時間的・物理的に分離するためのフルマネージド型キューサービスである。注文受付 API がリクエストを受けた時点で SQS にメッセージを投入し、在庫更新ワーカーが別プロセスとして自分のペースでメッセージを取り出して処理する構成にすれば、在庫更新側が一時的に停止していてもメッセージは最大 14 日間キューに保持される。標準キュー（Standard Queue）は順序保証なし・少なくとも 1 回配信、FIFO キューは順序保証・厳密に 1 回処理を提供する。\n\n代替案として SNS（pub/sub）や EventBridge（イベントバス）もあるが、SNS は通知のファンアウト用途、EventBridge はルーティング・スキーマ管理用途であり、ワーカーがメッセージを「取りに行く」ポーリング型のジョブキューには SQS が最も素直に当てはまる。注意点としては、コンシューマー側で可視性タイムアウト（Visibility Timeout）を処理時間より長く設定すること、処理失敗時の再試行回数を超えたメッセージを退避させる Dead Letter Queue（DLQ）を必ず設定することの 2 点が運用上の定石である。\n\nSAA-C03 では、疎結合（decoupling）・非同期処理・耐障害性というキーワードが出題文に含まれる場合、SQS が第一候補となる。誤答としては「ワーカー側で同期 HTTP 呼び出し」「DynamoDB に直接書き込み」「EC2 を Auto Scaling で増やす」など、疎結合化以外の論点にすり替える選択肢が混ぜられる。SNS と SQS の使い分け（通知配信か、ワーカーキューか）も頻出論点である。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
       },
-      "relatedServices": ["s3"],
-      "relatedTerms": ["versioning", "data-protection"],
-      "relatedComparisons": [],
-      "tags": ["s3", "versioning", "resilience"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon SQS とは（開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-012",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "S3に保存された重要データを誤削除から保護し、過去の状態へ戻せるようにしたいです。最も適した機能はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Versioning"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Select"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Event Notificationsだけを有効化する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Versioningを有効化すると、オブジェクトの複数バージョンを保持でき、誤削除や上書きからの復旧に役立ちます。",
+    "choiceExplanations": {
+      "A": "正解です。過去バージョンの保持により復旧性が高まります。",
+      "B": "Transfer Accelerationは遠距離アップロード高速化です。",
+      "C": "S3 Selectはオブジェクト内データの一部取得に使います。",
+      "D": "イベント通知だけでは過去のオブジェクトを復元できません。"
     },
-    {
-      "questionId": "saa-013",
-      "exam": "SAA-C03",
-      "category": "Resilient Architectures",
-      "domain": "Design Resilient Architectures",
-      "difficulty": "hard",
-      "question": "グローバルに利用されるアプリケーションで、プライマリリージョン障害時に別リージョンへフェイルオーバーしたいです。リレーショナルデータベースのクロスリージョン低遅延レプリケーションを重視する場合、最も適した選択肢はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Amazon Aurora Global Database"
-        },
-        {
-          "choiceId": "B",
-          "text": "単一AZのRDS MySQL"
-        },
-        {
-          "choiceId": "C",
-          "text": "Amazon EBSのスナップショットだけを手動で取得する"
-        },
-        {
-          "choiceId": "D",
-          "text": "Amazon SQS Standard Queue"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "Aurora Global Databaseはグローバル分散アプリケーション向けに、複数リージョン構成と低遅延レプリケーションを提供します。",
-      "choiceExplanations": {
-        "A": "正解です。クロスリージョンDRやグローバル読み取りに向いています。",
-        "B": "単一AZではリージョン障害やAZ障害に弱いです。",
-        "C": "手動スナップショットだけでは低RPO/RTOの要件を満たしにくいです。",
-        "D": "SQSはメッセージキューであり、リレーショナルDBのクロスリージョンレプリケーションではありません。"
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "versioning",
+      "data-protection"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "versioning",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "S3 Versioning は、同一キーに対するオブジェクトの上書きや削除操作を「新しいバージョンの作成」として扱い、過去バージョンを保持し続ける機能である。バケット単位で有効化し、有効化後の更新・削除はすべてバージョン履歴として保存される。誤って `DeleteObject` を呼び出した場合でも、実体は削除マーカー（Delete Marker）が追加されただけであり、削除マーカーを除去すれば直前のバージョンが復活する。重要データを置く本番バケットでは、Versioning と MFA Delete、ライフサイクルルールによる古いバージョンの定期削除をセットで設計するのが標準的である。\n\n代替案として AWS Backup による S3 のバックアップや、別バケットへのクロスリージョンレプリケーション（CRR）もあるが、これらは「別の保存先にコピーを作る」発想であり、Versioning の「同じバケット内で過去状態を保持する」発想とは目的が異なる。Versioning は誤操作・誤上書きからの即時復旧、CRR/Backup はリージョン障害や論理破壊への備えと整理できる。Versioning 有効化後は古いバージョンも課金対象となるため、ライフサイクルポリシーで一定日数経過後に削除または Glacier 系ストレージクラスへ移行させる設計が必要となる。\n\nSAA-C03 では、「誤削除に備える」「過去状態に戻す」「オブジェクトの履歴を保持する」という表現で Versioning が問われる。誤答として「ライフサイクルポリシーで削除を防ぐ」「S3 Object Lock のみで戻せる」など、別機能を当て込む選択肢が混入する。Object Lock は WORM（書き込み一度、読み取り多数）モデルで改ざん防止に使う機能であり、誤操作からの復元目的では Versioning が第一選択である。",
+    "officialDocs": [
+      {
+        "label": "S3 バージョニングによる複数バージョンのオブジェクトの保持（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Versioning.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-013",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "グローバルに利用されるアプリケーションで、プライマリリージョン障害時に別リージョンへフェイルオーバーしたいです。リレーショナルデータベースのクロスリージョン低遅延レプリケーションを重視する場合、最も適した選択肢はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon Aurora Global Database"
       },
-      "relatedServices": ["rds", "aurora"],
-      "relatedTerms": ["global-database", "disaster-recovery"],
-      "relatedComparisons": [],
-      "tags": ["aurora", "global-database", "dr", "resilience"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "choiceId": "B",
+        "text": "単一AZのRDS MySQL"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EBSのスナップショットだけを手動で取得する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS Standard Queue"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Aurora Global Databaseはグローバル分散アプリケーション向けに、複数リージョン構成と低遅延レプリケーションを提供します。",
+    "choiceExplanations": {
+      "A": "正解です。クロスリージョンDRやグローバル読み取りに向いています。",
+      "B": "単一AZではリージョン障害やAZ障害に弱いです。",
+      "C": "手動スナップショットだけでは低RPO/RTOの要件を満たしにくいです。",
+      "D": "SQSはメッセージキューであり、リレーショナルDBのクロスリージョンレプリケーションではありません。"
     },
-    {
-      "questionId": "saa-014",
-      "exam": "SAA-C03",
-      "category": "Resilient Architectures",
-      "domain": "Design Resilient Architectures",
-      "difficulty": "normal",
-      "question": "Lambda関数で処理に失敗したイベントを後で調査・再処理できるようにしたいです。非同期呼び出しの失敗イベントを保存する構成として最も適したものはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Dead-letter queueまたはLambda Destinationsを設定する"
-        },
-        {
-          "choiceId": "B",
-          "text": "Lambdaのメモリを必ず最大値にする"
-        },
-        {
-          "choiceId": "C",
-          "text": "Lambdaをパブリックサブネットに配置する"
-        },
-        {
-          "choiceId": "D",
-          "text": "CloudFrontのキャッシュTTLを0にする"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "非同期Lambdaの失敗イベントは、DLQやLambda Destinationsを使ってSQS/SNS/EventBridgeなどに送れます。これにより後続調査や再処理がしやすくなります。",
-      "choiceExplanations": {
-        "A": "正解です。失敗イベントの退避先として使えます。",
-        "B": "メモリ増加は性能改善には関係しますが、失敗イベントの保存にはなりません。",
-        "C": "ネットワーク配置の話であり、失敗イベント保存とは関係しません。",
-        "D": "CloudFrontのTTLはLambda失敗イベント保存とは関係しません。"
+    "relatedServices": [
+      "rds",
+      "aurora"
+    ],
+    "relatedTerms": [
+      "global-database",
+      "disaster-recovery"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "aurora",
+      "global-database",
+      "dr",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Aurora Global Database は、Aurora MySQL / Aurora PostgreSQL を複数リージョンに展開し、プライマリリージョンへの書き込みを 1 秒未満で他リージョンへレプリケートする機能である。最大 5 つのセカンダリリージョンを設定でき、各セカンダリは読み取り専用 DB クラスターとして稼働する。プライマリリージョン全体が利用不能になった場合、セカンダリリージョンを通常 1 分以内に新しいプライマリへ昇格（マネージドプランドフェイルオーバーまたはアンプランドデタッチ）できるため、RTO・RPO の厳しい DR 要件に応えやすい。\n\n代替として RDS のクロスリージョンリードレプリカ、DynamoDB Global Tables、手動 DMS レプリケーションもあるが、リレーショナル DB で「クロスリージョン低遅延レプリケーション」と「フェイルオーバー時間の短さ」を同時に要求された場合、Aurora Global Database が第一候補となる。コスト面では各リージョンに DB クラスターが必要となり、リージョン間データ転送量も発生するため、シングルリージョン Aurora と比較すると相応に高額となる。RPO 1 秒未満・RTO 1 分前後という性能を活かせる業務でのみ採用が正当化される。\n\nSAA-C03 では、「マルチリージョン」「災害対策」「グローバル分散アプリケーション」「クロスリージョン読み取り」というキーワードが出題文に並ぶ場合、Aurora Global Database が正答候補となる。誤答として「Multi-AZ 構成」（同一リージョン内の可用性向上）「リードレプリカ単独」（フェイルオーバー自動化が弱い）「DynamoDB Global Tables」（リレーショナルではなく NoSQL）を当て込む選択肢が混在する。",
+    "officialDocs": [
+      {
+        "label": "Amazon Aurora Global Database の使用（Aurora ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html"
       },
-      "relatedServices": ["lambda", "sqs", "sns", "eventbridge"],
-      "relatedTerms": ["dead-letter-queue", "lambda-destinations"],
-      "relatedComparisons": ["sns-vs-sqs-vs-eventbridge"],
-      "tags": ["lambda", "dlq", "resilience"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon Aurora Global Database（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/aurora/global-database/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-014",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Lambda関数で処理に失敗したイベントを後で調査・再処理できるようにしたいです。非同期呼び出しの失敗イベントを保存する構成として最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Dead-letter queueまたはLambda Destinationsを設定する"
+      },
+      {
+        "choiceId": "B",
+        "text": "Lambdaのメモリを必ず最大値にする"
+      },
+      {
+        "choiceId": "C",
+        "text": "Lambdaをパブリックサブネットに配置する"
+      },
+      {
+        "choiceId": "D",
+        "text": "CloudFrontのキャッシュTTLを0にする"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "非同期Lambdaの失敗イベントは、DLQやLambda Destinationsを使ってSQS/SNS/EventBridgeなどに送れます。これにより後続調査や再処理がしやすくなります。",
+    "choiceExplanations": {
+      "A": "正解です。失敗イベントの退避先として使えます。",
+      "B": "メモリ増加は性能改善には関係しますが、失敗イベントの保存にはなりません。",
+      "C": "ネットワーク配置の話であり、失敗イベント保存とは関係しません。",
+      "D": "CloudFrontのTTLはLambda失敗イベント保存とは関係しません。"
     },
-    {
-      "questionId": "saa-015",
-      "exam": "SAA-C03",
-      "category": "Resilient Architectures",
-      "domain": "Design Resilient Architectures",
-      "difficulty": "normal",
-      "question": "DynamoDBテーブルで、誤更新や削除に備えて任意の過去時点へ復元できるようにしたいです。最も適した機能はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Point-in-time recovery"
-        },
-        {
-          "choiceId": "B",
-          "text": "DynamoDB Accelerator"
-        },
-        {
-          "choiceId": "C",
-          "text": "DynamoDB Streamsだけを有効化する"
-        },
-        {
-          "choiceId": "D",
-          "text": "Provisioned Capacityを最大値にする"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "DynamoDBのPoint-in-time recoveryを有効化すると、過去の特定時点へテーブルを復元できます。",
-      "choiceExplanations": {
-        "A": "正解です。誤操作からの復旧に使います。",
-        "B": "DAXは読み取りキャッシュです。復元機能ではありません。",
-        "C": "Streamsは変更イベント取得に使いますが、単体で任意時点復元はできません。",
-        "D": "キャパシティ設定は復旧機能ではありません。"
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "sns",
+      "eventbridge"
+    ],
+    "relatedTerms": [
+      "dead-letter-queue",
+      "lambda-destinations"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "lambda",
+      "dlq",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Lambda の非同期呼び出し（Event 型 invoke）では、関数が指定回数の再試行に失敗したイベントを Dead Letter Queue（DLQ）または Lambda Destinations 経由で外部に退避できる。DLQ は SQS キューまたは SNS トピックを失敗イベントの送り先に指定する古典的な仕組みで、Lambda Destinations はそれを拡張し、成功・失敗それぞれの結果を SQS / SNS / EventBridge / 別の Lambda 関数へ配信できる新しい仕組みである。失敗イベントには元のペイロード・エラーメッセージ・スタックトレースが含まれるため、後続の調査・再処理パイプラインを組みやすい。\n\n代替として、Lambda 関数本体に try/catch を入れて自分で SNS に通知する実装もあるが、再試行制御や非同期呼び出しの内部リトライまでカバーするのは難しく、配信保証も自前で担保することになる。マネージドな DLQ / Destinations を使えば、Lambda サービス側が再試行・配信・順序を担保してくれる。EventBridge を Destinations に指定すると、失敗イベントをルールでフィルタして、別の Lambda や Step Functions に流すパイプラインを宣言的に組める。\n\nSAA-C03 では、「非同期 Lambda の失敗イベントを保持」「後で調査・再処理したい」「イベントを失わない」というキーワードが含まれる場合、DLQ / Destinations が正答となる。誤答として「CloudWatch Logs だけで十分」「X-Ray でトレースすれば失敗を再現できる」「同期呼び出しに切り替える」など、ログ機能や呼び出しモデル変更に逃げる選択肢が混入する。ログ・トレースは事後の観測であり、失敗イベント自体を保持する仕組みではない点を区別する必要がある。",
+    "officialDocs": [
+      {
+        "label": "Lambda 関数を非同期的に呼び出す（Lambda 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/invocation-async.html"
       },
-      "relatedServices": ["dynamodb"],
-      "relatedTerms": ["point-in-time-recovery", "backup"],
-      "relatedComparisons": ["rds-vs-dynamodb"],
-      "tags": ["dynamodb", "backup", "resilience"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Lambda 非同期呼び出しのレコードのキャプチャ（Lambda 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/invocation-async-retain-records.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-015",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "DynamoDBテーブルで、誤更新や削除に備えて任意の過去時点へ復元できるようにしたいです。最も適した機能はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Point-in-time recovery"
+      },
+      {
+        "choiceId": "B",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "C",
+        "text": "DynamoDB Streamsだけを有効化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Provisioned Capacityを最大値にする"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "DynamoDBのPoint-in-time recoveryを有効化すると、過去の特定時点へテーブルを復元できます。",
+    "choiceExplanations": {
+      "A": "正解です。誤操作からの復旧に使います。",
+      "B": "DAXは読み取りキャッシュです。復元機能ではありません。",
+      "C": "Streamsは変更イベント取得に使いますが、単体で任意時点復元はできません。",
+      "D": "キャパシティ設定は復旧機能ではありません。"
     },
-    {
-      "questionId": "saa-016",
-      "exam": "SAA-C03",
-      "category": "High-Performing Architectures",
-      "domain": "Design High-Performing Architectures",
-      "difficulty": "normal",
-      "question": "世界中のユーザーに静的コンテンツを低遅延で配信したいです。オリジンへのリクエスト数も減らしたい場合、最も適したサービスはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Amazon CloudFront"
-        },
-        {
-          "choiceId": "B",
-          "text": "AWS CloudTrail"
-        },
-        {
-          "choiceId": "C",
-          "text": "Amazon RDS"
-        },
-        {
-          "choiceId": "D",
-          "text": "AWS IAM"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "CloudFrontはエッジロケーションを使ってコンテンツをキャッシュし、世界中のユーザーへ低遅延で配信できます。",
-      "choiceExplanations": {
-        "A": "正解です。静的コンテンツ配信とキャッシュに適しています。",
-        "B": "CloudTrailはAPI操作履歴を記録するサービスです。",
-        "C": "RDSはリレーショナルデータベースです。",
-        "D": "IAMは認証・認可のサービスです。"
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "point-in-time-recovery",
+      "backup"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "backup",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "DynamoDB の Point-in-time Recovery（PITR）は、テーブルを過去 35 日以内の任意の秒単位の時点まで復元できる機能である。バックアップを明示的に取得する運用は不要で、テーブルごとに PITR を有効化するだけで、サービス側が継続的にトランザクションログを保持する。復元時は新しいテーブルとして書き出され、元のテーブルは変更されない。アプリケーション側のバグでデータを書き換えてしまった、特定の時刻の状態に巻き戻したい、といった要件に対し、運用ジョブを書かずに対応できる。\n\n代替として、DynamoDB のオンデマンドバックアップ（任意時点でスナップショット取得）や AWS Backup 経由のクロスリージョン・クロスアカウントバックアップもある。オンデマンドバックアップは取得時点のスナップショットしか戻せないため、「30 日前のあの瞬間」のような精細な時点指定には PITR が必要となる。PITR は有効化中の書き込み容量に応じた追加課金が発生するが、自前でログ収集・リプレイ機構を作る工数と比べれば十分に安い。\n\nSAA-C03 では、「任意の過去時点に戻したい」「秒単位の復元」「誤更新・誤削除からの復旧」というキーワードが含まれる場合、DynamoDB PITR が正答となる。誤答として「オンデマンドバックアップだけで十分」「Streams を使えば復元できる」「Global Tables のレプリカから戻す」など、別機能を当て込む選択肢が混在する。Streams は変更イベントの配信、Global Tables はマルチリージョンレプリケーションであり、いずれも任意時点復元の機能ではない。",
+    "officialDocs": [
+      {
+        "label": "DynamoDB Point-in-time Recovery（DynamoDB 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/PointInTimeRecovery.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-016",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "世界中のユーザーに静的コンテンツを低遅延で配信したいです。オリジンへのリクエスト数も減らしたい場合、最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon CloudFront"
       },
-      "relatedServices": ["cloudfront", "s3"],
-      "relatedTerms": ["cdn", "edge-location", "cache"],
-      "relatedComparisons": ["alb-vs-nlb-vs-cloudfront"],
-      "tags": ["cloudfront", "performance", "cdn"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS IAM"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "CloudFrontはエッジロケーションを使ってコンテンツをキャッシュし、世界中のユーザーへ低遅延で配信できます。",
+    "choiceExplanations": {
+      "A": "正解です。静的コンテンツ配信とキャッシュに適しています。",
+      "B": "CloudTrailはAPI操作履歴を記録するサービスです。",
+      "C": "RDSはリレーショナルデータベースです。",
+      "D": "IAMは認証・認可のサービスです。"
     },
-    {
-      "questionId": "saa-017",
-      "exam": "SAA-C03",
-      "category": "High-Performing Architectures",
-      "domain": "Design High-Performing Architectures",
-      "difficulty": "hard",
-      "question": "読み取り負荷が高いRDS for PostgreSQLがあります。書き込み負荷は低く、読み取りクエリをスケールさせたいです。最も適した構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Read Replicaを追加し、読み取りクエリをRead Replicaへ振り分ける"
-        },
-        {
-          "choiceId": "B",
-          "text": "Multi-AZを有効化し、読み取りクエリをスタンバイDBへ送る"
-        },
-        {
-          "choiceId": "C",
-          "text": "RDSの自動バックアップを無効化する"
-        },
-        {
-          "choiceId": "D",
-          "text": "DBをパブリックサブネットへ移動する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "Read Replicaは読み取りスケーリングに使います。アプリケーション側で読み取りをReplicaへ振り分けることで、プライマリDBの読み取り負荷を下げられます。",
-      "choiceExplanations": {
-        "A": "正解です。読み取り負荷分散に適しています。",
-        "B": "RDS Multi-AZのスタンバイDBは通常、読み取り用途には使いません。",
-        "C": "バックアップ無効化は性能改善策ではなく、復旧性を下げます。",
-        "D": "パブリックサブネット移動は性能改善ではなく、セキュリティリスクが増えます。"
+    "relatedServices": [
+      "cloudfront",
+      "s3"
+    ],
+    "relatedTerms": [
+      "cdn",
+      "edge-location",
+      "cache"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "cloudfront",
+      "performance",
+      "cdn"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Amazon CloudFront は、世界中に展開されたエッジロケーションでコンテンツをキャッシュし、ユーザーから最寄りのエッジで応答する CDN サービスである。S3 や ALB、API Gateway、EC2 などをオリジンに指定でき、初回リクエスト時にオリジンから取得したコンテンツをエッジに保存し、2 回目以降は同一エッジから返すことで、リージョン外のユーザーに対しても低遅延な応答を実現する。同時に、オリジンへのリクエスト数(オリジンリクエスト)が減るため、オリジン側のスケール要件とコストも下がる。\n\n実務では、S3 を静的サイトホスティングのオリジンに指定し、Origin Access Control(OAC)で S3 を非公開のまま CloudFront 経由でのみアクセスさせる構成が定型である。動的コンテンツに対しては、TTL を短く設定するかキャッシュを完全に無効化し、TLS 終端・WAF 連携・gzip/brotli 圧縮・HTTP/2・HTTP/3 のメリットだけを享受する使い方もある。エッジでのカスタムロジックは CloudFront Functions(軽量・JavaScript)と Lambda@Edge(汎用・Node.js/Python)の 2 種類から選ぶ。\n\nSAA-C03 では、「グローバルに低遅延で配信」「オリジン負荷を減らす」「静的コンテンツのキャッシュ」というキーワードが含まれる場合、CloudFront が正答となる。誤答として「S3 Transfer Acceleration」(ダウンロードではなくアップロード高速化が主用途)「Global Accelerator」(任意 TCP/UDP の anycast 経路最適化、キャッシュ機能なし)「Route 53 のレイテンシベースルーティング」(DNS レベルの最適化、コンテンツキャッシュなし)を当て込む選択肢が混入する。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront(AWS公式)",
+        "url": "https://aws.amazon.com/jp/cloudfront/"
       },
-      "relatedServices": ["rds"],
-      "relatedTerms": ["read-replica", "read-scaling"],
-      "relatedComparisons": ["multi-az-vs-read-replica"],
-      "tags": ["rds", "read-replica", "performance"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon CloudFront とは何ですか?(開発者ガイド)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-017",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "読み取り負荷が高いRDS for PostgreSQLがあります。書き込み負荷は低く、読み取りクエリをスケールさせたいです。最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Read Replicaを追加し、読み取りクエリをRead Replicaへ振り分ける"
+      },
+      {
+        "choiceId": "B",
+        "text": "Multi-AZを有効化し、読み取りクエリをスタンバイDBへ送る"
+      },
+      {
+        "choiceId": "C",
+        "text": "RDSの自動バックアップを無効化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "DBをパブリックサブネットへ移動する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Read Replicaは読み取りスケーリングに使います。アプリケーション側で読み取りをReplicaへ振り分けることで、プライマリDBの読み取り負荷を下げられます。",
+    "choiceExplanations": {
+      "A": "正解です。読み取り負荷分散に適しています。",
+      "B": "RDS Multi-AZのスタンバイDBは通常、読み取り用途には使いません。",
+      "C": "バックアップ無効化は性能改善策ではなく、復旧性を下げます。",
+      "D": "パブリックサブネット移動は性能改善ではなく、セキュリティリスクが増えます。"
     },
-    {
-      "questionId": "saa-018",
-      "exam": "SAA-C03",
-      "category": "High-Performing Architectures",
-      "domain": "Design High-Performing Architectures",
-      "difficulty": "normal",
-      "question": "DynamoDBテーブルに対する読み取りが非常に多く、同じキーへのアクセスが繰り返されています。マイクロ秒レベルの低遅延読み取りを実現したい場合、最も適したサービスはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "DynamoDB Accelerator"
-        },
-        {
-          "choiceId": "B",
-          "text": "Amazon EBS"
-        },
-        {
-          "choiceId": "C",
-          "text": "AWS CloudFormation"
-        },
-        {
-          "choiceId": "D",
-          "text": "AWS Budgets"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "DynamoDB AcceleratorはDynamoDB向けのインメモリキャッシュで、読み取りレイテンシを低減できます。",
-      "choiceExplanations": {
-        "A": "正解です。DynamoDB読み取りキャッシュとして使います。",
-        "B": "EBSはEC2向けブロックストレージです。",
-        "C": "CloudFormationはIaCサービスです。",
-        "D": "Budgetsは課金監視サービスです。"
+    "relatedServices": [
+      "rds"
+    ],
+    "relatedTerms": [
+      "read-replica",
+      "read-scaling"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "rds",
+      "read-replica",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "RDS のリードレプリカは、プライマリ DB から非同期レプリケーションで作られる読み取り専用 DB インスタンスであり、読み取りクエリの分散先として利用する。MySQL / MariaDB / PostgreSQL / Oracle / SQL Server / Aurora の各エンジンで対応している。アプリケーション側で書き込みはプライマリ、読み取りはレプリカに振り分ける実装にすることで、プライマリの読み取り負荷を下げ、レプリカを横に増やして読み取りスループットをスケールアウトできる。Aurora の場合は最大 15 個のレプリカを同一クラスター内に持ち、専用エンドポイント(リーダーエンドポイント)が自動でロードバランシングしてくれる。\n\n注意点として、レプリカは非同期レプリケーションのため、書き込み直後のデータが即座に読めるとは限らない(レプリケーションラグ)。強い整合性が必要な読み取りはプライマリへ送るか、書き込み直後だけプライマリから読む実装に分岐させる。可用性向上を目的とした Multi-AZ 配置はスタンバイ DB が読み取りに使えない(フェイルオーバー専用)ため、可用性とスケーラビリティは別軸の設計判断となる。両方を満たすには「Multi-AZ + リードレプリカ」を組み合わせる。\n\nSAA-C03 では、「読み取り負荷が高い」「読み取りクエリをスケールさせたい」「書き込み負荷は変わらない」というキーワードが含まれる場合、リードレプリカが正答となる。誤答として「Multi-AZ 構成にすれば読み取りも分散できる」「インスタンスタイプを大きくする(垂直スケール)だけで対応」「ElastiCache で全クエリをキャッシュ」など、スケール方向や役割の違うサービスを当て込む選択肢が混入する。",
+    "officialDocs": [
+      {
+        "label": "DB インスタンスのリードレプリカの操作(RDS ユーザーガイド)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_ReadRepl.html"
       },
-      "relatedServices": ["dynamodb"],
-      "relatedTerms": ["dax", "cache"],
-      "relatedComparisons": ["rds-vs-dynamodb"],
-      "tags": ["dynamodb", "dax", "performance"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon RDS リードレプリカ(AWS公式)",
+        "url": "https://aws.amazon.com/jp/rds/features/read-replicas/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-018",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "DynamoDBテーブルに対する読み取りが非常に多く、同じキーへのアクセスが繰り返されています。マイクロ秒レベルの低遅延読み取りを実現したい場合、最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudFormation"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "DynamoDB AcceleratorはDynamoDB向けのインメモリキャッシュで、読み取りレイテンシを低減できます。",
+    "choiceExplanations": {
+      "A": "正解です。DynamoDB読み取りキャッシュとして使います。",
+      "B": "EBSはEC2向けブロックストレージです。",
+      "C": "CloudFormationはIaCサービスです。",
+      "D": "Budgetsは課金監視サービスです。"
     },
-    {
-      "questionId": "saa-019",
-      "exam": "SAA-C03",
-      "category": "High-Performing Architectures",
-      "domain": "Design High-Performing Architectures",
-      "difficulty": "normal",
-      "question": "画像アップロード処理で、ユーザーが世界各地からS3へ大容量ファイルをアップロードします。遠距離アップロードの速度を改善したい場合、最も適した機能はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "S3 Transfer Acceleration"
-        },
-        {
-          "choiceId": "B",
-          "text": "S3 Versioning"
-        },
-        {
-          "choiceId": "C",
-          "text": "S3 Object Lock"
-        },
-        {
-          "choiceId": "D",
-          "text": "S3 Glacier Deep Archive"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "S3 Transfer AccelerationはCloudFrontのエッジロケーションを利用して、遠距離からS3へのアップロードを高速化します。",
-      "choiceExplanations": {
-        "A": "正解です。グローバルなS3アップロード高速化に使います。",
-        "B": "Versioningは過去バージョン保持の機能です。",
-        "C": "Object Lockは改ざん防止や保持期間管理に使います。",
-        "D": "Glacier Deep Archiveは長期アーカイブ向けの低コストストレージクラスです。"
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "dax",
+      "cache"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "dax",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "DynamoDB Accelerator(DAX)は、DynamoDB 専用のフルマネージド型インメモリキャッシュクラスターであり、ミリ秒級である DynamoDB の読み取りレイテンシをマイクロ秒級まで引き下げる。アプリケーション側は DAX クライアント SDK を経由するだけで、既存の DynamoDB API(GetItem / Query / Scan 等)をそのまま利用でき、コードの大幅な書き換えは不要である。同じキーへの繰り返し読み取り(ホットキー)が多いワークロード、レイテンシ要件が極めて厳しいゲームのリーダーボード・広告配信・リアルタイム入札(RTB)などで効果が大きい。\n\n代替として ElastiCache for Redis / Memcached を DynamoDB の前段に置く実装もあるが、その場合キャッシュとの整合性管理(書き込み時の invalidation、TTL 設計)をアプリケーションで自前管理する必要がある。DAX は DynamoDB 専用に最適化されており、書き込みスルー(write-through)でキャッシュと DynamoDB を同期するため、アプリ側の整合性管理コードを減らせる。一方で、DAX クラスターのノード費用が常時発生するため、読み取りパターンがホットでない・キャッシュヒット率が低いワークロードでは費用対効果が出にくい。\n\nSAA-C03 では、「DynamoDB のマイクロ秒級読み取り」「同じキーへの繰り返しアクセス」「レイテンシをさらに下げたい」というキーワードが含まれる場合、DAX が正答となる。誤答として「ElastiCache を使う」(汎用キャッシュで DynamoDB 専用最適化なし)「グローバルセカンダリインデックス(GSI)を追加」(クエリパターン拡張用、レイテンシ短縮目的ではない)「プロビジョンドキャパシティを増やす」(スループット拡張、レイテンシ短縮には直接寄与しにくい)を当て込む選択肢が混入する。",
+    "officialDocs": [
+      {
+        "label": "DynamoDB Accelerator (DAX) とインメモリアクセラレーション(DynamoDB 開発者ガイド)",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/DAX.html"
       },
-      "relatedServices": ["s3", "cloudfront"],
-      "relatedTerms": ["transfer-acceleration", "edge-location"],
-      "relatedComparisons": [],
-      "tags": ["s3", "upload", "performance"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon DynamoDB Accelerator (DAX)(AWS公式)",
+        "url": "https://aws.amazon.com/jp/dynamodb/dax/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-019",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "画像アップロード処理で、ユーザーが世界各地からS3へ大容量ファイルをアップロードします。遠距離アップロードの速度を改善したい場合、最も適した機能はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Versioning"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Object Lock"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Glacier Deep Archive"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Transfer AccelerationはCloudFrontのエッジロケーションを利用して、遠距離からS3へのアップロードを高速化します。",
+    "choiceExplanations": {
+      "A": "正解です。グローバルなS3アップロード高速化に使います。",
+      "B": "Versioningは過去バージョン保持の機能です。",
+      "C": "Object Lockは改ざん防止や保持期間管理に使います。",
+      "D": "Glacier Deep Archiveは長期アーカイブ向けの低コストストレージクラスです。"
     },
-    {
-      "questionId": "saa-020",
-      "exam": "SAA-C03",
-      "category": "High-Performing Architectures",
-      "domain": "Design High-Performing Architectures",
-      "difficulty": "hard",
-      "question": "EC2上のアプリケーションが共有ファイルシステムへアクセスする必要があります。複数AZの複数EC2から同じファイルへ同時アクセスしたい場合、最も適したストレージはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Amazon EFS"
-        },
-        {
-          "choiceId": "B",
-          "text": "Amazon EBS"
-        },
-        {
-          "choiceId": "C",
-          "text": "インスタンスストア"
-        },
-        {
-          "choiceId": "D",
-          "text": "Amazon S3 Glacier Deep Archive"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "Amazon EFSは複数EC2から共有アクセスできるマネージドNFSファイルシステムです。複数AZからの共有ファイルアクセスに向いています。",
-      "choiceExplanations": {
-        "A": "正解です。共有ファイルストレージに適しています。",
-        "B": "EBSは基本的に単一AZ内のEC2にアタッチするブロックストレージです。",
-        "C": "インスタンスストアは一時ストレージで、共有ファイルシステムではありません。",
-        "D": "Glacier Deep Archiveは長期アーカイブ向けで、頻繁な共有アクセスには向きません。"
+    "relatedServices": [
+      "s3",
+      "cloudfront"
+    ],
+    "relatedTerms": [
+      "transfer-acceleration",
+      "edge-location"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "upload",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "S3 Transfer Acceleration は、CloudFront のエッジロケーションを経由して S3 バケットへアップロードを行う機能で、遠距離・大容量のアップロードを高速化する。ユーザーは通常の S3 エンドポイント(`bucket.s3.amazonaws.com`)の代わりに専用エンドポイント(`bucket.s3-accelerate.amazonaws.com`)を使用し、最寄りのエッジまでは AWS バックボーンではなく公衆インターネット経由で短距離到達、エッジ以降は AWS バックボーン経由でバケットのあるリージョンまで届けられる。長距離区間で安定したスループットが得られるため、ユーザーが世界中に分散しているアップロードユースケースで効果が出やすい。\n\n代替として、マルチパートアップロードによる並列化、AWS DataSync・Snow Family など別経路の検討、ユーザーに近いリージョンへ S3 バケット自体を移すといった手段もある。Transfer Acceleration は「S3 バケットの場所は変えたくないが、遠距離アップロードだけ高速化したい」用途に最も素直に当てはまる。料金は通常の S3 データ転送に加えて加速分の追加料金が発生するため、Amazon が提供する Speed Comparison Tool で事前に効果を計測してから採用するのが定石である。\n\nSAA-C03 では、「世界各地から S3 への大容量アップロード」「遠距離アップロードを高速化」「バケットのリージョン移動はしたくない」というキーワードが含まれる場合、Transfer Acceleration が正答となる。誤答として「CloudFront を使ってアップロード」(CloudFront は基本ダウンロード配信向けで、PUT を直接受けるオリジンは別途必要)「Direct Connect」(オンプレ専用線、エンドユーザー向けではない)「マルチパートアップロードだけで解決」(区間遅延自体は短縮しない)を当て込む選択肢が混入する。",
+    "officialDocs": [
+      {
+        "label": "S3 Transfer Acceleration(S3 ユーザーガイド)",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/transfer-acceleration.html"
       },
-      "relatedServices": ["efs", "ec2", "ebs", "s3"],
-      "relatedTerms": ["file-storage", "nfs"],
-      "relatedComparisons": ["s3-vs-ebs-vs-efs"],
-      "tags": ["efs", "ec2", "storage", "performance"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon S3 Transfer Acceleration(AWS公式)",
+        "url": "https://aws.amazon.com/jp/s3/transfer-acceleration/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-020",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "EC2上のアプリケーションが共有ファイルシステムへアクセスする必要があります。複数AZの複数EC2から同じファイルへ同時アクセスしたい場合、最も適したストレージはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "C",
+        "text": "インスタンスストア"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3 Glacier Deep Archive"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon EFSは複数EC2から共有アクセスできるマネージドNFSファイルシステムです。複数AZからの共有ファイルアクセスに向いています。",
+    "choiceExplanations": {
+      "A": "正解です。共有ファイルストレージに適しています。",
+      "B": "EBSは基本的に単一AZ内のEC2にアタッチするブロックストレージです。",
+      "C": "インスタンスストアは一時ストレージで、共有ファイルシステムではありません。",
+      "D": "Glacier Deep Archiveは長期アーカイブ向けで、頻繁な共有アクセスには向きません。"
     },
-    {
-      "questionId": "saa-021",
-      "exam": "SAA-C03",
-      "category": "High-Performing Architectures",
-      "domain": "Design High-Performing Architectures",
-      "difficulty": "normal",
-      "question": "数百万件の小さなメッセージを非同期に処理します。処理順序は厳密でなく、できるだけ高いスループットを重視します。最も適したキューはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Amazon SQS Standard Queue"
-        },
-        {
-          "choiceId": "B",
-          "text": "Amazon SQS FIFO Queue"
-        },
-        {
-          "choiceId": "C",
-          "text": "Amazon EFS"
-        },
-        {
-          "choiceId": "D",
-          "text": "AWS Config"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "SQS Standard Queueは高スループットのメッセージ処理に向いています。順序保証が必須でない場合に適しています。",
-      "choiceExplanations": {
-        "A": "正解です。高スループットの非同期処理に適しています。",
-        "B": "FIFO Queueは順序保証が必要な場合に使いますが、Standard Queueより要件が厳しくなります。",
-        "C": "EFSは共有ファイルストレージです。",
-        "D": "AWS Configはリソース設定の記録・評価サービスです。"
+    "relatedServices": [
+      "efs",
+      "ec2",
+      "ebs",
+      "s3"
+    ],
+    "relatedTerms": [
+      "file-storage",
+      "nfs"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "efs",
+      "ec2",
+      "storage",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Amazon EFS は、複数の EC2 から NFSv4 プロトコルで同時マウントできるフルマネージド型ファイルシステムである。マウントターゲットを各 AZ に作成すれば、複数 AZ の複数 EC2 から同じファイルツリーへ同時に読み書きでき、ファイルシステム自体はリージョン内で冗長化されるため、AZ 障害に対しても継続利用できる。Web サーバーの共有コンテンツ、CI/CD のワークスペース、コンテナのデータボリューム、機械学習のデータセット共有など、「複数台から同じファイルを見る」要件に素直に当てはまる。\n\n代替候補は EBS と S3 である。EBS は単一 EC2 にアタッチするブロックストレージで、共有用途には Multi-Attach 機能を使っても同一 AZ 内かつクラスターファイルシステムが必要となり、汎用的な複数 AZ 共有には向かない。S3 はオブジェクトストレージで、ファイルシステム API(POSIX 互換)ではなくキー単位の API で操作するため、既存アプリの「ファイル open / read / write」をそのままでは扱えない。EFS は POSIX ファイルシステムを期待する既存アプリをほぼ無改修で複数 AZ 共有化できる点が強みである。一方で、性能モード(汎用 / 最大 I/O)とスループットモード(バースト / プロビジョンド / Elastic)の選択を誤るとレイテンシやスループットが要件に届かないため、ワークロード特性に応じた設計が必要となる。\n\nSAA-C03 では、「複数 EC2 から共有ファイルアクセス」「複数 AZ にまたがって同時アクセス」「マネージド NFS」というキーワードが含まれる場合、EFS が正答となる。誤答として「EBS Multi-Attach」(同一 AZ 限定 + クラスターファイルシステム前提)「S3 をマウントして共有」(API 不一致と整合性モデルの違い)「インスタンスストア」(揮発性ストレージで EC2 停止と共に消失)を当て込む選択肢が混入する。",
+    "officialDocs": [
+      {
+        "label": "Amazon Elastic File System(AWS公式)",
+        "url": "https://aws.amazon.com/jp/efs/"
       },
-      "relatedServices": ["sqs"],
-      "relatedTerms": ["standard-queue", "throughput"],
-      "relatedComparisons": ["sns-vs-sqs-vs-eventbridge"],
-      "tags": ["sqs", "throughput", "performance"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon Elastic File System とは(EFS ユーザーガイド)",
+        "url": "https://docs.aws.amazon.com/ja_jp/efs/latest/ug/whatisefs.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-021",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "数百万件の小さなメッセージを非同期に処理します。処理順序は厳密でなく、できるだけ高いスループットを重視します。最も適したキューはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon SQS Standard Queue"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS FIFO Queue"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Config"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "SQS Standard Queueは高スループットのメッセージ処理に向いています。順序保証が必須でない場合に適しています。",
+    "choiceExplanations": {
+      "A": "正解です。高スループットの非同期処理に適しています。",
+      "B": "FIFO Queueは順序保証が必要な場合に使いますが、Standard Queueより要件が厳しくなります。",
+      "C": "EFSは共有ファイルストレージです。",
+      "D": "AWS Configはリソース設定の記録・評価サービスです。"
     },
-    {
-      "questionId": "saa-022",
-      "exam": "SAA-C03",
-      "category": "High-Performing Architectures",
-      "domain": "Design High-Performing Architectures",
-      "difficulty": "normal",
-      "question": "Lambda関数の処理時間が長く、CPU負荷も高いです。コード変更なしでCPU性能も上げたい場合、まず検討すべき設定はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Lambdaのメモリサイズを増やす"
-        },
-        {
-          "choiceId": "B",
-          "text": "Lambdaの関数名を変更する"
-        },
-        {
-          "choiceId": "C",
-          "text": "CloudWatch Logsを無効化する"
-        },
-        {
-          "choiceId": "D",
-          "text": "Lambdaを必ずVPCに接続する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "Lambdaはメモリサイズを増やすと、割り当てられるCPU性能も増えます。CPU負荷が高い処理ではメモリ調整により処理時間が短くなる場合があります。",
-      "choiceExplanations": {
-        "A": "正解です。Lambdaの性能調整でまず確認する設定です。",
-        "B": "関数名変更では性能は変わりません。",
-        "C": "ログ無効化は根本的なCPU性能改善になりません。",
-        "D": "VPC接続は必要な場合だけ使います。性能改善目的で必ず接続するものではありません。"
+    "relatedServices": [
+      "sqs"
+    ],
+    "relatedTerms": [
+      "standard-queue",
+      "throughput"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "throughput",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Amazon SQS には Standard Queue と FIFO Queue の 2 種類が存在する。Standard Queue は「ほぼ無制限」のスループット（リージョン上限内で実質無制限の TPS）を提供し、ベストエフォートでの順序配信と、少なくとも 1 回（at-least-once）の配信保証を持つ。順序が保証されない代わりに、内部的に複数ノードへ分散することで非常に高いスループットを実現しており、数百万件規模の小メッセージ処理の非同期バッファとして適している。\n\nFIFO Queue は厳密な順序保証と重複排除（exactly-once 処理）を提供する代わりに、デフォルトでは 1 グループあたり 300 メッセージ/秒（バッチで 3000 メッセージ/秒）の上限がある。高スループットモード（High Throughput for FIFO）を有効化すれば数千 TPS まで拡張できるが、メッセージグループ ID の設計を適切に行わないとスループットが伸びない。順序が業務要件にない限りは Standard Queue を選び、コストとスケーラビリティの両面で有利な構成にするのが基本である。\n\nSAA-C03 では「高スループット」「順序は厳密でない」「数百万件規模」というキーワードで Standard Queue が正解となる。逆に「重複排除」「厳密な順序」「金融取引・在庫更新の決定的処理」などの要件があれば FIFO Queue が選ばれる。SNS や EventBridge との使い分けも頻出で、Pub/Sub 型のファンアウトなら SNS、イベント駆動のルーティングなら EventBridge、メッセージのバッファリング・retry なら SQS という棲み分けを押さえる。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
       },
-      "relatedServices": ["lambda", "cloudwatch"],
-      "relatedTerms": ["memory-size", "duration"],
-      "relatedComparisons": [],
-      "tags": ["lambda", "performance", "memory"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon SQS の標準キューと FIFO キュー（SQS 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"
+      },
+      {
+        "label": "Amazon SQS のクォータ（SQS 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-022",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "Lambda関数の処理時間が長く、CPU負荷も高いです。コード変更なしでCPU性能も上げたい場合、まず検討すべき設定はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Lambdaのメモリサイズを増やす"
+      },
+      {
+        "choiceId": "B",
+        "text": "Lambdaの関数名を変更する"
+      },
+      {
+        "choiceId": "C",
+        "text": "CloudWatch Logsを無効化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Lambdaを必ずVPCに接続する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Lambdaはメモリサイズを増やすと、割り当てられるCPU性能も増えます。CPU負荷が高い処理ではメモリ調整により処理時間が短くなる場合があります。",
+    "choiceExplanations": {
+      "A": "正解です。Lambdaの性能調整でまず確認する設定です。",
+      "B": "関数名変更では性能は変わりません。",
+      "C": "ログ無効化は根本的なCPU性能改善になりません。",
+      "D": "VPC接続は必要な場合だけ使います。性能改善目的で必ず接続するものではありません。"
     },
-    {
-      "questionId": "saa-023",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "normal",
-      "question": "アクセス頻度が低くなったS3オブジェクトを、自動的に低コストなストレージクラスへ移動したいです。最も適した機能はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "S3 Lifecycle rules"
-        },
-        {
-          "choiceId": "B",
-          "text": "S3 Transfer Acceleration"
-        },
-        {
-          "choiceId": "C",
-          "text": "S3 Object Lambda"
-        },
-        {
-          "choiceId": "D",
-          "text": "S3のバケット名変更"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "S3 Lifecycle rulesを使うと、一定期間後にS3 StandardからS3 Standard-IA、Glacier系ストレージクラスへ自動移行できます。",
-      "choiceExplanations": {
-        "A": "正解です。ストレージクラス移行によるコスト最適化に使います。",
-        "B": "Transfer Accelerationはアップロード高速化であり、保管コスト削減ではありません。",
-        "C": "Object Lambdaは取得時にデータ変換を行う機能です。",
-        "D": "バケット名変更はコスト最適化策ではありません。"
+    "relatedServices": [
+      "lambda",
+      "cloudwatch"
+    ],
+    "relatedTerms": [
+      "memory-size",
+      "duration"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "lambda",
+      "performance",
+      "memory"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS Lambda のメモリサイズ設定は、割り当てメモリ量だけでなく、それに比例した vCPU 性能と I/O 帯域を同時に決定する。メモリを 128MB から 1769MB に増やすと vCPU 換算で 1 コア相当となり、CPU バウンドな処理（画像変換、暗号化、JSON パース、機械学習推論など）では処理時間が大きく短縮される場合がある。料金は「GB 秒」で課金されるため、メモリを 2 倍にしても処理時間が半分以下になれば総コストはむしろ下がるケースもある。\n\nメモリチューニングを系統的に行うツールとして AWS Lambda Power Tuning（OSS / Step Functions ベース）があり、複数のメモリ設定で実関数を並列実行してコストと実行時間のグラフを得られる。実務ではこのツールを使って最適点を見つけ、provisioned concurrency でコールドスタートを抑える設計と組み合わせるのが一般的である。なお、メモリを増やしてもネットワーク I/O 待ち（DynamoDB や外部 API への呼び出し待ち）が支配的な処理では効果が小さく、その場合は並列化や接続再利用（コンテキスト外でのクライアント初期化）の方が効く。\n\nSAA-C03 では「Lambda の処理時間が長い」「CPU 負荷が高い」「コード変更なしで性能を上げたい」という文脈でメモリサイズ調整が正解となる。関数名変更、CloudWatch Logs 無効化、VPC への必須接続といった誤答は、性能改善とは無関係な操作である。Power Tuning や provisioned concurrency、SnapStart（Java 向け）といった発展的なチューニング手法も上位試験では問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda（AWS公式）",
+        "url": "https://aws.amazon.com/jp/lambda/"
       },
-      "relatedServices": ["s3"],
-      "relatedTerms": ["lifecycle", "storage-class"],
-      "relatedComparisons": ["s3-vs-ebs-vs-efs"],
-      "tags": ["s3", "lifecycle", "cost"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Lambda 関数のメモリの設定（Lambda 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/configuration-memory.html"
+      },
+      {
+        "label": "Lambda 関数のパフォーマンスを最適化する（Lambda 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/best-practices.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-023",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "アクセス頻度が低くなったS3オブジェクトを、自動的に低コストなストレージクラスへ移動したいです。最も適した機能はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Lifecycle rules"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Object Lambda"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3のバケット名変更"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Lifecycle rulesを使うと、一定期間後にS3 StandardからS3 Standard-IA、Glacier系ストレージクラスへ自動移行できます。",
+    "choiceExplanations": {
+      "A": "正解です。ストレージクラス移行によるコスト最適化に使います。",
+      "B": "Transfer Accelerationはアップロード高速化であり、保管コスト削減ではありません。",
+      "C": "Object Lambdaは取得時にデータ変換を行う機能です。",
+      "D": "バケット名変更はコスト最適化策ではありません。"
     },
-    {
-      "questionId": "saa-024",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "normal",
-      "question": "常時稼働するEC2インスタンスがあり、今後1年以上ほぼ同じ利用量が見込まれます。オンデマンド料金よりコストを下げたい場合、最も適した購入オプションはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Reserved InstancesまたはSavings Plans"
-        },
-        {
-          "choiceId": "B",
-          "text": "Spot Instancesのみを使う"
-        },
-        {
-          "choiceId": "C",
-          "text": "インスタンスストアを使う"
-        },
-        {
-          "choiceId": "D",
-          "text": "Elastic IPを追加する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "安定した長期利用が見込めるワークロードでは、Reserved InstancesやSavings Plansによりオンデマンドよりコストを下げられます。",
-      "choiceExplanations": {
-        "A": "正解です。継続利用に向く割引オプションです。",
-        "B": "Spot Instancesは中断される可能性があるため、常時稼働が必要な安定ワークロードには単独では不向きな場合があります。",
-        "C": "インスタンスストアは一時ストレージであり、購入オプションではありません。",
-        "D": "Elastic IP追加はコスト削減策ではありません。"
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "lifecycle",
+      "storage-class"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "lifecycle",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "S3 Lifecycle rules は、オブジェクトの作成日や最終アクセス日からの経過日数に応じて、ストレージクラスの自動遷移や自動削除を行う仕組みである。代表的なパターンは、作成から 30 日後に S3 Standard から Standard-IA（低頻度アクセス）へ移動し、90 日後に Glacier Flexible Retrieval、180 日後に Glacier Deep Archive へ移動し、最終的に 7 年後に削除する、といった階層化である。アクセス頻度が時間とともに下がるログ・バックアップ・コンプライアンス保管データなどで、保管コストを大幅に下げられる。\n\nLifecycle で注意すべき点として、各ストレージクラスに最小保管期間（Standard-IA / One Zone-IA は 30 日、Glacier 系は 90 日または 180 日）があり、これより早く削除や別クラスへ移動すると最小期間分の料金が課金される。また、小さなオブジェクト（128KB 未満）を IA クラスに置くと、最小オブジェクトサイズ課金により Standard より割高になる場合があるため、ファイル特性に応じた設計が必要である。アクセスパターンが予測できない場合は、Lifecycle ではなく S3 Intelligent-Tiering を選ぶ方が運用負荷とコストの両面で有利になることもある。\n\nSAA-C03 では「アクセス頻度が下がったデータを低コストクラスへ自動移動」「保管コストの最適化」「ライフサイクル管理」というキーワードで Lifecycle rules が正解となる。Transfer Acceleration（アップロード高速化）、Object Lambda（取得時変換）、バケット名変更などは、コスト最適化とは別目的の機能・操作であり誤答となる。Intelligent-Tiering との使い分け、最小保管期間、バージョニング併用時の挙動なども問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 ストレージクラス（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/storage-classes/"
       },
-      "relatedServices": ["ec2"],
-      "relatedTerms": ["reserved-instances", "savings-plans"],
-      "relatedComparisons": [],
-      "tags": ["ec2", "cost", "savings-plans"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "S3 ライフサイクルの管理（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/object-lifecycle-mgmt.html"
+      },
+      {
+        "label": "ライフサイクル設定の例（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/lifecycle-configuration-examples.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-024",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "常時稼働するEC2インスタンスがあり、今後1年以上ほぼ同じ利用量が見込まれます。オンデマンド料金よりコストを下げたい場合、最も適した購入オプションはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Reserved InstancesまたはSavings Plans"
+      },
+      {
+        "choiceId": "B",
+        "text": "Spot Instancesのみを使う"
+      },
+      {
+        "choiceId": "C",
+        "text": "インスタンスストアを使う"
+      },
+      {
+        "choiceId": "D",
+        "text": "Elastic IPを追加する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "安定した長期利用が見込めるワークロードでは、Reserved InstancesやSavings Plansによりオンデマンドよりコストを下げられます。",
+    "choiceExplanations": {
+      "A": "正解です。継続利用に向く割引オプションです。",
+      "B": "Spot Instancesは中断される可能性があるため、常時稼働が必要な安定ワークロードには単独では不向きな場合があります。",
+      "C": "インスタンスストアは一時ストレージであり、購入オプションではありません。",
+      "D": "Elastic IP追加はコスト削減策ではありません。"
     },
-    {
-      "questionId": "saa-025",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "normal",
-      "question": "短時間だけ実行されるバッチ処理があり、中断されても再試行できます。EC2コストを大きく削減したい場合、最も適した選択肢はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "Spot Instancesを利用する"
-        },
-        {
-          "choiceId": "B",
-          "text": "Dedicated Hostsのみを利用する"
-        },
-        {
-          "choiceId": "C",
-          "text": "常に最大サイズのオンデマンドインスタンスを利用する"
-        },
-        {
-          "choiceId": "D",
-          "text": "NAT Gatewayを追加する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "Spot Instancesは中断を許容できる処理に向いており、オンデマンドより大幅にコストを下げられる場合があります。",
-      "choiceExplanations": {
-        "A": "正解です。中断可能なバッチ処理に向いています。",
-        "B": "Dedicated Hostsは専有ホストが必要なライセンス要件などで使います。コスト削減目的では不向きです。",
-        "C": "最大サイズのオンデマンドはコストが高くなります。",
-        "D": "NAT Gateway追加はバッチ処理のEC2コスト削減策ではありません。"
+    "relatedServices": [
+      "ec2"
+    ],
+    "relatedTerms": [
+      "reserved-instances",
+      "savings-plans"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "cost",
+      "savings-plans"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Reserved Instances（RI）と Savings Plans は、いずれも 1 年または 3 年のコミットメントに対してオンデマンド料金から割引を受ける購入オプションである。RI は EC2 / RDS / ElastiCache / Redshift などサービスごとに購入し、インスタンスタイプ・リージョン・OS などを指定する。Savings Plans は「1 時間あたり N ドルの利用」をコミットする方式で、Compute Savings Plans は EC2 / Fargate / Lambda 横断で柔軟に適用される。安定して稼働するワークロードでは、オンデマンド比で最大 72% 程度の割引が得られる。\n\n選択の指針として、利用するインスタンスタイプやサービスが変動する可能性があるなら Compute Savings Plans（柔軟性が高い）、特定の DB インスタンスや Redshift クラスタなど構成が固定なら RI、というのが一般的である。RI には Standard RI（割引率高・変更制限あり）と Convertible RI（割引率やや低・インスタンスタイプ変更可）の区分があり、3 年確定で支払いを全額前払いにすると最大割引が得られる。一方、Spot Instances は中断を許容できるバッチや非同期処理向けで、常時稼働ワークロードには単独では不向きである。\n\nSAA-C03 では「常時稼働」「1 年以上の利用が確定」「オンデマンドよりコストを下げたい」という条件で RI または Savings Plans が正解となる。Spot のみ・インスタンスストア・Elastic IP 追加といった誤答は、安定稼働要件と相反するか、コスト削減手段ではない。コミットメント期間（1 年 vs 3 年）、支払い方式（全額前払い・一部前払い・前払いなし）、Standard vs Convertible RI の違いも上位試験で問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Savings Plans（AWS公式）",
+        "url": "https://aws.amazon.com/jp/savingsplans/"
       },
-      "relatedServices": ["ec2", "auto-scaling"],
-      "relatedTerms": ["spot-instances", "batch-processing"],
-      "relatedComparisons": [],
-      "tags": ["ec2", "spot", "cost"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon EC2 リザーブドインスタンス（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/pricing/reserved-instances/"
+      },
+      {
+        "label": "Savings Plans ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/savingsplans/latest/userguide/what-is-savings-plans.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-025",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "短時間だけ実行されるバッチ処理があり、中断されても再試行できます。EC2コストを大きく削減したい場合、最も適した選択肢はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Spot Instancesを利用する"
+      },
+      {
+        "choiceId": "B",
+        "text": "Dedicated Hostsのみを利用する"
+      },
+      {
+        "choiceId": "C",
+        "text": "常に最大サイズのオンデマンドインスタンスを利用する"
+      },
+      {
+        "choiceId": "D",
+        "text": "NAT Gatewayを追加する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Spot Instancesは中断を許容できる処理に向いており、オンデマンドより大幅にコストを下げられる場合があります。",
+    "choiceExplanations": {
+      "A": "正解です。中断可能なバッチ処理に向いています。",
+      "B": "Dedicated Hostsは専有ホストが必要なライセンス要件などで使います。コスト削減目的では不向きです。",
+      "C": "最大サイズのオンデマンドはコストが高くなります。",
+      "D": "NAT Gateway追加はバッチ処理のEC2コスト削減策ではありません。"
     },
-    {
-      "questionId": "saa-026",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "hard",
-      "question": "VPC内のLambda関数がDynamoDBにアクセスします。NAT Gatewayの固定費を避けたい場合、最も適した構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "DynamoDB Gateway VPC Endpointを作成する"
-        },
-        {
-          "choiceId": "B",
-          "text": "NAT Gatewayを各AZに作成する"
-        },
-        {
-          "choiceId": "C",
-          "text": "Internet GatewayをLambdaに直接関連付ける"
-        },
-        {
-          "choiceId": "D",
-          "text": "DynamoDBテーブルをパブリックサブネットに配置する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "DynamoDB Gateway VPC Endpointを使うと、VPC内のリソースからDynamoDBへプライベートにアクセスでき、NAT Gatewayの固定費を避けられます。",
-      "choiceExplanations": {
-        "A": "正解です。DynamoDBアクセスでNAT Gatewayを不要にできます。",
-        "B": "NAT Gatewayは固定費が発生します。",
-        "C": "LambdaへInternet Gatewayを直接関連付ける構成はありません。",
-        "D": "DynamoDBはVPC内サブネットに配置するサービスではありません。"
+    "relatedServices": [
+      "ec2",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "spot-instances",
+      "batch-processing"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "spot",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "Spot Instances は、AWS の余剰 EC2 キャパシティをオンデマンド料金から最大 90% 割引で利用できる購入オプションである。代わりに、AWS 側でキャパシティが必要になった場合は 2 分前の通知（Spot Instance interruption notice）と共に強制終了される可能性がある。この特性のため、中断されても再試行可能なバッチ処理、ML トレーニング、CI/CD ビルド、レンダリング、データ処理パイプラインなどに向いている。EC2 Auto Scaling グループに Spot を混在させ、混合インスタンスポリシーで複数インスタンスタイプを指定すれば、特定タイプの枯渇によるキャパシティ不足も回避できる。\n\n設計上のポイントとして、Spot 中断時の処理を冪等に設計し、チェックポイント機能（処理途中の状態を S3 や DynamoDB に保存して再開可能にする）を組み込むのが基本である。中断通知を CloudWatch Events / EventBridge で受け取り、Auto Scaling Lifecycle Hook で graceful shutdown を実行する構成も実務でよく使われる。常時可用性が必要な定常稼働では On-Demand や RI / Savings Plans と組み合わせ、Spot は弾力的に増減する部分に限定する。\n\nSAA-C03 では「短時間バッチ」「中断されても再試行できる」「大幅にコストを削減したい」という条件で Spot が正解となる。Dedicated Hosts は専有ホスト要件（ライセンス持ち込みや物理的隔離）向けでコスト削減が主目的ではない。常時最大サイズのオンデマンドや NAT Gateway 追加は、いずれもコスト増要因か無関係であり誤答となる。Spot Fleet、混合インスタンスポリシー、中断通知の処理パターンも上位試験で問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 スポットインスタンス（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/spot/"
       },
-      "relatedServices": ["lambda", "dynamodb", "vpc"],
-      "relatedTerms": ["vpc-endpoint", "gateway-endpoint"],
-      "relatedComparisons": [],
-      "tags": ["dynamodb", "vpc-endpoint", "lambda", "cost"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "スポットインスタンス（EC2 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/using-spot-instances.html"
+      },
+      {
+        "label": "スポットインスタンスの中断（EC2 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/spot-interruptions.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-026",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "VPC内のLambda関数がDynamoDBにアクセスします。NAT Gatewayの固定費を避けたい場合、最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DynamoDB Gateway VPC Endpointを作成する"
+      },
+      {
+        "choiceId": "B",
+        "text": "NAT Gatewayを各AZに作成する"
+      },
+      {
+        "choiceId": "C",
+        "text": "Internet GatewayをLambdaに直接関連付ける"
+      },
+      {
+        "choiceId": "D",
+        "text": "DynamoDBテーブルをパブリックサブネットに配置する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "DynamoDB Gateway VPC Endpointを使うと、VPC内のリソースからDynamoDBへプライベートにアクセスでき、NAT Gatewayの固定費を避けられます。",
+    "choiceExplanations": {
+      "A": "正解です。DynamoDBアクセスでNAT Gatewayを不要にできます。",
+      "B": "NAT Gatewayは固定費が発生します。",
+      "C": "LambdaへInternet Gatewayを直接関連付ける構成はありません。",
+      "D": "DynamoDBはVPC内サブネットに配置するサービスではありません。"
     },
-    {
-      "questionId": "saa-027",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "normal",
-      "question": "アクセスパターンが予測できないS3データがあります。頻繁にアクセスされるデータとほとんどアクセスされないデータが混在しており、運用負荷を増やさずにストレージコストを最適化したい場合、最も適したストレージクラスはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "S3 Intelligent-Tiering"
-        },
-        {
-          "choiceId": "B",
-          "text": "S3 Standardだけを使い続ける"
-        },
-        {
-          "choiceId": "C",
-          "text": "S3 Glacier Deep Archiveだけを使う"
-        },
-        {
-          "choiceId": "D",
-          "text": "Amazon EBS gp3"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "S3 Intelligent-Tieringはアクセスパターンに応じて階層を自動移動し、アクセス頻度が予測できないデータのコスト最適化に向いています。",
-      "choiceExplanations": {
-        "A": "正解です。アクセスパターンが不明な場合に有効です。",
-        "B": "低頻度アクセスデータの保管コストが高くなりやすいです。",
-        "C": "Deep Archiveは取り出しに時間がかかるため、頻繁にアクセスされるデータには不向きです。",
-        "D": "EBS gp3はEC2向けブロックストレージです。S3オブジェクトのストレージクラスではありません。"
+    "relatedServices": [
+      "lambda",
+      "dynamodb",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "vpc-endpoint",
+      "gateway-endpoint"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "dynamodb",
+      "vpc-endpoint",
+      "lambda",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "S3 と DynamoDB は AWS の中でも特殊な扱いで、Gateway 型 VPC Endpoint を介して VPC 内のリソースから AWS バックボーン経由でアクセスできる。Gateway Endpoint 自体は無料で、データ転送料金もリージョン内であれば発生しないため、VPC 内 Lambda や EC2 から DynamoDB を呼ぶ要件では、NAT Gateway を経由するよりも大幅にコストを削減できる。NAT Gateway は時間単価（1 AZ あたり月額数十ドル）とデータ処理量で課金されるため、VPC Lambda の通信量が多いほど Endpoint 化の効果が大きい。\n\n設計上の注意点として、Gateway Endpoint はルートテーブルへのプレフィックスリスト追加で動作するため、対象 VPC 内の全関連サブネットのルートテーブルに Endpoint を関連付けないと、一部 Lambda が依然として NAT Gateway 経由になる事故が起きやすい。また、Endpoint Policy で「特定の DynamoDB テーブルへのアクセスのみ許可」する制限をかけることで、想定外テーブルへのアクセスを VPC レベルで遮断できる。Gateway Endpoint が提供されるのは S3 と DynamoDB の 2 サービスに限定され、それ以外（Secrets Manager、KMS、SQS など）は Interface Endpoint（PrivateLink ベース、ENI 課金あり）となる。\n\nSAA-C03 では「VPC 内 Lambda から DynamoDB へアクセス」「NAT Gateway の固定費を避けたい」「プライベート経路で接続したい」という要件で Gateway VPC Endpoint が正解となる。NAT Gateway 増設、Internet Gateway の Lambda 直接関連付け、DynamoDB をパブリックサブネットへ配置といった誤答は、コスト増・存在しない構成・サービス特性と矛盾するため除外できる。Interface Endpoint との使い分け、Endpoint Policy による絞り込みも上位で問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS PrivateLink（AWS公式）",
+        "url": "https://aws.amazon.com/jp/privatelink/"
       },
-      "relatedServices": ["s3"],
-      "relatedTerms": ["intelligent-tiering", "storage-class"],
-      "relatedComparisons": ["s3-vs-ebs-vs-efs"],
-      "tags": ["s3", "intelligent-tiering", "cost"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "DynamoDB のゲートウェイエンドポイント（VPC ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/privatelink/vpc-endpoints-ddb.html"
+      },
+      {
+        "label": "VPC エンドポイントを使用した DynamoDB へのアクセス（DynamoDB 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/vpc-endpoints-dynamodb.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-027",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "アクセスパターンが予測できないS3データがあります。頻繁にアクセスされるデータとほとんどアクセスされないデータが混在しており、運用負荷を増やさずにストレージコストを最適化したい場合、最も適したストレージクラスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Intelligent-Tiering"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Standardだけを使い続ける"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Glacier Deep Archiveだけを使う"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EBS gp3"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Intelligent-Tieringはアクセスパターンに応じて階層を自動移動し、アクセス頻度が予測できないデータのコスト最適化に向いています。",
+    "choiceExplanations": {
+      "A": "正解です。アクセスパターンが不明な場合に有効です。",
+      "B": "低頻度アクセスデータの保管コストが高くなりやすいです。",
+      "C": "Deep Archiveは取り出しに時間がかかるため、頻繁にアクセスされるデータには不向きです。",
+      "D": "EBS gp3はEC2向けブロックストレージです。S3オブジェクトのストレージクラスではありません。"
     },
-    {
-      "questionId": "saa-028",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "normal",
-      "question": "個人開発の静的学習サイトを低コストで公開したいです。常時起動サーバーを避け、静的ファイル配信を中心にする場合、最も適した構成はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "S3 + CloudFront"
-        },
-        {
-          "choiceId": "B",
-          "text": "EC2 + RDS + NAT Gateway"
-        },
-        {
-          "choiceId": "C",
-          "text": "EKS + ALB + RDS"
-        },
-        {
-          "choiceId": "D",
-          "text": "Redshift + SageMaker"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "静的サイトはS3に配置し、CloudFrontで配信する構成が低コストかつ運用負荷も低いです。常時起動サーバーを避けられます。",
-      "choiceExplanations": {
-        "A": "正解です。静的サイト配信の低コスト構成です。",
-        "B": "EC2、RDS、NAT Gatewayは固定費が発生しやすく、静的サイトには過剰です。",
-        "C": "EKSは個人開発MVPには運用負荷とコストが重いです。",
-        "D": "RedshiftとSageMakerは分析・機械学習向けであり、静的サイト配信には不要です。"
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "intelligent-tiering",
+      "storage-class"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "intelligent-tiering",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "S3 Intelligent-Tiering は、オブジェクトごとのアクセス頻度をモニタリングし、ストレージ階層（Frequent Access、Infrequent Access、Archive Instant Access、Archive Access、Deep Archive Access）を自動的に移動するストレージクラスである。アクセスパターンが不明・予測困難で、Frequent と Infrequent が混在するデータセット（ユーザーアップロードファイル、メディアアーカイブ、ログデータなど）で運用負荷ゼロのコスト最適化を実現できる。取り出し料金は発生せず、最小オブジェクトサイズ課金（128KB 未満は単一階層扱い）と少額のモニタリング料金がオブジェクト単位で発生する。\n\nLifecycle rules による手動階層移動と比較すると、Intelligent-Tiering は「アクセスパターンが事前にわからない」場合に強い。逆に「30 日後に確実にコールド化する」とアクセスパターンが明確なログやバックアップでは、Lifecycle で Standard-IA や Glacier に直接移動した方がモニタリング料金が発生せず安くなる。Archive Access / Deep Archive Access は数時間〜十数時間の取り出し時間が必要で、頻繁にアクセスされるデータには不向きである点も設計時に押さえる必要がある。\n\nSAA-C03 では「アクセスパターンが予測できない」「運用負荷を増やさずにコスト最適化したい」「Frequent と Infrequent が混在」という条件で Intelligent-Tiering が正解となる。Standard だけ使い続ける（コスト未最適化）、Deep Archive のみ（取り出し時間問題）、EBS gp3（S3 のストレージクラスではない）はいずれも要件と合わない誤答である。Lifecycle との使い分け、最小保管期間、各階層の取り出し時間と料金も上位試験で問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 Intelligent-Tiering（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/storage-classes/intelligent-tiering/"
       },
-      "relatedServices": ["s3", "cloudfront", "ec2", "rds"],
-      "relatedTerms": ["static-site", "serverless"],
-      "relatedComparisons": [],
-      "tags": ["s3", "cloudfront", "cost", "portfolio"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "S3 Intelligent-Tiering によるストレージクラスの自動最適化（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/intelligent-tiering.html"
+      },
+      {
+        "label": "Amazon S3 の料金（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/pricing/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-028",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "個人開発の静的学習サイトを低コストで公開したいです。常時起動サーバーを避け、静的ファイル配信を中心にする場合、最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 + CloudFront"
+      },
+      {
+        "choiceId": "B",
+        "text": "EC2 + RDS + NAT Gateway"
+      },
+      {
+        "choiceId": "C",
+        "text": "EKS + ALB + RDS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Redshift + SageMaker"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "静的サイトはS3に配置し、CloudFrontで配信する構成が低コストかつ運用負荷も低いです。常時起動サーバーを避けられます。",
+    "choiceExplanations": {
+      "A": "正解です。静的サイト配信の低コスト構成です。",
+      "B": "EC2、RDS、NAT Gatewayは固定費が発生しやすく、静的サイトには過剰です。",
+      "C": "EKSは個人開発MVPには運用負荷とコストが重いです。",
+      "D": "RedshiftとSageMakerは分析・機械学習向けであり、静的サイト配信には不要です。"
     },
-    {
-      "questionId": "saa-029",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "hard",
-      "question": "CloudWatch LogsにLambdaの詳細ログを大量出力しており、ログ保存コストが増えています。調査に必要な期間だけログを保持し、古いログを自動削除したい場合、最も適した設定はどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "CloudWatch LogsのロググループにRetention periodを設定する"
-        },
-        {
-          "choiceId": "B",
-          "text": "CloudWatch LogsをS3バケットとして公開する"
-        },
-        {
-          "choiceId": "C",
-          "text": "Lambdaのタイムアウトを最大にする"
-        },
-        {
-          "choiceId": "D",
-          "text": "API GatewayのCORSを無効化する"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "CloudWatch LogsのRetention periodを設定すると、指定期間を過ぎたログを自動削除できます。ログ保存コストの抑制に有効です。",
-      "choiceExplanations": {
-        "A": "正解です。ログ保持期間を制御できます。",
-        "B": "ログを公開する設計はセキュリティ上危険です。",
-        "C": "Lambdaタイムアウト最大化はログ保存コスト削減になりません。",
-        "D": "CORS設定はログ保持とは関係ありません。"
+    "relatedServices": [
+      "s3",
+      "cloudfront",
+      "ec2",
+      "rds"
+    ],
+    "relatedTerms": [
+      "static-site",
+      "serverless"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "cloudfront",
+      "cost",
+      "portfolio"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "静的 Web サイトを低コストで公開する構成として、S3 にコンテンツを配置し CloudFront で配信する組み合わせは AWS の代表的なパターンである。S3 はオブジェクトストレージとしてストレージ単価が低く、HTML / CSS / JS / 画像といった静的アセットの保管に適している。CloudFront は世界中のエッジロケーションでキャッシュ配信を行い、オリジン（S3）への直接アクセスを減らすことで、レイテンシ低減と S3 リクエスト数削減によるコスト最適化を同時に実現する。Origin Access Control を組み合わせれば、S3 バケット自体を非公開のまま CloudFront 経由のみで配信できる。\n\nこの構成は常時起動サーバーを持たないため、EC2・RDS・NAT Gateway のような時間課金の固定費が発生しない。完全な従量課金（S3 ストレージ・リクエスト数、CloudFront データ転送量・リクエスト数）で運用でき、トラフィックが少ない時期は月数百円〜数千円規模で運用可能である。HTTPS 化には ACM 証明書（us-east-1 で発行）を CloudFront に紐付け、独自ドメインは Route 53 で管理する構成が一般的になる。Next.js などの SSG フレームワークでビルドした静的サイトもこの構成で配信できる。\n\nSAA-C03 では「静的サイト」「個人開発」「低コスト」「常時起動サーバーを避ける」というキーワードで S3 + CloudFront が正解となる。EC2 + RDS + NAT Gateway 構成は固定費が多く静的サイトには過剰、EKS は運用負荷が重い、Redshift + SageMaker は分析・機械学習向けでサイト配信用途ではない。サーバーレス（Lambda + API Gateway）との組み合わせや、SPA / SSR を含めた構成パターンも上位で問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 で静的ウェブサイトをホスティングする（S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/WebsiteHosting.html"
       },
-      "relatedServices": ["cloudwatch", "lambda"],
-      "relatedTerms": ["log-retention", "cost-management"],
-      "relatedComparisons": ["cloudwatch-vs-cloudtrail-vs-config"],
-      "tags": ["cloudwatch", "logs", "cost"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
+      {
+        "label": "Amazon CloudFront を使用した動的および静的コンテンツの配信（CloudFront 開発者ガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-029",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "CloudWatch LogsにLambdaの詳細ログを大量出力しており、ログ保存コストが増えています。調査に必要な期間だけログを保持し、古いログを自動削除したい場合、最も適した設定はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "CloudWatch LogsのロググループにRetention periodを設定する"
+      },
+      {
+        "choiceId": "B",
+        "text": "CloudWatch LogsをS3バケットとして公開する"
+      },
+      {
+        "choiceId": "C",
+        "text": "Lambdaのタイムアウトを最大にする"
+      },
+      {
+        "choiceId": "D",
+        "text": "API GatewayのCORSを無効化する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "CloudWatch LogsのRetention periodを設定すると、指定期間を過ぎたログを自動削除できます。ログ保存コストの抑制に有効です。",
+    "choiceExplanations": {
+      "A": "正解です。ログ保持期間を制御できます。",
+      "B": "ログを公開する設計はセキュリティ上危険です。",
+      "C": "Lambdaタイムアウト最大化はログ保存コスト削減になりません。",
+      "D": "CORS設定はログ保持とは関係ありません。"
     },
-    {
-      "questionId": "saa-030",
-      "exam": "SAA-C03",
-      "category": "Cost-Optimized Architectures",
-      "domain": "Design Cost-Optimized Architectures",
-      "difficulty": "normal",
-      "question": "月額AWS利用料が想定を超えそうな場合にメール通知を受け取りたいです。最も適したサービスはどれですか？",
-      "choices": [
-        {
-          "choiceId": "A",
-          "text": "AWS Budgets"
-        },
-        {
-          "choiceId": "B",
-          "text": "AWS CloudTrail"
-        },
-        {
-          "choiceId": "C",
-          "text": "Amazon EFS"
-        },
-        {
-          "choiceId": "D",
-          "text": "Amazon Route 53 Resolver"
-        }
-      ],
-      "correctChoiceId": "A",
-      "explanation": "AWS Budgetsを使うと、予算額や予測超過に応じてメール通知を設定できます。個人開発では課金事故防止の基本です。",
-      "choiceExplanations": {
-        "A": "正解です。コスト予算とアラートに使います。",
-        "B": "CloudTrailはAPI操作履歴の監査に使います。",
-        "C": "EFSは共有ファイルストレージです。",
-        "D": "Route 53 ResolverはDNS名前解決に関するサービスです。"
+    "relatedServices": [
+      "cloudwatch",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "log-retention",
+      "cost-management"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudwatch",
+      "logs",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "CloudWatch Logs のロググループには Retention period（保持期間）を設定でき、1 日〜10 年（または無期限）の範囲で指定できる。デフォルトは「Never Expire（無期限）」となっており、Lambda や ECS、API Gateway などのサービスを使い続けるとログが永続的に蓄積し、保存課金（GB 月）が増え続ける。実務では、ロググループ作成時または運用開始直後に Retention period を必ず設定し、調査・監査に必要な期間（一般的には 14 日〜90 日）だけ保持するのが基本である。\n\n長期保管が必要なログ（監査要件、コンプライアンス要件等）は、Subscription Filter や Export タスクで S3 へ転送し、S3 Lifecycle rules で Glacier や Deep Archive に階層化するパターンが定石となる。S3 の長期保管単価は CloudWatch Logs より大幅に安く、Athena でクエリすればログ分析もできる。CloudWatch Logs Insights は強力な分析クエリを提供するが、スキャン量で課金されるため、頻繁な大規模クエリが想定される場合はコスト試算が必要となる。\n\nSAA-C03 では「CloudWatch Logs のコスト削減」「ログ保存期間の管理」「自動削除」という要件で Retention period 設定が正解となる。S3 公開（セキュリティ違反）、Lambda タイムアウト最大化（無関係）、API Gateway CORS 無効化（CORS はブラウザの同一オリジンポリシー制御で別目的）はいずれも誤答である。S3 への長期エクスポート、Logs Insights のスキャン課金、Subscription Filter 経由でのリアルタイム転送なども上位試験で問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch Logs（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
       },
-      "relatedServices": ["aws-budgets", "cost-explorer"],
-      "relatedTerms": ["budget-alert", "cost-monitoring"],
-      "relatedComparisons": [],
-      "tags": ["budgets", "cost", "monitoring"],
-      "published": true,
-      "createdAt": "2026-06-07",
-      "updatedAt": "2026-06-07"
-    }
-  ]
+      {
+        "label": "ロググループでのログデータ保持期間の変更（CloudWatch Logs ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html"
+      },
+      {
+        "label": "Amazon CloudWatch の料金（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/pricing/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-030",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "月額AWS利用料が想定を超えそうな場合にメール通知を受け取りたいです。最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Route 53 Resolver"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Budgetsを使うと、予算額や予測超過に応じてメール通知を設定できます。個人開発では課金事故防止の基本です。",
+    "choiceExplanations": {
+      "A": "正解です。コスト予算とアラートに使います。",
+      "B": "CloudTrailはAPI操作履歴の監査に使います。",
+      "C": "EFSは共有ファイルストレージです。",
+      "D": "Route 53 ResolverはDNS名前解決に関するサービスです。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "budget-alert",
+      "cost-monitoring"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "budgets",
+      "cost",
+      "monitoring"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS Budgets は、月次・四半期・年次の予算額や、特定サービス・タグ・リンクされたアカウント単位での予算しきい値を設定し、実績値や予測値が指定したしきい値を超えた際に SNS や E メールで通知する機能を提供する。コスト予算（Cost Budget）、使用量予算（Usage Budget）、RI / Savings Plans のカバレッジや使用率予算など複数の種類があり、個人開発から大規模組織まで予算管理の基本ツールとして使われる。最初の 2 つの Action 対応予算は無料で利用可能で、その後は予算 1 個あたり日次少額課金となる。\n\n類似サービスとして AWS Cost Explorer があるが、Cost Explorer は過去〜将来のコスト推移を可視化・分析するためのダッシュボードで、しきい値ベースのアラート機能は持たない。Cost Anomaly Detection（コスト異常検出）は機械学習で異常な支出パターンを検出するサービスで、Budgets と組み合わせると「想定外のサービス突発利用」を早期発見できる。個人開発では、月初に小額（例：1000 円）の予算を立て、80% / 100% / 120% の 3 段階アラートを SNS 経由でメールに飛ばす構成が課金事故防止の基本パターンとなる。\n\nSAA-C03 では「予算超過時の通知」「コスト監視」「メール通知」という要件で AWS Budgets が正解となる。CloudTrail（API 操作監査）、EFS（共有ファイルストレージ）、Route 53 Resolver（DNS 名前解決）はいずれもコスト管理とは別目的のサービスである。Cost Explorer との使い分け、Cost Anomaly Detection、Budgets Action（しきい値超過時に IAM ポリシー適用や EC2 停止を自動実行）といった発展機能も上位試験で問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "AWS Budgets を使用したコストと使用量の管理（AWS Cost Management ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
+  }
+]
