@@ -4,12 +4,12 @@ import { ComparisonsListClient } from "@/components/comparisons/ComparisonsListC
 import {
   comparisonsPageMetadataByLocale,
   getComparisonsPageData,
-} from "./comparisons-page-data";
+} from "../../comparisons/comparisons-page-data";
 
 export const metadata: Metadata = createPageMetadata(
-  comparisonsPageMetadataByLocale.ja,
+  comparisonsPageMetadataByLocale.zh,
 );
 
-export default function ComparisonsPage() {
-  return <ComparisonsListClient {...getComparisonsPageData("ja")} />;
+export default function ChineseComparisonsPage() {
+  return <ComparisonsListClient {...getComparisonsPageData("zh")} />;
 }

@@ -1,0 +1,159 @@
+# RDS、DynamoDB 的差異
+
+## 結論
+
+Amazon RDS 與 Amazon DynamoDB 都是 AWS 的資料庫服務。
+
+但兩者的資料儲存方式與適合的使用情境並不相同。
+
+| 服務 | 一句話說明 | 主要使用情境 |
+|---|---|---|
+| Amazon RDS | 受管的關聯式資料庫 | SQL、表格形式、複雜查詢、交易處理 |
+| Amazon DynamoDB | 無伺服器架構的 NoSQL 資料庫 | 高速鍵值查詢、大量存取、結構簡單的資料 |
+
+如果一時難以判斷，可以先用以下方式分辨。
+
+- 想用 SQL 進行複雜查詢:RDS
+- 想採用無伺服器架構、降低維運負擔:DynamoDB
+- 需要把不同資料表結合起來:RDS
+- 想以鍵值快速讀寫資料:DynamoDB
+
+## 比較表
+
+| 項目 | RDS | DynamoDB |
+|---|---|---|
+| 正式名稱 | Amazon Relational Database Service | Amazon DynamoDB |
+| 種類 | 關聯式資料庫 | NoSQL 資料庫 |
+| 資料結構 | 資料表、資料列、資料欄 | 資料表、項目 (item)、屬性 |
+| 主要操作介面 | SQL | API、SDK、CLI |
+| 伺服器管理 | AWS 負責多數管理工作，但仍需自行規劃 DB 執行個體 | 無伺服器架構，無須管理執行個體 |
+| 擴展方式 | 透過執行個體規格、Read Replica、Amazon Aurora 等方式擴充 | 以讀寫容量單位或隨需模式對應 |
+| 複雜查詢 | 擅長 | 視設計而定，基本以鍵值存取為主 |
+| JOIN | 可使用 | 預設不採用 JOIN 設計 |
+| 交易處理 | 擅長 | 可支援，但設計時需特別注意 |
+| 固定成本 | 因執行個體持續運作，容易產生固定費用 | 規模較小時，容易維持低成本 |
+| 在本專案的用途 | MVP 階段不採用 | 預計用於儲存使用者諮詢資料 |
+
+## 初學者導向說明
+
+### Amazon RDS
+
+RDS 可在 AWS 上以較輕鬆的方式使用 MySQL、PostgreSQL、MariaDB、Oracle、SQL Server 等關聯式資料庫。
+
+可以想像成「把傳統 Web 應用程式常用的表格式資料庫，放到 AWS 上運作」。
+
+當應用程式涉及使用者、訂單、商品、付款等多個資料表之間的關聯時，RDS 是合適的選擇。
+
+### Amazon DynamoDB
+
+DynamoDB 是 AWS 的無伺服器 NoSQL 資料庫。
+
+無需管理伺服器或資料庫執行個體，可以透過鍵值快速地讀寫資料。
+
+在本專案中，DynamoDB 預計作為諮詢表單的資料儲存後端。
+
+諮詢資料不需要複雜的 JOIN，只要能逐筆儲存與檢視即可，因此非常適合 DynamoDB。
+
+## 考試常考重點
+
+### CLF-C02 常考內容
+
+- RDS 是關聯式資料庫的受管服務
+- DynamoDB 是 NoSQL 資料庫
+- RDS 使用 SQL
+- DynamoDB 採無伺服器架構，維運負擔較低
+- DynamoDB 適合鍵值的高速存取
+- RDS 可透過 Multi-AZ 提升可用性
+
+### SAA-C03 常考內容
+
+- 需要複雜 SQL 或 JOIN 時選 RDS
+- 需要高規模且簡單鍵值存取時選 DynamoDB
+- RDS 高可用性以 Multi-AZ 對應
+- RDS 讀取負載分散使用 Read Replica
+- DynamoDB 中，分區鍵 (partition key) 設計相當重要
+- DynamoDB 應避免過度使用 Scan，改以 Query 為主進行設計
+- 無伺服器架構通常會優先選擇 DynamoDB
+
+## 實務上的使用判斷
+
+### 適合採用 RDS 的情境
+
+- 想透過 SQL 進行查詢
+- 資料表之間關聯較多
+- 需要使用 JOIN
+- 重視交易一致性
+- 既有應用程式已使用 MySQL 或 PostgreSQL
+- 需要建置管理介面或業務系統
+
+範例:
+
+- 電子商務網站
+- 預約系統
+- 企業內部管理系統
+- 會計系統
+- 訂單管理系統
+
+### 適合採用 DynamoDB 的情境
+
+- 想採用無伺服器架構
+- 存取模式較為單純
+- 想以鍵值快速取得資料
+- 需要因應大量存取
+- 想降低基礎架構的維運負擔
+- 想與 AWS Lambda 搭配使用
+
+範例:
+
+- 諮詢資料儲存
+- 工作階段管理
+- 使用者設定儲存
+- 學習紀錄儲存
+- 事件記錄儲存
+- 通知設定儲存
+
+## 常見誤解
+
+### 誤解 1:把 DynamoDB 當成 RDS 的完整替代品
+
+DynamoDB 並非 RDS 的直接替代品。
+
+當設計中大量使用 JOIN 或複雜查詢時，使用 RDS 會更為自然。
+
+### 誤解 2:認為 RDS 也是無伺服器架構
+
+RDS 屬於受管服務，但仍需自行思考 DB 執行個體規格、儲存空間與可用性等設定。
+
+「受管 (managed)」與「無伺服器 (serverless)」並非同一概念。
+
+### 誤解 3:在 DynamoDB 中直接使用 Scan 即可
+
+在 DynamoDB 中大量使用 Scan，當資料量增加時容易產生成本與效能問題。
+
+DynamoDB 的正確作法是先決定存取模式，再依此設計鍵值。
+
+### 誤解 4:個人開發的 MVP 一開始就採用 RDS
+
+RDS 功能完整，但容易產生固定費用。
+
+本專案為了控制成本，MVP 階段的諮詢資料儲存採用 DynamoDB。
+
+## 相關用語
+
+- [Amazon RDS](/terms/rds)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 相關問題
+
+- [CLF 模擬試題清單](/questions/clf)
+
+## 總結
+
+判斷 RDS 與 DynamoDB 的差異時，可以從「以 SQL 為核心」或「以鍵值存取為核心」這兩個角度切入。
+
+RDS 是關聯式資料庫，DynamoDB 則是無伺服器架構的 NoSQL 資料庫。
+
+在本專案中，像諮詢資料這類結構單純的動態資料會儲存在 DynamoDB。

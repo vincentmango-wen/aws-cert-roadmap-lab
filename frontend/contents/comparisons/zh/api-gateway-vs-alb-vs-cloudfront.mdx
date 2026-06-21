@@ -1,0 +1,193 @@
+# API Gateway、ALB、CloudFront 的差異
+
+## 結論
+
+Amazon API Gateway、Application Load Balancer (ALB)、Amazon CloudFront 都可以作為接收外部請求的入口。
+
+不過，它們的用途並不相同。
+
+- 要對外公開無伺服器 API，使用 API Gateway。
+- 要對 Amazon EC2 或 Amazon ECS 上的 Web 應用做負載平衡，使用 ALB。
+- 要將內容以接近使用者的位置快取與高速傳遞，使用 Amazon CloudFront。
+
+在這個專案中，靜態網站交由 CloudFront 傳遞，聯絡用 API 則交由 API Gateway 處理。
+
+## 比較表
+
+| 項目 | API Gateway | ALB | CloudFront |
+|---|---|---|---|
+| 分類 | API 管理服務 | 負載平衡器 | CDN |
+| 主要用途 | 公開 REST API / HTTP API / WebSocket API | Web 應用的負載平衡 | 靜態與動態內容的高速傳遞 |
+| 常見後端 | AWS Lambda、HTTP 端點、AWS 服務 | Amazon EC2、Amazon ECS、AWS Lambda | Amazon S3、ALB、API Gateway、HTTP 來源 |
+| 認證與授權 | AWS IAM、Lambda Authorizer、Amazon Cognito 等 | OIDC 認證等 | 簽章 URL、AWS WAF 整合等 |
+| 快取 | 具備 API 快取功能 | 並非主要用途 | 擅長的領域 |
+| 與無伺服器的契合度 | 高 | 中 | 高 |
+| WebSocket | 支援 | 並非主要用途 | 並非主要用途 |
+| 考試關鍵字 | serverless API、REST、HTTP API、Lambda | load balancing、HTTP routing | CDN、edge、cache、static content |
+
+## 入門說明
+
+API Gateway 是 API 的入口。
+
+```text
+Frontend
+↓ POST /contact
+API Gateway
+↓
+Lambda
+```
+
+本專案的聯絡表單，也採用透過 API Gateway 的設計。
+
+ALB 是 Web 應用的入口。
+
+```text
+User
+↓
+ALB
+↓
+EC2 / ECS
+```
+
+ALB 會將流量分散到多台應用伺服器。
+
+CloudFront 是從接近使用者位置回傳內容的 CDN。
+
+```text
+User
+↓
+CloudFront
+↓
+S3
+```
+
+常用於靜態網站與圖片傳遞。
+
+## 考試常考重點
+
+### API Gateway 容易成為正解的情境
+
+- 想用 AWS Lambda 建立 API。
+- 想對外公開 HTTP API 或 REST API。
+- 想建立 WebSocket API。
+- 想以 API 為單位管理認證、流量限制與監控。
+- 需求中明確要求無伺服器架構。
+
+### ALB 容易成為正解的情境
+
+- 想對 Amazon EC2 或 Amazon ECS 上的 Web 應用做負載平衡。
+- 需要以 HTTP / HTTPS 進行路徑式路由。
+- 想將請求分散到容器化應用。
+- 需要為 Web 應用設置入口。
+
+### CloudFront 容易成為正解的情境
+
+- 想以高速傳遞靜態內容。
+- 想將 Amazon S3 作為來源。
+- 想以低延遲為全球使用者傳遞內容。
+- 想減少對來源的存取次數。
+- 想將 HTTPS 傳遞與快取一併運用。
+
+## 實務中的使用區分
+
+### 無伺服器聯絡 API
+
+使用 API Gateway。
+
+```text
+Contact Form
+↓
+API Gateway
+↓
+Lambda
+↓
+DynamoDB
+```
+
+在本專案的 MVP 中，這個組合是聯絡 API 的核心。
+
+### Amazon EC2 與 Amazon ECS 上的 Web 應用
+
+使用 ALB。
+
+```text
+User
+↓
+ALB
+↓
+ECS Service
+```
+
+當容器或 EC2 採多台設定時，由 ALB 負責負載平衡。
+
+### 靜態網站與圖片傳遞
+
+使用 CloudFront。
+
+```text
+User
+↓
+CloudFront
+↓
+S3
+```
+
+不直接公開 Amazon S3，而是透過 CloudFront 對外傳遞。
+
+### CloudFront + API Gateway
+
+也可以在 API 前方加上 CloudFront。
+
+```text
+User
+↓
+CloudFront
+↓
+API Gateway
+↓
+Lambda
+```
+
+不過 MVP 階段為了避免架構過於複雜，先採用 CloudFront 負責靜態網站、API 直接走 API Gateway URL 的設計就已足夠。
+
+## 常見的混淆
+
+### 混淆 1:把 API Gateway 與 ALB 視為同一種 API 入口
+
+兩者都能接收 HTTP 請求，但設計理念並不相同。
+
+以 Lambda 為核心的無伺服器 API 應使用 API Gateway，Amazon EC2 與 Amazon ECS 上 Web 應用的負載平衡則應使用 ALB。
+
+### 混淆 2:以 CloudFront 取代 API Gateway
+
+CloudFront 是 CDN。
+
+API 的建立、認證、階段管理、API 金鑰管理等領域屬於 API Gateway。
+
+### 混淆 3:以 API Gateway 提供靜態網站
+
+靜態網站的傳遞以 Amazon S3 與 CloudFront 為基本組合。
+
+API Gateway 是 API 的入口。
+
+## 相關用語
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Lambda](/terms/lambda)
+- [Amazon S3](/terms/s3)
+
+## 相關題目
+
+- [CLF 模擬題列表](/questions/clf)
+
+## 整理
+
+把 API Gateway、ALB、CloudFront 依用途區分，會比較容易記住。
+
+- API Gateway:API 的入口。
+- ALB:Web 應用的負載平衡。
+- CloudFront:內容的高速傳遞。
+
+本專案同時採用 CloudFront 與 API Gateway，這項比較在說明作品集時也是重要的著力點。

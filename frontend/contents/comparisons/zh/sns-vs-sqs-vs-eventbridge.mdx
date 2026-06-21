@@ -1,0 +1,173 @@
+# SNS、SQS、EventBridge 的差異
+
+## 結論
+
+Amazon SNS、Amazon SQS、Amazon EventBridge 都是 AWS 用來串接系統的服務。
+
+不過，三者的角色並不相同。
+
+| 服務 | 一句話說明 | 主要使用情境 |
+|---|---|---|
+| Amazon SNS | 將通知派送到多個目的地的服務 | 電子郵件通知、觸發 Lambda、向多個系統廣播 |
+| Amazon SQS | 暫存訊息的佇列 | 非同步處理、累積待處理工作、流量削峰 |
+| Amazon EventBridge | 根據事件觸發處理的事件匯流排 | SaaS 整合、AWS 事件整合、排程執行 |
+
+遇到選擇時，可以這樣判斷:
+
+- 想把通知派送到多個目的地: SNS
+- 想讓工作排隊、依序處理: SQS
+- 想依事件條件分流處理: EventBridge
+- 想定時執行: EventBridge
+
+## 比較表
+
+| 項目 | SNS | SQS | EventBridge |
+|---|---|---|---|
+| 正式名稱 | Amazon Simple Notification Service | Amazon Simple Queue Service | Amazon EventBridge |
+| 種類 | Pub/Sub 通知 | 訊息佇列 | 事件匯流排 |
+| 主要目的 | 派送通知 | 暫存訊息 | 以事件觸發處理 |
+| 派送對象 | 多個訂閱者 | 讀取佇列的處理端 | 符合規則的目標 |
+| 訊息保留 | 以通知為主 | 保留在佇列中 | 以事件路由為主 |
+| 派送方式 | 推送 (Push) | 拉取 (Pull) | 規則導向 |
+| 代表用途 | 電子郵件通知、觸發多個 Lambda | 非同步工作、待處理佇列 | 排程執行、事件驅動整合 |
+| 順序控制 | 可使用 FIFO 主題 | 可使用 FIFO 佇列 | 不以順序保證為設計目的 |
+| 在本專案的用途 | 未來通知功能的候選 | 未來非同步處理的候選 | 未來每日一題派送的候選 |
+
+## 給初學者的說明
+
+### Amazon SNS
+
+SNS 是將訊息派送到多個目的地的通知服務。
+
+只要向一個主題發布訊息，訂閱該主題的電子郵件、Lambda、SQS 等都會收到通知。
+
+「想把同一件事告訴多個對象」的時候適合使用。
+
+### Amazon SQS
+
+SQS 是暫存訊息的佇列。
+
+處理端會從佇列取出訊息，並依序進行處理。
+
+「現在還無法立刻處理，想之後再安全地處理」的工作就適合放進 SQS。
+
+### Amazon EventBridge
+
+EventBridge 是根據事件啟動處理的服務。
+
+它會接收 AWS 服務事件、應用程式事件、SaaS 事件，並將其轉送到符合條件的目標。
+
+也可以用來做排程執行。
+
+在本專案裡，未來的「每日一題派送」就是 EventBridge 的候選方案之一。
+
+## 考試重點
+
+### CLF-C02 常見出題重點
+
+- SNS 是通知派送服務
+- SQS 是訊息佇列
+- EventBridge 是事件驅動的整合服務
+- SQS 有助於系統間的鬆耦合
+- SNS 可以同時通知多個訂閱者
+- EventBridge 也能用於排程執行
+
+### SAA-C03 常見出題重點
+
+- 需要非同步處理並讓工作排隊時選 SQS
+- 需要把一個事件派送給多個處理端時選 SNS
+- 需要依 AWS 服務或 SaaS 事件觸發處理時選 EventBridge
+- 在 Lambda 前面放 SQS，可以吸收處理失敗與流量暴衝
+- SNS 搭配 SQS 可以做出 Fan-out 架構
+- EventBridge 可以依事件模式進行路由
+
+## 實務上的使用情境
+
+### 適合選 SNS 的情況
+
+- 想把同一個通知派送到多個目的地
+- 想把系統故障通知送到電子郵件或 Lambda
+- 想把同一個事件派送給多個服務
+- 想搭配 SQS 組成 Fan-out 架構
+
+例子:
+
+- 將訂單完成事件通知多個系統
+- 將 CloudWatch Alarm 以電子郵件通知
+- 同時派送到 Lambda 與 SQS
+
+### 適合選 SQS 的情況
+
+- 想改成非同步處理
+- 想在請求暴增時先把工作排隊起來
+- 想在處理端失敗時重新嘗試
+- 想控制 Lambda 或 worker 的處理量
+
+例子:
+
+- 圖片轉換處理
+- 寄送電子郵件
+- 報表產生處理
+- 等待外部 API 呼叫
+
+### 適合選 EventBridge 的情況
+
+- 想依事件條件分流處理
+- 想對 AWS 服務的狀態變化做出反應
+- 想把 SaaS 事件與 AWS 整合
+- 想每天或每小時定時觸發 Lambda
+
+例子:
+
+- 每天早上 8 點啟動處理
+- 依 S3 或 EC2 事件啟動處理
+- 將外部 SaaS 事件轉接到 Lambda
+- 在學習網站上每天通知一題
+
+## 常見誤解
+
+### 誤解 1: 把 SNS 和 SQS 都當成通知服務
+
+SNS 是派送通知的服務。
+
+SQS 是暫存訊息的服務。
+
+把這個差別記住，考試時就比較不會猶豫。
+
+### 誤解 2: 以為 SQS 會自動執行處理
+
+SQS 是佇列。
+
+它只會暫存訊息，實際的處理仍要由 Lambda 或 worker 來執行。
+
+### 誤解 3: 把 EventBridge 只當成排程器
+
+EventBridge 雖然也能做排程執行，但本質是事件整合。
+
+可以依事件模式路由到不同目標，這一點才是它的關鍵價值。
+
+### 誤解 4: 全部都用 Lambda 直接串接
+
+在小型系統中，直接呼叫 Lambda 也能運作。
+
+不過當處理量變多時，改用 SQS、SNS、EventBridge 做鬆耦合，系統會對故障更有韌性。
+
+## 相關用語
+
+- [Amazon SNS](/terms/sns)
+- [Amazon SQS](/terms/sqs)
+- [Amazon EventBridge](/terms/eventbridge)
+- [AWS Lambda](/terms/lambda)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 相關練習題
+
+- [CLF 練習題列表](/questions/clf)
+
+## 總結
+
+SNS、SQS、EventBridge 是系統整合中常出現的重要服務。
+
+SNS 負責通知，SQS 負責佇列，EventBridge 負責事件路由。
+
+只要能清楚區分這三者，就會更容易理解 AWS 上的無伺服器架構。
