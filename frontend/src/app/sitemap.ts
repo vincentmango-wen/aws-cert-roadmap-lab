@@ -24,6 +24,12 @@ type QuestionContent = {
   published?: unknown;
 };
 
+type LocalizedContent = {
+  slug?: unknown;
+  updatedAt?: unknown;
+  published?: unknown;
+};
+
 type MdxContentMeta = {
   slug: string;
   updatedAt?: string;
@@ -219,6 +225,56 @@ function getMdxRoutes(
     }));
 }
 
+/**
+ * locale 別 JSON SSoT を起点に detail URL を生成する。
+ *
+ * P5-034 (comparisons) / P5-042 (architectures) で MDX を locale サブディレクトリ
+ * 配下に移したため、旧 `readMdxContentMetas` は contents/<directoryName> 直下を
+ * 非再帰走査する設計上、空配列を返してしまい detail URL が sitemap から脱落する
+ * regression が発生していた (CR1-H2 共造)。
+ *
+ * 本関数は ja JSON の slug 集合を「公開されている全 slug 集合」として扱い、
+ * createLocalizedSitemapItems が 3 言語の URL を一度に生成する。
+ */
+function getLocalizedDetailRoutesFromJson(
+  jaJsonRelativePath: string,
+  routePrefix: string,
+  priority: number,
+  changeFrequency: ChangeFrequency,
+): SitemapRouteInput[] {
+  const entries = readRequiredJsonArray<LocalizedContent>(jaJsonRelativePath);
+
+  return entries
+    .filter((entry) => entry.published !== false)
+    .filter((entry) => isNonEmptyString(entry.slug))
+    .map((entry) => ({
+      pathname: `${routePrefix}/${String(entry.slug).trim()}`,
+      priority,
+      changeFrequency,
+      lastModified: isNonEmptyString(entry.updatedAt)
+        ? String(entry.updatedAt).trim()
+        : undefined,
+    }));
+}
+
+export function getArchitectureSitemapRoutes(): SitemapRouteInput[] {
+  return getLocalizedDetailRoutesFromJson(
+    "architectures/architectures.ja.json",
+    "/architectures",
+    0.75,
+    "monthly",
+  );
+}
+
+export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
+  return getLocalizedDetailRoutesFromJson(
+    "comparisons/comparisons.ja.json",
+    "/comparisons",
+    0.75,
+    "monthly",
+  );
+}
+
 function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
   const itemMap = new Map<string, SitemapItem>();
 
@@ -234,8 +290,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getStaticRoutes(),
     ...getTermRoutes(),
     ...getQuestionRoutes(),
-    ...getMdxRoutes("comparisons", "/comparisons", 0.75, "monthly"),
-    ...getMdxRoutes("architectures", "/architectures", 0.75, "monthly"),
+    ...getComparisonSitemapRoutes(),
+    ...getArchitectureSitemapRoutes(),
     ...getMdxRoutes("blog", "/blog", 0.7, "weekly"),
   ];
 

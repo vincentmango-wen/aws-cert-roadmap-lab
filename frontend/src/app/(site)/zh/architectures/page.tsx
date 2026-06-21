@@ -4,12 +4,12 @@ import { ArchitecturesListClient } from "@/components/architectures/Architecture
 import {
   architecturesPageMetadataByLocale,
   getArchitecturesPageData,
-} from "./architectures-page-data";
+} from "../../architectures/architectures-page-data";
 
 export const metadata: Metadata = createPageMetadata(
-  architecturesPageMetadataByLocale.ja,
+  architecturesPageMetadataByLocale.zh,
 );
 
-export default function ArchitecturesPage() {
-  return <ArchitecturesListClient {...getArchitecturesPageData("ja")} />;
+export default function ChineseArchitecturesPage() {
+  return <ArchitecturesListClient {...getArchitecturesPageData("zh")} />;
 }
