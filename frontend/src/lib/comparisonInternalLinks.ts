@@ -15,6 +15,7 @@
  * pure function に倒し、テスト容易性 + server / client いずれからも import 可能.
  */
 import {
+  isExistingArchitectureForLocale,
   isExistingComparisonForLocale,
   isExistingTerm,
 } from "./termGuards";
@@ -59,9 +60,13 @@ const ARCHITECTURES_PREFIX = "/architectures/";
  *    - 該当 locale で公開 → `/{locale}/comparisons/{slug}`
  *    - 未公開 → ja パス (`/comparisons/{slug}`) へフォールバック (fellBackToJa: true)
  *    - そもそも slug が存在しない → ja パスのまま (404)
- * - `/questions/...` / `/architectures/...`:
+ * - `/questions/...`:
  *    - 該当 locale ページが現状未整備 (P5-040 系・別 issue) のため、
  *      ja パスへフォールバック (fellBackToJa: true) して 404 を回避.
+ * - `/architectures/{slug}`:
+ *    - 該当 locale で公開 → `/{locale}/architectures/{slug}` (P5-042 で ja/en/zh 公開済)
+ *    - 未公開 → ja パス (`/architectures/{slug}`) へフォールバック (fellBackToJa: true)
+ *    - そもそも slug が存在しない → ja パスのまま (404)
  * - その他のサイト内ルート (`/`, `/about`, `/comparisons` 一覧, 等):
  *    - en/zh にも対応ルートが存在する前提で createLocalizedPath を適用.
  */
@@ -146,16 +151,42 @@ export function resolveInternalLink(
     };
   }
 
-  // /architectures/... — 同上 (ja のみ存在)
-  if (href.startsWith(ARCHITECTURES_PREFIX) || href === "/architectures") {
-    if (locale === "ja") {
-      return { href, isExternal: false, available: true, fellBackToJa: false };
+  // /architectures/{slug} — P5-042 で ja/en/zh 全 locale で公開済。
+  // 同言語に存在すれば `/{locale}/architectures/{slug}`、未公開なら ja パス
+  // へフォールバック (fellBackToJa: true) して 404 を避ける。
+  if (
+    href.startsWith(ARCHITECTURES_PREFIX) &&
+    href.length > ARCHITECTURES_PREFIX.length
+  ) {
+    const slug = href.slice(ARCHITECTURES_PREFIX.length).split(/[#?]/)[0];
+
+    if (isExistingArchitectureForLocale(locale, slug)) {
+      return {
+        href: createLocalizedPath(locale, href),
+        isExternal: false,
+        available: true,
+        fellBackToJa: false,
+      };
     }
+
+    // ja には存在するが en/zh で未公開のケース → ja パスへフォールバック.
+    // ja でも存在しない slug は ja パスのまま 404 (= 不正リンクの責任は MDX 側).
     return {
       href,
       isExternal: false,
       available: false,
-      fellBackToJa: true,
+      fellBackToJa: locale !== "ja",
+    };
+  }
+
+  // /architectures 一覧 (slug なし) は en/zh にも対応ルートが存在するため
+  // createLocalizedPath で 3 言語対応する。
+  if (href === "/architectures") {
+    return {
+      href: createLocalizedPath(locale, href),
+      isExternal: false,
+      available: true,
+      fellBackToJa: false,
     };
   }
 
