@@ -5,11 +5,8 @@ import {
   createArchitectureDetailMetadataInput,
   getArchitectureBySlug,
   getArchitectureStaticParams,
-} from "../architecture-detail-data";
+} from "../../../architectures/architecture-detail-data";
 import { ArchitectureDetailContent } from "@/components/architectures/ArchitectureDetailContent";
-
-export const dynamic = "force-static";
-export const dynamicParams = false;
 
 type PageProps = {
   params: Promise<{
@@ -17,8 +14,11 @@ type PageProps = {
   }>;
 };
 
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
 export function generateStaticParams() {
-  return getArchitectureStaticParams("ja");
+  return getArchitectureStaticParams("en");
 }
 
 export async function generateMetadata({
@@ -27,19 +27,21 @@ export async function generateMetadata({
   const { architectureSlug } = await params;
 
   return createPageMetadata(
-    createArchitectureDetailMetadataInput("ja", architectureSlug),
+    createArchitectureDetailMetadataInput("en", architectureSlug),
   );
 }
 
-export default async function ArchitectureDetailPage({ params }: PageProps) {
+export default async function EnglishArchitectureDetailPage({
+  params,
+}: PageProps) {
   const { architectureSlug } = await params;
-  const architecture = getArchitectureBySlug("ja", architectureSlug);
+  const architecture = getArchitectureBySlug("en", architectureSlug);
 
   if (!architecture) {
     notFound();
   }
 
   return (
-    <ArchitectureDetailContent locale="ja" architecture={architecture} />
+    <ArchitectureDetailContent locale="en" architecture={architecture} />
   );
 }

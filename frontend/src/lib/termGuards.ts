@@ -10,15 +10,11 @@
  * - comparisons: comparisons.ts の publishedComparisons（published: true のみ）
  * - architectures: architectures.ts の publishedArchitectures（published: true のみ）
  *
- * locale 別 published セット (P5-033):
- * - comparisons/architectures ページは現時点で ja 配下にのみ存在するため、
- *   en/zh の published セットは空セットとして保持する。
- * - en/zh の用語詳細ページから「関連比較・関連構成図」セクションは
- *   全件 EmptyMessage 表示となり、他言語ページへの遷移リンクを生成しない
- *   (= 同一言語内遷移を完了条件として担保)。
- * - 将来 en/zh 配下に comparisons/architectures ページを追加する際は、
- *   `comparisonSlugSetByLocale.en` / `architectureSlugSetByLocale.zh` 等に
- *   slug を追加するだけで自動的にリンク表示が復活する。
+ * locale 別 published セット (P5-033 → P5-034 → P5-042 で 3 言語化完了):
+ * - comparisons は P5-034 で en/zh ページを追加済 (3 言語共通 slug)。
+ * - architectures は P5-042 で en/zh ページを追加済 (3 言語共通 slug)。
+ * - terms / comparisons / architectures の関連セクションは、同言語ページへ
+ *   自動遷移する (= 同一言語内遷移を完了条件として担保)。
  *
  * NOTE: このファイルは server component でのみ import すること。
  * "use client" なコンポーネントから直接 import すると
@@ -50,9 +46,11 @@ const architectureSlugSet: Set<string> = new Set(
   publishedArchitectures.map((a) => a.slug),
 );
 
-// locale 別 published セット (P5-033 / P5-034 で comparison 系を 3 言語公開化)
+// locale 別 published セット (P5-033 / P5-034 で comparison 系を 3 言語公開化 /
+// P5-042 で architectures 系も 3 言語公開化).
 // comparisons は P5-034 で en/zh ページを追加し、11 slug すべてを 3 言語公開する。
-// architectures は引き続き ja 限定 (別 issue で対応).
+// architectures は P5-042 で en/zh ページを追加し、10 slug すべてを 3 言語公開する。
+// 内部リンク (terms の関連構成図セクション等) はこれにより同言語遷移が有効化される。
 const comparisonSlugSetByLocale: Record<Locale, Set<string>> = {
   ja: comparisonSlugSet,
   en: comparisonSlugSet,
@@ -61,8 +59,8 @@ const comparisonSlugSetByLocale: Record<Locale, Set<string>> = {
 
 const architectureSlugSetByLocale: Record<Locale, Set<string>> = {
   ja: architectureSlugSet,
-  en: new Set<string>(),
-  zh: new Set<string>(),
+  en: architectureSlugSet,
+  zh: architectureSlugSet,
 };
 
 /**
