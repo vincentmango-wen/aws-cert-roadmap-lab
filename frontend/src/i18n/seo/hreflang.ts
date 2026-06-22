@@ -75,6 +75,20 @@ export function createXDefaultUrl(): string {
   return createAbsoluteUrl(X_DEFAULT_PATHNAME);
 }
 
+/**
+ * 任意の path に対して ja / en / zh-Hant / x-default の hreflang URL を生成する。
+ *
+ * path-agnostic 設計のため、terms / comparisons / blog / architectures に加えて
+ * questions 系 path (`/questions`, `/questions/clf`, `/questions/saa`,
+ * `/questions/<questionId>`) も追加コード不要でそのまま利用できる。
+ *
+ * 例:
+ *   createHreflangAlternates("/questions/clf-001")
+ *     → { ja: "https://.../questions/clf-001",
+ *         en: "https://.../en/questions/clf-001",
+ *         "zh-Hant": "https://.../zh/questions/clf-001",
+ *         "x-default": "https://.../questions/clf-001" }
+ */
 export function createHreflangAlternates(pathname: string): HreflangAlternates {
   return {
     [HREFLANG_BY_LOCALE.ja]: createAbsoluteUrl(createLocalizedPathname("ja", pathname)),

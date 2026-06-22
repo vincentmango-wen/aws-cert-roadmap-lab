@@ -3,12 +3,21 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
+import { filterValidOfficialDocs } from "@/lib/official-doc";
+import { formatSlugLabel } from "@/lib/format-slug-label";
+import {
+  questionPlayerLabelsByLocale,
+  type QuestionPlayerLabels,
+  type QuestionPlayerLocale,
+} from "./question-player-labels";
+
+export type { QuestionPlayerLabels, QuestionPlayerLocale } from "./question-player-labels";
 
 /**
  * サーバー側で解決済みの関連リンク情報。
  * server component (`questions/[questionId]/page.tsx`) が存在チェックを行い、
  * この型で QuestionPlayer に渡す。
- * これにより "use client" な QuestionPlayer が termGuards (terms.ja.json 85KB) を
+ * これにより "use client" な QuestionPlayer が termGuards (terms.json 85KB) を
  * client bundle に引き込まない。
  */
 export type ResolvedLink = {
@@ -17,15 +26,59 @@ export type ResolvedLink = {
 };
 
 type QuestionPlayerProps = {
+  /** UI 文言ローカライズ用 locale。未指定なら 'ja'（既存呼び出し互換性維持）。 */
+  locale?: QuestionPlayerLocale;
+  /** UI 文言辞書。未指定なら locale に対応する既定辞書（questionPlayerLabelsByLocale[locale]）を使う。 */
+  labels?: QuestionPlayerLabels;
   question: Question;
   previousQuestionId?: string;
   nextQuestionId?: string;
-  resolvedServices?: ResolvedLink[];
-  resolvedTerms?: ResolvedLink[];
-  resolvedComparisons?: ResolvedLink[];
+  // resolved* は server component (`questions/[questionId]/page.tsx`) で必ず解決して渡される。
+  // 「存在しない関連 ID にはリンクを張らない」不変条件を server 側で守るため、型レベルで required にしている。
+  resolvedServices: ResolvedLink[];
+  resolvedTerms: ResolvedLink[];
+  resolvedComparisons: ResolvedLink[];
 };
 
+const LOCALE_PREFIX: Record<QuestionPlayerLocale, "" | "/en" | "/zh"> = {
+  ja: "",
+  en: "/en",
+  zh: "/zh",
+};
+
+function localizePath(
+  locale: QuestionPlayerLocale,
+  path: `/${string}`,
+): string {
+  const prefix = LOCALE_PREFIX[locale];
+  return prefix === "" ? path : `${prefix}${path}`;
+}
+
+/**
+ * question.exam に応じて exam list path を返す。
+ * P5 R1 Critical-2 対策: 旧版は常に '/questions/clf' を hardcode していたため
+ * SAA 問題 (saa-001..saa-030) の breadcrumb / 戻り link が誤 CLF を指していた。
+ */
+function getExamListPath(
+  exam: Question["exam"],
+  locale: QuestionPlayerLocale,
+): string {
+  if (exam === "SAA-C03") {
+    return localizePath(locale, "/questions/saa");
+  }
+  return localizePath(locale, "/questions/clf");
+}
+
+function getExamLabel(
+  exam: Question["exam"],
+  labels: QuestionPlayerLabels,
+): string {
+  return exam === "SAA-C03" ? labels.saaLabel : labels.clfLabel;
+}
+
 export function QuestionPlayer({
+  locale = "ja",
+  labels,
   question,
   previousQuestionId,
   nextQuestionId,
@@ -33,6 +86,8 @@ export function QuestionPlayer({
   resolvedTerms,
   resolvedComparisons,
 }: QuestionPlayerProps): React.JSX.Element {
+  const resolvedLabels = labels ?? questionPlayerLabelsByLocale[locale];
+
   const [selectedChoiceId, setSelectedChoiceId] = useState<ChoiceId | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
@@ -48,7 +103,10 @@ export function QuestionPlayer({
 
   const isCorrect = selectedChoiceId === question.correctChoiceId;
 
-  const difficultyLabel = getDifficultyLabel(question.difficulty);
+  const difficultyLabel = resolvedLabels.difficulty[question.difficulty];
+
+  const examListPath = getExamListPath(question.exam, locale);
+  const examLabel = getExamLabel(question.exam, resolvedLabels);
 
   const handleSelectChoice = (choiceId: ChoiceId) => {
     if (isSubmitted) {
@@ -96,23 +154,26 @@ export function QuestionPlayer({
 
   return (
     <article className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <nav className="mb-8 text-sm text-slate-600" aria-label="パンくず">
+      <nav className="mb-8 text-sm text-slate-600" aria-label={resolvedLabels.breadcrumbLabel}>
         <ol className="flex flex-wrap gap-2">
           <li>
-            <Link href="/" className="hover:underline">
-              ホーム
+            <Link href={localizePath(locale, "/")} className="hover:underline">
+              {resolvedLabels.homeLabel}
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link href="/questions" className="hover:underline">
-              模擬問題
+            <Link
+              href={localizePath(locale, "/questions")}
+              className="hover:underline"
+            >
+              {resolvedLabels.questionsLabel}
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link href="/questions/clf" className="hover:underline">
-              CLF-C02
+            <Link href={examListPath} className="hover:underline">
+              {examLabel}
             </Link>
           </li>
           <li aria-hidden="true">/</li>
@@ -129,7 +190,7 @@ export function QuestionPlayer({
             {question.category}
           </span>
           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-            難易度：{difficultyLabel}
+            {resolvedLabels.difficultyLabel}：{difficultyLabel}
           </span>
         </div>
 
@@ -142,7 +203,7 @@ export function QuestionPlayer({
       </header>
 
       <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-bold text-slate-950">選択肢</h2>
+        <h2 className="mb-4 text-lg font-bold text-slate-950">{resolvedLabels.choicesTitle}</h2>
 
         <div className="space-y-3">
           {question.choices.map((choice) => {
@@ -177,7 +238,7 @@ export function QuestionPlayer({
             onClick={handleSubmit}
             disabled={!selectedChoiceId || isSubmitted}
           >
-            回答する
+            {resolvedLabels.submitLabel}
           </button>
 
           {isSubmitted ? (
@@ -186,7 +247,7 @@ export function QuestionPlayer({
               className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
               onClick={handleRetry}
             >
-              もう一度選ぶ
+              {resolvedLabels.retryLabel}
             </button>
           ) : null}
         </div>
@@ -194,7 +255,7 @@ export function QuestionPlayer({
 
       {isSubmitted ? (
         <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-bold text-slate-950">回答結果</h2>
+          <h2 className="mb-4 text-lg font-bold text-slate-950">{resolvedLabels.resultTitle}</h2>
 
           <div
             className={
@@ -204,18 +265,20 @@ export function QuestionPlayer({
             }
           >
             <p className="text-base font-bold text-slate-950">
-              {isCorrect ? "正解です。" : "不正解です。"}
+              {isCorrect ? resolvedLabels.correctLabel : resolvedLabels.incorrectLabel}
             </p>
 
             <p className="mt-2 text-sm leading-6 text-slate-800">
-              あなたの回答：
+              {resolvedLabels.yourAnswerLabel}
               <span className="font-bold">
-                {selectedChoice ? `${selectedChoice.choiceId}. ${selectedChoice.text}` : "未選択"}
+                {selectedChoice
+                  ? `${selectedChoice.choiceId}. ${selectedChoice.text}`
+                  : resolvedLabels.unselectedLabel}
               </span>
             </p>
 
             <p className="mt-2 text-sm leading-6 text-slate-800">
-              正解：
+              {resolvedLabels.correctAnswerLabel}
               <span className="font-bold">
                 {correctChoice
                   ? `${correctChoice.choiceId}. ${correctChoice.text}`
@@ -225,13 +288,17 @@ export function QuestionPlayer({
           </div>
 
           <div className="mb-6">
-            <h3 className="mb-2 text-base font-bold text-slate-950">解説</h3>
-            <p className="leading-7 text-slate-800">{question.explanation}</p>
+            <h3 className="mb-2 text-base font-bold text-slate-950">
+              {resolvedLabels.explanationTitle}
+            </h3>
+            <p className="whitespace-pre-line leading-7 text-slate-800">{question.explanation}</p>
           </div>
 
           {question.choiceExplanations ? (
-            <div>
-              <h3 className="mb-3 text-base font-bold text-slate-950">選択肢ごとの解説</h3>
+            <div className="mb-6">
+              <h3 className="mb-3 text-base font-bold text-slate-950">
+                {resolvedLabels.choiceExplanationsTitle}
+              </h3>
               <div className="space-y-3">
                 {question.choices.map((choice) => {
                   const explanation = question.choiceExplanations?.[choice.choiceId];
@@ -248,34 +315,76 @@ export function QuestionPlayer({
                       <p className="mb-1 text-sm font-bold text-slate-950">
                         {choice.choiceId}. {choice.text}
                       </p>
-                      <p className="text-sm leading-6 text-slate-700">{explanation}</p>
+                      <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{explanation}</p>
                     </div>
                   );
                 })}
               </div>
             </div>
           ) : null}
+
+          {/* 実務での使いどころ: 客観的な実務文脈・よくある誤解の枠（体験談・一人称感想は入れない）。
+              practicalNote が存在する設問のみ表示。存在しない場合はセクションごと非表示。 */}
+          {question.practicalNote ? (
+            <div className="mb-6">
+              <h3 className="mb-2 text-base font-bold text-slate-950">
+                {resolvedLabels.practicalNoteTitle}
+              </h3>
+              <p className="whitespace-pre-line leading-7 text-slate-800">{question.practicalNote}</p>
+            </div>
+          ) : null}
+
+          {/* 公式ドキュメント: officialDocs が存在かつ allowlist を通過した件が1件以上の場合のみ表示。 */}
+          {(() => {
+            const validDocs = filterValidOfficialDocs(question.officialDocs);
+            return validDocs.length > 0 ? (
+              <div>
+                <h3 className="mb-3 text-base font-bold text-slate-950">
+                  {resolvedLabels.officialDocsTitle}
+                </h3>
+                <ul className="space-y-2">
+                  {validDocs.map((doc) => (
+                    <li key={doc.url}>
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
+                      >
+                        {doc.label}
+                        <span aria-hidden="true">↗</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null;
+          })()}
         </section>
       ) : null}
 
       <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-bold text-slate-950">関連リンク</h2>
+        <h2 className="mb-4 text-lg font-bold text-slate-950">
+          {resolvedLabels.relatedLinksTitle}
+        </h2>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* 関連サービス: 実在するもののみ表示。1件もなければセクションごと非表示 */}
-          {resolvedServices && resolvedServices.some(({ exists }) => exists) ? (
+          {resolvedServices.some(({ exists }) => exists) ? (
             <div>
-              <h3 className="mb-3 text-sm font-bold text-slate-700">関連サービス</h3>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">
+                {resolvedLabels.relatedServicesTitle}
+              </h3>
               <ul className="flex flex-wrap gap-2">
                 {resolvedServices
                   .filter(({ exists }) => exists)
                   .map(({ id: serviceId }) => (
                     <li key={serviceId}>
                       <Link
-                        href={`/terms/${serviceId}`}
+                        href={localizePath(locale, `/terms/${serviceId}`)}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
-                        {serviceId.toUpperCase()}
+                        {formatSlugLabel(serviceId)}
                       </Link>
                     </li>
                   ))}
@@ -284,19 +393,21 @@ export function QuestionPlayer({
           ) : null}
 
           {/* 関連用語: 実在するもののみ表示。1件もなければセクションごと非表示 */}
-          {resolvedTerms && resolvedTerms.some(({ exists }) => exists) ? (
+          {resolvedTerms.some(({ exists }) => exists) ? (
             <div>
-              <h3 className="mb-3 text-sm font-bold text-slate-700">関連用語</h3>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">
+                {resolvedLabels.relatedTermsTitle}
+              </h3>
               <ul className="flex flex-wrap gap-2">
                 {resolvedTerms
                   .filter(({ exists }) => exists)
                   .map(({ id: termId }) => (
                     <li key={termId}>
                       <Link
-                        href={`/terms/${termId}`}
+                        href={localizePath(locale, `/terms/${termId}`)}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
-                        {termId}
+                        {formatSlugLabel(termId)}
                       </Link>
                     </li>
                   ))}
@@ -305,19 +416,21 @@ export function QuestionPlayer({
           ) : null}
 
           {/* 関連比較記事: 実在するもののみ表示。1件もなければセクションごと非表示 */}
-          {resolvedComparisons && resolvedComparisons.some(({ exists }) => exists) ? (
+          {resolvedComparisons.some(({ exists }) => exists) ? (
             <div>
-              <h3 className="mb-3 text-sm font-bold text-slate-700">関連比較記事</h3>
+              <h3 className="mb-3 text-sm font-bold text-slate-700">
+                {resolvedLabels.relatedComparisonsTitle}
+              </h3>
               <ul className="flex flex-wrap gap-2">
                 {resolvedComparisons
                   .filter(({ exists }) => exists)
                   .map(({ id: slug }) => (
                     <li key={slug}>
                       <Link
-                        href={`/comparisons/${slug}`}
+                        href={localizePath(locale, `/comparisons/${slug}`)}
                         className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-sm font-semibold !text-slate-700 hover:bg-slate-50"
                       >
-                        {slug}
+                        {formatSlugLabel(slug)}
                       </Link>
                     </li>
                   ))}
@@ -329,56 +442,45 @@ export function QuestionPlayer({
 
       <nav
         className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-        aria-label="問題ナビゲーション"
+        aria-label={resolvedLabels.navAriaLabel}
       >
         <div>
           {previousQuestionId ? (
             <Link
-              href={`/questions/${previousQuestionId}`}
+              href={localizePath(locale, `/questions/${previousQuestionId}`)}
               className="inline-flex rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
             >
-              前の問題へ
+              {resolvedLabels.previousQuestionLabel}
             </Link>
           ) : (
             <span className="inline-flex rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-400">
-              前の問題なし
+              {resolvedLabels.noPreviousQuestionLabel}
             </span>
           )}
         </div>
 
         <Link
-          href="/questions/clf"
+          href={examListPath}
           className="inline-flex justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
         >
-          一覧に戻る
+          {resolvedLabels.backToListLabel}
         </Link>
 
         <div>
           {nextQuestionId ? (
             <Link
-              href={`/questions/${nextQuestionId}`}
+              href={localizePath(locale, `/questions/${nextQuestionId}`)}
               className="inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800"
             >
-              次の問題へ
+              {resolvedLabels.nextQuestionLabel}
             </Link>
           ) : (
             <span className="inline-flex rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-400">
-              次の問題なし
+              {resolvedLabels.noNextQuestionLabel}
             </span>
           )}
         </div>
       </nav>
     </article>
   );
-}
-
-function getDifficultyLabel(difficulty: Question["difficulty"]): string {
-  switch (difficulty) {
-    case "easy":
-      return "やさしい";
-    case "normal":
-      return "標準";
-    case "hard":
-      return "難しい";
-  }
 }

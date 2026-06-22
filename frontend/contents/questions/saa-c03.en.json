@@ -1,0 +1,1982 @@
+[
+  {
+    "questionId": "saa-001",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "A web application delivers static files stored in Amazon S3 through CloudFront. You do not want to expose the S3 bucket publicly and want to allow access only from CloudFront. Which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Disable Block Public Access on the S3 bucket and allow GetObject for all users in the bucket policy."
+      },
+      {
+        "choiceId": "B",
+        "text": "Use CloudFront Origin Access Control and allow only GetObject from the CloudFront distribution in the S3 bucket policy."
+      },
+      {
+        "choiceId": "C",
+        "text": "Enable S3 static website hosting and set the website endpoint as the CloudFront origin."
+      },
+      {
+        "choiceId": "D",
+        "text": "Set a public-read ACL on each S3 object."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "To restrict access to CloudFront only without exposing S3 directly, use CloudFront Origin Access Control and allow only access from the specific CloudFront distribution in the S3 bucket policy.",
+    "choiceExplanations": {
+      "A": "Incorrect. Exposing the bucket conflicts with the requirement to avoid direct S3 access.",
+      "B": "Correct. OAC keeps S3 private while delivering content securely through CloudFront.",
+      "C": "Incorrect. S3 static website endpoints cannot be combined with OAC and typically require the bucket to be public.",
+      "D": "Incorrect. Object ACL public exposure violates the principle of minimal exposure."
+    },
+    "practicalNote": "CloudFront Origin Access Control (OAC) is the mechanism that allows delivery only through CloudFront without exposing the S3 bucket. By keeping S3 Block Public Access enabled and writing a bucket policy that allows only GetObject from a specific CloudFront distribution, you can structurally block direct S3 access. Combined with signed URLs or signed cookies, you can layer additional access control at the CloudFront layer. OAC is positioned as the successor to the legacy Origin Access Identity (OAI), and OAC is recommended for new builds.\n\nA design consideration is that the S3 static website hosting endpoint cannot be combined with OAC. Because the website endpoint assumes HTTP public access, when there is a requirement to protect with OAC you must specify the REST API endpoint (bucket FQDN) as the origin. In addition, the standard configuration is to set the CloudFront behavior's Viewer Protocol Policy to Redirect HTTP to HTTPS, attach an ACM certificate (issued in us-east-1), and enforce HTTPS delivery.\n\nOn SAA-C03, OAC frequently appears as the correct answer in contexts such as \"deliver from S3 through CloudFront while keeping S3 private\" or \"maintain the principle of minimal exposure.\" Distractors line up choices that expose the bucket, such as disabling Block Public Access, setting public object ACLs, or using the S3 website endpoint. The differences between OAI and OAC (OAC is newer and supports SSE-KMS and SigV4 regional signatures) are also commonly asked.",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront (AWS official)",
+        "url": "https://aws.amazon.com/cloudfront/"
+      },
+      {
+        "label": "Restricting access to an Amazon S3 origin with Origin Access Control (CloudFront Developer Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html"
+      },
+      {
+        "label": "Blocking public access to your Amazon S3 storage (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "cloudfront",
+      "iam"
+    ],
+    "relatedTerms": [
+      "origin-access-control",
+      "bucket-policy"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "cloudfront",
+      "security",
+      "oac"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-002",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "A Lambda function needs to write inquiry data to a DynamoDB table. Which IAM policy best follows the principle of least privilege?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Allow dynamodb:* on all DynamoDB tables."
+      },
+      {
+        "choiceId": "B",
+        "text": "Allow only dynamodb:PutItem on the target table."
+      },
+      {
+        "choiceId": "C",
+        "text": "Attach AdministratorAccess to the Lambda execution role."
+      },
+      {
+        "choiceId": "D",
+        "text": "Store DynamoDB access keys in Lambda environment variables."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "If Lambda only saves inquiries, the least-privilege approach is to allow only PutItem on the target DynamoDB table.",
+    "choiceExplanations": {
+      "A": "Incorrect. dynamodb:* grants excessive permissions.",
+      "B": "Correct. It limits the policy to the target table and the required action.",
+      "C": "Incorrect. AdministratorAccess is far too broad.",
+      "D": "Incorrect. Storing AWS credentials in environment variables should be avoided. Use the Lambda execution role instead."
+    },
+    "practicalNote": "The IAM policy attached to a Lambda execution role should be limited to the actions and target resources that the function actually needs, following the principle of least privilege. For a function that only writes inquiries to a specific DynamoDB table, the appropriate policy limits Action to `dynamodb:PutItem` only and Resource to the ARN of the target table only. Granting `dynamodb:*` or AdministratorAccess greatly expands the blast radius if the function is compromised, so avoid them.\n\nA common antipattern in practice is storing AWS access keys (long-term IAM user credentials) in Lambda environment variables. Because Lambda can automatically receive temporary credentials through the execution role, there is no need to embed long-term keys in code or environment variables. Long-term keys also create rotation overhead on leakage and make tracking with IAM Access Analyzer or CloudTrail more difficult. Even when combined with Secrets Manager or Parameter Store, the basic principle is to limit stored secrets to external systems (such as database DSNs or external API keys) and leave AWS authentication to the role.\n\nOn SAA-C03, recurring perspectives include \"least privilege,\" \"IAM role vs access keys,\" and \"narrowing Resource to the ARN level.\" Distractor patterns include wildcard Actions, AdministratorAccess, and storing access keys in Lambda environment variables, all of which conflict with least privilege and best practices and can be eliminated. More advanced questions also cover restricting to a source VPC endpoint or requiring MFA with Conditions, or monitoring actual used permissions with IAM Access Analyzer.",
+    "officialDocs": [
+      {
+        "label": "Security best practices in IAM (IAM User Guide)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      },
+      {
+        "label": "AWS Lambda execution role (Lambda Developer Guide)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html"
+      },
+      {
+        "label": "Using identity-based policies (IAM policies) for Amazon DynamoDB (DynamoDB Developer Guide)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/using-identity-based-policies.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "dynamodb",
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege",
+      "iam-role"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "iam",
+      "lambda",
+      "dynamodb",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-003",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "EC2 instances in a private subnet need to access Amazon S3. You want to avoid communication over the internet and avoid the cost of a NAT Gateway. Which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create a NAT Gateway and route 0.0.0.0/0 from the private subnet route table to the NAT Gateway."
+      },
+      {
+        "choiceId": "B",
+        "text": "Attach an Internet Gateway directly to the private subnet."
+      },
+      {
+        "choiceId": "C",
+        "text": "Create an S3 Gateway VPC Endpoint and associate it with the target subnet route table."
+      },
+      {
+        "choiceId": "D",
+        "text": "Assign a public IP to the EC2 instance and access S3 from there."
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "An S3 Gateway VPC Endpoint allows access from a private subnet to S3 over the AWS network. There is no NAT Gateway fixed cost either.",
+    "choiceExplanations": {
+      "A": "Incorrect. A NAT Gateway incurs the cost the requirement asks to avoid.",
+      "B": "Incorrect. An Internet Gateway attaches to a VPC and is not directly associated with a private subnet.",
+      "C": "Correct. A Gateway VPC Endpoint for S3 provides low-cost private access.",
+      "D": "Incorrect. Assigning a public IP routes traffic over the internet and conflicts with the requirement."
+    },
+    "practicalNote": "There are two paths to access S3 from EC2 in a private subnet: via a NAT Gateway (over the internet to the public S3 endpoint) and via a VPC Endpoint (over the AWS internal network). S3 and DynamoDB offer Gateway-type VPC Endpoints, and the Gateway Endpoint itself incurs no additional charges. Because the NAT Gateway is billed by hourly unit price and data processing volume, simply offloading S3 traffic to a VPC Endpoint can lead to large cost savings in configurations with heavy data transfer.\n\nGateway Endpoints and Interface Endpoints (PrivateLink-based, with ENIs placed per AZ) are different things with different billing models. Gateway Endpoints are limited to the two services S3 and DynamoDB and are free; most other AWS services use Interface Endpoints (ENI hourly billing and data processing billing). At design time, the practical baseline is to apply an endpoint policy that allows only operations on specific buckets to close any path to unintended buckets. Because incidents where some subnets accidentally go through the internet due to missing route table settings happen easily, verify that all relevant route tables in the target VPC are associated with the endpoint.\n\nOn SAA-C03, a Gateway VPC Endpoint is the correct answer for requirements such as \"access S3 from a private subnet at low cost\" or \"avoid the fixed cost of a NAT Gateway.\" Advanced exams also ask about distinguishing Interface and Gateway Endpoints, narrowing access with endpoint policies, and service integration through PrivateLink.",
+    "officialDocs": [
+      {
+        "label": "VPC endpoints (VPC User Guide)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html"
+      },
+      {
+        "label": "Gateway endpoints for Amazon S3 (VPC User Guide)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html"
+      },
+      {
+        "label": "NAT gateways (VPC User Guide)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html"
+      }
+    ],
+    "relatedServices": [
+      "vpc",
+      "s3"
+    ],
+    "relatedTerms": [
+      "vpc-endpoint",
+      "private-subnet"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "vpc",
+      "s3",
+      "endpoint",
+      "security",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-004",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "An application connects to RDS for MySQL. You do not want to store DB credentials in source code or environment variables in plaintext. Which service is the most appropriate for storing credentials securely with periodic rotation in mind?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Secrets Manager"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudWatch Logs"
+      },
+      {
+        "choiceId": "C",
+        "text": "A public Amazon S3 bucket"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Secrets such as DB passwords can be managed with AWS Secrets Manager. It also supports integration and rotation with RDS.",
+    "choiceExplanations": {
+      "A": "Correct. It is well suited to secret management and rotation.",
+      "B": "Incorrect. CloudWatch Logs is a log storage service, not a destination for secrets.",
+      "C": "Incorrect. Storing secrets in a public bucket is a serious security risk.",
+      "D": "Incorrect. AWS Budgets is a billing monitoring service."
+    },
+    "practicalNote": "AWS Secrets Manager is a managed service for securely storing and retrieving sensitive information such as database passwords, API keys, and OAuth tokens. For databases such as RDS, Aurora, and Redshift, Secrets Manager directly supports rotation. The standard operational pattern is to rotate passwords periodically through a Lambda-based rotation function and synchronize them with the DB. The application retrieves the secret via the Secrets Manager API (or the SDK's automatic caching), so plaintext credentials never end up in code or environment variables.\n\nA similar service is the SecureString parameter in AWS Systems Manager Parameter Store. The standard tier is free, but automatic rotation is not provided out of the box (you must configure Lambda yourself). The common rule of thumb is to use Parameter Store when there are few secrets or for static secrets that do not require rotation (such as external API keys), and Secrets Manager for cases such as databases that need automatic rotation. Secrets Manager charges a fixed monthly fee per secret and per API call, so choose based on the balance of cost and operational overhead.\n\nOn SAA-C03, Secrets Manager is the correct answer for requirements such as \"store DB credentials securely and rotate periodically\" or \"avoid hardcoding or plaintext environment variables.\" The distractors that name CloudWatch Logs or a public S3 bucket as the storage location are the classic pattern of pointing at a service intended for a different purpose (log use or public storage). Comparison with Parameter Store SecureString and per-secret access control with IAM policies are also asked on higher exams.",
+    "officialDocs": [
+      {
+        "label": "AWS Secrets Manager (AWS official)",
+        "url": "https://aws.amazon.com/secrets-manager/"
+      },
+      {
+        "label": "What is AWS Secrets Manager (User Guide)",
+        "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html"
+      },
+      {
+        "label": "Rotate AWS Secrets Manager secrets (User Guide)",
+        "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "secrets-manager",
+      "iam"
+    ],
+    "relatedTerms": [
+      "credential-rotation",
+      "secret-management"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "secrets-manager",
+      "rds",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-005",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "You want internal users to be able to read only a specific prefix within an S3 bucket. From a least-privilege perspective, which design is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Allow s3:* on the entire target bucket."
+      },
+      {
+        "choiceId": "B",
+        "text": "Attach an IAM policy that allows s3:GetObject on objects under the target prefix."
+      },
+      {
+        "choiceId": "C",
+        "text": "Share the AWS account root user credentials."
+      },
+      {
+        "choiceId": "D",
+        "text": "Make the S3 bucket public."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "When the requirement is to read only a specific prefix, the least-privilege approach is to limit Resource to the target prefix and Action to s3:GetObject.",
+    "choiceExplanations": {
+      "A": "Incorrect. s3:* includes operations beyond read and is excessive.",
+      "B": "Correct. It limits the scope and the action.",
+      "C": "Incorrect. Sharing root user credentials must always be avoided.",
+      "D": "Incorrect. Making the bucket public creates unnecessary exposure."
+    },
+    "practicalNote": "S3 access control implements least privilege by narrowing Resource to the prefix level and Action to only the required operations. When internal users need to read only objects under a specific prefix, the IAM policy should limit Resource to `arn:aws:s3:::bucket/prefix/*` and Action to `s3:GetObject` only. Because other prefixes in the bucket and write or delete operations remain denied by the policy, the blast radius of accidental operations and permission abuse is structurally reduced.\n\nIn design, the distinction between IAM policies (identity-based) and S3 bucket policies (resource-based) is also important. IAM policies are easier when delegating permissions to specific IAM users or roles within the same account, and bucket policies are appropriate for cross-account access or when enforcing a \"common policy for the bucket.\" When both exist at the same time, build the policy with the evaluation logic in mind that an explicit Deny takes top priority. Furthermore, on ListBucket you can limit `s3:prefix` in the Condition of `s3:ListBucket` permission so that objects outside the prefix do not appear in listings.\n\nOn SAA-C03, this pattern frequently appears in contexts such as \"let users read only a specific prefix\" or \"keep exposure minimal.\" Distractors include granting `s3:*`, sharing root credentials, and making the entire bucket public — the three typical patterns of excessive permissions, misuse of public design, and direct root use — all of which conflict with IAM best practices.",
+    "officialDocs": [
+      {
+        "label": "Policies and permissions in Amazon S3 (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/user-policies.html"
+      },
+      {
+        "label": "Bucket policies and user policies (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-policy-alternatives-guidelines.html"
+      },
+      {
+        "label": "Security best practices in IAM (IAM User Guide)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege",
+      "prefix"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "iam",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-006",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "You operate multiple AWS accounts. You want to centrally review the configuration change history of each account from an audit account. Which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon ElastiCache"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EFS"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS CloudTrail records the API operation history within an AWS account. By aggregating trails across an organization, it can be used for auditing.",
+    "choiceExplanations": {
+      "A": "Correct. It is used to track API operation history and configuration changes.",
+      "B": "Incorrect. SQS is a message queue and is not primarily an audit log service.",
+      "C": "Incorrect. ElastiCache is an in-memory cache.",
+      "D": "Incorrect. EFS is shared file storage."
+    },
+    "practicalNote": "AWS CloudTrail is an audit log service that records API operations, console operations, and SDK operations within an AWS account. Management events (such as creating an IAM user, launching an EC2 instance, or deleting an S3 bucket) are retained by default for 90 days. By creating an additional Trail that stores them in an S3 bucket for the long term, you can meet longer-term audit requirements. When combined with AWS Organizations to enable an Organization Trail, you can aggregate trails from all accounts under the organization into a single S3 bucket (in the management account or delegated administrator account) and review them across accounts from the audit account.\n\nThe distinction from similar services is a frequent topic. CloudWatch's main purpose is collecting and visualizing metrics and logs (application logs, system logs); AWS Config's main purpose is the change history of resource configurations and continuous evaluation of whether the configuration meets compliance rules; CloudTrail's main purpose is the operational trail of \"who called what API, and when.\" Combining the three to compose detection (CloudWatch Logs Insights / EventBridge rules), evaluation (Config Rules), and tracking (CloudTrail) is the basic shape of enterprise auditing.\n\nOn SAA-C03, CloudTrail (Organization Trail) is the correct answer for requirements such as \"centrally review the operation history of multiple accounts\" or \"aggregate API call trails for auditing.\" Distractors often try to create confusion with CloudWatch or Config. In particular, the phrase \"configuration change history\" can evoke Config, but when you want to track changes including API calls, CloudTrail is required.",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail (AWS official)",
+        "url": "https://aws.amazon.com/cloudtrail/"
+      },
+      {
+        "label": "What is AWS CloudTrail (User Guide)",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "Creating a trail for an organization (CloudTrail User Guide)",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/creating-trail-organization.html"
+      }
+    ],
+    "relatedServices": [
+      "cloudtrail",
+      "organizations",
+      "s3"
+    ],
+    "relatedTerms": [
+      "audit-log",
+      "organization-trail"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudtrail",
+      "audit",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-007",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "You do not want EC2 instances behind an Application Load Balancer to receive direct HTTP access from the internet. Which security group configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Allow HTTP from 0.0.0.0/0 on the EC2 security group."
+      },
+      {
+        "choiceId": "B",
+        "text": "Allow only HTTP from the ALB security group on the EC2 security group."
+      },
+      {
+        "choiceId": "C",
+        "text": "Allow only HTTP from EC2 on the ALB security group."
+      },
+      {
+        "choiceId": "D",
+        "text": "Attach an Elastic IP to the EC2 instance so that it can be accessed directly."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "For EC2 behind an ALB, configure the EC2 security group to allow traffic only from the ALB security group.",
+    "choiceExplanations": {
+      "A": "Incorrect. This setting exposes EC2 directly to the internet.",
+      "B": "Correct. It allows only traffic that comes through the ALB.",
+      "C": "Incorrect. The ALB is the entry point that receives traffic from clients. Allowing only HTTP from EC2 to the ALB does not meet the requirement.",
+      "D": "Incorrect. Attaching an Elastic IP increases the likelihood of direct access."
+    },
+    "practicalNote": "For EC2 behind an Application Load Balancer (ALB), the configuration of \"allowing inbound traffic only from the ALB security group\" on the EC2-side security group (SG) structurally blocks direct access from the internet. Because a security group can reference another SG by ID as the source, not just CIDR, by allowing the ALB SG ID, you do not need to change rules on the EC2 side even when the ALB's IP varies. The standard pattern is a two-tier configuration: the ALB-side SG receives 80/443 from `0.0.0.0/0`, and the EC2-side SG receives 80/8080 etc. from the ALB SG.\n\nThere is also the distinction that security groups are \"allow rules only and stateful,\" while network ACLs (NACLs) are \"allow and deny rules, and stateless,\" and SAA-C03 asks about the difference. The common configuration is to place EC2 in a private subnet of the VPC and the ALB in a public subnet, and there is no need to attach a public IP or Elastic IP to EC2. Communication is established with the private IP and health checks and traffic forwarding via the ALB alone.\n\nOn SAA-C03, the pattern of allowing only the ALB SG on the EC2-side SG frequently appears for requirements such as \"do not allow direct internet access to EC2 behind an ALB.\" Distractors line up patterns that conflict with consolidating the entry point at the ALB, such as opening `0.0.0.0/0`, attaching an Elastic IP to EC2, or setting up the ALB-side SG to allow only from EC2 in the wrong direction. Note also that SG-to-SG references are limited to the same VPC (or peered VPCs).",
+    "officialDocs": [
+      {
+        "label": "Security groups for your Application Load Balancer (ELB User Guide)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html"
+      },
+      {
+        "label": "Security groups for your VPC (VPC User Guide)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html"
+      },
+      {
+        "label": "What is an Application Load Balancer (ELB User Guide)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "security-group",
+      "alb"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "alb",
+      "ec2",
+      "security-group",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-008",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "You want to encrypt objects stored in an S3 bucket with KMS keys that you manage yourself, rather than AWS-managed encryption keys. Which encryption method is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "SSE-S3"
+      },
+      {
+        "choiceId": "B",
+        "text": "SSE-KMS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Store without client-side encryption."
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Transfer Acceleration"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "With SSE-KMS, you can perform server-side encryption of S3 objects using AWS KMS keys. Using a customer managed key gives you control over key management.",
+    "choiceExplanations": {
+      "A": "Incorrect. SSE-S3 is encryption with S3-managed keys. It does not meet the requirement for self-managed KMS keys.",
+      "B": "Correct. It is server-side encryption using a KMS key.",
+      "C": "Incorrect. It does not encrypt and conflicts with the requirement.",
+      "D": "Incorrect. Transfer Acceleration is a transfer speedup feature, not an encryption method."
+    },
+    "practicalNote": "S3 server-side encryption comes in three types: SSE-S3 (S3 managed keys), SSE-KMS (AWS KMS managed keys), and SSE-C (customer-provided keys). When you want to use self-managed KMS keys (customer managed KMS keys / CMKs), choose SSE-KMS, and use the KMS key policy to finely control which IAM principals can encrypt and decrypt. Combined with CloudTrail, you can also obtain an audit trail of who used the KMS key for encryption and decryption and when, which makes it suitable for business data storage with compliance requirements.\n\nSSE-KMS also has trade-offs. Because KMS APIs (Decrypt / GenerateDataKey) are called on every access to an S3 object, in workloads with many S3 requests the KMS request charges add up. The S3 Bucket Keys feature mitigates this by letting S3 reuse a bucket-level data key locally and significantly reducing the number of calls to KMS (in some cases reducing cost by up to about 99%). Using the default SSE-S3 or the AWS managed KMS key (`aws/s3`) keeps management minimal, but choose a customer managed CMK when you need strict control over key rotation or cross-account sharing.\n\nOn SAA-C03, SSE-KMS is the correct answer in contexts such as \"encrypt S3 with self-managed encryption keys\" or \"compliance requirements demand KMS auditing.\" Distractors include no encryption and Transfer Acceleration (a transfer speedup feature unrelated to encryption). The difference between SSE-S3 and SSE-KMS, cost optimization with Bucket Keys, and auditing via CloudTrail integration are also asked on higher exams.",
+    "officialDocs": [
+      {
+        "label": "Using server-side encryption with AWS KMS keys (SSE-KMS) (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html"
+      },
+      {
+        "label": "Protecting data in Amazon S3 (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html"
+      },
+      {
+        "label": "Reducing the cost of SSE-KMS with Amazon S3 Bucket Keys (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "kms"
+    ],
+    "relatedTerms": [
+      "sse-kms",
+      "customer-managed-key"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "kms",
+      "encryption",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-009",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "You have an RDS for MySQL instance running in a single AZ. You want to improve DB availability so that it remains available during an AZ failure. Which configuration minimizes application-side changes?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Configure RDS as Multi-AZ."
+      },
+      {
+        "choiceId": "B",
+        "text": "Change the RDS storage type to gp3."
+      },
+      {
+        "choiceId": "C",
+        "text": "Disable RDS automated backups."
+      },
+      {
+        "choiceId": "D",
+        "text": "Move the RDS instance to a public subnet."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "RDS Multi-AZ improves availability during an AZ failure with synchronous replication and automatic failover.",
+    "choiceExplanations": {
+      "A": "Correct. It is the representative RDS configuration for high availability.",
+      "B": "Incorrect. It affects storage performance and cost but does not address AZ failure.",
+      "C": "Incorrect. Disabling backups reduces recoverability.",
+      "D": "Incorrect. Moving to a public subnet does not improve availability and adds security risk."
+    },
+    "practicalNote": "An RDS Multi-AZ deployment automatically builds a standby DB in a different Availability Zone within the same Region and performs synchronous replication with the primary DB. When the primary AZ fails, automatic failover occurs, and the DB endpoint (DNS name) is redirected to the standby side. The application can recover without changing its connection string. Failover typically completes in roughly 60 to 120 seconds, greatly shortening the RTO compared with a single-AZ configuration.\n\nThe distinction between Multi-AZ and Read Replicas is a frequent topic on SAA-C03. Multi-AZ is a standby configuration for availability, and the standby DB usually cannot serve reads (an exception is the Multi-AZ DB Cluster option, which provides two readable standbys). A Read Replica is an asynchronous replica for improving read performance. Its main purpose is not availability, and as a failover target it requires manual promotion. The standard pattern for large RDS configurations is to combine the two: protect writes with Multi-AZ and scale reads with Read Replicas.\n\nMulti-AZ has a cost trade-off. Because an additional standby DB instance runs, the compute charges are roughly twice those of a single-AZ configuration. Even so, it is the standard choice for workloads with availability requirements because it handles failover without application changes. On SAA-C03, Multi-AZ is the correct answer for requirements such as \"maintain availability during an AZ failure\" and \"minimize application changes,\" while distractors line up operations on a different axis from availability, such as changing the storage type, disabling backups, or moving to a public subnet.",
+    "officialDocs": [
+      {
+        "label": "High availability (Multi-AZ) for Amazon RDS (RDS User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "Working with read replicas (RDS User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html"
+      },
+      {
+        "label": "Amazon RDS (AWS official)",
+        "url": "https://aws.amazon.com/rds/"
+      }
+    ],
+    "relatedServices": [
+      "rds"
+    ],
+    "relatedTerms": [
+      "multi-az",
+      "failover"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "rds",
+      "multi-az",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-010",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "You want to run a web application on EC2 distributed across multiple AZs and stop sending traffic to instances with failures. Which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Configure an Application Load Balancer and an Auto Scaling Group across multiple AZs."
+      },
+      {
+        "choiceId": "B",
+        "text": "Attach an Elastic IP to a single-AZ EC2 instance."
+      },
+      {
+        "choiceId": "C",
+        "text": "Create an S3 bucket as a replacement for EC2."
+      },
+      {
+        "choiceId": "D",
+        "text": "Enable only CloudWatch Logs."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "An ALB uses health checks to route traffic only to healthy targets. Spreading an Auto Scaling Group across multiple AZs creates a configuration resilient to instance and AZ failures.",
+    "choiceExplanations": {
+      "A": "Correct. It is the basic configuration for high-availability web apps.",
+      "B": "Incorrect. A single-AZ configuration is weak against AZ failures.",
+      "C": "Incorrect. S3 can be used for static file storage but is not a direct replacement for a dynamic web app running on EC2.",
+      "D": "Incorrect. Log collection alone cannot achieve traffic control or high availability."
+    },
+    "practicalNote": "Deploying an Application Load Balancer (ALB) and an Auto Scaling Group (ASG) across multiple AZs is the basic pattern for high-availability web applications on AWS. The ALB routes traffic to EC2 instances registered with a target group based on configured health checks (such as HTTP response codes). Instances that fail the health check are automatically removed from the target and are reintroduced after recovery. When the ASG is configured across multiple AZs, instances in other AZs remain during an AZ failure, preventing a service-wide outage.\n\nThe ASG has scaling policies (Target Tracking, Step Scaling, Predictive Scaling) that dynamically adjust the number of instances based on metrics (CPU utilization, request count, custom metrics, and so on). The Launch Template lets you define user data, the IAM role, the AMI, and other settings at instance launch time, and pairs well with immutable infrastructure operations. The ALB supports path-based and host-based routing at Layer 7, as well as HTTP/HTTPS, WebSocket, and gRPC, and is used distinctly from the Network Load Balancer (Layer 4, ultra-low latency) and CloudFront (CDN, edge delivery) according to the use case.\n\nOn SAA-C03, ALB + ASG (Multi-AZ) is the correct answer for requirements such as \"distribute across multiple AZs\" and \"do not send traffic to instances with failures.\" The distractor patterns are also easy to organize: a single AZ + Elastic IP is weak against AZ failures, replacing EC2 with S3 cannot handle dynamic processing, and CloudWatch Logs alone cannot control traffic. The distinction among ALB / NLB / CloudFront, the design of ASG scaling policies, and the difference between Launch Template and Launch Configuration are explored in more depth on higher exams.",
+    "officialDocs": [
+      {
+        "label": "What is an Application Load Balancer (ELB User Guide)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"
+      },
+      {
+        "label": "What is Amazon EC2 Auto Scaling (Auto Scaling User Guide)",
+        "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "Target group health checks (ELB User Guide)",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "elb",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "multi-az",
+      "health-check"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "alb",
+      "auto-scaling",
+      "ec2",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-011",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "In an order processing system, you want to decouple the order intake API from the inventory update process. Which configuration allows order messages to be retained and processed later even if the inventory update process is temporarily down?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Invoke the inventory update Lambda synchronously from the API."
+      },
+      {
+        "choiceId": "B",
+        "text": "Send messages from the API to an SQS queue and have the inventory update Lambda process the queue."
+      },
+      {
+        "choiceId": "C",
+        "text": "Only write the order content to CloudWatch Logs from the API."
+      },
+      {
+        "choiceId": "D",
+        "text": "Rely solely on the CORS configuration of API Gateway."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "SQS lets you decouple order intake from inventory updates asynchronously. Even if the consumer is temporarily down, messages remain retained in the queue.",
+    "choiceExplanations": {
+      "A": "Incorrect. Synchronous invocation means a failure on the inventory side propagates to order intake.",
+      "B": "Correct. SQS is well suited to asynchronous processing and buffering.",
+      "C": "Incorrect. CloudWatch Logs is not a processing queue.",
+      "D": "Incorrect. CORS controls browser access and does not improve the reliability of asynchronous processing."
+    },
+    "practicalNote": "Amazon SQS is a fully managed queue service that separates message producers and consumers in time and location. When the order intake API receives a request, it places a message on SQS, and the inventory update worker runs as a separate process that pulls messages at its own pace. Even if the inventory side is temporarily unavailable, messages are retained in the queue for up to 14 days. Standard queues offer at-least-once delivery without ordering guarantees, while FIFO queues provide ordering and exactly-once processing.\n\nAlternatives include SNS (pub/sub) and EventBridge (event bus). SNS is intended for notification fan-out and EventBridge is intended for routing and schema management. For a polling-based job queue where workers pull messages, SQS is the most direct fit. Two operational rules of thumb on the consumer side are to set the visibility timeout longer than the processing time, and to always configure a Dead Letter Queue (DLQ) so that messages exceeding the retry limit are moved aside.\n\nOn SAA-C03, when the question mentions decoupling, asynchronous processing, or fault tolerance, SQS becomes the first candidate. Distractors typically substitute other concerns such as \"call the worker synchronously over HTTP,\" \"write directly to DynamoDB,\" or \"scale EC2 with Auto Scaling.\" The choice between SNS and SQS (notification fan-out vs. a worker queue) is also a frequent point of confusion.",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS (AWS official)",
+        "url": "https://aws.amazon.com/sqs/"
+      },
+      {
+        "label": "What is Amazon Simple Queue Service (Developer Guide)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      }
+    ],
+    "relatedServices": [
+      "sqs",
+      "lambda",
+      "api-gateway"
+    ],
+    "relatedTerms": [
+      "decoupling",
+      "asynchronous-processing"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "lambda",
+      "decoupling",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-012",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "You want to protect critical data stored in S3 against accidental deletion and be able to roll back to past states. Which feature is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Versioning"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Select"
+      },
+      {
+        "choiceId": "D",
+        "text": "Only enable S3 Event Notifications"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Enabling S3 Versioning preserves multiple versions of an object, which helps recover from accidental deletion or overwrites.",
+    "choiceExplanations": {
+      "A": "Correct. Keeping previous versions improves recoverability.",
+      "B": "Incorrect. Transfer Acceleration speeds up uploads over long distances.",
+      "C": "Incorrect. S3 Select retrieves only part of the data inside an object.",
+      "D": "Incorrect. Event notifications alone cannot restore past objects."
+    },
+    "practicalNote": "S3 Versioning treats overwrite and delete operations against the same key as the creation of a new version, retaining previous versions. It is enabled at the bucket level, and after enablement every update and delete is stored as a version. If you accidentally call DeleteObject, the actual effect is that a Delete Marker is added; removing that marker restores the previous version. For production buckets that hold critical data, the standard design is to combine Versioning with MFA Delete and a lifecycle rule that periodically removes old versions.\n\nAlternatives include AWS Backup for S3 and cross-region replication (CRR) to another bucket. These follow a \"make a copy in a different location\" model, whereas Versioning is built around \"retain past states within the same bucket.\" Versioning suits immediate recovery from accidental operations and overwrites, while CRR and Backup prepare for regional failures or logical destruction. After enabling Versioning, older versions are also billed, so a lifecycle policy that deletes or transitions them to Glacier-class storage after a certain period is required.\n\nOn SAA-C03, Versioning is asked through phrases like \"prepare for accidental deletion,\" \"roll back to past states,\" or \"retain object history.\" Distractors include \"use a lifecycle policy to prevent deletion\" or \"S3 Object Lock alone can restore.\" Object Lock is a WORM (write once, read many) feature for tamper protection, while Versioning is the first choice for recovering from accidental operations.",
+    "officialDocs": [
+      {
+        "label": "Retaining multiple versions of objects with S3 Versioning (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "versioning",
+      "data-protection"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "versioning",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-013",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "For a globally used application, you want to fail over to another Region if the primary Region fails. When low-latency cross-region replication of a relational database is critical, which choice is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon Aurora Global Database"
+      },
+      {
+        "choiceId": "B",
+        "text": "Single-AZ RDS MySQL"
+      },
+      {
+        "choiceId": "C",
+        "text": "Only take manual Amazon EBS snapshots"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS Standard Queue"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Aurora Global Database provides multi-region configuration and low-latency replication for globally distributed applications.",
+    "choiceExplanations": {
+      "A": "Correct. It suits cross-region DR and global reads.",
+      "B": "Incorrect. A single AZ is weak against Region or AZ failures.",
+      "C": "Incorrect. Manual snapshots alone struggle to meet low RPO and RTO requirements.",
+      "D": "Incorrect. SQS is a message queue, not cross-region replication for a relational database."
+    },
+    "practicalNote": "Aurora Global Database deploys Aurora MySQL or Aurora PostgreSQL across multiple Regions and replicates writes from the primary Region to other Regions in under a second. You can configure up to five secondary Regions, each running as a read-only DB cluster. If the primary Region becomes entirely unavailable, you can promote a secondary Region to the new primary, typically within a minute, via a managed planned failover or an unplanned detach. This makes it suitable for strict DR requirements with tight RTO and RPO targets.\n\nAlternatives include RDS cross-region read replicas, DynamoDB Global Tables, and manual DMS replication. When you need both low-latency cross-region replication and short failover times for a relational database, Aurora Global Database is the first candidate. The cost is higher than single-region Aurora because each Region needs a DB cluster and inter-region data transfer is billed, so adoption is justified only when the RPO of under a second and RTO around a minute are actually required.\n\nOn SAA-C03, when keywords such as multi-region, disaster recovery, globally distributed application, or cross-region reads appear, Aurora Global Database is the correct answer candidate. Distractors include Multi-AZ (intra-Region availability), a read replica alone (weaker failover automation), and DynamoDB Global Tables (NoSQL, not relational).",
+    "officialDocs": [
+      {
+        "label": "Using Amazon Aurora Global Database (Aurora User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html"
+      },
+      {
+        "label": "Amazon Aurora Global Database (AWS official)",
+        "url": "https://aws.amazon.com/rds/aurora/global-database/"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "aurora"
+    ],
+    "relatedTerms": [
+      "global-database",
+      "disaster-recovery"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "aurora",
+      "global-database",
+      "dr",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-014",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "You want to be able to investigate and reprocess events that failed in a Lambda function. Which configuration is the most appropriate for storing failed events from asynchronous invocations?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Configure a dead-letter queue or Lambda Destinations."
+      },
+      {
+        "choiceId": "B",
+        "text": "Always set the Lambda memory to its maximum value."
+      },
+      {
+        "choiceId": "C",
+        "text": "Place the Lambda function in a public subnet."
+      },
+      {
+        "choiceId": "D",
+        "text": "Set the CloudFront cache TTL to 0."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Failed events from asynchronous Lambda invocations can be sent to SQS, SNS, or EventBridge via a DLQ or Lambda Destinations. This makes investigation and reprocessing easier.",
+    "choiceExplanations": {
+      "A": "Correct. It can be used as a destination for failed events.",
+      "B": "Incorrect. Increasing memory affects performance but does not store failed events.",
+      "C": "Incorrect. Network placement is unrelated to storing failed events.",
+      "D": "Incorrect. CloudFront TTL is unrelated to storing Lambda failure events."
+    },
+    "practicalNote": "For asynchronous Lambda invocations (Event-type invoke), events that fail after the configured number of retries can be routed externally via a Dead Letter Queue (DLQ) or Lambda Destinations. A DLQ is the legacy mechanism that specifies an SQS queue or SNS topic as the destination for failed events. Lambda Destinations extends that model and can deliver both success and failure results to SQS, SNS, EventBridge, or another Lambda function. Failed events include the original payload, error message, and stack trace, making it easier to build downstream investigation and reprocessing pipelines.\n\nAn alternative is to add try/catch in the Lambda code itself and notify SNS, but it is hard to cover retry control or the Lambda service's internal retries for asynchronous invocations, and delivery guarantees must be implemented in application code. Managed DLQ or Destinations let the Lambda service handle retries, delivery, and ordering. When EventBridge is specified as a destination, you can declaratively route failed events to another Lambda or Step Functions using rules and filters.\n\nOn SAA-C03, when keywords such as \"retain failed events from asynchronous Lambda,\" \"investigate and reprocess later,\" or \"do not lose events\" appear, DLQ or Destinations is the correct answer. Distractors include \"CloudWatch Logs alone is sufficient,\" \"X-Ray tracing reproduces failures,\" or \"switch to synchronous invocation.\" Logs and traces are after-the-fact observability and are not mechanisms for retaining the failed events themselves.",
+    "officialDocs": [
+      {
+        "label": "Invoking Lambda functions asynchronously (Lambda Developer Guide)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html"
+      },
+      {
+        "label": "Capturing records for Lambda asynchronous invocation (Lambda Developer Guide)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-retain-records.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "sns",
+      "eventbridge"
+    ],
+    "relatedTerms": [
+      "dead-letter-queue",
+      "lambda-destinations"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "lambda",
+      "dlq",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-015",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "For a DynamoDB table, you want to be able to restore to any point in time as protection against accidental updates or deletes. Which feature is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Point-in-time recovery"
+      },
+      {
+        "choiceId": "B",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "C",
+        "text": "Only enable DynamoDB Streams"
+      },
+      {
+        "choiceId": "D",
+        "text": "Set Provisioned Capacity to its maximum value"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Enabling DynamoDB Point-in-time recovery allows you to restore a table to a specific point in the past.",
+    "choiceExplanations": {
+      "A": "Correct. It is used to recover from accidental operations.",
+      "B": "Incorrect. DAX is a read cache, not a restoration feature.",
+      "C": "Incorrect. Streams capture change events but cannot perform point-in-time restoration on their own.",
+      "D": "Incorrect. Capacity settings are not a recovery feature."
+    },
+    "practicalNote": "DynamoDB Point-in-time Recovery (PITR) can restore a table to any second-level point in time within the past 35 days. There is no need to take backups explicitly. Once PITR is enabled per table, the service continuously retains the transaction log. Restoration writes to a new table and does not modify the original. It directly addresses requirements such as \"an application bug overwrote data\" or \"roll back to the state at a specific time\" without writing operational jobs.\n\nAlternatives include DynamoDB on-demand backups (snapshots taken at chosen points) and AWS Backup for cross-region and cross-account backups. On-demand backups can only restore to the moment of the snapshot, so for fine-grained restoration like \"that exact moment 30 days ago,\" PITR is required. PITR incurs additional charges based on the write capacity while it is enabled, but the cost is small compared to the effort of building a custom log collection and replay mechanism.\n\nOn SAA-C03, when keywords such as \"restore to any past point in time,\" \"second-level restoration,\" or \"recover from accidental updates or deletes\" appear, DynamoDB PITR is the correct answer. Distractors include \"on-demand backups alone are sufficient,\" \"Streams can restore,\" or \"restore from a Global Tables replica.\" Streams deliver change events, and Global Tables provide multi-region replication; neither is a point-in-time restoration feature.",
+    "officialDocs": [
+      {
+        "label": "DynamoDB Point-in-time Recovery (DynamoDB Developer Guide)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery.html"
+      }
+    ],
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "point-in-time-recovery",
+      "backup"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "backup",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-016",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "You want to deliver static content to users around the world with low latency. If you also want to reduce the number of requests to the origin, which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS IAM"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "CloudFront caches content at edge locations and delivers it to users worldwide with low latency.",
+    "choiceExplanations": {
+      "A": "Correct. It is suited to static content delivery and caching.",
+      "B": "Incorrect. CloudTrail records API operation history.",
+      "C": "Incorrect. RDS is a relational database.",
+      "D": "Incorrect. IAM is a service for authentication and authorization."
+    },
+    "practicalNote": "Amazon CloudFront is a CDN service that caches content at edge locations distributed worldwide and responds from the nearest edge to the user. You can specify S3, ALB, API Gateway, or EC2 as origins. On the first request, content fetched from the origin is stored at the edge, and subsequent requests are served from the same edge. This delivers low-latency responses even to users outside the origin Region. It also reduces origin requests, lowering scaling requirements and cost on the origin side.\n\nIn practice, a typical configuration is to use S3 as the origin for a static site and use Origin Access Control (OAC) to keep S3 private while serving only through CloudFront. For dynamic content, you can shorten the TTL or disable caching entirely and use only the benefits of TLS termination, WAF integration, gzip/brotli compression, HTTP/2, and HTTP/3. For custom logic at the edge, choose between CloudFront Functions (lightweight, JavaScript) and Lambda@Edge (general purpose, Node.js or Python).\n\nOn SAA-C03, when keywords such as \"deliver globally with low latency,\" \"reduce origin load,\" or \"cache static content\" appear, CloudFront is the correct answer. Distractors include S3 Transfer Acceleration (whose primary use is upload acceleration, not download), Global Accelerator (anycast path optimization for arbitrary TCP/UDP, no caching), and Route 53 latency-based routing (DNS-level optimization without content caching).",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront (AWS official)",
+        "url": "https://aws.amazon.com/cloudfront/"
+      },
+      {
+        "label": "What is Amazon CloudFront (Developer Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      }
+    ],
+    "relatedServices": [
+      "cloudfront",
+      "s3"
+    ],
+    "relatedTerms": [
+      "cdn",
+      "edge-location",
+      "cache"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "cloudfront",
+      "performance",
+      "cdn"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-017",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "You have an RDS for PostgreSQL instance with heavy read load. Write load is low, and you want to scale read queries. Which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Add Read Replicas and route read queries to the Read Replicas."
+      },
+      {
+        "choiceId": "B",
+        "text": "Enable Multi-AZ and send read queries to the standby DB."
+      },
+      {
+        "choiceId": "C",
+        "text": "Disable RDS automated backups."
+      },
+      {
+        "choiceId": "D",
+        "text": "Move the DB to a public subnet."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Read Replicas are used for read scaling. Having the application route reads to replicas reduces the read load on the primary DB.",
+    "choiceExplanations": {
+      "A": "Correct. It is suited to distributing read load.",
+      "B": "Incorrect. The RDS Multi-AZ standby DB is generally not used for reads.",
+      "C": "Incorrect. Disabling backups is not a performance improvement and reduces recoverability.",
+      "D": "Incorrect. Moving to a public subnet does not improve performance and increases security risk."
+    },
+    "practicalNote": "RDS Read Replicas are read-only DB instances created from the primary DB via asynchronous replication and are used as targets to distribute read queries. They are supported for MySQL, MariaDB, PostgreSQL, Oracle, SQL Server, and Aurora engines. By routing writes to the primary and reads to replicas in the application, you can lower the read load on the primary and scale out read throughput by adding replicas horizontally. With Aurora, you can have up to 15 replicas in the same cluster, and a dedicated endpoint (the reader endpoint) automatically load-balances among them.\n\nA caveat is that replicas use asynchronous replication, so data written just before may not be readable immediately (replication lag). Reads that require strong consistency should go to the primary, or the application should branch to read from the primary right after a write. Multi-AZ deployment is for availability, and its standby DB cannot be used for reads (it is reserved for failover). Availability and scalability are separate design concerns. To meet both, combine Multi-AZ with Read Replicas.\n\nOn SAA-C03, when keywords such as \"heavy read load,\" \"scale read queries,\" or \"write load is unchanged\" appear, Read Replicas are the correct answer. Distractors include \"Multi-AZ also distributes reads,\" \"increase the instance type (vertical scaling) only,\" or \"cache all queries in ElastiCache,\" each of which substitutes a different scaling direction or service role.",
+    "officialDocs": [
+      {
+        "label": "Working with DB instance read replicas (RDS User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html"
+      },
+      {
+        "label": "Amazon RDS Read Replicas (AWS official)",
+        "url": "https://aws.amazon.com/rds/features/read-replicas/"
+      }
+    ],
+    "relatedServices": [
+      "rds"
+    ],
+    "relatedTerms": [
+      "read-replica",
+      "read-scaling"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "rds",
+      "read-replica",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-018",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "A DynamoDB table receives very heavy reads with repeated access to the same keys. To achieve microsecond-level low-latency reads, which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudFormation"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "DynamoDB Accelerator is an in-memory cache for DynamoDB that reduces read latency.",
+    "choiceExplanations": {
+      "A": "Correct. It is used as a read cache for DynamoDB.",
+      "B": "Incorrect. EBS is block storage for EC2.",
+      "C": "Incorrect. CloudFormation is an IaC service.",
+      "D": "Incorrect. Budgets is a billing monitoring service."
+    },
+    "practicalNote": "DynamoDB Accelerator (DAX) is a fully managed in-memory cache cluster purpose-built for DynamoDB, reducing DynamoDB read latency from milliseconds to microseconds. The application uses the DAX client SDK to call the existing DynamoDB APIs (GetItem, Query, Scan, and so on) without significant code changes. Workloads with frequent repeated reads on the same keys (hot keys), or with extremely strict latency requirements such as game leaderboards, ad serving, and real-time bidding (RTB), benefit most.\n\nAn alternative is to place ElastiCache for Redis or Memcached in front of DynamoDB, but then consistency management with the cache (invalidation on writes and TTL design) must be handled by the application. DAX is optimized specifically for DynamoDB and synchronizes the cache and DynamoDB with write-through, reducing consistency code on the application side. On the other hand, DAX cluster node costs are always incurred, so workloads without hot read patterns or with low cache hit rates may not justify the cost.\n\nOn SAA-C03, when keywords such as \"microsecond-level reads against DynamoDB,\" \"repeated access to the same keys,\" or \"further reduce latency\" appear, DAX is the correct answer. Distractors include \"use ElastiCache\" (a general-purpose cache without DynamoDB-specific optimization), \"add a Global Secondary Index (GSI)\" (for expanding query patterns, not for reducing latency), and \"increase provisioned capacity\" (throughput scaling that does not directly reduce latency).",
+    "officialDocs": [
+      {
+        "label": "DynamoDB Accelerator (DAX) and in-memory acceleration (DynamoDB Developer Guide)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.html"
+      },
+      {
+        "label": "Amazon DynamoDB Accelerator (DAX) (AWS official)",
+        "url": "https://aws.amazon.com/dynamodb/dax/"
+      }
+    ],
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "dax",
+      "cache"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "dax",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-019",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "In image upload processing, users around the world upload large files to S3. To improve the speed of long-distance uploads, which feature is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Versioning"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Object Lock"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Glacier Deep Archive"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Transfer Acceleration uses CloudFront edge locations to speed up uploads to S3 from long distances.",
+    "choiceExplanations": {
+      "A": "Correct. It is used for global S3 upload acceleration.",
+      "B": "Incorrect. Versioning is a feature for retaining previous versions.",
+      "C": "Incorrect. Object Lock is used for tamper protection and retention period management.",
+      "D": "Incorrect. Glacier Deep Archive is a low-cost storage class for long-term archives."
+    },
+    "practicalNote": "S3 Transfer Acceleration uploads to an S3 bucket via CloudFront edge locations, speeding up long-distance, large-file uploads. Instead of the usual S3 endpoint (bucket.s3.amazonaws.com), the user uses a dedicated endpoint (bucket.s3-accelerate.amazonaws.com). The short hop to the nearest edge goes over the public internet, and from the edge onward traffic travels over the AWS backbone to the bucket's Region. Because long segments achieve more stable throughput, the benefit is largest for upload use cases with users scattered across the globe.\n\nAlternatives include parallelism via multipart upload, considering different paths such as AWS DataSync or Snow Family, or moving the S3 bucket itself to a Region closer to users. Transfer Acceleration most directly fits the case of \"do not move the bucket location, but accelerate long-distance uploads.\" Pricing adds an acceleration surcharge on top of regular S3 data transfer, so the convention is to first measure benefit with the Speed Comparison Tool that Amazon provides before adopting it.\n\nOn SAA-C03, when keywords such as \"large uploads to S3 from around the world,\" \"accelerate long-distance uploads,\" or \"do not move the bucket Region\" appear, Transfer Acceleration is the correct answer. Distractors include \"use CloudFront to upload\" (CloudFront is primarily for download delivery and PUTs still require a separate origin), \"Direct Connect\" (an on-premises dedicated line, not for end users), and \"multipart upload alone solves it\" (it does not shorten the per-segment latency).",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 Transfer Acceleration (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/transfer-acceleration.html"
+      },
+      {
+        "label": "Amazon S3 Transfer Acceleration (AWS official)",
+        "url": "https://aws.amazon.com/s3/transfer-acceleration/"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "cloudfront"
+    ],
+    "relatedTerms": [
+      "transfer-acceleration",
+      "edge-location"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "upload",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-020",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "An application on EC2 needs to access a shared file system. When multiple EC2 instances across multiple AZs need simultaneous access to the same files, which storage is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Instance store"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3 Glacier Deep Archive"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon EFS is a managed NFS file system that supports shared access from multiple EC2 instances. It suits shared file access across multiple AZs.",
+    "choiceExplanations": {
+      "A": "Correct. It is suited to shared file storage.",
+      "B": "Incorrect. EBS is block storage that is typically attached to an EC2 instance in a single AZ.",
+      "C": "Incorrect. Instance store is ephemeral storage, not a shared file system.",
+      "D": "Incorrect. Glacier Deep Archive is for long-term archives and is not suitable for frequent shared access."
+    },
+    "practicalNote": "Amazon EFS is a fully managed file system that can be mounted concurrently from multiple EC2 instances using NFSv4. By creating a mount target in each AZ, multiple EC2 instances across multiple AZs can read and write the same file tree simultaneously. The file system itself is redundant within the Region and remains available even during an AZ failure. It fits naturally with requirements such as shared content for web servers, CI/CD workspaces, data volumes for containers, and dataset sharing for machine learning.\n\nAlternatives are EBS and S3. EBS is block storage attached to a single EC2 instance, and even with the Multi-Attach feature it requires being in the same AZ and using a cluster file system, so it is not suited to general cross-AZ sharing. S3 is object storage operated by key-based APIs rather than a file system API (POSIX-compatible), so existing applications that use \"file open, read, write\" cannot use it as-is. The strength of EFS is enabling cross-AZ sharing for existing applications that expect a POSIX file system, with little to no modification. On the other hand, choosing the wrong performance mode (General Purpose or Max I/O) or throughput mode (Bursting, Provisioned, or Elastic) can cause latency or throughput to fall short of requirements, so the design must reflect the workload characteristics.\n\nOn SAA-C03, when keywords such as \"shared file access from multiple EC2,\" \"simultaneous access across multiple AZs,\" or \"managed NFS\" appear, EFS is the correct answer. Distractors include EBS Multi-Attach (limited to a single AZ and requires a cluster file system), \"mount S3 to share\" (API mismatch and different consistency model), and instance store (ephemeral storage that is lost when the EC2 stops).",
+    "officialDocs": [
+      {
+        "label": "Amazon Elastic File System (AWS official)",
+        "url": "https://aws.amazon.com/efs/"
+      },
+      {
+        "label": "What is Amazon Elastic File System (EFS User Guide)",
+        "url": "https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html"
+      }
+    ],
+    "relatedServices": [
+      "efs",
+      "ec2",
+      "ebs",
+      "s3"
+    ],
+    "relatedTerms": [
+      "file-storage",
+      "nfs"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "efs",
+      "ec2",
+      "storage",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-021",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "You need to process millions of small messages asynchronously. Strict ordering is not required, and you want the highest possible throughput. Which queue is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon SQS Standard Queue"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS FIFO Queue"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Config"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "SQS Standard Queue is well suited to high-throughput message processing. It is a good fit when strict ordering is not required.",
+    "choiceExplanations": {
+      "A": "Correct. It is well suited to high-throughput asynchronous processing.",
+      "B": "Incorrect. FIFO Queue is used when ordering is required, but it has tighter limits than Standard Queue.",
+      "C": "Incorrect. EFS is a shared file storage service.",
+      "D": "Incorrect. AWS Config records and evaluates resource configurations."
+    },
+    "practicalNote": "Amazon SQS offers two queue types: Standard Queue and FIFO Queue. Standard Queue provides nearly unlimited throughput (effectively unlimited TPS within regional limits), best-effort ordering, and at-least-once delivery. The lack of strict ordering allows messages to be distributed across multiple internal nodes, which delivers very high throughput. This makes it well suited as an asynchronous buffer for processing millions of small messages.\n\nFIFO Queue provides strict ordering and deduplication (exactly-once processing) in exchange for a default limit of 300 messages per second per message group (3,000 messages per second with batching). High Throughput for FIFO can extend this to several thousand TPS, but throughput will not scale unless message group IDs are designed appropriately. Unless ordering is a business requirement, Standard Queue is the default choice because it is favorable in both cost and scalability.\n\nOn SAA-C03, keywords such as \"high throughput,\" \"strict ordering not required,\" and \"millions of messages\" point to Standard Queue. Conversely, requirements such as \"deduplication,\" \"strict ordering,\" or \"deterministic processing for financial or inventory updates\" point to FIFO Queue. The distinction with SNS and EventBridge is also a frequent topic: SNS for pub/sub fan-out, EventBridge for event-driven routing, and SQS for message buffering and retries.",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS (AWS official)",
+        "url": "https://aws.amazon.com/sqs/"
+      },
+      {
+        "label": "Amazon SQS standard and FIFO queues (SQS Developer Guide)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"
+      },
+      {
+        "label": "Amazon SQS quotas (SQS Developer Guide)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html"
+      }
+    ],
+    "relatedServices": [
+      "sqs"
+    ],
+    "relatedTerms": [
+      "standard-queue",
+      "throughput"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "throughput",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-022",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "A Lambda function has long execution time and high CPU load. To improve CPU performance without changing the code, which setting should you consider first?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Increase the Lambda memory size"
+      },
+      {
+        "choiceId": "B",
+        "text": "Rename the Lambda function"
+      },
+      {
+        "choiceId": "C",
+        "text": "Disable CloudWatch Logs"
+      },
+      {
+        "choiceId": "D",
+        "text": "Always attach Lambda to a VPC"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Increasing the Lambda memory size also increases the allocated CPU performance. For CPU-bound workloads, adjusting memory can shorten execution time.",
+    "choiceExplanations": {
+      "A": "Correct. This is the first setting to review when tuning Lambda performance.",
+      "B": "Incorrect. Renaming the function does not change performance.",
+      "C": "Incorrect. Disabling logs does not address CPU performance.",
+      "D": "Incorrect. VPC attachment is used when network requirements demand it, not as a default performance optimization."
+    },
+    "practicalNote": "The AWS Lambda memory size setting determines not only the allocated memory but also a proportional vCPU performance and I/O bandwidth. Increasing memory from 128 MB to 1,769 MB allocates the equivalent of one vCPU core, which can significantly reduce execution time for CPU-bound workloads such as image conversion, encryption, JSON parsing, and machine learning inference. Billing is based on GB-seconds, so even when memory is doubled, the total cost may decrease if execution time drops by more than half.\n\nAWS Lambda Power Tuning (an open-source tool based on Step Functions) is a systematic way to tune memory. It runs the function in parallel across multiple memory settings and produces a cost-versus-execution-time chart. In practice, this tool is used to find the optimal setting and is combined with provisioned concurrency to reduce cold starts. Note that increasing memory has limited effect on workloads dominated by network I/O wait (for example, waiting on DynamoDB or external API calls). In those cases, parallelization and connection reuse (initializing clients outside the handler) are more effective.\n\nOn SAA-C03, when the question describes \"long Lambda execution time,\" \"high CPU load,\" and \"improve performance without changing code,\" memory size adjustment is the correct answer. Distractors such as renaming the function, disabling CloudWatch Logs, or always attaching to a VPC are unrelated to performance improvement. Advanced tuning techniques such as Power Tuning, provisioned concurrency, and SnapStart (for Java) are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda (AWS official)",
+        "url": "https://aws.amazon.com/lambda/"
+      },
+      {
+        "label": "Configuring Lambda function memory (Lambda Developer Guide)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html"
+      },
+      {
+        "label": "Best practices for working with AWS Lambda functions (Lambda Developer Guide)",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "cloudwatch"
+    ],
+    "relatedTerms": [
+      "memory-size",
+      "duration"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "lambda",
+      "performance",
+      "memory"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-023",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "You want to automatically move S3 objects with declining access frequency to lower-cost storage classes. Which feature is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Lifecycle rules"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Transfer Acceleration"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3 Object Lambda"
+      },
+      {
+        "choiceId": "D",
+        "text": "Renaming the S3 bucket"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Lifecycle rules can automatically transition objects from S3 Standard to S3 Standard-IA or Glacier storage classes after a specified period.",
+    "choiceExplanations": {
+      "A": "Correct. It is used for cost optimization through storage class transitions.",
+      "B": "Incorrect. Transfer Acceleration speeds up uploads, not storage cost reduction.",
+      "C": "Incorrect. Object Lambda transforms data at retrieval time.",
+      "D": "Incorrect. Renaming a bucket is not a cost optimization technique."
+    },
+    "practicalNote": "S3 Lifecycle rules automatically transition objects between storage classes or delete them based on days elapsed since creation or last access. A common pattern is to move objects from S3 Standard to Standard-IA (infrequent access) after 30 days, to Glacier Flexible Retrieval after 90 days, to Glacier Deep Archive after 180 days, and finally to delete them after 7 years. This tiered approach can significantly reduce storage costs for data whose access frequency declines over time, such as logs, backups, and compliance retention data.\n\nWhen using Lifecycle, be aware that each storage class has a minimum retention period (30 days for Standard-IA and One Zone-IA, 90 or 180 days for Glacier classes). Deleting or transitioning data earlier still incurs charges for the minimum period. Placing small objects (under 128 KB) in IA classes can also be more expensive than Standard due to minimum object size billing, so design must account for file characteristics. When access patterns cannot be predicted, S3 Intelligent-Tiering is often more favorable than Lifecycle in terms of both operational overhead and cost.\n\nOn SAA-C03, keywords such as \"automatically move data with declining access to lower-cost classes,\" \"optimize storage costs,\" and \"lifecycle management\" point to Lifecycle rules. Transfer Acceleration (upload acceleration), Object Lambda (transformation on retrieval), and bucket renaming are features or operations for different purposes and are incorrect. The distinction with Intelligent-Tiering, minimum retention periods, and behavior when combined with Versioning are also asked.",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 storage classes (AWS official)",
+        "url": "https://aws.amazon.com/s3/storage-classes/"
+      },
+      {
+        "label": "Managing your storage lifecycle (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html"
+      },
+      {
+        "label": "Examples of S3 Lifecycle configurations (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-configuration-examples.html"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "lifecycle",
+      "storage-class"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "lifecycle",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-024",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "You have EC2 instances that run continuously and expect roughly the same usage for at least the next year. To reduce cost compared to on-demand pricing, which purchasing option is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Reserved Instances or Savings Plans"
+      },
+      {
+        "choiceId": "B",
+        "text": "Use only Spot Instances"
+      },
+      {
+        "choiceId": "C",
+        "text": "Use instance store"
+      },
+      {
+        "choiceId": "D",
+        "text": "Attach additional Elastic IPs"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "For workloads with stable long-term usage, Reserved Instances and Savings Plans deliver lower cost than on-demand pricing.",
+    "choiceExplanations": {
+      "A": "Correct. These are discount options that suit continuous usage.",
+      "B": "Incorrect. Spot Instances can be interrupted, so on their own they may not suit stable workloads that require continuous availability.",
+      "C": "Incorrect. Instance store is ephemeral storage, not a purchasing option.",
+      "D": "Incorrect. Adding Elastic IPs is not a cost-reduction technique."
+    },
+    "practicalNote": "Reserved Instances (RI) and Savings Plans both provide discounts off on-demand pricing in exchange for a one- or three-year commitment. RIs are purchased per service (EC2, RDS, ElastiCache, Redshift, and others) and specify the instance type, Region, OS, and similar attributes. Savings Plans commit to spending a fixed dollar amount per hour, and Compute Savings Plans apply flexibly across EC2, Fargate, and Lambda. For workloads that run steadily, savings can reach roughly 72% compared with on-demand.\n\nAs a rule of thumb, choose Compute Savings Plans (higher flexibility) when the instance types or services you use may change, and choose RIs when the configuration is fixed, such as a specific DB instance or Redshift cluster. RIs come in Standard RI (higher discount, limited changes) and Convertible RI (slightly lower discount, instance type changes allowed). Selecting a three-year term with all upfront payment yields the maximum discount. Spot Instances, by contrast, suit batch and asynchronous workloads that can tolerate interruption, and are not appropriate on their own for steady workloads.\n\nOn SAA-C03, conditions such as \"continuous operation,\" \"usage confirmed for at least one year,\" and \"reduce cost compared to on-demand\" point to RI or Savings Plans. Distractors such as Spot only, instance store, and additional Elastic IPs either conflict with the stable workload requirement or are not cost-reduction techniques. Commitment terms (one vs. three years), payment options (all upfront, partial upfront, no upfront), and the difference between Standard and Convertible RI are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "AWS Savings Plans (AWS official)",
+        "url": "https://aws.amazon.com/savingsplans/"
+      },
+      {
+        "label": "Amazon EC2 Reserved Instances (AWS official)",
+        "url": "https://aws.amazon.com/ec2/pricing/reserved-instances/"
+      },
+      {
+        "label": "Savings Plans User Guide (AWS official documentation)",
+        "url": "https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2"
+    ],
+    "relatedTerms": [
+      "reserved-instances",
+      "savings-plans"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "cost",
+      "savings-plans"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-025",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "You have a short-running batch job that can be retried if interrupted. To significantly reduce EC2 cost, which option is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Use Spot Instances"
+      },
+      {
+        "choiceId": "B",
+        "text": "Use only Dedicated Hosts"
+      },
+      {
+        "choiceId": "C",
+        "text": "Always use the largest on-demand instance"
+      },
+      {
+        "choiceId": "D",
+        "text": "Add a NAT Gateway"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Spot Instances suit workloads that can tolerate interruption and can significantly reduce cost compared with on-demand pricing.",
+    "choiceExplanations": {
+      "A": "Correct. They suit batch jobs that can be interrupted.",
+      "B": "Incorrect. Dedicated Hosts are used when licensing or other requirements call for a dedicated physical host. They are not a cost-reduction choice.",
+      "C": "Incorrect. Always using the largest on-demand instance increases cost.",
+      "D": "Incorrect. Adding a NAT Gateway is not a way to reduce EC2 cost for batch processing."
+    },
+    "practicalNote": "Spot Instances let you use spare EC2 capacity at up to 90% off on-demand pricing. In exchange, AWS can reclaim the capacity at any time, providing a Spot Instance interruption notice two minutes in advance before stopping the instance. This characteristic makes Spot suitable for retryable batch jobs, ML training, CI/CD builds, rendering, and data processing pipelines. Combining Spot with EC2 Auto Scaling groups and specifying multiple instance types via a mixed instances policy also avoids capacity shortages caused by exhaustion of a specific instance type.\n\nAs a design rule of thumb, make Spot interruption handling idempotent and incorporate a checkpointing mechanism that saves intermediate state to S3 or DynamoDB so processing can resume. Receiving interruption notices via CloudWatch Events / EventBridge and executing graceful shutdown through an Auto Scaling Lifecycle Hook is also a common pattern. For workloads that need constant availability, combine On-Demand or RI / Savings Plans for the baseline and limit Spot to elastic capacity that scales up and down.\n\nOn SAA-C03, conditions such as \"short-running batch,\" \"can be retried if interrupted,\" and \"significantly reduce cost\" point to Spot. Dedicated Hosts target requirements for dedicated physical hosts (such as bring-your-own license or physical isolation) and are not primarily a cost-reduction option. Always running the largest on-demand instance or adding a NAT Gateway either increases cost or is unrelated. Spot Fleet, mixed instances policies, and interruption-handling patterns are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Spot Instances (AWS official)",
+        "url": "https://aws.amazon.com/ec2/spot/"
+      },
+      {
+        "label": "Spot Instances (EC2 User Guide)",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html"
+      },
+      {
+        "label": "Spot Instance interruptions (EC2 User Guide)",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-interruptions.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "spot-instances",
+      "batch-processing"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "spot",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-026",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "A Lambda function inside a VPC accesses DynamoDB. To avoid the fixed cost of a NAT Gateway, which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create a DynamoDB Gateway VPC Endpoint"
+      },
+      {
+        "choiceId": "B",
+        "text": "Create a NAT Gateway in each AZ"
+      },
+      {
+        "choiceId": "C",
+        "text": "Attach an Internet Gateway directly to Lambda"
+      },
+      {
+        "choiceId": "D",
+        "text": "Place the DynamoDB table in a public subnet"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "A DynamoDB Gateway VPC Endpoint lets resources inside the VPC access DynamoDB privately and avoids the fixed cost of a NAT Gateway.",
+    "choiceExplanations": {
+      "A": "Correct. It removes the need for a NAT Gateway for DynamoDB access.",
+      "B": "Incorrect. NAT Gateways incur fixed costs.",
+      "C": "Incorrect. There is no configuration that attaches an Internet Gateway directly to Lambda.",
+      "D": "Incorrect. DynamoDB is not a service placed inside VPC subnets."
+    },
+    "practicalNote": "S3 and DynamoDB are special in AWS in that they support Gateway VPC Endpoints, which let resources inside a VPC reach the service over the AWS backbone. The Gateway Endpoint itself is free, and intra-region data transfer is not charged. For workloads where a VPC-attached Lambda or EC2 calls DynamoDB, this can significantly reduce cost compared with routing through a NAT Gateway. NAT Gateways are billed by the hour (tens of dollars per month per AZ) and by data processed, so the higher the VPC Lambda traffic, the bigger the benefit of using an Endpoint.\n\nIn terms of design, Gateway Endpoints work by adding a prefix list to route tables. A common pitfall is failing to associate the Endpoint with the route tables of all relevant subnets in the target VPC, leaving some Lambda functions still routed through the NAT Gateway. Endpoint Policies can restrict access to specific DynamoDB tables, blocking unintended table access at the VPC level. Gateway Endpoints are only available for S3 and DynamoDB; other services (Secrets Manager, KMS, SQS, and so on) use Interface Endpoints, which are based on PrivateLink and incur ENI charges.\n\nOn SAA-C03, requirements such as \"VPC Lambda accessing DynamoDB,\" \"avoid the fixed cost of a NAT Gateway,\" and \"connect over a private path\" point to a Gateway VPC Endpoint. Distractors such as adding more NAT Gateways, attaching an Internet Gateway directly to Lambda, or placing DynamoDB in a public subnet either increase cost, do not exist as configurations, or contradict the service's characteristics, and can be ruled out. The distinction with Interface Endpoints and restricting access via Endpoint Policies are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "AWS PrivateLink (AWS official)",
+        "url": "https://aws.amazon.com/privatelink/"
+      },
+      {
+        "label": "Gateway endpoints for Amazon DynamoDB (VPC User Guide)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-ddb.html"
+      },
+      {
+        "label": "Using VPC endpoints to access DynamoDB (DynamoDB Developer Guide)",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/vpc-endpoints-dynamodb.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "dynamodb",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "vpc-endpoint",
+      "gateway-endpoint"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "dynamodb",
+      "vpc-endpoint",
+      "lambda",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-027",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "You have S3 data with unpredictable access patterns. Frequently accessed and rarely accessed data are mixed together, and you want to optimize storage cost without increasing operational overhead. Which storage class is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 Intelligent-Tiering"
+      },
+      {
+        "choiceId": "B",
+        "text": "Continue to use only S3 Standard"
+      },
+      {
+        "choiceId": "C",
+        "text": "Use only S3 Glacier Deep Archive"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EBS gp3"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 Intelligent-Tiering automatically moves objects across tiers based on access patterns. It is well suited to cost optimization for data with unpredictable access frequency.",
+    "choiceExplanations": {
+      "A": "Correct. It is effective when access patterns are unknown.",
+      "B": "Incorrect. Storage cost for infrequently accessed data tends to be higher.",
+      "C": "Incorrect. Deep Archive has long retrieval times and does not suit frequently accessed data.",
+      "D": "Incorrect. EBS gp3 is block storage for EC2 and is not an S3 storage class."
+    },
+    "practicalNote": "S3 Intelligent-Tiering monitors the access frequency of each object and automatically moves it across storage tiers (Frequent Access, Infrequent Access, Archive Instant Access, Archive Access, and Deep Archive Access). It delivers cost optimization with no operational overhead for datasets where access patterns are unknown or hard to predict and where frequently and infrequently accessed objects are mixed, such as user uploads, media archives, and log data. There are no retrieval fees; the only additional cost is a minimum object size charge (objects under 128 KB are treated as a single tier) and a small per-object monitoring fee.\n\nCompared with manual tier transitions through Lifecycle rules, Intelligent-Tiering is stronger when access patterns cannot be known in advance. Conversely, when access patterns are clear (for example, logs or backups that reliably cool after 30 days), moving directly to Standard-IA or Glacier via Lifecycle is cheaper because no monitoring fee is incurred. Note also that Archive Access and Deep Archive Access require retrieval times ranging from several hours to more than ten hours, so they do not suit frequently accessed data, and this should be reflected in the design.\n\nOn SAA-C03, conditions such as \"unpredictable access patterns,\" \"optimize cost without increasing operational overhead,\" and \"frequent and infrequent access are mixed\" point to Intelligent-Tiering. Continuing to use only Standard (not cost-optimized), using only Deep Archive (retrieval time issue), and EBS gp3 (not an S3 storage class) all conflict with the requirements and are incorrect. The distinction with Lifecycle, minimum retention periods, and the retrieval times and pricing of each tier are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 Intelligent-Tiering (AWS official)",
+        "url": "https://aws.amazon.com/s3/storage-classes/intelligent-tiering/"
+      },
+      {
+        "label": "Automatically optimizing storage class with S3 Intelligent-Tiering (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/intelligent-tiering.html"
+      },
+      {
+        "label": "Amazon S3 pricing (AWS official)",
+        "url": "https://aws.amazon.com/s3/pricing/"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "intelligent-tiering",
+      "storage-class"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "intelligent-tiering",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-028",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "You want to publish a personal static learning site at low cost. To avoid always-on servers and focus on static file delivery, which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 + CloudFront"
+      },
+      {
+        "choiceId": "B",
+        "text": "EC2 + RDS + NAT Gateway"
+      },
+      {
+        "choiceId": "C",
+        "text": "EKS + ALB + RDS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Redshift + SageMaker"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "For a static site, placing content in S3 and serving it through CloudFront is low cost and low operational overhead. It avoids always-on servers.",
+    "choiceExplanations": {
+      "A": "Correct. It is a low-cost configuration for serving a static site.",
+      "B": "Incorrect. EC2, RDS, and NAT Gateway tend to incur fixed costs and are excessive for a static site.",
+      "C": "Incorrect. EKS is too heavy in operational overhead and cost for a personal MVP.",
+      "D": "Incorrect. Redshift and SageMaker target analytics and machine learning, which are not needed for static site delivery."
+    },
+    "practicalNote": "Hosting content in S3 and serving it through CloudFront is the representative AWS pattern for publishing a static website at low cost. S3 is object storage with low storage unit pricing and suits storing static assets such as HTML, CSS, JS, and images. CloudFront caches and serves content at edge locations around the world, which reduces direct access to the origin (S3) and simultaneously delivers lower latency and lower S3 request costs. Combining Origin Access Control lets you keep the S3 bucket itself private and serve it only through CloudFront.\n\nBecause this configuration has no always-on servers, the time-based fixed costs of EC2, RDS, and NAT Gateway do not apply. It runs purely on usage (S3 storage and requests, CloudFront data transfer and requests), and during quiet periods it can run for a few hundred to a few thousand yen per month. For HTTPS, a typical setup attaches an ACM certificate (issued in us-east-1) to CloudFront and manages the custom domain through Route 53. Static sites built with SSG frameworks such as Next.js can also be served by this configuration.\n\nOn SAA-C03, keywords such as \"static site,\" \"personal development,\" \"low cost,\" and \"avoid always-on servers\" point to S3 + CloudFront. EC2 + RDS + NAT Gateway carries many fixed costs and is excessive for a static site, EKS adds heavy operational overhead, and Redshift + SageMaker targets analytics and machine learning rather than site delivery. Combinations with serverless (Lambda + API Gateway) and configurations that include SPA or SSR are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "Hosting a static website using Amazon S3 (S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html"
+      },
+      {
+        "label": "Delivering dynamic and static content with Amazon CloudFront (CloudFront Developer Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "Amazon S3 (AWS official)",
+        "url": "https://aws.amazon.com/s3/"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "cloudfront",
+      "ec2",
+      "rds"
+    ],
+    "relatedTerms": [
+      "static-site",
+      "serverless"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "cloudfront",
+      "cost",
+      "portfolio"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-029",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "Lambda is emitting a large volume of detailed logs to CloudWatch Logs, and log storage cost is rising. You want to retain logs only for the period needed for investigation and automatically delete older logs. Which setting is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Set a Retention period on the CloudWatch Logs log group"
+      },
+      {
+        "choiceId": "B",
+        "text": "Expose CloudWatch Logs as an S3 bucket"
+      },
+      {
+        "choiceId": "C",
+        "text": "Maximize the Lambda timeout"
+      },
+      {
+        "choiceId": "D",
+        "text": "Disable CORS on API Gateway"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Setting a Retention period on CloudWatch Logs automatically deletes logs older than the specified period. It is effective for controlling log storage cost.",
+    "choiceExplanations": {
+      "A": "Correct. It controls how long logs are retained.",
+      "B": "Incorrect. Exposing logs publicly is a security risk.",
+      "C": "Incorrect. Maximizing the Lambda timeout does not reduce log storage cost.",
+      "D": "Incorrect. CORS settings are unrelated to log retention."
+    },
+    "practicalNote": "CloudWatch Logs log groups support a Retention period that can be set from 1 day to 10 years (or never expire). The default is \"Never Expire,\" so as services such as Lambda, ECS, and API Gateway continue to run, logs accumulate indefinitely and storage charges (GB per month) keep rising. In practice, you should always set a Retention period when the log group is created or shortly after operation begins, retaining logs only for the period needed for investigation or audit (commonly 14 to 90 days).\n\nFor logs that must be kept long term (audit or compliance requirements), the standard pattern is to forward them to S3 using Subscription Filters or Export tasks and then tier them to Glacier or Deep Archive with S3 Lifecycle rules. The long-term storage unit price for S3 is significantly lower than for CloudWatch Logs, and Athena can be used for log analysis. CloudWatch Logs Insights provides powerful analysis queries, but it is billed by scanned data volume, so cost estimation is needed when frequent large queries are expected.\n\nOn SAA-C03, requirements such as \"reduce CloudWatch Logs cost,\" \"manage log retention,\" and \"automatic deletion\" point to setting a Retention period. Exposing logs publicly (a security violation), maximizing the Lambda timeout (unrelated), and disabling API Gateway CORS (CORS is the browser same-origin policy control, which is a different purpose) are all incorrect. Long-term export to S3, the per-scan pricing of Logs Insights, and real-time forwarding via Subscription Filters are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch Logs (AWS official)",
+        "url": "https://aws.amazon.com/cloudwatch/"
+      },
+      {
+        "label": "Changing log data retention in CloudWatch Logs (CloudWatch Logs User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html"
+      },
+      {
+        "label": "Amazon CloudWatch pricing (AWS official)",
+        "url": "https://aws.amazon.com/cloudwatch/pricing/"
+      }
+    ],
+    "relatedServices": [
+      "cloudwatch",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "log-retention",
+      "cost-management"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudwatch",
+      "logs",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-030",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "You want to receive an email notification when monthly AWS usage is likely to exceed your expected amount. Which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Route 53 Resolver"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Budgets lets you configure email notifications based on a budget amount or forecasted overrun. For personal development, this is the basic safeguard against billing accidents.",
+    "choiceExplanations": {
+      "A": "Correct. It is used for cost budgets and alerts.",
+      "B": "Incorrect. CloudTrail is used for auditing API operation history.",
+      "C": "Incorrect. EFS is a shared file storage service.",
+      "D": "Incorrect. Route 53 Resolver is a service related to DNS name resolution."
+    },
+    "practicalNote": "AWS Budgets lets you set thresholds for monthly, quarterly, or annual budgets, as well as budgets scoped by specific service, tag, or linked account. When actual or forecasted values exceed the threshold, notifications are sent via SNS or email. It supports several budget types (cost budget, usage budget, RI / Savings Plans coverage and utilization budgets) and is used as the basic budget management tool from personal development through large organizations. The first two action-enabled budgets are free, and additional budgets are billed at a small daily amount.\n\nA similar service is AWS Cost Explorer, but Cost Explorer is a dashboard for visualizing and analyzing past and forecasted cost trends and does not provide threshold-based alerts. Cost Anomaly Detection uses machine learning to detect unusual spending patterns, and combining it with Budgets allows early detection of unexpected spikes in service usage. For personal development, a basic pattern that prevents billing accidents is to set a small budget at the start of the month (for example, 1,000 yen) and send three-stage alerts at 80%, 100%, and 120% to email through SNS.\n\nOn SAA-C03, requirements such as \"notification when the budget is exceeded,\" \"cost monitoring,\" and \"email notification\" point to AWS Budgets. CloudTrail (API operation auditing), EFS (shared file storage), and Route 53 Resolver (DNS name resolution) are all services for different purposes than cost management. The distinction with Cost Explorer, Cost Anomaly Detection, and Budgets Actions (which can automatically apply IAM policies or stop EC2 when a threshold is crossed) are also asked in higher-level exams.",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets (AWS official)",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "Managing your costs and usage with AWS Budgets (AWS Cost Management User Guide)",
+        "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "AWS Cost Explorer (AWS official)",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/"
+      }
+    ],
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "budget-alert",
+      "cost-monitoring"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "budgets",
+      "cost",
+      "monitoring"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-22"
+  }
+]

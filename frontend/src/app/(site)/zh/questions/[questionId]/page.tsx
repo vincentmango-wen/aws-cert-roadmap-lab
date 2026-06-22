@@ -10,15 +10,13 @@ import {
   getAdjacentQuestionIds,
   getPublishedQuestionByIdLocale,
   getQuestionStaticParams,
-} from "../question-detail-data";
+} from "../../../questions/question-detail-data";
 
-type QuestionDetailPageProps = {
-  params: Promise<{
-    questionId: string;
-  }>;
+type PageProps = {
+  params: Promise<{ questionId: string }>;
 };
 
-const LOCALE = "ja" as const;
+const LOCALE = "zh" as const;
 
 export const dynamicParams = false;
 
@@ -28,16 +26,16 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: QuestionDetailPageProps): Promise<Metadata> {
+}: PageProps): Promise<Metadata> {
   const { questionId } = await params;
   return createPageMetadata(
     createQuestionDetailMetadataInput(LOCALE, questionId),
   );
 }
 
-export default async function QuestionDetailPage({
+export default async function ChineseQuestionDetailPage({
   params,
-}: QuestionDetailPageProps): Promise<React.JSX.Element> {
+}: PageProps): Promise<React.JSX.Element> {
   const { questionId } = await params;
   const question = getPublishedQuestionByIdLocale(LOCALE, questionId);
 
@@ -50,9 +48,6 @@ export default async function QuestionDetailPage({
     questionId,
   );
 
-  // server 側で存在チェックを済ませ、解決済み構造を client に渡す。
-  // QuestionPlayer ("use client") から termGuards (terms.json 85KB) の
-  // import を排除し client bundle 汚染を解消する。
   const resolvedServices: ResolvedLink[] = (question.relatedServices ?? []).map(
     (id) => ({ id, exists: isExistingTerm(id) }),
   );
