@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { QuestionPlayer } from "@/components/questions/QuestionPlayer";
 import type { ResolvedLink } from "@/components/questions/QuestionPlayer";
+import { questionPlayerLabelsByLocale } from "@/components/questions/question-player-labels";
 import { createPageMetadata } from "@/lib/seo";
 import { isExistingTerm, isExistingComparison } from "@/lib/termGuards";
 import {
@@ -65,6 +66,7 @@ export default async function QuestionDetailPage({
   return (
     <QuestionPlayer
       locale={LOCALE}
+      labels={questionPlayerLabelsByLocale[LOCALE]}
       question={question}
       previousQuestionId={previousQuestionId ?? undefined}
       nextQuestionId={nextQuestionId ?? undefined}
