@@ -55,6 +55,8 @@ function formatServiceName(service: string): string {
     "secrets-manager": "Secrets Manager",
     "systems-manager": "Systems Manager",
     kms: "KMS",
+    bedrock: "Bedrock",
+    sagemaker: "SageMaker",
   };
 
   return serviceNameMap[service] ?? service.toUpperCase();

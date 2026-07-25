@@ -168,9 +168,13 @@ export const priorityLabelsByLocale: Record<
  * 比較記事の category 表示ラベル (locale 別).
  *
  * key は comparisons.{ja,en,zh}.json 内の category 値 (英語固定: Storage / Database /
- * Networking / Security / Monitoring / Integration) を網羅する。anchor id
- * (#storage 等) は category.toLowerCase() で生成し、URL 安定性のため
+ * Networking / Security / Monitoring / Integration / MachineLearning) を網羅する。
+ * anchor id (#storage 等) は category.toLowerCase() で生成し、URL 安定性のため
  * locale 間で共通の英語 key を利用する (設計書 §4-4).
+ *
+ * MachineLearning は ACR-001 (Bedrock vs SageMaker) で追加。既存カテゴリ
+ * (Storage/Database/Networking/Security/Monitoring/Integration) のいずれにも
+ * 対応しない AI/ML 領域の比較コンテンツ用。
  */
 export type ComparisonCategory =
   | "Storage"
@@ -178,7 +182,8 @@ export type ComparisonCategory =
   | "Networking"
   | "Security"
   | "Monitoring"
-  | "Integration";
+  | "Integration"
+  | "MachineLearning";
 
 export const categoryLabelsByLocale: Record<
   ComparisonLocale,
@@ -191,6 +196,7 @@ export const categoryLabelsByLocale: Record<
     Security: "セキュリティ",
     Monitoring: "監視",
     Integration: "統合",
+    MachineLearning: "AI/機械学習",
   },
   en: {
     Storage: "Storage",
@@ -199,6 +205,7 @@ export const categoryLabelsByLocale: Record<
     Security: "Security",
     Monitoring: "Monitoring",
     Integration: "Integration",
+    MachineLearning: "AI / Machine Learning",
   },
   zh: {
     Storage: "儲存",
@@ -207,6 +214,7 @@ export const categoryLabelsByLocale: Record<
     Security: "安全",
     Monitoring: "監控",
     Integration: "整合",
+    MachineLearning: "AI / 機器學習",
   },
 };
 

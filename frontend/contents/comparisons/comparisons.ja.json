@@ -174,5 +174,21 @@
     "publishedAt": "2026-06-16",
     "updatedAt": "2026-06-21",
     "locale": "ja"
+  },
+  {
+    "comparisonId": "cmp-012",
+    "slug": "bedrock-vs-sagemaker",
+    "title": "Bedrock・SageMakerの違いを初心者向けに解説",
+    "description": "AWSの生成AI・機械学習サービスであるAmazon BedrockとAmazon SageMakerの違い、試験ポイント、実務での使い分けを整理します。",
+    "category": "MachineLearning",
+    "level": "beginner",
+    "examScopes": ["AIF-C01"],
+    "services": ["bedrock", "sagemaker"],
+    "tags": ["ai", "machine-learning", "bedrock", "sagemaker", "comparison", "aif"],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-07-25",
+    "updatedAt": "2026-07-25",
+    "locale": "ja"
   }
 ]
