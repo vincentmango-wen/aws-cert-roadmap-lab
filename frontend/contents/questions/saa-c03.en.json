@@ -1978,5 +1978,1398 @@
     "published": true,
     "createdAt": "2026-06-07",
     "updatedAt": "2026-06-22"
+  },
+  {
+    "questionId": "saa-031",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "You want to block requests that attempt SQL injection or cross-site scripting against a web application running behind an Application Load Balancer, before they reach the application. Which configuration is the most appropriate for keeping up with known attack patterns without maintaining your own rules?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Keep adding inbound rules to the ALB security group that deny the source IP addresses of attackers"
+      },
+      {
+        "choiceId": "B",
+        "text": "Subscribe to AWS Shield Advanced and block requests that contain attacks with its DDoS mitigation features"
+      },
+      {
+        "choiceId": "C",
+        "text": "Associate an AWS WAF web ACL with the ALB and apply AWS Managed Rules (Core rule set / SQL database)"
+      },
+      {
+        "choiceId": "D",
+        "text": "Add an inbound rule to the subnet network ACL that denies requests containing attack strings"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "SQL injection and XSS cannot be identified without inspecting the contents of the HTTP request (layer 7). If you associate an AWS WAF web ACL with the ALB and apply managed rule groups that AWS continuously updates, you can block known attack patterns without maintaining signatures yourself.",
+    "choiceExplanations": {
+      "A": "Incorrect. A security group only looks at layer 3/4 information such as source IP and port, so it cannot evaluate attack strings in the request body. Security groups also have no deny rules at all; they consist only of allow rules.",
+      "B": "Incorrect. AWS Shield is intended to mitigate DDoS attacks centered on layers 3/4, and it does not perform payload inspection such as SQL injection or XSS. An AWS Shield Advanced subscription includes AWS WAF usage fees, but it is the WAF rules that actually inspect and block requests.",
+      "C": "Correct. Associating a web ACL with the ALB and applying AWS Managed Rule groups blocks layer 7 attack patterns before they reach the application.",
+      "D": "Incorrect. A network ACL is a stateless filter that evaluates IP addresses, protocols, and ports at the subnet boundary, and it cannot see the contents of an HTTP request."
+    },
+    "practicalNote": "AWS WAF is a web application firewall that inspects HTTP / HTTPS requests at layer 7. Rules are grouped into a unit called a web ACL, which you associate with a CloudFront distribution, an Application Load Balancer, API Gateway, AppSync, a Cognito user pool, and so on. Rule types include source IP sets, rate-based rules (blocking based on the number of requests within a time window), string and regex matches, and managed rule groups provided by AWS or by Marketplace vendors. Because AWS continuously updates its managed rule groups, you no longer need to maintain signatures yourself.\n\nIn terms of design, the first consideration is where you associate the web ACL, because that determines where attacks are stopped. If you associate it with CloudFront, attacks are dropped at edge locations, whereas associating it with an ALB means requests are evaluated only after they reach the Region. Also, when you apply managed rules in production, switching straight to the Block action can drop legitimate requests, so the standard approach is to run them in Count mode for a while first, check for false positives using CloudWatch metrics and sampled requests, and only then switch to Block. WAF pricing consists of a monthly charge per web ACL and per rule, plus a usage-based charge for the number of requests.\n\nOn SAA-C03, terms such as \"SQL injection,\" \"cross-site scripting,\" \"OWASP Top 10,\" and \"a flood of requests from specific IP addresses\" point to AWS WAF as the correct answer. Distractors include security groups (layer 3/4, no deny rules), network ACLs (stateless IP / port filters), and AWS Shield (DDoS mitigation). The division of roles between Shield and WAF, and the decision of whether to attach WAF to CloudFront or to an ALB, are also commonly asked.",
+    "officialDocs": [
+      {
+        "label": "AWS WAF (AWS official)",
+        "url": "https://aws.amazon.com/waf/"
+      },
+      {
+        "label": "What is AWS WAF (AWS WAF Developer Guide)",
+        "url": "https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html"
+      },
+      {
+        "label": "AWS Managed Rules rule groups list (AWS WAF Developer Guide)",
+        "url": "https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list.html"
+      }
+    ],
+    "relatedServices": [
+      "waf",
+      "elb",
+      "shield"
+    ],
+    "relatedTerms": [
+      "cloudfront",
+      "api-gateway"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront",
+      "security-group-vs-nacl"
+    ],
+    "tags": [
+      "waf",
+      "security",
+      "alb",
+      "layer7"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-032",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "You need to delegate permission to read resources in your AWS account to an external SaaS monitoring vendor. The vendor calls the APIs from its own AWS account. Which configuration is the most appropriate for delegating access while preventing the confused deputy problem?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create a dedicated IAM user for the vendor, attach ReadOnlyAccess, share the issued access key with the vendor, and rotate it every 90 days"
+      },
+      {
+        "choiceId": "B",
+        "text": "Create an IAM role that trusts only the vendor's AWS account ID and attach ReadOnlyAccess"
+      },
+      {
+        "choiceId": "C",
+        "text": "Add a resource-based policy to each target resource that allows read access to the vendor's AWS account"
+      },
+      {
+        "choiceId": "D",
+        "text": "Create an IAM role that trusts the vendor's AWS account and require a unique value issued by the vendor for sts:ExternalId in a Condition element of the trust policy"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "For cross-account access granted to a third party, AWS recommends adding an sts:ExternalId Condition element to the trust policy of the IAM role. A third party that does not know the External ID cannot assume the role even through the vendor's account, which prevents the confused deputy problem.",
+    "choiceExplanations": {
+      "A": "Incorrect. Handing long-term access keys to an external organization has a large blast radius if they leak, and revocation is manual. Even with rotation, temporary credentials via an IAM role are recommended for cross-account access.",
+      "B": "Incorrect. Using a role is the right direction, but without an External ID you cannot prevent the confused deputy problem, in which the vendor mixes up the permissions it holds for another customer and operates on your resources. It does not meet the requirement.",
+      "C": "Incorrect. Resource-based policies can grant access only for a subset of services such as S3 buckets and KMS keys, and every additional read target requires another individual entry. This breaks down operationally, and there is no protection via an External ID.",
+      "D": "Correct. By requiring the External ID issued by the vendor in a Condition element of the trust policy, you structurally prevent the confused deputy problem."
+    },
+    "practicalNote": "Delegating permissions across AWS accounts should be done with IAM roles and AWS STS AssumeRole, not by sharing IAM users and access keys. The delegating side (your company) creates the role and writes the other party's account ID or role ARN in the Principal of the trust policy. The other party calls AssumeRole to obtain temporary credentials, and once those credentials expire the permissions disappear automatically. Compared with handing long-term access keys to an outside party, the exposure window after a leak is far shorter, and you can cut off access instantly just by deleting the trust policy.\n\nWith third-party SaaS, where a single vendor accesses many customer accounts through the same mechanism, the confused deputy problem can arise. If the vendor mistakenly specifies customer A's role ARN (or is tricked into doing so by an attacker), operations that customer A never intended are performed. To prevent this, require sts:ExternalId in a Condition element of the trust policy. The External ID is a unique string that the vendor issues per customer; it is not a secret but functions as an identifier that prevents mix-ups. In addition, the delegated permissions should be a custom policy narrowed to the required APIs rather than a managed policy such as ReadOnlyAccess as-is.\n\nOn SAA-C03, when keywords such as \"external vendor,\" \"another company's account,\" \"confused deputy,\" or \"External ID\" appear, an IAM role plus sts:ExternalId is the correct answer. Distractors include sharing IAM user access keys, sharing root user credentials, and a cross-account role with no conditions. It is also worth remembering the distinction that between your own multiple accounts (under AWS Organizations) an External ID is unnecessary, and you use SCPs or the aws:PrincipalOrgID condition instead.",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management (AWS official)",
+        "url": "https://aws.amazon.com/iam/"
+      },
+      {
+        "label": "Access to AWS accounts owned by third parties (IAM User Guide)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
+      },
+      {
+        "label": "IAM tutorial: Delegate access across AWS accounts using IAM roles (IAM User Guide)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html"
+      }
+    ],
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "organizations",
+      "cloudtrail"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "cross-account",
+      "sts",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-033",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "You are implementing sign-up and sign-in for the end users of a mobile app, together with federation with external identity providers such as Google. After authentication, you also want to use the same authentication result for access control on a REST API published through Amazon API Gateway. Which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Manage users in an Amazon Cognito user pool and validate the issued tokens with a Cognito authorizer on API Gateway"
+      },
+      {
+        "choiceId": "B",
+        "text": "Create an IAM user for each end user, embed access keys in the app, and call the API with SigV4 signatures"
+      },
+      {
+        "choiceId": "C",
+        "text": "Manage end users in AWS IAM Identity Center and federate SAML assertions to the app"
+      },
+      {
+        "choiceId": "D",
+        "text": "Store hashes of user names and passwords in AWS Secrets Manager and implement your own authentication logic in Lambda"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "An Amazon Cognito user pool is well suited to authenticating an app's end users. It provides sign-up, sign-in, MFA, and external identity provider federation as a managed service, and the ID tokens and access tokens it issues can be validated directly by a Cognito authorizer on API Gateway.",
+    "choiceExplanations": {
+      "A": "Correct. The user pool acts as the user directory and token issuer while the Cognito authorizer on API Gateway handles token validation, so you do not have to implement authentication yourself.",
+      "B": "Incorrect. IAM is a mechanism for principals that operate AWS resources (internal people and applications); it is not designed to manage an app's end users as individual IAM users. Embedding long-term access keys in an app is also unsafe.",
+      "C": "Incorrect. IAM Identity Center targets single sign-on for a workforce such as employees, and it is not intended for self-service sign-up by general consumers.",
+      "D": "Incorrect. Implementing authentication yourself means building password storage, MFA, token revocation, and external IdP federation from scratch. Secrets Manager is meant for storing credentials used by applications; it is not a user directory."
+    },
+    "practicalNote": "Amazon Cognito consists of two features: user pools and identity pools (federated identities). A user pool is a user directory for your app that provides sign-up, sign-in, password policies, MFA, email/SMS verification, and federation with external IdPs such as Google and Apple as a managed service, issuing an OpenID Connect ID token, an access token, and a refresh token on successful authentication. An identity pool exchanges those tokens (or tokens from other IdPs) for temporary AWS credentials, and is used when the app needs to call S3 or DynamoDB directly.\n\nIn design, you decide which to use based on \"who you want to authenticate.\" General app users belong in a user pool, internal people and CI/CD that operate AWS resources belong in IAM, and employee single sign-on belongs in IAM Identity Center. When combined with API Gateway, configuring a Cognito authorizer on a REST API validates the token's signature, expiration, and aud/iss for you, removing the need to build your own Lambda authorizer. Use a Lambda authorizer alongside it only when you need finer control, such as branching on scopes or custom claims.\n\nOn SAA-C03, requirements such as \"user authentication for a mobile or web app,\" \"social login,\" and \"sign-up functionality\" point to Amazon Cognito. Creating an IAM user per end user is a frequent distractor, but IAM users have a per-account limit and the feature was never intended for end-user management, so it is inappropriate as a design. The difference in role from IAM Identity Center (for the workforce) is also commonly asked.",
+    "officialDocs": [
+      {
+        "label": "Amazon Cognito (AWS official)",
+        "url": "https://aws.amazon.com/cognito/"
+      },
+      {
+        "label": "What is Amazon Cognito (Amazon Cognito Developer Guide)",
+        "url": "https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html"
+      },
+      {
+        "label": "Amazon Cognito user pools (Amazon Cognito Developer Guide)",
+        "url": "https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html"
+      }
+    ],
+    "relatedServices": [
+      "cognito",
+      "api-gateway",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "iam",
+      "secrets-manager"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy",
+      "api-gateway-vs-alb-vs-cloudfront"
+    ],
+    "tags": [
+      "cognito",
+      "authentication",
+      "api-gateway",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-034",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "Audit requirements state that all access to a certain S3 bucket must occur over an encrypted communication path. Which method is the most appropriate for structurally rejecting unencrypted HTTP requests?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Enable SSE-S3 as the default encryption for the bucket"
+      },
+      {
+        "choiceId": "B",
+        "text": "Add a statement to the bucket policy that denies s3:* when the condition key aws:SecureTransport is false"
+      },
+      {
+        "choiceId": "C",
+        "text": "Enable all Block Public Access settings on the bucket"
+      },
+      {
+        "choiceId": "D",
+        "text": "Issue a certificate with AWS Certificate Manager and assign it to the S3 bucket"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "To enforce encryption in transit, explicitly deny requests where aws:SecureTransport is false in the bucket policy. Because an explicit Deny always takes precedence in IAM policy evaluation, HTTP access is always rejected regardless of any other allow.",
+    "choiceExplanations": {
+      "A": "Incorrect. SSE-S3 encrypts data stored in S3 (at rest) and has nothing to do with the communication path between the client and S3. The requirement is encryption in transit, so it is not satisfied.",
+      "B": "Correct. An explicit Deny takes precedence over any Allow, so HTTP requests are blocked structurally.",
+      "C": "Incorrect. Block Public Access disables ACLs and bucket policies that would lead to public exposure; it does not evaluate whether the communication path is encrypted.",
+      "D": "Incorrect. You cannot assign an ACM certificate directly to an S3 bucket. If you need HTTPS delivery on a custom domain, you associate the ACM certificate with a CloudFront distribution."
+    },
+    "practicalNote": "S3 encryption has two axes, at rest and in transit, and they are configured in completely different places. At rest, you specify an encryption method such as SSE-S3, SSE-KMS, DSSE-KMS, or SSE-C through the bucket's default encryption or a request header. In transit, the question is whether TLS is used, and because S3 endpoints accept both HTTPS and HTTP by default, you need policy enforcement to prevent HTTP from being used. The mechanism for this enforcement is the AWS global condition context key aws:SecureTransport, which is true when the request arrives over TLS.\n\nThe implementation is a bucket policy with Effect: Deny, Action: s3:*, Resource listing both the bucket ARN and the object ARN, and a Condition with Bool aws:SecureTransport false. Be careful to list both the bucket ARN (arn:aws:s3:::bucket) and the object ARN (arn:aws:s3:::bucket/*) in Resource; forgetting one lets operations such as ListBucket slip through. Because an explicit Deny takes precedence over every Allow in IAM policy evaluation, even an administrator in the same account is denied HTTP access. Similar condition-enforcement patterns include enforcing encryption at rest with s3:x-amz-server-side-encryption, and restricting access to a VPC endpoint with aws:SourceVpce.\n\nOn SAA-C03, requirements such as \"enforce encryption of data in transit\" or \"prohibit access over HTTP\" make a Deny on aws:SecureTransport the correct answer. Distractors include default encryption (at rest), Block Public Access (public exposure control), and assigning an ACM certificate (not possible for S3 alone). Confusing at rest with in transit is the most common mistake in this area, so always read carefully which one the requirement is asking about.",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 (AWS official)",
+        "url": "https://aws.amazon.com/s3/"
+      },
+      {
+        "label": "Security best practices for Amazon S3 (Amazon S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html"
+      },
+      {
+        "label": "AWS global condition context keys (IAM User Guide)",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "iam"
+    ],
+    "relatedTerms": [
+      "acm",
+      "kms",
+      "cloudfront"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "bucket-policy",
+      "encryption-in-transit",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-035",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "In a production account, you want to continuously detect misuse of credentials and suspicious communication from EC2 instances (such as malware command-and-control traffic or cryptocurrency mining). Which service can you start with without deploying agents or building a log analysis platform?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Record resource configuration changes with AWS Config and evaluate compliance with Config rules"
+      },
+      {
+        "choiceId": "B",
+        "text": "Scan EC2 instances and ECR images for vulnerabilities with Amazon Inspector"
+      },
+      {
+        "choiceId": "C",
+        "text": "Enable an AWS CloudTrail trail and store the logs in an S3 bucket"
+      },
+      {
+        "choiceId": "D",
+        "text": "Enable Amazon GuardDuty"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Amazon GuardDuty automatically ingests CloudTrail events, VPC Flow Logs, Route 53 DNS query logs, and more on the AWS side, and detects suspicious behavior using threat intelligence and machine learning. No agent deployment or log platform is required; detection begins as soon as you enable it.",
+    "choiceExplanations": {
+      "A": "Incorrect. AWS Config records the history of resource configuration changes and evaluates whether configurations comply with defined rules. That is the domain of configuration compliance, and it does not cover detecting threats such as suspicious traffic or credential misuse.",
+      "B": "Incorrect. Amazon Inspector is a vulnerability management service that continuously scans for software vulnerabilities and unintended network reachability. It can find known CVEs but does not detect suspicious communication or credential abuse that is actually in progress.",
+      "C": "Incorrect. CloudTrail only records API operations and has no capability to determine threats within those records. Detecting them requires a separate analysis mechanism. GuardDuty uses these CloudTrail logs as one of its inputs.",
+      "D": "Correct. Simply enabling it starts log ingestion and threat detection, and findings can be routed to notification and automated response through Security Hub or EventBridge."
+    },
+    "practicalNote": "Amazon GuardDuty is a managed threat detection service that detects threats that are in progress inside an AWS account. Its input data sources (CloudTrail management events, CloudTrail S3 data events, VPC Flow Logs, Route 53 Resolver DNS query logs, EKS audit logs, and others) are ingested directly on the AWS side, so you do not need to enable logs, ship them to S3, or build an analysis platform. Detections are emitted as findings with a severity (Low / Medium / High) and fire as EventBridge events, so you can connect them to SNS notifications or automated isolation with Lambda.\n\nThe division of roles among similar services matters. Amazon Inspector handles vulnerability management, scanning EC2, ECR images, and Lambda functions for software vulnerabilities (CVEs) and unintended network reachability. AWS Config handles configuration compliance, recording configuration change history and evaluating rule compliance. AWS CloudTrail records API operations, and Amazon Macie discovers and classifies sensitive data in S3. GuardDuty differs in that it uses these logs as input to judge behavior such as communication with known malicious IPs and domains, API calls from unusual Regions, and cryptocurrency mining traffic from EC2. In multi-account environments, you can integrate with AWS Organizations and enable it for all member accounts at once from a delegated administrator account.\n\nOn SAA-C03, requirements such as \"detect suspicious activity,\" \"compromised credentials,\" \"malware communication,\" and \"start immediately without agents\" point to GuardDuty. Distractors include Inspector (vulnerability scanning), Config (configuration evaluation), and CloudTrail (recording only), all of which can be distinguished by the fact that they do not detect threats. There are also advanced questions about combining AWS Security Hub when you want to aggregate findings in one place.",
+    "officialDocs": [
+      {
+        "label": "Amazon GuardDuty (AWS official)",
+        "url": "https://aws.amazon.com/guardduty/"
+      },
+      {
+        "label": "What is Amazon GuardDuty (Amazon GuardDuty User Guide)",
+        "url": "https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html"
+      },
+      {
+        "label": "Amazon Inspector (AWS official)",
+        "url": "https://aws.amazon.com/inspector/"
+      }
+    ],
+    "relatedServices": [
+      "guardduty",
+      "cloudtrail",
+      "eventbridge"
+    ],
+    "relatedTerms": [
+      "inspector",
+      "aws-config"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "guardduty",
+      "threat-detection",
+      "security",
+      "monitoring"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-036",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "Operators need shell access to EC2 instances in a private subnet. Which configuration is the most appropriate for doing so without running a bastion server, without opening any inbound ports on the instances, and while being able to audit who connected and when?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Place a bastion EC2 instance in a public subnet and allow port 22 only from the operators' source IP addresses"
+      },
+      {
+        "choiceId": "B",
+        "text": "Assign an Elastic IP to the target instance, change the SSH listening port from 22, and connect with a key pair"
+      },
+      {
+        "choiceId": "C",
+        "text": "Use AWS Systems Manager Session Manager, making sure the SSM Agent can reach the required endpoints to establish a session"
+      },
+      {
+        "choiceId": "D",
+        "text": "Enable EC2 Instance Connect and connect over SSH from the browser in the Management Console"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Session Manager establishes a session using an outbound connection from the SSM Agent on the instance to Systems Manager. No inbound port and no bastion is needed, connections are controlled by IAM, and operations can be audited through CloudTrail and session logs.",
+    "choiceExplanations": {
+      "A": "Incorrect. The operational burden of patching, key management, and availability for the bastion server itself remains, and inbound port 22 stays open. It does not meet the requirements of \"no bastion to operate\" and \"no inbound ports opened.\"",
+      "B": "Incorrect. This exposes an instance in a private subnet to the internet, which is the opposite of the requirement. Changing the port number does not remove the listener, so it is not a meaningful security improvement either.",
+      "C": "Correct. Because the session is established with an outbound connection only, you can operate with the security group's inbound rules left empty.",
+      "D": "Incorrect. Connecting from the console with EC2 Instance Connect requires the instance to allow inbound port 22 from the EC2 Instance Connect service prefix list and to be reachable. That conflicts with the requirement to open no inbound ports at all."
+    },
+    "practicalNote": "AWS Systems Manager Session Manager lets you open a shell session to EC2 instances and on-premises servers from a browser or the AWS CLI. The key to how it works is the direction of communication: the SSM Agent running on the instance connects outbound to the Systems Manager endpoints, and the session rides on that path. Therefore you can connect without writing a single inbound rule in the instance's security group, and neither a bastion server nor a key pair is required. Whether a connection is allowed is controlled by IAM policies (such as ssm:StartSession), and who connected to which instance and when is recorded in CloudTrail.\n\nAs design prerequisites, the instance needs an IAM instance profile that includes AmazonSSMManagedInstanceCore, and it needs a path to reach the SSM endpoints. In a private subnet there are two ways to build that path. One is to go out to the internet through a NAT Gateway; the other is to create three interface VPC endpoints for ssm, ssmmessages, and ec2messages so that traffic reaches Systems Manager without leaving for the internet. The latter avoids the fixed cost of a NAT Gateway and keeps traffic inside the AWS network. Session content can be recorded to S3 or CloudWatch Logs, and sessions can be encrypted with KMS.\n\nOn SAA-C03, requirements such as \"eliminate the bastion server,\" \"do not open the SSH port,\" \"do not manage key pairs,\" and \"audit connections\" point to Session Manager. Distractors include building a bastion EC2 instance, changing the SSH port number, and assigning a public IP, all traditional designs. In the context of avoiding a NAT Gateway in a private subnet, questions sometimes go as far as the three VPC endpoints.",
+    "officialDocs": [
+      {
+        "label": "AWS Systems Manager (AWS official)",
+        "url": "https://aws.amazon.com/systems-manager/"
+      },
+      {
+        "label": "AWS Systems Manager Session Manager (AWS Systems Manager User Guide)",
+        "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html"
+      },
+      {
+        "label": "Amazon EC2 (AWS official)",
+        "url": "https://aws.amazon.com/ec2/"
+      }
+    ],
+    "relatedServices": [
+      "systems-manager",
+      "ec2",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "iam",
+      "cloudtrail",
+      "cloudwatch"
+    ],
+    "relatedComparisons": [
+      "nat-gateway-vs-nat-instance-vs-vpc-endpoint"
+    ],
+    "tags": [
+      "systems-manager",
+      "session-manager",
+      "bastion",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-037",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "Unauthorized access attempts against a subnet continue from a specific IP address range. You want to deny only the traffic from that range for all instances in the subnet at once. Which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "In the network ACL associated with the subnet, add an inbound rule denying that range with a lower rule number than the existing allow rules"
+      },
+      {
+        "choiceId": "B",
+        "text": "Add an inbound rule denying that range to the security group of each instance"
+      },
+      {
+        "choiceId": "C",
+        "text": "Deny traffic destined for that range in the outbound rules of the security group"
+      },
+      {
+        "choiceId": "D",
+        "text": "Add a blackhole route for that range to the subnet's route table"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Because security groups have no deny rules, you use a network ACL to block a specific source. Network ACLs are evaluated in ascending rule-number order and the first matching rule is applied, so the deny rule must have a lower number than the existing allow rules.",
+    "choiceExplanations": {
+      "A": "Correct. Because a network ACL applies at the subnet level, it takes effect for every instance in the subnet at once. The order of rule numbers is the deciding point.",
+      "B": "Incorrect. Security groups consist only of allow rules, and you cannot write deny rules. They are a whitelist mechanism in which anything not explicitly allowed does not pass.",
+      "C": "Incorrect. Restricting outbound traffic does not stop the inbound attempts that arrive from outside. Security groups also have no deny rules in the first place.",
+      "D": "Incorrect. A route table determines the next hop per destination network and cannot filter by source address. It is also not a mechanism for blocking traffic inside a subnet before it arrives."
+    },
+    "practicalNote": "Security groups and network ACLs are two layers of traffic control in a VPC, and their scope and evaluation model are fundamentally different. A security group is a stateful firewall applied per ENI (instance) that has only allow rules; it evaluates all rules and lets traffic through if any one matches. Because it is stateful, return traffic for a connection allowed inbound passes regardless of outbound rules. A network ACL, by contrast, is a stateless filter applied per subnet that has both allow and deny rules; it evaluates rules in ascending rule-number order and the first match decides the verdict.\n\nThis difference determines practical usage. A requirement to \"block only a specific source\" cannot be expressed with a security group, so you use a Deny rule in a network ACL. At that point, note that the default network ACL contains an allow-all rule at number 100, so unless you give the deny rule a lower number (for example 90) it loses in evaluation order and traffic passes through. Also, because it is stateless, allowing a connection requires rules in both the inbound and outbound directions, and forgetting to allow the ephemeral ports (1024-65535) for return traffic stops communication in one direction. Note that when you want fine-grained control of attacks against a web application by source IP or request content, AWS WAF IP sets and rate-based rules are more suitable than network ACLs.\n\nOn SAA-C03, wording such as \"deny a specific IP range\" and \"apply to the entire subnet at once\" points to a network ACL, while \"allow traffic to a specific resource\" or \"allow access only from the ALB\" points to a security group. The stateful / stateless difference, evaluation order by rule number, and the handling of ephemeral ports are repeatedly tested in this area.",
+    "officialDocs": [
+      {
+        "label": "Amazon Virtual Private Cloud (AWS official)",
+        "url": "https://aws.amazon.com/vpc/"
+      },
+      {
+        "label": "Control subnet traffic with network access control lists (Amazon VPC User Guide)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html"
+      },
+      {
+        "label": "Control traffic to your AWS resources using security groups (Amazon VPC User Guide)",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html"
+      }
+    ],
+    "relatedServices": [
+      "vpc",
+      "ec2"
+    ],
+    "relatedTerms": [
+      "waf",
+      "elb"
+    ],
+    "relatedComparisons": [
+      "security-group-vs-nacl"
+    ],
+    "tags": [
+      "nacl",
+      "security-group",
+      "vpc",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-038",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "For a web application running in the Tokyo Region, you want to switch automatically to a standby environment in the Osaka Region when a Region-wide failure occurs. The domain name that users access cannot change. Which configuration is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Use Route 53 weighted routing with weight 100 for Tokyo and weight 0 for Osaka, and swap the weights manually when a failure is detected"
+      },
+      {
+        "choiceId": "B",
+        "text": "Use a Route 53 failover routing policy with Tokyo as primary and Osaka as secondary, and associate a health check with the primary record"
+      },
+      {
+        "choiceId": "C",
+        "text": "Register EC2 instances from both Tokyo and Osaka in an Application Load Balancer target group and distribute traffic using health checks"
+      },
+      {
+        "choiceId": "D",
+        "text": "Create an Auto Scaling group that spans Tokyo and Osaka so that instances launch in Osaka when Tokyo becomes unhealthy"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "To fail over automatically between Regions while keeping the same domain name, combine a Route 53 failover routing policy with a health check. When the primary health check fails, DNS responses switch automatically to the secondary endpoint.",
+    "choiceExplanations": {
+      "A": "Incorrect. Weighted routing itself is a valid feature, but because changing the weights is manual it does not meet the requirement to switch automatically. The time from detection to switchover also depends on how fast people respond.",
+      "B": "Correct. You can tune the switchover speed with the health check failure threshold and interval, and keeping the DNS record TTL short makes the change take effect quickly.",
+      "C": "Incorrect. The Application Load Balancer itself is a resource inside the Tokyo Region, so a Region-wide failure in Tokyo takes down the ALB as well and no cross-Region switchover happens. Registering instances in another Region as targets is actually possible with an IP address type target group and inter-Region VPC peering (instance ID type targets are limited to the load balancer's own VPC), but the ALB still depends on a single Region.",
+      "D": "Incorrect. An Auto Scaling group can span multiple Availability Zones within a single Region, but it cannot span Regions."
+    },
+    "practicalNote": "Amazon Route 53 routing policies are separated by purpose. Simple routing just returns a single destination; weighted routing distributes traffic in a specified ratio (used for canary releases and phased migration); latency-based routing returns the Region with the lowest latency from the client's perspective; geolocation routing returns a destination based on the requester's geography; and failover routing defines primary and secondary paths and returns the secondary only when the primary is unhealthy. Failover routing is the one that corresponds to an active/passive disaster recovery design.\n\nThe key to automatic switchover is the Route 53 health check. Health checkers around the world send periodic requests to the target endpoint (an IP address or domain name), and by default they mark it Unhealthy when the failure count exceeds the threshold at a 30-second interval (10 seconds for fast checks). In addition, you can base a health check on the state of a CloudWatch alarm, or create a calculated health check that combines multiple health checks with AND / OR. Because the switchover manifests as a change in the DNS response, the actual speed depends on the health check detection time plus the record TTL plus the client-side resolver cache. Keeping the TTL around 60 seconds is the standard practice, and if you need faster switchover, consider a mechanism that does not depend on DNS, such as AWS Global Accelerator.\n\nOn SAA-C03, requirements such as \"automatic failover to another Region during a Regional failure\" and \"switch over while keeping the same domain name\" make failover routing plus a health check the correct answer. Distractors include using an ALB or an Auto Scaling group across Regions, both of which you can eliminate by knowing that they are Regional services. Weighted routing is ruled out by reading that it is manual and therefore does not fit the requirement.",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53 (AWS official)",
+        "url": "https://aws.amazon.com/route53/"
+      },
+      {
+        "label": "Failover routing (Amazon Route 53 Developer Guide)",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-failover.html"
+      },
+      {
+        "label": "Creating Amazon Route 53 health checks (Amazon Route 53 Developer Guide)",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html"
+      }
+    ],
+    "relatedServices": [
+      "route53",
+      "elb",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "cloudfront",
+      "ec2"
+    ],
+    "relatedComparisons": [
+      "route53-vs-cloudfront-vs-global-accelerator"
+    ],
+    "tags": [
+      "route53",
+      "failover",
+      "disaster-recovery",
+      "multi-region"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-039",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Regulatory requirements state that objects in an S3 bucket must also be retained in another Region. Which configuration is the most appropriate so that newly uploaded objects are replicated automatically and versions are retained at the destination as well?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Enable versioning on both the source and destination buckets and configure an S3 cross-Region replication rule"
+      },
+      {
+        "choiceId": "B",
+        "text": "Configure an S3 Lifecycle rule that moves objects to a bucket in another Region after a certain period"
+      },
+      {
+        "choiceId": "C",
+        "text": "Schedule an AWS DataSync task once per day to synchronize the two buckets"
+      },
+      {
+        "choiceId": "D",
+        "text": "Create an Amazon EFS file system in another Region, mount the S3 bucket, and synchronize it"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3 cross-Region replication (CRR) automatically and asynchronously copies new objects to a bucket in another Region. Versioning must be enabled on both the source and the destination as a prerequisite, which is what keeps versions at the destination as well.",
+    "choiceExplanations": {
+      "A": "Correct. Versioning is a mandatory requirement for CRR, and replication copies objects while preserving version IDs.",
+      "B": "Incorrect. S3 Lifecycle rules can only transition storage classes and expire objects; there is no feature that moves objects to a bucket in another Region.",
+      "C": "Incorrect. DataSync can copy between buckets, but because it runs as a scheduled batch it has too much delay for the requirement that new objects be replicated automatically, and changes between runs are not protected.",
+      "D": "Incorrect. Amazon S3 is object storage and is not mounted as an EFS file system. This option is not technically viable."
+    },
+    "practicalNote": "S3 Replication automatically and asynchronously copies objects to another bucket according to rules configured on the bucket. When the destination is in another Region it is called cross-Region replication (CRR), and when it is in the same Region it is called same-Region replication (SRR). CRR is used for disaster recovery, latency reduction, and geographic compliance requirements, while SRR is used for log aggregation, providing data from production to test environments, and cross-account backups. Replication copies objects while preserving version IDs, metadata, and ACLs, and can change the storage class or owner at the destination if needed.\n\nIt is worth knowing the prerequisites and quirks. First, versioning must be enabled on both the source and destination buckets. Second, by default only new objects uploaded after the rule is created are in scope; to replicate existing objects you must run S3 Batch Replication separately. Third, because replication is asynchronous, the time to completion is not guaranteed. When you need a time guarantee, enabling S3 Replication Time Control (S3 RTC) replicates 99.99% of objects within 15 minutes and adds replication metrics and notifications. Also, when replicating objects encrypted with SSE-KMS, you must grant the replication role permissions on the KMS key in the destination Region. Replication of delete markers is disabled by default and must be enabled explicitly.\n\nOn SAA-C03, contexts such as \"keep a copy of data in another Region\" and \"geographic redundancy is a requirement\" make CRR the correct answer. Lifecycle rules are a frequent distractor, but the distinction that lifecycle handles only storage class transitions and expiration and never copies across Regions is the deciding factor. The fact that versioning is mandatory and that existing objects need Batch Replication are also commonly asked.",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 (AWS official)",
+        "url": "https://aws.amazon.com/s3/"
+      },
+      {
+        "label": "Replicating objects within and across Regions (Amazon S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html"
+      },
+      {
+        "label": "Meeting compliance requirements using S3 Replication Time Control (S3 RTC) (Amazon S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-time-control.html"
+      }
+    ],
+    "relatedServices": [
+      "s3",
+      "kms"
+    ],
+    "relatedTerms": [
+      "aws-backup",
+      "efs"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "replication",
+      "disaster-recovery",
+      "versioning"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-040",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "In a web application running on EC2 Auto Scaling, some users are logged out every time a scale-in or an instance failure occurs. Session information is stored on the local disk of each instance. Which improvement is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Enable sticky sessions on the Application Load Balancer so that the same user is always forwarded to the same instance"
+      },
+      {
+        "choiceId": "B",
+        "text": "Raise the minimum capacity of the Auto Scaling group so that scale-in does not occur"
+      },
+      {
+        "choiceId": "C",
+        "text": "Attach a dedicated EBS volume to each instance and store session files there"
+      },
+      {
+        "choiceId": "D",
+        "text": "Move session information to an external data store such as Amazon ElastiCache or Amazon DynamoDB and make the application tier stateless"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "The root cause is holding state on instances, which are short-lived resources. If you externalize session information to a shared data store such as ElastiCache or DynamoDB and make the application tier stateless, sessions are not lost no matter which instance terminates.",
+    "choiceExplanations": {
+      "A": "Incorrect. Sticky sessions only keep forwarding to the same instance, and the session is lost when that instance terminates. It does not eliminate logouts during failures and creates a separate problem of uneven load.",
+      "B": "Incorrect. Even with a higher minimum capacity, instances are still replaced due to failures or failed health checks. It only increases cost without solving the root cause.",
+      "C": "Incorrect. An EBS volume is attached to a single instance and is pinned to a single Availability Zone. Once the instance terminates, other instances cannot read that session.",
+      "D": "Correct. Externalizing state lets you treat instances as disposable resources that can be thrown away at any time."
+    },
+    "practicalNote": "In an architecture built on Auto Scaling, instances must be designed as things that may terminate at any time. Being selected for scale-in, being replaced after a failed health check, and disappearing in an AZ failure are all part of normal operation, and a design where each of these affects users does not meet the prerequisites of horizontal scaling. The basic design principle is to avoid holding state that exists only on that instance, such as session information or temporary files being uploaded; in other words, to make the application tier stateless.\n\nCommon destinations for externalized sessions are Amazon ElastiCache (Redis / Valkey / Memcached) and Amazon DynamoDB. ElastiCache is in-memory with fast responses, and session expiry management with TTL is natural to write. The Redis family supports replication and automatic failover (Multi-AZ), so the cache tier itself can be made highly available. DynamoDB is serverless with no capacity management, supports automatic deletion via a TTL attribute, and with global tables can even share sessions across Regions. On the other hand, ALB sticky sessions (session affinity) can serve as a stopgap for existing applications, but understand that it does not solve session loss during instance failure and has the side effect of skewing load toward specific instances. Similarly, files that need to be shared should be placed on Amazon EFS or S3 rather than EBS.\n\nOn SAA-C03, questions that present symptoms such as \"users are logged out on every scale-in\" or \"cart contents disappear when an instance is replaced\" and ask you to choose externalized state (ElastiCache / DynamoDB) are a staple. Distractors include enabling sticky sessions, raising the minimum capacity, and storing sessions on EBS. The property that EBS is tied to a single AZ and a single instance is the deciding factor in this judgment.",
+    "officialDocs": [
+      {
+        "label": "Amazon ElastiCache (AWS official)",
+        "url": "https://aws.amazon.com/elasticache/"
+      },
+      {
+        "label": "What is Amazon ElastiCache (Amazon ElastiCache User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/WhatIs.html"
+      },
+      {
+        "label": "Amazon EC2 Auto Scaling (AWS official)",
+        "url": "https://aws.amazon.com/ec2/autoscaling/"
+      }
+    ],
+    "relatedServices": [
+      "elasticache",
+      "dynamodb",
+      "auto-scaling",
+      "elb"
+    ],
+    "relatedTerms": [
+      "ec2",
+      "ebs"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "stateless",
+      "session",
+      "elasticache",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-041",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "You operate a web application that requires the processing capacity of 6 instances at all times during peak hours, using an Auto Scaling group spread evenly across three Availability Zones. If you want to maintain peak processing capacity even when one AZ goes down completely, which minimum capacity setting is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "6 instances (2 per AZ)"
+      },
+      {
+        "choiceId": "B",
+        "text": "7 instances"
+      },
+      {
+        "choiceId": "C",
+        "text": "9 instances (3 per AZ)"
+      },
+      {
+        "choiceId": "D",
+        "text": "12 instances (4 per AZ)"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "When instances are distributed evenly across three AZs, losing one AZ loses one third of the total at once. The remaining two thirds must cover the 6 instances needed at peak, so 6 / (1 - 1/3) = 9 instances are required. Placing 3 instances per AZ leaves 6 after losing one AZ.",
+    "choiceExplanations": {
+      "A": "Incorrect. With 2 per AZ for a total of 6, losing one AZ leaves 4, which is below the 6 instances needed at peak.",
+      "B": "Incorrect. 7 is not divisible by 3, so the instance count per AZ is uneven, and losing the AZ with the most instances leaves 5 or fewer, which does not meet the requirement.",
+      "C": "Correct. Even after losing one AZ, 6 instances remain and peak processing capacity is maintained.",
+      "D": "Incorrect. It does satisfy the requirement, but 8 instances remain after losing one AZ, which is excessive. It incurs the cost of 4 surplus instances at all times, so it is not appropriate as the minimum capacity."
+    },
+    "practicalNote": "Simply \"being Multi-AZ\" does not make you resilient to an AZ failure. An EC2 Auto Scaling group tries to distribute instances evenly across the specified subnets (that is, AZs), but if one AZ goes down, the instances in that AZ are lost simultaneously. Therefore, to maintain the required processing capacity after an AZ failure, you need the concept of static stability, in which you provision capacity that already accounts for what will be lost. If the required capacity is N and the number of AZs is Z, the total number of instances needed to survive the loss of one AZ is the ceiling of N / (1 - 1/Z). That is twice N for 2 AZs, 1.5 times for 3 AZs, and about 1.34 times for 4 AZs, so the more AZs you use, the lower the required surplus ratio.\n\nOne objection is that \"if an AZ goes down, Auto Scaling will automatically replenish capacity in the remaining AZs, so surplus is unnecessary.\" In practice, however, replenishment takes time to launch, initialize, and pass health checks, and during an AZ failure other customers in the same Region also demand capacity at once, so you cannot count on immediately obtaining the capacity you need. The point of static stability is to already have the capacity you need running at the moment the failure occurs. As a related setting, changing the Auto Scaling group's health check type from EC2 to ELB also makes instances whose application is unresponsive due to a process failure eligible for replacement.\n\nOn SAA-C03, this appears as a calculation question that asks you to choose a minimum capacity or desired capacity under the condition that performance must be maintained even if one AZ goes down. Remembering the ratios — 1.5 times the required capacity for a 3-AZ design and 2 times for a 2-AZ design — lets you answer instantly. Options with excessive instance counts are wrong from a cost optimization perspective, so it is important to read the question as asking for the smallest configuration that satisfies the requirement.",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Auto Scaling (AWS official)",
+        "url": "https://aws.amazon.com/ec2/autoscaling/"
+      },
+      {
+        "label": "Benefits of Auto Scaling for your application architecture (Amazon EC2 Auto Scaling User Guide)",
+        "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/auto-scaling-benefits.html"
+      },
+      {
+        "label": "Auto Scaling groups (Amazon EC2 Auto Scaling User Guide)",
+        "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/auto-scaling-groups.html"
+      }
+    ],
+    "relatedServices": [
+      "auto-scaling",
+      "ec2",
+      "elb"
+    ],
+    "relatedTerms": [
+      "vpc",
+      "cloudwatch"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "auto-scaling",
+      "multi-az",
+      "capacity-planning",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-042",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "For multiple systems that use Amazon EBS, Amazon RDS, Amazon DynamoDB, and Amazon EFS, you want to define backup schedules and retention periods centrally and be able to audit that no backups are missed. Which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Configure each service's automatic backup feature individually and periodically aggregate and report the settings with a Lambda function"
+      },
+      {
+        "choiceId": "B",
+        "text": "Create a backup plan and a backup vault in AWS Backup and assign resources based on tags"
+      },
+      {
+        "choiceId": "C",
+        "text": "Manage backups for all target services centrally with Amazon Data Lifecycle Manager policies"
+      },
+      {
+        "choiceId": "D",
+        "text": "Evaluate compliance of backup settings with AWS Config rules and run automatic remediation actions when non-compliant"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "AWS Backup is a managed service that centrally manages backups spanning multiple AWS services through a single definition called a backup plan. Because resources can be assigned by tag, it is easy to prevent missed backups, and it also supports auditing through compliance reports.",
+    "choiceExplanations": {
+      "A": "Incorrect. Because each service has a different configuration method and a different way of specifying retention, consistency cannot be maintained and new resources are easily missed. The operational burden of building your own aggregation also remains.",
+      "B": "Correct. A backup plan defines frequency, retention, and copy destinations, and assigning resources by tag means new resources automatically become protected as well.",
+      "C": "Incorrect. Amazon Data Lifecycle Manager can only manage EBS snapshots and EBS-backed AMIs. RDS, DynamoDB, and EFS are out of scope.",
+      "D": "Incorrect. AWS Config is a service that evaluates whether configurations comply with defined rules; it does not take backups itself. It can support auditing, but it does not satisfy the central requirement of centralized backup management."
+    },
+    "practicalNote": "AWS Backup is a managed service for defining, running, and auditing backups across multiple AWS services. Supported resources include EBS volumes, EC2 instances, RDS / Aurora, DynamoDB, EFS, FSx, Storage Gateway, S3, DocumentDB, and Neptune, and instead of using each service's individual backup feature, a single definition called a backup plan specifies frequency, backup window, retention, transition to cold storage, and copies to another Region or account. The backups taken are stored in a backup vault and encrypted with a KMS key.\n\nThere are two operational essentials. First, assigning protected resources by tag means newly created resources automatically have the backup plan applied, structurally preventing missed backups, the most common accident. Second, enabling Vault Lock puts backups into a WORM (Write Once Read Many) state that forbids deletion or shortening of retention, achieving the \"backups that cannot be erased\" required for ransomware protection and regulatory compliance. Combined with AWS Organizations you can apply backup policies across the whole organization, and AWS Backup Audit Manager can generate compliance reports automatically.\n\nOn SAA-C03, requirements such as \"centrally manage backups for multiple services,\" \"standardize retention policies,\" and \"support auditing\" make AWS Backup the correct answer. Amazon Data Lifecycle Manager is sometimes offered as a distractor, but you can distinguish it because DLM covers only EBS snapshots and EBS-backed AMIs. It is also worth remembering that AWS Config is a service that evaluates whether configurations comply, not a service that takes backups.",
+    "officialDocs": [
+      {
+        "label": "AWS Backup (AWS official)",
+        "url": "https://aws.amazon.com/backup/"
+      },
+      {
+        "label": "What is AWS Backup (AWS Backup Developer Guide)",
+        "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html"
+      },
+      {
+        "label": "Amazon EBS (AWS official)",
+        "url": "https://aws.amazon.com/ebs/"
+      }
+    ],
+    "relatedServices": [
+      "aws-backup",
+      "ebs",
+      "rds",
+      "dynamodb",
+      "efs"
+    ],
+    "relatedTerms": [
+      "aws-config",
+      "kms",
+      "organizations"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "backup",
+      "retention",
+      "governance",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-043",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "You have a batch process that runs five Lambda functions in sequence, currently chained so that each function invokes the next one directly. When it fails partway through, it is difficult to trace which step failed and to re-run only the failed step. Which improvement is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Consolidate the five operations into a single Lambda function and implement error handling with try-catch inside the function"
+      },
+      {
+        "choiceId": "B",
+        "text": "Chain the function invocations with Amazon SQS queues and let failed messages be redelivered after the visibility timeout expires"
+      },
+      {
+        "choiceId": "C",
+        "text": "Trigger each function in order with Amazon EventBridge rules and output failure events to CloudWatch Logs"
+      },
+      {
+        "choiceId": "D",
+        "text": "Define the workflow as an AWS Step Functions state machine and configure Retry and Catch on each state"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "AWS Step Functions defines each step of a workflow as a state and visualizes it as execution history. Because you can declaratively configure Retry (retries with backoff) and Catch (branching on error) per state, tracing where a failure occurred and re-running parts of the workflow become easy.",
+    "choiceExplanations": {
+      "A": "Incorrect. Consolidating into a single function makes it easy to hit the execution time limit (15 minutes maximum), and a failure means starting over from the beginning. It also does not improve visibility into which step failed.",
+      "B": "Incorrect. Chaining with SQS does provide loose coupling, but the workflow as a whole has no state for how far it has progressed, and branching, parallel execution, and per-step re-runs must all be implemented yourself.",
+      "C": "Incorrect. EventBridge is responsible for delivering events; it does not manage workflow state or control retries at the step level. Even if failures are recorded, controlling re-runs must be built yourself.",
+      "D": "Correct. You can identify the failed state from the execution history graph, and Retry / Catch let you declaratively write automatic recovery from transient failures and compensating actions on failure."
+    },
+    "practicalNote": "AWS Step Functions is an orchestration service that defines multiple service calls as a state machine and has the service manage its execution state. State types include Task (calling Lambda or other services), Choice (conditional branching), Parallel (parallel execution), Map (iteration over an array), Wait, and Fail / Succeed, described in a JSON-based definition called the Amazon States Language. Because each Task can declaratively specify Retry (retry count, interval, and backoff rate per error type) and Catch (the state to transition to on error), retry and rollback logic can be separated from application code.\n\nA chain in which one Lambda function directly invokes the next works while it is small but quickly becomes unmanageable as steps increase. Because the overall progress is not stored anywhere, identifying the failure point is difficult, and resuming from the middle must be built yourself. There is also the waste that the calling Lambda continues to be billed while it waits for the callee to finish. Moving to Step Functions leaves a history per execution, lets you identify the failed state at a glance in the console graph, and makes re-running with substituted input easy. There are two workflow types: Standard (up to 1 year, strict per-execution history, billed per state transition) and Express (up to 5 minutes, high throughput, billed by execution time and memory). Choose Standard for long-running business workflows and Express for large volumes of short event processing.\n\nOn SAA-C03, requirements such as \"run multi-step processing in order,\" \"trace which step failed,\" and \"build in retries and error handling\" make Step Functions the correct answer. Distractors include consolidating into Lambda, chaining with SQS, and chaining with EventBridge. The distinction that SQS and EventBridge are responsible for loosely coupled message delivery and do not manage workflow state is the deciding factor.",
+    "officialDocs": [
+      {
+        "label": "AWS Step Functions (AWS official)",
+        "url": "https://aws.amazon.com/step-functions/"
+      },
+      {
+        "label": "What is Step Functions (AWS Step Functions Developer Guide)",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html"
+      },
+      {
+        "label": "Error handling in Step Functions workflows (AWS Step Functions Developer Guide)",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "lambda",
+      "sqs",
+      "eventbridge"
+    ],
+    "relatedTerms": [
+      "cloudwatch",
+      "x-ray"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "step-functions",
+      "workflow",
+      "retry",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-044",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "You run servers for a real-time multiplayer game that uses UDP on Network Load Balancers in multiple Regions. You want to reduce latency for players worldwide and switch to another Region quickly during a Regional failure. In addition, the destination IP addresses embedded in the client cannot be changed. Which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Global Accelerator"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon Route 53 latency-based routing"
+      },
+      {
+        "choiceId": "D",
+        "text": "Cross-Region configuration of an Application Load Balancer"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Global Accelerator provides two fixed anycast IP addresses and forwards traffic from the nearest edge location over the AWS global network to the optimal endpoint. It supports both TCP and UDP, and switchover on health check failure is fast because it does not depend on DNS TTLs.",
+    "choiceExplanations": {
+      "A": "Correct. It satisfies all of the requirements: static IPs, UDP support, low latency over the AWS backbone, and fast failover that does not depend on DNS.",
+      "B": "Incorrect. CloudFront is a CDN for HTTP/HTTPS content delivery and cannot handle UDP traffic. It is also not a mechanism that provides fixed IP addresses as a destination.",
+      "C": "Incorrect. Latency-based routing can return the Region with the lowest latency, but because it is DNS-based it is affected by client and resolver cache TTLs and switching takes time. It also does not meet the requirement to keep the IP addresses fixed.",
+      "D": "Incorrect. An Application Load Balancer is a layer 7 load balancer for HTTP/HTTPS and does not support UDP. Registering instances in another Region is actually possible with an IP address type target group and inter-Region VPC peering, but that does not help here because UDP cannot be handled at all, and an ALB does not provide static IP addresses either."
+    },
+    "practicalNote": "AWS Global Accelerator issues two anycast static IP addresses per accelerator, receives traffic destined for those addresses at the nearest AWS edge location, and carries it to Regional endpoints over the AWS global network (backbone). Endpoints can be Network Load Balancers, Application Load Balancers, EC2 instances, or Elastic IPs, and you can control distribution with per-Region traffic dials and per-endpoint weights. Compared with paths over the internet, packet loss and jitter are reduced, and it supports both TCP and UDP.\n\nThe first branch point is how it differs from CloudFront. CloudFront targets HTTP / HTTPS and caches content at the edge, making it strong for static content and video delivery. Global Accelerator has no cache and optimizes packet forwarding regardless of protocol, so it suits non-HTTP, low-latency workloads such as gaming, VoIP, IoT, and financial trading. The difference from Route 53 latency-based routing lies in switchover speed. Route 53 changes the destination in the DNS response, so old destinations continue to be used until client and resolver caches expire. Global Accelerator switches the internal forwarding target while the destination IP seen by the client stays the same, so switchover is unaffected by DNS caching. In addition, static IPs fit requirements to register addresses in firewall allow lists or to embed IPs in clients.\n\nOn SAA-C03, keywords such as \"UDP,\" \"non-HTTP protocol,\" \"static IPs required,\" \"fast failover that does not depend on DNS,\" and \"reduce global latency\" point to Global Accelerator. Distractors include CloudFront (HTTP only, caching purpose), Route 53 latency-based routing (DNS-dependent, slow switchover), and ALBs spanning Regions (with an IP address type target group and inter-Region VPC peering you can register instances in another Region, while instance ID type targets are limited to the load balancer's own VPC; either way an ALB is a layer 7 load balancer for HTTP / HTTPS, does not support UDP, and provides no static IPs, so it cannot meet the requirements here). Whether the question is about CloudFront or Global Accelerator can be told from the protocol involved and whether caching is needed.",
+    "officialDocs": [
+      {
+        "label": "AWS Global Accelerator (AWS official)",
+        "url": "https://aws.amazon.com/global-accelerator/"
+      },
+      {
+        "label": "What is AWS Global Accelerator (AWS Global Accelerator Developer Guide)",
+        "url": "https://docs.aws.amazon.com/global-accelerator/latest/dg/what-is-global-accelerator.html"
+      },
+      {
+        "label": "Amazon Route 53 (AWS official)",
+        "url": "https://aws.amazon.com/route53/"
+      }
+    ],
+    "relatedServices": [
+      "elb",
+      "route53",
+      "cloudfront"
+    ],
+    "relatedTerms": [
+      "vpc",
+      "ec2"
+    ],
+    "relatedComparisons": [
+      "route53-vs-cloudfront-vs-global-accelerator",
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "global-accelerator",
+      "latency",
+      "anycast",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-045",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "A commercial database running on EC2 constantly demands around 30,000 IOPS and needs to keep latency variation small. Which configuration is the most appropriate for meeting this requirement with a single EBS volume?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create a large gp2 volume and use the baseline IOPS that grows in proportion to capacity"
+      },
+      {
+        "choiceId": "B",
+        "text": "Create a gp3 volume and provision 30,000 IOPS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Create an io2 volume and provision the required IOPS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Create an st1 (Throughput Optimized HDD) volume"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "The IOPS limit for general purpose SSD (gp2 / gp3) is 16,000 IOPS per volume. To sustain 30,000 IOPS on a single volume, you need io2 (or io2 Block Express), which is Provisioned IOPS SSD. io2 provides consistent low latency and high durability.",
+    "choiceExplanations": {
+      "A": "Incorrect. gp2 IOPS grow at 3 IOPS per GiB of capacity, but the maximum is 16,000 IOPS. Increasing capacity never reaches 30,000 IOPS, and you cannot specify IOPS independently of capacity.",
+      "B": "Incorrect. gp3 lets you provision IOPS and throughput independently of capacity, but the limit is 16,000 IOPS per volume. You cannot specify 30,000 IOPS.",
+      "C": "Correct. io2 lets you provision IOPS and delivers performance well above 16,000 IOPS on a single volume with consistent low latency.",
+      "D": "Incorrect. st1 is HDD-based and optimized for large-block sequential reads and writes. It is not suited to workloads with heavy random I/O such as databases."
+    },
+    "practicalNote": "Amazon EBS volume types divide broadly into SSD-based and HDD-based. SSD types are for workloads where random I/O (IOPS) matters and include general purpose SSD gp2 / gp3 and Provisioned IOPS SSD io1 / io2 / io2 Block Express. HDD types are for workloads where sequential throughput matters and include Throughput Optimized HDD st1 and Cold HDD sc1. As a broad rule, databases and transaction processing use SSD types, while big data processing and log processing use HDD types.\n\nThe difference between gp2 and gp3 is how performance is determined. gp2 ties its baseline of 3 IOPS per GiB to capacity and depends on a burst bucket at small sizes. gp3 has a baseline of 3,000 IOPS / 125 MiB/s and lets you provision additional IOPS and throughput independently of capacity, so you no longer need to inflate capacity just for performance, and it is cheaper than gp2 at the same capacity. However, both gp2 and gp3 have a per-volume IOPS limit of 16,000, and requirements above that call for the io2 family. io2 supports Provisioned IOPS and offers higher durability than general purpose SSD, and io2 Block Express supports even higher IOPS and throughput. Note that EBS performance is also limited by the EC2 instance's EBS bandwidth, not just by the volume, so EBS-optimized instances and an appropriate instance size are prerequisites.\n\nOn SAA-C03, questions that present a required IOPS number and ask you to select the appropriate volume type are a staple. The basic axis is to split between gp3 and io2 at the general purpose SSD limit of 16,000 IOPS, and phrases such as \"consistent low latency\" or \"mission-critical database\" make io2 more likely. Conversely, \"large sequential throughput,\" \"log processing,\" or \"cost focused\" make st1 / sc1 the correct answer.",
+    "officialDocs": [
+      {
+        "label": "Amazon EBS (AWS official)",
+        "url": "https://aws.amazon.com/ebs/"
+      },
+      {
+        "label": "Amazon EBS volume types (Amazon EBS User Guide)",
+        "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html"
+      },
+      {
+        "label": "Amazon EC2 (AWS official)",
+        "url": "https://aws.amazon.com/ec2/"
+      }
+    ],
+    "relatedServices": [
+      "ebs",
+      "ec2",
+      "rds"
+    ],
+    "relatedTerms": [
+      "s3",
+      "efs"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "ebs",
+      "iops",
+      "storage",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-046",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "You want to run ad hoc SQL analysis just a few times a month on several TB of access logs accumulated in S3. If you want to avoid the always-on cost and infrastructure management of an analytics platform, which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create an Amazon Redshift provisioned cluster, load the logs, and query them"
+      },
+      {
+        "choiceId": "B",
+        "text": "Run SQL queries directly against the data in S3 with Amazon Athena"
+      },
+      {
+        "choiceId": "C",
+        "text": "Ingest the logs into an Amazon RDS for PostgreSQL instance and aggregate them with SQL"
+      },
+      {
+        "choiceId": "D",
+        "text": "Launch an Amazon EMR cluster and aggregate the data with Spark SQL"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Amazon Athena is a serverless query service that runs SQL directly against data in S3 and charges only for the amount of data scanned. Because no cluster needs to be built or kept running, it is the best fit for infrequent ad hoc analysis.",
+    "choiceExplanations": {
+      "A": "Incorrect. A Redshift provisioned cluster is billed the entire time it is running. It also requires loading the logs, which is excessive for a few uses per month.",
+      "B": "Correct. Once you register table definitions in the Glue Data Catalog, you can query immediately while leaving the data in S3.",
+      "C": "Incorrect. RDS is billed as an always-on instance, and it also requires processing to ingest several TB of logs and securing storage. It is not suited to ad hoc analysis.",
+      "D": "Incorrect. An EMR cluster can be operated only when needed, but it requires cluster configuration management and job implementation, which is excessive operational burden when SQL analysis is the only goal."
+    },
+    "practicalNote": "Amazon Athena is a serverless query service that runs standard SQL directly against data stored in S3. You do not need to load data into another database; you can query simply by registering the table schema in the AWS Glue Data Catalog. It supports formats such as CSV, JSON, ORC, Parquet, and Avro, and is widely used for analyzing AWS-generated logs such as CloudTrail logs, VPC Flow Logs, ALB access logs, and CloudFront logs. Billing is usage-based on the amount of data a query scans, with no charge for cluster uptime.\n\nWhat drives cost and performance is how much you can reduce the scanned volume. Converting data to a columnar format such as Parquet or ORC dramatically reduces scanned volume compared with CSV or JSON because only the needed columns are read. In addition, if you partition S3 keys by year / month / day and specify the partition columns in the WHERE clause, files outside the target range are not read at all. As data grows, combine compression (Snappy / GZIP) as well. Among analytics options, Amazon Redshift suits repeated, standardized dashboards and BI use cases that need sub-second responses, while Amazon EMR and AWS Glue suit large-scale ETL and machine learning preprocessing.\n\nOn SAA-C03, keywords such as \"analyze data in S3 with SQL as-is,\" \"start serverless,\" \"ad hoc analysis,\" and \"pay only for what you query\" point to Athena. Distractors include a Redshift cluster (always-on cost), loading into RDS (ingestion burden), and an EMR cluster (operational burden). Conversely, it is worth remembering that conditions such as \"perform large aggregations quickly on a daily basis\" or \"many users viewing dashboards concurrently\" make Redshift the correct answer.",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena (AWS official)",
+        "url": "https://aws.amazon.com/athena/"
+      },
+      {
+        "label": "What is Amazon Athena (Amazon Athena User Guide)",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/what-is.html"
+      },
+      {
+        "label": "Amazon Redshift (AWS official)",
+        "url": "https://aws.amazon.com/redshift/"
+      }
+    ],
+    "relatedServices": [
+      "athena",
+      "s3",
+      "glue",
+      "redshift"
+    ],
+    "relatedTerms": [
+      "quicksight",
+      "rds"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "athena",
+      "analytics",
+      "serverless",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-047",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "You receive tens of thousands of telemetry records per second from IoT devices and want to perform two processes in parallel — real-time anomaly detection and accumulation into an analytics platform — while preserving the chronological order per device. If one of the processes has a defect, you need to be able to re-read and reprocess the last 24 hours of data. Which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "An Amazon SQS standard queue"
+      },
+      {
+        "choiceId": "B",
+        "text": "An Amazon SQS FIFO queue"
+      },
+      {
+        "choiceId": "C",
+        "text": "Fan out by subscribing two Lambda functions to an Amazon SNS topic"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Kinesis Data Streams"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Kinesis Data Streams guarantees ordering per partition key (within a shard) and keeps records on the stream for the retention period (24 hours by default, up to 365 days). Because multiple consumers can read the same records from independent positions, it satisfies both the parallel processing and the reprocessing requirements.",
+    "choiceExplanations": {
+      "A": "Incorrect. A standard queue does not guarantee ordering. Messages also assume a single consumer processes and deletes them, so you can neither feed the same data to two processes nor re-read deleted messages.",
+      "B": "Incorrect. A FIFO queue guarantees ordering per message group, but messages are deleted after consumption so past data cannot be re-read. It also does not meet the requirement to deliver the same message to two independent processes.",
+      "C": "Incorrect. SNS can deliver the same message to multiple subscribers, but with a standard topic delivery happens only once, with no retention or re-read mechanism and no ordering guarantee. Ordering requires a FIFO topic, and a FIFO topic can only deliver to SQS queues (FIFO or standard). You cannot subscribe a Lambda function directly, so you have to put an SQS queue in between, and if that queue is an SQS standard queue the message group ID is not passed on, so the ordering guarantee is lost anyway.",
+      "D": "Correct. Ordering within a shard, re-reading within the retention period, and independent reads by multiple consumers are three characteristics that all match the requirements."
+    },
+    "practicalNote": "Amazon Kinesis Data Streams is a distributed streaming service that ingests large volumes of records in real time and retains them on the stream for a period. A stream is divided into shards, and the destination shard for a record is determined by a hash of the partition key that the producer specifies. Records with the same partition key always go to the same shard and are read out in the order they were put, which achieves ordering guarantees per unit such as \"per device\" or \"per user.\" Capacity modes include provisioned (you manage the shard count) and on-demand (automatically adjusted to traffic).\n\nThe decisive difference from queues is that records do not disappear when consumed. A consumer holds its own read position (iterator) and can re-read past records at any time during the retention period (24 hours by default, up to 365 days). This property naturally enables a fan-out design in which multiple consumer applications read the same stream independently without interfering with each other (enhanced fan-out even gives each consumer dedicated throughput). SQS, on the other hand, is a work queue in which one consumer processes and deletes a message; re-reading after deletion is impossible, and standard queues do not guarantee ordering. SNS provides push-based fan-out, but a standard topic has no retention or re-read mechanism. If you simply need to deliver data into S3, Redshift, or OpenSearch, Amazon Data Firehose, which requires no shard management, may be more suitable.\n\nOn SAA-C03, when keywords such as \"preserve ordering,\" \"feed the same data to multiple processes,\" \"reprocess by going back a certain period,\" and \"tens of thousands of records per second of streaming\" all appear, Kinesis Data Streams is the correct answer. Conversely, \"process exactly once while avoiding duplicates\" or \"a job queue that needs strict ordering\" points to SQS FIFO, and \"loosely coupled task distribution\" points to an SQS standard queue.",
+    "officialDocs": [
+      {
+        "label": "Amazon Kinesis Data Streams (AWS official)",
+        "url": "https://aws.amazon.com/kinesis/data-streams/"
+      },
+      {
+        "label": "What is Amazon Kinesis Data Streams (Amazon Kinesis Data Streams Developer Guide)",
+        "url": "https://docs.aws.amazon.com/streams/latest/dev/introduction.html"
+      },
+      {
+        "label": "Amazon Kinesis Data Streams terminology and concepts (Amazon Kinesis Data Streams Developer Guide)",
+        "url": "https://docs.aws.amazon.com/streams/latest/dev/key-concepts.html"
+      }
+    ],
+    "relatedServices": [
+      "kinesis",
+      "lambda",
+      "sqs",
+      "sns"
+    ],
+    "relatedTerms": [
+      "s3",
+      "dynamodb"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "kinesis",
+      "streaming",
+      "ordering",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-048",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "For an HPC workload, you want to connect multiple EC2 instances with low-latency, high-bandwidth inter-node communication. Which setting related to instance placement is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Place the instances in a cluster placement group"
+      },
+      {
+        "choiceId": "B",
+        "text": "Place the instances in a spread placement group"
+      },
+      {
+        "choiceId": "C",
+        "text": "Place the instances in a partition placement group"
+      },
+      {
+        "choiceId": "D",
+        "text": "Distribute the instances across multiple Availability Zones and manage them with an Auto Scaling group"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "A cluster placement group packs instances physically close together within a single Availability Zone, achieving low latency and high network throughput between nodes. It is the placement strategy suited to HPC and tightly coupled distributed computing.",
+    "choiceExplanations": {
+      "A": "Correct. Close placement minimizes inter-node communication latency and makes the most of the bandwidth between instances.",
+      "B": "Incorrect. A spread placement group distributes instances onto separate physical hardware to avoid simultaneous failures. It improves availability but does not improve inter-node latency.",
+      "C": "Incorrect. A partition placement group isolates the blast radius per partition for large distributed systems such as HDFS and Cassandra. Low-latency communication is not its purpose.",
+      "D": "Incorrect. Distributing across Availability Zones improves availability, but the physical distance between AZs increases communication latency. It is the opposite direction from the requirement."
+    },
+    "practicalNote": "EC2 placement groups specify where instances are placed on the underlying hardware, and there are three strategies: cluster, spread, and partition. A cluster placement group packs instances physically close together within a single Availability Zone, minimizing inter-node network latency and maximizing bandwidth. Use it for workloads where inter-node communication is the performance bottleneck, such as HPC, distributed machine learning training, and tightly coupled parallel computing. A spread placement group does the opposite, placing each instance on a different rack (an independent unit of power and network) to avoid simultaneous failures, which suits protecting a small number of critical instances. A partition placement group divides instances into logical groups called partitions and ensures partitions do not share racks, which is used for failure isolation in large distributed data stores such as HDFS, Cassandra, and Kafka.\n\nAs a design trade-off, a cluster placement group is confined to a single AZ precisely because it packs instances close together, concentrating them in the same failure domain and making it weak against AZ failures. If you need availability, you need a design such as preparing multiple cluster groups across AZs. Also, instances in a group are easier to place if you use the same instance type and launch them all at once; adding instances later can produce insufficient capacity errors. Additional factors for extracting network performance include using the Elastic Network Adapter (ENA) or the lower-latency Elastic Fabric Adapter (EFA), and enabling enhanced networking.\n\nOn SAA-C03, terms such as \"HPC,\" \"low-latency inter-node communication,\" and \"tightly coupled parallel processing\" point to cluster; \"distribute critical instances onto separate hardware\" points to spread; and \"failure isolation for a large distributed data store\" points to partition. Not mixing up the correspondence between the three names and their purposes translates directly into points in this area.",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 (AWS official)",
+        "url": "https://aws.amazon.com/ec2/"
+      },
+      {
+        "label": "Placement groups for your Amazon EC2 instances (Amazon EC2 User Guide)",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "vpc",
+      "ebs"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "placement-group",
+      "hpc",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-049",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "You will store audit logs in S3 that must be retained for 7 years for legal compliance. They are almost never referenced during the retention period, and even when an audit request arrives it is acceptable for retrieval to take about half a day. Which configuration is the most appropriate for minimizing the storage cost over 7 years?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Transition to S3 Standard-IA (Infrequent Access) with a lifecycle rule and retain for 7 years"
+      },
+      {
+        "choiceId": "B",
+        "text": "Transition to S3 Glacier Deep Archive with a lifecycle rule and delete via expiration after 7 years"
+      },
+      {
+        "choiceId": "C",
+        "text": "Transition to S3 Glacier Flexible Retrieval with a lifecycle rule and retain for 7 years"
+      },
+      {
+        "choiceId": "D",
+        "text": "Enable S3 Intelligent-Tiering and leave automatic tiering to the access pattern"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "S3 Glacier Deep Archive has the lowest storage price of any S3 storage class, and standard retrieval takes about 12 hours. That matches the conditions of \"almost never referenced\" and \"retrieval may take half a day,\" and it minimizes the storage cost over 7 years.",
+    "choiceExplanations": {
+      "A": "Incorrect. S3 Standard-IA can be retrieved immediately in milliseconds, but its storage price is much higher than the Glacier classes. Since immediate retrieval is not required here, it does not minimize cost.",
+      "B": "Correct. If you transition with a lifecycle rule and also define expiration-based deletion at the 7-year mark in the same rule, you can automate retention management as well.",
+      "C": "Incorrect. S3 Glacier Flexible Retrieval is an intermediate class retrievable in minutes to 12 hours, but its storage price is higher than Deep Archive. For a requirement that can wait half a day, you would be paying for retrieval speed you do not need.",
+      "D": "Incorrect. Intelligent-Tiering is a good option when the access pattern is unpredictable. When you already know the data is almost never accessed, as here, the per-object monitoring charge only makes it less favorable."
+    },
+    "practicalNote": "S3 storage classes are arranged along a trade-off between storage price and retrieval speed and cost. The instant-access classes are S3 Standard, S3 Standard-IA, S3 One Zone-IA, and S3 Glacier Instant Retrieval; all can be retrieved in milliseconds, storage price decreases in that order, and in exchange there are constraints such as retrieval charges and minimum storage durations (30 days for the IA classes, 90 days for Glacier Instant Retrieval). The archive classes are S3 Glacier Flexible Retrieval (90-day minimum, retrieval in minutes to 12 hours) and S3 Glacier Deep Archive (180-day minimum, standard retrieval within 12 hours and bulk retrieval within 48 hours), with Deep Archive offering the lowest storage price in S3.\n\nThe selection criteria come down to two points: how long you can wait for retrieval, and whether you can satisfy the minimum storage duration. Cases such as long-term retention of audit logs or compliance data, where the data is never referenced for most of the retention period and immediacy is not required even when it is, make Deep Archive the optimal answer. Conversely, \"a few times a year but retrieval must be immediate\" suits Glacier Instant Retrieval, and \"the access pattern is unpredictable\" suits S3 Intelligent-Tiering. Intelligent-Tiering moves objects between tiers automatically based on access, but adds a per-object monitoring and automation charge, so for data you know in advance is almost never accessed, moving directly to a fixed archive class is cheaper. Both transition and expiration can be declared in lifecycle rules, and the standard practice is to design all the way through to automatic deletion at the end of the retention period.\n\nOn SAA-C03, questions repeatedly embed three conditions — retention period, access frequency, and acceptable retrieval time — and ask you to select the matching storage class. Because \"within a few hours\" versus \"within 12 hours is fine\" is what separates Glacier Flexible Retrieval from Deep Archive, not skimming over the time wording is what decides your score. The fact that deleting before the minimum storage duration incurs charges for the remaining period is also asked in cost calculation questions.",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 storage classes (AWS official)",
+        "url": "https://aws.amazon.com/s3/storage-classes/"
+      },
+      {
+        "label": "Understanding and managing Amazon S3 storage classes (Amazon S3 User Guide)",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html"
+      },
+      {
+        "label": "Amazon S3 (AWS official)",
+        "url": "https://aws.amazon.com/s3/"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "aws-backup",
+      "cost-explorer"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "glacier",
+      "storage-class",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-050",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "CPU utilization on your production EC2 instances has stayed below 10% for a long period, suggesting the specifications may be excessive. If you want candidate instance types to migrate to presented based on an analysis of actual usage, which service is the most appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Set an EC2 cost budget in AWS Budgets and receive notifications when the threshold is exceeded"
+      },
+      {
+        "choiceId": "B",
+        "text": "Check the AWS Trusted Advisor \"Low Utilization Amazon EC2 Instances\" check"
+      },
+      {
+        "choiceId": "C",
+        "text": "Enable AWS Compute Optimizer and review the recommended instance types based on utilization metrics"
+      },
+      {
+        "choiceId": "D",
+        "text": "Collect custom metrics for memory utilization with Amazon CloudWatch and visualize them on a dashboard"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Compute Optimizer analyzes CloudWatch utilization metrics with machine learning and presents concrete recommended resource configurations, estimated savings, and performance risk for EC2 instances, Auto Scaling groups, EBS volumes, Lambda functions, and more. Presenting migration candidates is what matches the requirement.",
+    "choiceExplanations": {
+      "A": "Incorrect. AWS Budgets notifies you when a budget threshold is exceeded; it does not analyze which instances are oversized or propose migration targets.",
+      "B": "Incorrect. The Trusted Advisor cost optimization checks do detect low-utilization instances, but using them requires a Business or higher support plan, and recommending concrete migration target instance types based on utilization analysis is the domain of Compute Optimizer.",
+      "C": "Correct. It can be enabled for free, and you can review the comparison between current and recommended configurations along with estimated cost savings.",
+      "D": "Incorrect. Visualizing metrics helps you understand the current state, but there is no capability to judge and present appropriate instance types."
+    },
+    "practicalNote": "AWS Compute Optimizer analyzes resource utilization metrics collected by CloudWatch with machine learning and presents, for EC2 instances, EC2 Auto Scaling groups, EBS volumes, Lambda functions, ECS on Fargate services, commercial software licenses, and more, both whether the current configuration is over- or under-provisioned and the recommended migration target. Recommendations come with estimated cost savings and the performance risk of making the change, so you can judge right-sizing that does not sacrifice performance rather than simply moving to the cheapest type. Enabling it is free, and for EC2 the accuracy of recommendations improves if you send additional metrics such as memory utilization via the CloudWatch agent.\n\nServices related to cost optimization are divided into fine-grained roles and are easy to confuse. AWS Cost Explorer is a dashboard for visualizing and analyzing cost and usage trends, and it also provides Savings Plans and RI purchase recommendations as well as right-sizing recommendations. AWS Budgets is a mechanism that notifies you of actual or forecasted overruns against a budget threshold. AWS Trusted Advisor checks best practices in five areas — cost optimization, performance, security, fault tolerance, and service quotas — and has detection items such as \"Low Utilization Amazon EC2 Instances,\" but a Business or higher support plan is required to use the cost optimization checks fully. Cost Anomaly Detection uses machine learning to detect spending patterns that differ from the norm.\n\nOn SAA-C03, requirements such as \"recommend appropriate instance types based on utilization\" and \"we want to right-size\" make Compute Optimizer the correct answer. Distractors include Budgets (notification only), CloudWatch (visualization only), and Trusted Advisor (detects but does not present recommended types). Reading from the question which of detection, visualization, notification, or recommendation is being asked for is the key judgment axis in this area.",
+    "officialDocs": [
+      {
+        "label": "AWS Compute Optimizer (AWS official)",
+        "url": "https://aws.amazon.com/compute-optimizer/"
+      },
+      {
+        "label": "What is AWS Compute Optimizer (AWS Compute Optimizer User Guide)",
+        "url": "https://docs.aws.amazon.com/compute-optimizer/latest/ug/what-is-compute-optimizer.html"
+      },
+      {
+        "label": "AWS Cost Explorer (AWS official)",
+        "url": "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "cloudwatch",
+      "trusted-advisor",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "aws-budgets",
+      "auto-scaling"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "compute-optimizer",
+      "rightsizing",
+      "cost",
+      "ec2"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
   }
 ]
