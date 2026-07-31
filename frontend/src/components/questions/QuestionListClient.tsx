@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { getDictionary } from "../../i18n/dictionaries";
-import type { Locale } from "../../i18n/locales";
+import { createLocalizedPath, type Locale } from "../../i18n/locales";
 import {
   QUESTION_CATEGORIES,
   QUESTION_DIFFICULTIES,
@@ -113,7 +113,10 @@ export function QuestionListClient({
           {filteredQuestions.map((question) => (
             <Link
               key={question.questionId}
-              href={`/questions/${question.questionId}`}
+              href={createLocalizedPath(
+                locale,
+                `/questions/${question.questionId}`,
+              )}
               className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
             >
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
