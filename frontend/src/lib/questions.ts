@@ -1,3 +1,4 @@
+import { getDictionary } from "../i18n/dictionaries";
 import type {
   Question,
   QuestionCategory,
@@ -6,16 +7,18 @@ import type {
   QuestionDifficultySummary,
 } from "../types/question";
 
-export const QUESTION_CATEGORY_LABELS: Record<QuestionCategory, string> = {
-  "Cloud Concepts": "クラウドの概念",
-  "Security and Compliance": "セキュリティとコンプライアンス",
-  "Cloud Technology and Services": "クラウド技術とサービス",
-  "Billing, Pricing, and Support": "請求・料金・サポート",
-  "Secure Architectures": "セキュアなアーキテクチャ",
-  "Resilient Architectures": "耐障害性のあるアーキテクチャ",
-  "High-Performing Architectures": "高性能なアーキテクチャ",
-  "Cost-Optimized Architectures": "コスト最適化されたアーキテクチャ",
-};
+/**
+ * 日本語のカテゴリラベル。
+ *
+ * 実体は ja 辞書の `questions.categoryLabels` であり、多言語版と同一の
+ * 単一定義を参照する（ja 固定の重複定義を残さないため）。
+ *
+ * 型注釈 `Record<QuestionCategory, string>` により、辞書側の
+ * `QuestionCategoryKey` に `QuestionCategory` のいずれかが欠けた場合は
+ * ここでコンパイルエラーになる。
+ */
+export const QUESTION_CATEGORY_LABELS: Record<QuestionCategory, string> =
+  getDictionary("ja").questions.categoryLabels;
 
 export const QUESTION_CATEGORY_DESCRIPTIONS: Record<QuestionCategory, string> = {
   "Cloud Concepts":

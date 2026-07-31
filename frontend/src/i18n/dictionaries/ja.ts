@@ -32,6 +32,23 @@ export type TermLevelKey = "beginner" | "intermediate" | "advanced";
 
 export type QuestionDifficultyKey = "easy" | "normal" | "hard";
 
+/**
+ * 模擬問題のカテゴリキー。
+ *
+ * 値は AWS 公式試験ガイドのドメイン名に対応する識別子であり、
+ * `types/question.ts` の `QuestionCategory` と同一集合であることが
+ * `lib/questions.ts` の `QUESTION_CATEGORY_LABELS` の型注釈で担保される。
+ */
+export type QuestionCategoryKey =
+  | "Cloud Concepts"
+  | "Security and Compliance"
+  | "Cloud Technology and Services"
+  | "Billing, Pricing, and Support"
+  | "Secure Architectures"
+  | "Resilient Architectures"
+  | "High-Performing Architectures"
+  | "Cost-Optimized Architectures";
+
 export type QuestionsDictionary = {
   breadcrumbHome: string;
   breadcrumbQuestions: string;
@@ -59,6 +76,19 @@ export type QuestionsDictionary = {
   noPreviousQuestion: string;
   noNextQuestion: string;
   examDumpDisclaimer: string;
+  // 一覧ページ（フィルタ / カード / 空状態）で使う文言
+  difficultyLabel: string;
+  categoryLabels: Record<QuestionCategoryKey, string>;
+  allCategoriesLabel: string;
+  allDifficultiesLabel: string;
+  filteredCountPrefix: string;
+  filteredCountSeparator: string;
+  filteredCountSuffix: string;
+  labelSeparator: string;
+  noRelatedServicesLabel: string;
+  viewQuestionLabel: string;
+  emptyStateTitle: string;
+  emptyStateDescription: string;
 };
 
 export type UiDictionary = {
@@ -352,5 +382,26 @@ export const jaDictionary: UiDictionary = {
     noPreviousQuestion: "前の問題はありません",
     noNextQuestion: "次の問題はありません",
     examDumpDisclaimer: "本サイトの問題はオリジナルであり、実際の試験問題（試験ダンプ）ではありません。",
+    difficultyLabel: "難易度",
+    categoryLabels: {
+      "Cloud Concepts": "クラウドの概念",
+      "Security and Compliance": "セキュリティとコンプライアンス",
+      "Cloud Technology and Services": "クラウド技術とサービス",
+      "Billing, Pricing, and Support": "請求・料金・サポート",
+      "Secure Architectures": "セキュアなアーキテクチャ",
+      "Resilient Architectures": "耐障害性のあるアーキテクチャ",
+      "High-Performing Architectures": "高性能なアーキテクチャ",
+      "Cost-Optimized Architectures": "コスト最適化されたアーキテクチャ",
+    },
+    allCategoriesLabel: "すべてのカテゴリ",
+    allDifficultiesLabel: "すべての難易度",
+    filteredCountPrefix: "表示中：",
+    filteredCountSeparator: "問 / 全",
+    filteredCountSuffix: "問",
+    labelSeparator: "：",
+    noRelatedServicesLabel: "関連サービスなし",
+    viewQuestionLabel: "問題を見る →",
+    emptyStateTitle: "条件に一致する問題がありません。",
+    emptyStateDescription: "カテゴリまたは難易度の条件を変更してください。",
   },
 };
