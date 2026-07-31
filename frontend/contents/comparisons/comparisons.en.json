@@ -329,5 +329,21 @@
     "publishedAt": "2026-07-25",
     "updatedAt": "2026-07-25",
     "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-013",
+    "slug": "nat-gateway-vs-nat-instance-vs-vpc-endpoint",
+    "title": "Differences between NAT Gateway, NAT instances, and VPC endpoints, explained for beginners",
+    "description": "Organizes the differences between NAT Gateway, NAT instances, and VPC endpoints — services that are easy to confuse when designing traffic paths out of a private subnet — covering purpose, pricing, availability, and when to use gateway versus interface endpoints.",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": ["SAA-C03"],
+    "services": ["nat-gateway", "nat-instance", "vpc-endpoint"],
+    "tags": ["networking", "vpc", "comparison", "saa"],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "locale": "en"
   }
 ]

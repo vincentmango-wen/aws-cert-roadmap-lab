@@ -1,0 +1,225 @@
+# Differences between NAT Gateway, NAT instances, and VPC endpoints
+
+## Bottom line
+
+All three show up in the same situation: a resource in a private subnet needs to talk to something outside the subnet.
+
+However, their **purposes are the exact opposite of each other**.
+
+- NAT Gateway and NAT instances exist to **get out to the internet**
+- VPC endpoints exist to **avoid going out to the internet**
+
+Mixing these two up leads to both bad designs and wrong exam answers.
+
+| Service | In one line | Main use cases |
+|---|---|---|
+| NAT Gateway | AWS-managed NAT that lets private subnets reach the internet | OS patching, calling external APIs |
+| NAT instance | A NAT you build yourself on EC2, for the same outbound purpose | Learning and test environments, extremely small cost-sensitive setups |
+| VPC endpoint | A way to keep traffic to AWS services inside the VPC, without touching the internet | Private access to S3 and DynamoDB, internal traffic over PrivateLink |
+
+When in doubt, use this quick test:
+
+- Need to reach arbitrary destinations on the internet: NAT Gateway
+- Want to try the cheapest possible NAT for learning or testing: NAT instance
+- The only destinations are AWS services such as S3 or DynamoDB: VPC endpoint
+- Want to cut NAT Gateway data processing charges: add a VPC endpoint so S3 traffic bypasses the NAT Gateway
+
+## Comparison table
+
+| Item | NAT Gateway | NAT instance | VPC endpoint |
+|---|---|---|---|
+| Purpose | Go out to the internet | Go out to the internet | Stay off the internet |
+| What it actually is | An AWS-managed NAT service | An EC2 instance you launch and manage | A route table entry (gateway type) or an ENI (interface type) |
+| Reachable destinations | Any destination on the internet | Any destination on the internet | Only supported AWS services |
+| Operational responsibility | AWS handles patching and scaling | OS patching, monitoring, and recovery are all on you | Managed by AWS |
+| Availability | Redundant within an AZ; multi-AZ designs need one per AZ | A single instance is a single point of failure; failover is your own design | Gateway type is redundant within the Region; interface type places an ENI per AZ |
+| Bandwidth | Scales automatically (up to 100 Gbps) | Capped by the network performance of the instance type | Follows the limits of the AWS service being used |
+| Pricing | Hourly charge + data processing charge | EC2 instance charges (plus EBS and data transfer) | Gateway type has no additional charge; interface type is hourly + data processing |
+| Security groups | Cannot be attached (use the subnet's network ACL) | Can be attached, because it is an EC2 instance | Can be attached to the ENI of an interface endpoint (not for gateway type) |
+| Internet gateway | Required (placed in a public subnet) | Required (placed in a public subnet) | Not required |
+| Signature pitfall | Without one per AZ you pay cross-AZ data transfer and lose all AZs when one fails | **Disabling the source/destination check is mandatory** | Only S3 and DynamoDB support the gateway type |
+| Exam keywords | managed NAT, per-AZ, outbound only | source/destination check, EC2-based NAT | gateway endpoint, interface endpoint, PrivateLink |
+
+## Beginner-friendly explanation
+
+### NAT Gateway
+
+NAT Gateway is an AWS-managed service that lets resources in a private subnet **reach out to the internet**.
+
+You place the NAT Gateway in a public subnet and point the `0.0.0.0/0` route of the private subnet's route table at it.
+
+```text
+Private Subnet          Public Subnet
+EC2 ──0.0.0.0/0──▶ NAT Gateway ──▶ Internet Gateway ──▶ Internet
+```
+
+Traffic is **outbound only**. Nothing on the internet can initiate a connection into your EC2 instance through a NAT Gateway.
+
+It is what you use when you want to pull OS patches without giving the instance a public IP address.
+
+### NAT instance
+
+A NAT instance is the same role, built by hand on an EC2 instance.
+
+The topology is nearly identical: you put an EC2 instance in a public subnet and point the private subnet's route table at that instance.
+
+```text
+Private Subnet          Public Subnet
+EC2 ──0.0.0.0/0──▶ NAT Instance (EC2) ──▶ Internet Gateway ──▶ Internet
+```
+
+It can be cheaper, but availability, scaling, and OS patching all become your responsibility.
+
+There is also a pitfall unique to NAT instances. EC2 drops packets that are not addressed to itself by default, so **forwarding will not work at all unless you disable the source/destination check**.
+
+On modern AWS, NAT Gateway is the recommended choice for production.
+
+### VPC endpoint
+
+A VPC endpoint keeps traffic to AWS services **inside the VPC**.
+
+Because the traffic never leaves for the internet, neither a NAT Gateway nor an internet gateway is involved.
+
+There are two types, and the distinction matters both on the exam and in practice.
+
+**Gateway endpoint**
+
+- Supported by **only two services: S3 and DynamoDB**
+- Works by adding an entry (a route to a prefix list) in the route table
+- **No additional charge**
+- No ENI is created, so security groups cannot be attached
+- Only for traffic originating inside the VPC; it cannot be used directly from on-premises over Direct Connect or VPN
+
+**Interface endpoint (AWS PrivateLink)**
+
+- Supported by many AWS services (S3 can also be used through an interface endpoint)
+- Works by creating an **ENI with a private IP address** inside your subnet
+- Billed **hourly plus a data processing charge**
+- Security groups can be attached to the ENI
+- Reachable from on-premises over Direct Connect or VPN
+
+```text
+Private Subnet
+EC2 ──▶ Gateway Endpoint ──▶ Amazon S3      (via route table / no additional charge)
+EC2 ──▶ Interface Endpoint (ENI) ──▶ AWS Systems Manager  (PrivateLink / hourly charge)
+```
+
+## Exam points to remember
+
+### Points that often show up in SAA-C03
+
+- An EC2 instance in a private subnet needs to pull patches from an internet repository → NAT Gateway
+- When high availability is a requirement, **deploy one NAT Gateway per AZ** and point each AZ's private subnet route table at the NAT Gateway in the same AZ
+- NAT Gateway is billed both hourly and per gigabyte processed. If the workload pushes a lot of data to S3, **adding an S3 gateway endpoint to bypass the NAT Gateway** reduces cost (a recurring exam pattern)
+- "Access S3 without traversing the internet" → gateway VPC endpoint
+- "Reach an AWS service from on-premises over PrivateLink" → interface VPC endpoint
+- **Security groups cannot be attached to a NAT Gateway**; use the network ACL of its subnet instead
+- NAT Gateway is **outbound only**; connections cannot be initiated from the internet side
+- For NAT instances, **disabling the source/destination check is mandatory**
+- A NAT instance is an EC2 instance, so it can have a security group — a difference from NAT Gateway that is often tested
+- For outbound IPv6 traffic, use an **egress-only internet gateway** instead of a NAT Gateway
+- NAT Gateway comes in a public flavor (out to the internet) and a private flavor (VPC-to-VPC or on-premises traffic). "NAT Gateway" without qualification normally means the public one
+
+## How to choose in practice
+
+### When to pick NAT Gateway
+
+- You need OS patches or libraries on EC2 instances in a private subnet
+- You need to call an external SaaS API
+- The destinations cannot be limited to AWS services
+- You do not want to spend operational effort on availability and scaling
+
+Examples:
+
+- External API integration from application servers in a private subnet
+- Package updates via yum or apt
+- Connecting to an external payment gateway
+
+### When to pick a NAT instance
+
+- A learning or test environment where you want to understand how NAT itself works
+- A very small setup where even the fixed cost of a NAT Gateway matters
+- You want to co-locate a bastion host or custom packet processing with the NAT role
+
+For production, NAT Gateway is the default choice because of availability and patching overhead.
+
+If you do run a NAT instance, plan for disabling the source/destination check and for recovery (for example with Auto Scaling) as a package.
+
+### When to pick a VPC endpoint
+
+- The destinations can be limited to AWS services such as S3 and DynamoDB
+- Compliance requires that traffic never leaves for the internet
+- You want to reduce NAT Gateway data processing charges
+- You want to operate instances in private subnets through Systems Manager Session Manager (interface endpoint)
+
+Examples:
+
+- Shipping logs and backups to S3 (gateway endpoint)
+- Reading from and writing to DynamoDB (gateway endpoint)
+- Maintenance through Systems Manager (interface endpoint)
+
+### How this fits this project
+
+The MVP of this project is built around S3 + CloudFront + Lambda + DynamoDB and does not use a VPC.
+
+As a result, neither NAT Gateway nor VPC endpoints appear directly.
+
+Still, VPC route design is unavoidable on SAA-C03. You need to be able to draw which traffic goes out to the internet and which traffic does not.
+
+## Common misunderstandings
+
+### Misunderstanding 1: A VPC endpoint is a way to get out to the internet
+
+A VPC endpoint exists to **avoid** going out to the internet.
+
+Its purpose is the opposite of NAT Gateway, and it can only replace one when every destination is an AWS service that supports VPC endpoints.
+
+### Misunderstanding 2: Forgetting to disable the source/destination check on a NAT instance
+
+By default, EC2 drops packets that are not addressed to itself.
+
+Forwarding packets is the entire job of a NAT instance, so **traffic will not flow unless the source/destination check is disabled**.
+
+If the route table and security groups look correct but nothing gets through, check this first.
+
+### Misunderstanding 3: One NAT Gateway is enough for a multi-AZ design
+
+A NAT Gateway is an AZ-scoped resource.
+
+If you put one in a single AZ, an outage in that AZ takes down outbound traffic for private subnets in the other AZs too, and you pay cross-AZ data transfer in the meantime.
+
+For high availability, **create a NAT Gateway per AZ and reference it from the route table of the same AZ**.
+
+### Misunderstanding 4: Any AWS service can use a gateway endpoint
+
+Only **S3 and DynamoDB** support the gateway type.
+
+For any other service you want to keep inside the VPC, use an interface endpoint (PrivateLink). Interface endpoints are not free: they are billed hourly plus a data processing charge.
+
+### Misunderstanding 5: You can attach a security group to a NAT Gateway
+
+Security groups cannot be attached to a NAT Gateway.
+
+To control that traffic, use the network ACL of the subnet where the NAT Gateway lives, or the security groups of the resources in the private subnet.
+
+## Related terms
+
+- [Amazon VPC](/terms/vpc)
+- [Amazon EC2](/terms/ec2)
+- [Amazon S3](/terms/s3)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Systems Manager](/terms/systems-manager)
+
+## Related questions
+
+- [SAA practice questions](/questions/saa)
+
+## Summary
+
+The difference becomes easy to sort out once you frame it as "does this go out to the internet or not?"
+
+- NAT Gateway: managed outbound access, one per AZ, hourly plus data processing charges
+- NAT instance: self-built on EC2, cheap but entirely your responsibility, source/destination check must be disabled
+- VPC endpoint: stays off the internet; the gateway type covers only S3 and DynamoDB at no additional charge, while the interface type uses PrivateLink for many services with an hourly charge
+
+SAA-C03 repeatedly asks about designs that combine these three to lower cost while keeping traffic off the internet.

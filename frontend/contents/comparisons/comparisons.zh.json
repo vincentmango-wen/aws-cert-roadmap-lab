@@ -329,5 +329,21 @@
     "publishedAt": "2026-07-25",
     "updatedAt": "2026-07-25",
     "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-013",
+    "slug": "nat-gateway-vs-nat-instance-vs-vpc-endpoint",
+    "title": "NAT Gateway、NAT 執行個體、VPC 端點的差異 — 初學者向解說",
+    "description": "整理在私有子網路的通訊路徑設計中容易混淆的 NAT Gateway、NAT 執行個體、VPC 端點的差異，涵蓋目的、費用、可用性，以及 Gateway 型與 Interface 型的使用區分。",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": ["SAA-C03"],
+    "services": ["nat-gateway", "nat-instance", "vpc-endpoint"],
+    "tags": ["networking", "vpc", "comparison", "saa"],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "locale": "zh"
   }
 ]

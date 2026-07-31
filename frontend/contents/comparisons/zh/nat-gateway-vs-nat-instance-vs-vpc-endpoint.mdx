@@ -1,0 +1,225 @@
+# NAT Gateway、NAT 執行個體、VPC 端點的差異
+
+## 結論
+
+這三者都會出現在同一個情境:位於私有子網路的資源需要與外部通訊。
+
+但它們的**目的正好相反**。
+
+- NAT Gateway 與 NAT 執行個體是「**為了連上網際網路**」的機制
+- VPC 端點是「**為了不連上網際網路**」的機制
+
+一旦搞混這一點，架構設計與考試選項都會判斷錯誤。
+
+| 服務 | 一句話說明 | 主要使用情境 |
+|---|---|---|
+| NAT Gateway | AWS 受管的 NAT，讓私有子網路能連往網際網路 | 取得 OS 修補程式、呼叫外部 API |
+| NAT 執行個體 | 在 EC2 上自行建置的 NAT，同樣用於對外連線 | 學習與驗證環境、極小規模的成本節省 |
+| VPC 端點 | 將往 AWS 服務的流量封閉在 VPC 內，不經過網際網路 | 私密存取 S3 與 DynamoDB、透過 PrivateLink 的內部通訊 |
+
+如果一時難以判斷，可以先用以下方式分辨。
+
+- 需要連往網際網路上的任意目的地:NAT Gateway
+- 想以最低成本建置 NAT 來學習或驗證:NAT 執行個體
+- 通訊對象僅限 S3、DynamoDB 等 AWS 服務:VPC 端點
+- 想降低 NAT Gateway 的資料處理費用:加上 VPC 端點讓 S3 流量繞過 NAT Gateway
+
+## 比較表
+
+| 項目 | NAT Gateway | NAT 執行個體 | VPC 端點 |
+|---|---|---|---|
+| 目的 | 連往網際網路 | 連往網際網路 | 不連往網際網路 |
+| 實際型態 | AWS 受管的 NAT 服務 | 自行啟動與管理的 EC2 執行個體 | 路由表項目 (Gateway 型) 或 ENI (Interface 型) |
+| 可通訊的對象 | 網際網路上的任意目的地 | 網際網路上的任意目的地 | 僅限有支援的 AWS 服務 |
+| 維運責任 | AWS 負責修補與擴充 | OS 修補、監控、故障復原全部自行負責 | 由 AWS 受管 |
+| 可用性 | 在 AZ 內具備備援。多 AZ 架構需每個 AZ 各建一個 | 單一執行個體即為單點故障，需自行設計容錯移轉 | Gateway 型在區域內具備備援。Interface 型需每個 AZ 配置 ENI |
+| 頻寬 | 自動擴充 (最高 100 Gbps) | 上限取決於執行個體類型的網路效能 | 依所使用的 AWS 服務上限而定 |
+| 費用 | 時數計費 + 資料處理量計費 | EC2 執行個體費用 (加上 EBS 與資料傳輸) | Gateway 型無額外費用。Interface 型為時數計費 + 資料處理量計費 |
+| 安全群組 | 無法指派 (以子網路的 Network ACL 控制) | 因為是 EC2，可以指派 | 可指派給 Interface 型的 ENI (Gateway 型不可) |
+| 網際網路閘道 | 需要 (需置於公有子網路) | 需要 (需置於公有子網路) | 不需要 |
+| 專屬陷阱 | 未在每個 AZ 各建一個時會產生跨 AZ 傳輸費用，且會被單一 AZ 故障拖累 | **必須停用來源/目的地檢查** | 支援 Gateway 型的只有 S3 與 DynamoDB 兩項服務 |
+| 考試關鍵字 | managed NAT, per-AZ, outbound only | source/destination check, EC2-based NAT | gateway endpoint, interface endpoint, PrivateLink |
+
+## 初學者導向說明
+
+### NAT Gateway
+
+NAT Gateway 是讓私有子網路的資源能夠**連往網際網路**的 AWS 受管服務。
+
+作法是將 NAT Gateway 置於公有子網路，並在私有子網路的路由表中把 `0.0.0.0/0` 指向該 NAT Gateway。
+
+```text
+Private Subnet          Public Subnet
+EC2 ──0.0.0.0/0──▶ NAT Gateway ──▶ Internet Gateway ──▶ Internet
+```
+
+通訊方向**僅限對外 (outbound)**。網際網路端無法透過 NAT Gateway 主動連入 EC2。
+
+適合「不想為 EC2 指派公有 IP，但需要取得 OS 修補程式」這類需求。
+
+### NAT 執行個體
+
+NAT 執行個體是把同樣的角色，改為自行建置在 EC2 執行個體上。
+
+架構幾乎相同:在公有子網路放置 EC2，並讓私有子網路的路由表指向該執行個體。
+
+```text
+Private Subnet          Public Subnet
+EC2 ──0.0.0.0/0──▶ NAT Instance (EC2) ──▶ Internet Gateway ──▶ Internet
+```
+
+成本較低，但可用性、擴充性、OS 修補全部都要自行負責。
+
+此外，NAT 執行個體還有一個專屬陷阱。EC2 預設會丟棄「目的地不是自己」的封包，因此**若不停用來源/目的地檢查 (Source/Destination Check)，轉送根本不會成立**。
+
+在現在的 AWS 上，正式環境原則上建議使用 NAT Gateway。
+
+### VPC 端點
+
+VPC 端點是把往 AWS 服務的流量**封閉在 VPC 內**的機制。
+
+由於流量本來就不會流向網際網路，因此不需要 NAT Gateway 或網際網路閘道。
+
+它有兩種類型，這個區別在考試與實務上都很重要。
+
+**Gateway 型 (Gateway Endpoint)**
+
+- 支援的服務**只有 S3 與 DynamoDB 兩項**
+- 以在路由表中新增項目 (指向前綴清單的路由) 的方式運作
+- **無額外費用**
+- 不會建立 ENI，因此無法指派安全群組
+- 對象是來自 VPC 內部的流量，無法直接從地端透過 Direct Connect 或 VPN 使用
+
+**Interface 型 (Interface Endpoint / AWS PrivateLink)**
+
+- 支援眾多 AWS 服務 (S3 也可以使用 Interface 型)
+- 以在子網路內建立**具備私有 IP 的 ENI** 的方式運作
+- 會產生**時數計費 + 資料處理量計費**
+- 可以對 ENI 指派安全群組
+- 可從地端透過 Direct Connect 或 VPN 連達
+
+```text
+Private Subnet
+EC2 ──▶ Gateway Endpoint ──▶ Amazon S3      (經由路由表 / 無額外費用)
+EC2 ──▶ Interface Endpoint (ENI) ──▶ AWS Systems Manager  (PrivateLink / 時數計費)
+```
+
+## 考試常考重點
+
+### SAA-C03 常考內容
+
+- 私有子網路的 EC2 需要從網際網路上的儲存庫取得修補程式 → NAT Gateway
+- 若要求高可用性，應**在每個 AZ 各配置一個 NAT Gateway**，並讓各 AZ 私有子網路的路由表指向同一 AZ 的 NAT Gateway
+- NAT Gateway 同時有時數計費與資料處理量計費。若架構會往 S3 傳送大量資料，**加上 S3 的 Gateway 型 VPC 端點以繞過 NAT Gateway**即可降低成本 (常見題型)
+- 「不經過網際網路存取 S3」→ Gateway 型 VPC 端點
+- 「從地端透過 PrivateLink 連達 AWS 服務」→ Interface 型 VPC 端點
+- NAT Gateway **無法指派安全群組**，需以其所在子網路的 Network ACL 控制
+- NAT Gateway **僅供對外連線**，無法由網際網路端主動建立連線
+- NAT 執行個體**必須停用來源/目的地檢查**
+- NAT 執行個體是 EC2，因此可以指派安全群組，這一點常被拿來與 NAT Gateway 對比出題
+- IPv6 的對外流量要使用 **Egress-Only Internet Gateway**，而非 NAT Gateway
+- NAT Gateway 分為連往網際網路的公有型，以及用於 VPC 之間或地端通訊的私有型。單講「NAT Gateway」時通常指公有型
+
+## 實務上的使用判斷
+
+### 適合採用 NAT Gateway 的情境
+
+- 需要讓私有子網路的 EC2 取得 OS 修補程式或函式庫
+- 需要呼叫外部的 SaaS API
+- 通訊對象無法限縮在 AWS 服務範圍內
+- 不想在可用性與擴充性上投入維運工時
+
+例如:
+
+- 私有子網路的應用伺服器與外部 API 介接
+- 透過 yum / apt 更新套件
+- 連線至外部金流閘道
+
+### 適合採用 NAT 執行個體的情境
+
+- 在學習與驗證環境中想理解 NAT 機制本身
+- 極小規模架構，連 NAT Gateway 的固定費用都想節省
+- 想讓 NAT 與跳板機或特殊封包處理共存於同一台機器
+
+在正式環境中，考量可用性與修補負擔，基本上仍以 NAT Gateway 為主。
+
+若要使用 NAT 執行個體，必須把停用來源/目的地檢查與 Auto Scaling 等復原設計一併納入考量。
+
+### 適合採用 VPC 端點的情境
+
+- 通訊對象可以限縮在 S3、DynamoDB 等 AWS 服務
+- 法遵要求「流量不得流向網際網路」
+- 想降低 NAT Gateway 的資料處理費用
+- 想透過 Systems Manager Session Manager 操作私有子網路的執行個體 (Interface 型)
+
+例如:
+
+- 將日誌與備份傳送至 S3 (Gateway 型)
+- 對 DynamoDB 進行讀寫 (Gateway 型)
+- 透過 Systems Manager 進行維護作業 (Interface 型)
+
+### 在本專案中的定位
+
+本專案的 MVP 以 S3 + CloudFront + Lambda + DynamoDB 為主，並未使用 VPC。
+
+因此 NAT Gateway 與 VPC 端點都不會直接出現。
+
+不過在 SAA-C03 中，VPC 的路由設計是無法迴避的出題範圍。必須能夠畫出「哪些流量要走向網際網路、哪些不走」。
+
+## 常見誤解
+
+### 誤解 1:認為 VPC 端點是「連上網際網路的機制」
+
+VPC 端點是「**為了不連上網際網路**」的機制。
+
+它與 NAT Gateway 的目的正好相反，只有在通訊對象都是支援 VPC 端點的 AWS 服務時，才能取代 NAT Gateway。
+
+### 誤解 2:忘記在 NAT 執行個體上停用來源/目的地檢查
+
+EC2 預設會丟棄目的地不是自己的封包。
+
+轉送封包正是 NAT 執行個體的工作，因此**只要沒有停用來源/目的地檢查，流量就無法通過**。
+
+如果路由表與安全群組看起來都正確卻仍無法通訊，請先檢查這一點。
+
+### 誤解 3:認為多 AZ 架構只要建立一個 NAT Gateway 就夠了
+
+NAT Gateway 是以 AZ 為單位的資源。
+
+若只放在單一 AZ，該 AZ 發生故障時，其他 AZ 私有子網路的對外通訊也會一併中斷，平時還會產生跨 AZ 的資料傳輸費用。
+
+若重視可用性，應**在每個 AZ 各建立一個 NAT Gateway，並由同一 AZ 的路由表參照**。
+
+### 誤解 4:認為任何 AWS 服務都能使用 Gateway 型 VPC 端點
+
+支援 Gateway 型的**只有 S3 與 DynamoDB 兩項**。
+
+其他服務若想封閉在 VPC 內使用，就要採用 Interface 型 (PrivateLink)。Interface 型並非免費，會產生時數計費與資料處理量計費。
+
+### 誤解 5:認為可以對 NAT Gateway 指派安全群組
+
+NAT Gateway 無法指派安全群組。
+
+若要控管流量，需使用 NAT Gateway 所在子網路的 Network ACL，或私有子網路內資源的安全群組。
+
+## 相關用語
+
+- [Amazon VPC](/terms/vpc)
+- [Amazon EC2](/terms/ec2)
+- [Amazon S3](/terms/s3)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Systems Manager](/terms/systems-manager)
+
+## 相關問題
+
+- [SAA 模擬題列表](/questions/saa)
+
+## 總結
+
+判斷這三者的差異時，只要從「會不會連往網際網路」切入就不會混淆。
+
+- NAT Gateway:受管的對外連線機制。需每個 AZ 各配置一個。時數計費 + 資料處理量計費
+- NAT 執行個體:以 EC2 自行建置。成本低但全部自行負責。必須停用來源/目的地檢查
+- VPC 端點:不連往網際網路。Gateway 型只支援 S3 與 DynamoDB 且無額外費用，Interface 型透過 PrivateLink 支援眾多服務並採時數計費
+
+SAA-C03 會反覆測驗如何組合這三者，打造「既能降低成本、又能讓流量不流向網際網路」的架構。
