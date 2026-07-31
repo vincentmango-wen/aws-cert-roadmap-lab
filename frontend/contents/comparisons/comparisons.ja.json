@@ -190,5 +190,21 @@
     "publishedAt": "2026-07-25",
     "updatedAt": "2026-07-25",
     "locale": "ja"
+  },
+  {
+    "comparisonId": "cmp-013",
+    "slug": "nat-gateway-vs-nat-instance-vs-vpc-endpoint",
+    "title": "NAT Gateway・NATインスタンス・VPCエンドポイントの違いを初心者向けに解説",
+    "description": "プライベートサブネットからの通信設計で混同しやすいNAT Gateway、NATインスタンス、VPCエンドポイントの違いを、目的、料金、可用性、Gateway型とInterface型の使い分けの観点で整理します。",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": ["SAA-C03"],
+    "services": ["nat-gateway", "nat-instance", "vpc-endpoint"],
+    "tags": ["networking", "vpc", "comparison", "saa"],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "locale": "ja"
   }
 ]
