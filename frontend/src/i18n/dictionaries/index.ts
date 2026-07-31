@@ -41,6 +41,7 @@ import {
   export type {
     FooterSectionKey,
     NavigationKey,
+    QuestionCategoryKey,
     QuestionDifficultyKey,
     QuestionsDictionary,
     TermCategoryKey,

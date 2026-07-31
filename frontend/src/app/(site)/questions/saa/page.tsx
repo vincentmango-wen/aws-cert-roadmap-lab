@@ -94,7 +94,7 @@ export default function SaaQuestionsPage() {
         </div>
 
         <div className="mt-6">
-          <QuestionListClient questions={questions} />
+          <QuestionListClient questions={questions} locale="ja" />
         </div>
       </section>
     </div>

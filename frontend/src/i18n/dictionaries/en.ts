@@ -186,5 +186,29 @@ export const enDictionary: UiDictionary = {
     noPreviousQuestion: "No previous question",
     noNextQuestion: "No next question",
     examDumpDisclaimer: "All questions on this site are original and are not actual exam questions (exam dumps).",
+    difficultyLabel: "Difficulty",
+    // Domain names quoted verbatim from the official AWS exam guides
+    // (AWS Certified Cloud Practitioner CLF-C02 v1.0 /
+    //  AWS Certified Solutions Architect - Associate SAA-C03 v1.1).
+    categoryLabels: {
+      "Cloud Concepts": "Cloud Concepts",
+      "Security and Compliance": "Security and Compliance",
+      "Cloud Technology and Services": "Cloud Technology and Services",
+      "Billing, Pricing, and Support": "Billing, Pricing, and Support",
+      "Secure Architectures": "Design Secure Architectures",
+      "Resilient Architectures": "Design Resilient Architectures",
+      "High-Performing Architectures": "Design High-Performing Architectures",
+      "Cost-Optimized Architectures": "Design Cost-Optimized Architectures",
+    },
+    allCategoriesLabel: "All categories",
+    allDifficultiesLabel: "All difficulties",
+    filteredCountPrefix: "Showing ",
+    filteredCountSeparator: " of ",
+    filteredCountSuffix: " questions",
+    labelSeparator: ": ",
+    noRelatedServicesLabel: "No related services",
+    viewQuestionLabel: "View question →",
+    emptyStateTitle: "No questions match the selected filters.",
+    emptyStateDescription: "Change the category or difficulty filter.",
   },
 };

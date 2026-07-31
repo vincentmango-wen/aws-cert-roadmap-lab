@@ -85,7 +85,7 @@ export default function ChineseSaaQuestionsPage() {
               </p>
             </div>
           ) : (
-            <QuestionListClient questions={questions} />
+            <QuestionListClient questions={questions} locale="zh" />
           )}
         </div>
       </section>

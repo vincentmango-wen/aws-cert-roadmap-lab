@@ -86,7 +86,7 @@ export default function EnglishClfQuestionsPage() {
               </p>
             </div>
           ) : (
-            <QuestionListClient questions={questions} />
+            <QuestionListClient questions={questions} locale="en" />
           )}
         </div>
       </section>

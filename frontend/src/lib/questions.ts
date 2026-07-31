@@ -1,3 +1,4 @@
+import { getDictionary } from "../i18n/dictionaries";
 import type {
   Question,
   QuestionCategory,
@@ -6,16 +7,18 @@ import type {
   QuestionDifficultySummary,
 } from "../types/question";
 
-export const QUESTION_CATEGORY_LABELS: Record<QuestionCategory, string> = {
-  "Cloud Concepts": "クラウドの概念",
-  "Security and Compliance": "セキュリティとコンプライアンス",
-  "Cloud Technology and Services": "クラウド技術とサービス",
-  "Billing, Pricing, and Support": "請求・料金・サポート",
-  "Secure Architectures": "セキュアなアーキテクチャ",
-  "Resilient Architectures": "耐障害性のあるアーキテクチャ",
-  "High-Performing Architectures": "高性能なアーキテクチャ",
-  "Cost-Optimized Architectures": "コスト最適化されたアーキテクチャ",
-};
+/**
+ * 日本語のカテゴリラベル。
+ *
+ * 実体は ja 辞書の `questions.categoryLabels` であり、多言語版と同一の
+ * 単一定義を参照する（ja 固定の重複定義を残さないため）。
+ *
+ * 型注釈 `Record<QuestionCategory, string>` により、辞書側の
+ * `QuestionCategoryKey` に `QuestionCategory` のいずれかが欠けた場合は
+ * ここでコンパイルエラーになる。
+ */
+export const QUESTION_CATEGORY_LABELS: Record<QuestionCategory, string> =
+  getDictionary("ja").questions.categoryLabels;
 
 export const QUESTION_CATEGORY_DESCRIPTIONS: Record<QuestionCategory, string> = {
   "Cloud Concepts":
@@ -36,11 +39,16 @@ export const QUESTION_CATEGORY_DESCRIPTIONS: Record<QuestionCategory, string> = 
     "S3ライフサイクル、Spot、Savings Plans、VPC Endpoint、ログ保持など、コストを抑える設計を確認します。",
 };
 
-export const QUESTION_DIFFICULTY_LABELS: Record<QuestionDifficulty, string> = {
-  easy: "初級",
-  normal: "標準",
-  hard: "やや難しい",
-};
+/**
+ * 日本語の難易度ラベル。
+ *
+ * `QUESTION_CATEGORY_LABELS` と同じく、実体は ja 辞書の
+ * `questions.difficultyLabels` を参照する。一覧・詳細・ハブの 3 面で
+ * 同じ問題の難易度表記が食い違わないようにするため、定義箇所を
+ * 辞書 1 か所に集約している。
+ */
+export const QUESTION_DIFFICULTY_LABELS: Record<QuestionDifficulty, string> =
+  getDictionary("ja").questions.difficultyLabels;
 
 export const QUESTION_CATEGORIES: QuestionCategory[] = [
   "Cloud Concepts",
@@ -105,9 +113,19 @@ export function getBeginnerRecommendedQuestions(
     .slice(0, limit);
 }
 
-export function formatRelatedServices(relatedServices?: string[]): string {
+/**
+ * 関連サービス名の表示文字列を組み立てる。
+ *
+ * サービス名の連結・大文字化は locale 非依存だが、関連サービスが 0 件の
+ * ときのフォールバック文言だけは locale 依存のため、呼び出し側が辞書から
+ * 取得した `emptyLabel` を渡す。
+ */
+export function formatRelatedServices(
+  relatedServices: string[] | undefined,
+  emptyLabel: string,
+): string {
   if (!relatedServices || relatedServices.length === 0) {
-    return "関連サービスなし";
+    return emptyLabel;
   }
 
   return relatedServices.join(" / ").toUpperCase();

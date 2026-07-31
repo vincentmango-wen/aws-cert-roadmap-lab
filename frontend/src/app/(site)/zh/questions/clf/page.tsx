@@ -84,7 +84,7 @@ export default function ChineseClfQuestionsPage() {
               </p>
             </div>
           ) : (
-            <QuestionListClient questions={questions} />
+            <QuestionListClient questions={questions} locale="zh" />
           )}
         </div>
       </section>

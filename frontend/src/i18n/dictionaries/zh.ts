@@ -183,5 +183,29 @@ export const zhDictionary: UiDictionary = {
     noPreviousQuestion: "沒有上一題",
     noNextQuestion: "沒有下一題",
     examDumpDisclaimer: "本網站所有題目皆為原創，並非實際考試題目（試題傾印）。",
+    difficultyLabel: "難度",
+    // 網域名稱引用自 AWS 官方繁體中文考試指南
+    //（AWS Certified Cloud Practitioner CLF-C02 /
+    //  AWS Certified Solutions Architect - Associate SAA-C03）。
+    categoryLabels: {
+      "Cloud Concepts": "雲端概念",
+      "Security and Compliance": "安全性和合規性",
+      "Cloud Technology and Services": "雲端技術與服務",
+      "Billing, Pricing, and Support": "帳單、定價和支援",
+      "Secure Architectures": "設計安全架構",
+      "Resilient Architectures": "設計彈性架構",
+      "High-Performing Architectures": "設計高效能架構",
+      "Cost-Optimized Architectures": "設計成本最佳化架構",
+    },
+    allCategoriesLabel: "所有分類",
+    allDifficultiesLabel: "所有難度",
+    filteredCountPrefix: "顯示 ",
+    filteredCountSeparator: " 題 / 共 ",
+    filteredCountSuffix: " 題",
+    labelSeparator: "：",
+    noRelatedServicesLabel: "無相關服務",
+    viewQuestionLabel: "查看題目 →",
+    emptyStateTitle: "沒有符合條件的題目。",
+    emptyStateDescription: "請變更分類或難度條件。",
   },
 };
