@@ -1978,5 +1978,1398 @@
         "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
       }
     ]
+  },
+  {
+    "questionId": "saa-031",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "Application Load Balancerの背後で稼働するWebアプリケーションに対し、SQLインジェクションやクロスサイトスクリプティングを狙ったリクエストを、アプリケーションへ到達する前に遮断したいです。既知の攻撃パターンへの追随を自前のルール保守なしで続けられる構成として、最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "ALBのセキュリティグループに、攻撃元IPアドレスを拒否するインバウンドルールを追加していく"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Shield Advancedを契約し、DDoS緩和機能で攻撃を含むリクエストを遮断する"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS WAFのWeb ACLをALBに関連付け、AWSマネージドルール（Core rule set / SQL database）を適用する"
+      },
+      {
+        "choiceId": "D",
+        "text": "サブネットのネットワークACLに、攻撃文字列を含むリクエストを拒否するインバウンドルールを追加する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "SQLインジェクションやXSSはHTTPリクエストの中身（レイヤー7）を検査しないと判定できません。AWS WAFのWeb ACLをALBに関連付け、AWSが継続的に更新するマネージドルールグループを適用すれば、自前でシグネチャを保守せずに既知の攻撃パターンを遮断できます。",
+    "choiceExplanations": {
+      "A": "セキュリティグループは送信元IPやポートといったレイヤー3/4の情報しか見ないため、リクエスト本文の攻撃文字列は判定できません。またセキュリティグループには拒否ルール自体が存在せず、許可ルールのみで構成されます。",
+      "B": "AWS Shieldはレイヤー3/4を中心としたDDoS攻撃の緩和が目的で、SQLインジェクションやXSSのようなペイロード検査は行いません。Shield Advancedの契約にはAWS WAFの利用料が含まれますが、実際にリクエストを検査してブロックするのはWAFのルールです。",
+      "C": "正解です。Web ACLをALBに関連付け、AWSマネージドルールグループを適用することで、レイヤー7の攻撃パターンをアプリケーション到達前に遮断できます。",
+      "D": "ネットワークACLはサブネット境界でIPアドレス・プロトコル・ポートを評価するステートレスなフィルタで、HTTPリクエストの中身は見られません。"
+    },
+    "relatedServices": [
+      "waf",
+      "elb",
+      "shield"
+    ],
+    "relatedTerms": [
+      "cloudfront",
+      "api-gateway"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront",
+      "security-group-vs-nacl"
+    ],
+    "tags": [
+      "waf",
+      "security",
+      "alb",
+      "layer7"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "AWS WAF は HTTP / HTTPS リクエストをレイヤー 7 で検査する Web アプリケーションファイアウォールで、Web ACL という単位でルールをまとめ、CloudFront ディストリビューション・Application Load Balancer・API Gateway・AppSync・Cognito ユーザープールなどに関連付けて利用する。ルールには、送信元 IP セット、レートベース（一定時間内のリクエスト数によるブロック）、文字列一致や正規表現一致、そして AWS やマーケットプレイスのベンダーが提供するマネージドルールグループがある。マネージドルールグループは AWS 側で継続的に更新されるため、自前でシグネチャを保守する運用が不要になる。\n\n設計上の注意点として、まず「どこに関連付けるか」で防御位置が変わる。CloudFront に関連付ければエッジロケーションで攻撃を落とせるが、ALB に関連付けた場合はリクエストがリージョンまで到達してから評価される。また、マネージドルールを本番へ適用する際は、いきなり Block アクションにすると正規のリクエストまで落ちる可能性があるため、まず Count モードで一定期間動かし、CloudWatch メトリクスやサンプルリクエストで誤検知を確認してから Block に切り替えるのが定石である。WAF の課金は Web ACL 単位・ルール単位の月額とリクエスト数の従量課金で構成される。\n\nSAA-C03 では「SQL インジェクション」「クロスサイトスクリプティング」「OWASP Top 10」「特定 IP からの大量リクエスト」といった語が出たら AWS WAF が正解になる。誤答にはセキュリティグループ（レイヤー 3/4・拒否ルールなし）、ネットワーク ACL（ステートレスな IP / ポートフィルタ）、AWS Shield（DDoS 緩和）が並ぶ。Shield と WAF の役割分担、および WAF を CloudFront に付けるか ALB に付けるかの判断も問われやすい。",
+    "officialDocs": [
+      {
+        "label": "AWS WAF（AWS公式）",
+        "url": "https://aws.amazon.com/jp/waf/"
+      },
+      {
+        "label": "AWS WAF とは（AWS WAF デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/waf-chapter.html"
+      },
+      {
+        "label": "AWS マネージドルールのルールグループリスト（AWS WAF デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/aws-managed-rule-groups-list.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-032",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "外部のSaaS監視ベンダーに対し、自社AWSアカウントのリソースを読み取る権限を委譲する必要があります。ベンダーはベンダー自身のAWSアカウントからAPIを呼び出します。混乱した代理人（confused deputy）問題を防ぎながらアクセスを委譲する構成として、最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "ベンダー専用のIAMユーザーを作成してReadOnlyAccessをアタッチし、発行したアクセスキーをベンダーへ共有して90日ごとにローテーションする"
+      },
+      {
+        "choiceId": "B",
+        "text": "ベンダーのAWSアカウントIDのみを信頼するIAMロールを作成し、ReadOnlyAccessをアタッチする"
+      },
+      {
+        "choiceId": "C",
+        "text": "対象リソースごとにリソースベースポリシーを追加し、ベンダーのAWSアカウントに読み取りを許可する"
+      },
+      {
+        "choiceId": "D",
+        "text": "ベンダーのAWSアカウントを信頼するIAMロールを作成し、信頼ポリシーのCondition句でsts:ExternalIdにベンダーが発行した一意の値を要求する"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "サードパーティへのクロスアカウントアクセスでは、IAMロールの信頼ポリシーにsts:ExternalIdのCondition句を加えるのがAWSの推奨です。External IDを知らない第三者は、ベンダーのアカウント経由であってもロールを引き受けられないため、混乱した代理人問題を防げます。",
+    "choiceExplanations": {
+      "A": "長期のアクセスキーを外部組織へ渡す方式は、漏洩時の影響範囲が大きく、失効も手動になります。ローテーションを行っても、クロスアカウントではIAMロールによる一時的な認証情報が推奨されます。",
+      "B": "ロールを使う点は正しいですが、External IDがないとベンダーが他の顧客用に持つ権限と取り違えて自社リソースを操作してしまう混乱した代理人問題を防げません。要件を満たしていません。",
+      "C": "リソースベースポリシーで許可できるのはS3バケットやKMSキーなど一部のサービスに限られ、読み取り対象が増えるたびに個別追加が必要になります。運用が破綻しやすく、External IDによる保護もありません。",
+      "D": "正解です。ベンダーが発行するExternal IDを信頼ポリシーのConditionで必須にすることで、混乱した代理人問題を構造的に防げます。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "organizations",
+      "cloudtrail"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "cross-account",
+      "sts",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "AWS アカウントをまたいだ権限委譲は、IAM ユーザーとアクセスキーの共有ではなく、IAM ロールと AWS STS の AssumeRole で行うのが原則である。委譲する側（自社）がロールを作り、信頼ポリシーの Principal に相手のアカウント ID やロール ARN を書く。相手は AssumeRole を呼んで一時的な認証情報を取得し、その有効期限が切れれば自動的に権限が消える。長期のアクセスキーを外部へ渡す方式と比べ、漏洩時の露出時間が短く、信頼ポリシーを消すだけで即座に遮断できる点が大きい。\n\nサードパーティ SaaS のように「1 つのベンダーが多数の顧客アカウントに対して同じ仕組みでアクセスする」ケースでは、混乱した代理人（confused deputy）問題が発生しうる。ベンダーが顧客 A のロール ARN を誤って（あるいは攻撃者に誘導されて）指定すると、顧客 A の意図しない操作が行われてしまう。これを防ぐために、信頼ポリシーに Condition で sts:ExternalId を要求する。External ID はベンダーが顧客ごとに発行する一意の文字列で、秘密情報ではなく「取り違え防止のための識別子」として機能する。加えて、委譲する権限は ReadOnlyAccess のようなマネージドポリシーそのままではなく、必要な API に絞ったカスタムポリシーにするのが望ましい。\n\nSAA-C03 では「外部ベンダー」「他社アカウント」「confused deputy」「External ID」というキーワードが登場したら、IAM ロール + sts:ExternalId が正解になる。誤答には IAM ユーザーのアクセスキー共有、ルートユーザーの認証情報共有、条件なしのクロスアカウントロールが並ぶ。自社の複数アカウント間（AWS Organizations 配下）であれば External ID は不要で、代わりに SCP や aws:PrincipalOrgID 条件を使うという区別も押さえておきたい。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management（AWS公式）",
+        "url": "https://aws.amazon.com/jp/iam/"
+      },
+      {
+        "label": "第三者が所有する AWS アカウントへのアクセス（IAM ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
+      },
+      {
+        "label": "IAM チュートリアル: AWS アカウント間の IAM ロールを使用したアクセスの委任（IAM ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-033",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "モバイルアプリのエンドユーザー向けに、サインアップ・サインインとGoogleなど外部IDプロバイダー連携を実装します。認証後はAmazon API Gatewayで公開したREST APIへのアクセス制御にも同じ認証結果を使いたいです。最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon Cognitoユーザープールでユーザーを管理し、発行されたトークンをAPI GatewayのCognitoオーソライザーで検証する"
+      },
+      {
+        "choiceId": "B",
+        "text": "エンドユーザーごとにIAMユーザーを作成し、アプリにアクセスキーを埋め込んでSigV4署名でAPIを呼び出す"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS IAM Identity Centerでエンドユーザーを管理し、SAMLアサーションをアプリへ連携する"
+      },
+      {
+        "choiceId": "D",
+        "text": "ユーザー名とパスワードのハッシュをAWS Secrets Managerに保存し、Lambdaで自前の認証処理を実装する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "アプリのエンドユーザー認証にはAmazon Cognitoユーザープールが適しています。サインアップ・サインイン、MFA、外部IDプロバイダー連携をマネージドで提供し、発行されるIDトークン・アクセストークンをAPI GatewayのCognitoオーソライザーでそのまま検証できます。",
+    "choiceExplanations": {
+      "A": "正解です。ユーザープールがユーザーディレクトリとトークン発行を担い、API GatewayのCognitoオーソライザーがトークン検証を担うため、認証処理を自前実装せずに済みます。",
+      "B": "IAMはAWSリソースを操作する主体（社内の人・アプリケーション）のための仕組みで、アプリのエンドユーザーを個別のIAMユーザーとして管理する設計ではありません。長期のアクセスキーをアプリへ埋め込む点も安全ではありません。",
+      "C": "IAM Identity Centerは従業員などワークフォースのシングルサインオン向けで、一般消費者のセルフサービスなサインアップは想定されていません。",
+      "D": "認証処理を自前実装するとパスワード保管、MFA、トークン失効、外部IdP連携をすべて自作することになります。Secrets Managerはアプリケーションが使う認証情報の保管が用途で、ユーザーディレクトリではありません。"
+    },
+    "relatedServices": [
+      "cognito",
+      "api-gateway",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "iam",
+      "secrets-manager"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy",
+      "api-gateway-vs-alb-vs-cloudfront"
+    ],
+    "tags": [
+      "cognito",
+      "authentication",
+      "api-gateway",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "Amazon Cognito は「ユーザープール」と「IDプール（フェデレーティッドアイデンティティ）」という 2 つの機能から構成される。ユーザープールはアプリのユーザーディレクトリで、サインアップ・サインイン・パスワードポリシー・MFA・メール/SMS 検証・Google や Apple などの外部 IdP との連携をマネージドで提供し、認証成功時に OpenID Connect の ID トークン、アクセストークン、リフレッシュトークンを発行する。ID プールはこれらのトークン（あるいは他の IdP のトークン）と引き換えに一時的な AWS 認証情報を払い出す仕組みで、アプリから S3 や DynamoDB を直接呼びたい場合に使う。\n\n設計上は「誰を認証したいのか」で使い分けを決める。アプリの一般ユーザーはユーザープール、AWS リソースを操作する社内の人や CI/CD は IAM、従業員のシングルサインオンは IAM Identity Center という切り分けになる。API Gateway と組み合わせる場合、REST API では Cognito オーソライザーを設定するとトークンの署名・有効期限・aud/iss をマネージドで検証してくれるため、Lambda オーソライザーを自作する必要がなくなる。より細かい制御（スコープやカスタムクレームによる分岐）が必要なときのみ Lambda オーソライザーを併用する。\n\nSAA-C03 では「モバイルアプリ / Web アプリのユーザー認証」「ソーシャルログイン」「サインアップ機能」といった要件で Amazon Cognito が正解になる。誤答としてエンドユーザーごとの IAM ユーザー作成が頻出するが、IAM ユーザーにはアカウントあたりの上限があり、そもそもエンドユーザー管理を意図した機能ではないため設計として不適切である。IAM Identity Center（ワークフォース向け）との役割の違いも問われやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon Cognito（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cognito/"
+      },
+      {
+        "label": "Amazon Cognito とは（Amazon Cognito デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/what-is-amazon-cognito.html"
+      },
+      {
+        "label": "Amazon Cognito ユーザープール（Amazon Cognito デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cognito/latest/developerguide/cognito-user-identity-pools.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-034",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "監査要件により、あるS3バケットへのアクセスがすべて暗号化された通信路で行われることを保証しなければなりません。暗号化されていないHTTPでのリクエストを構造的に拒否する方法として、最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "バケットのデフォルト暗号化としてSSE-S3を有効化する"
+      },
+      {
+        "choiceId": "B",
+        "text": "バケットポリシーで、条件キーaws:SecureTransportがfalseの場合にs3:*をDenyするステートメントを追加する"
+      },
+      {
+        "choiceId": "C",
+        "text": "バケットのブロックパブリックアクセスをすべて有効化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Certificate Managerで証明書を発行し、S3バケットに割り当てる"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "転送時の暗号化を強制するには、バケットポリシーでaws:SecureTransportがfalseのリクエストを明示的にDenyします。IAMの評価では明示的なDenyが常に優先されるため、HTTPでのアクセスは他の許可があっても必ず拒否されます。",
+    "choiceExplanations": {
+      "A": "SSE-S3はS3に保存されたデータ（保管時）の暗号化であり、クライアントとS3の間の通信路には関与しません。要件は転送時の暗号化なので満たしません。",
+      "B": "正解です。明示的Denyは他のAllowより優先されるため、HTTPリクエストを構造的に遮断できます。",
+      "C": "ブロックパブリックアクセスは、パブリック公開につながるACLやバケットポリシーを無効化する機能で、通信路が暗号化されているかどうかは判定しません。",
+      "D": "S3バケットにACM証明書を直接割り当てることはできません。独自ドメインでのHTTPS配信が必要な場合は、CloudFrontディストリビューションにACM証明書を関連付けます。"
+    },
+    "relatedServices": [
+      "s3",
+      "iam"
+    ],
+    "relatedTerms": [
+      "acm",
+      "kms",
+      "cloudfront"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "s3",
+      "bucket-policy",
+      "encryption-in-transit",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "S3 の暗号化には「保管時（at rest）」と「転送時（in transit）」の 2 つの軸があり、設定箇所がまったく異なる。保管時は SSE-S3 / SSE-KMS / DSSE-KMS / SSE-C といった暗号化方式をバケットのデフォルト暗号化やリクエストヘッダーで指定する。一方、転送時は TLS を使うかどうかの話であり、S3 のエンドポイントはもともと HTTPS と HTTP の両方を受け付けるため、HTTP を「使わせない」ためにはポリシーによる強制が必要になる。この強制に使うのが AWS グローバル条件コンテキストキーの aws:SecureTransport で、リクエストが TLS 経由なら true になる。\n\n実装は、バケットポリシーに Effect: Deny / Action: s3:* / Resource にバケット ARN とオブジェクト ARN の両方 / Condition に Bool の aws:SecureTransport false を書く。ここで Resource にバケット ARN（arn:aws:s3:::bucket）とオブジェクト ARN（arn:aws:s3:::bucket/*）の 2 つを列挙し忘れると、ListBucket など一部の操作が素通りするので注意する。IAM のポリシー評価では明示的な Deny がすべての Allow に優先するため、同じアカウント内の管理者であっても HTTP アクセスは拒否される。同様の条件強制のパターンとして、s3:x-amz-server-side-encryption を条件にした保管時暗号化の強制や、aws:SourceVpce を条件にした VPC エンドポイント経由限定などがある。\n\nSAA-C03 では「転送中のデータを暗号化することを強制したい」「HTTP でのアクセスを禁止したい」という要件で aws:SecureTransport の Deny が正解になる。誤答にはデフォルト暗号化（保管時）、ブロックパブリックアクセス（公開制御）、ACM 証明書の割り当て（S3 単体では不可）が並ぶ。保管時と転送時の混同はこの領域で最も多い誤答パターンなので、要件文のどちらを問われているかを必ず読み分けたい。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      },
+      {
+        "label": "Amazon S3 のセキュリティのベストプラクティス（Amazon S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/security-best-practices.html"
+      },
+      {
+        "label": "AWS グローバル条件コンテキストキー（IAM ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/reference_policies_condition-keys.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-035",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "本番アカウントで、認証情報の不正利用や、EC2インスタンスからの不審な通信（マルウェアのC2通信や暗号通貨マイニング）を継続的に検出したいです。エージェント導入やログ分析基盤の構築をせずに始められるサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Configでリソース設定の変更を記録し、Configルールで準拠状況を評価する"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon InspectorでEC2インスタンスとECRイメージの脆弱性をスキャンする"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudTrailの証跡を有効化し、ログをS3バケットへ保存する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon GuardDutyを有効化する"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Amazon GuardDutyはCloudTrailイベント、VPCフローログ、Route 53 DNSクエリログなどをAWS側で自動的に取り込み、脅威インテリジェンスと機械学習で不審な挙動を検出します。エージェント導入もログ基盤の構築も不要で、有効化するだけで検出が始まります。",
+    "choiceExplanations": {
+      "A": "AWS Configはリソースの設定変更履歴の記録と、設定が定めたルールに準拠しているかの評価を行います。設定コンプライアンスの領域であり、通信内容や認証情報の不正利用といった脅威の検出は対象外です。",
+      "B": "Amazon Inspectorはソフトウェアの脆弱性や意図しないネットワーク到達性を継続的にスキャンする脆弱性管理サービスです。既知のCVEは見つけられますが、実際に進行中の不審な通信や認証情報の悪用は検出しません。",
+      "C": "CloudTrailはAPI操作を記録するだけで、その記録の中から脅威を判定する機能は持ちません。検出するには別途分析の仕組みが必要になります。GuardDutyはこのCloudTrailログを入力の1つとして利用します。",
+      "D": "正解です。有効化するだけでログの取り込みと脅威検出が始まり、検出結果はSecurity HubやEventBridge経由で通知・自動対応につなげられます。"
+    },
+    "relatedServices": [
+      "guardduty",
+      "cloudtrail",
+      "eventbridge"
+    ],
+    "relatedTerms": [
+      "inspector",
+      "aws-config"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "guardduty",
+      "threat-detection",
+      "security",
+      "monitoring"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "Amazon GuardDuty は、AWS アカウント内で起きている「進行中の脅威」を検出するマネージドな脅威検出サービスである。入力となるデータソース（CloudTrail 管理イベント、CloudTrail S3 データイベント、VPC フローログ、Route 53 リゾルバー DNS クエリログ、EKS 監査ログなど）は GuardDuty が AWS 側で直接取り込むため、利用者がログの有効化や S3 への転送、分析基盤の構築を行う必要がない。検出結果は Finding として重要度（Low / Medium / High）付きで出力され、EventBridge イベントとして発火するので、SNS 通知や Lambda による自動隔離につなげられる。\n\n類似サービスとの役割分担が重要になる。Amazon Inspector は EC2 や ECR イメージ、Lambda 関数のソフトウェア脆弱性（CVE）と意図しないネットワーク到達性をスキャンする「脆弱性管理」、AWS Config はリソース設定の変更履歴とルール準拠評価を行う「設定コンプライアンス」、AWS CloudTrail は API 操作の「記録」、Amazon Macie は S3 内の機密データの「発見と分類」を担当する。GuardDuty はこれらのログを入力として、既知の悪性 IP・ドメインとの通信、通常と異なるリージョンからの API 呼び出し、EC2 からの暗号通貨マイニング通信といった振る舞いを判定する点が異なる。マルチアカウント環境では、AWS Organizations と連携して委任管理者アカウントから全メンバーアカウントを一括有効化できる。\n\nSAA-C03 では「不審なアクティビティの検出」「侵害された認証情報」「マルウェア通信」「エージェント不要ですぐに始めたい」といった要件で GuardDuty が正解になる。誤答には Inspector（脆弱性スキャン）、Config（設定評価）、CloudTrail（記録のみ）が並び、いずれも「検出はしない」という点で区別できる。検出結果を集約して一元的に見たい場合は AWS Security Hub を組み合わせる、という発展的な出題もある。",
+    "officialDocs": [
+      {
+        "label": "Amazon GuardDuty（AWS公式）",
+        "url": "https://aws.amazon.com/jp/guardduty/"
+      },
+      {
+        "label": "Amazon GuardDuty とは（Amazon GuardDuty ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/guardduty/latest/ug/what-is-guardduty.html"
+      },
+      {
+        "label": "Amazon Inspector（AWS公式）",
+        "url": "https://aws.amazon.com/jp/inspector/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-036",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "プライベートサブネットのEC2インスタンスに、運用担当者がシェルアクセスする必要があります。踏み台サーバーを運用せず、インスタンスへのインバウンドポートも一切開けず、誰がいつ接続したかを監査できる構成として最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "パブリックサブネットに踏み台EC2を配置し、22番ポートを運用担当者の送信元IPだけに許可する"
+      },
+      {
+        "choiceId": "B",
+        "text": "対象インスタンスにElastic IPを付与し、SSHの待ち受けポートを22番から変更したうえでキーペアで接続する"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Systems Manager Session Managerを使用し、SSM Agentが必要なエンドポイントへ到達できるようにしてセッションを確立する"
+      },
+      {
+        "choiceId": "D",
+        "text": "EC2 Instance Connectを有効化し、マネジメントコンソールのブラウザ経由でSSH接続する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Session Managerは、インスタンス上のSSM AgentからSystems Managerへのアウトバウンド接続を使ってセッションを確立します。インバウンドポートを開ける必要も踏み台も不要で、接続はIAMで制御され、操作はCloudTrailとセッションログで監査できます。",
+    "choiceExplanations": {
+      "A": "踏み台サーバー自体のパッチ適用・鍵管理・可用性という運用負荷が残り、22番ポートのインバウンドも開いたままです。「踏み台を運用しない」「インバウンドを開けない」という要件を満たしません。",
+      "B": "プライベートサブネットのインスタンスをインターネットへ露出させることになり、要件と逆行します。ポート番号を変えても待ち受け自体は残るため、実質的なセキュリティ向上にもなりません。",
+      "C": "正解です。アウトバウンド方向の接続だけでセッションが成立するため、セキュリティグループのインバウンドルールを空にしたまま運用できます。",
+      "D": "EC2 Instance Connectでコンソールから接続する構成は、インスタンスがEC2 Instance Connectサービスのプレフィックスリストからの22番インバウンドを許可し、かつ到達可能である必要があります。インバウンドを一切開けないという要件に反します。"
+    },
+    "relatedServices": [
+      "systems-manager",
+      "ec2",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "iam",
+      "cloudtrail",
+      "cloudwatch"
+    ],
+    "relatedComparisons": [
+      "nat-gateway-vs-nat-instance-vs-vpc-endpoint"
+    ],
+    "tags": [
+      "systems-manager",
+      "session-manager",
+      "bastion",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "AWS Systems Manager Session Manager は、EC2 インスタンスやオンプレミスサーバーに対してブラウザまたは AWS CLI からシェルセッションを張れる機能である。仕組みの要点は通信の向きにあり、インスタンス上で動く SSM Agent が Systems Manager のエンドポイントへ「アウトバウンドで」接続し、その経路上にセッションを載せる。したがってインスタンス側のセキュリティグループにインバウンドルールを一切書かなくても接続でき、踏み台サーバーもキーペアも不要になる。接続の可否は IAM ポリシー（ssm:StartSession など）で制御され、誰がいつどのインスタンスに接続したかは CloudTrail に残る。\n\n設計上の前提として、インスタンスには AmazonSSMManagedInstanceCore を含む IAM インスタンスプロファイルが必要で、かつ SSM のエンドポイントへ到達できる経路が必要になる。プライベートサブネットの場合、経路の作り方は 2 通りある。1 つは NAT Gateway 経由でインターネットへ出る方法、もう 1 つは ssm / ssmmessages / ec2messages の 3 つの Interface 型 VPC エンドポイントを作り、インターネットに出ずに到達させる方法である。後者は NAT Gateway の固定費を避けられ、通信を AWS ネットワーク内に留められる。セッションの内容は S3 や CloudWatch Logs へ記録でき、KMS でセッションを暗号化することもできる。\n\nSAA-C03 では「踏み台サーバーをなくしたい」「SSH ポートを開けたくない」「キーペアを管理したくない」「接続を監査したい」という要件が出たら Session Manager が正解になる。誤答には踏み台 EC2 の構築、SSH ポート番号の変更、パブリック IP の付与といった従来型の構成が並ぶ。プライベートサブネットで NAT Gateway を使わずに済ませる文脈では、VPC エンドポイント 3 種の話まで踏み込んで問われることがある。",
+    "officialDocs": [
+      {
+        "label": "AWS Systems Manager（AWS公式）",
+        "url": "https://aws.amazon.com/jp/systems-manager/"
+      },
+      {
+        "label": "AWS Systems Manager Session Manager（AWS Systems Manager ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/session-manager.html"
+      },
+      {
+        "label": "Amazon EC2（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-037",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "特定のIPアドレスレンジから、あるサブネットに対する不正アクセス試行が継続しています。そのレンジからの通信だけを、サブネット内の全インスタンスに対してまとめて拒否したいです。最も適した設定はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "サブネットに関連付けたネットワークACLに、当該レンジを拒否するインバウンドルールを、既存の許可ルールより小さいルール番号で追加する"
+      },
+      {
+        "choiceId": "B",
+        "text": "各インスタンスのセキュリティグループに、当該レンジを拒否するインバウンドルールを追加する"
+      },
+      {
+        "choiceId": "C",
+        "text": "セキュリティグループのアウトバウンドルールで、当該レンジ宛ての通信を拒否する"
+      },
+      {
+        "choiceId": "D",
+        "text": "サブネットのルートテーブルに、当該レンジ宛てのブラックホールルートを追加する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "セキュリティグループには拒否ルールが存在しないため、特定の送信元だけをブロックするにはネットワークACLを使います。ネットワークACLはルール番号の小さい順に評価され最初に一致したルールが適用されるため、拒否ルールは既存の許可ルールより小さい番号を付ける必要があります。",
+    "choiceExplanations": {
+      "A": "正解です。ネットワークACLはサブネット単位で適用されるため、サブネット内の全インスタンスへ一括で効きます。ルール番号の順序が判断の分かれ目です。",
+      "B": "セキュリティグループは許可ルールのみで構成され、拒否ルールを書くことはできません。「明示的に許可していないものは通らない」というホワイトリスト型の仕組みです。",
+      "C": "アウトバウンドを制限しても、外部から到達するインバウンドの試行そのものは止まりません。またセキュリティグループには拒否ルール自体がありません。",
+      "D": "ルートテーブルは宛先ネットワークごとの転送先を決めるもので、送信元アドレスによるフィルタリングはできません。またサブネット内の通信を到達前に遮断する仕組みでもありません。"
+    },
+    "relatedServices": [
+      "vpc",
+      "ec2"
+    ],
+    "relatedTerms": [
+      "waf",
+      "elb"
+    ],
+    "relatedComparisons": [
+      "security-group-vs-nacl"
+    ],
+    "tags": [
+      "nacl",
+      "security-group",
+      "vpc",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "セキュリティグループとネットワーク ACL は、VPC における 2 層のトラフィック制御で、適用範囲と評価方式が根本的に異なる。セキュリティグループは ENI（インスタンス）単位で適用されるステートフルなファイアウォールで、許可ルールのみを持ち、すべてのルールを評価したうえで 1 つでも一致すれば通す。ステートフルなので、インバウンドで許可した通信の戻りはアウトバウンドルールに関係なく通る。一方、ネットワーク ACL はサブネット単位で適用されるステートレスなフィルタで、許可ルールと拒否ルールの両方を持ち、ルール番号の昇順に評価して最初に一致したルールで判定を確定する。\n\nこの差から実務上の使い分けが決まる。「特定の送信元だけをブロックしたい」という要件はセキュリティグループでは表現できないため、ネットワーク ACL の Deny ルールを使う。このとき、既定のネットワーク ACL には番号 100 で全許可ルールが入っているため、拒否ルールには 100 より小さい番号（例: 90）を付けないと評価順で負けて素通りしてしまう。また、ステートレスであるがゆえに、通信を許可したい場合はインバウンドとアウトバウンドの両方にルールが必要で、戻りトラフィック用のエフェメラルポート（1024-65535）の許可を忘れると通信が片道で止まる。なお、Web アプリケーションに対する攻撃を送信元 IP やリクエスト内容で細かく制御したい場合は、ネットワーク ACL より AWS WAF の IP セットやレートベースルールが適している。\n\nSAA-C03 では「特定の IP レンジを拒否したい」「サブネット全体にまとめて適用したい」という文言が出たらネットワーク ACL、「特定のリソースへの通信を許可したい」「ALB からのアクセスだけ許可したい」という文言ならセキュリティグループが正解になる。ステートフル / ステートレスの違い、ルール番号による評価順、エフェメラルポートの扱いは、この領域で繰り返し問われる論点である。",
+    "officialDocs": [
+      {
+        "label": "Amazon Virtual Private Cloud（AWS公式）",
+        "url": "https://aws.amazon.com/jp/vpc/"
+      },
+      {
+        "label": "ネットワークアクセスコントロールリストを使用して、サブネットのトラフィックを制御する（Amazon VPC ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-network-acls.html"
+      },
+      {
+        "label": "セキュリティグループを使用して AWS リソースへのトラフィックを制御する（Amazon VPC ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-security-groups.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-038",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "東京リージョンで稼働するWebアプリケーションについて、リージョン規模の障害が発生した際に大阪リージョンの待機環境へ自動的に切り替えたいです。利用者が使うドメイン名は変えられません。最も適した構成はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Route 53の加重ルーティングで東京に重み100、大阪に重み0を設定し、障害を検知したら重みを手動で入れ替える"
+      },
+      {
+        "choiceId": "B",
+        "text": "Route 53のフェイルオーバールーティングポリシーで東京をプライマリ、大阪をセカンダリとし、プライマリのレコードにヘルスチェックを関連付ける"
+      },
+      {
+        "choiceId": "C",
+        "text": "Application Load Balancerのターゲットグループに東京と大阪の両方のEC2インスタンスを登録し、ヘルスチェックで振り分ける"
+      },
+      {
+        "choiceId": "D",
+        "text": "Auto Scalingグループを東京と大阪にまたがって作成し、東京側が異常になったら大阪でインスタンスを起動する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "同じドメイン名を維持したままリージョン間で自動切り替えを行うには、Route 53のフェイルオーバールーティングポリシーとヘルスチェックを組み合わせます。プライマリのヘルスチェックが失敗すると、DNS応答が自動的にセカンダリのエンドポイントへ切り替わります。",
+    "choiceExplanations": {
+      "A": "加重ルーティング自体は有効な機能ですが、重みの変更が手動である以上「自動的に切り替える」という要件を満たしません。障害検知から切り替えまでの時間も人の対応速度に依存します。",
+      "B": "正解です。ヘルスチェックの失敗回数と間隔で切り替え速度を調整でき、DNSレコードのTTLを短めにしておくことで反映も早くなります。",
+      "C": "Application Load Balancerはリージョン内のサービスで、別リージョンのインスタンスをターゲットとして登録することはできません。",
+      "D": "Auto Scalingグループは単一リージョン内の複数アベイラビリティーゾーンにまたがることはできますが、リージョンをまたぐことはできません。"
+    },
+    "relatedServices": [
+      "route53",
+      "elb",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "cloudfront",
+      "ec2"
+    ],
+    "relatedComparisons": [
+      "route53-vs-cloudfront-vs-global-accelerator"
+    ],
+    "tags": [
+      "route53",
+      "failover",
+      "disaster-recovery",
+      "multi-region"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "Amazon Route 53 のルーティングポリシーは用途ごとに分かれている。シンプルルーティングは単一の宛先を返すだけ、加重ルーティングは指定した比率でトラフィックを分配（カナリアリリースや段階移行に利用）、レイテンシーベースルーティングはクライアントから見て最も遅延の小さいリージョンを返す、位置情報ルーティングは送信元の地理に応じて返す、そしてフェイルオーバールーティングはプライマリ / セカンダリの 2 系統を定義し、プライマリが異常なときだけセカンダリを返す。アクティブ / パッシブなディザスタリカバリ構成にはフェイルオーバールーティングが対応する。\n\n自動切り替えの鍵は Route 53 ヘルスチェックである。ヘルスチェックは世界各地のチェッカーから対象のエンドポイント（IP またはドメイン名）へ定期的にリクエストを送り、既定では 30 秒間隔（高速なら 10 秒間隔）で失敗回数のしきい値を超えると Unhealthy と判定する。加えて、CloudWatch アラームの状態をヘルスチェックにする方式や、複数のヘルスチェックを AND / OR で束ねる計算されたヘルスチェックもある。切り替えは DNS 応答の変化として現れるため、実際の切り替わり速度は「ヘルスチェックの検知時間 + レコードの TTL + クライアント側リゾルバーのキャッシュ」に左右される。TTL を 60 秒程度に短くしておくのが定石で、より速い切り替えが必要なら AWS Global Accelerator のような DNS に依存しない方式を検討する。\n\nSAA-C03 では「リージョン障害時に別リージョンへ自動フェイルオーバー」「同じドメイン名のまま切り替えたい」という要件でフェイルオーバールーティング + ヘルスチェックが正解になる。誤答には ALB や Auto Scaling グループをリージョンまたぎで使う構成が並ぶが、どちらもリージョン内のサービスであるという知識で切れる。加重ルーティングは「手動」である点が要件と噛み合わないという読み分けが問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      },
+      {
+        "label": "フェイルオーバールーティング（Amazon Route 53 デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/routing-policy-failover.html"
+      },
+      {
+        "label": "Amazon Route 53 ヘルスチェックの作成（Amazon Route 53 デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/dns-failover.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-039",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "規制要件により、S3バケットのオブジェクトを別リージョンにも保持する必要があります。新しくアップロードされたオブジェクトが自動的に複製され、複製先でもバージョンが保持される構成として最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "送信元バケットと送信先バケットの両方でバージョニングを有効化し、S3のクロスリージョンレプリケーションルールを設定する"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3ライフサイクルルールを設定し、一定期間経過したオブジェクトを別リージョンのバケットへ移行する"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS DataSyncのタスクを1日1回スケジュール実行し、2つのバケット間を同期する"
+      },
+      {
+        "choiceId": "D",
+        "text": "別リージョンにAmazon EFSファイルシステムを作成し、S3バケットをマウントして同期する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "S3のクロスリージョンレプリケーション（CRR）は、新規オブジェクトを別リージョンのバケットへ自動的に非同期でコピーします。送信元・送信先ともにバージョニングが有効であることが前提条件で、これによって複製先でもバージョンが保持されます。",
+    "choiceExplanations": {
+      "A": "正解です。バージョニングはCRRの必須要件で、レプリケーションはバージョンIDを保ったままコピーします。",
+      "B": "S3ライフサイクルルールができるのはストレージクラスの遷移と有効期限による削除だけで、オブジェクトを別リージョンのバケットへ移動する機能はありません。",
+      "C": "DataSyncでもバケット間のコピーは可能ですが、スケジュール実行のバッチ処理になるため「新規オブジェクトが自動的に複製される」という要件に対しては遅延が大きく、実行間の変更が保護されません。",
+      "D": "Amazon S3はオブジェクトストレージであり、EFSファイルシステムとしてマウントする構成ではありません。技術的に成立しない選択肢です。"
+    },
+    "relatedServices": [
+      "s3",
+      "kms"
+    ],
+    "relatedTerms": [
+      "aws-backup",
+      "efs"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "replication",
+      "disaster-recovery",
+      "versioning"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "S3 レプリケーションは、バケットに設定したルールに従ってオブジェクトを別のバケットへ自動的に非同期コピーする機能で、コピー先が別リージョンならクロスリージョンレプリケーション（CRR）、同一リージョンならセイムリージョンレプリケーション（SRR）と呼ぶ。CRR は災害対策やレイテンシー削減、地理的なコンプライアンス要件に、SRR はログの集約や本番から検証環境へのデータ提供、アカウントをまたいだバックアップに使われる。レプリケーションはバージョン ID・メタデータ・ACL を保ったままコピーし、必要なら複製先のストレージクラスや所有者を変更することもできる。\n\n前提条件と挙動の癖を押さえておきたい。第一に、送信元・送信先の両バケットでバージョニングが有効である必要がある。第二に、既定ではルール作成後にアップロードされた新規オブジェクトのみが対象で、既存オブジェクトを複製するには S3 バッチレプリケーションを別途実行する。第三に、レプリケーションは非同期であるため完了までの時間は保証されない。時間の保証が必要な場合は S3 Replication Time Control（S3 RTC）を有効化すると 99.99% のオブジェクトが 15 分以内に複製され、レプリケーションメトリクスと通知が付く。また、SSE-KMS で暗号化されたオブジェクトを複製する場合は、複製先リージョンの KMS キーに対する権限をレプリケーションロールへ付与する必要がある。削除マーカーの複製は既定では無効で、明示的に有効化する。\n\nSAA-C03 では「別リージョンにデータのコピーを保持したい」「地理的な冗長性が要件」という文脈で CRR が正解になる。誤答としてライフサイクルルールがよく並ぶが、ライフサイクルはストレージクラス遷移と失効だけを扱いリージョン間のコピーはしない、という区別が決め手になる。バージョニングが必須である点、既存オブジェクトにはバッチレプリケーションが必要な点も問われやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      },
+      {
+        "label": "リージョン内およびリージョン間でのオブジェクトのレプリケート（Amazon S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/replication.html"
+      },
+      {
+        "label": "S3 Replication Time Control (S3 RTC) を使用してコンプライアンス要件を満たす（Amazon S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/replication-time-control.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-040",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "EC2 Auto Scalingで稼働するWebアプリケーションで、スケールインやインスタンス障害が起きるたびに一部のユーザーがログアウトされてしまいます。セッション情報は各インスタンスのローカルディスクに保存されています。最も適した改善策はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Application Load Balancerのスティッキーセッションを有効化し、同じユーザーを常に同じインスタンスへ転送する"
+      },
+      {
+        "choiceId": "B",
+        "text": "Auto Scalingグループの最小台数を引き上げ、スケールインが発生しないようにする"
+      },
+      {
+        "choiceId": "C",
+        "text": "各インスタンスに専用のEBSボリュームをアタッチし、セッションファイルをそこへ保存する"
+      },
+      {
+        "choiceId": "D",
+        "text": "セッション情報をAmazon ElastiCacheやAmazon DynamoDBなどの外部データストアへ移し、アプリケーション層をステートレスにする"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "根本原因は、インスタンスというライフサイクルの短いリソースに状態を持たせていることです。セッション情報をElastiCacheやDynamoDBといった共有データストアへ外部化してアプリケーション層をステートレスにすれば、どのインスタンスが終了してもセッションは失われません。",
+    "choiceExplanations": {
+      "A": "スティッキーセッションは同じインスタンスへ転送し続けるだけで、そのインスタンスが終了すればセッションは失われます。障害時のログアウトは解消せず、負荷の偏りという別の問題も生みます。",
+      "B": "最小台数を上げてもインスタンス障害やヘルスチェック失敗による置き換えは起こります。コストが増えるだけで根本解決になりません。",
+      "C": "EBSボリュームは単一のインスタンスにアタッチされ、単一のアベイラビリティーゾーンに固定されます。インスタンスが終了すればそのセッションを他のインスタンスから読むことはできません。",
+      "D": "正解です。状態を外部化することで、インスタンスを「いつでも捨てられる」使い捨てのリソースとして扱えるようになります。"
+    },
+    "relatedServices": [
+      "elasticache",
+      "dynamodb",
+      "auto-scaling",
+      "elb"
+    ],
+    "relatedTerms": [
+      "ec2",
+      "ebs"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "stateless",
+      "session",
+      "elasticache",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "Auto Scaling を前提にしたアーキテクチャでは、インスタンスは「いつ終了してもよいもの」として設計する必要がある。スケールインの対象になる、ヘルスチェック失敗で置き換えられる、AZ 障害で消えるといった事象は正常系の一部であり、そのたびにユーザー影響が出る構成は水平スケールの前提を満たしていない。セッション情報やアップロード中の一時ファイルのように「そのインスタンスにしかない状態」を持たせないこと、すなわちアプリケーション層をステートレスにすることが基本設計になる。\n\nセッションの外部化先としてよく使われるのが Amazon ElastiCache（Redis / Valkey / Memcached）と Amazon DynamoDB である。ElastiCache はインメモリで応答が速く、TTL によるセッション期限管理も自然に書ける。Redis 系はレプリケーションと自動フェイルオーバー（Multi-AZ）に対応するため、キャッシュ層自体の可用性も確保できる。DynamoDB はサーバーレスでキャパシティ管理が不要、TTL 属性による自動削除に対応し、グローバルテーブルを使えばリージョンをまたいだセッション共有も可能になる。一方、ALB のスティッキーセッション（セッションアフィニティ）は既存アプリの暫定対処としては使えるが、インスタンス障害時のセッション消失は解決せず、特定インスタンスへ負荷が偏る副作用がある点を理解しておく。同様に、共有が必要なファイルは EBS ではなく Amazon EFS や S3 に置く。\n\nSAA-C03 では「スケールインのたびにログアウトされる」「インスタンスが置き換わるとカートの中身が消える」といった症状から、状態の外部化（ElastiCache / DynamoDB）を選ばせる出題が定番である。誤答にはスティッキーセッションの有効化、最小台数の引き上げ、EBS へのセッション保存が並ぶ。EBS が単一 AZ・単一インスタンスにひも付くリソースであるという性質は、この判断の決め手になる。",
+    "officialDocs": [
+      {
+        "label": "Amazon ElastiCache（AWS公式）",
+        "url": "https://aws.amazon.com/jp/elasticache/"
+      },
+      {
+        "label": "Amazon ElastiCache とは（Amazon ElastiCache ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonElastiCache/latest/dg/WhatIs.html"
+      },
+      {
+        "label": "Amazon EC2 Auto Scaling（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/autoscaling/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-041",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "ピーク時に常時6台分の処理能力が必要なWebアプリケーションを、3つのアベイラビリティーゾーンへ均等に分散したAuto Scalingグループで運用します。1つのAZが完全に停止してもピーク時の処理能力を維持したい場合、最小台数として最も適した設定はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "6台（各AZに2台）"
+      },
+      {
+        "choiceId": "B",
+        "text": "7台"
+      },
+      {
+        "choiceId": "C",
+        "text": "9台（各AZに3台）"
+      },
+      {
+        "choiceId": "D",
+        "text": "12台（各AZに4台）"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "3つのAZへ均等配置した場合、1つのAZを失うと全体の3分の1の台数が同時に失われます。残る3分の2でピーク時に必要な6台分を賄う必要があるため、6 ÷ (1 - 1/3) = 9台が必要です。各AZに3台ずつ配置すれば、1AZ喪失後も6台が残ります。",
+    "choiceExplanations": {
+      "A": "各AZに2台で合計6台の場合、1つのAZを失うと4台になり、ピーク時に必要な6台分を下回ります。",
+      "B": "7台は3で割り切れずAZごとの台数が不均等になり、最も台数の多いAZを失うと残りは5台以下となって要件を満たしません。",
+      "C": "正解です。1AZ喪失後も6台が残り、ピーク時の処理能力を維持できます。",
+      "D": "要件自体は満たしますが、1AZ喪失後も8台が残る過剰な構成です。常時4台分の余剰コストが発生するため、最小台数としては適切ではありません。"
+    },
+    "relatedServices": [
+      "auto-scaling",
+      "ec2",
+      "elb"
+    ],
+    "relatedTerms": [
+      "vpc",
+      "cloudwatch"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "auto-scaling",
+      "multi-az",
+      "capacity-planning",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "「マルチ AZ にしてある」だけでは AZ 障害に耐えられない。EC2 Auto Scaling グループは指定した複数のサブネット（＝ AZ）へインスタンスを均等に配置しようとするが、AZ が 1 つ落ちればその AZ 上のインスタンスは同時に失われる。したがって、AZ 障害後も必要な処理能力を維持するには、あらかじめ「失われる分」を織り込んだ台数を確保しておく静的安定性（static stability）の考え方が必要になる。必要能力を N、AZ 数を Z とすると、1 AZ の喪失に耐えるための総台数は N ÷ (1 - 1/Z) を切り上げた値になる。2 AZ なら N の 2 倍、3 AZ なら 1.5 倍、4 AZ なら約 1.34 倍で、AZ 数を増やすほど必要な余剰率は下がる。\n\nここで「AZ が落ちたら Auto Scaling が残りの AZ で自動的に補充するから余剰は不要では」という反論があるが、実際には補充にはインスタンスの起動・初期化・ヘルスチェック通過までの時間がかかり、さらに AZ 障害時は同じリージョンの他利用者も一斉に容量を要求するため、必要なキャパシティを即座に確保できるとは限らない。障害の瞬間に必要な能力を「すでに動いている状態」で持っておく、というのが静的安定性の要点である。関連する設定として、Auto Scaling グループのヘルスチェックタイプを EC2 だけでなく ELB にしておくと、プロセス異常でアプリが応答しないインスタンスも置き換え対象になる。\n\nSAA-C03 では「1 つの AZ が停止しても性能を維持したい」という条件付きで最小台数や desired capacity を選ばせる計算問題として出題される。3 AZ 構成なら必要能力の 1.5 倍、2 AZ 構成なら 2 倍、という比率を押さえておくと即答できる。過剰な台数を選ぶ選択肢はコスト最適化の観点で誤答となるため、「要件を満たす最小の構成」を選ぶという読み方が重要になる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Auto Scaling（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/autoscaling/"
+      },
+      {
+        "label": "アプリケーションアーキテクチャに対する Auto Scaling の利点（Amazon EC2 Auto Scaling ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/auto-scaling-benefits.html"
+      },
+      {
+        "label": "Auto Scaling グループ（Amazon EC2 Auto Scaling ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/auto-scaling-groups.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-042",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Amazon EBS、Amazon RDS、Amazon DynamoDB、Amazon EFSを利用する複数のシステムについて、バックアップの取得スケジュールと保持期間を一元的に定義し、取得漏れがないことを監査できるようにしたいです。最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "各サービスの自動バックアップ機能を個別に設定し、Lambda関数で定期的に設定内容を集計してレポートする"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Backupでバックアップ計画とバックアップボールトを作成し、タグベースでリソースを割り当てる"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon Data Lifecycle Managerのポリシーで、対象サービスすべてのバックアップを統合管理する"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Configルールでバックアップ設定の準拠状況を評価し、非準拠なら自動修復アクションを実行する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "AWS Backupは複数のAWSサービスにまたがるバックアップを、バックアップ計画という単一の定義で一元管理できるマネージドサービスです。タグでリソースを割り当てられるため取得漏れを防ぎやすく、コンプライアンスレポートによる監査にも対応します。",
+    "choiceExplanations": {
+      "A": "サービスごとに設定方法も保持期間の指定方法も異なるため、設定の一貫性が保てず新規リソースの取得漏れも起きやすくなります。集計を自作する運用負荷も残ります。",
+      "B": "正解です。バックアップ計画で頻度・保持期間・コピー先を定義し、リソース割り当てをタグベースにすることで、新規リソースも自動的に保護対象になります。",
+      "C": "Amazon Data Lifecycle Managerが管理できるのはEBSスナップショットとEBS-backed AMIに限られます。RDSやDynamoDB、EFSは対象外です。",
+      "D": "AWS Configは設定が定めたルールに準拠しているかを評価するサービスで、バックアップの取得そのものは行いません。監査の補助にはなりますが、要件の中心である一元的な取得管理を満たしません。"
+    },
+    "relatedServices": [
+      "aws-backup",
+      "ebs",
+      "rds",
+      "dynamodb",
+      "efs"
+    ],
+    "relatedTerms": [
+      "aws-config",
+      "kms",
+      "organizations"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "backup",
+      "retention",
+      "governance",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "AWS Backup は、複数の AWS サービスのバックアップを横断的に定義・実行・監査するためのマネージドサービスである。対応リソースには EBS ボリューム、EC2 インスタンス、RDS / Aurora、DynamoDB、EFS、FSx、Storage Gateway、S3、DocumentDB、Neptune などがあり、それぞれのサービスが持つ個別のバックアップ機能を使い分けることなく、バックアップ計画（backup plan）という 1 つの定義で頻度・バックアップウィンドウ・保持期間・コールドストレージへの移行・別リージョン / 別アカウントへのコピーを指定できる。取得したバックアップはバックアップボールト（backup vault）に格納され、KMS キーで暗号化される。\n\n運用上の要点は 2 つある。第一に、保護対象リソースの割り当てをタグベースにすると、新規に作られたリソースにも自動的にバックアップ計画が適用され、取得漏れという最も起こりやすい事故を構造的に防げる。第二に、Vault Lock を有効にするとバックアップの削除や保持期間の短縮を禁止する WORM（Write Once Read Many）状態にでき、ランサムウェア対策や規制対応で求められる「消せないバックアップ」を実現できる。AWS Organizations と組み合わせればバックアップポリシーを組織全体へ適用でき、AWS Backup Audit Manager によってコンプライアンスレポートを自動生成できる。\n\nSAA-C03 では「複数サービスのバックアップを一元管理したい」「保持期間のポリシーを統一したい」「監査に対応したい」という要件で AWS Backup が正解になる。誤答として Amazon Data Lifecycle Manager が並ぶことがあるが、DLM の対象は EBS スナップショットと EBS-backed AMI に限られるという点で区別できる。AWS Config は「設定が準拠しているかを評価する」サービスであって「バックアップを取る」サービスではない、という役割の違いも押さえておきたい。",
+    "officialDocs": [
+      {
+        "label": "AWS Backup（AWS公式）",
+        "url": "https://aws.amazon.com/jp/backup/"
+      },
+      {
+        "label": "AWS Backup とは（AWS Backup デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/whatisbackup.html"
+      },
+      {
+        "label": "Amazon EBS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ebs/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-043",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "5つのLambda関数を順番に実行するバッチ処理があり、現在は各関数が次の関数を直接呼び出す形で連鎖しています。途中で失敗した際に、どのステップで失敗したかの追跡と、失敗したステップだけの再実行が難しくなっています。最も適した改善策はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "5つの処理を1つのLambda関数に統合し、関数内でtry-catchによるエラーハンドリングを実装する"
+      },
+      {
+        "choiceId": "B",
+        "text": "各関数の呼び出しをAmazon SQSキューで連結し、失敗したメッセージは可視性タイムアウト経過後に再配信させる"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon EventBridgeのルールで各関数を順に発火させ、失敗イベントをCloudWatch Logsへ出力する"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Step Functionsのステートマシンでワークフローを定義し、各ステートにRetryとCatchを設定する"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "AWS Step Functionsはワークフローの各ステップを状態として定義し、実行履歴として可視化します。ステートごとにRetry（バックオフ付き再試行）とCatch（エラー時の分岐）を宣言的に設定できるため、どこで失敗したかの追跡と部分的な再実行が容易になります。",
+    "choiceExplanations": {
+      "A": "1つの関数に統合すると、実行時間の上限（最大15分）に抵触しやすくなり、失敗時は先頭からのやり直しになります。どのステップで失敗したかの可視化も改善しません。",
+      "B": "SQSで連結すれば疎結合にはなりますが、ワークフロー全体としてどこまで進んだかという状態は持てず、分岐や並列実行、ステップ単位の再実行も自前で実装することになります。",
+      "C": "EventBridgeはイベントの配信を担うサービスで、ワークフローの状態管理やステップ単位のリトライ制御は行いません。失敗の記録は残っても、再実行の制御は自作が必要です。",
+      "D": "正解です。実行履歴のグラフから失敗ステートを特定でき、Retry / Catch により一時的な障害の自動回復と失敗時の補償処理を宣言的に書けます。"
+    },
+    "relatedServices": [
+      "step-functions",
+      "lambda",
+      "sqs",
+      "eventbridge"
+    ],
+    "relatedTerms": [
+      "cloudwatch",
+      "x-ray"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "step-functions",
+      "workflow",
+      "retry",
+      "resiliency"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "AWS Step Functions は、複数のサービス呼び出しを「ステートマシン」として定義し、その実行状態をサービス側が管理してくれるオーケストレーションサービスである。ステートには Task（Lambda や他サービスの呼び出し）、Choice（条件分岐）、Parallel（並列実行）、Map（配列に対する反復）、Wait（待機）、Fail / Succeed などがあり、Amazon States Language という JSON ベースの定義で記述する。各 Task には Retry（エラー種別ごとの再試行回数・間隔・バックオフ率）と Catch（エラー時の遷移先ステート）を宣言的に書けるため、リトライ処理やロールバック処理をアプリケーションコードから切り離せる。\n\n「Lambda 関数が次の Lambda 関数を直接呼ぶ」という関数チェーンは、小規模なうちは動くが、ステップが増えると急速に扱いづらくなる。全体の進行状況がどこにも保存されないため失敗地点の特定が難しく、途中から再開する仕組みも自作になる。呼び出し元の Lambda は呼び出し先の完了を待つ間も課金され続けるという無駄もある。Step Functions に移すと、実行ごとに履歴が残りコンソールのグラフで失敗ステートを一目で特定でき、入力を差し替えた再実行も容易になる。ワークフロータイプには Standard（最長 1 年、実行ごとの厳密な履歴、状態遷移課金）と Express（最長 5 分、高スループット、実行時間とメモリ課金）の 2 種類があり、長時間の業務ワークフローは Standard、大量の短時間イベント処理は Express を選ぶ。\n\nSAA-C03 では「複数ステップの処理を順序立てて実行したい」「どのステップで失敗したか追跡したい」「リトライやエラー処理を組み込みたい」といった要件で Step Functions が正解になる。誤答には Lambda への統合、SQS による連結、EventBridge による連鎖が並ぶ。SQS や EventBridge は「疎結合なメッセージ配信」が役割であってワークフローの状態管理は行わない、という区別が判断の決め手になる。",
+    "officialDocs": [
+      {
+        "label": "AWS Step Functions（AWS公式）",
+        "url": "https://aws.amazon.com/jp/step-functions/"
+      },
+      {
+        "label": "Step Functions とは（AWS Step Functions デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/welcome.html"
+      },
+      {
+        "label": "Step Functions ワークフローでのエラー処理（AWS Step Functions デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/concepts-error-handling.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-044",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "複数リージョンのNetwork Load Balancer上で、UDPを使うリアルタイム対戦ゲームのサーバーを運用しています。世界中のプレイヤーの遅延を下げ、リージョン障害時には短時間で別リージョンへ切り替えたいです。さらに、クライアントに組み込む接続先IPアドレスは変更できない事情があります。最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Global Accelerator"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon Route 53の遅延ベースルーティング"
+      },
+      {
+        "choiceId": "D",
+        "text": "Application Load Balancerのクロスリージョン設定"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Global Acceleratorは2つの固定的なエニーキャストIPアドレスを提供し、最寄りのエッジロケーションからAWSのグローバルネットワーク経由で最適なエンドポイントへ転送します。TCPとUDPの両方に対応し、ヘルスチェック失敗時の切り替えはDNSのTTLに依存しないため高速です。",
+    "choiceExplanations": {
+      "A": "正解です。静的IP、UDP対応、AWSバックボーン経由の低遅延、DNSに依存しない高速フェイルオーバーという要件をすべて満たします。",
+      "B": "CloudFrontはHTTP/HTTPSのコンテンツ配信を対象とするCDNで、UDPのトラフィックは扱えません。また接続先として固定IPアドレスを提供する仕組みでもありません。",
+      "C": "遅延ベースルーティングは最も遅延の小さいリージョンを返せますが、DNSベースであるためクライアントやリゾルバーのキャッシュTTLの影響を受け、切り替えに時間がかかります。IPアドレスを固定するという要件も満たしません。",
+      "D": "Application Load Balancerはリージョン内のサービスで、リージョンをまたぐ構成は取れません。またALBはHTTP/HTTPSを扱うレイヤー7のロードバランサーであり、UDPには対応しません。"
+    },
+    "relatedServices": [
+      "elb",
+      "route53",
+      "cloudfront"
+    ],
+    "relatedTerms": [
+      "vpc",
+      "ec2"
+    ],
+    "relatedComparisons": [
+      "route53-vs-cloudfront-vs-global-accelerator",
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "global-accelerator",
+      "latency",
+      "anycast",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "AWS Global Accelerator は、アクセラレーターごとに 2 つのエニーキャスト静的 IP アドレスを払い出し、そのアドレス宛ての通信を最寄りの AWS エッジロケーションで受けて、AWS のグローバルネットワーク（バックボーン）経由でリージョンのエンドポイントへ運ぶサービスである。エンドポイントには Network Load Balancer、Application Load Balancer、EC2 インスタンス、Elastic IP を指定でき、リージョンごとのトラフィックダイヤルやエンドポイントごとの重みで配分を制御できる。インターネット経由の経路と比べてパケットロスやジッターが減り、TCP / UDP の両方に対応する点が特徴になる。\n\nCloudFront との使い分けが最初の分岐点になる。CloudFront は HTTP / HTTPS を対象とし、エッジでコンテンツをキャッシュして配信するサービスで、静的コンテンツや動画配信に強い。Global Accelerator はキャッシュを持たず、プロトコルを問わないパケット転送の最適化を担うため、ゲーム、VoIP、IoT、金融取引といった非 HTTP かつ低遅延が求められるワークロードに向く。Route 53 のレイテンシーベースルーティングとの違いは切り替え速度にある。Route 53 は DNS 応答で宛先を変えるため、クライアントやリゾルバーのキャッシュ TTL が切れるまで古い宛先が使われ続ける。Global Accelerator はクライアントから見た宛先 IP が変わらないまま内部の転送先を切り替えるため、DNS キャッシュの影響を受けずに切り替わる。加えて、静的 IP はファイアウォールの許可リストに登録したい要件や、IP をクライアントへ埋め込まざるを得ない要件にも適合する。\n\nSAA-C03 では「UDP」「非 HTTP プロトコル」「静的 IP が必要」「DNS に依存しない高速フェイルオーバー」「グローバルな遅延削減」というキーワードが出たら Global Accelerator が正解になる。誤答には CloudFront（HTTP 限定・キャッシュ目的）、Route 53 レイテンシーベースルーティング（DNS 依存で切り替えが遅い）、リージョンをまたぐ ALB（そもそも不可能）が並ぶ。CloudFront と Global Accelerator のどちらを問われているかは、扱うプロトコルとキャッシュの要否で読み分けられる。",
+    "officialDocs": [
+      {
+        "label": "AWS Global Accelerator（AWS公式）",
+        "url": "https://aws.amazon.com/jp/global-accelerator/"
+      },
+      {
+        "label": "AWS Global Accelerator とは（AWS Global Accelerator デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/global-accelerator/latest/dg/what-is-global-accelerator.html"
+      },
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-045",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "EC2上で稼働する商用データベースが、常時30,000 IOPS前後を要求し、レイテンシーのばらつきを小さく抑える必要があります。単一のEBSボリュームでこの要件を満たす構成として、最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "gp2ボリュームを大容量で作成し、容量に比例して増えるベースラインIOPSを利用する"
+      },
+      {
+        "choiceId": "B",
+        "text": "gp3ボリュームを作成し、IOPSを30,000にプロビジョニングする"
+      },
+      {
+        "choiceId": "C",
+        "text": "io2ボリュームを作成し、必要なIOPSをプロビジョニングする"
+      },
+      {
+        "choiceId": "D",
+        "text": "st1（スループット最適化HDD）ボリュームを作成する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "汎用SSD（gp2 / gp3）のIOPS上限は1ボリュームあたり16,000 IOPSです。30,000 IOPSを単一ボリュームで安定して出すには、プロビジョンドIOPS SSDであるio2（またはio2 Block Express）を選ぶ必要があります。io2は一貫した低レイテンシーと高い耐久性を提供します。",
+    "choiceExplanations": {
+      "A": "gp2のIOPSは容量1 GiBあたり3 IOPSで増えますが、上限は16,000 IOPSです。容量を増やしても30,000 IOPSには到達せず、IOPSを容量と独立に指定することもできません。",
+      "B": "gp3はIOPSとスループットを容量と独立にプロビジョニングできますが、1ボリュームあたりの上限は16,000 IOPSです。30,000 IOPSは指定できません。",
+      "C": "正解です。io2はIOPSをプロビジョニングでき、単一ボリュームで16,000 IOPSを大きく超える性能と一貫した低レイテンシーを提供します。",
+      "D": "st1はHDDベースで、大きなブロックのシーケンシャルな読み書きに最適化されています。データベースのようなランダムI/Oが多いワークロードには適していません。"
+    },
+    "relatedServices": [
+      "ebs",
+      "ec2",
+      "rds"
+    ],
+    "relatedTerms": [
+      "s3",
+      "efs"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "ebs",
+      "iops",
+      "storage",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "Amazon EBS のボリュームタイプは、SSD 系と HDD 系に大別される。SSD 系はランダム I/O（IOPS）が重要なワークロード向けで、汎用 SSD の gp2 / gp3 と、プロビジョンド IOPS SSD の io1 / io2 / io2 Block Express がある。HDD 系はシーケンシャルなスループットが重要なワークロード向けで、スループット最適化 HDD の st1 と、コールド HDD の sc1 がある。データベースやトランザクション処理は SSD 系、ビッグデータ処理やログ処理は HDD 系という大枠で判断する。\n\ngp2 と gp3 の違いは性能の決まり方にある。gp2 は容量 1 GiB あたり 3 IOPS というベースライン性能が容量に連動し、小容量ではバーストバケットに依存する。gp3 は 3,000 IOPS / 125 MiB/s をベースラインとして持ち、IOPS とスループットを容量とは独立に追加プロビジョニングできるため、「性能のために容量を無駄に大きくする」必要がなくなり、同容量なら gp2 より安価になる。ただし gp2 / gp3 とも 1 ボリュームあたりの IOPS 上限は 16,000 で、これを超える要求には io2 系を使う。io2 はプロビジョンド IOPS に対応し、耐久性も汎用 SSD より高く、io2 Block Express ではさらに高い IOPS とスループットに対応する。なお、EBS の性能はボリューム側だけでなく EC2 インスタンス側の EBS 帯域にも制限されるため、EBS 最適化インスタンスと適切なインスタンスサイズの選択が前提になる。\n\nSAA-C03 では、要求 IOPS の数値を提示したうえで適切なボリュームタイプを選ばせる出題が定番である。16,000 IOPS という汎用 SSD の上限を境界に gp3 か io2 かを切り分けるのが基本の判断軸で、「一貫した低レイテンシー」「ミッションクリティカルなデータベース」という語が付くと io2 が選ばれやすい。逆に「大量のシーケンシャルスループット」「ログ処理」「コスト重視」なら st1 / sc1 が正解になる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EBS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ebs/"
+      },
+      {
+        "label": "Amazon EBS ボリュームの種類（Amazon EBS ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/ebs/latest/userguide/ebs-volume-types.html"
+      },
+      {
+        "label": "Amazon EC2（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-046",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "S3に蓄積された数TBのアクセスログに対し、月に数回だけアドホックなSQL分析を実行したいです。分析基盤の常時稼働コストとインフラ管理を避けたい場合、最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon Redshiftのプロビジョンドクラスターを作成し、ログをロードしてクエリする"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon Athenaで、S3上のデータに対して直接SQLクエリを実行する"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon RDS for PostgreSQLインスタンスにログを取り込み、SQLで集計する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EMRクラスターを起動し、Spark SQLで集計する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Amazon AthenaはS3上のデータへ直接SQLを実行できるサーバーレスのクエリサービスで、スキャンしたデータ量に対してのみ課金されます。クラスターの構築も常時稼働も不要なため、実行頻度の低いアドホック分析に最も適しています。",
+    "choiceExplanations": {
+      "A": "Redshiftのプロビジョンドクラスターは起動している間ずっと課金されます。ログのロード作業も必要で、月数回の利用に対しては過剰な構成です。",
+      "B": "正解です。テーブル定義をGlueデータカタログに登録すれば、データをS3に置いたまま即座にクエリできます。",
+      "C": "RDSは常時稼働のインスタンス課金であり、数TBのログを取り込む処理と保存領域の確保も必要です。アドホックな分析用途には向きません。",
+      "D": "EMRクラスターは必要なときだけ起動する運用も可能ですが、クラスターの構成管理やジョブの実装が必要で、SQL分析だけが目的なら運用負荷が過大です。"
+    },
+    "relatedServices": [
+      "athena",
+      "s3",
+      "glue",
+      "redshift"
+    ],
+    "relatedTerms": [
+      "quicksight",
+      "rds"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "athena",
+      "analytics",
+      "serverless",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "Amazon Athena は、S3 に置かれたデータへ標準 SQL を直接実行できるサーバーレスのクエリサービスである。データを別のデータベースへロードする必要がなく、テーブルのスキーマを AWS Glue データカタログに登録するだけでクエリできる。CSV、JSON、ORC、Parquet、Avro といった形式に対応し、CloudTrail ログ、VPC フローログ、ALB アクセスログ、CloudFront ログといった AWS が出力するログの分析用途で広く使われる。課金はクエリがスキャンしたデータ量に対する従量制で、クラスターの起動時間に対する課金は発生しない。\n\nコストと性能を左右するのは「スキャン量をいかに減らすか」である。データを Parquet や ORC といった列指向フォーマットへ変換すると、必要な列だけを読むため CSV や JSON に比べてスキャン量が大幅に減る。加えて、S3 のキー設計を年 / 月 / 日などで区切ってパーティション化し、WHERE 句でパーティション列を指定すれば、対象外のファイルを読まずに済む。データ量が増えてきたら圧縮（Snappy / GZIP）も併用する。分析基盤の選択肢としては、繰り返し実行する定型のダッシュボードやサブ秒応答が求められる BI 用途なら Amazon Redshift、大規模な ETL や機械学習の前処理なら Amazon EMR や AWS Glue、という棲み分けになる。\n\nSAA-C03 では「S3 上のデータをそのまま SQL で分析したい」「サーバーレスで始めたい」「アドホックな分析」「クエリした分だけ課金」というキーワードが出たら Athena が正解になる。誤答には Redshift クラスター（常時稼働のコスト）、RDS へのロード（取り込み負荷）、EMR クラスター（運用負荷）が並ぶ。逆に「日常的に大量の集計を高速に行う」「多数のユーザーが同時にダッシュボードを見る」という条件なら Redshift が正解になるという読み分けも押さえておきたい。",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena（AWS公式）",
+        "url": "https://aws.amazon.com/jp/athena/"
+      },
+      {
+        "label": "Amazon Athena とは（Amazon Athena ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/athena/latest/ug/what-is.html"
+      },
+      {
+        "label": "Amazon Redshift（AWS公式）",
+        "url": "https://aws.amazon.com/jp/redshift/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-047",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "IoTデバイスから毎秒数万件のテレメトリを受信し、デバイスごとの時系列順序を保ったまま、リアルタイムの異常検知と分析基盤への蓄積という2つの処理を並行して行いたいです。片方の処理に不具合があった場合は、直近24時間分のデータを読み直して再処理できる必要があります。最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon SQSの標準キュー"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQSのFIFOキュー"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon SNSのトピックに2つのLambda関数をサブスクライブしてファンアウトする"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Kinesis Data Streams"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Kinesis Data Streamsはパーティションキー単位（シャード内）で順序を保証し、レコードを保持期間（既定24時間、最大365日）の間ストリーム上に残します。複数のコンシューマーが同じレコードを独立した位置から読めるため、並行処理と再処理の両方の要件を満たします。",
+    "choiceExplanations": {
+      "A": "標準キューは順序を保証しません。またメッセージは1つのコンシューマーが処理して削除する前提のため、2つの処理へ同じデータを流すことも、削除済みメッセージを読み直すこともできません。",
+      "B": "FIFOキューはメッセージグループ単位で順序を保証しますが、メッセージは消費後に削除されるため過去データの読み直しができません。2つの独立した処理へ同じメッセージを配るという要件も満たしません。",
+      "C": "SNSは同じメッセージを複数のサブスクライバーへ配信できますが、配信は一度きりで保持と再読み取りの仕組みがなく、順序の保証もありません（FIFOトピックはSQS FIFOキュー向けの機能です）。",
+      "D": "正解です。シャード内の順序保証、保持期間内の再読み取り、複数コンシューマーの独立した読み取りという3つの特性がすべて要件に一致します。"
+    },
+    "relatedServices": [
+      "kinesis",
+      "lambda",
+      "sqs",
+      "sns"
+    ],
+    "relatedTerms": [
+      "s3",
+      "dynamodb"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "kinesis",
+      "streaming",
+      "ordering",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "Amazon Kinesis Data Streams は、大量のレコードをリアルタイムに取り込み、一定期間ストリーム上に保持する分散ストリーミングサービスである。ストリームはシャードという単位に分かれ、プロデューサーが指定するパーティションキーのハッシュでレコードの配置先シャードが決まる。同じパーティションキーのレコードは必ず同じシャードへ入り、シャード内では投入順に読み出されるため、「デバイスごと」「ユーザーごと」といった単位での順序保証が実現できる。キャパシティモードにはプロビジョンド（シャード数を自分で管理）とオンデマンド（トラフィックに応じて自動調整）がある。\n\nキューとの決定的な違いは、レコードが「消費されても消えない」点にある。コンシューマーは自分の読み取り位置（イテレーター）を持ち、保持期間（既定 24 時間、最大 365 日）の間はいつでも過去のレコードを読み直せる。この性質により、複数のコンシューマーアプリケーションが同じストリームを互いに干渉せず独立して読めるファンアウト構成が自然に組める（拡張ファンアウトを使えばコンシューマーごとに専有スループットも確保できる）。一方 SQS はメッセージを 1 つのコンシューマーが処理して削除するワークキューであり、削除後の読み直しはできず、標準キューでは順序も保証されない。SNS はプッシュ型のファンアウトができるが保持と再読み取りの仕組みを持たない。単純に S3 や Redshift、OpenSearch へ流し込むだけなら、シャード管理が不要な Amazon Data Firehose のほうが適する場合もある。\n\nSAA-C03 では「順序を保ちたい」「複数の処理へ同じデータを流したい」「一定期間さかのぼって再処理したい」「毎秒数万件のストリーミング」というキーワードが揃ったら Kinesis Data Streams が正解になる。逆に「重複を避けつつ 1 回だけ処理したい」「厳密な順序が必要なジョブキュー」であれば SQS FIFO、「疎結合なタスク分散」なら SQS 標準キューという読み分けになる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Kinesis Data Streams（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kinesis/data-streams/"
+      },
+      {
+        "label": "Amazon Kinesis Data Streams とは（Amazon Kinesis Data Streams デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/streams/latest/dev/introduction.html"
+      },
+      {
+        "label": "Amazon Kinesis Data Streams の用語と概念（Amazon Kinesis Data Streams デベロッパーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/streams/latest/dev/key-concepts.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-048",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "HPCワークロードで、複数のEC2インスタンス間を低レイテンシー・高帯域のノード間通信で結びたいです。インスタンスの配置に関する設定として最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "クラスタープレイスメントグループにインスタンスを配置する"
+      },
+      {
+        "choiceId": "B",
+        "text": "スプレッドプレイスメントグループにインスタンスを配置する"
+      },
+      {
+        "choiceId": "C",
+        "text": "パーティションプレイスメントグループにインスタンスを配置する"
+      },
+      {
+        "choiceId": "D",
+        "text": "複数のアベイラビリティーゾーンへインスタンスを分散し、Auto Scalingグループで管理する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "クラスタープレイスメントグループは、単一のアベイラビリティーゾーン内でインスタンスを物理的に近接配置し、ノード間の低レイテンシーと高いネットワークスループットを実現します。HPCや密結合の分散計算に適した配置戦略です。",
+    "choiceExplanations": {
+      "A": "正解です。近接配置により、ノード間通信のレイテンシーを最小化し、インスタンス間の帯域を最大限に活用できます。",
+      "B": "スプレッドプレイスメントグループは、インスタンスを別々の物理ハードウェアへ分散して同時障害を避けるための配置です。可用性は上がりますが、ノード間のレイテンシーは改善しません。",
+      "C": "パーティションプレイスメントグループは、大規模な分散システム（HDFSやCassandraなど）で、パーティション単位に障害の影響範囲を分離するための配置です。低レイテンシー通信が目的ではありません。",
+      "D": "アベイラビリティーゾーンをまたぐ分散は可用性を高めますが、AZ間の物理距離により通信レイテンシーは大きくなります。要件と逆方向の設計です。"
+    },
+    "relatedServices": [
+      "ec2",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "vpc",
+      "ebs"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "placement-group",
+      "hpc",
+      "performance"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "EC2 のプレイスメントグループは、インスタンスを基盤ハードウェア上のどこに配置するかを指定する仕組みで、クラスター・スプレッド・パーティションの 3 つの戦略がある。クラスタープレイスメントグループは、単一のアベイラビリティーゾーン内でインスタンスを物理的に近接配置し、ノード間のネットワークレイテンシーを最小化して帯域を最大化する。HPC、機械学習の分散学習、密結合な並列計算といった「ノード間通信が性能のボトルネックになる」ワークロードで使う。スプレッドプレイスメントグループは逆に、各インスタンスを異なるラック（電源・ネットワークが独立した単位）へ配置して同時障害を避ける戦略で、少数の重要なインスタンスを守る用途に向く。パーティションプレイスメントグループは、インスタンス群をパーティションという論理グループに分け、パーティション同士が同じラックを共有しないようにする戦略で、HDFS や Cassandra、Kafka のような大規模分散データストアの障害分離に使う。\n\n設計上のトレードオフとして、クラスタープレイスメントグループは近接配置ゆえに単一 AZ 内に閉じ、同一の障害ドメインへ集中するため AZ 障害には弱い。可用性が必要なら、AZ をまたいだ複数のクラスターグループを用意するといった設計が必要になる。また、グループ内のインスタンスは同じインスタンスタイプで揃えて一度に起動するほうが容量を確保しやすく、後から追加すると容量不足のエラーが出ることがある。ネットワーク性能をさらに引き出す要素として、Elastic Network Adapter（ENA）や、より低遅延な Elastic Fabric Adapter（EFA）の利用、拡張ネットワーキングの有効化がある。\n\nSAA-C03 では「HPC」「ノード間の低レイテンシー通信」「密結合な並列処理」という語が出たらクラスター、「重要なインスタンスを別々のハードウェアへ分散したい」ならスプレッド、「大規模分散データストアの障害分離」ならパーティション、という 3 択の読み分けが問われる。3 つの名前と目的の対応を取り違えないことがそのまま得点になる領域である。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      },
+      {
+        "label": "Amazon EC2 インスタンスのプレイスメントグループ（Amazon EC2 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/placement-groups.html"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-049",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "hard",
+    "question": "法令対応のため7年間保管が必要な監査ログをS3に保存します。保管期間中の参照はほとんど発生せず、監査要求があった場合も取り出しに半日程度かかって構いません。7年間の保管コストを最小化する構成として、最も適したものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "ライフサイクルルールでS3 Standard-IA（低頻度アクセス）へ移行し、7年間保持する"
+      },
+      {
+        "choiceId": "B",
+        "text": "ライフサイクルルールでS3 Glacier Deep Archiveへ移行し、7年経過後に有効期限で削除する"
+      },
+      {
+        "choiceId": "C",
+        "text": "ライフサイクルルールでS3 Glacier Flexible Retrievalへ移行し、7年間保持する"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Intelligent-Tieringを有効化し、アクセスパターンに応じた自動階層化に任せる"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "S3 Glacier Deep ArchiveはS3の中で最も保管単価が安いストレージクラスで、標準的な取り出しに12時間程度を要します。「参照はほとんど発生しない」「取り出しに半日かかってよい」という条件に一致し、7年間の保管コストを最小化できます。",
+    "choiceExplanations": {
+      "A": "S3 Standard-IAはミリ秒単位で即座に取り出せますが、保管単価はGlacier系より大幅に高くなります。即時取り出しが不要な本要件ではコストが最小になりません。",
+      "B": "正解です。ライフサイクルルールで移行し、7年経過時点で有効期限による削除も同じルールに定義しておけば、保持期間の管理まで自動化できます。",
+      "C": "S3 Glacier Flexible Retrievalは数分から12時間で取り出せる中間的なクラスですが、保管単価はDeep Archiveより高くなります。半日待てる要件に対しては過剰な取り出し速度にコストを払うことになります。",
+      "D": "Intelligent-Tieringはアクセスパターンが読めない場合に有効な選択肢です。本要件のように「ほとんどアクセスされない」と分かっている場合は、オブジェクト単位のモニタリング料金が上乗せされる分だけ不利になります。"
+    },
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [
+      "aws-backup",
+      "cost-explorer"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "glacier",
+      "storage-class",
+      "cost"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "S3 のストレージクラスは「保管単価」と「取り出しの速さ・料金」のトレードオフで並んでいる。即時アクセス系は S3 Standard、S3 Standard-IA、S3 One Zone-IA、S3 Glacier Instant Retrieval で、いずれもミリ秒単位で取り出せる代わりに保管単価はこの順に安くなり、代わりに取り出し料金や最小保存期間（IA 系は 30 日、Glacier Instant Retrieval は 90 日）といった制約が付く。アーカイブ系は S3 Glacier Flexible Retrieval（最小 90 日、取り出しは数分〜12 時間）と S3 Glacier Deep Archive（最小 180 日、標準の取り出しは 12 時間以内、大量取り出しは 48 時間以内）で、Deep Archive が S3 で最も安い保管単価となる。\n\n選定の判断軸は「取り出しにどれだけ待てるか」と「最小保存期間を満たせるか」の 2 点になる。監査ログやコンプライアンス目的の長期保管のように、保管期間の大半で一切参照されず、参照時も即時性が不要なケースは Deep Archive が最適解になる。逆に「年に数回だが取り出しは即座に必要」なら Glacier Instant Retrieval、「アクセスパターンが読めない」なら S3 Intelligent-Tiering が向く。Intelligent-Tiering はアクセス状況に応じて自動的に階層を移すが、オブジェクト単位のモニタリング・自動化料金が上乗せされるため、「ほとんどアクセスされないと事前に分かっている」データに対しては固定のアーカイブクラスへ直接移すほうが安くなる。移行と失効はどちらもライフサイクルルールで宣言でき、保持期間の終了時に自動削除するところまで含めて設計するのが定石である。\n\nSAA-C03 では、保管年数・アクセス頻度・許容される取り出し時間という 3 つの条件が問題文に埋め込まれ、それに合うストレージクラスを選ばせる出題が繰り返される。「数時間以内」なのか「12 時間以内でよい」のかで Glacier Flexible Retrieval と Deep Archive が分かれるため、時間の記述を読み飛ばさないことが得点の分かれ目になる。最小保存期間より前に削除すると残り期間分の料金が請求される点も、コスト計算の出題で問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 ストレージクラス（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/storage-classes/"
+      },
+      {
+        "label": "Amazon S3 ストレージクラスの理解と管理（Amazon S3 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/storage-class-intro.html"
+      },
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      }
+    ]
+  },
+  {
+    "questionId": "saa-050",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "本番EC2インスタンス群のCPU使用率が長期間10%未満で推移しており、スペックが過剰である可能性があります。実際の使用状況の分析にもとづいて、移行先として適切なインスタンスタイプの候補まで提示させたい場合、最も適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS BudgetsでEC2のコスト予算を設定し、しきい値超過時に通知を受け取る"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Trusted Advisorの「低使用率のAmazon EC2インスタンス」チェックを確認する"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Compute Optimizerを有効化し、使用率メトリクスにもとづく推奨インスタンスタイプを確認する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon CloudWatchでメモリ使用率のカスタムメトリクスを収集し、ダッシュボードで可視化する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Compute Optimizerは、CloudWatchの使用率メトリクスを機械学習で分析し、EC2インスタンス・Auto Scalingグループ・EBSボリューム・Lambda関数などに対して具体的な推奨リソース構成と推定削減額、パフォーマンスリスクを提示します。移行先候補まで示す点が要件に一致します。",
+    "choiceExplanations": {
+      "A": "AWS Budgetsは予算のしきい値超過を通知するサービスで、どのインスタンスが過剰かの分析や移行先の提案は行いません。",
+      "B": "Trusted Advisorのコスト最適化チェックは低使用率のインスタンスを「検出」してくれますが、利用にはビジネス以上のサポートプランが必要で、使用率分析にもとづく具体的な移行先インスタンスタイプの推奨まではCompute Optimizerの領分です。",
+      "C": "正解です。無料で有効化でき、推奨と現状の比較、推定コスト削減額まで確認できます。",
+      "D": "メトリクスの可視化は現状把握には役立ちますが、適切なインスタンスタイプを判断・提示する機能はありません。"
+    },
+    "relatedServices": [
+      "ec2",
+      "cloudwatch",
+      "trusted-advisor",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "aws-budgets",
+      "auto-scaling"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "compute-optimizer",
+      "rightsizing",
+      "cost",
+      "ec2"
+    ],
+    "published": true,
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "practicalNote": "AWS Compute Optimizer は、CloudWatch が収集したリソース使用率メトリクスを機械学習で分析し、EC2 インスタンス、EC2 Auto Scaling グループ、EBS ボリューム、Lambda 関数、ECS on Fargate サービス、商用ソフトウェアライセンスなどについて「現在の構成が過剰か不足か」と「推奨される移行先」を提示するサービスである。推奨には推定コスト削減額と、変更した場合のパフォーマンスリスクが併記されるため、単に安いタイプへ寄せるのではなく、性能を落とさない範囲での適正化（ライトサイジング）を判断できる。有効化自体は無料で、EC2 についてはメモリ使用率などの追加メトリクスを CloudWatch エージェント経由で送ると推奨の精度が上がる。\n\nコスト最適化に関わるサービスは役割が細かく分かれており、混同しやすい。AWS Cost Explorer はコストと使用量の推移を可視化・分析するダッシュボードで、Savings Plans や RI の購入推奨、ライトサイジング推奨も提供する。AWS Budgets は予算のしきい値に対する超過・予測超過を通知する仕組み。AWS Trusted Advisor はコスト最適化・パフォーマンス・セキュリティ・耐障害性・サービスクォータの 5 分野でベストプラクティスをチェックし、「低使用率の Amazon EC2 インスタンス」のような検出項目を持つが、コスト最適化系のチェックをフルに利用するにはビジネス以上のサポートプランが必要になる。Cost Anomaly Detection は普段と異なる支出パターンを機械学習で検出する。\n\nSAA-C03 では「使用率にもとづいて適切なインスタンスタイプを推奨してほしい」「ライトサイジングしたい」という要件で Compute Optimizer が正解になる。誤答には Budgets（通知のみ）、CloudWatch（可視化のみ）、Trusted Advisor（検出はするが推奨タイプの提示は行わない）が並ぶ。「検出」「可視化」「通知」「推奨」のどれを求められているかを問題文から読み分けるのが、この領域の判断軸になる。",
+    "officialDocs": [
+      {
+        "label": "AWS Compute Optimizer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/compute-optimizer/"
+      },
+      {
+        "label": "AWS Compute Optimizer とは（AWS Compute Optimizer ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/compute-optimizer/latest/ug/what-is-compute-optimizer.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
   }
 ]
