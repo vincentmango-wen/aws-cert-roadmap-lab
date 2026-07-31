@@ -7,7 +7,7 @@
  *
  * 検証 invariant (task spec T1):
  *  (1) clf-c02.{ja,en,zh}.json の questionId 集合が完全一致 (50 件 × 3 言語)
- *  (2) saa-c03.{ja,en,zh}.json の questionId 集合が完全一致 (30 件 × 3 言語)
+ *  (2) saa-c03.{ja,en,zh}.json の questionId 集合が完全一致 (50 件 × 3 言語)
  *  (3) 各 questionId について immutable フィールドが ja/en/zh で完全一致:
  *      exam, category, domain, difficulty, correctChoiceId, published,
  *      relatedServices, relatedTerms, relatedComparisons, tags
@@ -60,7 +60,7 @@ const DATASETS: ExamDataset[] = [
   },
   {
     name: "SAA-C03",
-    expectedCount: 30,
+    expectedCount: 50,
     ja: saaJa as Question[],
     en: saaEn as Question[],
     zh: saaZh as Question[],
