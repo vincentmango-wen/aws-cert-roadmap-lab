@@ -51,6 +51,9 @@ function formatServiceName(service: string): string {
     kms: "KMS",
     bedrock: "Bedrock",
     sagemaker: "SageMaker",
+    "nat-gateway": "NAT Gateway",
+    "nat-instance": "NAT Instance",
+    "vpc-endpoint": "VPC Endpoint",
   };
 
   return serviceNameMap[service] ?? service.toUpperCase();
