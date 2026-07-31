@@ -169,4 +169,45 @@ describe("comparisons locale parity", () => {
       }
     }
   });
+
+  // (7) ACR-002 追加: examScopes / level / priority の値が型の union に含まれること。
+  // JSON は comparison-detail-data.ts で `as Comparison[]` として読み込まれるため、
+  // 値のタイポ (例: "SAA-CO3") は tsc では検出できない。invariant (3) は 3 言語一致しか
+  // 見ないので、3 ファイルへ同じタイポを書くと素通りし、examScopes は
+  // ComparisonDetailContent / ComparisonsListClient がチップとして**そのまま描画**する。
+  // (cmp-013 で examScopes を手で 3 ファイルに書く運用が続くため、値域を機械的に固定する)
+  it("(7) examScopes/level/priority values are within the declared unions", () => {
+    const VALID_EXAM_SCOPES = new Set<string>(["CLF-C02", "SAA-C03", "AIF-C01"]);
+    const VALID_LEVELS = new Set<string>([
+      "beginner",
+      "intermediate",
+      "advanced",
+    ]);
+    const VALID_PRIORITIES = new Set<string>(["high", "medium", "low"]);
+
+    const localeLists: Array<["ja" | "en" | "zh", Comparison[]]> = [
+      ["ja", jaList],
+      ["en", enList],
+      ["zh", zhList],
+    ];
+
+    for (const [locale, list] of localeLists) {
+      for (const entry of list) {
+        for (const scope of entry.examScopes) {
+          expect(
+            VALID_EXAM_SCOPES.has(scope),
+            `unknown examScope "${scope}" (locale=${locale}, slug=${entry.slug}). It would be rendered verbatim as an exam chip.`,
+          ).toBe(true);
+        }
+        expect(
+          VALID_LEVELS.has(entry.level),
+          `unknown level "${entry.level}" (locale=${locale}, slug=${entry.slug})`,
+        ).toBe(true);
+        expect(
+          VALID_PRIORITIES.has(entry.priority),
+          `unknown priority "${entry.priority}" (locale=${locale}, slug=${entry.slug})`,
+        ).toBe(true);
+      }
+    }
+  });
 });
