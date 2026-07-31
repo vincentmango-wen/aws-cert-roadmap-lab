@@ -108,9 +108,19 @@ export function getBeginnerRecommendedQuestions(
     .slice(0, limit);
 }
 
-export function formatRelatedServices(relatedServices?: string[]): string {
+/**
+ * 関連サービス名の表示文字列を組み立てる。
+ *
+ * サービス名の連結・大文字化は locale 非依存だが、関連サービスが 0 件の
+ * ときのフォールバック文言だけは locale 依存のため、呼び出し側が辞書から
+ * 取得した `emptyLabel` を渡す。
+ */
+export function formatRelatedServices(
+  relatedServices: string[] | undefined,
+  emptyLabel: string,
+): string {
   if (!relatedServices || relatedServices.length === 0) {
-    return "関連サービスなし";
+    return emptyLabel;
   }
 
   return relatedServices.join(" / ").toUpperCase();
