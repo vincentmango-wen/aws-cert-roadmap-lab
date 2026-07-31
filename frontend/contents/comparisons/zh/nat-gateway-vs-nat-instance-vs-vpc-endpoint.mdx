@@ -15,7 +15,7 @@
 |---|---|---|
 | NAT Gateway | AWS 受管的 NAT，讓私有子網路能連往網際網路 | 取得 OS 修補程式、呼叫外部 API |
 | NAT 執行個體 | 在 EC2 上自行建置的 NAT，同樣用於對外連線 | 學習與驗證環境、極小規模的成本節省 |
-| VPC 端點 | 將往 AWS 服務的流量封閉在 VPC 內，不經過網際網路 | 私密存取 S3 與 DynamoDB、透過 PrivateLink 的內部通訊 |
+| VPC 端點 | 讓往 AWS 服務的流量不經過網際網路，在 AWS 網路內完成 | 私密存取 S3 與 DynamoDB、透過 PrivateLink 的內部通訊 |
 
 如果一時難以判斷，可以先用以下方式分辨。
 
@@ -32,8 +32,8 @@
 | 實際型態 | AWS 受管的 NAT 服務 | 自行啟動與管理的 EC2 執行個體 | 路由表項目 (Gateway 型) 或 ENI (Interface 型) |
 | 可通訊的對象 | 網際網路上的任意目的地 | 網際網路上的任意目的地 | 僅限有支援的 AWS 服務 |
 | 維運責任 | AWS 負責修補與擴充 | OS 修補、監控、故障復原全部自行負責 | 由 AWS 受管 |
-| 可用性 | 在 AZ 內具備備援。多 AZ 架構需每個 AZ 各建一個 | 單一執行個體即為單點故障，需自行設計容錯移轉 | Gateway 型在區域內具備備援。Interface 型需每個 AZ 配置 ENI |
-| 頻寬 | 自動擴充 (最高 100 Gbps) | 上限取決於執行個體類型的網路效能 | 依所使用的 AWS 服務上限而定 |
+| 可用性 | 預設的 zonal 模式在 AZ 內具備備援，多 AZ 架構需每個 AZ 各建一個 (regional 模式會自動擴充至有工作負載的 AZ) | 單一執行個體即為單點故障，需自行設計容錯移轉 | Gateway 型在區域內具備備援。Interface 型需每個 AZ 配置 ENI |
+| 頻寬 | 自動擴充 (最高 100 Gbps) | 上限取決於執行個體類型的網路效能 | 每個 AZ 自 10 Gbps 起，自動擴充至最高 100 Gbps (AWS PrivateLink 配額) |
 | 費用 | 時數計費 + 資料處理量計費 | EC2 執行個體費用 (加上 EBS 與資料傳輸) | Gateway 型無額外費用。Interface 型為時數計費 + 資料處理量計費 |
 | 安全群組 | 無法指派 (以子網路的 Network ACL 控制) | 因為是 EC2，可以指派 | 可指派給 Interface 型的 ENI (Gateway 型不可) |
 | 網際網路閘道 | 需要 (需置於公有子網路) | 需要 (需置於公有子網路) | 不需要 |
@@ -76,7 +76,7 @@ EC2 ──0.0.0.0/0──▶ NAT Instance (EC2) ──▶ Internet Gateway ─�
 
 ### VPC 端點
 
-VPC 端點是把往 AWS 服務的流量**封閉在 VPC 內**的機制。
+VPC 端點是讓往 AWS 服務的流量**不經過網際網路，在 AWS 網路內完成**的機制。
 
 由於流量本來就不會流向網際網路，因此不需要 NAT Gateway 或網際網路閘道。
 
@@ -87,7 +87,8 @@ VPC 端點是把往 AWS 服務的流量**封閉在 VPC 內**的機制。
 - 支援的服務**只有 S3 與 DynamoDB 兩項**
 - 以在路由表中新增項目 (指向前綴清單的路由) 的方式運作
 - **無額外費用**
-- 不會建立 ENI，因此無法指派安全群組
+- 不會建立 ENI，因此無法對端點本身指派安全群組
+- 流量的目的地是服務的**公有端點** (AWS 受管前綴清單所涵蓋的 IP 範圍)，因此**來源執行個體的安全群組必須放行往該前綴清單的對外流量 (TCP 443)**
 - 對象是來自 VPC 內部的流量，無法直接從地端透過 Direct Connect 或 VPN 使用
 
 **Interface 型 (Interface Endpoint / AWS PrivateLink)**
@@ -119,6 +120,7 @@ EC2 ──▶ Interface Endpoint (ENI) ──▶ AWS Systems Manager  (PrivateLi
 - NAT 執行個體是 EC2，因此可以指派安全群組，這一點常被拿來與 NAT Gateway 對比出題
 - IPv6 的對外流量要使用 **Egress-Only Internet Gateway**，而非 NAT Gateway
 - NAT Gateway 分為連往網際網路的公有型，以及用於 VPC 之間或地端通訊的私有型。單講「NAT Gateway」時通常指公有型
+- 除了上述連線類型之外，還有可用性模式之分:在單一 AZ 運作的 zonal 模式，以及會自動擴充至有工作負載的 AZ、且不需要公有子網路的 regional 模式。**SAA-C03 所考的是傳統的 zonal 模式 (即每個 AZ 各配置一個)**
 
 ## 實務上的使用判斷
 
@@ -184,11 +186,13 @@ EC2 預設會丟棄目的地不是自己的封包。
 
 ### 誤解 3:認為多 AZ 架構只要建立一個 NAT Gateway 就夠了
 
-NAT Gateway 是以 AZ 為單位的資源。
+NAT Gateway 在預設的 zonal 模式下，是以 AZ 為單位的資源。
 
 若只放在單一 AZ，該 AZ 發生故障時，其他 AZ 私有子網路的對外通訊也會一併中斷，平時還會產生跨 AZ 的資料傳輸費用。
 
 若重視可用性，應**在每個 AZ 各建立一個 NAT Gateway，並由同一 AZ 的路由表參照**。
+
+若改用 regional 模式雖然不需要每個 AZ 各建一個，但**SAA-C03 所考的仍是以 zonal 模式為前提的架構**。
 
 ### 誤解 4:認為任何 AWS 服務都能使用 Gateway 型 VPC 端點
 

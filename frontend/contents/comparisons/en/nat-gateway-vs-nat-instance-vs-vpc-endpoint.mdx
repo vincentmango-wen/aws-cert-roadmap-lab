@@ -15,7 +15,7 @@ Mixing these two up leads to both bad designs and wrong exam answers.
 |---|---|---|
 | NAT Gateway | AWS-managed NAT that lets private subnets reach the internet | OS patching, calling external APIs |
 | NAT instance | A NAT you build yourself on EC2, for the same outbound purpose | Learning and test environments, extremely small cost-sensitive setups |
-| VPC endpoint | A way to keep traffic to AWS services inside the VPC, without touching the internet | Private access to S3 and DynamoDB, internal traffic over PrivateLink |
+| VPC endpoint | A way to reach AWS services without going out to the internet, keeping the traffic on the AWS network | Private access to S3 and DynamoDB, internal traffic over PrivateLink |
 
 When in doubt, use this quick test:
 
@@ -32,8 +32,8 @@ When in doubt, use this quick test:
 | What it actually is | An AWS-managed NAT service | An EC2 instance you launch and manage | A route table entry (gateway type) or an ENI (interface type) |
 | Reachable destinations | Any destination on the internet | Any destination on the internet | Only supported AWS services |
 | Operational responsibility | AWS handles patching and scaling | OS patching, monitoring, and recovery are all on you | Managed by AWS |
-| Availability | Redundant within an AZ; multi-AZ designs need one per AZ | A single instance is a single point of failure; failover is your own design | Gateway type is redundant within the Region; interface type places an ENI per AZ |
-| Bandwidth | Scales automatically (up to 100 Gbps) | Capped by the network performance of the instance type | Follows the limits of the AWS service being used |
+| Availability | The default zonal mode is redundant within an AZ, and multi-AZ designs need one per AZ (the regional mode expands automatically to the AZs where your workloads run) | A single instance is a single point of failure; failover is your own design | Gateway type is redundant within the Region; interface type places an ENI per AZ |
+| Bandwidth | Scales automatically (up to 100 Gbps) | Capped by the network performance of the instance type | Scales automatically from 10 Gbps per AZ up to 100 Gbps (AWS PrivateLink quota) |
 | Pricing | Hourly charge + data processing charge | EC2 instance charges (plus EBS and data transfer) | Gateway type has no additional charge; interface type is hourly + data processing |
 | Security groups | Cannot be attached (use the subnet's network ACL) | Can be attached, because it is an EC2 instance | Can be attached to the ENI of an interface endpoint (not for gateway type) |
 | Internet gateway | Required (placed in a public subnet) | Required (placed in a public subnet) | Not required |
@@ -76,7 +76,7 @@ On modern AWS, NAT Gateway is the recommended choice for production.
 
 ### VPC endpoint
 
-A VPC endpoint keeps traffic to AWS services **inside the VPC**.
+A VPC endpoint lets you reach AWS services **without going out to the internet, keeping the traffic on the AWS network**.
 
 Because the traffic never leaves for the internet, neither a NAT Gateway nor an internet gateway is involved.
 
@@ -87,7 +87,8 @@ There are two types, and the distinction matters both on the exam and in practic
 - Supported by **only two services: S3 and DynamoDB**
 - Works by adding an entry (a route to a prefix list) in the route table
 - **No additional charge**
-- No ENI is created, so security groups cannot be attached
+- No ENI is created, so a security group cannot be attached to the endpoint itself
+- Traffic is destined for the service's **public endpoint** (the IP ranges of the AWS-managed prefix list), so the **security groups of the source instances must allow outbound traffic to that prefix list (TCP 443)**
 - Only for traffic originating inside the VPC; it cannot be used directly from on-premises over Direct Connect or VPN
 
 **Interface endpoint (AWS PrivateLink)**
@@ -119,6 +120,7 @@ EC2 ──▶ Interface Endpoint (ENI) ──▶ AWS Systems Manager  (PrivateLi
 - A NAT instance is an EC2 instance, so it can have a security group — a difference from NAT Gateway that is often tested
 - For outbound IPv6 traffic, use an **egress-only internet gateway** instead of a NAT Gateway
 - NAT Gateway comes in a public flavor (out to the internet) and a private flavor (VPC-to-VPC or on-premises traffic). "NAT Gateway" without qualification normally means the public one
+- Separately from that connectivity type, there is an availability mode: the zonal mode that runs in a single AZ, and the regional mode that expands automatically to the AZs where your workloads run and needs no public subnet. **What SAA-C03 asks about is the traditional zonal mode (one NAT Gateway per AZ)**
 
 ## How to choose in practice
 
@@ -184,11 +186,13 @@ If the route table and security groups look correct but nothing gets through, ch
 
 ### Misunderstanding 3: One NAT Gateway is enough for a multi-AZ design
 
-A NAT Gateway is an AZ-scoped resource.
+In the default zonal mode, a NAT Gateway is an AZ-scoped resource.
 
 If you put one in a single AZ, an outage in that AZ takes down outbound traffic for private subnets in the other AZs too, and you pay cross-AZ data transfer in the meantime.
 
 For high availability, **create a NAT Gateway per AZ and reference it from the route table of the same AZ**.
+
+The regional mode removes the need for one per AZ, but **SAA-C03 questions assume this zonal design**.
 
 ### Misunderstanding 4: Any AWS service can use a gateway endpoint
 
