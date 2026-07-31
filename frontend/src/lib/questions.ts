@@ -39,11 +39,16 @@ export const QUESTION_CATEGORY_DESCRIPTIONS: Record<QuestionCategory, string> = 
     "S3ライフサイクル、Spot、Savings Plans、VPC Endpoint、ログ保持など、コストを抑える設計を確認します。",
 };
 
-export const QUESTION_DIFFICULTY_LABELS: Record<QuestionDifficulty, string> = {
-  easy: "初級",
-  normal: "標準",
-  hard: "やや難しい",
-};
+/**
+ * 日本語の難易度ラベル。
+ *
+ * `QUESTION_CATEGORY_LABELS` と同じく、実体は ja 辞書の
+ * `questions.difficultyLabels` を参照する。一覧・詳細・ハブの 3 面で
+ * 同じ問題の難易度表記が食い違わないようにするため、定義箇所を
+ * 辞書 1 か所に集約している。
+ */
+export const QUESTION_DIFFICULTY_LABELS: Record<QuestionDifficulty, string> =
+  getDictionary("ja").questions.difficultyLabels;
 
 export const QUESTION_CATEGORIES: QuestionCategory[] = [
   "Cloud Concepts",
