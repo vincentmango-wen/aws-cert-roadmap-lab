@@ -1,4 +1,18 @@
 import type { Metadata } from "next";
+import { createHreflangAlternates } from "@/i18n/seo/hreflang";
+import { isSealedPathname } from "@/i18n/release-gate";
+
+export const supportedSeoLocales = ["ja", "en", "zh"] as const;
+
+export type SeoLocale = (typeof supportedSeoLocales)[number];
+
+const DEFAULT_SEO_LOCALE: SeoLocale = "ja";
+
+const openGraphLocaleByLocale = {
+  ja: "ja_JP",
+  en: "en_US",
+  zh: "zh_TW",
+} satisfies Record<SeoLocale, string>;
 
 export const siteConfig = {
   name: "AWS資格ロードマップラボ",
@@ -7,6 +21,8 @@ export const siteConfig = {
     "AWS Cloud Practitioner / SAAの学習内容を、用語集・比較・模擬問題・構成図で体系的に整理する学習サイトです。",
   defaultPath: "/",
   defaultOgImage: "/images/assets/og-image.png",
+  englishOgImage: "/images/assets/og-image-en.svg",
+  chineseOgImage: "/images/assets/og-image-zh.png",
 };
 
 export type PageMetadataInput = {
@@ -14,11 +30,14 @@ export type PageMetadataInput = {
   description: string;
   path: `/${string}` | "/";
   image?: string;
+  imageAlt?: string;
   keywords?: string[];
   noIndex?: boolean;
   type?: "website" | "article";
   publishedTime?: string;
   modifiedTime?: string;
+  enableLanguageAlternates?: boolean;
+  locale?: SeoLocale;
 };
 
 export function getSiteUrl(): string {
@@ -45,32 +64,104 @@ export function createAbsoluteUrl(path: string): string {
   return `${siteUrl}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+export function isSupportedSeoLocale(value: string): value is SeoLocale {
+  return supportedSeoLocales.some((locale) => locale === value);
+}
+
+export function resolveSeoLocaleFromPath(path: PageMetadataInput["path"]): SeoLocale {
+  if (path === "/en" || path.startsWith("/en/")) {
+    return "en";
+  }
+
+  if (path === "/zh" || path.startsWith("/zh/")) {
+    return "zh";
+  }
+
+  return DEFAULT_SEO_LOCALE;
+}
+
+export function getDefaultOgImageForLocale(locale: SeoLocale): string {
+  if (locale === "en") {
+    return siteConfig.englishOgImage;
+  }
+
+  return siteConfig.defaultOgImage;
+}
+
+/**
+ * path に応じた robots ディレクティブを返す（ACR-012 / #322）。
+ *
+ * 封印中の en/zh 配下は `index: false, follow: false`。
+ * `follow: false` にする理由は、en/zh の静的 HTML に実体の無い
+ * `/en/roadmap` `/zh/roadmap`（#305）へのリンクが焼き込まれており、
+ * Googlebot にこの死にリンクをクロール候補として収穫させないため。
+ *
+ * `createPageMetadata` を経由しない素の `Metadata` リテラルを書いているページは、
+ * `robots: {index:false, follow:false}` のリテラル直書きではなく
+ * **必ずこの関数の呼び出し**で書くこと。直書きするとフラグが届かず、
+ * 解封してもそのページだけ永久に noindex のまま残る。
+ */
+export function createLocaleAwareRobots(path: string): NonNullable<Metadata["robots"]> {
+  if (isSealedPathname(path)) {
+    return {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  return {
+    index: true,
+    follow: true,
+  };
+}
+
+function resolveSiteNameForLocale(locale: SeoLocale): string {
+  if (locale === "en") {
+    return siteConfig.shortName;
+  }
+
+  return siteConfig.name;
+}
+
 export function createPageMetadata(input: PageMetadataInput): Metadata {
+  const locale = input.locale ?? resolveSeoLocaleFromPath(input.path);
+  const siteName = resolveSiteNameForLocale(locale);
   const canonicalUrl = createAbsoluteUrl(input.path);
-  const imagePath = input.image ?? siteConfig.defaultOgImage;
+  const imagePath = input.image ?? getDefaultOgImageForLocale(locale);
   const ogImageUrl = createAbsoluteUrl(imagePath);
+  const imageAlt = input.imageAlt ?? `${input.title} - ${siteName}`;
+  const languages =
+    input.enableLanguageAlternates === true ? createHreflangAlternates(input.path) : {};
 
   return {
     title: input.title,
     description: input.description,
     keywords: input.keywords,
     alternates: {
+      // 封印ページでも canonical は自己参照のまま残す。
+      // `/en/x` の canonical を `/x` に向けると noindex とクロスカノニカルの併用になり、
+      // Google に矛盾シグナルを送って ja 側の評価まで巻き込む。
       canonical: canonicalUrl,
+      ...(Object.keys(languages).length > 0 ? { languages } : {}),
     },
     openGraph: {
       title: input.title,
       description: input.description,
       url: canonicalUrl,
-      siteName: siteConfig.name,
+      siteName,
       images: [
         {
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `${input.title} - ${siteConfig.name}`,
+          alt: imageAlt,
         },
       ],
-      locale: "ja_JP",
+      locale: openGraphLocaleByLocale[locale],
       type: input.type ?? "website",
       publishedTime: input.publishedTime,
       modifiedTime: input.modifiedTime,
@@ -81,15 +172,18 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
       description: input.description,
       images: [ogImageUrl],
     },
-    robots: input.noIndex
-      ? {
-          index: false,
-          follow: true,
-        }
-      : {
-          index: true,
-          follow: true,
-        },
+    robots: isSealedPathname(input.path)
+      ? createLocaleAwareRobots(input.path)
+      : input.noIndex
+        ? {
+            // ja 用の既存 noIndex セマンティクス（`follow: true`）は変えない。
+            index: false,
+            follow: true,
+          }
+        : {
+            index: true,
+            follow: true,
+          },
   };
 }
 
@@ -200,16 +294,16 @@ export const pageSeo = {
   contact: {
     title: "お問い合わせ",
     description:
-      "AWS資格ロードマップラボへのお問い合わせ、記事内容の誤り報告、ポートフォリオに関する連絡はこちらから送信できます。",
+      "AWS資格ロードマップラボへのお問い合わせ窓口です。記事内容の誤り報告の送り方、受け付ける問い合わせと受け付けられない問い合わせ、返信の目安、送信いただいた情報の取り扱いを記載しています。",
     path: "/contact",
     keywords: ["お問い合わせ", "AWS資格ロードマップラボ"],
   },
   about: {
     title: "運営者情報",
     description:
-      "AWS資格ロードマップラボの運営者情報、制作背景、学習目的、ポートフォリオとしての位置づけを紹介します。",
+      "AWS資格ロードマップラボの運営者プロフィール、コンテンツ制作方針、公開前のレビュー基準、情報の更新方針を公開しています。誰がどのような基準でAWS学習コンテンツを作成しているかを確認できます。",
     path: "/about",
-    keywords: ["運営者情報", "AWS ポートフォリオ"],
+    keywords: ["運営者情報", "コンテンツ制作方針", "AWS資格ロードマップラボ"],
   },
   privacy: {
     title: "プライバシーポリシー",
@@ -217,6 +311,13 @@ export const pageSeo = {
       "AWS資格ロードマップラボにおける個人情報、Cookie、アクセス解析、広告配信に関する方針を記載しています。",
     path: "/privacy",
     keywords: ["プライバシーポリシー", "個人情報保護"],
+  },
+  termsOfService: {
+    title: "利用規約",
+    description:
+      "AWS資格ロードマップラボのコンテンツ利用条件、引用・転載の範囲、禁止事項、免責、著作権および商標の取り扱いを定めた利用規約です。",
+    path: "/terms-of-service",
+    keywords: ["利用規約", "AWS資格ロードマップラボ"],
   },
   disclaimer: {
     title: "免責事項",

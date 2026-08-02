@@ -1,0 +1,98 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" rx="32" fill="#F8FAFC"/>
+
+  <text x="600" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#0F172A">
+    ALB + Auto Scaling + RDS Multi-AZ 高可用性架構
+  </text>
+
+  <text x="600" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#475569">
+    將應用程式分散至多個 AZ，透過 ALB、Auto Scaling、RDS Multi-AZ 強化故障容錯能力
+  </text>
+
+  <rect x="70" y="135" width="1060" height="550" rx="28" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="3"/>
+  <text x="105" y="174" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#0F172A">
+    VPC / Multi-AZ
+  </text>
+
+  <rect x="150" y="205" width="390" height="390" rx="24" fill="#EFF6FF" stroke="#60A5FA" stroke-width="2"/>
+  <text x="345" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#1D4ED8">
+    Availability Zone A
+  </text>
+
+  <rect x="660" y="205" width="390" height="390" rx="24" fill="#F0F9FF" stroke="#38BDF8" stroke-width="2"/>
+  <text x="855" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#0369A1">
+    Availability Zone B
+  </text>
+
+  <rect x="465" y="125" width="270" height="92" rx="22" fill="#FFFFFF" stroke="#7C3AED" stroke-width="3"/>
+  <text x="600" y="164" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#6D28D9">
+    ALB
+  </text>
+  <text x="600" y="193" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#64748B">
+    Internet-facing Load Balancer
+  </text>
+
+  <rect x="230" y="320" width="230" height="120" rx="20" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
+  <text x="345" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#C2410C">
+    EC2
+  </text>
+  <text x="345" y="394" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    App Server
+  </text>
+  <text x="345" y="418" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Auto Scaling Group
+  </text>
+
+  <rect x="740" y="320" width="230" height="120" rx="20" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
+  <text x="855" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#C2410C">
+    EC2
+  </text>
+  <text x="855" y="394" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    App Server
+  </text>
+  <text x="855" y="418" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Auto Scaling Group
+  </text>
+
+  <rect x="230" y="485" width="230" height="82" rx="18" fill="#FFFFFF" stroke="#22C55E" stroke-width="3"/>
+  <text x="345" y="520" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#15803D">
+    RDS Primary
+  </text>
+  <text x="345" y="548" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Multi-AZ
+  </text>
+
+  <rect x="740" y="485" width="230" height="82" rx="18" fill="#FFFFFF" stroke="#22C55E" stroke-width="3"/>
+  <text x="855" y="520" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#15803D">
+    RDS Standby
+  </text>
+  <text x="855" y="548" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Automatic Failover
+  </text>
+
+  <path d="M520 217L390 306" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+  <path d="M680 217L810 306" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+  <path d="M398 288L384 310L409 304" stroke="#7C3AED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M802 288L816 310L791 304" stroke="#7C3AED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M345 440V468" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M855 440V468" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M460 526H724" stroke="#22C55E" stroke-width="4" stroke-dasharray="8 8"/>
+  <path d="M714 514L734 526L714 538" stroke="#22C55E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="600" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#15803D">
+    Synchronous Replication
+  </text>
+
+  <rect x="465" y="615" width="270" height="52" rx="16" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+  <text x="600" y="648" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#92400E">
+    CloudWatch Monitoring
+  </text>
+
+  <path d="M600 615V568" stroke="#F59E0B" stroke-width="3" stroke-dasharray="8 8"/>
+
+  <rect x="125" y="705" width="950" height="42" rx="21" fill="#E2E8F0"/>
+  <text x="600" y="732" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
+    重點：為了因應單一 AZ 故障，將應用層與資料庫層分散至多個 AZ
+  </text>
+</svg>

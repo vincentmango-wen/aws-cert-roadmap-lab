@@ -1,0 +1,176 @@
+# Differences between ALB, NLB, and CloudFront
+
+## Bottom line
+
+Application Load Balancer (ALB), Network Load Balancer (NLB), and Amazon CloudFront all show up as the entry point for user traffic into AWS.
+
+Their roles, however, are different.
+
+- ALB distributes HTTP and HTTPS requests for web applications.
+- NLB distributes TCP, UDP, and TLS traffic at a low layer with high performance.
+- CloudFront delivers static and dynamic content from edge locations around the world with caching.
+
+On AWS exams, the key skill is deciding whether the question calls for a load balancer or a CDN.
+
+## Comparison table
+
+| Item | ALB | NLB | CloudFront |
+|---|---|---|---|
+| Full name | Application Load Balancer | Network Load Balancer | Amazon CloudFront |
+| Category | Load balancer | Load balancer | CDN |
+| Primary layer | L7 | L4 | Edge delivery |
+| Primary use case | HTTP/HTTPS routing for web apps | High-performance TCP/UDP/TLS routing | High-speed delivery of static and dynamic content |
+| Typical targets | Amazon EC2, Amazon ECS, AWS Lambda, and others | Amazon EC2, IP addresses, ALB, and others | Amazon S3, ALB, Amazon API Gateway, custom origins |
+| URL path-based routing | Strong | Not suited | Controllable via cache behaviors |
+| Host-based routing | Strong | Not suited | Supported |
+| Static IP | Not the typical fit | Well suited | CloudFront domain or custom domain by default |
+| Caching | None | None | Yes |
+| Global delivery | Not the primary purpose | Not the primary purpose | Strong |
+| Exam keywords | HTTP, HTTPS, path routing, host routing | TCP, UDP, static IP, high performance | CDN, edge location, cache, S3 static site |
+
+## Beginner-friendly walkthrough
+
+ALB is the entry point for web applications.
+
+For example, it can route requests like this.
+
+```text
+/app  -> application server
+/admin -> admin console server
+/api  -> API server
+```
+
+NLB is an entry point that moves traffic at a lower layer with high performance.
+
+Instead of inspecting HTTP payloads, NLB delivers TCP and UDP traffic to targets quickly.
+
+CloudFront is not a load balancer, it is a CDN.
+
+By returning content from edge locations close to the user, CloudFront improves display speed. It pairs well with Amazon S3 static sites and image delivery.
+
+## Exam-focused points
+
+### When ALB is the right answer
+
+- You want to load balance an HTTP/HTTPS web application.
+- You need to route to different targets by URL path.
+- You need to route to different targets by host name.
+- You want to combine with Amazon ECS or AWS Lambda.
+- You need an entry point designed for web applications.
+
+### When NLB is the right answer
+
+- You need to handle TCP or UDP traffic.
+- You require high throughput and low latency.
+- You need static IP addresses.
+- You want routing at the network level rather than HTTP path routing.
+
+### When CloudFront is the right answer
+
+- You want to deliver static files quickly to users around the world.
+- You want to cache images, HTML, CSS, and JavaScript stored on Amazon S3.
+- You want delivery from edge locations close to the user.
+- You want to reduce traffic to the origin.
+- You want to deliver from Amazon S3 without exposing the bucket directly.
+
+## How to choose in practice
+
+### Publishing a static site from Amazon S3
+
+Use CloudFront.
+
+```text
+User
+↓
+CloudFront
+↓
+Amazon S3
+```
+
+The production setup for this project also uses Amazon S3 plus CloudFront as the baseline.
+
+### Running a web application on Amazon EC2 or Amazon ECS
+
+Use ALB.
+
+```text
+User
+↓
+ALB
+↓
+Amazon EC2 / Amazon ECS
+```
+
+For HTTP/HTTPS web applications, ALB is the first option to consider.
+
+### High-performance TCP-based traffic
+
+Use NLB.
+
+```text
+User
+↓
+NLB
+↓
+Amazon EC2
+```
+
+Game servers, custom TCP protocols, and high-performance network entry points are typical candidates.
+
+### Combining global delivery with web application load balancing
+
+Combine CloudFront with ALB.
+
+```text
+User
+↓
+CloudFront
+↓
+ALB
+↓
+Amazon EC2 / Amazon ECS
+```
+
+CloudFront handles caching, TLS termination, and edge delivery, while ALB routes to the application.
+
+## Common mistakes
+
+### Mistake 1: Treating CloudFront as a load balancer
+
+CloudFront is a CDN.
+
+You can point CloudFront at an ALB as an origin, but CloudFront does not replace ALB and load balance directly onto a target group.
+
+### Mistake 2: Lumping ALB and NLB together as "the same kind of load balancer"
+
+ALB operates at the application layer, and NLB operates at the network layer.
+
+Route by URL path with ALB; use NLB for TCP, UDP, or static IP requirements.
+
+### Mistake 3: Using ALB for a static site
+
+For a static site, the baseline is Amazon S3 plus CloudFront.
+
+Serving a static site through ALB and Amazon EC2 requires an always-on server, which is a costly choice for an MVP.
+
+## Related terms
+
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon EC2](/terms/ec2)
+- [Amazon S3](/terms/s3)
+- [AWS Certificate Manager](/terms/acm)
+
+## Related questions
+
+- [CLF practice question list](/questions/clf)
+
+## Summary
+
+The differences between ALB, NLB, and CloudFront come up often on AWS exams and in real workloads.
+
+A simple first pass on the choice looks like this.
+
+- HTTP/HTTPS routing for a web app: ALB
+- TCP/UDP traffic or a static IP requirement: NLB
+- Static content delivery, caching, and edge delivery: CloudFront

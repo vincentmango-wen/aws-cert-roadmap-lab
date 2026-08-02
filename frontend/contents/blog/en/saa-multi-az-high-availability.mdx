@@ -1,0 +1,71 @@
+---
+postId: "blog-011"
+slug: "saa-multi-az-high-availability"
+title: "Multi-AZ High Availability Design for the SAA Exam"
+description: "A beginner-friendly summary of Multi-AZ, redundancy, and single points of failure — concepts commonly tested in SAA-C03."
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "Multi-AZ"
+  - "High Availability"
+  - "RDS"
+  - "ALB"
+targetKeywords:
+  - "SAA Multi-AZ"
+  - "AWS high availability design"
+  - "AWS single point of failure"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Multi-AZ High Availability Design for the SAA Exam
+
+The Solutions Architect Associate exam often tests high availability design. Multi-AZ configurations, redundancy, and eliminating single points of failure are core topics you need to understand.
+
+## Summary
+
+To improve availability, avoid designs that depend on a single AZ, a single instance, or a single component. In AWS, spanning multiple AZs is the standard approach.
+
+## What Is a Single Point of Failure?
+
+A single point of failure (SPOF) is any component that brings down the whole system if it fails. Examples include a single EC2 instance, a database in only one AZ, or a NAT Gateway with no redundancy.
+
+The SAA exam often asks questions like "What is the weak point of this design?" or "How can you improve its availability?"
+
+## What Is Multi-AZ?
+
+Multi-AZ means using more than one Availability Zone. If one AZ fails, processing can continue in another AZ.
+
+RDS Multi-AZ is a common pattern for making a database highly available. This is different from a Read Replica, which is designed to scale read performance.
+
+## ALB and Auto Scaling
+
+For web applications, ALB distributes traffic across EC2 instances in multiple AZs, and Auto Scaling adjusts the number of instances. This makes the system resilient to both a single EC2 failure and an AZ-level failure.
+
+## High Availability for Serverless Services
+
+Managed services such as Lambda, S3, DynamoDB, and API Gateway are designed by AWS with high availability built in. However, availability can still drop if you misconfigure settings or introduce a fragile dependency.
+
+For example, if you place a Lambda function inside a VPC and route its traffic through a NAT Gateway, you need to think about NAT Gateway redundancy as well.
+
+## Key Points for the Exam
+
+- A single-AZ design is vulnerable to failures
+- Multi-AZ is used to improve availability
+- Read Replicas are mainly used to scale read performance and distribute read traffic
+- ALB + Auto Scaling provides redundancy at the web layer
+- Even with managed services, check your dependencies
+
+## Related Terms
+
+- [Amazon RDS](/terms/rds)
+- [Elastic Load Balancing](/terms/elb)
+- [Auto Scaling](/terms/auto-scaling)
+
+## Further Reading
+
+- [Multi-AZ vs Read Replica](/comparisons/multi-az-vs-read-replica)
+- [High Availability Web App with ALB + Auto Scaling + RDS Multi-AZ](/architectures/high-availability-web-app)

@@ -1,0 +1,71 @@
+---
+postId: "blog-013"
+slug: "saa-s3-cloudfront-oac-design"
+title: "Secure Static Site Delivery with S3 and CloudFront OAC"
+description: "Learn how to serve a static site through CloudFront OAC instead of exposing S3 directly, explained from both SAA exam and portfolio perspectives."
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "S3"
+  - "CloudFront"
+  - "OAC"
+  - "Static Site"
+targetKeywords:
+  - "CloudFront OAC S3"
+  - "S3 static site security"
+  - "SAA CloudFront"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Secure Static Site Delivery with S3 and CloudFront OAC
+
+If you publish a static site on AWS, S3 + CloudFront is the standard pattern. However, you should not expose the S3 bucket directly to the public.
+
+## Conclusion
+
+Keep the S3 bucket private and use CloudFront OAC so that only CloudFront can fetch objects from S3. Users access the site over HTTPS through CloudFront.
+
+## Why You Should Not Expose S3 Directly
+
+Making an S3 bucket public can lead to unintended file exposure or access control mistakes. Even for static site delivery, it is safer to put CloudFront in front of S3 instead of exposing the bucket directly.
+
+## What Is OAC
+
+OAC stands for Origin Access Control. It is the mechanism CloudFront uses to access an S3 origin. The S3 bucket policy is configured to allow access only from a specific CloudFront distribution.
+
+## Request Flow
+
+1. The user accesses a custom domain or CloudFront domain
+2. CloudFront receives the request
+3. If the content is cached, CloudFront returns it
+4. If not cached, CloudFront fetches the object from S3
+5. S3 only allows access from CloudFront
+
+## Key Points for the SAA Exam
+
+- Combine S3 static site delivery with CloudFront
+- Do not expose S3 directly; use OAC
+- CloudFront handles HTTPS delivery and caching
+- For custom domains, attach an ACM certificate to CloudFront
+- Use Invalidation to refresh the cache
+
+## Role in This Project
+
+This site puts the Next.js static export into S3 and serves it through CloudFront. GitHub Actions runs `s3 sync` and triggers a CloudFront Invalidation after each deploy.
+
+This setup lets you explain low cost, HTTPS delivery, a private S3 bucket, and CI/CD together as a single portfolio story.
+
+## Related Terms
+
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Certificate Manager](/terms/acm)
+
+## Read Next
+
+- [S3 + CloudFront Static Website Architecture](/architectures/static-site-s3-cloudfront)
+- [Differences Between S3, EBS, and EFS](/comparisons/s3-vs-ebs-vs-efs)

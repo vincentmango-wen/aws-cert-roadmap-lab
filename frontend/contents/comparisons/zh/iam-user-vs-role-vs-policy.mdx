@@ -1,0 +1,159 @@
+# IAM 使用者、IAM 角色、IAM 政策的差異
+
+## 結論
+
+AWS Identity and Access Management (IAM) 是 AWS 的權限管理服務。
+
+IAM 使用者、IAM 角色、IAM 政策的職責各自不同。
+
+| 用語 | 一句話描述 | 主要使用情境 |
+|---|---|---|
+| IAM 使用者 | 與人員或應用程式綁定的 AWS 使用者 | 管理者或開發者的登入 |
+| IAM 角色 | 暫時承接權限的機制 | AWS Lambda、Amazon EC2、GitHub Actions 等 |
+| IAM 政策 | 描述允許或拒絕什麼的權限定義 | 授予 Amazon S3 讀取、Amazon DynamoDB 寫入等 |
+
+判斷不清時，先依以下方式判斷。
+
+- 誰要使用:IAM 使用者
+- 要授予 AWS 服務權限:IAM 角色
+- 要允許什麼:IAM 政策
+
+## 比較表
+
+| 項目 | IAM 使用者 | IAM 角色 | IAM 政策 |
+|---|---|---|---|
+| 種類 | 身分 ID | 承接權限的機制 | 權限規則 |
+| 主要對象 | 人員、應用程式 | AWS 服務、外部身分、其他帳戶 | 使用者、群組、角色 |
+| 認證資訊 | 密碼、存取金鑰 | 暫時性的認證資訊 | 不持有認證資訊 |
+| 主要用途 | 登入 AWS Management Console、使用 AWS CLI | AWS Lambda 執行、Amazon EC2 權限、OIDC 整合 | 定義允許的動作與目標資源 |
+| 安全考量 | MFA 與存取金鑰管理至關重要 | 無需長期金鑰，較易於確保安全 | 最小權限原則至關重要 |
+| 在本專案中的用途 | 管理者登入用 | AWS Lambda 執行角色、GitHub Actions 角色 | 授予 AWS Lambda 對 Amazon DynamoDB PutItem、Amazon S3 部署等權限 |
+
+## 初學者向解說
+
+### IAM 使用者
+
+IAM 使用者是代表操作 AWS 的人員或應用程式的身分 ID。
+
+可登入 AWS Management Console，也可從 AWS CLI 操作 AWS。
+
+不過，核發存取金鑰會帶來外洩風險，因此使用時需要謹慎。
+
+### IAM 角色
+
+IAM 角色是讓特定主體暫時承接權限的機制。
+
+例如，當 AWS Lambda 要寫入 Amazon DynamoDB 時，會在 AWS Lambda 函式上附加 IAM 角色。
+
+在本專案中，設計上會讓聯絡表單送出的 AWS Lambda 只持有對 Amazon DynamoDB 的寫入權限。
+
+### IAM 政策
+
+IAM 政策是以 JSON 定義對哪個資源允許哪些操作的設定。
+
+例如，聯絡表單用的 AWS Lambda 僅允許 `dynamodb:PutItem`。
+
+不會附加不必要的 `dynamodb:*` 或 `AdministratorAccess`。
+
+## 考試會問到的重點
+
+### CLF-C02 常問的重點
+
+- IAM 是管理 AWS 的認證與授權的服務
+- 對 IAM 使用者設定 MFA
+- root 使用者不用於日常作業
+- 透過 IAM 政策定義權限
+- 最小權限原則至關重要
+- 對 AWS 服務授予權限時，經常使用 IAM 角色
+
+### SAA-C03 常問的重點
+
+- 要對 Amazon EC2 或 AWS Lambda 授予權限時，使用 IAM 角色
+- 比起長期存取金鑰，優先使用 IAM 角色
+- 跨帳戶存取使用 IAM 角色
+- 與 GitHub Actions 等外部服務整合時，OIDC + IAM 角色較為安全
+- 以資源為單位收斂政策
+- 避免大量使用 `*` 所造成的過大權限
+
+## 實務上的使用區分
+
+### 使用 IAM 使用者的情境
+
+- 開發者登入 AWS Management Console
+- 管理者確認帳單或資源
+- 學習初期使用 AWS CLI
+
+不過，務必設定 MFA，並將存取金鑰的核發降到最低限度。
+
+### 使用 IAM 角色的情境
+
+- 從 AWS Lambda 寫入 Amazon DynamoDB
+- 從 Amazon EC2 讀取 Amazon S3
+- 從 GitHub Actions 部署至 Amazon S3
+- 從其他 AWS 帳戶暫時存取
+
+在本專案中，會出現以下 IAM 角色。
+
+- AWS Lambda 聯絡表單送出用角色
+- GitHub Actions 部署用角色
+
+### 使用 IAM 政策的情境
+
+- 對 AWS Lambda 僅允許 Amazon DynamoDB PutItem
+- 對 GitHub Actions 僅允許 Amazon S3 上傳
+- 僅允許 Amazon CloudFront Invalidation
+- 對 Amazon S3 儲存貯體的讀取，僅允許 Amazon CloudFront
+
+在政策中，收斂 Action 與 Resource 至關重要。
+
+## 常見的錯誤
+
+### 錯誤 1:對 IAM 使用者常態使用 AdministratorAccess
+
+在學習初期，容易想以較廣的權限推進作業。
+
+不過，在正式環境或作品集說明中，這樣的做法相當危險。
+
+從長期角度來看，應依作業類型區分權限。
+
+### 錯誤 2:在 AWS Lambda 內部寫入 AWS 存取金鑰
+
+對 AWS Lambda 附加 IAM 角色即可。
+
+在程式碼中寫入 AWS 存取金鑰相當危險。
+
+在本專案中，也禁止將機密資訊直接寫死於程式碼中。
+
+### 錯誤 3:將 IAM 角色與 IAM 政策視為相同事物
+
+IAM 角色是承接權限的容器。
+
+IAM 政策是權限的內容。
+
+對角色附加政策，才會決定實際能做什麼。
+
+### 錯誤 4:總是將 Resource 設為 `*`
+
+`*` 代表所有對象。
+
+實務上，應收斂至對應的 Amazon S3 儲存貯體或 Amazon DynamoDB 資料表等對象。
+
+## 相關用語
+
+- [AWS IAM](/terms/iam)
+- [AWS Lambda](/terms/lambda)
+- [Amazon S3](/terms/s3)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon CloudFront](/terms/cloudfront)
+
+## 相關題目
+
+- [CLF 模擬題目一覽](/questions/clf)
+
+## 總結
+
+IAM 使用者、IAM 角色、IAM 政策是 AWS 安全的基礎。
+
+IAM 使用者是使用者本身，IAM 角色是暫時承接權限的機制，IAM 政策則是權限的內容。
+
+只要能說明這項差異，就更容易說明 AWS 作品集中的安全設計。

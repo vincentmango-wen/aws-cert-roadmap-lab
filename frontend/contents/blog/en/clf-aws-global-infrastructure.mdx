@@ -1,0 +1,70 @@
+---
+postId: "blog-007"
+slug: "clf-aws-global-infrastructure"
+title: "AWS Global Infrastructure for Beginners"
+description: "Learn the difference between Regions, Availability Zones, and Edge Locations for the AWS Cloud Practitioner exam."
+category: "CLF"
+tags:
+  - "clf-c02"
+  - "region"
+  - "availability-zone"
+  - "cloudfront"
+targetKeywords:
+  - "AWS Region vs AZ"
+  - "AWS global infrastructure"
+  - "AWS Cloud Practitioner"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# AWS Global Infrastructure for Beginners
+
+To understand how AWS is built, you first need to know the difference between Regions, Availability Zones, and Edge Locations. These topics show up often on both the Cloud Practitioner (CLF) and Solutions Architect Associate (SAA) exams.
+
+## Summary
+
+A Region is a geographic area. An Availability Zone (AZ) is a group of isolated data centers inside a Region. An Edge Location is a delivery point close to end users that serves content with low latency.
+
+## What Is a Region?
+
+A Region is a geographic location such as Tokyo, N. Virginia, or Singapore. You choose a Region to decide where your services and data live.
+
+If your users are in Japan and you want low latency, you usually pick the Tokyo Region. In this project, S3, Lambda, DynamoDB, and API Gateway all run in the Tokyo Region.
+
+## What Is an Availability Zone?
+
+An Availability Zone is a group of isolated data centers inside a Region. It is often called an AZ for short.
+
+To build a highly available system, you should spread your workload across multiple AZs. For example, RDS Multi-AZ or an ALB with Auto Scaling lets your service keep running even if one AZ fails.
+
+## What Is an Edge Location?
+
+An Edge Location is a delivery point used by services like CloudFront. It caches content close to your users so that pages load faster.
+
+When you host a static site on S3 and serve it through CloudFront, users do not reach S3 directly. They get the content from a nearby CloudFront Edge Location instead.
+
+## Exam Tips
+
+- A Region is a geographic unit.
+- An AZ is an isolated failure domain inside a Region.
+- A multi-AZ design improves high availability.
+- CloudFront uses Edge Locations to deliver content quickly.
+- When you use ACM certificates with CloudFront, you often need to issue them in the N. Virginia Region.
+
+## How This Project Uses It
+
+This site stores static files in S3 and delivers them through CloudFront. The contact API uses API Gateway, Lambda, and DynamoDB. CloudFront handles global delivery, while data storage and API processing stay in the Tokyo Region.
+
+## Related Terms
+
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon Route 53](/terms/route53)
+- [AWS Certificate Manager](/terms/acm)
+
+## Read Next
+
+- [Static Website Architecture with S3 and CloudFront](/architectures/static-site-s3-cloudfront)
+- [ALB vs. NLB vs. CloudFront](/comparisons/alb-vs-nlb-vs-cloudfront)

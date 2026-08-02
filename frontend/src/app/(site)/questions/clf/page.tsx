@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { QuestionListClient } from "@/components/questions/QuestionListClient";
-import rawQuestions from "../../../../../contents/questions/clf-c02.json";
+import rawQuestions from "../../../../../contents/questions/clf-c02.ja.json";
 import {
   getPublishedQuestions,
   getQuestionCategorySummaries,
@@ -75,7 +75,7 @@ export default function ClfQuestionsPage() {
               問題一覧
             </h2>
             <p className="mt-2 text-sm leading-7 text-slate-600">
-              カテゴリと難易度で絞り込みできます。問題詳細・回答UIはP1-012で実装します。
+              カテゴリと難易度で絞り込みできます。
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export default function ClfQuestionsPage() {
         </div>
 
         <div className="mt-6">
-          <QuestionListClient questions={questions} />
+          <QuestionListClient questions={questions} locale="ja" />
         </div>
       </section>
     </div>

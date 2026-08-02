@@ -1,0 +1,349 @@
+[
+  {
+    "comparisonId": "cmp-001",
+    "slug": "s3-vs-ebs-vs-efs",
+    "title": "S3、EBS、EFS 的差異 — 初學者向解說",
+    "description": "整理 AWS 代表性的儲存服務 Amazon S3、Amazon EBS、Amazon EFS 的差異、考試重點以及實務上的使用區分。",
+    "category": "Storage",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "s3",
+      "ebs",
+      "efs"
+    ],
+    "tags": [
+      "storage",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-002",
+    "slug": "rds-vs-dynamodb",
+    "title": "RDS、DynamoDB 的差異 — 初學者向解說",
+    "description": "整理 AWS 代表性的資料庫服務 Amazon RDS 與 Amazon DynamoDB 的差異、考試重點以及實務上的使用區分。",
+    "category": "Database",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "rds",
+      "dynamodb"
+    ],
+    "tags": [
+      "database",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-003",
+    "slug": "sns-vs-sqs-vs-eventbridge",
+    "title": "SNS、SQS、EventBridge 的差異 — 初學者向解說",
+    "description": "整理 AWS 應用程式整合服務 Amazon SNS、Amazon SQS、Amazon EventBridge 的差異、考試重點以及實務上的使用區分。",
+    "category": "Integration",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "sns",
+      "sqs",
+      "eventbridge"
+    ],
+    "tags": [
+      "integration",
+      "messaging",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-004",
+    "slug": "iam-user-vs-role-vs-policy",
+    "title": "IAM 使用者、IAM 角色、IAM 政策的差異 — 初學者向解說",
+    "description": "整理在 AWS 權限管理中至關重要的 IAM 使用者、IAM 角色、IAM 政策的差異、考試重點以及實務上的使用區分。",
+    "category": "Security",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "iam"
+    ],
+    "tags": [
+      "security",
+      "iam",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-005",
+    "slug": "cloudwatch-vs-cloudtrail-vs-config",
+    "title": "CloudWatch、CloudTrail、AWS Config 的差異 — 初學者向解說",
+    "description": "整理在 AWS 維運監控中至關重要的 Amazon CloudWatch、AWS CloudTrail、AWS Config 的差異、考試重點以及實務上的使用區分。",
+    "category": "Monitoring",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "cloudwatch",
+      "cloudtrail",
+      "config"
+    ],
+    "tags": [
+      "monitoring",
+      "governance",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-01",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-006",
+    "slug": "alb-vs-nlb-vs-cloudfront",
+    "title": "ALB、NLB、CloudFront 的差異 — 初學者向解說",
+    "description": "整理 AWS 流量入口容易混淆的 Application Load Balancer、Network Load Balancer、Amazon CloudFront 的差異、考試重點以及實務上的使用區分。",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "elb",
+      "cloudfront"
+    ],
+    "tags": [
+      "networking",
+      "load-balancer",
+      "cloudfront",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-007",
+    "slug": "multi-az-vs-read-replica",
+    "title": "RDS Multi-AZ、Read Replica 的差異 — 初學者向解說",
+    "description": "從可用性、讀取效能、容錯切換、考試重點等觀點，整理 Amazon RDS 中容易混淆的 Multi-AZ 部署與 Read Replica 的差異。",
+    "category": "Database",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "rds"
+    ],
+    "tags": [
+      "database",
+      "rds",
+      "multi-az",
+      "read-replica",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-008",
+    "slug": "security-group-vs-nacl",
+    "title": "Security Group、Network ACL 的差異 — 初學者向解說",
+    "description": "從適用範圍、具狀態與無狀態、允許與拒絕規則、考試重點等觀點，整理 Amazon VPC 中容易混淆的 Security Group 與 Network ACL 的差異。",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "vpc"
+    ],
+    "tags": [
+      "security",
+      "vpc",
+      "security-group",
+      "nacl",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-009",
+    "slug": "api-gateway-vs-alb-vs-cloudfront",
+    "title": "API Gateway、ALB、CloudFront 的差異 — 初學者向解說",
+    "description": "從無伺服器、負載平衡、CDN、考試重點的觀點，整理 AWS 中作為 API 與 Web 應用入口的 Amazon API Gateway、Application Load Balancer、Amazon CloudFront 的差異。",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "api-gateway",
+      "elb",
+      "cloudfront"
+    ],
+    "tags": [
+      "api",
+      "serverless",
+      "networking",
+      "cloudfront",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-010",
+    "slug": "secrets-manager-vs-parameter-store",
+    "title": "Secrets Manager、Parameter Store 的差異 — 初學者向解說",
+    "description": "從用途、加密、自動輪替、成本、考試重點的觀點，整理 AWS 中管理設定值與機密資訊的 AWS Secrets Manager 與 AWS Systems Manager Parameter Store 的差異。",
+    "category": "Security",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "secrets-manager",
+      "systems-manager",
+      "kms"
+    ],
+    "tags": [
+      "security",
+      "secrets",
+      "parameter-store",
+      "kms",
+      "comparison",
+      "saa"
+    ],
+    "priority": "medium",
+    "published": true,
+    "publishedAt": "2026-06-07",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-011",
+    "slug": "route53-vs-cloudfront-vs-global-accelerator",
+    "title": "Route 53、CloudFront、Global Accelerator 的差異 — 初學者向解說",
+    "description": "整理「全部都是全球服務」容易混淆的 Amazon Route 53、Amazon CloudFront、AWS Global Accelerator 的差異、考試重點以及實務上的使用區分。",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "route53",
+      "cloudfront"
+    ],
+    "tags": [
+      "networking",
+      "dns",
+      "cdn",
+      "cloudfront",
+      "comparison",
+      "clf",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-06-16",
+    "updatedAt": "2026-06-21",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-012",
+    "slug": "bedrock-vs-sagemaker",
+    "title": "Bedrock、SageMaker 的差異 — 初學者向解說",
+    "description": "整理 AWS 生成式 AI 與機器學習服務 Amazon Bedrock 與 Amazon SageMaker 的差異、考試重點以及實務上的使用區分。",
+    "category": "MachineLearning",
+    "level": "beginner",
+    "examScopes": ["AIF-C01"],
+    "services": ["bedrock", "sagemaker"],
+    "tags": ["ai", "machine-learning", "bedrock", "sagemaker", "comparison", "aif"],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-07-25",
+    "updatedAt": "2026-07-25",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-013",
+    "slug": "nat-gateway-vs-nat-instance-vs-vpc-endpoint",
+    "title": "NAT Gateway、NAT 執行個體、VPC 端點的差異 — 初學者向解說",
+    "description": "整理在私有子網路的通訊路徑設計中容易混淆的 NAT Gateway、NAT 執行個體、VPC 端點的差異，涵蓋目的、費用、可用性，以及 Gateway 型與 Interface 型的使用區分。",
+    "category": "Networking",
+    "level": "intermediate",
+    "examScopes": ["SAA-C03"],
+    "services": ["nat-gateway", "nat-instance", "vpc-endpoint"],
+    "tags": ["networking", "vpc", "comparison", "saa"],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-07-31",
+    "updatedAt": "2026-07-31",
+    "locale": "zh"
+  }
+]

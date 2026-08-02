@@ -113,12 +113,18 @@ export default function DisclaimerPage() {
         <p className="mt-3 text-sm leading-7 text-slate-200 sm:text-base">
           掲載内容に誤りや古い情報を見つけた場合は、お問い合わせページから連絡してください。
         </p>
-        <div className="mt-5">
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/contact"
             className="inline-flex rounded-xl bg-white px-5 py-3 text-sm font-semibold !text-slate-900 transition hover:bg-slate-100"
           >
             お問い合わせページへ
+          </Link>
+          <Link
+            href="/terms-of-service"
+            className="inline-flex rounded-xl border border-slate-600 px-5 py-3 text-sm font-semibold !text-white transition hover:bg-slate-800"
+          >
+            利用規約を読む
           </Link>
         </div>
       </section>

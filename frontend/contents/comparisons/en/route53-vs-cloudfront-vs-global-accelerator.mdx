@@ -1,0 +1,168 @@
+# Differences between Route 53, CloudFront, and Global Accelerator
+
+## Bottom line
+
+Amazon Route 53, Amazon CloudFront, and AWS Global Accelerator all appear with "Global" in the Region column of the AWS Management Console, and none of them are tied to a specific region.
+
+Because of that, it is easy to lump them together as "all global services" and get pulled in by the word *global* in an exam question.
+
+Their roles, however, sit at different layers.
+
+- To translate a name (domain) into an IP address, use Route 53.
+- To cache static and dynamic content at edge locations for fast delivery, use CloudFront.
+- To carry TCP/UDP packets onto the AWS backbone through static IPs for low-latency delivery, use Global Accelerator.
+
+When in doubt, separate the three by asking "is there a static IP?", "is content cached?", and "is DNS resolved?"
+
+## Comparison table
+
+| Item | Route 53 | CloudFront | Global Accelerator |
+|---|---|---|---|
+| Full name | Amazon Route 53 | Amazon CloudFront | AWS Global Accelerator |
+| Category | DNS | CDN | Network acceleration |
+| Primary layer | DNS layer | Edge delivery (HTTP/HTTPS) | L3/L4 (TCP/UDP) |
+| Primary purpose | Resolve names to IPs | Cache and deliver content | Carry packets along the shortest path |
+| Static IP | None (operated by DNS name) | None (operated by DNS name) | Yes (two static IPv4 addresses) |
+| Caching | No | Yes (default TTL 24 hours) | No (path optimization only) |
+| Supported protocols | DNS queries | HTTP / HTTPS | TCP / UDP |
+| Typical use cases | Domain registration, DNS routing, health checks | Fast delivery of images, video, JS/CSS | Games, VoIP, apps that require fixed IPs |
+| Pricing model | Pay-as-you-go | Pay-as-you-go | Fixed fee per accelerator created |
+| Exam keywords | DNS, routing policy, failover, geolocation | CDN, edge location, cache, S3 static site | static IP, anycast, TCP/UDP, non-HTTP |
+
+## Beginner-friendly explanation
+
+### Amazon Route 53
+
+Route 53 is a DNS service that translates domain names into IP addresses.
+
+DNS servers are distributed across edge locations worldwide, so queries from anywhere are answered from a nearby location. That is why Route 53 is described as "global".
+
+What Route 53 returns is the IP address itself, not "content" such as HTML or images. That is the most important difference from CloudFront.
+
+### Amazon CloudFront
+
+CloudFront is a CDN that caches HTTP/HTTPS content at edge locations.
+
+HTML, images, video, JS, CSS, and API responses are cached at edge locations around the world, and each user is served from the edge closest to them.
+
+CloudFront pairs well with Amazon S3 static sites and image delivery, and this project also uses Amazon S3 + CloudFront as its production setup.
+
+### AWS Global Accelerator
+
+Global Accelerator optimizes TCP/UDP traffic over the AWS backbone and provides static anycast IPs.
+
+The differences from CloudFront are that it is not limited to HTTP/HTTPS and that it provides static IPs. Rather than caching content, it puts the packets themselves on the shortest path to accelerate delivery.
+
+It is a candidate for games or VoIP that require fixed IPs, and for financial systems that require IP allowlisting.
+
+## Exam-relevant points
+
+### Cases where Route 53 is the right answer
+
+- You want to register or manage a domain.
+- You want to return an IP address in response to a DNS query.
+- You want to fail over with DNS during a regional outage.
+- You want to split traffic with routing policies such as latency, weighted, or geolocation.
+- You want to monitor endpoints with health checks.
+
+### Cases where CloudFront is the right answer
+
+- You want to deliver static files worldwide at high speed.
+- You want to cache images, HTML, CSS, and JavaScript stored in Amazon S3.
+- You want to serve content from the edge location closest to the user.
+- You want to serve an Amazon S3 bucket over HTTPS with a custom domain without exposing it directly.
+- You want to reduce data transfer from the AWS origin to optimize cost.
+
+### Cases where Global Accelerator is the right answer
+
+- You want to accelerate TCP/UDP traffic, not only HTTP/HTTPS.
+- You need static IPs to distribute to clients.
+- You run real-time workloads such as games or VoIP.
+- You want failover from a regional outage within seconds.
+
+### Route 53 routing policies (frequent on CLF-C02)
+
+| Exam keyword | Correct answer |
+|---|---|
+| Split A/B testing 10% / 90% | Weighted |
+| Send traffic to the region with the lowest latency | Latency |
+| Disaster recovery (DR) linked to health checks | Failover |
+| Route by region while respecting data sovereignty | Geolocation |
+| Return multiple IPs as a simple load distribution | Multivalue answer |
+
+## Practical patterns
+
+### Publishing an Amazon S3 static site under a custom domain
+
+Combine Route 53 and CloudFront.
+
+```text
+User
+↓
+Route 53 (domain → resolves to CloudFront)
+↓
+CloudFront (cache and TLS termination)
+↓
+Amazon S3
+```
+
+Route 53 points the custom domain at CloudFront, and CloudFront handles caching and HTTPS.
+
+### When low-latency TCP/UDP communication is required
+
+Use Global Accelerator.
+
+```text
+User
+↓
+Global Accelerator (static IP, shortest path)
+↓
+ALB / NLB / Amazon EC2
+```
+
+Global Accelerator is a candidate for protocols that HTTP cannot carry, and for cases where you want to hand fixed IPs to clients.
+
+### Do not confuse "global delivery" with "global static IPs"
+
+If the requirement is only "deliver globally", the answer is CloudFront. If "global static IPs" enters the requirements, the answer is Global Accelerator. Rephrasing the exam question around "what does the user want done" makes it clear which of the three axes is checked.
+
+## Common mistakes
+
+### Mistake 1: Treating all three as "the same because they are global"
+
+The three services share the property of not being tied to a region, but Route 53 works at the DNS layer, CloudFront at the CDN layer, and Global Accelerator at the L3/L4 layer.
+
+### Mistake 2: Assuming CloudFront has static IPs
+
+CloudFront does not provide static IPs; it is operated by DNS name. If a static IP is in the requirements, consider Global Accelerator.
+
+### Mistake 3: Remembering Global Accelerator as a CDN
+
+Global Accelerator does not cache content. It is a service that places packets on the shortest path, and the correct answer for cache delivery is CloudFront.
+
+### Mistake 4: Thinking Global Accelerator pricing is "pay-as-you-go"
+
+CloudFront and Route 53 are primarily metered by usage, while Global Accelerator incurs a fixed fee simply by creating an accelerator. This is easy to miss when the question asks "which one is a candidate to stop for cost optimization?"
+
+## Related terms
+
+- [Amazon Route 53](/terms/route53)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [Elastic Load Balancing](/terms/elb)
+
+## Related questions
+
+- [CLF practice questions](/questions/clf)
+
+## Summary
+
+Route 53, CloudFront, and Global Accelerator all appear as "Global" services and are easy to confuse, but their roles are cleanly separated by layer.
+
+Three axes make the decision easier.
+
+- DNS resolution (name → IP): Route 53
+- Cache delivery of content: CloudFront
+- Static IPs and TCP/UDP path optimization: Global Accelerator
+
+Instead of being pulled in by the word *global*, separate by "is there a static IP?", "is content cached?", and "is DNS resolved?" to avoid mixing up the three services.

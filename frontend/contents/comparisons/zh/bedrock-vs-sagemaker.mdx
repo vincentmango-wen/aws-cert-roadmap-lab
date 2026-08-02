@@ -1,0 +1,141 @@
+# Bedrock、SageMaker 的差異
+
+## 結論
+
+Amazon Bedrock 與 Amazon SageMaker 都是 AWS 的生成式 AI 與機器學習服務。
+
+但兩者所處理的層級與擅長的事情並不相同。
+
+| 服務 | 一句話說明 | 主要使用情境 |
+|---|---|---|
+| Amazon Bedrock | 透過 API 呼叫基礎模型的受管生成式 AI 服務 | 聊天機器人、文字生成、透過 Knowledge Bases 實現 RAG |
+| Amazon SageMaker | 用於建置、訓練、部署機器學習模型的完全受管平台 | 訓練自有模型、建置 MLOps 流程、自訂推論端點 |
+
+如果一時難以判斷，可以先用以下方式分辨。
+
+- 想立即透過 API 使用現有的基礎模型:Bedrock
+- 想用自有資料從零開始訓練並客製化機器學習模型:SageMaker
+- 想以無伺服器架構加入生成式 AI 功能:Bedrock
+- 想在筆記本環境中讓資料科學家反覆試驗:SageMaker
+
+## 比較表
+
+| 項目 | Amazon Bedrock | Amazon SageMaker |
+|---|---|---|
+| 正式名稱 | Amazon Bedrock | Amazon SageMaker |
+| 種類 | 受管生成式 AI 基礎模型 API | 機器學習的完全受管開發平台 |
+| 提供內容 | 透過 API 使用 Anthropic Claude、Amazon Titan、Meta Llama、Mistral、AI21 Labs 等基礎模型 | 筆記本、訓練工作、模型登錄、推論端點、流程管線 |
+| 模型的使用方式 | 透過 API 呼叫既有的基礎模型 | 訓練、調校、部署自有模型 |
+| 基礎架構管理 | 無伺服器架構，無須管理基礎架構 | 需選擇並管理訓練 / 推論用執行個體 |
+| 客製化方式 | 微調 (fine-tuning)、Knowledge Bases、Agents | 完整自訂訓練、超參數調整、自有演算法 |
+| 典型使用方式 | 作為生成式 AI 應用程式的後端 API 呼叫 | 從模型訓練到 MLOps 流程管線的完整流程 |
+| 資料科學作業 | 幾乎不需要，以提示詞設計為主 | 前處理、訓練、評估等資料科學流程為核心 |
+| 代表性功能 | Knowledge Bases (RAG)、Guardrails、Agents | JumpStart、Studio、Pipelines、Model Registry |
+| 在本專案的用途 | AI 章節內容的 dogfooding 對象 | MVP 階段不直接使用 |
+
+## 初學者導向說明
+
+### Amazon Bedrock
+
+Bedrock 是一項受管服務，可讓你透過單一 API 呼叫多家 AI 業者、以及 Amazon 自身提供的基礎模型 (Foundation Model)。
+
+由於 Anthropic Claude、Amazon Titan、Meta Llama、Mistral、AI21 Labs 等模型都能透過 Bedrock 的共通 API 使用，因此在切換模型時，通常只需要很小幅度的程式碼調整。
+
+由於不需要自行管理伺服器或 GPU 執行個體，且基礎模型的訓練工作也由 Bedrock 負責，因此非常適合「想在應用程式中加入生成式 AI 功能，但不想自行訓練與維運模型」的情境。
+
+### Amazon SageMaker
+
+SageMaker 是用於從零開始建置、訓練、部署機器學習模型的完全受管開發平台。
+
+它涵蓋機器學習專案的完整生命週期,包括以 Jupyter 為基礎的筆記本環境 (SageMaker Studio)、大規模訓練工作、已訓練模型的部署,以及 MLOps 流程管線的建置。
+
+當你需要用自有資料從零開始訓練模型,或需要處理現有基礎模型無法應對的特殊任務時,適合使用 SageMaker。
+
+## 考試常考重點
+
+### AIF-C01 常考內容
+
+- Bedrock 以透過受管 API 呼叫模型為核心，SageMaker 則是建置、訓練、部署模型的平台
+- Bedrock 採無伺服器架構，無須管理基礎架構
+- SageMaker 需要選擇並管理訓練 / 推論用的執行個體
+- 在「負責任的 AI (Responsible AI)」的脈絡下，經常會考到 Bedrock Guardrails
+- Amazon Bedrock Knowledge Bases 是用來實現 RAG (檢索增強生成) 的功能
+- SageMaker JumpStart 可讓你快速開始使用預訓練模型與解決方案範本
+- 考試會測驗如何評估基礎模型的觀點 (準確度、成本、延遲、模態)
+- 基本判斷原則:想立即使用現有基礎模型時選 Bedrock，想用自有資料從零建置模型時選 SageMaker
+
+## 實務上的使用判斷
+
+### 適合採用 Bedrock 的情境
+
+- 想立即透過 API 使用現有的基礎模型
+- 想以無伺服器架構加入生成式 AI 功能
+- 聊天機器人、文字生成等生成式 AI 使用情境
+- 想透過 Knowledge Bases 快速建置 RAG 架構
+- 想切換並比較多個模型
+
+範例:
+
+- 企業內部聊天機器人
+- 客戶服務自動回覆
+- 文件搜尋與摘要 (RAG)
+- 行銷文案自動生成
+
+### 適合採用 SageMaker 的情境
+
+- 需要用自有資料從零訓練機器學習模型
+- 有基礎模型無法處理的專屬任務
+- 需要建置 MLOps 流程管線以持續重新訓練模型
+- 資料科學家需要在筆記本環境中反覆試驗
+
+範例:
+
+- 建置需求預測模型
+- 訓練詐欺偵測模型
+- 開發自訂影像分類模型
+- 建置推薦引擎
+
+## 常見誤解
+
+### 誤解 1:認為 Bedrock 與 SageMaker 完全不相關
+
+Bedrock 與 SageMaker 並非互相競爭的服務，也可以搭配使用。
+
+例如，可以先在 SageMaker 中訓練自訂模型，再透過 Bedrock 呼叫該模型。
+
+### 誤解 2:認為可以在 Bedrock 中「訓練」模型
+
+Bedrock 是透過 API 呼叫既有基礎模型的服務，雖然支援微調 (fine-tuning)，但並非設計來從零開始訓練模型。
+
+如果需要從零開始訓練大型模型，SageMaker 會是更合適的選擇。
+
+### 誤解 3:認為使用 SageMaker 就完全不需要管理基礎架構
+
+SageMaker 屬於受管服務，但仍需自行選擇訓練 / 推論用的執行個體類型，並管理相關成本。
+
+「受管 (managed)」並不等於「完全無須管理基礎架構」。
+
+### 誤解 4:只要是生成式 AI 情境就先考慮 Bedrock
+
+在生成式 AI 的使用情境中，Bedrock 並非永遠是最佳選擇。
+
+如果需要以自有資料進行大規模預訓練，或想嘗試自訂架構，透過 SageMaker 自行開發有時會更為合適。
+
+## 相關用語
+
+- [AWS IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [AWS Lambda](/terms/lambda)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 相關問題
+
+- [查看模擬題列表](/questions)
+
+## 總結
+
+判斷 Bedrock 與 SageMaker 的差異時，可以從「透過 API 使用基礎模型」或「從零開始建置並訓練模型」這兩個角度切入。
+
+Bedrock 是受管生成式 AI 基礎模型 API，SageMaker 則是機器學習的完全受管開發平台。
+
+AIF-C01 會測驗你對這兩項服務角色差異的理解，以及負責任的 AI、RAG 等相關概念。

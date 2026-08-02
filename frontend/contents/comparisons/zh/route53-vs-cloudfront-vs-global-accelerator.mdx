@@ -1,0 +1,168 @@
+# Route 53、CloudFront、Global Accelerator 的差異
+
+## 結論
+
+Amazon Route 53、Amazon CloudFront、AWS Global Accelerator 在 AWS Management Console 的「區域」欄位都顯示為「Global」，屬於不綁定特定區域的服務。
+
+正因如此，容易被歸納成「全部都是全球服務」，在考題中也容易被「全球」這個字眼牽著走而混淆。
+
+但是各自的角色階層其實不同。
+
+- 要把名稱 (網域) 轉換成 IP 位址，選 Route 53。
+- 要在邊緣節點快取靜態與動態內容並高速傳遞，選 CloudFront。
+- 要把 TCP/UDP 封包透過靜態 IP 經由 AWS 骨幹網路加速，選 Global Accelerator。
+
+判斷時，從「有沒有靜態 IP」「有沒有快取」「有沒有解析 DNS」3 個軸切分，會比較容易判斷。
+
+## 比較表
+
+| 項目 | Route 53 | CloudFront | Global Accelerator |
+|---|---|---|---|
+| 正式名稱 | Amazon Route 53 | Amazon CloudFront | AWS Global Accelerator |
+| 分類 | DNS | CDN | 網路加速 |
+| 主要層級 | DNS 層 | 邊緣傳遞 (HTTP/HTTPS) | L3/L4 (TCP/UDP) |
+| 主要目的 | 把名稱轉換成 IP | 快取並傳遞內容 | 把封包以最短路徑運送 |
+| 靜態 IP | 沒有 (使用 DNS 名稱運作) | 沒有 (使用 DNS 名稱運作) | 有 (2 個 IPv4 靜態 IP) |
+| 快取 | 沒有 | 有 (預設 TTL 24 小時) | 沒有 (只做路徑最佳化) |
+| 支援的通訊協定 | DNS 查詢 | HTTP / HTTPS | TCP / UDP |
+| 代表性用途 | 網域註冊、DNS 路由、健康檢查 | 圖片、影片、JS/CSS 的高速傳遞 | 遊戲、VoIP、需要固定 IP 的應用程式 |
+| 計費性質 | 使用多少算多少 | 使用多少算多少 | 建立加速器即產生固定費用 |
+| 考試常見關鍵字 | DNS, routing policy, failover, geolocation | CDN, edge location, cache, S3 static site | static IP, anycast, TCP/UDP, non-HTTP |
+
+## 初學者導向說明
+
+### Amazon Route 53
+
+Route 53 是把網域名稱轉換成 IP 位址的 DNS 服務。
+
+DNS 伺服器分散部署在全球各邊緣節點 (edge location)，不論從哪裡查詢，都會由就近的位置回應。這就是它被稱為「全球」的理由。
+
+這裡回應的是 IP 位址本身，而不是 HTML 或圖片這類的「內容」，這是與 CloudFront 最大的差異。
+
+### Amazon CloudFront
+
+CloudFront 是在邊緣節點快取 HTTP/HTTPS 內容的 CDN。
+
+它會把 HTML、圖片、影片、JS、CSS、API 回應等內容快取在全球的邊緣節點，從距離使用者最近的邊緣節點傳遞。
+
+它與 Amazon S3 靜態網站、圖片傳遞非常契合，本專案的正式環境構成也採用 Amazon S3 + CloudFront 為基本架構。
+
+### AWS Global Accelerator
+
+Global Accelerator 把 TCP/UDP 流量透過 AWS 骨幹網路最佳化，並提供靜態 anycast IP。
+
+與 CloudFront 的差異在於不限於 HTTP/HTTPS，而且擁有靜態 IP。它不是快取內容，而是把封包本身放到最短路徑來加速。
+
+需要固定 IP 的遊戲、VoIP，或要求 IP 白名單的金融系統等，都會把它列入候選。
+
+## 考試會問到的重點
+
+### Route 53 容易成為正解的情況
+
+- 想註冊或管理網域。
+- 想根據 DNS 查詢回應 IP 位址。
+- 想在區域故障時使用 DNS 進行故障切換。
+- 想以延遲、加權、地理位置等路由策略分配流量。
+- 想對端點做存活監控 (健康檢查)。
+
+### CloudFront 容易成為正解的情況
+
+- 想把靜態檔案高速傳遞到全世界。
+- 想對 Amazon S3 上的圖片、HTML、CSS、JavaScript 做快取。
+- 想從靠近使用者的邊緣節點傳遞。
+- 想不直接公開 Amazon S3，而是以 HTTPS 與自訂網域傳遞。
+- 想減少從 AWS 來源的傳輸量並最佳化成本。
+
+### Global Accelerator 容易成為正解的情況
+
+- 想加速 TCP/UDP 通訊 (不限於 HTTP/HTTPS)。
+- 需要分配給用戶端的靜態 IP。
+- 經營即時性重要的遊戲或 VoIP。
+- 想在區域故障時在數秒以內完成故障切換。
+
+### Route 53 的路由策略 (CLF-C02 常見)
+
+| 題目關鍵字 | 正解 |
+|---|---|
+| A/B 測試以 10%/90% 分配 | 加權 (Weighted) |
+| 送往延遲最低的區域 | 延遲 (Latency) |
+| 與健康檢查連動的災難復原 (DR) | 故障切換 (Failover) |
+| 在守住資料主權的前提下依地區分配 | 地理位置 (Geolocation) |
+| 以簡易負載分散方式回應多個 IP | 多重值回應 (Multivalue answer) |
+
+## 實務上的使用區分
+
+### 以自訂網域公開 Amazon S3 靜態網站
+
+組合 Route 53 與 CloudFront。
+
+```text
+User
+↓
+Route 53 (網域 → 解析至 CloudFront)
+↓
+CloudFront (快取與 TLS 終止)
+↓
+Amazon S3
+```
+
+由 Route 53 把自訂網域指向 CloudFront，並由 CloudFront 負責快取與 HTTPS。
+
+### 需要 TCP/UDP 低延遲通訊時
+
+使用 Global Accelerator。
+
+```text
+User
+↓
+Global Accelerator (靜態 IP、最短路徑)
+↓
+ALB / NLB / Amazon EC2
+```
+
+HTTP 處理不來的通訊協定，或是想把固定 IP 分配給用戶端時，會把它列入候選。
+
+### 不要把「全球傳遞」與「固定 IP」混淆
+
+只要是「全球傳遞」就用 CloudFront，要是「全球性的靜態 IP」也在條件內，就選 Global Accelerator。把題目中的「想要做什麼」替換成主語，就可以判斷 3 個軸的哪一個被標記。
+
+## 常見錯誤
+
+### 錯誤 1:把 3 個服務都記成「都是全球的，所以一樣」
+
+3 個服務在不綁定區域這點上相同，但是 Route 53 在 DNS 層、CloudFront 在 CDN 層、Global Accelerator 在 L3/L4 層，各自運作的層級都不同。
+
+### 錯誤 2:以為 CloudFront 有靜態 IP
+
+CloudFront 沒有靜態 IP，而是以 DNS 名稱運作。如果條件中包含靜態 IP，就要考慮 Global Accelerator。
+
+### 錯誤 3:把 Global Accelerator 當成 CDN 來記
+
+Global Accelerator 不快取內容。它是把封包放到最短路徑上的服務，如果目的是快取傳遞，就應該選 CloudFront。
+
+### 錯誤 4:以為 Global Accelerator 的成本是「用多少算多少」
+
+CloudFront 與 Route 53 以使用量計費為主，但是 Global Accelerator 只要建立加速器，就會產生固定費用。被問到「成本最佳化時可以停止哪一個」時，這是容易被忽略的重點。
+
+## 相關用語
+
+- [Amazon Route 53](/terms/route53)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [Elastic Load Balancing](/terms/elb)
+
+## 相關問題
+
+- [CLF 模擬問題一覽](/questions/clf)
+
+## 總結
+
+Route 53、CloudFront、Global Accelerator 都顯示為「Global」，容易混淆，但是各自的角色階層其實分得很乾淨。
+
+從以下 3 個軸記憶，會比較容易判斷。
+
+- DNS 解析 (名稱 → IP):Route 53
+- 內容的快取傳遞:CloudFront
+- 靜態 IP 與 TCP/UDP 的路徑最佳化:Global Accelerator
+
+不要被「全球」這個字眼牽著走，而是用「有沒有靜態 IP」「有沒有快取」「有沒有解析 DNS」切分，就可以避免 3 個服務之間的混淆。

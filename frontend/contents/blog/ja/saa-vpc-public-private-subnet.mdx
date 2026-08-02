@@ -1,0 +1,148 @@
+---
+postId: "blog-012"
+slug: "saa-vpc-public-private-subnet"
+title: "VPCのPublic SubnetとPrivate SubnetをSAA向けに整理する"
+description: "VPC、Public Subnet、Private Subnet、Internet Gateway、NAT Gatewayの役割をSAA対策として整理します。"
+category: "SAA対策"
+tags:
+  - "SAA-C03"
+  - "VPC"
+  - "Subnet"
+  - "NAT Gateway"
+  - "Internet Gateway"
+targetKeywords:
+  - "VPC Public Subnet Private Subnet"
+  - "SAA VPC 基礎"
+  - "AWS ネットワーク 初心者"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-08-02"
+---
+
+# VPCのPublic SubnetとPrivate SubnetをSAA向けに整理する
+
+SAAでネットワーク問題を解くには、VPC、サブネット、ルートテーブル、Internet Gateway、NAT Gatewayの関係を理解する必要があります。
+
+## 結論
+
+Public Subnetはインターネットから到達させるリソースを置く場所、Private Subnetは外部から直接到達させたくないリソースを置く場所です。
+
+両者を分けているのは、サブネットに付いた名札ではなく、**ルートテーブルの中身**です。ここを押さえると、選択肢の絞り込みが速くなります。
+
+## VPCとは
+
+VPCはAWS上に作る仮想ネットワークです。EC2、RDS、ALBなどを配置するネットワークの土台になります。
+
+S3、DynamoDB、Lambda、API Gatewayだけで構成する小さなサーバーレスMVPでは、VPCを使わない選択もあります。このサイトの問い合わせLambdaもDynamoDBにアクセスするだけなので、VPC接続しない構成がシンプルです。
+
+## サブネットの前提知識
+
+サブネットを設計するとき、先に知っておくべき制約があります。
+
+- サブネットは1つのアベイラビリティゾーンに属する。複数AZにまたがるサブネットは作れない
+- 各サブネットの先頭4つと末尾1つ、合計5つのIPアドレスはAWSが予約する。利用者は使えない
+- そのため `/24`（256アドレス）のサブネットで実際に使えるのは 251 アドレスになる
+
+「/24 なら 254 台置ける」とオンプレミスの感覚で計算すると、AWSでは 3 アドレス分ずれます。細かいサブネットを切るときほど効いてくるので、`/28`（16 − 5 = 11 アドレス）のような小さいCIDRを使う場合は特に注意します。
+
+## Public Subnetとは
+
+Public Subnetは、ルートテーブルでInternet Gatewayへのルートを持つサブネットです。外部から到達させるALBや踏み台用途のEC2などを置くことがあります。
+
+Public Subnet に紐づくルートテーブルは、次のようなエントリを持ちます。
+
+| 送信先（Destination） | ターゲット（Target） | 意味 |
+|---|---|---|
+| 10.0.0.0/16 | local | VPC内部の通信。削除できない |
+| 0.0.0.0/0 | igw-xxxxxxxx | それ以外はすべてInternet Gatewayへ |
+
+`local` ルートはVPC作成時に自動で入り、削除も変更もできません。「VPC内の通信のためにルートを追加する必要があるか」という問いには「不要」が答えになります。
+
+ただし、Public Subnetに置いたから必ずインターネット公開されるわけではありません。インターネットと双方向に通信するには、次の条件がすべて揃う必要があります。
+
+1. サブネットのルートテーブルに Internet Gateway 向けの `0.0.0.0/0` がある
+2. インスタンスにパブリックIPアドレス（またはElastic IP）が割り当てられている
+3. セキュリティグループのインバウンドルールが該当の通信を許可している
+4. ネットワークACLがインバウンド・アウトバウンドの両方で許可している
+
+このうち1つでも欠けると通信できません。SAAの問題文は、この4条件のどれかを欠いた状態で「なぜ到達できないか」を問う形を取ることがあります。
+
+## Private Subnetとは
+
+Private Subnetは、インターネットから直接到達させないリソースを置くサブネットです。アプリケーションサーバーやRDSを置く構成が代表的です。
+
+Private Subnet のルートテーブルは次のようになります。
+
+| 送信先 | ターゲット | 意味 |
+|---|---|---|
+| 10.0.0.0/16 | local | VPC内部の通信 |
+| 0.0.0.0/0 | nat-xxxxxxxx | 外向き通信はNAT Gateway経由 |
+
+`0.0.0.0/0` のターゲットが Internet Gateway か NAT Gateway かが、Public と Private の分かれ目です。NAT Gateway 自体は Public Subnet に配置します。ここを取り違えて Private Subnet に NAT Gateway を置くと、外に出る経路がないため通信できません。
+
+## セキュリティグループとネットワークACLの違い
+
+同じ「通信を許可する仕組み」でも性質が違います。
+
+| 項目 | セキュリティグループ | ネットワークACL |
+|---|---|---|
+| 適用単位 | ENI（インスタンス単位） | サブネット単位 |
+| ルール | 許可のみ | 許可と拒否の両方 |
+| 状態 | ステートフル（戻りの通信は自動許可） | ステートレス（戻りも明示的に許可が必要） |
+| 評価 | すべてのルールを評価 | ルール番号の小さい順に評価し、一致した時点で確定 |
+
+ステートレスであることを忘れると、ネットワークACLでアウトバウンドの一時ポート（エフェメラルポート）を開け忘れて通信が片道になります。
+
+## NAT Gateway のコスト
+
+NAT Gateway は固定費が出やすいため、個人MVPでは慎重に扱います。東京リージョン（ap-northeast-1）、2026年8月時点の公開単価では、時間課金とデータ処理課金の二重構造になっています。
+
+| 課金項目 | 単価 |
+|---|---|
+| NAT Gateway 稼働時間 | 0.062 USD / 時 |
+| 処理したデータ量 | 0.062 USD / GB |
+
+1か月を730時間とすると、通信がまったく無くても時間課金だけで次の金額になります。
+
+```text
+730 時間 × 0.062 USD = 45.26 USD / 月
+```
+
+ここに、Private Subnet から外に出たデータ量に応じた処理課金が加わります。仮に月 100 GB の外向き通信があれば、`100 × 0.062 = 6.2 USD` が上乗せされます。単価は改定されるため、実際の見積もりではAWS公式の料金ページで確認してください。
+
+NAT Gateway は Private Subnet の外向き通信のために置くものなので、VPC を作り直しても残りやすく、消し忘れに気づきにくい部類のリソースです。VPC ごと削除しても NAT Gateway が残っていれば課金は続くため、片付けるときは VPC ではなく NAT Gateway 側から確認してください。
+
+## VPCエンドポイントでNAT Gatewayを避ける
+
+Private Subnet 内のリソースが S3 や DynamoDB にアクセスするだけなら、NAT Gateway は不要です。ゲートウェイ型のVPCエンドポイントを使えば、ルートテーブルにエンドポイント向けのルートが追加され、AWSネットワーク内で完結します。
+
+ゲートウェイ型エンドポイント（S3 と DynamoDB が対象）は、時間課金もデータ処理課金もありません。一方、インターフェイス型エンドポイント（AWS PrivateLink）は、東京リージョン・2026年8月時点で 0.014 USD/時 と、処理データ 1 GB あたり 0.01 USD が発生します。
+
+この時間課金は「エンドポイント1つあたり」ではなく **「エンドポイント × 配置したAZ（サブネット）の数」** で発生する点に注意してください。可用性のために 2 AZ に配置すれば時間課金は 2 倍、3 AZ なら 3 倍です。NAT Gateway と比較する際にここを見落とすと、コストを実際より少なく見積もることになります。用途に対してどちらを選ぶかは、対象サービスと通信量、そして必要な AZ 数で決まります。
+
+## SAAで問われるポイント
+
+- Public SubnetはInternet Gatewayへのルートを持つ
+- Private Subnetのリソースは外部から直接到達させない
+- NAT GatewayはPrivate Subnetから外向き通信するときに使い、配置先はPublic Subnet
+- RDSは基本的にPrivate Subnetに置く
+- マルチAZ構成ではサブネットも複数AZに分ける
+- コスト削減の文脈では、S3/DynamoDB向けのゲートウェイ型VPCエンドポイントが選択肢になる
+
+## 実務での注意点
+
+VPC設計は一度作ると後から変更が面倒です。CIDR、サブネット分割、AZ、ルートテーブル、セキュリティグループを最初に整理します。VPCのCIDRは作成後に追加はできても、当初のブロックの縮小はできません。将来の拡張を見込んだ範囲を最初に決めます。
+
+初学者の個人開発では、不要なVPC接続やNAT Gatewayを作らない方が安全です。学習目的で作る場合も、作成後の削除確認までセットで行います。
+
+## 関連用語
+
+- [Amazon VPC](/terms/vpc)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon RDS](/terms/rds)
+
+## 次に読む記事
+
+- [Security Group・NACLの違い](/comparisons/security-group-vs-nacl)
+- [VPC内3層Webアプリ構成](/architectures/three-tier-vpc)

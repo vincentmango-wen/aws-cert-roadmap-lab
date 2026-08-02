@@ -1,0 +1,159 @@
+# Differences between S3, EBS, and EFS
+
+## Conclusion
+
+Amazon S3, Amazon EBS, and Amazon EFS are all AWS storage services, but the situations in which they are used differ significantly.
+
+A simple way to remember them is shown below.
+
+| Service | In one sentence | Main use cases |
+|---|---|---|
+| Amazon S3 | Object storage for keeping files | Images, videos, logs, backups, static sites |
+| Amazon EBS | A virtual disk attached to an EC2 instance | OS volumes for EC2, disks for applications |
+| Amazon EFS | File storage that can be shared from multiple EC2 instances | Shared file location for multiple servers |
+
+When in doubt, use the following rules of thumb.
+
+- You want to store images or static files for a website: S3
+- You want to use it as a disk for an EC2 instance: EBS
+- You want to share the same files from multiple EC2 instances: EFS
+
+## Comparison Table
+
+| Item | S3 | EBS | EFS |
+|---|---|---|---|
+| Full name | Amazon Simple Storage Service | Amazon Elastic Block Store | Amazon Elastic File System |
+| Type | Object storage | Block storage | File storage |
+| Main use cases | File storage, static sites, backups, log storage | A disk for EC2 | A shared file system between multiple EC2 instances |
+| What it connects to | Apps, browsers, AWS services | An EC2 instance in principle | Multiple EC2 instances |
+| Access methods | HTTP API, SDK, CLI, console | Recognized by the OS as a disk | Mounted via NFS |
+| Multi-server sharing | Possible, but not a file system | Generally attached to a single EC2 instance | Possible |
+| Capacity expansion | Effectively automatic | Volume size is specified | Automatic |
+| Availability | Highly durable across multiple AZs | A volume within a single AZ | Accessible from multiple AZs |
+| Representative exam keywords | Object, bucket, durability, storage class | EC2, block, volume, snapshot | NFS, shared files, multiple EC2 |
+| Use in this project | Storing static site files | Not used in MVP | Not used in MVP |
+
+## Beginner-Friendly Explanation
+
+### Amazon S3
+
+S3 is a service that stores files as "objects".
+
+It can store images, PDFs, HTML, CSS, JavaScript, log files, backup files, and similar content.
+
+In this project, we use a setup that places statically exported Next.js files in S3 and delivers them through Amazon CloudFront.
+
+### Amazon EBS
+
+EBS is a disk that you attach to an EC2 instance for use.
+
+It is similar to the "built-in SSD" or "external disk" of a local PC.
+
+When running applications on EC2, EBS is used to store the OS and the application files.
+
+### Amazon EFS
+
+EFS is used when you want multiple EC2 instances to share the same files.
+
+It is used in cases such as having multiple web servers reference the same uploaded files.
+
+Unlike S3, EFS can be mounted and used as a file system, which is its defining feature.
+
+## Points That Often Appear in the Exams
+
+### Points likely to appear on CLF-C02
+
+- S3 is object storage
+- EBS is block storage attached to EC2
+- EFS is file storage that can be shared from multiple EC2 instances
+- S3 can be used for static website delivery and backups
+- EBS can be backed up using snapshots
+- EFS is used for file sharing on Linux systems
+
+### Points likely to appear on SAA-C03
+
+- The standard pattern for delivering static content is S3 + CloudFront
+- Use EBS for persistent disks on EC2
+- Consider EFS when handling shared files from EC2 instances across multiple AZs
+- Use different S3 storage classes for frequent access, infrequent access, and archive
+- EBS is tied to an AZ, so it cannot be attached as-is to an EC2 instance in a different AZ
+- EFS can be accessed from multiple AZs, which makes it suitable for shared use cases
+
+## Practical Use Cases
+
+### When to choose S3
+
+- You want to publish a static website
+- You want to store images and PDFs
+- You want to store log files
+- You want to store backups
+- You want to deliver static content in combination with CloudFront
+
+In this project, S3 is required.
+
+### When to choose EBS
+
+- You build a web server using EC2
+- You need an OS disk for EC2
+- You build a database on EC2
+- You want to attach a high-performance disk to a specific EC2 instance
+
+The MVP for this project does not use EC2, so EBS is not used either.
+
+### When to choose EFS
+
+- You want multiple EC2 instances to share the same files
+- You want to use shared storage over NFS from Linux servers
+- You need a shared file system that spans multiple AZs
+
+The MVP for this project does not use a multi-EC2 configuration, so EFS is not used either.
+
+## Common Mistakes
+
+### Mistake 1: Thinking that S3 can be used as a disk for EC2
+
+S3 is object storage.
+
+When you want the EC2 OS to handle storage directly as a regular disk, use EBS.
+
+### Mistake 2: Thinking that EBS can be easily shared across multiple EC2 instances
+
+EBS is, in principle, block storage attached to a single EC2 instance.
+
+When you want to share files across multiple EC2 instances, consider EFS.
+
+### Mistake 3: Using EFS for static website delivery
+
+For static website delivery, the standard choice is S3 + CloudFront.
+
+EFS is intended for file-sharing use cases and is not the first choice for static web delivery.
+
+### Mistake 4: Memorizing S3, EBS, and EFS all as a single "place to put files"
+
+This kind of memorization leads to confusion on the exam.
+
+- S3: object
+- EBS: block
+- EFS: file
+
+Organize them with these three words.
+
+## Related Terms
+
+- [Amazon S3](/terms/s3)
+- [Amazon EBS](/terms/ebs)
+- [Amazon EFS](/terms/efs)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon EC2](/terms/ec2)
+
+## Related Questions
+
+- [CLF Practice Questions](/questions/clf)
+
+## Summary
+
+S3, EBS, and EFS are the fundamentals of AWS storage.
+
+First, remember them with the following sentence.
+
+S3 is for file storage, EBS is the disk for EC2, and EFS is a shared file system for multiple EC2 instances.

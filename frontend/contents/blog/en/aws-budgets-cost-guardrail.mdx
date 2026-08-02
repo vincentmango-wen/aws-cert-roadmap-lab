@@ -1,0 +1,70 @@
+---
+postId: "blog-022"
+slug: "aws-budgets-cost-guardrail"
+title: "Use AWS Budgets to Prevent Surprise Bills in Personal Projects"
+description: "A practical guide to AWS Budgets for solo developers: what it does, which thresholds to set, and how it differs from Cost Explorer."
+category: "Free Tier"
+tags:
+  - "AWS Budgets"
+  - "Cost Explorer"
+  - "cost management"
+  - "personal projects"
+targetKeywords:
+  - "AWS Budgets setup"
+  - "prevent AWS surprise bills"
+  - "AWS cost management for personal projects"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-08-02"
+---
+
+# Use AWS Budgets to Prevent Surprise Bills in Personal Projects
+
+AWS Budgets is one of the first services you should set up when building on AWS as a solo developer. Before writing any feature code, make sure you can detect billing problems early.
+
+## Conclusion
+
+AWS Budgets sends notifications when your AWS spending gets close to a target amount or percentage. For personal projects, set a low monthly budget and trigger alerts at 50%, 80%, 100%, and forecasted 100%.
+
+## Why Set It Up First
+
+AWS uses pay-as-you-go pricing. Even small experiments can keep generating charges if you leave resources running.
+
+Services like NAT Gateway, RDS, ALB, EC2, and OpenSearch are common sources of unexpected costs in personal MVPs. If you have Budgets in place, you have a chance to catch anomalies early.
+
+## What Budgets Watches
+
+In Budgets, you set a monthly cost target and receive notifications based on it. For example, set a budget of 1 USD or another low amount, and add alerts at Actual 50%, Actual 80%, Actual 100%, and Forecasted 100%.
+
+The key point is to use a notification email address you check regularly.
+
+## How It Differs from Cost Explorer
+
+Budgets tells you "you are about to exceed your target." Cost Explorer tells you "this service cost you this much."
+
+When you get a Budgets alert, open Cost Explorer to break down spending by service and region.
+
+## How This Project Uses It
+
+This site uses S3, CloudFront, API Gateway, Lambda, DynamoDB, and CloudWatch Logs. With low traffic, costs stay small, but a permanent zero-dollar bill is never guaranteed.
+
+That is why Budgets is required from day one, so unexpected charges show up quickly.
+
+## Things to Keep in Mind
+
+Budgets does not stop billing automatically. When an alert arrives, check the Billing Dashboard, Cost Explorer, and your active resources right away.
+
+Delete experiments you no longer need, and avoid setting CloudWatch Logs retention to "never expire."
+
+## Related Terms
+
+- [AWS Budgets](/terms/aws-budgets)
+- [Cost Explorer](/terms/cost-explorer)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## What to Read Next
+
+- [AWS Pricing Basics for Cloud Practitioner Candidates](/blog/clf-aws-pricing-basics)
+- [Why Choose a Serverless Architecture for an AWS Portfolio](/blog/aws-portfolio-serverless-architecture)

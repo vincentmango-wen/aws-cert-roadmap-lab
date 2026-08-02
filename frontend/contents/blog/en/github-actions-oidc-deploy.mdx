@@ -1,0 +1,75 @@
+---
+postId: "blog-023"
+slug: "github-actions-oidc-deploy"
+title: "Secure AWS Deployments from GitHub Actions with OIDC"
+description: "Learn how to deploy from GitHub Actions to AWS using OIDC for temporary credentials instead of long-lived access keys."
+category: "Free Tier & Portfolio"
+tags:
+  - "GitHub Actions"
+  - "OIDC"
+  - "IAM"
+  - "CI/CD"
+  - "CloudFront"
+targetKeywords:
+  - "GitHub Actions OIDC AWS"
+  - "AWS deploy OIDC"
+  - "GitHub Actions IAM Role"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-08-02"
+---
+
+# Secure AWS Deployments from GitHub Actions with OIDC
+
+When you deploy from GitHub Actions to AWS, one option is to store AWS access keys in GitHub Secrets. However, using OIDC is a more secure approach.
+
+## Summary
+
+With OIDC, GitHub Actions assumes an AWS IAM role temporarily. Because no long-lived access keys are stored in GitHub, the risk of credential leakage goes down.
+
+## What is the Problem?
+
+Storing `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in GitHub Secrets is simple to operate. However, long-lived access keys carry a large risk if they are ever leaked.
+
+Even for personal projects, if you publish them as a portfolio, you should be careful with how credentials are handled.
+
+## How OIDC Works
+
+When a GitHub Actions workflow runs, GitHub issues an OIDC token. On the AWS side, you configure a GitHub OIDC Provider and a Trust Policy so that only a specific repository and branch can assume the IAM role.
+
+In this project, the production branch is `master`. The `sub` condition in the Trust Policy is therefore set to match `refs/heads/master`.
+
+## Apply Least Privilege
+
+The IAM role used by GitHub Actions is granted only the permissions needed to upload to S3, delete files in S3, and create a CloudFront invalidation.
+
+Permissions that are not needed for the deployment — such as IAM operations, DynamoDB deletions, or EC2 actions — are not granted.
+
+## Deployment Flow in This Project
+
+1. Push to the `master` branch
+2. GitHub Actions starts
+3. Build Next.js
+4. Assume the AWS IAM role via OIDC
+5. Sync `out/` to S3
+6. Run a CloudFront invalidation
+
+## Key Points for Exams and Real Work
+
+- IAM roles can be used for temporary permission delegation
+- The principle of least privilege matters
+- Reducing long-lived access keys lowers the risk of credential leakage
+- Security design also applies to CI/CD
+
+## Related Terms
+
+- [IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+
+## Related Articles
+
+- [IAM Basics for Cloud Practitioner](/blog/clf-iam-basics)
+- [Why a Serverless Architecture Fits an AWS Portfolio](/blog/aws-portfolio-serverless-architecture)

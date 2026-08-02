@@ -1,0 +1,170 @@
+---
+postId: "blog-002"
+slug: "aws-free-tier-portfolio"
+title: "How to Build a Portfolio Site on the AWS Free Tier"
+description: "A beginner-friendly guide to building a portfolio site on the AWS Free Tier using S3, CloudFront, Lambda, and DynamoDB."
+category: "Portfolio"
+tags:
+  - "aws"
+  - "free-tier"
+  - "portfolio"
+  - "cloudfront"
+  - "lambda"
+targetKeywords:
+  - "AWS Free Tier portfolio"
+  - "AWS portfolio for beginners"
+  - "S3 CloudFront static site"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# How to Build a Portfolio Site on the AWS Free Tier
+
+## Conclusion
+
+If you want to build a portfolio on AWS, a serverless architecture is a good starting point.
+
+The reason is simple: you do not need to keep a server running all the time, which helps you control costs as an individual developer.
+
+This site assumes the following setup.
+
+| Purpose | AWS Service |
+|---|---|
+| Static site delivery | S3, CloudFront |
+| Contact API | API Gateway, Lambda |
+| Contact storage | DynamoDB |
+| Log inspection | CloudWatch Logs |
+| Access control | IAM |
+| Cost monitoring | AWS Budgets |
+
+This architecture also aligns well with the topics covered in Cloud Practitioner and SAA.
+
+## What You Can Build on the Free Tier
+
+When beginners build a portfolio, the main thing to avoid is an architecture that generates fixed monthly costs.
+
+For example, leaving an EC2 instance running or keeping an RDS instance up can produce charges even for learning purposes.
+
+So we start with the following policies.
+
+| Policy | Details |
+|---|---|
+| Static site first | Put HTML, CSS, and JavaScript on S3 |
+| CDN delivery | Serve over HTTPS via CloudFront |
+| Minimal APIs | Only the contact form is exposed as an API |
+| Small DB usage | Store only contact submissions in DynamoDB |
+| Cost monitoring | Set up AWS Budgets from the start |
+
+## Services Used
+
+### Amazon S3
+
+S3 is used to store static files.
+
+When you export a Next.js project as static output, you get HTML, CSS, JavaScript, and image files.
+
+You can place those files on S3 and use it as your website's file storage.
+
+However, you should avoid making the S3 bucket directly public.
+
+This site assumes that content is delivered through CloudFront.
+
+### Amazon CloudFront
+
+CloudFront is a CDN that delivers your site to users quickly.
+
+Using CloudFront gives you the following benefits.
+
+| Benefit | Details |
+|---|---|
+| HTTPS delivery | Users can access your site securely from the browser |
+| Caching | Static files are delivered with low latency |
+| S3 protection | You can keep S3 private instead of exposing it |
+| Portfolio value | You can explain a CDN-based architecture |
+
+### AWS Lambda
+
+Lambda is used to process the contact form.
+
+You do not keep a server running at all times. Code runs only when a request arrives.
+
+This pricing model fits well with low-traffic processing such as a personal portfolio's contact form.
+
+### Amazon API Gateway
+
+API Gateway is the entry point that lets the frontend call Lambda.
+
+When a user clicks the submit button on the contact form, the frontend sends a POST request to API Gateway.
+
+API Gateway invokes Lambda, and Lambda writes the data to DynamoDB.
+
+### Amazon DynamoDB
+
+DynamoDB is used to store contact submissions.
+
+This MVP does not require complex relational data.
+
+It is enough to store the name, email address, subject, message body, and timestamp.
+
+For that reason, DynamoDB is a better fit than RDS.
+
+## Services with Billing Risk
+
+Even on the AWS Free Tier, billing risk is not zero.
+
+Beginners should pay attention to the following services in particular.
+
+| Service | Caution |
+|---|---|
+| EC2 | Running instances are charged by the hour |
+| RDS | Even small instances tend to create fixed monthly costs |
+| NAT Gateway | Costs can be incurred simply by creating it |
+| ALB | Always-on usage charges apply |
+| CloudWatch Logs | Logs stored without expiration accumulate charges over time |
+| CloudFront | High traffic or large images can increase data transfer costs |
+
+This MVP does not use EC2, RDS, NAT Gateway, or ALB.
+
+## Implementation Steps
+
+The flow looks like this.
+
+1. Build a static site with Next.js
+2. Generate static files with `npm run build`
+3. Create an S3 bucket
+4. Upload the static files to S3
+5. Create a CloudFront distribution
+6. Use CloudFront OAC to keep S3 private
+7. Set up API Gateway, Lambda, and DynamoDB for the contact form
+8. Set up billing alerts with AWS Budgets
+9. Document the architecture and design choices in the README
+
+If you follow this flow, you end up with more than a portfolio of screens. You get a project where you can also explain the AWS architecture behind it.
+
+## What to Highlight in Your Portfolio
+
+When you show your work to recruiters or interviewers, showing screens alone is not enough.
+
+If you can explain the following points, your portfolio is easier to evaluate.
+
+| Topic | What to explain |
+|---|---|
+| Why S3 | A static site does not need a server |
+| Why CloudFront | HTTPS, caching, and keeping S3 private |
+| Why Lambda | The contact form does not need an always-on server |
+| Why DynamoDB | A good fit for small-scale contact storage |
+| Why not RDS | Fixed costs and operational burden are too heavy for an MVP |
+| How to prevent billing accidents | Set up AWS Budgets from the start |
+| How to keep it secure | IAM least privilege, private S3, and CORS restrictions |
+
+## Summary
+
+If you want to build a portfolio on the AWS Free Tier, starting with a static site on S3 + CloudFront is the practical choice.
+
+Add dynamic processing in small steps, such as a contact form.
+
+By combining API Gateway, Lambda, and DynamoDB, you can also learn how serverless APIs work.
+
+With this setup, you can turn the knowledge you learn for the Cloud Practitioner exam into a working implementation, while also building the design skills that lead toward SAA.

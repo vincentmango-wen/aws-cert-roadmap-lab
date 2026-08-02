@@ -1,0 +1,76 @@
+---
+postId: "blog-008"
+slug: "clf-aws-pricing-basics"
+title: "AWS Pricing Basics for Cloud Practitioner"
+description: "A beginner-friendly overview of AWS pricing: pay-as-you-go, the Free Tier, Reserved Instances, and Savings Plans."
+category: "CLF"
+tags:
+  - "clf-c02"
+  - "pricing"
+  - "aws-budgets"
+  - "cost-explorer"
+targetKeywords:
+  - "AWS pricing basics"
+  - "AWS Free Tier"
+  - "Cloud Practitioner billing"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-08-02"
+---
+
+# AWS Pricing Basics for Cloud Practitioner
+
+Pricing is something you cannot skip when learning AWS. The Cloud Practitioner exam asks not only about technical services, but also about billing, pricing, support, and cost management.
+
+## Summary
+
+The core idea of AWS pricing is "pay only for what you use." But each service charges for different things. You need to understand what is billed: storage, requests, data transfer, runtime, and so on.
+
+## Pay-as-you-go
+
+Most AWS services use pay-as-you-go pricing. For example, S3 charges for storage and requests, Lambda charges for execution count and duration, and CloudFront charges for data transfer and requests.
+
+The important thing is to separate services that tend to incur fixed costs just by being created from services that only charge when you use them.
+
+## Free Tier
+
+AWS offers a Free Tier. However, "Free Tier" does not mean everything is free forever. There are conditions on time period, usage amount, and which services qualify.
+
+For personal projects, instead of relying only on the Free Tier, it is more important to set up AWS Budgets so you get notified about unexpected charges.
+
+## Services that tend to incur fixed costs
+
+Common examples beginners should watch out for are NAT Gateway, RDS, ALB, EC2, and OpenSearch. These can keep running up charges depending on configuration and usage, so you should be careful with them in a personal MVP.
+
+In this project, the MVP avoids EC2, RDS, NAT Gateway, and ALB, and instead uses S3, CloudFront, API Gateway, Lambda, and DynamoDB.
+
+## Services used for cost management
+
+AWS Budgets is for budget alerts, and Cost Explorer is for analyzing costs by service. Budgets tells you "you went over the limit," and Cost Explorer helps you figure out "where the money went."
+
+## Key points for the exam
+
+- AWS pricing is pay-as-you-go by default
+- The Free Tier has conditions
+- Budgets is used for budget management
+- Cost Explorer is used for cost analysis
+- Savings Plans and Reserved Instances offer discounts for long-term usage
+
+## Practical notes
+
+Do not leave pricing as an afterthought in your design. As soon as you decide which services to use, check what each one charges for.
+
+For personal projects, the safe approach is to set up Budgets first, avoid services that tend to incur fixed costs, and prefer static delivery and serverless options.
+
+## Related terms
+
+- [AWS Budgets](/terms/aws-budgets)
+- [Cost Explorer](/terms/cost-explorer)
+- [AWS Lambda](/terms/lambda)
+
+## Next articles
+
+- [How to build a portfolio with the AWS Free Tier](/blog/aws-free-tier-portfolio)
+- [Prevent billing surprises in personal projects with AWS Budgets](/blog/aws-budgets-cost-guardrail)

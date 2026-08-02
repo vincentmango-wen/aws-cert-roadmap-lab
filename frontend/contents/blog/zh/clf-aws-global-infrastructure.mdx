@@ -1,0 +1,70 @@
+---
+postId: "blog-007"
+slug: "clf-aws-global-infrastructure"
+title: "AWS 全球基礎架構初學者解說"
+description: "為 Cloud Practitioner 考生整理 Region、Availability Zone 與 Edge Location 的差異。"
+category: "CLF"
+tags:
+  - "CLF-C02"
+  - "Region"
+  - "AZ"
+  - "CloudFront"
+targetKeywords:
+  - "AWS Region AZ 差異"
+  - "AWS 全球基礎架構"
+  - "Cloud Practitioner"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# AWS 全球基礎架構初學者解說
+
+要理解 AWS 的整體架構,首先需要掌握 Region、Availability Zone 與 Edge Location 的差異。這些概念在 Cloud Practitioner 與 SAA 考試中都會頻繁出現。
+
+## 結論
+
+Region 是地理區域,Availability Zone 是 Region 內彼此獨立的資料中心群,Edge Location 則是從靠近使用者的位置遞送內容的據點。
+
+## 什麼是 Region
+
+Region 是東京、北維吉尼亞、新加坡等以地理位置劃分的單位。決定服務與資料要部署在哪個地區時,就是以 Region 為單位。
+
+如果要為日本使用者提供低延遲的服務,基本上會選擇東京 Region。本專案的 S3、Lambda、DynamoDB、API Gateway 也是以東京 Region 為前提。
+
+## 什麼是 Availability Zone
+
+Availability Zone 是 Region 內彼此獨立的資料中心群,通常稱為 AZ。
+
+要實現高可用性,跨多個 AZ 部署是關鍵。例如 RDS Multi-AZ,或是 ALB 搭配 Auto Scaling 的架構,即使單一 AZ 發生故障,服務仍可持續運作。
+
+## 什麼是 Edge Location
+
+Edge Location 是 CloudFront 等服務使用的內容遞送據點。透過從靠近使用者的位置回應快取,可以加快顯示速度。
+
+把放在 S3 的靜態網站透過 CloudFront 遞送時,使用者並非直接存取 S3,而是經由 CloudFront 的 Edge 據點接收內容。
+
+## 考試重點
+
+- Region 是地理區域單位
+- AZ 是 Region 內彼此獨立的故障隔離單位
+- 跨多個 AZ 的架構可帶來高可用性
+- CloudFront 透過 Edge Location 提供高速遞送
+- 若要在 CloudFront 使用 ACM 憑證,部分情況需在北維吉尼亞 Region 簽發
+
+## 在本專案中的運用
+
+本網站將靜態檔案放在 S3,並透過 CloudFront 對外遞送。聯絡表單 API 則由 API Gateway、Lambda、DynamoDB 組成。全球內容遞送交給 CloudFront,資料儲存與 API 處理則由東京 Region 負責,各司其職。
+
+## 相關名詞
+
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon Route 53](/terms/route53)
+- [AWS Certificate Manager](/terms/acm)
+
+## 延伸閱讀
+
+- [S3 + CloudFront 靜態網站架構](/architectures/static-site-s3-cloudfront)
+- [ALB、NLB、CloudFront 的差異](/comparisons/alb-vs-nlb-vs-cloudfront)

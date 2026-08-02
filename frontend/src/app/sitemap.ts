@@ -1,19 +1,18 @@
-export const dynamic = "force-static";
-
 import type { MetadataRoute } from "next";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import {
+  createLocalizedSitemapItems,
+  getSitemapSiteUrl,
+  type ChangeFrequency,
+  type LocalizedSitemapRouteInput,
+  type SitemapItem,
+} from "../i18n/seo/sitemap";
+import { isSealedPathname } from "../i18n/release-gate";
 
-type SitemapItem = MetadataRoute.Sitemap[number];
+export const dynamic = "force-static";
 
-type ChangeFrequency = NonNullable<SitemapItem["changeFrequency"]>;
-
-type SitemapRouteInput = {
-  pathname: string;
-  priority: number;
-  changeFrequency: ChangeFrequency;
-  lastModified?: string | Date;
-};
+type SitemapRouteInput = LocalizedSitemapRouteInput;
 
 type TermContent = {
   termId?: unknown;
@@ -27,6 +26,12 @@ type QuestionContent = {
   published?: unknown;
 };
 
+type LocalizedContent = {
+  slug?: unknown;
+  updatedAt?: unknown;
+  published?: unknown;
+};
+
 type MdxContentMeta = {
   slug: string;
   updatedAt?: string;
@@ -34,67 +39,10 @@ type MdxContentMeta = {
   noIndex: boolean;
 };
 
-const FALLBACK_SITE_URL = "https://aws-cert-roadmap-lab.example.com";
-
 const CONTENT_ROOT = path.join(process.cwd(), "contents");
-
-const BUILD_TIME = new Date();
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
-}
-
-function getSiteUrl(): string {
-  const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_SITE_URL;
-  const trimmedSiteUrl = rawSiteUrl.trim().replace(/\/+$/, "");
-
-  if (trimmedSiteUrl.length === 0) {
-    return FALLBACK_SITE_URL;
-  }
-
-  if (trimmedSiteUrl.startsWith("http://") || trimmedSiteUrl.startsWith("https://")) {
-    return trimmedSiteUrl;
-  }
-
-  return `https://${trimmedSiteUrl}`;
-}
-
-function createAbsoluteUrl(pathname: string): string {
-  const siteUrl = getSiteUrl();
-
-  if (pathname === "/") {
-    return siteUrl;
-  }
-
-  const normalizedPathname = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  return `${siteUrl}${normalizedPathname}`;
-}
-
-function toLastModified(value?: string | Date): Date {
-  if (value instanceof Date) {
-    return value;
-  }
-
-  if (!isNonEmptyString(value)) {
-    return BUILD_TIME;
-  }
-
-  const parsedDate = new Date(value);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return BUILD_TIME;
-  }
-
-  return parsedDate;
-}
-
-function createSitemapItem(route: SitemapRouteInput): SitemapItem {
-  return {
-    url: createAbsoluteUrl(route.pathname),
-    lastModified: toLastModified(route.lastModified),
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
-  };
 }
 
 function readRequiredJsonArray<T>(relativeFilePath: string): T[] {
@@ -196,6 +144,11 @@ function getStaticRoutes(): SitemapRouteInput[] {
       changeFrequency: "weekly",
     },
     {
+      pathname: "/questions/saa",
+      priority: 0.8,
+      changeFrequency: "weekly",
+    },
+    {
       pathname: "/comparisons",
       priority: 0.8,
       changeFrequency: "weekly",
@@ -230,6 +183,14 @@ function getStaticRoutes(): SitemapRouteInput[] {
       priority: 0.3,
       changeFrequency: "yearly",
     },
+    {
+      // 利用規約は ja のみ提供する。/en /zh の利用規約ページは存在しないため
+      // availableLocales を ja に絞り、sitemap に 404 URL を載せない（#305 の 200 ゲート対策）。
+      pathname: "/terms-of-service",
+      priority: 0.3,
+      changeFrequency: "yearly",
+      availableLocales: ["ja"],
+    },
   ];
 }
 
@@ -247,32 +208,97 @@ function getTermRoutes(): SitemapRouteInput[] {
     }));
 }
 
+/**
+ * CLF (50問) + SAA (30問) を ja JSON SSoT から読み、3 言語 × 80 問 = 240 URL を
+ * 生成するための入力を返す。
+ *
+ * en/zh の専用 JSON が未生成でも `createLocalizedSitemapItems` が自動で locale prefix
+ * を付与した URL を出力するため、stub JSON を待たずに sitemap に並べられる
+ * (P5-E6 / .en.json / .zh.json 空配列 stub 戦略と整合)。
+ */
 function getQuestionRoutes(): SitemapRouteInput[] {
-  const questions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.json");
+  const clfQuestions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.ja.json");
+  const saaQuestions = readRequiredJsonArray<QuestionContent>("questions/saa-c03.ja.json");
 
-  return questions
+  return [...clfQuestions, ...saaQuestions]
     .filter((question) => question.published !== false)
     .filter((question) => isNonEmptyString(question.questionId))
     .map((question) => ({
       pathname: `/questions/${String(question.questionId).trim()}`,
       priority: 0.7,
       changeFrequency: "monthly",
-      lastModified: isNonEmptyString(question.updatedAt) ? question.updatedAt : undefined,
+      lastModified: isNonEmptyString(question.updatedAt)
+        ? question.updatedAt
+        : undefined,
     }));
 }
 
-function getMdxRoutes(
-  directoryName: string,
+/**
+ * locale 別 JSON SSoT を起点に detail URL を生成する。
+ *
+ * P5-034 (comparisons) / P5-042 (architectures) で MDX を locale サブディレクトリ
+ * 配下に移したため、旧 `readMdxContentMetas` は contents/<directoryName> 直下を
+ * 非再帰走査する設計上、空配列を返してしまい detail URL が sitemap から脱落する
+ * regression が発生していた (CR1-H2 共造)。
+ *
+ * 本関数は ja JSON の slug 集合を「公開されている全 slug 集合」として扱い、
+ * createLocalizedSitemapItems が 3 言語の URL を一度に生成する。
+ */
+function getLocalizedDetailRoutesFromJson(
+  jaJsonRelativePath: string,
   routePrefix: string,
   priority: number,
   changeFrequency: ChangeFrequency,
 ): SitemapRouteInput[] {
-  return readMdxContentMetas(directoryName)
-    .filter((meta) => meta.published)
-    .map((meta) => ({
-      pathname: `${routePrefix}/${meta.slug}`,
+  const entries = readRequiredJsonArray<LocalizedContent>(jaJsonRelativePath);
+
+  return entries
+    .filter((entry) => entry.published !== false)
+    .filter((entry) => isNonEmptyString(entry.slug))
+    .map((entry) => ({
+      pathname: `${routePrefix}/${String(entry.slug).trim()}`,
       priority,
       changeFrequency,
+      lastModified: isNonEmptyString(entry.updatedAt)
+        ? String(entry.updatedAt).trim()
+        : undefined,
+    }));
+}
+
+export function getArchitectureSitemapRoutes(): SitemapRouteInput[] {
+  return getLocalizedDetailRoutesFromJson(
+    "architectures/architectures.ja.json",
+    "/architectures",
+    0.75,
+    "monthly",
+  );
+}
+
+export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
+  return getLocalizedDetailRoutesFromJson(
+    "comparisons/comparisons.ja.json",
+    "/comparisons",
+    0.75,
+    "monthly",
+  );
+}
+
+/**
+ * blog detail URL を ja MDX (`contents/blog/ja/<slug>.mdx`) の slug 集合から生成する。
+ *
+ * P5-050 で MDX を locale サブディレクトリ配下 (ja/en/zh) に移したため、旧
+ * `getMdxRoutes("blog", "/blog", ...)` は `contents/blog/` 直下を非再帰走査し
+ * 空配列を返すようになっていた。本関数は ja MDX を「公開されている全 slug」の
+ * 真の集合として扱い、`createLocalizedSitemapItems` が 3 言語の URL を一度に
+ * 生成する。
+ */
+export function getBlogSitemapRoutes(): SitemapRouteInput[] {
+  return readMdxContentMetas(path.join("blog", "ja"))
+    .filter((meta) => meta.published)
+    .map((meta) => ({
+      pathname: `/blog/${meta.slug}`,
+      priority: 0.7,
+      changeFrequency: "weekly",
       lastModified: meta.updatedAt,
     }));
 }
@@ -287,17 +313,36 @@ function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
   return Array.from(itemMap.values());
 }
 
+/**
+ * sitemap 封印の第 2 層（保険フィルタ / ACR-012 / #322）。
+ *
+ * 第 1 層は `i18n/seo/sitemap.ts` の `resolveAvailableLocales()`。
+ * sitemap は 2026-06-28 の落選（宣言 URL がほぼ全件 404）の直接原因なので、
+ * 生成経路が増えても封印が漏れないよう出口でもう一度落とす。
+ */
+export function filterSealedLocaleUrls(items: SitemapItem[]): SitemapItem[] {
+  const siteUrl = getSitemapSiteUrl();
+
+  return items.filter((item) => {
+    const pathname = item.url.startsWith(siteUrl) ? item.url.slice(siteUrl.length) : item.url;
+
+    return !isSealedPathname(pathname === "" ? "/" : pathname);
+  });
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: SitemapRouteInput[] = [
     ...getStaticRoutes(),
     ...getTermRoutes(),
     ...getQuestionRoutes(),
-    ...getMdxRoutes("comparisons", "/comparisons", 0.75, "monthly"),
-    ...getMdxRoutes("architectures", "/architectures", 0.75, "monthly"),
-    ...getMdxRoutes("blog", "/blog", 0.7, "weekly"),
+    ...getComparisonSitemapRoutes(),
+    ...getArchitectureSitemapRoutes(),
+    ...getBlogSitemapRoutes(),
   ];
 
-  const sitemapItems = routes.map(createSitemapItem);
+  const sitemapItems = routes.flatMap(createLocalizedSitemapItems);
 
-  return deduplicateByUrl(sitemapItems).sort((a, b) => a.url.localeCompare(b.url));
+  return filterSealedLocaleUrls(deduplicateByUrl(sitemapItems)).sort((a, b) =>
+    a.url.localeCompare(b.url),
+  );
 }

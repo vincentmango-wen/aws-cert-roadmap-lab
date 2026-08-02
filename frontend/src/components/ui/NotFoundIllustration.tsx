@@ -10,10 +10,11 @@ export function NotFoundIllustration({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 480 214"
+      viewBox="0 0 480 200"
       role="img"
       aria-label="ロードマップの道の上に旗が立ち、大きな雲のキャラクターが右下で手を振って下のリンクへ案内している"
       className="mx-auto w-full max-w-sm sm:max-w-md"
+      style={{ overflow: "visible" }}
     >
       {/* 背景 */}
       <rect x="0" y="0" width="480" height="150" fill="#f8fafc" />

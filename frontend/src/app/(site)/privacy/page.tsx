@@ -342,7 +342,7 @@ export default function PrivacyPage(): ReactElement {
         <p className="font-semibold">このページについて</p>
         <p className="mt-2">
           当サイトでは、アクセス解析のためにGoogle Analyticsを使用しています。
-          また、収益化準備としてGoogle AdSenseなどの広告配信サービスを利用する場合があります。
+          また、Google AdSenseなどの広告配信サービスを利用する場合があります。
           問い合わせフォームで取得した情報は、問い合わせ対応、誤り報告への対応、サイト改善のために利用します。
         </p>
       </div>
@@ -403,6 +403,12 @@ export default function PrivacyPage(): ReactElement {
             className="rounded-full border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 hover:border-blue-300 hover:text-blue-700"
           >
             免責事項
+          </Link>
+          <Link
+            href="/terms-of-service"
+            className="rounded-full border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-700 hover:border-blue-300 hover:text-blue-700"
+          >
+            利用規約
           </Link>
         </div>
       </div>

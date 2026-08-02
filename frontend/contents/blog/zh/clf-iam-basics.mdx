@@ -1,0 +1,74 @@
+---
+postId: "blog-009"
+slug: "clf-iam-basics"
+title: "為 Cloud Practitioner 整理 IAM 的基礎概念"
+description: "整理 IAM User、IAM Group、IAM Role、IAM Policy 的基礎，以及最小權限的核心觀念。"
+category: "CLF 對策"
+tags:
+  - "CLF-C02"
+  - "IAM"
+  - "資安"
+  - "最小權限"
+targetKeywords:
+  - "AWS IAM 入門"
+  - "IAM Role Policy 差異"
+  - "Cloud Practitioner IAM"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 為 Cloud Practitioner 整理 IAM 的基礎概念
+
+IAM 是 AWS 的權限管理服務。無論是 Cloud Practitioner 或 SAA 都很重要,是安全使用 AWS 的基礎。
+
+## 結論
+
+IAM 管理的是「誰」「對什麼」「能做什麼」這三件事。初學者首先要釐清 IAM User、IAM Group、IAM Role、IAM Policy 這四者的差異。
+
+## IAM User
+
+IAM User 是代表操作 AWS 的人或應用程式的身分。日常作業中不使用 root 使用者,而是改用 IAM User,這是基本原則。
+
+不過,一旦發行長期 Access Key,就會產生外洩風險。沒用到的 Access Key 要刪除,並設定 MFA。
+
+## IAM Group
+
+IAM Group 是把多個使用者集中管理權限的機制。個人開發較少用到,但團隊開發時可以用「開發者」「維運人員」這類角色來區分。
+
+## IAM Role
+
+IAM Role 是用來暫時承接權限的機制,常用於把權限授予 AWS 服務的情境。
+
+例如 Lambda 要寫入 DynamoDB 時,會在 Lambda 執行角色(Execution Role)上授予 DynamoDB PutItem 權限。從 GitHub Actions 部署到 AWS 時,也可以採用透過 OIDC 承接 IAM Role 的架構。
+
+## IAM Policy
+
+IAM Policy 是用 JSON 定義「允許」或「拒絕」哪些操作的設定,會指定 Action、Resource、Effect 等欄位。
+
+重點是不要隨便使用 `*`,要把權限縮限到必要的服務、必要的操作、必要的資源。
+
+## 最小權限原則
+
+最小權限(Least Privilege)指的是只授予作業所需的權限。本網站的設計就是:Lambda 只給 DynamoDB 的 PutItem,GitHub Actions 也只給 S3 sync 與 CloudFront Invalidation 所需的權限。
+
+## 考試重點
+
+- root 使用者不用於日常作業
+- 啟用 MFA
+- 用 IAM Policy 定義權限
+- IAM Role 用於 AWS 服務或臨時憑證
+- 最小權限原則非常重要
+
+## 相關名詞
+
+- [IAM](/terms/iam)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 延伸閱讀
+
+- [IAM User、IAM Role、IAM Policy 的差異](/comparisons/iam-user-vs-role-vs-policy)
+- [用 GitHub OIDC 安全地部署 AWS](/blog/github-actions-oidc-deploy)

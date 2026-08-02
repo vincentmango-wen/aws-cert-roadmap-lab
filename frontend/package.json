@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/set-html-lang.mjs && node scripts/verify-locale-seal.mjs",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "test:run": "vitest run"
+    "check:html-lang": "node scripts/set-html-lang.mjs --check",
+    "check:question-html": "node scripts/measure-question-html.mjs",
+    "check:locale-seal": "node scripts/verify-locale-seal.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.7",
@@ -29,6 +31,6 @@
     "eslint-config-next": "^16.2.6",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^2.1.9"
+    "vitest": "^4.1.9"
   }
 }

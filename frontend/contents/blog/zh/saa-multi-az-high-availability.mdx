@@ -1,0 +1,71 @@
+---
+postId: "blog-011"
+slug: "saa-multi-az-high-availability"
+title: "整理 SAA 重點：Multi-AZ 高可用性架構設計"
+description: "整理 SAA-C03 常考的 Multi-AZ、冗餘設計與單一故障點概念,適合初學者閱讀。"
+category: "SAA 對策"
+tags:
+  - "SAA-C03"
+  - "Multi-AZ"
+  - "高可用性"
+  - "RDS"
+  - "ALB"
+targetKeywords:
+  - "SAA Multi-AZ"
+  - "AWS 高可用性 設計"
+  - "AWS 單一故障點"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 整理 SAA 重點：Multi-AZ 高可用性架構設計
+
+在 Solutions Architect Associate 考試中,高可用性架構設計是常見的考題。其中 Multi-AZ 架構、冗餘設計與消除單一故障點更是必備觀念。
+
+## 結論
+
+要提升可用性,就不能依賴單一 AZ、單一執行個體或單一元件。在 AWS 中,跨多個 AZ 的架構是基本原則。
+
+## 什麼是單一故障點
+
+單一故障點是指當該處發生故障時,整個系統就會停擺的位置。例如只有一台 EC2、資料庫只放在單一 AZ、未做冗餘的 NAT Gateway 等。
+
+SAA 考試常以「這個架構的弱點在哪裡」「如何提升可用性」這類形式出題。
+
+## 什麼是 Multi-AZ
+
+Multi-AZ 是使用多個可用區域 (Availability Zone) 的架構。即使其中一個 AZ 發生故障,也能透過另一個 AZ 持續處理。
+
+RDS Multi-AZ 是提升資料庫可用性的代表性架構。它與用來提升讀取效能的 Read Replica 角色不同。
+
+## ALB 與 Auto Scaling
+
+在 Web 應用程式中,可使用 ALB 將流量分散到跨多個 AZ 的 EC2,並透過 Auto Scaling 調整台數。這樣即使一台 EC2 或單一 AZ 發生故障,也能維持服務運作。
+
+## Serverless 也要注意高可用性
+
+Lambda、S3、DynamoDB、API Gateway 等託管服務,AWS 已在背後設計了高可用性。但若設定或相依關係設計錯誤,可用性還是會下降。
+
+例如,將 Lambda 放在 VPC 內並依賴 NAT Gateway 時,就必須考慮 NAT Gateway 的冗餘設計。
+
+## 考試重點
+
+- 單一 AZ 架構容易因故障而中斷
+- Multi-AZ 用於提升高可用性
+- Read Replica 主要用於提升讀取效能與讀取流量分散
+- ALB + Auto Scaling 用於 Web 層的冗餘設計
+- 即使是託管服務,也要確認相依關係
+
+## 相關術語
+
+- [Amazon RDS](/terms/rds)
+- [Elastic Load Balancing](/terms/elb)
+- [Auto Scaling](/terms/auto-scaling)
+
+## 延伸閱讀
+
+- [Multi-AZ 與 Read Replica 的差異](/comparisons/multi-az-vs-read-replica)
+- [ALB + Auto Scaling + RDS Multi-AZ 高可用性架構](/architectures/high-availability-web-app)
