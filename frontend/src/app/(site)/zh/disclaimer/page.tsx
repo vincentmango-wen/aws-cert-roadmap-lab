@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { createLocaleAwareRobots } from "@/lib/seo";
+
+const pagePath = "/zh/disclaimer";
+
 export const metadata: Metadata = {
   title: "免責聲明 | AWS Cert Roadmap Lab",
   description:
     "AWS Cert Roadmap Lab 的繁體中文免責聲明。說明 AWS 資格學習資訊、模擬題、架構圖、外部連結、資訊正確性與責任限制等方針。",
   alternates: {
-    canonical: "/zh/disclaimer",
-    languages: {
-      ja: "/disclaimer",
-      en: "/en/disclaimer",
-      "zh-Hant": "/zh/disclaimer",
-      "x-default": "/disclaimer",
-    },
+    canonical: pagePath,
   },
+  robots: createLocaleAwareRobots(pagePath),
   openGraph: {
     title: "免責聲明 | AWS Cert Roadmap Lab",
     description:

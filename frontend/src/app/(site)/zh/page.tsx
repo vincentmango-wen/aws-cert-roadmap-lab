@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createAbsoluteUrl, siteConfig } from "@/lib/seo";
+import { createAbsoluteUrl, createLocaleAwareRobots, siteConfig } from "@/lib/seo";
+
+const pagePath = "/zh";
 
 type FeatureCard = {
   title: string;
@@ -38,13 +40,7 @@ export const metadata: Metadata = {
     "AWS服務比較",
   ],
   alternates: {
-    canonical: createAbsoluteUrl("/zh"),
-    languages: {
-      ja: createAbsoluteUrl("/"),
-      en: createAbsoluteUrl("/en"),
-      "zh-Hant": createAbsoluteUrl("/zh"),
-      "x-default": createAbsoluteUrl("/"),
-    },
+    canonical: createAbsoluteUrl(pagePath),
   },
   openGraph: {
     title: pageTitle,
@@ -68,10 +64,7 @@ export const metadata: Metadata = {
     description: pageDescription,
     images: [createAbsoluteUrl(siteConfig.defaultOgImage)],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: createLocaleAwareRobots(pagePath),
 };
 
 const featureCards: FeatureCard[] = [

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactElement, ReactNode } from "react";
 import Link from "next/link";
-import { createAbsoluteUrl, siteConfig } from "@/lib/seo";
+import { createAbsoluteUrl, createLocaleAwareRobots, siteConfig } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -32,12 +32,6 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: createAbsoluteUrl(pagePath),
-    languages: {
-      ja: createAbsoluteUrl("/privacy"),
-      en: createAbsoluteUrl(pagePath),
-      "zh-Hant": createAbsoluteUrl("/zh/privacy"),
-      "x-default": createAbsoluteUrl("/privacy"),
-    },
   },
   openGraph: {
     title: pageTitle,
@@ -61,10 +55,7 @@ export const metadata: Metadata = {
     description: pageDescription,
     images: [createAbsoluteUrl(siteConfig.defaultOgImage)],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: createLocaleAwareRobots(pagePath),
 };
 
 const policySections: PolicySection[] = [

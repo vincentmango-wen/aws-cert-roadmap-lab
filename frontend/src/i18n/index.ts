@@ -19,7 +19,14 @@ export {
     prefixedLocales,
     removeLocalePrefix,
   } from "./locales";
-  
+
+  export {
+    isPublishedLocale,
+    isSealedPathname,
+    LOCALIZED_ROUTES_PUBLISHED,
+    publishedLocales,
+  } from "./release-gate";
+
   export type {
     HtmlLang,
     Locale,

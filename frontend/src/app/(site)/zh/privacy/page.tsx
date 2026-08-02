@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactElement } from "react";
 import Link from "next/link";
-import { createAbsoluteUrl, siteConfig } from "@/lib/seo";
+import { createAbsoluteUrl, createLocaleAwareRobots, siteConfig } from "@/lib/seo";
 
 type PolicySection = {
   id: string;
@@ -31,12 +31,6 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: createAbsoluteUrl(pagePath),
-    languages: {
-      ja: createAbsoluteUrl("/privacy"),
-      en: createAbsoluteUrl("/en/privacy"),
-      "zh-Hant": createAbsoluteUrl(pagePath),
-      "x-default": createAbsoluteUrl("/privacy"),
-    },
   },
   openGraph: {
     title: pageTitle,
@@ -51,8 +45,9 @@ export const metadata: Metadata = {
         alt: `${pageTitle} - ${siteConfig.shortName}`,
       },
     ],
+    // 封印中は他ロケール版の存在を宣言しない（他の en/zh ページと揃える）。
+    // 解封時は release-gate.ts の JSDoc「解封前提条件」に従って再投入すること。
     locale: "zh_TW",
-    alternateLocale: ["ja_JP", "en_US"],
     type: "website",
   },
   twitter: {
@@ -61,10 +56,7 @@ export const metadata: Metadata = {
     description: pageDescription,
     images: [createAbsoluteUrl(siteConfig.defaultOgImage)],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: createLocaleAwareRobots(pagePath),
 };
 
 const policySections: PolicySection[] = [

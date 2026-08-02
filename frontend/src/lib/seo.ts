@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createHreflangAlternates } from "@/i18n/seo/hreflang";
+import { isSealedPathname } from "@/i18n/release-gate";
 
 export const supportedSeoLocales = ["ja", "en", "zh"] as const;
 
@@ -87,6 +88,37 @@ export function getDefaultOgImageForLocale(locale: SeoLocale): string {
   return siteConfig.defaultOgImage;
 }
 
+/**
+ * path に応じた robots ディレクティブを返す（ACR-012 / #322）。
+ *
+ * 封印中の en/zh 配下は `index: false, follow: false`。
+ * `follow: false` にする理由は、en/zh の静的 HTML に実体の無い
+ * `/en/roadmap` `/zh/roadmap`（#305）へのリンクが焼き込まれており、
+ * Googlebot にこの死にリンクをクロール候補として収穫させないため。
+ *
+ * `createPageMetadata` を経由しない素の `Metadata` リテラルを書いているページは、
+ * `robots: {index:false, follow:false}` のリテラル直書きではなく
+ * **必ずこの関数の呼び出し**で書くこと。直書きするとフラグが届かず、
+ * 解封してもそのページだけ永久に noindex のまま残る。
+ */
+export function createLocaleAwareRobots(path: string): NonNullable<Metadata["robots"]> {
+  if (isSealedPathname(path)) {
+    return {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  return {
+    index: true,
+    follow: true,
+  };
+}
+
 function resolveSiteNameForLocale(locale: SeoLocale): string {
   if (locale === "en") {
     return siteConfig.shortName;
@@ -102,18 +134,19 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
   const imagePath = input.image ?? getDefaultOgImageForLocale(locale);
   const ogImageUrl = createAbsoluteUrl(imagePath);
   const imageAlt = input.imageAlt ?? `${input.title} - ${siteName}`;
+  const languages =
+    input.enableLanguageAlternates === true ? createHreflangAlternates(input.path) : {};
 
   return {
     title: input.title,
     description: input.description,
     keywords: input.keywords,
     alternates: {
+      // 封印ページでも canonical は自己参照のまま残す。
+      // `/en/x` の canonical を `/x` に向けると noindex とクロスカノニカルの併用になり、
+      // Google に矛盾シグナルを送って ja 側の評価まで巻き込む。
       canonical: canonicalUrl,
-      ...(input.enableLanguageAlternates === true
-        ? {
-            languages: createHreflangAlternates(input.path),
-          }
-        : {}),
+      ...(Object.keys(languages).length > 0 ? { languages } : {}),
     },
     openGraph: {
       title: input.title,
@@ -139,15 +172,18 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
       description: input.description,
       images: [ogImageUrl],
     },
-    robots: input.noIndex
-      ? {
-          index: false,
-          follow: true,
-        }
-      : {
-          index: true,
-          follow: true,
-        },
+    robots: isSealedPathname(input.path)
+      ? createLocaleAwareRobots(input.path)
+      : input.noIndex
+        ? {
+            // ja 用の既存 noIndex セマンティクス（`follow: true`）は変えない。
+            index: false,
+            follow: true,
+          }
+        : {
+            index: true,
+            follow: true,
+          },
   };
 }
 

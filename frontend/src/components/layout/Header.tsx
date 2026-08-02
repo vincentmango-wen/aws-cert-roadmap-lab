@@ -11,6 +11,7 @@ import {
   removeLocalePrefix,
 } from "@/i18n/locales";
 import type { Locale } from "@/i18n/locales";
+import { LOCALIZED_ROUTES_PUBLISHED } from "@/i18n/release-gate";
 
 type NavItem = {
   label: Record<Locale, string>;
@@ -196,7 +197,8 @@ export function Header(): ReactElement {
             })}
           </nav>
 
-          <LanguageSwitcher />
+          {/* ACR-012 (#322): 封印中は ja 面から en/zh への内部リンクを 0 件にする */}
+          {LOCALIZED_ROUTES_PUBLISHED ? <LanguageSwitcher /> : null}
         </div>
 
         <button
@@ -263,9 +265,15 @@ export function Header(): ReactElement {
             );
           })}
 
-          <div className="mt-2 border-t border-slate-200 pt-3">
-            <LanguageSwitcher onNavigate={closeMenu} />
-          </div>
+          {/*
+            ACR-012 (#322): ラッパー div ごとガードする。
+            div を残すと区切り線だけがドロワー最下部に孤立して描画される。
+          */}
+          {LOCALIZED_ROUTES_PUBLISHED ? (
+            <div className="mt-2 border-t border-slate-200 pt-3">
+              <LanguageSwitcher onNavigate={closeMenu} />
+            </div>
+          ) : null}
         </nav>
       </div>
     </header>

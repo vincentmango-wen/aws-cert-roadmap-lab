@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/set-html-lang.mjs",
+    "build": "next build && node scripts/set-html-lang.mjs && node scripts/verify-locale-seal.mjs",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "check:html-lang": "node scripts/set-html-lang.mjs --check",
     "check:question-html": "node scripts/measure-question-html.mjs",
+    "check:locale-seal": "node scripts/verify-locale-seal.mjs",
     "test": "vitest run"
   },
   "dependencies": {

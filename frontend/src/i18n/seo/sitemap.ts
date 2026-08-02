@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import type { Locale } from "../locales";
-import { createLocalizedPath, locales } from "../locales";
+import { createLocalizedPath, defaultLocale, locales } from "../locales";
+import { isPublishedLocale } from "../release-gate";
 
 export type SitemapItem = MetadataRoute.Sitemap[number];
 
@@ -87,24 +88,25 @@ export function toSitemapLastModified(value?: string | Date): Date {
   return parsedDate;
 }
 
+/**
+ * sitemap 封印の choke point（ACR-012 / #322）。
+ *
+ * `createLocalizedSitemapItems()` は `<loc>` の生成と `<xhtml:link>`（alternates）の
+ * 生成の両方でこの戻り値を使うため、ここで en/zh を落とすと URL と hreflang が同時に消える。
+ *
+ * 空フォールバックを `[...locales]` にしてはいけない（封印下で en/zh が復活する）。
+ * 逆に空配列を返すと sitemap が空洞化して 2026-06-28 の「ほぼ全 URL が 404」に戻るため、
+ * 必ず `[defaultLocale]` を返す。
+ */
 function resolveAvailableLocales(availableLocales?: readonly Locale[]): Locale[] {
-  if (!availableLocales) {
-    return [...locales];
-  }
+  const requestedLocales =
+    availableLocales && availableLocales.length > 0
+      ? availableLocales.filter((locale) => locales.includes(locale))
+      : [...locales];
 
-  const uniqueLocales = new Set<Locale>();
+  const publishedRequestedLocales = [...new Set(requestedLocales)].filter(isPublishedLocale);
 
-  for (const locale of availableLocales) {
-    if (locales.includes(locale)) {
-      uniqueLocales.add(locale);
-    }
-  }
-
-  if (uniqueLocales.size === 0) {
-    return [...locales];
-  }
-
-  return [...uniqueLocales];
+  return publishedRequestedLocales.length > 0 ? publishedRequestedLocales : [defaultLocale];
 }
 
 export function createAlternateLanguageUrls(

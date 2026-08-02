@@ -3,10 +3,12 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import {
   createLocalizedSitemapItems,
+  getSitemapSiteUrl,
   type ChangeFrequency,
   type LocalizedSitemapRouteInput,
   type SitemapItem,
 } from "../i18n/seo/sitemap";
+import { isSealedPathname } from "../i18n/release-gate";
 
 export const dynamic = "force-static";
 
@@ -311,6 +313,23 @@ function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
   return Array.from(itemMap.values());
 }
 
+/**
+ * sitemap 封印の第 2 層（保険フィルタ / ACR-012 / #322）。
+ *
+ * 第 1 層は `i18n/seo/sitemap.ts` の `resolveAvailableLocales()`。
+ * sitemap は 2026-06-28 の落選（宣言 URL がほぼ全件 404）の直接原因なので、
+ * 生成経路が増えても封印が漏れないよう出口でもう一度落とす。
+ */
+export function filterSealedLocaleUrls(items: SitemapItem[]): SitemapItem[] {
+  const siteUrl = getSitemapSiteUrl();
+
+  return items.filter((item) => {
+    const pathname = item.url.startsWith(siteUrl) ? item.url.slice(siteUrl.length) : item.url;
+
+    return !isSealedPathname(pathname === "" ? "/" : pathname);
+  });
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: SitemapRouteInput[] = [
     ...getStaticRoutes(),
@@ -323,5 +342,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const sitemapItems = routes.flatMap(createLocalizedSitemapItems);
 
-  return deduplicateByUrl(sitemapItems).sort((a, b) => a.url.localeCompare(b.url));
+  return filterSealedLocaleUrls(deduplicateByUrl(sitemapItems)).sort((a, b) =>
+    a.url.localeCompare(b.url),
+  );
 }

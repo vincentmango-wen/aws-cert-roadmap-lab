@@ -1,4 +1,5 @@
 import { createAbsoluteUrl } from "@/lib/seo";
+import { LOCALIZED_ROUTES_PUBLISHED } from "../release-gate";
 
 export type Locale = "ja" | "en" | "zh";
 
@@ -71,6 +72,12 @@ export function createLocalizedPathname(locale: Locale, pathname: string): Local
   return `${localePrefix}${basePathname}` as LocalizedPathname;
 }
 
+/**
+ * x-default 用の URL。
+ *
+ * 封印中（`LOCALIZED_ROUTES_PUBLISHED === false`）は `createHreflangAlternates()` が
+ * 空を返すため未使用だが、解封時に x-default を再投入するために export を残している。
+ */
 export function createXDefaultUrl(): string {
   return createAbsoluteUrl(X_DEFAULT_PATHNAME);
 }
@@ -88,8 +95,17 @@ export function createXDefaultUrl(): string {
  *         en: "https://.../en/questions/clf-001",
  *         "zh-Hant": "https://.../zh/questions/clf-001",
  *         "x-default": "https://.../questions/clf-001" }
+ *
+ * ACR-012（#322）の封印中は **空オブジェクトを返す**。
+ * hreflang アノテーションは 2 言語以上のクラスタでのみ意味を持ち、ja 単独で
+ * `{ ja: url, "x-default": url }` を出すのは canonical と重複する無意味なシグナルで、
+ * Search Console に警告が出るため。解封時に自動で 4 件へ戻る。
  */
-export function createHreflangAlternates(pathname: string): HreflangAlternates {
+export function createHreflangAlternates(pathname: string): Partial<HreflangAlternates> {
+  if (!LOCALIZED_ROUTES_PUBLISHED) {
+    return {};
+  }
+
   return {
     [HREFLANG_BY_LOCALE.ja]: createAbsoluteUrl(createLocalizedPathname("ja", pathname)),
     [HREFLANG_BY_LOCALE.en]: createAbsoluteUrl(createLocalizedPathname("en", pathname)),
