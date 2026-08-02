@@ -9,6 +9,7 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "check:html-lang": "node scripts/set-html-lang.mjs --check",
+    "check:question-html": "node scripts/measure-question-html.mjs",
     "test": "vitest run"
   },
   "dependencies": {

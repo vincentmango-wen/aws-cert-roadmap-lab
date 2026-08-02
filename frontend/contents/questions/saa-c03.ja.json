@@ -13,24 +13,24 @@
       },
       {
         "choiceId": "B",
-        "text": "CloudFront Origin Access Controlを使い、S3バケットポリシーでCloudFront DistributionからのGetObjectのみ許可する"
+        "text": "S3オブジェクトごとにパブリック読み取りACLを設定する"
       },
       {
         "choiceId": "C",
-        "text": "S3静的Webサイトホスティングを有効化し、CloudFrontのオリジンにWebサイトエンドポイントを設定する"
+        "text": "CloudFront Origin Access Controlを使い、S3バケットポリシーでCloudFront DistributionからのGetObjectのみ許可する"
       },
       {
         "choiceId": "D",
-        "text": "S3オブジェクトごとにパブリック読み取りACLを設定する"
+        "text": "S3静的Webサイトホスティングを有効化し、CloudFrontのオリジンにWebサイトエンドポイントを設定する"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "C",
     "explanation": "S3を直接公開せずCloudFront経由に限定するには、CloudFront Origin Access Controlを使用し、S3バケットポリシーで特定のCloudFront Distributionからのアクセスだけを許可する構成が適しています。",
     "choiceExplanations": {
       "A": "バケットを公開するため、S3直接公開を避ける要件に反します。",
-      "B": "正解です。OACによりS3を非公開のままCloudFront経由で安全に配信できます。",
-      "C": "S3静的WebサイトエンドポイントはOACと組み合わせられず、バケット公開が必要になりやすいです。",
-      "D": "オブジェクトACLで公開する方式は、最小公開の設計に反します。"
+      "B": "オブジェクトACLで公開する方式は、最小公開の設計に反します。",
+      "C": "正解です。OACによりS3を非公開のままCloudFront経由で安全に配信できます。",
+      "D": "S3静的WebサイトエンドポイントはOACと組み合わせられず、バケット公開が必要になりやすいです。"
     },
     "relatedServices": [
       "s3",
@@ -77,28 +77,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "すべてのDynamoDBテーブルに対するdynamodb:*を許可する"
-      },
-      {
-        "choiceId": "B",
-        "text": "対象テーブルに対するdynamodb:PutItemのみを許可する"
-      },
-      {
-        "choiceId": "C",
         "text": "Lambda実行ロールにAdministratorAccessを付与する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "DynamoDBへのアクセスキーをLambda環境変数に保存する"
+      },
+      {
+        "choiceId": "C",
+        "text": "すべてのDynamoDBテーブルに対するdynamodb:*を許可する"
+      },
+      {
+        "choiceId": "D",
+        "text": "対象テーブルに対するdynamodb:PutItemのみを許可する"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "D",
     "explanation": "Lambdaが問い合わせ保存だけを行うなら、対象DynamoDBテーブルへのPutItemだけを許可するのが最小権限です。",
     "choiceExplanations": {
-      "A": "dynamodb:*は権限過多です。",
-      "B": "正解です。対象テーブルと必要な操作に限定しています。",
-      "C": "AdministratorAccessは権限が広すぎます。",
-      "D": "AWS認証情報を環境変数に保存する設計は避けるべきです。Lambda実行ロールを使います。"
+      "A": "AdministratorAccessは権限が広すぎます。",
+      "B": "AWS認証情報を環境変数に保存する設計は避けるべきです。Lambda実行ロールを使います。",
+      "C": "dynamodb:*は権限過多です。",
+      "D": "正解です。対象テーブルと必要な操作に限定しています。"
     },
     "relatedServices": [
       "lambda",
@@ -149,24 +149,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Internet Gatewayをプライベートサブネットに直接関連付ける"
-      },
-      {
-        "choiceId": "C",
         "text": "S3 Gateway VPC Endpointを作成し、対象サブネットのルートテーブルに関連付ける"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "EC2にパブリックIPを付与してS3へアクセスする"
+      },
+      {
+        "choiceId": "D",
+        "text": "Internet Gatewayをプライベートサブネットに直接関連付ける"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "S3 Gateway VPC Endpointを使うと、プライベートサブネットからS3へAWSネットワーク内でアクセスできます。NAT Gatewayの固定費も不要です。",
     "choiceExplanations": {
       "A": "NAT Gatewayは要件上避けたいコストが発生します。",
-      "B": "Internet GatewayはVPCにアタッチするもので、プライベートサブネットに直接関連付けるものではありません。",
-      "C": "正解です。S3向けのGateway VPC Endpointは低コストでプライベートアクセスを実現できます。",
-      "D": "パブリックIPを付与するとインターネット経由になり、要件に反します。"
+      "B": "正解です。S3向けのGateway VPC Endpointは低コストでプライベートアクセスを実現できます。",
+      "C": "パブリックIPを付与するとインターネット経由になり、要件に反します。",
+      "D": "Internet GatewayはVPCにアタッチするもので、プライベートサブネットに直接関連付けるものではありません。"
     },
     "relatedServices": [
       "vpc",
@@ -213,7 +213,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Secrets Manager"
+        "text": "Amazon S3の公開バケット"
       },
       {
         "choiceId": "B",
@@ -221,19 +221,19 @@
       },
       {
         "choiceId": "C",
-        "text": "Amazon S3の公開バケット"
+        "text": "AWS Secrets Manager"
       },
       {
         "choiceId": "D",
         "text": "AWS Budgets"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "DBパスワードなどの秘密情報はAWS Secrets Managerで管理できます。RDSとの統合やローテーションにも対応できます。",
     "choiceExplanations": {
-      "A": "正解です。秘密情報管理とローテーションに向いています。",
+      "A": "公開バケットに秘密情報を置くのは重大なセキュリティリスクです。",
       "B": "CloudWatch Logsはログ保存サービスであり、秘密情報の保存先ではありません。",
-      "C": "公開バケットに秘密情報を置くのは重大なセキュリティリスクです。",
+      "C": "正解です。秘密情報管理とローテーションに向いています。",
       "D": "AWS Budgetsは課金監視サービスです。"
     },
     "relatedServices": [
@@ -280,7 +280,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "対象バケット全体に対するs3:*を許可する"
+        "text": "S3バケットをパブリック公開する"
       },
       {
         "choiceId": "B",
@@ -292,16 +292,16 @@
       },
       {
         "choiceId": "D",
-        "text": "S3バケットをパブリック公開する"
+        "text": "対象バケット全体に対するs3:*を許可する"
       }
     ],
     "correctChoiceId": "B",
     "explanation": "特定プレフィックスだけを読み取る要件では、Resourceを対象プレフィックスに限定し、Actionもs3:GetObjectに限定するのが最小権限です。",
     "choiceExplanations": {
-      "A": "s3:*は読み取り以外の操作も含むため権限過多です。",
+      "A": "パブリック公開は不要な公開範囲を生みます。",
       "B": "正解です。対象範囲と操作を限定しています。",
       "C": "rootユーザー認証情報の共有は絶対に避けるべきです。",
-      "D": "パブリック公開は不要な公開範囲を生みます。"
+      "D": "s3:*は読み取り以外の操作も含むため権限過多です。"
     },
     "relatedServices": [
       "s3",
@@ -350,24 +350,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon SQS"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon ElastiCache"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "AWS CloudTrailはAWSアカウント内のAPI操作履歴を記録します。組織全体の証跡を集約することで監査に利用できます。",
     "choiceExplanations": {
       "A": "正解です。API操作履歴や設定変更の追跡に使います。",
-      "B": "SQSはメッセージキューであり、監査ログの主目的サービスではありません。",
-      "C": "ElastiCacheはインメモリキャッシュです。",
-      "D": "EFSは共有ファイルストレージです。"
+      "B": "ElastiCacheはインメモリキャッシュです。",
+      "C": "EFSは共有ファイルストレージです。",
+      "D": "SQSはメッセージキューであり、監査ログの主目的サービスではありません。"
     },
     "relatedServices": [
       "cloudtrail",
@@ -415,28 +415,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "EC2のセキュリティグループで0.0.0.0/0からのHTTPを許可する"
-      },
-      {
-        "choiceId": "B",
-        "text": "EC2のセキュリティグループでALBのセキュリティグループからのHTTPのみ許可する"
-      },
-      {
-        "choiceId": "C",
         "text": "ALBのセキュリティグループでEC2からのHTTPのみ許可する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "EC2のセキュリティグループで0.0.0.0/0からのHTTPを許可する"
+      },
+      {
+        "choiceId": "C",
         "text": "EC2にElastic IPを付与して直接アクセスできるようにする"
+      },
+      {
+        "choiceId": "D",
+        "text": "EC2のセキュリティグループでALBのセキュリティグループからのHTTPのみ許可する"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "D",
     "explanation": "ALB配下のEC2は、EC2側のセキュリティグループでALBのセキュリティグループからの通信だけを許可する構成にします。",
     "choiceExplanations": {
-      "A": "EC2をインターネットに直接公開する設定です。",
-      "B": "正解です。ALB経由の通信だけを許可できます。",
-      "C": "ALBはクライアントから受ける入口です。EC2からALBへのHTTPだけを許可しても要件を満たしません。",
-      "D": "Elastic IPを付与すると直接アクセスの可能性が高まります。"
+      "A": "ALBはクライアントから受ける入口です。EC2からALBへのHTTPだけを許可しても要件を満たしません。",
+      "B": "EC2をインターネットに直接公開する設定です。",
+      "C": "Elastic IPを付与すると直接アクセスの可能性が高まります。",
+      "D": "正解です。ALB経由の通信だけを許可できます。"
     },
     "relatedServices": [
       "ec2",
@@ -552,11 +552,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "RDSをMulti-AZ構成にする"
+        "text": "RDSのストレージタイプをgp3に変更する"
       },
       {
         "choiceId": "B",
-        "text": "RDSのストレージタイプをgp3に変更する"
+        "text": "RDSをMulti-AZ構成にする"
       },
       {
         "choiceId": "C",
@@ -567,11 +567,11 @@
         "text": "RDSインスタンスをパブリックサブネットに移動する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "RDS Multi-AZは同期レプリケーションと自動フェイルオーバーにより、AZ障害時の可用性を高めます。",
     "choiceExplanations": {
-      "A": "正解です。高可用性のための代表的なRDS構成です。",
-      "B": "ストレージ性能やコストには関係しますが、AZ障害対策にはなりません。",
+      "A": "ストレージ性能やコストには関係しますが、AZ障害対策にはなりません。",
+      "B": "正解です。高可用性のための代表的なRDS構成です。",
       "C": "バックアップを無効化すると復旧性が下がります。",
       "D": "パブリックサブネット移動は可用性向上ではなく、セキュリティリスクも増えます。"
     },
@@ -619,11 +619,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Application Load BalancerとAuto Scaling Groupを複数AZで構成する"
+        "text": "CloudWatch Logsだけを有効化する"
       },
       {
         "choiceId": "B",
-        "text": "単一AZのEC2インスタンスにElastic IPを付与する"
+        "text": "Application Load BalancerとAuto Scaling Groupを複数AZで構成する"
       },
       {
         "choiceId": "C",
@@ -631,16 +631,16 @@
       },
       {
         "choiceId": "D",
-        "text": "CloudWatch Logsだけを有効化する"
+        "text": "単一AZのEC2インスタンスにElastic IPを付与する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "ALBはヘルスチェックで正常なターゲットにトラフィックを振り分けます。Auto Scaling Groupを複数AZに広げることで、インスタンス障害やAZ障害に強い構成になります。",
     "choiceExplanations": {
-      "A": "正解です。高可用性Webアプリの基本構成です。",
-      "B": "単一AZ構成ではAZ障害に弱いです。",
+      "A": "ログ収集だけではトラフィック制御や高可用性は実現できません。",
+      "B": "正解です。高可用性Webアプリの基本構成です。",
       "C": "S3は静的ファイル保存には使えますが、EC2上の動的Webアプリをそのまま置き換える選択肢ではありません。",
-      "D": "ログ収集だけではトラフィック制御や高可用性は実現できません。"
+      "D": "単一AZ構成ではAZ障害に弱いです。"
     },
     "relatedServices": [
       "ec2",
@@ -689,28 +689,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "APIから在庫更新Lambdaを同期呼び出しする"
-      },
-      {
-        "choiceId": "B",
         "text": "APIからSQSキューへメッセージを送信し、在庫更新LambdaがSQSを処理する"
       },
       {
+        "choiceId": "B",
+        "text": "API GatewayのCORS設定だけで制御する"
+      },
+      {
         "choiceId": "C",
-        "text": "APIからCloudWatch Logsに注文内容を出力するだけにする"
+        "text": "APIから在庫更新Lambdaを同期呼び出しする"
       },
       {
         "choiceId": "D",
-        "text": "API GatewayのCORS設定だけで制御する"
+        "text": "APIからCloudWatch Logsに注文内容を出力するだけにする"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "A",
     "explanation": "SQSを使うと、注文受付と在庫更新を非同期・疎結合にできます。処理側が一時停止してもメッセージをキューに保持できます。",
     "choiceExplanations": {
-      "A": "同期呼び出しでは在庫更新側の障害が注文受付に影響しやすくなります。",
-      "B": "正解です。SQSは非同期処理とバッファリングに向いています。",
-      "C": "CloudWatch Logsは処理キューではありません。",
-      "D": "CORSはブラウザからのアクセス制御であり、非同期処理の信頼性を高める機能ではありません。"
+      "A": "正解です。SQSは非同期処理とバッファリングに向いています。",
+      "B": "CORSはブラウザからのアクセス制御であり、非同期処理の信頼性を高める機能ではありません。",
+      "C": "同期呼び出しでは在庫更新側の障害が注文受付に影響しやすくなります。",
+      "D": "CloudWatch Logsは処理キューではありません。"
     },
     "relatedServices": [
       "sqs",
@@ -812,28 +812,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon Aurora Global Database"
-      },
-      {
-        "choiceId": "B",
-        "text": "単一AZのRDS MySQL"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon EBSのスナップショットだけを手動で取得する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "Amazon SQS Standard Queue"
+      },
+      {
+        "choiceId": "C",
+        "text": "単一AZのRDS MySQL"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Aurora Global Database"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Aurora Global Databaseはグローバル分散アプリケーション向けに、複数リージョン構成と低遅延レプリケーションを提供します。",
     "choiceExplanations": {
-      "A": "正解です。クロスリージョンDRやグローバル読み取りに向いています。",
-      "B": "単一AZではリージョン障害やAZ障害に弱いです。",
-      "C": "手動スナップショットだけでは低RPO/RTOの要件を満たしにくいです。",
-      "D": "SQSはメッセージキューであり、リレーショナルDBのクロスリージョンレプリケーションではありません。"
+      "A": "手動スナップショットだけでは低RPO/RTOの要件を満たしにくいです。",
+      "B": "SQSはメッセージキューであり、リレーショナルDBのクロスリージョンレプリケーションではありません。",
+      "C": "単一AZではリージョン障害やAZ障害に弱いです。",
+      "D": "正解です。クロスリージョンDRやグローバル読み取りに向いています。"
     },
     "relatedServices": [
       "rds",
@@ -879,24 +879,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Lambdaのメモリを必ず最大値にする"
+        "text": "CloudFrontのキャッシュTTLを0にする"
       },
       {
         "choiceId": "C",
-        "text": "Lambdaをパブリックサブネットに配置する"
+        "text": "Lambdaのメモリを必ず最大値にする"
       },
       {
         "choiceId": "D",
-        "text": "CloudFrontのキャッシュTTLを0にする"
+        "text": "Lambdaをパブリックサブネットに配置する"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "非同期Lambdaの失敗イベントは、DLQやLambda Destinationsを使ってSQS/SNS/EventBridgeなどに送れます。これにより後続調査や再処理がしやすくなります。",
     "choiceExplanations": {
       "A": "正解です。失敗イベントの退避先として使えます。",
-      "B": "メモリ増加は性能改善には関係しますが、失敗イベントの保存にはなりません。",
-      "C": "ネットワーク配置の話であり、失敗イベント保存とは関係しません。",
-      "D": "CloudFrontのTTLはLambda失敗イベント保存とは関係しません。"
+      "B": "CloudFrontのTTLはLambda失敗イベント保存とは関係しません。",
+      "C": "メモリ増加は性能改善には関係しますが、失敗イベントの保存にはなりません。",
+      "D": "ネットワーク配置の話であり、失敗イベント保存とは関係しません。"
     },
     "relatedServices": [
       "lambda",
@@ -945,24 +945,24 @@
       },
       {
         "choiceId": "B",
-        "text": "DynamoDB Accelerator"
+        "text": "Provisioned Capacityを最大値にする"
       },
       {
         "choiceId": "C",
-        "text": "DynamoDB Streamsだけを有効化する"
+        "text": "DynamoDB Accelerator"
       },
       {
         "choiceId": "D",
-        "text": "Provisioned Capacityを最大値にする"
+        "text": "DynamoDB Streamsだけを有効化する"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "DynamoDBのPoint-in-time recoveryを有効化すると、過去の特定時点へテーブルを復元できます。",
     "choiceExplanations": {
       "A": "正解です。誤操作からの復旧に使います。",
-      "B": "DAXは読み取りキャッシュです。復元機能ではありません。",
-      "C": "Streamsは変更イベント取得に使いますが、単体で任意時点復元はできません。",
-      "D": "キャパシティ設定は復旧機能ではありません。"
+      "B": "キャパシティ設定は復旧機能ではありません。",
+      "C": "DAXは読み取りキャッシュです。復元機能ではありません。",
+      "D": "Streamsは変更イベント取得に使いますが、単体で任意時点復元はできません。"
     },
     "relatedServices": [
       "dynamodb"
@@ -1069,24 +1069,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Multi-AZを有効化し、読み取りクエリをスタンバイDBへ送る"
-      },
-      {
-        "choiceId": "C",
         "text": "RDSの自動バックアップを無効化する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "DBをパブリックサブネットへ移動する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Multi-AZを有効化し、読み取りクエリをスタンバイDBへ送る"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "Read Replicaは読み取りスケーリングに使います。アプリケーション側で読み取りをReplicaへ振り分けることで、プライマリDBの読み取り負荷を下げられます。",
     "choiceExplanations": {
       "A": "正解です。読み取り負荷分散に適しています。",
-      "B": "RDS Multi-AZのスタンバイDBは通常、読み取り用途には使いません。",
-      "C": "バックアップ無効化は性能改善策ではなく、復旧性を下げます。",
-      "D": "パブリックサブネット移動は性能改善ではなく、セキュリティリスクが増えます。"
+      "B": "バックアップ無効化は性能改善策ではなく、復旧性を下げます。",
+      "C": "パブリックサブネット移動は性能改善ではなく、セキュリティリスクが増えます。",
+      "D": "RDS Multi-AZのスタンバイDBは通常、読み取り用途には使いません。"
     },
     "relatedServices": [
       "rds"
@@ -1128,28 +1128,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "DynamoDB Accelerator"
-      },
-      {
-        "choiceId": "B",
-        "text": "Amazon EBS"
-      },
-      {
-        "choiceId": "C",
         "text": "AWS CloudFormation"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "C",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EBS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "DynamoDB AcceleratorはDynamoDB向けのインメモリキャッシュで、読み取りレイテンシを低減できます。",
     "choiceExplanations": {
-      "A": "正解です。DynamoDB読み取りキャッシュとして使います。",
-      "B": "EBSはEC2向けブロックストレージです。",
-      "C": "CloudFormationはIaCサービスです。",
-      "D": "Budgetsは課金監視サービスです。"
+      "A": "CloudFormationはIaCサービスです。",
+      "B": "Budgetsは課金監視サービスです。",
+      "C": "正解です。DynamoDB読み取りキャッシュとして使います。",
+      "D": "EBSはEC2向けブロックストレージです。"
     },
     "relatedServices": [
       "dynamodb"
@@ -1253,11 +1253,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon EFS"
+        "text": "Amazon EBS"
       },
       {
         "choiceId": "B",
-        "text": "Amazon EBS"
+        "text": "Amazon S3 Glacier Deep Archive"
       },
       {
         "choiceId": "C",
@@ -1265,16 +1265,16 @@
       },
       {
         "choiceId": "D",
-        "text": "Amazon S3 Glacier Deep Archive"
+        "text": "Amazon EFS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Amazon EFSは複数EC2から共有アクセスできるマネージドNFSファイルシステムです。複数AZからの共有ファイルアクセスに向いています。",
     "choiceExplanations": {
-      "A": "正解です。共有ファイルストレージに適しています。",
-      "B": "EBSは基本的に単一AZ内のEC2にアタッチするブロックストレージです。",
+      "A": "EBSは基本的に単一AZ内のEC2にアタッチするブロックストレージです。",
+      "B": "Glacier Deep Archiveは長期アーカイブ向けで、頻繁な共有アクセスには向きません。",
       "C": "インスタンスストアは一時ストレージで、共有ファイルシステムではありません。",
-      "D": "Glacier Deep Archiveは長期アーカイブ向けで、頻繁な共有アクセスには向きません。"
+      "D": "正解です。共有ファイルストレージに適しています。"
     },
     "relatedServices": [
       "efs",
@@ -1324,24 +1324,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon SQS FIFO Queue"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon EFS"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "AWS Config"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS FIFO Queue"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "SQS Standard Queueは高スループットのメッセージ処理に向いています。順序保証が必須でない場合に適しています。",
     "choiceExplanations": {
       "A": "正解です。高スループットの非同期処理に適しています。",
-      "B": "FIFO Queueは順序保証が必要な場合に使いますが、Standard Queueより要件が厳しくなります。",
-      "C": "EFSは共有ファイルストレージです。",
-      "D": "AWS Configはリソース設定の記録・評価サービスです。"
+      "B": "EFSは共有ファイルストレージです。",
+      "C": "AWS Configはリソース設定の記録・評価サービスです。",
+      "D": "FIFO Queueは順序保証が必要な場合に使いますが、Standard Queueより要件が厳しくなります。"
     },
     "relatedServices": [
       "sqs"
@@ -1387,7 +1387,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Lambdaのメモリサイズを増やす"
+        "text": "CloudWatch Logsを無効化する"
       },
       {
         "choiceId": "B",
@@ -1395,19 +1395,19 @@
       },
       {
         "choiceId": "C",
-        "text": "CloudWatch Logsを無効化する"
+        "text": "Lambdaのメモリサイズを増やす"
       },
       {
         "choiceId": "D",
         "text": "Lambdaを必ずVPCに接続する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "Lambdaはメモリサイズを増やすと、割り当てられるCPU性能も増えます。CPU負荷が高い処理ではメモリ調整により処理時間が短くなる場合があります。",
     "choiceExplanations": {
-      "A": "正解です。Lambdaの性能調整でまず確認する設定です。",
+      "A": "ログ無効化は根本的なCPU性能改善になりません。",
       "B": "関数名変更では性能は変わりません。",
-      "C": "ログ無効化は根本的なCPU性能改善になりません。",
+      "C": "正解です。Lambdaの性能調整でまず確認する設定です。",
       "D": "VPC接続は必要な場合だけ使います。性能改善目的で必ず接続するものではありません。"
     },
     "relatedServices": [
@@ -1461,11 +1461,11 @@
       },
       {
         "choiceId": "C",
-        "text": "S3 Object Lambda"
+        "text": "S3のバケット名変更"
       },
       {
         "choiceId": "D",
-        "text": "S3のバケット名変更"
+        "text": "S3 Object Lambda"
       }
     ],
     "correctChoiceId": "A",
@@ -1473,8 +1473,8 @@
     "choiceExplanations": {
       "A": "正解です。ストレージクラス移行によるコスト最適化に使います。",
       "B": "Transfer Accelerationはアップロード高速化であり、保管コスト削減ではありません。",
-      "C": "Object Lambdaは取得時にデータ変換を行う機能です。",
-      "D": "バケット名変更はコスト最適化策ではありません。"
+      "C": "バケット名変更はコスト最適化策ではありません。",
+      "D": "Object Lambdaは取得時にデータ変換を行う機能です。"
     },
     "relatedServices": [
       "s3"
@@ -1520,7 +1520,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Reserved InstancesまたはSavings Plans"
+        "text": "Elastic IPを追加する"
       },
       {
         "choiceId": "B",
@@ -1532,16 +1532,16 @@
       },
       {
         "choiceId": "D",
-        "text": "Elastic IPを追加する"
+        "text": "Reserved InstancesまたはSavings Plans"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "安定した長期利用が見込めるワークロードでは、Reserved InstancesやSavings Plansによりオンデマンドよりコストを下げられます。",
     "choiceExplanations": {
-      "A": "正解です。継続利用に向く割引オプションです。",
+      "A": "Elastic IP追加はコスト削減策ではありません。",
       "B": "Spot Instancesは中断される可能性があるため、常時稼働が必要な安定ワークロードには単独では不向きな場合があります。",
       "C": "インスタンスストアは一時ストレージであり、購入オプションではありません。",
-      "D": "Elastic IP追加はコスト削減策ではありません。"
+      "D": "正解です。継続利用に向く割引オプションです。"
     },
     "relatedServices": [
       "ec2"
@@ -1585,28 +1585,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Spot Instancesを利用する"
+        "text": "NAT Gatewayを追加する"
       },
       {
         "choiceId": "B",
-        "text": "Dedicated Hostsのみを利用する"
-      },
-      {
-        "choiceId": "C",
         "text": "常に最大サイズのオンデマンドインスタンスを利用する"
       },
       {
+        "choiceId": "C",
+        "text": "Dedicated Hostsのみを利用する"
+      },
+      {
         "choiceId": "D",
-        "text": "NAT Gatewayを追加する"
+        "text": "Spot Instancesを利用する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Spot Instancesは中断を許容できる処理に向いており、オンデマンドより大幅にコストを下げられる場合があります。",
     "choiceExplanations": {
-      "A": "正解です。中断可能なバッチ処理に向いています。",
-      "B": "Dedicated Hostsは専有ホストが必要なライセンス要件などで使います。コスト削減目的では不向きです。",
-      "C": "最大サイズのオンデマンドはコストが高くなります。",
-      "D": "NAT Gateway追加はバッチ処理のEC2コスト削減策ではありません。"
+      "A": "NAT Gateway追加はバッチ処理のEC2コスト削減策ではありません。",
+      "B": "最大サイズのオンデマンドはコストが高くなります。",
+      "C": "Dedicated Hostsは専有ホストが必要なライセンス要件などで使います。コスト削減目的では不向きです。",
+      "D": "正解です。中断可能なバッチ処理に向いています。"
     },
     "relatedServices": [
       "ec2",
@@ -1651,28 +1651,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "DynamoDB Gateway VPC Endpointを作成する"
-      },
-      {
-        "choiceId": "B",
         "text": "NAT Gatewayを各AZに作成する"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "Internet GatewayをLambdaに直接関連付ける"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "DynamoDBテーブルをパブリックサブネットに配置する"
+      },
+      {
+        "choiceId": "D",
+        "text": "DynamoDB Gateway VPC Endpointを作成する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "DynamoDB Gateway VPC Endpointを使うと、VPC内のリソースからDynamoDBへプライベートにアクセスでき、NAT Gatewayの固定費を避けられます。",
     "choiceExplanations": {
-      "A": "正解です。DynamoDBアクセスでNAT Gatewayを不要にできます。",
-      "B": "NAT Gatewayは固定費が発生します。",
-      "C": "LambdaへInternet Gatewayを直接関連付ける構成はありません。",
-      "D": "DynamoDBはVPC内サブネットに配置するサービスではありません。"
+      "A": "NAT Gatewayは固定費が発生します。",
+      "B": "LambdaへInternet Gatewayを直接関連付ける構成はありません。",
+      "C": "DynamoDBはVPC内サブネットに配置するサービスではありません。",
+      "D": "正解です。DynamoDBアクセスでNAT Gatewayを不要にできます。"
     },
     "relatedServices": [
       "lambda",
@@ -1719,28 +1719,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "S3 Intelligent-Tiering"
-      },
-      {
-        "choiceId": "B",
         "text": "S3 Standardだけを使い続ける"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "S3 Glacier Deep Archiveだけを使う"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Amazon EBS gp3"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Intelligent-Tiering"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "S3 Intelligent-Tieringはアクセスパターンに応じて階層を自動移動し、アクセス頻度が予測できないデータのコスト最適化に向いています。",
     "choiceExplanations": {
-      "A": "正解です。アクセスパターンが不明な場合に有効です。",
-      "B": "低頻度アクセスデータの保管コストが高くなりやすいです。",
-      "C": "Deep Archiveは取り出しに時間がかかるため、頻繁にアクセスされるデータには不向きです。",
-      "D": "EBS gp3はEC2向けブロックストレージです。S3オブジェクトのストレージクラスではありません。"
+      "A": "低頻度アクセスデータの保管コストが高くなりやすいです。",
+      "B": "Deep Archiveは取り出しに時間がかかるため、頻繁にアクセスされるデータには不向きです。",
+      "C": "EBS gp3はEC2向けブロックストレージです。S3オブジェクトのストレージクラスではありません。",
+      "D": "正解です。アクセスパターンが不明な場合に有効です。"
     },
     "relatedServices": [
       "s3"
@@ -1786,11 +1786,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "S3 + CloudFront"
+        "text": "EC2 + RDS + NAT Gateway"
       },
       {
         "choiceId": "B",
-        "text": "EC2 + RDS + NAT Gateway"
+        "text": "S3 + CloudFront"
       },
       {
         "choiceId": "C",
@@ -1801,11 +1801,11 @@
         "text": "Redshift + SageMaker"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "静的サイトはS3に配置し、CloudFrontで配信する構成が低コストかつ運用負荷も低いです。常時起動サーバーを避けられます。",
     "choiceExplanations": {
-      "A": "正解です。静的サイト配信の低コスト構成です。",
-      "B": "EC2、RDS、NAT Gatewayは固定費が発生しやすく、静的サイトには過剰です。",
+      "A": "EC2、RDS、NAT Gatewayは固定費が発生しやすく、静的サイトには過剰です。",
+      "B": "正解です。静的サイト配信の低コスト構成です。",
       "C": "EKSは個人開発MVPには運用負荷とコストが重いです。",
       "D": "RedshiftとSageMakerは分析・機械学習向けであり、静的サイト配信には不要です。"
     },
@@ -1855,28 +1855,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "CloudWatch LogsのロググループにRetention periodを設定する"
-      },
-      {
-        "choiceId": "B",
         "text": "CloudWatch LogsをS3バケットとして公開する"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "Lambdaのタイムアウトを最大にする"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "API GatewayのCORSを無効化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "CloudWatch LogsのロググループにRetention periodを設定する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "CloudWatch LogsのRetention periodを設定すると、指定期間を過ぎたログを自動削除できます。ログ保存コストの抑制に有効です。",
     "choiceExplanations": {
-      "A": "正解です。ログ保持期間を制御できます。",
-      "B": "ログを公開する設計はセキュリティ上危険です。",
-      "C": "Lambdaタイムアウト最大化はログ保存コスト削減になりません。",
-      "D": "CORS設定はログ保持とは関係ありません。"
+      "A": "ログを公開する設計はセキュリティ上危険です。",
+      "B": "Lambdaタイムアウト最大化はログ保存コスト削減になりません。",
+      "C": "CORS設定はログ保持とは関係ありません。",
+      "D": "正解です。ログ保持期間を制御できます。"
     },
     "relatedServices": [
       "cloudwatch",
@@ -1927,7 +1927,7 @@
       },
       {
         "choiceId": "B",
-        "text": "AWS CloudTrail"
+        "text": "Amazon Route 53 Resolver"
       },
       {
         "choiceId": "C",
@@ -1935,16 +1935,16 @@
       },
       {
         "choiceId": "D",
-        "text": "Amazon Route 53 Resolver"
+        "text": "AWS CloudTrail"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "AWS Budgetsを使うと、予算額や予測超過に応じてメール通知を設定できます。個人開発では課金事故防止の基本です。",
     "choiceExplanations": {
       "A": "正解です。コスト予算とアラートに使います。",
-      "B": "CloudTrailはAPI操作履歴の監査に使います。",
+      "B": "Route 53 ResolverはDNS名前解決に関するサービスです。",
       "C": "EFSは共有ファイルストレージです。",
-      "D": "Route 53 ResolverはDNS名前解決に関するサービスです。"
+      "D": "CloudTrailはAPI操作履歴の監査に使います。"
     },
     "relatedServices": [
       "aws-budgets",
@@ -1989,28 +1989,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "ALBのセキュリティグループに、攻撃元IPアドレスを拒否するインバウンドルールを追加していく"
+        "text": "サブネットのネットワークACLに、攻撃文字列を含むリクエストを拒否するインバウンドルールを追加する"
       },
       {
         "choiceId": "B",
-        "text": "AWS Shield Advancedを契約し、DDoS緩和機能で攻撃を含むリクエストを遮断する"
-      },
-      {
-        "choiceId": "C",
         "text": "AWS WAFのWeb ACLをALBに関連付け、AWSマネージドルール（Core rule set / SQL database）を適用する"
       },
       {
+        "choiceId": "C",
+        "text": "ALBのセキュリティグループに、攻撃元IPアドレスを拒否するインバウンドルールを追加していく"
+      },
+      {
         "choiceId": "D",
-        "text": "サブネットのネットワークACLに、攻撃文字列を含むリクエストを拒否するインバウンドルールを追加する"
+        "text": "AWS Shield Advancedを契約し、DDoS緩和機能で攻撃を含むリクエストを遮断する"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "SQLインジェクションやXSSはHTTPリクエストの中身（レイヤー7）を検査しないと判定できません。AWS WAFのWeb ACLをALBに関連付け、AWSが継続的に更新するマネージドルールグループを適用すれば、自前でシグネチャを保守せずに既知の攻撃パターンを遮断できます。",
     "choiceExplanations": {
-      "A": "セキュリティグループは送信元IPやポートといったレイヤー3/4の情報しか見ないため、リクエスト本文の攻撃文字列は判定できません。またセキュリティグループには拒否ルール自体が存在せず、許可ルールのみで構成されます。",
-      "B": "AWS Shieldはレイヤー3/4を中心としたDDoS攻撃の緩和が目的で、SQLインジェクションやXSSのようなペイロード検査は行いません。Shield Advancedの契約にはAWS WAFの利用料が含まれますが、実際にリクエストを検査してブロックするのはWAFのルールです。",
-      "C": "正解です。Web ACLをALBに関連付け、AWSマネージドルールグループを適用することで、レイヤー7の攻撃パターンをアプリケーション到達前に遮断できます。",
-      "D": "ネットワークACLはサブネット境界でIPアドレス・プロトコル・ポートを評価するステートレスなフィルタで、HTTPリクエストの中身は見られません。"
+      "A": "ネットワークACLはサブネット境界でIPアドレス・プロトコル・ポートを評価するステートレスなフィルタで、HTTPリクエストの中身は見られません。",
+      "B": "正解です。Web ACLをALBに関連付け、AWSマネージドルールグループを適用することで、レイヤー7の攻撃パターンをアプリケーション到達前に遮断できます。",
+      "C": "セキュリティグループは送信元IPやポートといったレイヤー3/4の情報しか見ないため、リクエスト本文の攻撃文字列は判定できません。またセキュリティグループには拒否ルール自体が存在せず、許可ルールのみで構成されます。",
+      "D": "AWS Shieldはレイヤー3/4を中心としたDDoS攻撃の緩和が目的で、SQLインジェクションやXSSのようなペイロード検査は行いません。Shield Advancedの契約にはAWS WAFの利用料が含まれますが、実際にリクエストを検査してブロックするのはWAFのルールです。"
     },
     "relatedServices": [
       "waf",
@@ -2060,28 +2060,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "ベンダー専用のIAMユーザーを作成してReadOnlyAccessをアタッチし、発行したアクセスキーをベンダーへ共有して90日ごとにローテーションする"
-      },
-      {
-        "choiceId": "B",
-        "text": "ベンダーのAWSアカウントIDのみを信頼するIAMロールを作成し、ReadOnlyAccessをアタッチする"
-      },
-      {
-        "choiceId": "C",
         "text": "対象リソースごとにリソースベースポリシーを追加し、ベンダーのAWSアカウントに読み取りを許可する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "ベンダー専用のIAMユーザーを作成してReadOnlyAccessをアタッチし、発行したアクセスキーをベンダーへ共有して90日ごとにローテーションする"
+      },
+      {
+        "choiceId": "C",
         "text": "ベンダーのAWSアカウントを信頼するIAMロールを作成し、信頼ポリシーのCondition句でsts:ExternalIdにベンダーが発行した一意の値を要求する"
+      },
+      {
+        "choiceId": "D",
+        "text": "ベンダーのAWSアカウントIDのみを信頼するIAMロールを作成し、ReadOnlyAccessをアタッチする"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "C",
     "explanation": "サードパーティへのクロスアカウントアクセスでは、IAMロールの信頼ポリシーにsts:ExternalIdのCondition句を加えるのがAWSの推奨です。External IDを知らない第三者は、ベンダーのアカウント経由であってもロールを引き受けられないため、混乱した代理人問題を防げます。",
     "choiceExplanations": {
-      "A": "長期のアクセスキーを外部組織へ渡す方式は、漏洩時の影響範囲が大きく、失効も手動になります。ローテーションを行っても、クロスアカウントではIAMロールによる一時的な認証情報が推奨されます。",
-      "B": "ロールを使う点は正しいですが、External IDがないとベンダーが他の顧客用に持つ権限と取り違えて自社リソースを操作してしまう混乱した代理人問題を防げません。要件を満たしていません。",
-      "C": "リソースベースポリシーで許可できるのはS3バケットやKMSキーなど一部のサービスに限られ、読み取り対象が増えるたびに個別追加が必要になります。運用が破綻しやすく、External IDによる保護もありません。",
-      "D": "正解です。ベンダーが発行するExternal IDを信頼ポリシーのConditionで必須にすることで、混乱した代理人問題を構造的に防げます。"
+      "A": "リソースベースポリシーで許可できるのはS3バケットやKMSキーなど一部のサービスに限られ、読み取り対象が増えるたびに個別追加が必要になります。運用が破綻しやすく、External IDによる保護もありません。",
+      "B": "長期のアクセスキーを外部組織へ渡す方式は、漏洩時の影響範囲が大きく、失効も手動になります。ローテーションを行っても、クロスアカウントではIAMロールによる一時的な認証情報が推奨されます。",
+      "C": "正解です。ベンダーが発行するExternal IDを信頼ポリシーのConditionで必須にすることで、混乱した代理人問題を構造的に防げます。",
+      "D": "ロールを使う点は正しいですが、External IDがないとベンダーが他の顧客用に持つ権限と取り違えて自社リソースを操作してしまう混乱した代理人問題を防げません。要件を満たしていません。"
     },
     "relatedServices": [
       "iam"
@@ -2128,28 +2128,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon Cognitoユーザープールでユーザーを管理し、発行されたトークンをAPI GatewayのCognitoオーソライザーで検証する"
-      },
-      {
-        "choiceId": "B",
         "text": "エンドユーザーごとにIAMユーザーを作成し、アプリにアクセスキーを埋め込んでSigV4署名でAPIを呼び出す"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "AWS IAM Identity Centerでエンドユーザーを管理し、SAMLアサーションをアプリへ連携する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "ユーザー名とパスワードのハッシュをAWS Secrets Managerに保存し、Lambdaで自前の認証処理を実装する"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Cognitoユーザープールでユーザーを管理し、発行されたトークンをAPI GatewayのCognitoオーソライザーで検証する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "アプリのエンドユーザー認証にはAmazon Cognitoユーザープールが適しています。サインアップ・サインイン、MFA、外部IDプロバイダー連携をマネージドで提供し、発行されるIDトークン・アクセストークンをAPI GatewayのCognitoオーソライザーでそのまま検証できます。",
     "choiceExplanations": {
-      "A": "正解です。ユーザープールがユーザーディレクトリとトークン発行を担い、API GatewayのCognitoオーソライザーがトークン検証を担うため、認証処理を自前実装せずに済みます。",
-      "B": "IAMはAWSリソースを操作する主体（社内の人・アプリケーション）のための仕組みで、アプリのエンドユーザーを個別のIAMユーザーとして管理する設計ではありません。長期のアクセスキーをアプリへ埋め込む点も安全ではありません。",
-      "C": "IAM Identity Centerは従業員などワークフォースのシングルサインオン向けで、一般消費者のセルフサービスなサインアップは想定されていません。",
-      "D": "認証処理を自前実装するとパスワード保管、MFA、トークン失効、外部IdP連携をすべて自作することになります。Secrets Managerはアプリケーションが使う認証情報の保管が用途で、ユーザーディレクトリではありません。"
+      "A": "IAMはAWSリソースを操作する主体（社内の人・アプリケーション）のための仕組みで、アプリのエンドユーザーを個別のIAMユーザーとして管理する設計ではありません。長期のアクセスキーをアプリへ埋め込む点も安全ではありません。",
+      "B": "IAM Identity Centerは従業員などワークフォースのシングルサインオン向けで、一般消費者のセルフサービスなサインアップは想定されていません。",
+      "C": "認証処理を自前実装するとパスワード保管、MFA、トークン失効、外部IdP連携をすべて自作することになります。Secrets Managerはアプリケーションが使う認証情報の保管が用途で、ユーザーディレクトリではありません。",
+      "D": "正解です。ユーザープールがユーザーディレクトリとトークン発行を担い、API GatewayのCognitoオーソライザーがトークン検証を担うため、認証処理を自前実装せずに済みます。"
     },
     "relatedServices": [
       "cognito",
@@ -2271,11 +2271,11 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon InspectorでEC2インスタンスとECRイメージの脆弱性をスキャンする"
+        "text": "AWS CloudTrailの証跡を有効化し、ログをS3バケットへ保存する"
       },
       {
         "choiceId": "C",
-        "text": "AWS CloudTrailの証跡を有効化し、ログをS3バケットへ保存する"
+        "text": "Amazon InspectorでEC2インスタンスとECRイメージの脆弱性をスキャンする"
       },
       {
         "choiceId": "D",
@@ -2286,8 +2286,8 @@
     "explanation": "Amazon GuardDutyはCloudTrailイベント、VPCフローログ、Route 53 DNSクエリログなどをAWS側で自動的に取り込み、脅威インテリジェンスと機械学習で不審な挙動を検出します。エージェント導入もログ基盤の構築も不要で、有効化するだけで検出が始まります。",
     "choiceExplanations": {
       "A": "AWS Configはリソースの設定変更履歴の記録と、設定が定めたルールに準拠しているかの評価を行います。設定コンプライアンスの領域であり、通信内容や認証情報の不正利用といった脅威の検出は対象外です。",
-      "B": "Amazon Inspectorはソフトウェアの脆弱性や意図しないネットワーク到達性を継続的にスキャンする脆弱性管理サービスです。既知のCVEは見つけられますが、実際に進行中の不審な通信や認証情報の悪用は検出しません。",
-      "C": "CloudTrailはAPI操作を記録するだけで、その記録の中から脅威を判定する機能は持ちません。検出するには別途分析の仕組みが必要になります。GuardDutyはこのCloudTrailログを入力の1つとして利用します。",
+      "B": "CloudTrailはAPI操作を記録するだけで、その記録の中から脅威を判定する機能は持ちません。検出するには別途分析の仕組みが必要になります。GuardDutyはこのCloudTrailログを入力の1つとして利用します。",
+      "C": "Amazon Inspectorはソフトウェアの脆弱性や意図しないネットワーク到達性を継続的にスキャンする脆弱性管理サービスです。既知のCVEは見つけられますが、実際に進行中の不審な通信や認証情報の悪用は検出しません。",
       "D": "正解です。有効化するだけでログの取り込みと脅威検出が始まり、検出結果はSecurity HubやEventBridge経由で通知・自動対応につなげられます。"
     },
     "relatedServices": [
@@ -2408,27 +2408,27 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "サブネットに関連付けたネットワークACLに、当該レンジを拒否するインバウンドルールを、既存の許可ルールより小さいルール番号で追加する"
-      },
-      {
-        "choiceId": "B",
         "text": "各インスタンスのセキュリティグループに、当該レンジを拒否するインバウンドルールを追加する"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "セキュリティグループのアウトバウンドルールで、当該レンジ宛ての通信を拒否する"
+      },
+      {
+        "choiceId": "C",
+        "text": "サブネットに関連付けたネットワークACLに、当該レンジを拒否するインバウンドルールを、既存の許可ルールより小さいルール番号で追加する"
       },
       {
         "choiceId": "D",
         "text": "サブネットのルートテーブルに、当該レンジ宛てのブラックホールルートを追加する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "セキュリティグループには拒否ルールが存在しないため、特定の送信元だけをブロックするにはネットワークACLを使います。ネットワークACLはルール番号の小さい順に評価され最初に一致したルールが適用されるため、拒否ルールは既存の許可ルールより小さい番号を付ける必要があります。",
     "choiceExplanations": {
-      "A": "正解です。ネットワークACLはサブネット単位で適用されるため、サブネット内の全インスタンスへ一括で効きます。ルール番号の順序が判断の分かれ目です。",
-      "B": "セキュリティグループは許可ルールのみで構成され、拒否ルールを書くことはできません。「明示的に許可していないものは通らない」というホワイトリスト型の仕組みです。",
-      "C": "アウトバウンドを制限しても、外部から到達するインバウンドの試行そのものは止まりません。またセキュリティグループには拒否ルール自体がありません。",
+      "A": "セキュリティグループは許可ルールのみで構成され、拒否ルールを書くことはできません。「明示的に許可していないものは通らない」というホワイトリスト型の仕組みです。",
+      "B": "アウトバウンドを制限しても、外部から到達するインバウンドの試行そのものは止まりません。またセキュリティグループには拒否ルール自体がありません。",
+      "C": "正解です。ネットワークACLはサブネット単位で適用されるため、サブネット内の全インスタンスへ一括で効きます。ルール番号の順序が判断の分かれ目です。",
       "D": "ルートテーブルは宛先ネットワークごとの転送先を決めるもので、送信元アドレスによるフィルタリングはできません。またサブネット内の通信を到達前に遮断する仕組みでもありません。"
     },
     "relatedServices": [
@@ -2477,28 +2477,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Route 53の加重ルーティングで東京に重み100、大阪に重み0を設定し、障害を検知したら重みを手動で入れ替える"
+        "text": "Auto Scalingグループを東京と大阪にまたがって作成し、東京側が異常になったら大阪でインスタンスを起動する"
       },
       {
         "choiceId": "B",
-        "text": "Route 53のフェイルオーバールーティングポリシーで東京をプライマリ、大阪をセカンダリとし、プライマリのレコードにヘルスチェックを関連付ける"
+        "text": "Route 53の加重ルーティングで東京に重み100、大阪に重み0を設定し、障害を検知したら重みを手動で入れ替える"
       },
       {
         "choiceId": "C",
-        "text": "Application Load Balancerのターゲットグループに東京と大阪の両方のEC2インスタンスを登録し、ヘルスチェックで振り分ける"
+        "text": "Route 53のフェイルオーバールーティングポリシーで東京をプライマリ、大阪をセカンダリとし、プライマリのレコードにヘルスチェックを関連付ける"
       },
       {
         "choiceId": "D",
-        "text": "Auto Scalingグループを東京と大阪にまたがって作成し、東京側が異常になったら大阪でインスタンスを起動する"
+        "text": "Application Load Balancerのターゲットグループに東京と大阪の両方のEC2インスタンスを登録し、ヘルスチェックで振り分ける"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "C",
     "explanation": "同じドメイン名を維持したままリージョン間で自動切り替えを行うには、Route 53のフェイルオーバールーティングポリシーとヘルスチェックを組み合わせます。プライマリのヘルスチェックが失敗すると、DNS応答が自動的にセカンダリのエンドポイントへ切り替わります。",
     "choiceExplanations": {
-      "A": "加重ルーティング自体は有効な機能ですが、重みの変更が手動である以上「自動的に切り替える」という要件を満たしません。障害検知から切り替えまでの時間も人の対応速度に依存します。",
-      "B": "正解です。ヘルスチェックの失敗回数と間隔で切り替え速度を調整でき、DNSレコードのTTLを短めにしておくことで反映も早くなります。",
-      "C": "Application Load Balancer自体が東京リージョン内のリソースであるため、東京リージョン規模の障害ではALBごと利用できなくなり、リージョン間の切り替えにはなりません。IPアドレスタイプのターゲットグループとリージョン間VPCピアリングを使えば別リージョンのインスタンスをターゲット登録すること自体は可能ですが（インスタンスIDタイプのターゲットはロードバランサーと同じVPC内に限られます）、ALBが単一リージョンに依存する点は変わりません。",
-      "D": "Auto Scalingグループは単一リージョン内の複数アベイラビリティーゾーンにまたがることはできますが、リージョンをまたぐことはできません。"
+      "A": "Auto Scalingグループは単一リージョン内の複数アベイラビリティーゾーンにまたがることはできますが、リージョンをまたぐことはできません。",
+      "B": "加重ルーティング自体は有効な機能ですが、重みの変更が手動である以上「自動的に切り替える」という要件を満たしません。障害検知から切り替えまでの時間も人の対応速度に依存します。",
+      "C": "正解です。ヘルスチェックの失敗回数と間隔で切り替え速度を調整でき、DNSレコードのTTLを短めにしておくことで反映も早くなります。",
+      "D": "Application Load Balancer自体が東京リージョン内のリソースであるため、東京リージョン規模の障害ではALBごと利用できなくなり、リージョン間の切り替えにはなりません。IPアドレスタイプのターゲットグループとリージョン間VPCピアリングを使えば別リージョンのインスタンスをターゲット登録すること自体は可能ですが（インスタンスIDタイプのターゲットはロードバランサーと同じVPC内に限られます）、ALBが単一リージョンに依存する点は変わりません。"
     },
     "relatedServices": [
       "route53",
@@ -2547,28 +2547,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "送信元バケットと送信先バケットの両方でバージョニングを有効化し、S3のクロスリージョンレプリケーションルールを設定する"
-      },
-      {
-        "choiceId": "B",
-        "text": "S3ライフサイクルルールを設定し、一定期間経過したオブジェクトを別リージョンのバケットへ移行する"
-      },
-      {
-        "choiceId": "C",
         "text": "AWS DataSyncのタスクを1日1回スケジュール実行し、2つのバケット間を同期する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "別リージョンにAmazon EFSファイルシステムを作成し、S3バケットをマウントして同期する"
+      },
+      {
+        "choiceId": "C",
+        "text": "送信元バケットと送信先バケットの両方でバージョニングを有効化し、S3のクロスリージョンレプリケーションルールを設定する"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3ライフサイクルルールを設定し、一定期間経過したオブジェクトを別リージョンのバケットへ移行する"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "S3のクロスリージョンレプリケーション（CRR）は、新規オブジェクトを別リージョンのバケットへ自動的に非同期でコピーします。送信元・送信先ともにバージョニングが有効であることが前提条件で、これによって複製先でもバージョンが保持されます。",
     "choiceExplanations": {
-      "A": "正解です。バージョニングはCRRの必須要件で、レプリケーションはバージョンIDを保ったままコピーします。",
-      "B": "S3ライフサイクルルールができるのはストレージクラスの遷移と有効期限による削除だけで、オブジェクトを別リージョンのバケットへ移動する機能はありません。",
-      "C": "DataSyncでもバケット間のコピーは可能ですが、スケジュール実行のバッチ処理になるため「新規オブジェクトが自動的に複製される」という要件に対しては遅延が大きく、実行間の変更が保護されません。",
-      "D": "Amazon S3はオブジェクトストレージであり、EFSファイルシステムとしてマウントする構成ではありません。技術的に成立しない選択肢です。"
+      "A": "DataSyncでもバケット間のコピーは可能ですが、スケジュール実行のバッチ処理になるため「新規オブジェクトが自動的に複製される」という要件に対しては遅延が大きく、実行間の変更が保護されません。",
+      "B": "Amazon S3はオブジェクトストレージであり、EFSファイルシステムとしてマウントする構成ではありません。技術的に成立しない選択肢です。",
+      "C": "正解です。バージョニングはCRRの必須要件で、レプリケーションはバージョンIDを保ったままコピーします。",
+      "D": "S3ライフサイクルルールができるのはストレージクラスの遷移と有効期限による削除だけで、オブジェクトを別リージョンのバケットへ移動する機能はありません。"
     },
     "relatedServices": [
       "s3",
@@ -2620,24 +2620,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Auto Scalingグループの最小台数を引き上げ、スケールインが発生しないようにする"
-      },
-      {
-        "choiceId": "C",
         "text": "各インスタンスに専用のEBSボリュームをアタッチし、セッションファイルをそこへ保存する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "セッション情報をAmazon ElastiCacheやAmazon DynamoDBなどの外部データストアへ移し、アプリケーション層をステートレスにする"
+      },
+      {
+        "choiceId": "D",
+        "text": "Auto Scalingグループの最小台数を引き上げ、スケールインが発生しないようにする"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "C",
     "explanation": "根本原因は、インスタンスというライフサイクルの短いリソースに状態を持たせていることです。セッション情報をElastiCacheやDynamoDBといった共有データストアへ外部化してアプリケーション層をステートレスにすれば、どのインスタンスが終了してもセッションは失われません。",
     "choiceExplanations": {
       "A": "スティッキーセッションは同じインスタンスへ転送し続けるだけで、そのインスタンスが終了すればセッションは失われます。障害時のログアウトは解消せず、負荷の偏りという別の問題も生みます。",
-      "B": "最小台数を上げてもインスタンス障害やヘルスチェック失敗による置き換えは起こります。コストが増えるだけで根本解決になりません。",
-      "C": "EBSボリュームは単一のインスタンスにアタッチされ、単一のアベイラビリティーゾーンに固定されます。インスタンスが終了すればそのセッションを他のインスタンスから読むことはできません。",
-      "D": "正解です。状態を外部化することで、インスタンスを「いつでも捨てられる」使い捨てのリソースとして扱えるようになります。"
+      "B": "EBSボリュームは単一のインスタンスにアタッチされ、単一のアベイラビリティーゾーンに固定されます。インスタンスが終了すればそのセッションを他のインスタンスから読むことはできません。",
+      "C": "正解です。状態を外部化することで、インスタンスを「いつでも捨てられる」使い捨てのリソースとして扱えるようになります。",
+      "D": "最小台数を上げてもインスタンス障害やヘルスチェック失敗による置き換えは起こります。コストが増えるだけで根本解決になりません。"
     },
     "relatedServices": [
       "elasticache",
@@ -2687,11 +2687,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "6台（各AZに2台）"
+        "text": "7台"
       },
       {
         "choiceId": "B",
-        "text": "7台"
+        "text": "12台（各AZに4台）"
       },
       {
         "choiceId": "C",
@@ -2699,16 +2699,16 @@
       },
       {
         "choiceId": "D",
-        "text": "12台（各AZに4台）"
+        "text": "6台（各AZに2台）"
       }
     ],
     "correctChoiceId": "C",
     "explanation": "3つのAZへ均等配置した場合、1つのAZを失うと全体の3分の1の台数が同時に失われます。残る3分の2でピーク時に必要な6台分を賄う必要があるため、6 ÷ (1 - 1/3) = 9台が必要です。各AZに3台ずつ配置すれば、1AZ喪失後も6台が残ります。",
     "choiceExplanations": {
-      "A": "各AZに2台で合計6台の場合、1つのAZを失うと4台になり、ピーク時に必要な6台分を下回ります。",
-      "B": "7台は3で割り切れずAZごとの台数が不均等になり、最も台数の多いAZを失うと残りは5台以下となって要件を満たしません。",
+      "A": "7台は3で割り切れずAZごとの台数が不均等になり、最も台数の多いAZを失うと残りは5台以下となって要件を満たしません。",
+      "B": "要件自体は満たしますが、1AZ喪失後も8台が残る過剰な構成です。常時4台分の余剰コストが発生するため、最小台数としては適切ではありません。",
       "C": "正解です。1AZ喪失後も6台が残り、ピーク時の処理能力を維持できます。",
-      "D": "要件自体は満たしますが、1AZ喪失後も8台が残る過剰な構成です。常時4台分の余剰コストが発生するため、最小台数としては適切ではありません。"
+      "D": "各AZに2台で合計6台の場合、1つのAZを失うと4台になり、ピーク時に必要な6台分を下回ります。"
     },
     "relatedServices": [
       "auto-scaling",
@@ -2761,24 +2761,24 @@
       },
       {
         "choiceId": "B",
-        "text": "AWS Backupでバックアップ計画とバックアップボールトを作成し、タグベースでリソースを割り当てる"
+        "text": "AWS Configルールでバックアップ設定の準拠状況を評価し、非準拠なら自動修復アクションを実行する"
       },
       {
         "choiceId": "C",
-        "text": "Amazon Data Lifecycle Managerのポリシーで、対象サービスすべてのバックアップを統合管理する"
+        "text": "AWS Backupでバックアップ計画とバックアップボールトを作成し、タグベースでリソースを割り当てる"
       },
       {
         "choiceId": "D",
-        "text": "AWS Configルールでバックアップ設定の準拠状況を評価し、非準拠なら自動修復アクションを実行する"
+        "text": "Amazon Data Lifecycle Managerのポリシーで、対象サービスすべてのバックアップを統合管理する"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "C",
     "explanation": "AWS Backupは複数のAWSサービスにまたがるバックアップを、バックアップ計画という単一の定義で一元管理できるマネージドサービスです。タグでリソースを割り当てられるため取得漏れを防ぎやすく、コンプライアンスレポートによる監査にも対応します。",
     "choiceExplanations": {
       "A": "サービスごとに設定方法も保持期間の指定方法も異なるため、設定の一貫性が保てず新規リソースの取得漏れも起きやすくなります。集計を自作する運用負荷も残ります。",
-      "B": "正解です。バックアップ計画で頻度・保持期間・コピー先を定義し、リソース割り当てをタグベースにすることで、新規リソースも自動的に保護対象になります。",
-      "C": "Amazon Data Lifecycle Managerが管理できるのはEBSスナップショットとEBS-backed AMIに限られます。RDSやDynamoDB、EFSは対象外です。",
-      "D": "AWS Configは設定が定めたルールに準拠しているかを評価するサービスで、バックアップの取得そのものは行いません。監査の補助にはなりますが、要件の中心である一元的な取得管理を満たしません。"
+      "B": "AWS Configは設定が定めたルールに準拠しているかを評価するサービスで、バックアップの取得そのものは行いません。監査の補助にはなりますが、要件の中心である一元的な取得管理を満たしません。",
+      "C": "正解です。バックアップ計画で頻度・保持期間・コピー先を定義し、リソース割り当てをタグベースにすることで、新規リソースも自動的に保護対象になります。",
+      "D": "Amazon Data Lifecycle Managerが管理できるのはEBSスナップショットとEBS-backed AMIに限られます。RDSやDynamoDB、EFSは対象外です。"
     },
     "relatedServices": [
       "aws-backup",
@@ -2830,28 +2830,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "5つの処理を1つのLambda関数に統合し、関数内でtry-catchによるエラーハンドリングを実装する"
+        "text": "AWS Step Functionsのステートマシンでワークフローを定義し、各ステートにRetryとCatchを設定する"
       },
       {
         "choiceId": "B",
-        "text": "各関数の呼び出しをAmazon SQSキューで連結し、失敗したメッセージは可視性タイムアウト経過後に再配信させる"
+        "text": "5つの処理を1つのLambda関数に統合し、関数内でtry-catchによるエラーハンドリングを実装する"
       },
       {
         "choiceId": "C",
-        "text": "Amazon EventBridgeのルールで各関数を順に発火させ、失敗イベントをCloudWatch Logsへ出力する"
+        "text": "各関数の呼び出しをAmazon SQSキューで連結し、失敗したメッセージは可視性タイムアウト経過後に再配信させる"
       },
       {
         "choiceId": "D",
-        "text": "AWS Step Functionsのステートマシンでワークフローを定義し、各ステートにRetryとCatchを設定する"
+        "text": "Amazon EventBridgeのルールで各関数を順に発火させ、失敗イベントをCloudWatch Logsへ出力する"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "A",
     "explanation": "AWS Step Functionsはワークフローの各ステップを状態として定義し、実行履歴として可視化します。ステートごとにRetry（バックオフ付き再試行）とCatch（エラー時の分岐）を宣言的に設定できるため、どこで失敗したかの追跡と部分的な再実行が容易になります。",
     "choiceExplanations": {
-      "A": "1つの関数に統合すると、実行時間の上限（最大15分）に抵触しやすくなり、失敗時は先頭からのやり直しになります。どのステップで失敗したかの可視化も改善しません。",
-      "B": "SQSで連結すれば疎結合にはなりますが、ワークフロー全体としてどこまで進んだかという状態は持てず、分岐や並列実行、ステップ単位の再実行も自前で実装することになります。",
-      "C": "EventBridgeはイベントの配信を担うサービスで、ワークフローの状態管理やステップ単位のリトライ制御は行いません。失敗の記録は残っても、再実行の制御は自作が必要です。",
-      "D": "正解です。実行履歴のグラフから失敗ステートを特定でき、Retry / Catch により一時的な障害の自動回復と失敗時の補償処理を宣言的に書けます。"
+      "A": "正解です。実行履歴のグラフから失敗ステートを特定でき、Retry / Catch により一時的な障害の自動回復と失敗時の補償処理を宣言的に書けます。",
+      "B": "1つの関数に統合すると、実行時間の上限（最大15分）に抵触しやすくなり、失敗時は先頭からのやり直しになります。どのステップで失敗したかの可視化も改善しません。",
+      "C": "SQSで連結すれば疎結合にはなりますが、ワークフロー全体としてどこまで進んだかという状態は持てず、分岐や並列実行、ステップ単位の再実行も自前で実装することになります。",
+      "D": "EventBridgeはイベントの配信を担うサービスで、ワークフローの状態管理やステップ単位のリトライ制御は行いません。失敗の記録は残っても、再実行の制御は自作が必要です。"
     },
     "relatedServices": [
       "step-functions",
@@ -2901,28 +2901,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Global Accelerator"
-      },
-      {
-        "choiceId": "B",
-        "text": "Amazon CloudFront"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon Route 53の遅延ベースルーティング"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "AWS Global Accelerator"
+      },
+      {
+        "choiceId": "C",
         "text": "Application Load Balancerのクロスリージョン設定"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon CloudFront"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "AWS Global Acceleratorは2つの固定的なエニーキャストIPアドレスを提供し、最寄りのエッジロケーションからAWSのグローバルネットワーク経由で最適なエンドポイントへ転送します。TCPとUDPの両方に対応し、ヘルスチェック失敗時の切り替えはDNSのTTLに依存しないため高速です。",
     "choiceExplanations": {
-      "A": "正解です。静的IP、UDP対応、AWSバックボーン経由の低遅延、DNSに依存しない高速フェイルオーバーという要件をすべて満たします。",
-      "B": "CloudFrontはHTTP/HTTPSのコンテンツ配信を対象とするCDNで、UDPのトラフィックは扱えません。また接続先として固定IPアドレスを提供する仕組みでもありません。",
-      "C": "遅延ベースルーティングは最も遅延の小さいリージョンを返せますが、DNSベースであるためクライアントやリゾルバーのキャッシュTTLの影響を受け、切り替えに時間がかかります。IPアドレスを固定するという要件も満たしません。",
-      "D": "Application Load BalancerはHTTP/HTTPSを扱うレイヤー7のロードバランサーであり、UDPには対応しません。IPアドレスタイプのターゲットグループとリージョン間VPCピアリングを使えば別リージョンのインスタンスを登録すること自体は可能ですが、UDPを扱えない以上この要件は満たせず、ALBは固定IPアドレスも提供しません。"
+      "A": "遅延ベースルーティングは最も遅延の小さいリージョンを返せますが、DNSベースであるためクライアントやリゾルバーのキャッシュTTLの影響を受け、切り替えに時間がかかります。IPアドレスを固定するという要件も満たしません。",
+      "B": "正解です。静的IP、UDP対応、AWSバックボーン経由の低遅延、DNSに依存しない高速フェイルオーバーという要件をすべて満たします。",
+      "C": "Application Load BalancerはHTTP/HTTPSを扱うレイヤー7のロードバランサーであり、UDPには対応しません。IPアドレスタイプのターゲットグループとリージョン間VPCピアリングを使えば別リージョンのインスタンスを登録すること自体は可能ですが、UDPを扱えない以上この要件は満たせず、ALBは固定IPアドレスも提供しません。",
+      "D": "CloudFrontはHTTP/HTTPSのコンテンツ配信を対象とするCDNで、UDPのトラフィックは扱えません。また接続先として固定IPアドレスを提供する仕組みでもありません。"
     },
     "relatedServices": [
       "elb",
@@ -2972,28 +2972,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "gp2ボリュームを大容量で作成し、容量に比例して増えるベースラインIOPSを利用する"
-      },
-      {
-        "choiceId": "B",
         "text": "gp3ボリュームを作成し、IOPSを30,000にプロビジョニングする"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "io2ボリュームを作成し、必要なIOPSをプロビジョニングする"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "st1（スループット最適化HDD）ボリュームを作成する"
+      },
+      {
+        "choiceId": "D",
+        "text": "gp2ボリュームを大容量で作成し、容量に比例して増えるベースラインIOPSを利用する"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "汎用SSD（gp2 / gp3）のIOPS上限は1ボリュームあたり16,000 IOPSです。30,000 IOPSを単一ボリュームで安定して出すには、プロビジョンドIOPS SSDであるio2（またはio2 Block Express）を選ぶ必要があります。io2は一貫した低レイテンシーと高い耐久性を提供します。",
     "choiceExplanations": {
-      "A": "gp2のIOPSは容量1 GiBあたり3 IOPSで増えますが、上限は16,000 IOPSです。容量を増やしても30,000 IOPSには到達せず、IOPSを容量と独立に指定することもできません。",
-      "B": "gp3はIOPSとスループットを容量と独立にプロビジョニングできますが、1ボリュームあたりの上限は16,000 IOPSです。30,000 IOPSは指定できません。",
-      "C": "正解です。io2はIOPSをプロビジョニングでき、単一ボリュームで16,000 IOPSを大きく超える性能と一貫した低レイテンシーを提供します。",
-      "D": "st1はHDDベースで、大きなブロックのシーケンシャルな読み書きに最適化されています。データベースのようなランダムI/Oが多いワークロードには適していません。"
+      "A": "gp3はIOPSとスループットを容量と独立にプロビジョニングできますが、1ボリュームあたりの上限は16,000 IOPSです。30,000 IOPSは指定できません。",
+      "B": "正解です。io2はIOPSをプロビジョニングでき、単一ボリュームで16,000 IOPSを大きく超える性能と一貫した低レイテンシーを提供します。",
+      "C": "st1はHDDベースで、大きなブロックのシーケンシャルな読み書きに最適化されています。データベースのようなランダムI/Oが多いワークロードには適していません。",
+      "D": "gp2のIOPSは容量1 GiBあたり3 IOPSで増えますが、上限は16,000 IOPSです。容量を増やしても30,000 IOPSには到達せず、IOPSを容量と独立に指定することもできません。"
     },
     "relatedServices": [
       "ebs",
@@ -3042,7 +3042,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon Redshiftのプロビジョンドクラスターを作成し、ログをロードしてクエリする"
+        "text": "Amazon RDS for PostgreSQLインスタンスにログを取り込み、SQLで集計する"
       },
       {
         "choiceId": "B",
@@ -3050,7 +3050,7 @@
       },
       {
         "choiceId": "C",
-        "text": "Amazon RDS for PostgreSQLインスタンスにログを取り込み、SQLで集計する"
+        "text": "Amazon Redshiftのプロビジョンドクラスターを作成し、ログをロードしてクエリする"
       },
       {
         "choiceId": "D",
@@ -3060,9 +3060,9 @@
     "correctChoiceId": "B",
     "explanation": "Amazon AthenaはS3上のデータへ直接SQLを実行できるサーバーレスのクエリサービスで、スキャンしたデータ量に対してのみ課金されます。クラスターの構築も常時稼働も不要なため、実行頻度の低いアドホック分析に最も適しています。",
     "choiceExplanations": {
-      "A": "Redshiftのプロビジョンドクラスターは起動している間ずっと課金されます。ログのロード作業も必要で、月数回の利用に対しては過剰な構成です。",
+      "A": "RDSは常時稼働のインスタンス課金であり、数TBのログを取り込む処理と保存領域の確保も必要です。アドホックな分析用途には向きません。",
       "B": "正解です。テーブル定義をGlueデータカタログに登録すれば、データをS3に置いたまま即座にクエリできます。",
-      "C": "RDSは常時稼働のインスタンス課金であり、数TBのログを取り込む処理と保存領域の確保も必要です。アドホックな分析用途には向きません。",
+      "C": "Redshiftのプロビジョンドクラスターは起動している間ずっと課金されます。ログのロード作業も必要で、月数回の利用に対しては過剰な構成です。",
       "D": "EMRクラスターは必要なときだけ起動する運用も可能ですが、クラスターの構成管理やジョブの実装が必要で、SQL分析だけが目的なら運用負荷が過大です。"
     },
     "relatedServices": [
@@ -3111,28 +3111,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon SQSの標準キュー"
-      },
-      {
-        "choiceId": "B",
-        "text": "Amazon SQSのFIFOキュー"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon SNSのトピックに2つのLambda関数をサブスクライブしてファンアウトする"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "Amazon Kinesis Data Streams"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon SQSのFIFOキュー"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQSの標準キュー"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "B",
     "explanation": "Kinesis Data Streamsはパーティションキー単位（シャード内）で順序を保証し、レコードを保持期間（既定24時間、最大365日）の間ストリーム上に残します。複数のコンシューマーが同じレコードを独立した位置から読めるため、並行処理と再処理の両方の要件を満たします。",
     "choiceExplanations": {
-      "A": "標準キューは順序を保証しません。またメッセージは1つのコンシューマーが処理して削除する前提のため、2つの処理へ同じデータを流すことも、削除済みメッセージを読み直すこともできません。",
-      "B": "FIFOキューはメッセージグループ単位で順序を保証しますが、メッセージは消費後に削除されるため過去データの読み直しができません。2つの独立した処理へ同じメッセージを配るという要件も満たしません。",
-      "C": "SNSは同じメッセージを複数のサブスクライバーへ配信できますが、標準トピックの配信は一度きりで、保持と再読み取りの仕組みも順序の保証もありません。順序を保証するにはFIFOトピックが必要で、FIFOトピックが配信先にできるのはSQSキュー（FIFO / 標準）だけです。Lambda関数を直接サブスクライブすることはできず、間にSQSキューを挟む必要があります（挟んだのがSQS標準キューの場合はメッセージグループIDが引き渡されないため順序保証は失われます）。",
-      "D": "正解です。シャード内の順序保証、保持期間内の再読み取り、複数コンシューマーの独立した読み取りという3つの特性がすべて要件に一致します。"
+      "A": "SNSは同じメッセージを複数のサブスクライバーへ配信できますが、標準トピックの配信は一度きりで、保持と再読み取りの仕組みも順序の保証もありません。順序を保証するにはFIFOトピックが必要で、FIFOトピックが配信先にできるのはSQSキュー（FIFO / 標準）だけです。Lambda関数を直接サブスクライブすることはできず、間にSQSキューを挟む必要があります（挟んだのがSQS標準キューの場合はメッセージグループIDが引き渡されないため順序保証は失われます）。",
+      "B": "正解です。シャード内の順序保証、保持期間内の再読み取り、複数コンシューマーの独立した読み取りという3つの特性がすべて要件に一致します。",
+      "C": "FIFOキューはメッセージグループ単位で順序を保証しますが、メッセージは消費後に削除されるため過去データの読み直しができません。2つの独立した処理へ同じメッセージを配るという要件も満たしません。",
+      "D": "標準キューは順序を保証しません。またメッセージは1つのコンシューマーが処理して削除する前提のため、2つの処理へ同じデータを流すことも、削除済みメッセージを読み直すこともできません。"
     },
     "relatedServices": [
       "kinesis",
@@ -3186,24 +3186,24 @@
       },
       {
         "choiceId": "B",
-        "text": "スプレッドプレイスメントグループにインスタンスを配置する"
-      },
-      {
-        "choiceId": "C",
         "text": "パーティションプレイスメントグループにインスタンスを配置する"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "複数のアベイラビリティーゾーンへインスタンスを分散し、Auto Scalingグループで管理する"
+      },
+      {
+        "choiceId": "D",
+        "text": "スプレッドプレイスメントグループにインスタンスを配置する"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "クラスタープレイスメントグループは、単一のアベイラビリティーゾーン内でインスタンスを物理的に近接配置し、ノード間の低レイテンシーと高いネットワークスループットを実現します。HPCや密結合の分散計算に適した配置戦略です。",
     "choiceExplanations": {
       "A": "正解です。近接配置により、ノード間通信のレイテンシーを最小化し、インスタンス間の帯域を最大限に活用できます。",
-      "B": "スプレッドプレイスメントグループは、インスタンスを別々の物理ハードウェアへ分散して同時障害を避けるための配置です。可用性は上がりますが、ノード間のレイテンシーは改善しません。",
-      "C": "パーティションプレイスメントグループは、大規模な分散システム（HDFSやCassandraなど）で、パーティション単位に障害の影響範囲を分離するための配置です。低レイテンシー通信が目的ではありません。",
-      "D": "アベイラビリティーゾーンをまたぐ分散は可用性を高めますが、AZ間の物理距離により通信レイテンシーは大きくなります。要件と逆方向の設計です。"
+      "B": "パーティションプレイスメントグループは、大規模な分散システム（HDFSやCassandraなど）で、パーティション単位に障害の影響範囲を分離するための配置です。低レイテンシー通信が目的ではありません。",
+      "C": "アベイラビリティーゾーンをまたぐ分散は可用性を高めますが、AZ間の物理距離により通信レイテンシーは大きくなります。要件と逆方向の設計です。",
+      "D": "スプレッドプレイスメントグループは、インスタンスを別々の物理ハードウェアへ分散して同時障害を避けるための配置です。可用性は上がりますが、ノード間のレイテンシーは改善しません。"
     },
     "relatedServices": [
       "ec2",
@@ -3245,28 +3245,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "ライフサイクルルールでS3 Standard-IA（低頻度アクセス）へ移行し、7年間保持する"
+        "text": "S3 Intelligent-Tieringを有効化し、アクセスパターンに応じた自動階層化に任せる"
       },
       {
         "choiceId": "B",
-        "text": "ライフサイクルルールでS3 Glacier Deep Archiveへ移行し、7年経過後に有効期限で削除する"
-      },
-      {
-        "choiceId": "C",
         "text": "ライフサイクルルールでS3 Glacier Flexible Retrievalへ移行し、7年間保持する"
       },
       {
+        "choiceId": "C",
+        "text": "ライフサイクルルールでS3 Standard-IA（低頻度アクセス）へ移行し、7年間保持する"
+      },
+      {
         "choiceId": "D",
-        "text": "S3 Intelligent-Tieringを有効化し、アクセスパターンに応じた自動階層化に任せる"
+        "text": "ライフサイクルルールでS3 Glacier Deep Archiveへ移行し、7年経過後に有効期限で削除する"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "D",
     "explanation": "S3 Glacier Deep ArchiveはS3の中で最も保管単価が安いストレージクラスで、標準的な取り出しに12時間程度を要します。「参照はほとんど発生しない」「取り出しに半日かかってよい」という条件に一致し、7年間の保管コストを最小化できます。",
     "choiceExplanations": {
-      "A": "S3 Standard-IAはミリ秒単位で即座に取り出せますが、保管単価はGlacier系より大幅に高くなります。即時取り出しが不要な本要件ではコストが最小になりません。",
-      "B": "正解です。ライフサイクルルールで移行し、7年経過時点で有効期限による削除も同じルールに定義しておけば、保持期間の管理まで自動化できます。",
-      "C": "S3 Glacier Flexible Retrievalは数分から12時間で取り出せる中間的なクラスですが、保管単価はDeep Archiveより高くなります。半日待てる要件に対しては過剰な取り出し速度にコストを払うことになります。",
-      "D": "Intelligent-Tieringはアクセスパターンが読めない場合に有効な選択肢です。本要件のように「ほとんどアクセスされない」と分かっている場合は、オブジェクト単位のモニタリング料金が上乗せされる分だけ不利になります。"
+      "A": "Intelligent-Tieringはアクセスパターンが読めない場合に有効な選択肢です。本要件のように「ほとんどアクセスされない」と分かっている場合は、オブジェクト単位のモニタリング料金が上乗せされる分だけ不利になります。",
+      "B": "S3 Glacier Flexible Retrievalは数分から12時間で取り出せる中間的なクラスですが、保管単価はDeep Archiveより高くなります。半日待てる要件に対しては過剰な取り出し速度にコストを払うことになります。",
+      "C": "S3 Standard-IAはミリ秒単位で即座に取り出せますが、保管単価はGlacier系より大幅に高くなります。即時取り出しが不要な本要件ではコストが最小になりません。",
+      "D": "正解です。ライフサイクルルールで移行し、7年経過時点で有効期限による削除も同じルールに定義しておけば、保持期間の管理まで自動化できます。"
     },
     "relatedServices": [
       "s3"
@@ -3313,28 +3313,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS BudgetsでEC2のコスト予算を設定し、しきい値超過時に通知を受け取る"
+        "text": "Amazon CloudWatchでメモリ使用率のカスタムメトリクスを収集し、ダッシュボードで可視化する"
       },
       {
         "choiceId": "B",
-        "text": "AWS Trusted Advisorの「低使用率のAmazon EC2インスタンス」チェックを確認する"
-      },
-      {
-        "choiceId": "C",
         "text": "AWS Compute Optimizerを有効化し、使用率メトリクスにもとづく推奨インスタンスタイプを確認する"
       },
       {
+        "choiceId": "C",
+        "text": "AWS BudgetsでEC2のコスト予算を設定し、しきい値超過時に通知を受け取る"
+      },
+      {
         "choiceId": "D",
-        "text": "Amazon CloudWatchでメモリ使用率のカスタムメトリクスを収集し、ダッシュボードで可視化する"
+        "text": "AWS Trusted Advisorの「低使用率のAmazon EC2インスタンス」チェックを確認する"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "AWS Compute Optimizerは、CloudWatchの使用率メトリクスを機械学習で分析し、EC2インスタンス・Auto Scalingグループ・EBSボリューム・Lambda関数などに対して具体的な推奨リソース構成と推定削減額、パフォーマンスリスクを提示します。移行先候補まで示す点が要件に一致します。",
     "choiceExplanations": {
-      "A": "AWS Budgetsは予算のしきい値超過を通知するサービスで、どのインスタンスが過剰かの分析や移行先の提案は行いません。",
-      "B": "Trusted Advisorのコスト最適化チェックは低使用率のインスタンスを「検出」してくれますが、利用にはビジネス以上のサポートプランが必要で、使用率分析にもとづく具体的な移行先インスタンスタイプの推奨まではCompute Optimizerの領分です。",
-      "C": "正解です。無料で有効化でき、推奨と現状の比較、推定コスト削減額まで確認できます。",
-      "D": "メトリクスの可視化は現状把握には役立ちますが、適切なインスタンスタイプを判断・提示する機能はありません。"
+      "A": "メトリクスの可視化は現状把握には役立ちますが、適切なインスタンスタイプを判断・提示する機能はありません。",
+      "B": "正解です。無料で有効化でき、推奨と現状の比較、推定コスト削減額まで確認できます。",
+      "C": "AWS Budgetsは予算のしきい値超過を通知するサービスで、どのインスタンスが過剰かの分析や移行先の提案は行いません。",
+      "D": "Trusted Advisorのコスト最適化チェックは低使用率のインスタンスを「検出」してくれますが、利用にはビジネス以上のサポートプランが必要で、使用率分析にもとづく具体的な移行先インスタンスタイプの推奨まではCompute Optimizerの領分です。"
     },
     "relatedServices": [
       "ec2",

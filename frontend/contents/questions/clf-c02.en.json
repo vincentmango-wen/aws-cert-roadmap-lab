@@ -9,28 +9,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "You must purchase physical servers before you can start using it."
+        "text": "All AWS services are available for free indefinitely."
       },
       {
         "choiceId": "B",
-        "text": "You can scale resources up or down based on demand."
-      },
-      {
-        "choiceId": "C",
         "text": "AWS takes on all security responsibilities."
       },
       {
+        "choiceId": "C",
+        "text": "You must purchase physical servers before you can start using it."
+      },
+      {
         "choiceId": "D",
-        "text": "All AWS services are available for free indefinitely."
+        "text": "You can scale resources up or down based on demand."
       }
     ],
-    "correctChoiceId": "B",
-    "explanation": "The correct answer is B. A representative advantage of the AWS Cloud is the ability to add and remove resources based on demand,\nin other words scalability and elasticity.\n\nIn on-premises environments, the common approach was to provision servers in advance with enough capacity to handle peak\ntraffic. In that model, the excess servers sit idle during normal periods and become a fixed cost, and when traffic exceeds\nexpectations, processing capacity becomes insufficient. On AWS, mechanisms such as Auto Scaling and Elastic Load Balancing\nautomatically add EC2 instances as traffic grows and automatically remove them as traffic decreases. When this elasticity\nis combined with pay-as-you-go billing, an operating pattern of running small during normal periods and large only during\nbusy periods becomes possible.\n\nWhat is worth distinguishing here is that the advantage of the cloud is not low cost itself, but the flexibility to provision\nthe exact amount you need only when you need it. Elasticity has a larger effect on workloads whose demand is hard to predict\nor whose traffic has spikes. On CLF-C02, scalability, elasticity, agility, and pay-as-you-go pricing are repeatedly asked\nas advantages of the cloud. When choices use extreme phrasing such as purchasing physical servers, AWS taking full\nresponsibility, or everything being permanently free, those statements contradict the characteristics of the cloud and are\nusually wrong.",
+    "correctChoiceId": "D",
+    "explanation": "The correct answer is \"You can scale resources up or down based on demand.\" A representative advantage of the AWS Cloud is the ability to add and remove resources based on demand,\nin other words scalability and elasticity.\n\nIn on-premises environments, the common approach was to provision servers in advance with enough capacity to handle peak\ntraffic. In that model, the excess servers sit idle during normal periods and become a fixed cost, and when traffic exceeds\nexpectations, processing capacity becomes insufficient. On AWS, mechanisms such as Auto Scaling and Elastic Load Balancing\nautomatically add EC2 instances as traffic grows and automatically remove them as traffic decreases. When this elasticity\nis combined with pay-as-you-go billing, an operating pattern of running small during normal periods and large only during\nbusy periods becomes possible.\n\nWhat is worth distinguishing here is that the advantage of the cloud is not low cost itself, but the flexibility to provision\nthe exact amount you need only when you need it. Elasticity has a larger effect on workloads whose demand is hard to predict\nor whose traffic has spikes. On CLF-C02, scalability, elasticity, agility, and pay-as-you-go pricing are repeatedly asked\nas advantages of the cloud. When choices use extreme phrasing such as purchasing physical servers, AWS taking full\nresponsibility, or everything being permanently free, those statements contradict the characteristics of the cloud and are\nusually wrong.",
     "choiceExplanations": {
-      "A": "Incorrect. This is rather a description of on-premises environments where you own physical servers yourself.\nOn AWS, you do not need to purchase or install physical servers yourself. You can launch EC2 instances when needed\nand stop or terminate them when no longer needed. Being able to start with no upfront investment is an advantage\nof the cloud, and option A describes the opposite direction.",
-      "B": "Correct. The ability to scale resources up or down based on demand (scalability and elasticity) is the most\nrepresentative advantage of the cloud. Because resources can be added or removed automatically in line with traffic peaks,\nyou can suppress both the wasted cost of excess resources and the opportunity loss from insufficient resources.",
-      "C": "Incorrect. AWS security is based on the Shared Responsibility Model, which divides responsibility between AWS and the\nuser. AWS is responsible for the security of the cloud itself (data centers, hardware, and so on), and the user is\nresponsible for what is in the cloud (OS updates, IAM permission settings, data encryption, and so on). Saying that AWS\ntakes on all responsibility is a typical mistake that tests understanding of the Shared Responsibility Model.",
-      "D": "Incorrect. AWS offers a Free Tier, but it applies to a limited amount of certain services and is often subject to\nconditions such as 12 months from the start of use. Not all services are free indefinitely. Unconditional statements such\nas permanently free or completely free are usually wrong."
+      "A": "Incorrect. AWS offers a Free Tier, but it applies to a limited amount of certain services and is often subject to\nconditions such as 12 months from the start of use. Not all services are free indefinitely. Unconditional statements such\nas permanently free or completely free are usually wrong.",
+      "B": "Incorrect. AWS security is based on the Shared Responsibility Model, which divides responsibility between AWS and the\nuser. AWS is responsible for the security of the cloud itself (data centers, hardware, and so on), and the user is\nresponsible for what is in the cloud (OS updates, IAM permission settings, data encryption, and so on). Saying that AWS\ntakes on all responsibility is a typical mistake that tests understanding of the Shared Responsibility Model.",
+      "C": "Incorrect. This is rather a description of on-premises environments where you own physical servers yourself.\nOn AWS, you do not need to purchase or install physical servers yourself. You can launch EC2 instances when needed\nand stop or terminate them when no longer needed. Being able to start with no upfront investment is an advantage\nof the cloud, and this option describes the opposite direction.",
+      "D": "Correct. The ability to scale resources up or down based on demand (scalability and elasticity) is the most\nrepresentative advantage of the cloud. Because resources can be added or removed automatically in line with traffic peaks,\nyou can suppress both the wasted cost of excess resources and the opportunity loss from insufficient resources."
     },
     "practicalNote": "Scalability and elasticity are most effective in practice for workloads with large fluctuations in demand. Examples include\nweb sites whose traffic spikes temporarily due to campaigns or news coverage, batch and payment systems whose volume jumps\nat month-end or during sales, and internal systems whose traffic differs between day and night. For such workloads, a common\nconfiguration is to use Auto Scaling to add and remove EC2 instances automatically, or to use a serverless configuration\n(such as Lambda) that does not keep resources running and launches them in response to requests.\n\nOn the other hand, elasticity is not a silver bullet. For workloads whose load is constantly steady, long-term commitments\nsuch as Reserved Instances or Savings Plans can be cheaper than on-demand pay-as-you-go pricing. A common misconception\nfor exam takers is to view the cloud as always cheap, but more precisely the advantage is that it allows you to reduce waste\nin line with demand. Whether costs go down depends on the characteristics of the workload. The exam also tests the context\nof suppressing waste through elasticity and the context of discounts through commitments for steady loads as separate topics.",
     "officialDocs": [
@@ -79,11 +79,11 @@
       },
       {
         "choiceId": "B",
-        "text": "You always pay a flat fee regardless of usage."
+        "text": "You only pay the upfront fee, with no further usage charges."
       },
       {
         "choiceId": "C",
-        "text": "You only pay the upfront fee, with no further usage charges."
+        "text": "You always pay a flat fee regardless of usage."
       },
       {
         "choiceId": "D",
@@ -94,8 +94,8 @@
     "explanation": "Many AWS services charge based on the amount of resources you use or the number of requests you make. This is called pay-as-you-go pricing.",
     "choiceExplanations": {
       "A": "Correct. Pay-as-you-go is the idea of paying only for what you use.",
-      "B": "Incorrect. Some services include fixed fees, but as a description of the cloud as a whole, this is insufficient.",
-      "C": "Incorrect. The cloud reduces upfront costs, but usage charges still apply.",
+      "B": "Incorrect. The cloud reduces upfront costs, but usage charges still apply.",
+      "C": "Incorrect. Some services include fixed fees, but as a description of the cloud as a whole, this is insufficient.",
       "D": "Incorrect. Once you exceed the Free Tier, charges apply."
     },
     "practicalNote": "The pay-as-you-go pricing model is the billing structure used by many AWS services, with charges based on the type and amount\nof resources you use, such as EC2 running time, S3 storage capacity, the number of Lambda executions, and data transfer\nvolume. Because upfront payment or long-term contracts are not required, this model fits well with patterns such as\nlaunching resources for a short period for testing and then disposing of them, or starting small for workloads whose demand\nis hard to predict and then scaling them in stages.\n\nHowever, pay-as-you-go does not always mean the lowest cost. For servers that run steadily, or for workloads whose usage is\nconfirmed for the long term, discounts through long-term commitments such as Reserved Instances or Savings Plans, or the use\nof spare capacity through Spot Instances, often lower the unit price compared with on-demand pay-as-you-go pricing. In\naddition, if you leave a resource running by mistake, charges continue even when you are not using it. For that reason,\nyou need to set thresholds with AWS Budgets and visualize actuals with Cost Explorer as a paired operational practice.\n\nOn CLF-C02, pay-as-you-go is repeatedly asked using the expression of paying only for what you use. The typical distractors\nare assertive statements such as free regardless of usage, only an initial investment with no further charges, or always a\nflat fee. These contradict the pricing characteristics of the cloud and can be eliminated. You should also be careful about\nchoices that try to confuse the AWS Free Tier with pay-as-you-go. The Free Tier is a limited mechanism with caps and time\nlimits defined per service.",
@@ -139,11 +139,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "A geographic area that contains one or more Availability Zones."
+        "text": "A single physical server."
       },
       {
         "choiceId": "B",
-        "text": "A single physical server."
+        "text": "A geographic area that contains one or more Availability Zones."
       },
       {
         "choiceId": "C",
@@ -154,11 +154,11 @@
         "text": "A folder inside an S3 bucket."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "A Region is a geographic area such as the Tokyo Region or the US East (N. Virginia) Region. Each Region contains multiple Availability Zones.",
     "choiceExplanations": {
-      "A": "Correct. A Region is a geographic area that contains multiple AZs.",
-      "B": "Incorrect. A Region is not a single server.",
+      "A": "Incorrect. A Region is not a single server.",
+      "B": "Correct. A Region is a geographic area that contains multiple AZs.",
       "C": "Incorrect. IAM is a global service and is a separate concept from a Region.",
       "D": "Incorrect. This has nothing to do with the folder-like view in S3."
     },
@@ -205,28 +205,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "To reduce single points of failure and improve availability."
-      },
-      {
-        "choiceId": "B",
         "text": "To increase the number of IAM users."
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "To make all AWS usage free."
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "To disable CloudWatch Logs."
+      },
+      {
+        "choiceId": "D",
+        "text": "To reduce single points of failure and improve availability."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "By placing resources across multiple Availability Zones, services can continue to operate even when a single AZ experiences a failure.",
     "choiceExplanations": {
-      "A": "Correct. A multi-AZ configuration is the basis of higher availability.",
-      "B": "Incorrect. This has nothing to do with the number of IAM users.",
-      "C": "Incorrect. A multi-AZ configuration can increase cost in some cases.",
-      "D": "Incorrect. This has nothing to do with enabling or disabling CloudWatch Logs."
+      "A": "Incorrect. This has nothing to do with the number of IAM users.",
+      "B": "Incorrect. A multi-AZ configuration can increase cost in some cases.",
+      "C": "Incorrect. This has nothing to do with enabling or disabling CloudWatch Logs.",
+      "D": "Correct. A multi-AZ configuration is the basis of higher availability."
     },
     "practicalNote": "A multi-AZ configuration that uses multiple Availability Zones (AZs) is a basic design that prevents the entire service from\nstopping when a single physical data center failure occurs, such as a power outage, network equipment failure, or natural\ndisaster. In practice, standard configurations include a web tier in which EC2 instances are placed in multiple AZs via an\nAuto Scaling Group with an ALB in front to distribute traffic, a database tier in which RDS is configured for Multi-AZ\nplacement with a standby DB in a different AZ, and a file storage layer placed on services that are already redundant within\na Region, such as EFS.\n\nA multi-AZ configuration also involves trade-offs. Data transfer across AZs incurs charges, and the latency between AZs is\nhigher than within the same AZ. In addition, RDS Multi-AZ launches an additional standby DB instance, so it incurs roughly\ndouble the compute cost compared with a single-AZ configuration. Because higher availability also raises cost, you must\ndecide in stages whether a single AZ is sufficient, whether Multi-AZ is needed, or whether you should expand all the way to\nmulti-Region based on the SLA required by the workload (for example, 99.9% or 99.99%).\n\nOn CLF-C02, the purpose of multi-AZ placement is tested in the context of eliminating single points of failure (SPOFs) and\nachieving high availability. Typical distractors apply topics that are unrelated to availability, such as reducing cost,\nincreasing the number of IAM users, or making monitoring unnecessary. You should also be careful about confusing multi-AZ\nwith multi-Region. Multi-AZ is a measure for availability within the same Region, while multi-Region is positioned as a\nmeasure for geographic disaster recovery or latency optimization.",
     "officialDocs": [
@@ -273,28 +273,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "The ability to add or remove resources based on load."
-      },
-      {
-        "choiceId": "B",
         "text": "A property that requires you to store data on paper."
       },
       {
+        "choiceId": "B",
+        "text": "The ability to add or remove resources based on load."
+      },
+      {
         "choiceId": "C",
-        "text": "A property that requires you to manually approve all communications."
+        "text": "A property that requires you to run only one server."
       },
       {
         "choiceId": "D",
-        "text": "A property that requires you to run only one server."
+        "text": "A property that requires you to manually approve all communications."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "Scalability is the property of being able to increase or decrease system capacity in line with changes in load or number of users.",
     "choiceExplanations": {
-      "A": "Correct. Resources can be added or removed in line with load fluctuations.",
-      "B": "Incorrect. This has nothing to do with storing on paper.",
-      "C": "Incorrect. This is not a description of communication approval.",
-      "D": "Incorrect. A single-server configuration tends to become a single point of failure and is not a description of scalability."
+      "A": "Incorrect. This has nothing to do with storing on paper.",
+      "B": "Correct. Resources can be added or removed in line with load fluctuations.",
+      "C": "Incorrect. A single-server configuration tends to become a single point of failure and is not a description of scalability.",
+      "D": "Incorrect. This is not a description of communication approval."
     },
     "practicalNote": "Scalability refers to the property of being able to add or remove processing capacity for a system in line with changes in\nload. There are two broad axes of expansion: vertical scaling (scaling up and scaling down), which increases the\nspecifications of a single instance, and horizontal scaling (scaling out and scaling in), which adjusts the number of\ninstances. AWS offers rich mechanisms to automate horizontal scaling. EC2 Auto Scaling Groups use CloudWatch metrics (such\nas CPU utilization or request count) as triggers to add and remove instances automatically. Because Lambda starts an\nexecution environment per request, you barely need to be aware of scaling settings on the user side.\n\nA concept that is often confused with scalability is elasticity. Scalability refers to the static property of the ability to\nexpand, while elasticity refers to the dynamic behavior of dynamically expanding and contracting in line with demand without\nholding on to wasted resources. The two concepts are close, but the exam can distinguish between them. In particular, the\ncontext of reducing resources when demand drops is more appropriately described as elasticity. Even when an application\nclaims scalability, if the implementation holds state locally, it cannot scale horizontally. At design time, you need to\nconsider making the application stateless and externalizing the session store.\n\nOn CLF-C02, scalability is tested with a direct definition such as the property of being able to add or remove resources\nbased on load. Distractors that have nothing to do with the concept, such as storing data on paper, manually approving\ncommunications, or running only one server, are common, and the correct answer can usually be narrowed down to one option.\nOn the other hand, applied questions related to the performance efficiency pillar of the Well-Architected Framework ask in\nmore depth about the distinction between scalability and elasticity, and the proper use of Auto Scaling and serverless.",
     "officialDocs": [
@@ -340,28 +340,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Place resources across multiple Availability Zones."
-      },
-      {
-        "choiceId": "B",
-        "text": "Store all data on only one EC2 instance."
-      },
-      {
-        "choiceId": "C",
         "text": "Take no backups at all."
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "Stop all monitoring services."
+      },
+      {
+        "choiceId": "C",
+        "text": "Store all data on only one EC2 instance."
+      },
+      {
+        "choiceId": "D",
+        "text": "Place resources across multiple Availability Zones."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "To improve high availability, designs that use multiple AZs and redundancy to reduce single points of failure are important.",
     "choiceExplanations": {
-      "A": "Correct. Distributing across multiple AZs makes the system more resilient to failures.",
-      "B": "Incorrect. Consolidating onto a single instance makes the system more likely to stop during a failure.",
-      "C": "Incorrect. Backups are important for recovery.",
-      "D": "Incorrect. Stopping monitoring delays failure detection."
+      "A": "Incorrect. Backups are important for recovery.",
+      "B": "Incorrect. Stopping monitoring delays failure detection.",
+      "C": "Incorrect. Consolidating onto a single instance makes the system more likely to stop during a failure.",
+      "D": "Correct. Distributing across multiple AZs makes the system more resilient to failures."
     },
     "practicalNote": "High Availability (HA) refers to the property of a system that can continue to provide service even when unexpected failures\noccur. The basic patterns for achieving high availability on AWS are distributing resources across multiple Availability\nZones, distributing traffic via a load balancer, redundant databases that include standby systems, and the combination of\nregular backups and monitoring. The standard configuration is to span the web tier across two or more AZs using an ALB with\nan Auto Scaling Group, and to make the data tier redundant in writers and readers using RDS Multi-AZ or an Aurora cluster\nconfiguration.\n\nRelated concepts to high availability are fault tolerance, disaster recovery, and backup and restore, each of which has\ndifferent goals and means. High availability focuses on not stopping service even when a single component fails, while\ndisaster recovery focuses on switching to another Region when a Region-scale failure occurs and is designed around metrics\nsuch as RTO (Recovery Time Objective) and RPO (Recovery Point Objective). The higher you make availability, the more\ncomplex the configuration becomes and the higher the cost. The practical foundation is to clarify the acceptable downtime as\na business requirement before designing.\n\nOn CLF-C02, distribution across multiple AZs frequently appears as the correct answer for high-availability designs.\nDistractors include extreme choices that directly impair availability, such as consolidating everything onto a single EC2\ninstance, not taking backups, or stopping monitoring. In higher-level exams such as SAA-C03, more advanced design decisions\nare asked, such as the proper use of Multi-AZ and Read Replicas (the former for availability, the latter for read\nperformance), or the difference between active/passive and active/active configurations.",
     "officialDocs": [
@@ -408,28 +408,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Cost Optimization"
-      },
-      {
-        "choiceId": "B",
-        "text": "Paper-based ledger management"
-      },
-      {
-        "choiceId": "C",
         "text": "Manual server procurement"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "Cost Optimization"
+      },
+      {
+        "choiceId": "C",
         "text": "Guaranteed flat pricing"
+      },
+      {
+        "choiceId": "D",
+        "text": "Paper-based ledger management"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "The AWS Well-Architected Framework includes pillars such as Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, and Sustainability.",
     "choiceExplanations": {
-      "A": "Correct. Cost Optimization is an important pillar of the Well-Architected Framework.",
-      "B": "Incorrect. Paper-based ledger management is not a pillar.",
-      "C": "Incorrect. Automation and use of the cloud are emphasized rather than manual procurement.",
-      "D": "Incorrect. Many AWS services use pay-as-you-go pricing."
+      "A": "Incorrect. Automation and use of the cloud are emphasized rather than manual procurement.",
+      "B": "Correct. Cost Optimization is an important pillar of the Well-Architected Framework.",
+      "C": "Incorrect. Many AWS services use pay-as-you-go pricing.",
+      "D": "Incorrect. Paper-based ledger management is not a pillar."
     },
     "practicalNote": "The AWS Well-Architected Framework is a collection of best practices for reviewing the design of workloads on the cloud,\ncurrently composed of six pillars (Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization,\nand Sustainability). In practice, it is used for the design review of new systems, for re-architecture decisions on existing\nsystems, and as a common language during internal architecture reviews. The AWS Well-Architected Tool, provided by AWS at\nno charge, allows you to answer questions aligned with each pillar per workload and to list improvement points (High Risk\nIssues and Medium Risk Issues).\n\nThe central themes of each pillar play different roles. Operational Excellence covers deployment automation and operational\nstandardization, Security covers IAM least privilege, encryption, and audit logs, Reliability covers Multi-AZ placement and\nbackups, Performance Efficiency covers appropriate instance type selection and the use of caches, Cost Optimization covers\nresource inventory and pricing model optimization, and Sustainability covers resource efficiency and reduction of\nenvironmental impact. Although the pillars are independent, they influence each other, so you need to be conscious of\ntrade-offs. For example, reducing resources too much for cost optimization can lower reliability.\n\nOn CLF-C02, this content is asked in the form of which of the following is included as a pillar of the Well-Architected\nFramework, or which area is covered by the Cost Optimization pillar. Typical distractors include choices that are obviously\nnot pillars of cloud design, such as paper-based ledger management, manual server procurement, or guaranteed flat pricing.\nFrom SAA-C03 onward, applied questions appear that ask, given a specific scenario, which pillar's perspective you should\nuse to improve it, so you need to accurately associate the names of the six pillars with their central themes.",
     "officialDocs": [
@@ -473,28 +473,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Purchase, installation, and maintenance of physical servers"
-      },
-      {
-        "choiceId": "B",
         "text": "Responsibility for application design"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "Responsibility for user account management"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Responsibility for data classification"
+      },
+      {
+        "choiceId": "D",
+        "text": "Purchase, installation, and maintenance of physical servers"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "By using AWS, you can offload the purchase, installation, and maintenance of physical servers and data center equipment to AWS.",
     "choiceExplanations": {
-      "A": "Correct. You can reduce the management burden of physical infrastructure.",
-      "B": "Incorrect. Application design is the user's responsibility.",
-      "C": "Incorrect. Managing users and permissions is the user's responsibility.",
-      "D": "Incorrect. The classification and handling of data are decided by the user."
+      "A": "Incorrect. Application design is the user's responsibility.",
+      "B": "Incorrect. Managing users and permissions is the user's responsibility.",
+      "C": "Incorrect. The classification and handling of data are decided by the user.",
+      "D": "Correct. You can reduce the management burden of physical infrastructure."
     },
     "practicalNote": "What can be significantly reduced by using the AWS Cloud compared with on-premises environments is the work that does not\ndirectly contribute to application differentiation, such as the purchase of physical servers, capital investment in data\ncenters, hardware maintenance, and procurement of network equipment. AWS calls this area undifferentiated heavy lifting,\nand users can leave this to AWS and redirect their time to application design, data modeling, and user experience design,\nwhere they should really focus. Operations such as launching an EC2 instance, storing in S3, or building an RDS instance all\ncomplete within minutes without going through the procurement process for physical equipment.\n\nOn the other hand, the scope that you can leave to AWS extends only to the cloud itself, while responsibilities for what is\nin the cloud remain with the user. Specifically, even though AWS provides the infrastructure, you still need to make\ndecisions and operate the application's design and implementation, data classification and selection of encryption methods,\nmanagement of IAM users and permissions, OS patching (in the case of EC2), and network settings (security groups, VPC).\nThese are organized as the Shared Responsibility Model and serve as the criteria for distinguishing between what can be\nreduced and what cannot.\n\nOn CLF-C02, the question of what can be reduced by moving to the cloud is asked in connection with the Shared\nResponsibility Model. The correct answer is infrastructure-side work, such as the purchase, installation, and maintenance\nof physical servers. Typical distractors include items that remain as the user's responsibility, such as responsibility for\napplication design, user account management, or data classification. Keywords such as the shift from CapEx (capital\nexpenditure) to OpEx (operating expenditure), reduction of upfront investment, and shorter time to market are also tested\nrepeatedly in the same context.",
     "officialDocs": [
@@ -547,11 +547,11 @@
       },
       {
         "choiceId": "C",
-        "text": "Building management of AWS Regions"
+        "text": "Maintenance of AWS global network equipment"
       },
       {
         "choiceId": "D",
-        "text": "Maintenance of AWS global network equipment"
+        "text": "Building management of AWS Regions"
       }
     ],
     "correctChoiceId": "B",
@@ -559,8 +559,8 @@
     "choiceExplanations": {
       "A": "Incorrect. Physical security is AWS's responsibility.",
       "B": "Correct. IAM permission management is the user's responsibility.",
-      "C": "Incorrect. Data center and facility management is AWS's responsibility.",
-      "D": "Incorrect. Maintenance of global infrastructure is AWS's responsibility."
+      "C": "Incorrect. Maintenance of global infrastructure is AWS's responsibility.",
+      "D": "Incorrect. Data center and facility management is AWS's responsibility."
     },
     "practicalNote": "The AWS Shared Responsibility Model is the basic framework that defines how security responsibilities are divided between\nAWS and the user. AWS takes responsibility for security OF the cloud itself, including the physical security of data\ncenters, maintenance of hardware, and operation of the hypervisor and managed service infrastructure. The user, on the\nother hand, takes responsibility for security IN the cloud, including management of IAM users and roles, data\nclassification and encryption, network settings (security group and VPC settings), OS patching (in the case of EC2), and\nsecurity implementation of applications.\n\nThe scope of user responsibility varies depending on the service model used. With IaaS, such as EC2, all layers from the OS\nupward become the user's responsibility, while with managed services such as Lambda or DynamoDB, AWS handles the management\nof the OS and middleware, allowing the user to focus on IAM permissions, data, and application logic. In practice, the\nleast-privilege design of IAM policies, verification of S3 bucket public settings, and detection of configuration drift via\nSecurity Hub or AWS Config are incorporated as routine work to fulfill user responsibility.\n\nOn CLF-C02, this content frequently appears in the direct form of which of the following is the user's responsibility or\nwhich is AWS's responsibility. Typical examples of user responsibility are management of IAM users and permissions, data\nencryption, and security implementation of applications. Typical examples of AWS responsibility are physical security of\ndata centers, management of Region facilities, and maintenance of global network equipment. Accurately understanding the\nline of responsibility is the shortcut to the correct answer.",
     "officialDocs": [
@@ -609,11 +609,11 @@
       },
       {
         "choiceId": "C",
-        "text": "A graph that displays the CPU utilization of an EC2 instance."
+        "text": "The domain registration feature of Route 53."
       },
       {
         "choiceId": "D",
-        "text": "The domain registration feature of Route 53."
+        "text": "A graph that displays the CPU utilization of an EC2 instance."
       }
     ],
     "correctChoiceId": "A",
@@ -621,8 +621,8 @@
     "choiceExplanations": {
       "A": "Correct. The key point of an IAM role is the use of temporary credentials.",
       "B": "Incorrect. It is not an image compression service.",
-      "C": "Incorrect. Displaying metrics is the domain of CloudWatch.",
-      "D": "Incorrect. Domain registration is a feature of Route 53."
+      "C": "Incorrect. Domain registration is a feature of Route 53.",
+      "D": "Incorrect. Displaying metrics is the domain of CloudWatch."
     },
     "practicalNote": "An IAM role is a mechanism for granting permissions to AWS resources or users by issuing temporary credentials. Whereas\nan IAM user holds long-term credentials (password and access keys) tied to a person, an IAM role is not tied to an entity\nand is assumed at the time it is needed (AssumeRole) so that temporary credentials (an access key ID, a secret access key,\nand a session token issued by STS) are handed out. The issued credentials have an expiration set on them, and the impact\nrange in case of leakage is limited along the time axis. This is the biggest advantage compared with long-lived access keys.\n\nThere are three representative usage patterns in practice. The first is the EC2 instance profile, which is a configuration\nwhere an application running on EC2 obtains permissions via an IAM role rather than embedding access keys in code or\nenvironment variables when it accesses S3 or DynamoDB. The second is the Lambda execution role, which is used as the\nauthentication used when a Lambda function accesses other AWS services. The third is cross-account access, where you allow\nAssumeRole to an IAM user or role in a different AWS account, achieving cross-account integration without sharing long-term\ncredentials. IAM Identity Center (formerly SSO) and Cognito also internally use the temporary credential issuance mechanism\nof IAM roles.\n\nOn CLF-C02, this content is asked in the form of which of the following best describes an IAM role, or what is the method\nto access S3 from EC2 without using access keys. Typical distractors apply services in different domains from IAM, such as\nan image compression service, displaying metrics, or a domain registration feature. From SAA-C03 onward, the proper use of\nIAM users, groups, roles, and policies, the difference between trust policies and permission policies, and the\nauthorization flow of AssumeRole are asked in more depth.",
     "officialDocs": [
@@ -670,7 +670,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Avoid using it for day-to-day work and enable MFA."
+        "text": "Prevent anyone from viewing the billing information."
       },
       {
         "choiceId": "B",
@@ -678,20 +678,20 @@
       },
       {
         "choiceId": "C",
-        "text": "Share the password among all developers."
+        "text": "Avoid using it for day-to-day work and enable MFA."
       },
       {
         "choiceId": "D",
-        "text": "Prevent anyone from viewing the billing information."
+        "text": "Share the password among all developers."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "The root user has full permissions over the account. The recommended practice is to avoid day-to-day use, enable MFA, and not create access keys.",
     "choiceExplanations": {
-      "A": "Correct. Protect the root user and do not use it for day-to-day work.",
+      "A": "Incorrect. Reviewing billing information is important to prevent unexpected charges.",
       "B": "Incorrect. Storing access keys on GitHub is dangerous.",
-      "C": "Incorrect. Sharing passwords should be avoided.",
-      "D": "Incorrect. Reviewing billing information is important to prevent unexpected charges."
+      "C": "Correct. Protect the root user and do not use it for day-to-day work.",
+      "D": "Incorrect. Sharing passwords should be avoided."
     },
     "practicalNote": "The root user of an AWS account is the top-level privileged identity with full permissions over the account, including account closure, payment method changes, and Support plan changes. Because the permissions are so broad, day-to-day use is not recommended. AWS best practices state that the root user should be used only for a limited set of tasks (for example, IAM user creation right after sign-up, Support plan changes, and specific billing settings). For everyday work, use an IAM user or a user provisioned through IAM Identity Center. Protective measures such as enabling MFA, setting a strong password, and not creating access keys (or deleting them if they already exist) are also considered mandatory.\n\nIn practice, a standard pattern is to create an administrator IAM user (or an IAM Identity Center user) immediately after the initial setup is complete, and to perform all subsequent work as that IAM user. When you use AWS Organizations, the root user of a member account cannot be fully restricted even with a Service Control Policy (SCP). For that reason, enable MFA on the root user of every account and manage the credentials strictly using a vault or a password manager. There have been real incidents where root user access keys were accidentally published to a public GitHub repository and a third party took over the account and launched expensive resources. Not creating access keys in the first place is the most reliable defense.\n\nOn CLF-C02, this content typically appears as a question that asks which of the following is the correct recommendation for the root user. The correct answer is the option that strengthens protection and limits use, such as avoiding day-to-day work and enabling MFA. Typical distractors clearly contradict security best practices, such as creating access keys and storing them on GitHub, sharing the password among all developers, or preventing anyone from viewing billing information.",
     "officialDocs": [
@@ -742,11 +742,11 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon Route 53"
+        "text": "Amazon CloudFront"
       },
       {
         "choiceId": "C",
-        "text": "Amazon CloudFront"
+        "text": "Amazon Route 53"
       },
       {
         "choiceId": "D",
@@ -757,8 +757,8 @@
     "explanation": "AWS KMS creates and manages encryption keys, and it can be used for encryption with many AWS services such as Amazon S3 and DynamoDB.",
     "choiceExplanations": {
       "A": "Correct. KMS is a key management service.",
-      "B": "Incorrect. Route 53 is a DNS service.",
-      "C": "Incorrect. CloudFront is a CDN.",
+      "B": "Incorrect. CloudFront is a CDN.",
+      "C": "Incorrect. Route 53 is a DNS service.",
       "D": "Incorrect. AWS Budgets is a cost monitoring service."
     },
     "practicalNote": "AWS Key Management Service (KMS) is the central service for encrypting data at rest on AWS. KMS is a managed service that creates, stores, and rotates encryption keys (customer master keys, also called KMS keys). It can be specified as the key used to encrypt data at the storage layer by many AWS services, including S3, EBS, RDS, DynamoDB, Lambda, CloudWatch Logs, Secrets Manager, SNS, and SQS. The keys themselves are protected by hardware security modules (HSMs) that meet FIPS 140-2 validation, and the design ensures that plaintext keys never leave KMS.\n\nUsage patterns in practice fall into two main categories. The first is to enable encryption by default using an AWS managed key (such as aws/s3 or aws/ebs, which AWS creates for each service). Unless there is a specific requirement, this is the first step to encrypt data at rest. The second is to create your own customer managed key (CMK) and use it. This is adopted when you need finer-grained control, such as a key rotation policy, control over which IAM principals can use the key, and account-boundary control through key policies. Services that are easily confused include CloudFront (CDN), Route 53 (DNS), and AWS Budgets (cost monitoring). None of these are responsible for encryption, and recognizing this makes it easier to narrow down the choices.\n\nOn CLF-C02, this content is asked as a question that requests the service used to encrypt data at rest, or the key management service used to encrypt data stored in S3 or DynamoDB. Distractors that present a CDN, a DNS service, or a cost monitoring service are common. From SAA-C03 onward, the distinction among SSE-S3, SSE-KMS, SSE-C, and client-side encryption, the combination of key policies and IAM policies, and the mechanism of envelope encryption are asked in greater depth.",
@@ -805,28 +805,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Record the history of API operations performed within an AWS account."
+        "text": "Provide DNS name resolution."
       },
       {
         "choiceId": "B",
-        "text": "Serve a static website."
-      },
-      {
-        "choiceId": "C",
         "text": "Provide a NoSQL database."
       },
       {
+        "choiceId": "C",
+        "text": "Record the history of API operations performed within an AWS account."
+      },
+      {
         "choiceId": "D",
-        "text": "Provide DNS name resolution."
+        "text": "Serve a static website."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "CloudTrail records API operations and user activity performed within an AWS account, and the records can be used for auditing.",
     "choiceExplanations": {
-      "A": "Correct. CloudTrail is used to record and audit operation history.",
-      "B": "Incorrect. Static delivery is handled by Amazon S3 and Amazon CloudFront.",
-      "C": "Incorrect. The NoSQL database service is Amazon DynamoDB.",
-      "D": "Incorrect. DNS is provided by Amazon Route 53."
+      "A": "Incorrect. DNS is provided by Amazon Route 53.",
+      "B": "Incorrect. The NoSQL database service is Amazon DynamoDB.",
+      "C": "Correct. CloudTrail is used to record and audit operation history.",
+      "D": "Incorrect. Static delivery is handled by Amazon S3 and Amazon CloudFront."
     },
     "practicalNote": "AWS CloudTrail is a service that records API calls and management events that occur within an AWS account, and makes it possible to trace who performed which operation on which resource and when. Every operation that goes through an API is recorded, including operations from the AWS Management Console, AWS CLI, AWS SDK, and automatic calls between AWS services. Each event includes the IAM principal that performed the operation (user name or role name), the source IP address, the request parameters, and the response. It plays a central role in security incident investigations, compliance audits, and root-cause tracing of operational changes.\n\nCloudTrail has two main forms of use. One is the Event history, which lets you search management events for the past 90 days from the console without any additional configuration, and is used for initial investigations during incidents. The other is the trail, which is a setting that continuously writes logs to an Amazon S3 bucket for long-term retention at the organization or account level. It is required for production environments that have to meet compliance requirements for long-term storage. Another important point in practice is that data events (object-level operations in Amazon S3, Lambda function invocations, and so on) are not recorded by default and must be explicitly enabled.\n\nOn CLF-C02, this content is asked as a question that requests the service that records the history of API operations within an AWS account, or the service that captures audit logs. Distractors include services whose purpose is different, such as Amazon S3 and CloudFront (static delivery), Amazon DynamoDB (NoSQL), and Amazon Route 53 (DNS). CloudTrail is easily confused with Amazon CloudWatch (metrics and log monitoring) and AWS Config (assessment of resource configuration state), but the coverage of each service is different. CloudTrail records API calls, CloudWatch handles metrics and application logs, and AWS Config tracks the state and change history of resource configurations. Telling the three apart is a recurring exam point.",
     "officialDocs": [
@@ -870,28 +870,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Strengthen authentication so that it does not rely on a password alone."
-      },
-      {
-        "choiceId": "B",
         "text": "Increase the storage capacity of Amazon S3."
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "Improve the CPU performance of Amazon EC2."
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Invalidate the cache of Amazon CloudFront."
+      },
+      {
+        "choiceId": "D",
+        "text": "Strengthen authentication so that it does not rely on a password alone."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "MFA uses an additional factor such as an authenticator app in addition to a password, which lowers the risk of account takeover.",
     "choiceExplanations": {
-      "A": "Correct. MFA strengthens authentication.",
-      "B": "Incorrect. It has nothing to do with S3 capacity.",
-      "C": "Incorrect. It has nothing to do with EC2 performance.",
-      "D": "Incorrect. It has nothing to do with CloudFront cache invalidation."
+      "A": "Incorrect. It has nothing to do with S3 capacity.",
+      "B": "Incorrect. It has nothing to do with EC2 performance.",
+      "C": "Incorrect. It has nothing to do with CloudFront cache invalidation.",
+      "D": "Correct. MFA strengthens authentication."
     },
     "practicalNote": "Multi-Factor Authentication (MFA) is a mechanism that requires multiple factors of different types at sign-in. In addition to a password (a knowledge factor), it requires a one-time code generated by an authenticator app or a hardware security key (a possession factor). On AWS, MFA can be configured for both IAM users and the root user. With MFA enabled, an account cannot be taken over by a leaked password alone. Even if credentials are accidentally published to a public repository such as GitHub or stolen in a phishing attack, sign-in can be blocked as long as the second factor is not in the attacker's hands. This is the main purpose of enabling MFA.\n\nMFA devices used in practice include virtual MFA devices (smartphone apps such as Authy and Google Authenticator), U2F or FIDO2 security keys (physical devices such as YubiKey), and hardware TOTP devices. AWS official best practices recommend that MFA be enabled on highly privileged accounts, such as the root user, administrator IAM users, and CI/CD roles that have production deployment permissions. In addition, a standard design is to evaluate the MFA state using the IAM policy condition key aws:MultiFactorAuthPresent, and to allow sensitive operations only on sessions that passed MFA.\n\nOn CLF-C02, this content is asked as a question about the primary purpose of enabling MFA, or about what can be done to lower the risk of account takeover. The correct answer is an option such as strengthening authentication so that it does not rely on a password alone. Common distractors apply unrelated service operations, such as increasing S3 capacity, improving EC2 performance, or invalidating the CloudFront cache.",
     "officialDocs": [
@@ -935,27 +935,27 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "A service that provides access to AWS compliance reports and agreements."
-      },
-      {
-        "choiceId": "B",
         "text": "A service that creates backups of Amazon EC2 instances."
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "A service that runs AWS Lambda functions on a schedule."
+      },
+      {
+        "choiceId": "C",
+        "text": "A service that provides access to AWS compliance reports and agreements."
       },
       {
         "choiceId": "D",
         "text": "A service that selects Amazon CloudFront edge locations."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "AWS Artifact provides access to compliance-related reports and agreements.",
     "choiceExplanations": {
-      "A": "Correct. AWS Artifact is used to review compliance documents.",
-      "B": "Incorrect. EC2 backups are handled by AMIs and EBS snapshots, among others.",
-      "C": "Incorrect. Scheduled execution is handled by Amazon EventBridge.",
+      "A": "Incorrect. EC2 backups are handled by AMIs and EBS snapshots, among others.",
+      "B": "Incorrect. Scheduled execution is handled by Amazon EventBridge.",
+      "C": "Correct. AWS Artifact is used to review compliance documents.",
       "D": "Incorrect. It is not a service that individually selects CloudFront edge locations."
     },
     "practicalNote": "AWS Artifact is a self-service portal for obtaining AWS compliance-related documents. It includes SOC 1, SOC 2, and SOC 3 reports, ISO certification documents, the PCI DSS Attestation of Compliance (AOC), HIPAA and FedRAMP-related documents, compliance documents specific to various countries and regions, and agreements with AWS (such as the Business Associate Agreement, BAA, and NDAs). These serve as primary materials when explaining AWS's security and compliance posture to third parties, and can be used directly as evidence for internal audits, external audits, and as documents submitted to customers.\n\nTypical scenarios in practice include obtaining the SOC 2 report as evidence of controls for the AWS infrastructure portion when undergoing a SOC 2 audit, signing a BAA with AWS when building a HIPAA-compliant medical system, and proving the AWS responsibility scope with the AOC for a PCI DSS cardholder data environment. AWS Artifact itself is free to use, but the documents are distributed under an NDA, so you are asked to agree to the terms when downloading them. If you use AWS Organizations, you can also delegate from the management account and obtain documents individually in each member account.\n\nOn CLF-C02, this content is asked as a question that requests the service used to access AWS compliance reports, or the service that can obtain audit documents. Distractors include service capabilities in unrelated areas, such as an EC2 backup service, a Lambda scheduler, or CloudFront edge selection. The name is similar to AWS Audit Manager (which automates the collection of audit evidence), but AWS Artifact is for obtaining AWS's own compliance documents, while Audit Manager is for collecting audit evidence in the customer environment. The roles are different.",
@@ -1004,7 +1004,7 @@
       },
       {
         "choiceId": "B",
-        "text": "Grant AdministratorAccess to all users."
+        "text": "Share access keys among everyone."
       },
       {
         "choiceId": "C",
@@ -1012,16 +1012,16 @@
       },
       {
         "choiceId": "D",
-        "text": "Share access keys among everyone."
+        "text": "Grant AdministratorAccess to all users."
       }
     ],
     "correctChoiceId": "A",
     "explanation": "Under the principle of least privilege, only the permissions required for the job are granted to users and services.",
     "choiceExplanations": {
       "A": "Correct. Permissions are scoped down to the necessary actions and resources.",
-      "B": "Incorrect. Routinely using AdministratorAccess is dangerous.",
+      "B": "Incorrect. Sharing access keys should be avoided.",
       "C": "Incorrect. Permission management is a security fundamental.",
-      "D": "Incorrect. Sharing access keys should be avoided."
+      "D": "Incorrect. Routinely using AdministratorAccess is dangerous."
     },
     "practicalNote": "The principle of least privilege is a fundamental security design principle. It states that users, roles, and services should be granted only the permissions on actions and resources that are required for the job, and nothing more. On AWS, IAM policies let you scope permissions along three axes: Action (the operation), Resource (the target), and Condition. For example, you can control permissions at fine granularity such as allowing only GetObject on the objects under a specific Amazon S3 bucket while not allowing writes or deletes, allowing Amazon EC2 launches only in a specific AWS Region, or allowing sensitive operations only on sessions that passed MFA.\n\nThe standard approach for operating this principle in practice is gradual reduction. First, run the application with broader permissions (AWS managed policies or permissions close to *:*), aggregate the APIs that were actually called using AWS CloudTrail, and then use the policy generation feature of IAM Access Analyzer to narrow the policy to the minimum necessary based on that result. Conversely, if you leave AdministratorAccess granted to all users, the blast radius from insider misuse, accidental operations, or credential leaks expands without limit. Sharing access keys is a prohibited item one step earlier. The desirable practice is to split IAM users per person, and ideally to use temporary credentials through IAM Identity Center.\n\nOn CLF-C02, this content is asked frequently as a direct definition question, such as which of the following is the most appropriate description of the principle of least privilege. The correct answer is the option that states you grant only the permissions required for the job. Distractors line up in the opposite direction of the principle, such as granting AdministratorAccess to everyone, not managing permissions at all, or sharing access keys. From SAA-C03 onward, IAM policy condition keys, the combination of resource-based policies and identity-based policies, and the upper-bound management with Permissions Boundaries or SCPs are asked in depth.",
     "officialDocs": [
@@ -1062,28 +1062,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Store files in an object format."
-      },
-      {
-        "choiceId": "B",
         "text": "Run virtual servers."
       },
       {
+        "choiceId": "B",
+        "text": "Manage a relational database."
+      },
+      {
         "choiceId": "C",
-        "text": "Provide DNS name resolution."
+        "text": "Store files in an object format."
       },
       {
         "choiceId": "D",
-        "text": "Manage a relational database."
+        "text": "Provide DNS name resolution."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "Amazon S3 is an object storage service that can be used to store files such as images, HTML, logs, and backups.",
     "choiceExplanations": {
-      "A": "Correct. Amazon S3 is object storage.",
-      "B": "Incorrect. Virtual servers are provided by Amazon EC2.",
-      "C": "Incorrect. DNS is provided by Amazon Route 53.",
-      "D": "Incorrect. Relational databases are provided by Amazon RDS."
+      "A": "Incorrect. Virtual servers are provided by Amazon EC2.",
+      "B": "Incorrect. Relational databases are provided by Amazon RDS.",
+      "C": "Correct. Amazon S3 is object storage.",
+      "D": "Incorrect. DNS is provided by Amazon Route 53."
     },
     "practicalNote": "Amazon S3 (Simple Storage Service) is a fully managed object storage service that stores files as units called objects. You place objects with a key name into a bucket (the logical container for storage) and read and write them over HTTP and HTTPS. There is no upper limit on storage capacity, and a single object can be up to 5 TB. Durability is designed for eleven nines (99.999999999%) of annual object durability, with data automatically replicated across multiple physical locations.\n\nTypical use cases in practice include serving static website assets (images, CSS, JavaScript, and HTML), data lakes (storing source data for analytics such as CSV, JSON, and Parquet), backup and archive (EBS snapshots and RDS snapshots are also stored on S3 internally), log aggregation (the destination for AWS CloudTrail, ALB, and VPC Flow Logs), an origin for Amazon CloudFront, and the location of software distribution packages. You can choose a storage class based on access frequency (Standard, Standard-IA, Intelligent-Tiering, and the Glacier classes), and you can use lifecycle policies to automatically transition data to a lower-cost class for cost optimization. It is important to understand that Amazon S3 is neither block storage (Amazon EBS or Amazon EC2 instance store volumes that the OS sees as a disk) nor file storage (Amazon EFS or NFS mounts), because the use cases are different.\n\nOn CLF-C02, this content is asked as a question about which of the following is the most appropriate primary use case for S3, or which service is suitable for storing images or backups. Distractors include services whose use case is not storage, such as Amazon EC2 (virtual servers), Amazon Route 53 (DNS), and Amazon RDS (relational database). From SAA-C03 onward, the selection of storage classes, versioning, replication, presigned URLs, the combination of bucket policies and IAM policies, and the distinction among encryption methods (SSE-S3, SSE-KMS, and SSE-C) are asked in depth.",
     "officialDocs": [
@@ -1129,11 +1129,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "A service that lets you launch virtual servers on AWS."
+        "text": "An object storage service."
       },
       {
         "choiceId": "B",
-        "text": "An object storage service."
+        "text": "A service that lets you launch virtual servers on AWS."
       },
       {
         "choiceId": "C",
@@ -1144,11 +1144,11 @@
         "text": "A service that sends cost budget notifications only."
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "Amazon EC2 is a service that lets you launch virtual servers on AWS, and configure the operating system and middleware to use them.",
     "choiceExplanations": {
-      "A": "Correct. EC2 is a virtual server service.",
-      "B": "Incorrect. Object storage is Amazon S3.",
+      "A": "Incorrect. Object storage is Amazon S3.",
+      "B": "Correct. EC2 is a virtual server service.",
       "C": "Incorrect. DNS is Amazon Route 53.",
       "D": "Incorrect. Budget notifications are handled by AWS Budgets."
     },
@@ -1202,11 +1202,11 @@
       },
       {
         "choiceId": "B",
-        "text": "You purchase and install physical servers."
+        "text": "It manages only DNS records."
       },
       {
         "choiceId": "C",
-        "text": "It manages only DNS records."
+        "text": "You purchase and install physical servers."
       },
       {
         "choiceId": "D",
@@ -1217,8 +1217,8 @@
     "explanation": "AWS Lambda is a serverless compute service that lets you run code in response to events without managing servers.",
     "choiceExplanations": {
       "A": "Correct. Lambda lets you run code without servers.",
-      "B": "Incorrect. There is no need to purchase physical servers.",
-      "C": "Incorrect. DNS management is handled by Amazon Route 53.",
+      "B": "Incorrect. DNS management is handled by Amazon Route 53.",
+      "C": "Incorrect. There is no need to purchase physical servers.",
       "D": "Incorrect. It is not a service for mailing invoices."
     },
     "practicalNote": "AWS Lambda is a serverless compute service that lets you run code without provisioning or managing servers. You deploy code as functions, which are triggered automatically by events such as a request to Amazon API Gateway, a file upload to Amazon S3, a message arriving on Amazon SQS, or a scheduled event from Amazon EventBridge. Billing is based on the execution time actually used in milliseconds (about 0.0000002 USD per request), so for small workloads with few requests or event-driven processing, the cost can be significantly lower than Amazon EC2.\n\nA key characteristic is that the maximum execution time is limited to 15 minutes. Long-running processing (such as batch jobs or video transcoding) is not a good fit, and in that case Amazon EC2 or Amazon ECS with AWS Fargate becomes the choice. Supported runtimes officially include Node.js, Python, Java, Go, Ruby, and .NET. You can also run any language using a custom runtime. The default concurrent execution limit is set per AWS Region, and cold-start latency can occur when traffic increases rapidly.\n\nOn CLF-C02, this content is asked as a question that requests which option lets you run code without managing servers, or which is a correct characteristic of Lambda. Understanding the concept of serverless itself (no infrastructure management, event-driven, per-millisecond billing, and an execution time limit) is important. Common distractors include Amazon EC2 (where you need to manage servers) and Amazon ECS (where you need to manage containers).",
@@ -1267,7 +1267,7 @@
       },
       {
         "choiceId": "B",
-        "text": "A NoSQL key-value database service."
+        "text": "A message queue service."
       },
       {
         "choiceId": "C",
@@ -1275,16 +1275,16 @@
       },
       {
         "choiceId": "D",
-        "text": "A message queue service."
+        "text": "A NoSQL key-value database service."
       }
     ],
     "correctChoiceId": "A",
     "explanation": "Amazon RDS is a managed service for using relational databases such as MySQL, PostgreSQL, MariaDB, Oracle Database, and Microsoft SQL Server.",
     "choiceExplanations": {
       "A": "Correct. RDS is a managed service for relational databases.",
-      "B": "Incorrect. NoSQL key-value use cases are served by Amazon DynamoDB.",
+      "B": "Incorrect. The message queue is Amazon SQS.",
       "C": "Incorrect. The CDN is Amazon CloudFront.",
-      "D": "Incorrect. The message queue is Amazon SQS."
+      "D": "Incorrect. NoSQL key-value use cases are served by Amazon DynamoDB."
     },
     "practicalNote": "Amazon RDS (Relational Database Service) is a managed service that provides the setup, operation, and scaling of relational databases (RDB). AWS handles OS patching, database engine upgrades, automatic snapshots (backups), and failover (automatic switchover in a Multi-AZ deployment). The user can focus on data model design, SQL tuning, and application development.\n\nThe supported engines are six families: Amazon Aurora (MySQL- and PostgreSQL-compatible), MySQL, PostgreSQL, MariaDB, Oracle Database, and Microsoft SQL Server. Aurora is a cloud-native engine that AWS developed in-house, designed to provide higher throughput and lower latency than ordinary MySQL. Compared with installing an RDB on Amazon EC2 yourself, RDS significantly reduces operational overhead, but the trade-off is that you cannot perform OS-level customization.\n\nWhen you enable a Multi-AZ deployment, a standby replica is created in a different Availability Zone, and an automatic failover happens when the primary fails. Creating a Read Replica lets you scale out reads.\n\nOn CLF-C02, this content is asked as a direct question that requests which managed service is for relational databases. Distractors include Amazon DynamoDB (NoSQL), Amazon CloudFront (CDN), and Amazon SQS (message queue). If you keep the axis that RDS is a managed service for relational databases, you can reliably select the correct answer. From SAA-C03 onward, the differences between Multi-AZ and Read Replicas, the characteristics of Aurora, parameter groups, encryption, and sharing and copying snapshots are explored in depth.",
     "officialDocs": [
@@ -1331,11 +1331,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "A fully managed NoSQL database service"
+        "text": "A CDN that delivers only static files"
       },
       {
         "choiceId": "B",
-        "text": "A service for creating virtual networks"
+        "text": "A fully managed NoSQL database service"
       },
       {
         "choiceId": "C",
@@ -1343,16 +1343,16 @@
       },
       {
         "choiceId": "D",
-        "text": "A CDN that delivers only static files"
+        "text": "A service for creating virtual networks"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "Amazon DynamoDB is a fully managed NoSQL database service that is well suited for storing key-value and document data.",
     "choiceExplanations": {
-      "A": "Correct. DynamoDB is a fully managed NoSQL database.",
-      "B": "Incorrect. Virtual networks are provided by VPC.",
+      "A": "Incorrect. The CDN service is CloudFront.",
+      "B": "Correct. DynamoDB is a fully managed NoSQL database.",
       "C": "Incorrect. Virtual servers are provided by EC2.",
-      "D": "Incorrect. The CDN service is CloudFront."
+      "D": "Incorrect. Virtual networks are provided by VPC."
     },
     "practicalNote": "Amazon DynamoDB is a fully managed NoSQL database service provided by AWS. In the CLF-C02 exam context, the key is to use it as a binary decision axis: \"does the workload need a relational database, or does it need NoSQL?\"\n\nThe DynamoDB characteristics that appear on the exam can be summarized into four points. (1) It is NoSQL (schemaless and non-relational). (2) It is fully managed, so no server administration is required and scaling is handled automatically. (3) It is designed for high throughput and single-digit millisecond latency. (4) It is commonly used as the backend of serverless architectures together with Lambda and API Gateway.\n\nAs a decision axis, use RDS when an existing relational schema and JOIN operations are required, and use DynamoDB when access patterns are simple and large volumes of reads and writes are needed, or when the system is designed around NoSQL access patterns. On the CLF exam, DynamoDB is the correct answer to questions such as \"Which is the managed NoSQL key-value service?\" and \"Which database is used with Lambda for a serverless architecture?\" Common distractors include RDS (relational database), VPC (virtual network), EC2 (virtual server), and CloudFront (CDN).",
     "officialDocs": [
@@ -1396,28 +1396,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Delivering content from edge locations close to users"
+        "text": "Sending only AWS billing budget notifications"
       },
       {
         "choiceId": "B",
-        "text": "Creating IAM users"
+        "text": "Delivering content from edge locations close to users"
       },
       {
         "choiceId": "C",
-        "text": "Running SQL queries against RDS"
+        "text": "Creating IAM users"
       },
       {
         "choiceId": "D",
-        "text": "Sending only AWS billing budget notifications"
+        "text": "Running SQL queries against RDS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "CloudFront is a CDN service that uses edge locations to deliver web content with low latency.",
     "choiceExplanations": {
-      "A": "Correct. CloudFront delivers content from edge locations.",
-      "B": "Incorrect. IAM user management is handled by IAM.",
-      "C": "Incorrect. SQL execution is performed by databases such as RDS.",
-      "D": "Incorrect. Budget notifications are handled by AWS Budgets."
+      "A": "Incorrect. Budget notifications are handled by AWS Budgets.",
+      "B": "Correct. CloudFront delivers content from edge locations.",
+      "C": "Incorrect. IAM user management is handled by IAM.",
+      "D": "Incorrect. SQL execution is performed by databases such as RDS."
     },
     "practicalNote": "Amazon CloudFront is a CDN (Content Delivery Network) service that AWS operates from edge locations worldwide. You register an S3 bucket, an ALB, an API Gateway endpoint, or your own origin server as the origin. Edge locations then cache the content retrieved from the origin and serve it to users from a nearby location. This reduces latency caused by geographic distance and lowers direct origin traffic, which in turn reduces origin load and data transfer cost.\n\nOn the exam, the typical pattern is to pick CloudFront from keywords such as \"a service that delivers content quickly from the edge\" or \"the CDN service.\" Common distractors include IAM (user and permission management), RDS (running SQL against a relational database), and AWS Budgets (budget threshold alerts). All of these belong to a completely different domain than content delivery, and the question is essentially asking whether the test taker has confused the role of the service. Key points for CLF-C02 are that CloudFront is a caching delivery service rather than a storage service, that it is used for HTTPS delivery, and that it is combined with ACM certificates.\n\nFor SAA-C03 and above, more advanced topics are covered. These include protecting an S3 origin with OAC (Origin Access Control) so that the bucket can stay private while still being served, cache TTL and Invalidation operations, the constraint that ACM certificates used with CloudFront must reside in us-east-1, attack mitigation in combination with WAF, and access control through signed URLs and signed cookies.",
     "officialDocs": [
@@ -1461,28 +1461,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Providing DNS name resolution and domain-related features"
+        "text": "A service for deleting CloudWatch Logs"
       },
       {
         "choiceId": "B",
-        "text": "Automatically generating Lambda function source code"
-      },
-      {
-        "choiceId": "C",
         "text": "A dedicated service for encrypting S3 objects"
       },
       {
+        "choiceId": "C",
+        "text": "Automatically generating Lambda function source code"
+      },
+      {
         "choiceId": "D",
-        "text": "A service for deleting CloudWatch Logs"
+        "text": "Providing DNS name resolution and domain-related features"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Route 53 is a DNS service used to resolve domain names to IP addresses or to resources such as CloudFront.",
     "choiceExplanations": {
-      "A": "Correct. Route 53 is a DNS-related service.",
-      "B": "Incorrect. It is not a Lambda code generation service.",
-      "C": "Incorrect. Encryption key management is handled by KMS.",
-      "D": "Incorrect. It is not a dedicated log deletion service."
+      "A": "Incorrect. It is not a dedicated log deletion service.",
+      "B": "Incorrect. Encryption key management is handled by KMS.",
+      "C": "Incorrect. It is not a Lambda code generation service.",
+      "D": "Correct. Route 53 is a DNS-related service."
     },
     "practicalNote": "Amazon Route 53 is the managed authoritative DNS service provided by AWS. It centers on three core capabilities: domain name registration (registrar functionality), DNS name resolution (authoritative DNS server functionality), and routing policies that integrate with health checks. You create a \"hosted zone,\" register DNS records (A, AAAA, CNAME, MX, TXT, Alias, and so on), and AWS edge locations respond to queries from DNS resolvers around the world.\n\nThe available routing policies are Simple (a straightforward one-to-one resolution), Weighted (for A/B testing), Latency-based (routes users to the Region with the lowest latency), Geolocation (routes by country or region), Failover (switches to a standby when a health check fails), Multivalue answer (returns multiple IP addresses), and Geoproximity (routes by physical location with optional traffic bias). You choose between them based on the requirements. An Alias record is an important feature that differs from a CNAME because it lets you point an apex (root) domain directly to an AWS resource such as CloudFront, ALB, an S3 static site, or API Gateway.\n\nOn the exam, the question is typically phrased as \"Which service performs DNS name resolution?\" or \"Which service provides domain-related features?\" Common distractors include options such as \"automatically generates Lambda code,\" \"encrypts S3 objects,\" or \"deletes CloudWatch Logs,\" all of which are completely unrelated to DNS. CLF-C02 focuses on whether you can distinguish the scope of each service. SAA-C03 and above go deeper into when to use Alias records versus CNAME, how to select routing policies, health checks and DR design (Route 53 failover), and the relationship between a private hosted zone and a VPC.",
     "officialDocs": [
@@ -1528,7 +1528,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "A service that passes messages between applications as a queue"
+        "text": "A service that forecasts AWS account usage charges"
       },
       {
         "choiceId": "B",
@@ -1536,19 +1536,19 @@
       },
       {
         "choiceId": "C",
-        "text": "A service that forecasts AWS account usage charges"
+        "text": "A service that passes messages between applications as a queue"
       },
       {
         "choiceId": "D",
         "text": "A service that creates a virtual private network"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "Amazon SQS is a message queue service that can be used to loosely couple systems.",
     "choiceExplanations": {
-      "A": "Correct. SQS is a message queue.",
+      "A": "Incorrect. Cost analysis is performed using Cost Explorer and similar services.",
       "B": "Incorrect. Cache delivery is provided by CloudFront.",
-      "C": "Incorrect. Cost analysis is performed using Cost Explorer and similar services.",
+      "C": "Correct. SQS is a message queue.",
       "D": "Incorrect. Virtual networks are provided by VPC."
     },
     "practicalNote": "Amazon SQS (Simple Queue Service) is a fully managed message queue service. The sender (producer) puts a message into the queue and the receiver (consumer) takes the message out of the queue and processes it. Because the sender and receiver do not communicate directly, the two sides can be loosely coupled, which is the biggest characteristic of the service. Even if a consumer is temporarily down, the messages remain in the queue, and processing can resume after the consumer comes back online. This improves the fault tolerance of the system as a whole.\n\nSQS provides two types of queues. A Standard queue offers nearly unlimited throughput, at-least-once delivery, and best-effort ordering, and is suitable for most asynchronous workloads. A FIFO queue provides ordering guarantees and deduplication, with throughput lower than a Standard queue. FIFO queues are used for workloads such as order processing or payment events where strict ordering and deduplication are required. Each message has a visibility timeout, which is the period during which it is hidden from other consumers after being received. If processing does not complete within that period, the message returns to the queue and becomes available for reprocessing.\n\nOn the exam, the question is typically phrased as \"Which service passes messages between applications as a queue?\" or \"Which service loosely couples systems?\" Distractors include CloudFront (cache delivery), Cost Explorer (cost analysis), and VPC (virtual networking), all of which lie outside messaging. The distinction between SNS (Pub/Sub), EventBridge (event routing), and SQS (message queue) is a frequent comparison point. The general guideline is to use SQS for one-to-one polling, SNS for one-to-many fanout, and EventBridge for rule-based event routing. SAA-C03 and above go deeper into visibility timeout design, DLQ (dead-letter queues), long polling, and SNS+SQS fanout architectures.",
@@ -1598,28 +1598,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Monitoring AWS resources using metrics, logs, and alarms"
-      },
-      {
-        "choiceId": "B",
         "text": "Managing DNS records"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "Automatically generating S3 bucket names"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Automatically deleting IAM policies"
+      },
+      {
+        "choiceId": "D",
+        "text": "Monitoring AWS resources using metrics, logs, and alarms"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "CloudWatch is a monitoring service that manages metrics, logs, and alarms for AWS resources and applications.",
     "choiceExplanations": {
-      "A": "Correct. CloudWatch is used for monitoring and log management.",
-      "B": "Incorrect. DNS management is handled by Route 53.",
-      "C": "Incorrect. It is not a service that generates S3 bucket names.",
-      "D": "Incorrect. It is not a service that deletes IAM policies."
+      "A": "Incorrect. DNS management is handled by Route 53.",
+      "B": "Incorrect. It is not a service that generates S3 bucket names.",
+      "C": "Incorrect. It is not a service that deletes IAM policies.",
+      "D": "Correct. CloudWatch is used for monitoring and log management."
     },
     "practicalNote": "Amazon CloudWatch is a monitoring service that consolidates metrics, logs, and alarms for AWS resources and applications. Major services such as EC2, RDS, Lambda, ECS, and API Gateway send metrics (CPU utilization, network I/O, request count, execution time, and so on) to CloudWatch by default, and time-series data can be viewed without additional configuration. Custom metrics can also be sent from the application side, allowing business metrics such as order count, error rate, and billing amount to be visualized in a unified manner.\n\nCloudWatch Logs consolidates application logs, and supports query search through Logs Insights, retention configuration, long-term export to S3, and metric extraction from logs through Metric Filters. CloudWatch Alarms detect when a metric exceeds a threshold and send notifications through SNS to email, Slack, PagerDuty, and other channels, and can also serve as a trigger for Auto Scaling or EC2 actions. CloudWatch Dashboards bring these together into operational dashboards.\n\nOn the exam, the question is typically phrased as \"Which service monitors AWS resources?\" or \"Which service manages metrics and logs?\" Distractors include Route 53 (DNS), S3 bucket creation, and IAM policy deletion, all of which are completely unrelated to monitoring or observability. The distinction between CloudWatch (monitoring the \"behavior\" of resources and applications), CloudTrail (audit log of AWS API calls), and AWS Config (history of resource configuration changes) is a frequent comparison point on both CLF-C02 and SAA-C03. SAA-C03 and above go deeper into integration with Auto Scaling, composite alarms, Logs Insights query design, and distributed tracing in combination with X-Ray.",
     "officialDocs": [
@@ -1672,11 +1672,11 @@
       },
       {
         "choiceId": "B",
-        "text": "Encrypting S3 buckets"
+        "text": "Updating the OS of EC2 instances"
       },
       {
         "choiceId": "C",
-        "text": "Updating the OS of EC2 instances"
+        "text": "Encrypting S3 buckets"
       },
       {
         "choiceId": "D",
@@ -1687,8 +1687,8 @@
     "explanation": "AWS Budgets lets you set monthly budgets and usage thresholds, and notify you when they are exceeded or forecast to be exceeded.",
     "choiceExplanations": {
       "A": "Correct. AWS Budgets is used for billing alerts.",
-      "B": "Incorrect. Encryption is handled by SSE, KMS, and similar services.",
-      "C": "Incorrect. It is not an OS update service.",
+      "B": "Incorrect. It is not an OS update service.",
+      "C": "Incorrect. Encryption is handled by SSE, KMS, and similar services.",
       "D": "Incorrect. DNS is handled by Route 53."
     },
     "practicalNote": "AWS Budgets is a budget management service that lets you set budgets (thresholds) for usage charges and usage volume, and fire an alert when a threshold is exceeded or forecast to be exceeded. You can create cost budgets (monthly, quarterly, or annual charge thresholds), usage budgets (thresholds on usage volume for a specific service), reservation utilization budgets, and Savings Plans utilization budgets, and the notification destinations can be email or an SNS topic. With Budgets Actions, you can also set up automated actions such as attaching an IAM policy that suppresses resource launches when a threshold is exceeded.\n\nIn practice, the most common usage pattern is to prevent accidental large charges in AWS accounts used for personal development or testing. Setting a small monthly threshold such as 1,000 yen or 5,000 yen, with email notifications at 50 percent, 80 percent, 100 percent, and forecast exceedance, lets you detect unexpected costs early. In production accounts, the more common pattern is per-project tag-based budgets that give each team its own budget. AWS Budgets is easily confused with Cost Explorer. Cost Explorer visualizes and analyzes cost structure, while AWS Budgets sets budget thresholds and fires alerts when they are exceeded. The roles are clearly different.\n\nOn the exam, the question is typically phrased as \"Which service lets you set a budget and notify you when it is exceeded?\" or \"Which service can set up billing alerts?\" Distractors include S3 encryption, EC2 OS updates, and DNS record creation, all of which are completely unrelated to budget management. CLF-C02 focuses on whether you can distinguish the scope of each service. The distinction between AWS Budgets (budget alerts), Cost Explorer (cost visualization and analysis), and Cost and Usage Report (a detailed usage charge CSV exported to S3) is a frequent comparison point.",
@@ -1730,28 +1730,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Analyzing trends in AWS usage charges and usage volume"
-      },
-      {
-        "choiceId": "B",
-        "text": "Resetting the password of an IAM user"
-      },
-      {
-        "choiceId": "C",
         "text": "Storing the code of a Lambda function"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "Analyzing trends in AWS usage charges and usage volume"
+      },
+      {
+        "choiceId": "C",
         "text": "Stopping DNS queries in Route 53"
+      },
+      {
+        "choiceId": "D",
+        "text": "Resetting the password of an IAM user"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "Cost Explorer visualizes AWS usage charges and usage volume, and supports cost analysis by service and by period.",
     "choiceExplanations": {
-      "A": "Correct. Cost Explorer is used for cost analysis.",
-      "B": "Incorrect. IAM operations are performed in IAM.",
-      "C": "Incorrect. It is not a description of Lambda code storage.",
-      "D": "Incorrect. It is not a service that stops DNS queries."
+      "A": "Incorrect. It is not a description of Lambda code storage.",
+      "B": "Correct. Cost Explorer is used for cost analysis.",
+      "C": "Incorrect. It is not a service that stops DNS queries.",
+      "D": "Incorrect. IAM operations are performed in IAM."
     },
     "practicalNote": "AWS Cost Explorer is a free Management Console feature that visualizes and analyzes the cost and usage incurred in an AWS account. You can view daily and monthly trends, the breakdown by service, the breakdown by Region, the breakdown by linked account, and grouping by tags or cost allocation tags, all in charts and tables. You can see up to 13 months of historical data plus a 12-month forecast.\n\nOn the exam, the question is typically phrased as \"Which service analyzes trends in AWS usage charges and usage volume?\" and Cost Explorer is the correct answer. Distractors include \"resetting an IAM user password,\" \"storing Lambda code,\" and \"stopping DNS queries in Route 53,\" all of which lie outside the scope of cost management. This is a classic case where the exam is testing whether you have confused the role of the service.\n\nIn practice, Cost Explorer is often used together with AWS Budgets. Cost Explorer is for \"analyzing\" past trends, while AWS Budgets is for sending \"alerts\" when a predefined budget is exceeded. CLF-C02 repeatedly tests the division of roles between these two services. For deeper cost optimization, it is common to start from a Cost Explorer report to check Savings Plans purchase recommendations, or to monitor the coverage and utilization of Reserved Instances.",
     "officialDocs": [
@@ -1792,7 +1792,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Recommendations for cost optimization, security, fault tolerance, and more"
+        "text": "Automatic source code generation for EC2"
       },
       {
         "choiceId": "B",
@@ -1800,20 +1800,20 @@
       },
       {
         "choiceId": "C",
-        "text": "Automatic source code generation for EC2"
+        "text": "Programming training material for Lambda functions"
       },
       {
         "choiceId": "D",
-        "text": "Programming training material for Lambda functions"
+        "text": "Recommendations for cost optimization, security, fault tolerance, and more"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "AWS Trusted Advisor inspects your AWS environment and presents recommendations in areas such as cost optimization, security, fault tolerance, and performance.",
     "choiceExplanations": {
-      "A": "Correct. Trusted Advisor is used for AWS environment improvement recommendations.",
+      "A": "Incorrect. It is not a source code generation service.",
       "B": "Incorrect. It is not an image editing service.",
-      "C": "Incorrect. It is not a source code generation service.",
-      "D": "Incorrect. It is not a training material service."
+      "C": "Incorrect. It is not a training material service.",
+      "D": "Correct. Trusted Advisor is used for AWS environment improvement recommendations."
     },
     "practicalNote": "AWS Trusted Advisor is a service that automatically inspects the resource configuration of an AWS account and presents recommendations across five categories: cost optimization, security, fault tolerance, performance, and service quotas. Typical check items include unused Elastic IP addresses, EC2 instances with low utilization, publicly accessible S3 buckets, the presence of MFA on the IAM users, and EBS snapshot generation management.\n\nThe set of available checks varies by support plan. Basic and Developer Support are limited to the core checks (some checks in the security and service quota categories), while paid Business Support and above unlock the full set of checks across all categories. The feature differences by support plan are frequently tested on CLF-C02.\n\nOn the exam, the question is typically phrased as \"Which service lets you check recommendations for improving cost, security, and fault tolerance in your AWS environment?\" Distractors include options such as \"image editing of S3 objects,\" \"automatic EC2 source code generation,\" and \"Lambda training material,\" all of which are completely unrelated to the role of Trusted Advisor. It is also worth noting that Trusted Advisor is a service that \"presents recommendations\" rather than one that automatically changes the configuration.",
     "officialDocs": [
@@ -1854,7 +1854,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Consider Savings Plans or Reserved Instances"
+        "text": "Keep CloudWatch Logs forever"
       },
       {
         "choiceId": "B",
@@ -1862,19 +1862,19 @@
       },
       {
         "choiceId": "C",
-        "text": "Keep CloudWatch Logs forever"
+        "text": "Consider Savings Plans or Reserved Instances"
       },
       {
         "choiceId": "D",
         "text": "Fix all data on storage for high-frequency access"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "For long-running, stable workloads, Savings Plans or Reserved Instances can lower the cost compared with On-Demand pricing in many cases.",
     "choiceExplanations": {
-      "A": "Correct. For long-term use, consider discount options.",
+      "A": "Incorrect. Keeping logs indefinitely increases cost.",
       "B": "Incorrect. On-Demand is flexible but can be more expensive for long, fixed-term use.",
-      "C": "Incorrect. Keeping logs indefinitely increases cost.",
+      "C": "Correct. For long-term use, consider discount options.",
       "D": "Incorrect. Choosing storage according to access frequency is important."
     },
     "practicalNote": "EC2 has four billing models: On-Demand, Savings Plans, Reserved Instances (RI), and Spot Instances. On-Demand bills usage per second or per hour with no commitment, Savings Plans and RI discount the hourly unit price in exchange for a one-year or three-year commitment, and Spot uses spare capacity at a heavy discount in exchange for the risk of interruption. For workloads that run stably over the long term, combining Savings Plans or RI can reduce cost by up to around 70 percent compared with On-Demand.\n\nSavings Plans commit to a hourly spend amount that applies across EC2, Fargate, and Lambda. Compute Savings Plans are particularly flexible because they automatically follow changes to the instance family, Region, OS, and tenancy. RI is EC2-specific. In exchange for specifying an instance type, Standard RI provides the highest discount rate and Convertible RI provides the flexibility to change the instance family. CLF-C02 only goes as far as asking whether to consider a discount option for long-term use, while SAA-C03 and above go deeper into the choice between Savings Plans and RI and the differences between Compute and EC2 Instance Savings Plans.\n\nFrequent distractors include \"always use only On-Demand pricing,\" \"keep CloudWatch Logs forever,\" and \"fix all data on storage for high-frequency access,\" all of which increase cost rather than reduce it. The correspondence to remember is: long-term fixed usage equals a discounted commitment, highly variable usage equals On-Demand or serverless, and interruption-tolerant usage equals Spot.",
@@ -1920,28 +1920,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Multiple plans are available based on the use case and the required level of support"
+        "text": "Using a support plan makes all AWS service usage charges free"
       },
       {
         "choiceId": "B",
-        "text": "All support plans always come with a dedicated technical account manager"
+        "text": "Multiple plans are available based on the use case and the required level of support"
       },
       {
         "choiceId": "C",
-        "text": "Support plans are completely free regardless of AWS usage charges"
+        "text": "All support plans always come with a dedicated technical account manager"
       },
       {
         "choiceId": "D",
-        "text": "Using a support plan makes all AWS service usage charges free"
+        "text": "Support plans are completely free regardless of AWS usage charges"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "AWS offers support plans such as Basic, Developer, Business, and Enterprise tiers, tailored to the use case and the required level of support.",
     "choiceExplanations": {
-      "A": "Correct. You choose a plan based on the support content you need.",
-      "B": "Incorrect. Whether a dedicated contact is assigned depends on the plan.",
-      "C": "Incorrect. There are paid support plans.",
-      "D": "Incorrect. A support plan does not make AWS usage charges free."
+      "A": "Incorrect. A support plan does not make AWS usage charges free.",
+      "B": "Correct. You choose a plan based on the support content you need.",
+      "C": "Incorrect. Whether a dedicated contact is assigned depends on the plan.",
+      "D": "Incorrect. There are paid support plans."
     },
     "practicalNote": "AWS Support offers multiple plans: Basic, Developer, Business, Enterprise On-Ramp, and Enterprise. Basic is the minimum plan included free with every account, and covers billing and account inquiries, access to AWS documentation, whitepapers, and community forums, the core checks in Trusted Advisor, and AWS Personal Health Dashboard. Developer and above are paid, and add capabilities such as the ability to open technical support cases, response time SLAs, the full set of Trusted Advisor checks, and third-party software support, expanding progressively with each plan. Enterprise On-Ramp and Enterprise add a Technical Account Manager (TAM) who provides periodic architecture reviews and operational guidance.\n\nOn the exam, the typical pattern places a neutral correct answer such as \"multiple plans are available based on the use case and the required level of support\" alongside extreme distractors such as \"a TAM always comes with every plan,\" \"support plans are completely free,\" or \"using a support plan makes AWS usage charges free.\" If you remember the two facts that Basic is included for free with every account and that technical support and TAM access depend on the plan, you can rule out the extreme distractors.\n\nThe general guideline for choosing a plan in practice is to consider Business or above if you run even a single production workload, Enterprise On-Ramp or Enterprise if you operate mission-critical production, and to stay on Basic or Developer for learning or test workloads. The price of a support plan is the sum of a fixed monthly amount and a percentage of AWS usage charges, so the price increases as your usage grows.",
     "officialDocs": [
@@ -1980,7 +1980,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Physical protection of the AWS global infrastructure"
+        "text": "Replacing the underlying hardware of AWS managed services"
       },
       {
         "choiceId": "B",
@@ -1988,20 +1988,20 @@
       },
       {
         "choiceId": "C",
-        "text": "Permission design for IAM users and IAM roles"
+        "text": "Physical protection of the AWS global infrastructure"
       },
       {
         "choiceId": "D",
-        "text": "Replacing the underlying hardware of AWS managed services"
+        "text": "Permission design for IAM users and IAM roles"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "D",
     "explanation": "Under the shared responsibility model, AWS is responsible for security of the cloud, and the customer is responsible for security in the cloud. IAM permission design and access management are the customer's responsibility.",
     "choiceExplanations": {
-      "A": "Incorrect. Physical protection of the AWS global infrastructure is AWS's responsibility.",
+      "A": "Incorrect. Maintenance of the underlying hardware is AWS's responsibility.",
       "B": "Incorrect. Management of data center facilities is AWS's responsibility.",
-      "C": "Correct. IAM permission design is the customer's security in the cloud.",
-      "D": "Incorrect. Maintenance of the underlying hardware is AWS's responsibility."
+      "C": "Incorrect. Physical protection of the AWS global infrastructure is AWS's responsibility.",
+      "D": "Correct. IAM permission design is the customer's security in the cloud."
     },
     "practicalNote": "The AWS shared responsibility model divides responsibilities between AWS and the customer into security of the cloud and security in the cloud. AWS is responsible for the physical security of data centers, the hardware of servers, storage, and network equipment, the hypervisor and the underlying software of managed services, and operation of the AWS global infrastructure as a whole. The customer is responsible for IAM permission design, OS and middleware patching for IaaS, data encryption, network configuration such as VPC, security groups, and NACLs, application code, and data classification and protection.\n\nThe scope of customer responsibility shifts based on the service type. For IaaS such as Amazon EC2, everything from the OS up is the customer's responsibility. For managed services such as Amazon RDS, the OS and the database engine itself move to AWS, and the customer becomes responsible for schema design, data, network paths, and IAM authentication. For fully managed services such as Amazon S3 and Amazon DynamoDB, customer responsibility narrows further to data and access control. For serverless services such as AWS Lambda, the function code and the IAM execution role remain the customer's responsibility.\n\nOn the exam, this concept appears in questions that ask which of the following items is the customer's responsibility. IAM permission design, data encryption, security group rule configuration, and guest OS patching appear as correct answers. Distractors list items that are clearly on the AWS side, such as managing power equipment in a data center, physical protection of the global infrastructure, or replacing the underlying hardware of managed services. On CLF-C02, this boundary is frequently tested.",
     "officialDocs": [
@@ -2045,7 +2045,7 @@
       },
       {
         "choiceId": "B",
-        "text": "AWS CloudTrail"
+        "text": "AWS Shield"
       },
       {
         "choiceId": "C",
@@ -2053,16 +2053,16 @@
       },
       {
         "choiceId": "D",
-        "text": "AWS Shield"
+        "text": "AWS CloudTrail"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "AWS Budgets lets you set thresholds for budget amounts and usage, and receive notifications when the thresholds are exceeded or forecasted to be exceeded.",
     "choiceExplanations": {
       "A": "Correct. AWS Budgets is used for cost monitoring and budget alerts.",
-      "B": "Incorrect. CloudTrail records API activity within an AWS account.",
+      "B": "Incorrect. AWS Shield is a DDoS protection service. It is not used for cost notifications.",
       "C": "Incorrect. CloudFront is a content delivery network. It is not a budget notification service.",
-      "D": "Incorrect. AWS Shield is a DDoS protection service. It is not used for cost notifications."
+      "D": "Incorrect. CloudTrail records API activity within an AWS account."
     },
     "practicalNote": "AWS Budgets is a cost management service that lets you set thresholds for AWS charges and usage, and receive notifications when those thresholds are exceeded or forecasted to be exceeded. You can set budgets on multiple dimensions, including monthly, quarterly, or annual budget amounts, coverage and utilization metrics for Reserved Instances and Savings Plans, and usage by specific service or tag. Notifications can be sent to Amazon SNS topics, to email, or to Slack and Microsoft Teams through AWS Chatbot.\n\nOn the exam, the typical question asks which service is appropriate for receiving a notification when AWS charges are about to exceed an expected amount. Distractors that frequently appear include CloudTrail (records API activity), CloudFront (CDN), and Shield (DDoS protection). None of these are primarily cost notification services, so as long as you understand the scope of each, you can easily rule them out.\n\nIn practice, AWS Budgets is often used in combination with AWS Cost Explorer. Cost Explorer is for analyzing costs from the past up to the present, while AWS Budgets is for alerting when a predefined threshold is crossed. CLF-C02 frequently tests this division of roles between the two services. As a low-cost first step against unexpected bills, the typical recommendation is to set up a single monthly budget alert at the account level in AWS Budgets.",
     "officialDocs": [
@@ -2101,28 +2101,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon S3"
-      },
-      {
-        "choiceId": "B",
-        "text": "Amazon RDS"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon EBS"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "AWS IAM"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon S3"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon RDS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "Amazon S3 is an object storage service and is well suited to storing static files such as HTML, CSS, JavaScript, and images. Combined with CloudFront, it can deliver content quickly and securely.",
     "choiceExplanations": {
-      "A": "Correct. S3 is object storage well suited to storing static files.",
-      "B": "Incorrect. RDS is a relational database. Storing static files is not its primary purpose.",
-      "C": "Incorrect. EBS is block storage attached to EC2. For publishing a static site, S3 is the standard choice.",
-      "D": "Incorrect. IAM is a permission management service, not a file storage service."
+      "A": "Incorrect. EBS is block storage attached to EC2. For publishing a static site, S3 is the standard choice.",
+      "B": "Incorrect. IAM is a permission management service, not a file storage service.",
+      "C": "Correct. S3 is object storage well suited to storing static files.",
+      "D": "Incorrect. RDS is a relational database. Storing static files is not its primary purpose."
     },
     "practicalNote": "Amazon S3 is an object storage service that stores static files such as HTML, CSS, JavaScript, and images, and can serve them directly over HTTP and HTTPS. Enabling the static website hosting feature lets you publish the objects in a bucket as a website, so you can serve web pages without running a server continuously. Because there is no server to manage and billing is based on data transfer and stored capacity, S3 is widely used as the foundation for static site delivery.\n\nOn the exam, the typical question asks which service is used to store the content of a static website, with Amazon S3 as the correct answer. Distractors include RDS (relational database), EBS (block storage for EC2), and IAM (authentication and authorization). None of these are primarily for delivering static website content, so as long as you understand the scope of each service, you can rule them out.\n\nIn practice, the common pattern is not to publish a static site from S3 alone, but to combine S3 with CloudFront. S3 acts as the origin and CloudFront sits in front as the CDN, providing HTTPS delivery, cache acceleration, custom domain support, and WAF integration in one configuration. CLF-C02 focuses on the role of S3. From SAA-C03 and above, the S3 plus CloudFront pattern and preventing direct S3 access using Origin Access Control (OAC) are also tested repeatedly.",
     "officialDocs": [
@@ -2171,11 +2171,11 @@
       },
       {
         "choiceId": "C",
-        "text": "A model in which all AWS services become free"
+        "text": "A model that always requires a one-year contract once a resource is created"
       },
       {
         "choiceId": "D",
-        "text": "A model that always requires a one-year contract once a resource is created"
+        "text": "A model in which all AWS services become free"
       }
     ],
     "correctChoiceId": "B",
@@ -2183,8 +2183,8 @@
     "choiceExplanations": {
       "A": "Incorrect. This is closer to a fixed-price model and does not describe pay-as-you-go.",
       "B": "Correct. With AWS, many services are charged based only on what you use.",
-      "C": "Incorrect. AWS has a Free Tier, but not all services are free.",
-      "D": "Incorrect. Some purchase options offer discounts with long-term commitments, but they are not the definition of pay-as-you-go."
+      "C": "Incorrect. Some purchase options offer discounts with long-term commitments, but they are not the definition of pay-as-you-go.",
+      "D": "Incorrect. AWS has a Free Tier, but not all services are free."
     },
     "practicalNote": "Pay-as-you-go is a billing model in which charges are based on the amount of resources used. Nearly all AWS services follow this approach. An Amazon EC2 instance is billed for the time it is running, Amazon S3 for the amount of objects stored and data transferred, and AWS Lambda for the number and duration of executions. In short, you pay for what you use. When you stop or delete a resource, the charges stop or decrease.\n\nOn the exam, the typical question asks what kind of model pay-as-you-go is. Distractors include a model where the same fixed amount is always charged every month regardless of usage, a model in which all AWS services become free, and a model that always requires a one-year contract once a resource is created. None of these match the definition of pay-as-you-go, so they can be ruled out. Extreme statements such as everything is free, always a fixed amount, or always a long-term contract often diverge from the nature of cloud pricing and tend to be incorrect.\n\nA practical caveat is that the benefit of pay-as-you-go, paying only for what you use, also means that costs can grow without bound if usage runs unchecked. Forgetting to stop a resource, exceeding Free Tier limits, and unintended large data transfers can all push the bill above expectations. Common countermeasures are to set budget alerts with AWS Budgets, regularly review the breakdown with Cost Explorer, and delete unused resources. For workloads with a steady load, long-term commitment discounts such as Reserved Instances and Savings Plans are another option for reducing costs. CLF-C02 tests these pricing models across multiple questions.",
     "officialDocs": [
@@ -2223,7 +2223,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Lambda"
+        "text": "Amazon EFS"
       },
       {
         "choiceId": "B",
@@ -2231,20 +2231,20 @@
       },
       {
         "choiceId": "C",
-        "text": "Amazon EFS"
+        "text": "Amazon Route 53"
       },
       {
         "choiceId": "D",
-        "text": "Amazon Route 53"
+        "text": "AWS Lambda"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "AWS Lambda is a serverless compute service that runs code in response to requests or events. You do not need to provision or continuously manage servers.",
     "choiceExplanations": {
-      "A": "Correct. Lambda is a serverless service that runs code in response to events.",
+      "A": "Incorrect. EFS is a file storage service.",
       "B": "Incorrect. EC2 is a virtual server and requires OS and instance management.",
-      "C": "Incorrect. EFS is a file storage service.",
-      "D": "Incorrect. Route 53 is a DNS service, not a code execution service."
+      "C": "Incorrect. Route 53 is a DNS service, not a code execution service.",
+      "D": "Correct. Lambda is a serverless service that runs code in response to events."
     },
     "practicalNote": "AWS Lambda is a serverless compute service that runs code without requiring server management. You register code as a Lambda function and it runs automatically in response to various events, such as requests through API Gateway, object creation in Amazon S3, Amazon DynamoDB Streams, scheduled events from Amazon EventBridge, and messages from Amazon SQS. You are charged only for the execution time in milliseconds and the number of requests, and there is no cost while the function is idle.\n\nOn the exam, the typical question asks which event-driven compute service runs code without server management. Distractors include EC2 (virtual servers), EFS (shared file storage), and Route 53 (DNS). EC2 requires server management such as starting and stopping instances and applying patches, so it is not serverless. EFS and Route 53 are not compute services in the first place.\n\nIn practice, Lambda is widely used for API backends, scheduled batch jobs, image processing triggered by file uploads, log transformation, and Slack notifications and other lightweight processing. Long-running processing (the default limit is 15 minutes), heavy computation, and workloads that require large amounts of memory are not a good fit for Lambda, and you would instead consider Amazon ECS, AWS Fargate, or Amazon EC2. CLF-C02 focuses on what serverless means and the role of Lambda. Keywords such as usage-based billing, low operational overhead, and event-driven execution appear repeatedly.",
     "officialDocs": [
@@ -2286,28 +2286,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Enable MFA for the root user"
-      },
-      {
-        "choiceId": "B",
         "text": "Create multiple access keys for the root user"
       },
       {
+        "choiceId": "B",
+        "text": "Enable MFA for the root user"
+      },
+      {
         "choiceId": "C",
-        "text": "Use the root user for day-to-day development work"
+        "text": "Grant AdministratorAccess to all IAM users"
       },
       {
         "choiceId": "D",
-        "text": "Grant AdministratorAccess to all IAM users"
+        "text": "Use the root user for day-to-day development work"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "The root user has strong permissions over the entire AWS account. Enabling MFA and avoiding day-to-day use are essential practices.",
     "choiceExplanations": {
-      "A": "Correct. MFA must always be configured for the root user.",
-      "B": "Incorrect. The basic guidance is not to create root user access keys, or to delete them if they exist.",
-      "C": "Incorrect. The root user should not be used for day-to-day work.",
-      "D": "Incorrect. Granting AdministratorAccess to everyone violates the principle of least privilege."
+      "A": "Incorrect. The basic guidance is not to create root user access keys, or to delete them if they exist.",
+      "B": "Correct. MFA must always be configured for the root user.",
+      "C": "Incorrect. Granting AdministratorAccess to everyone violates the principle of least privilege.",
+      "D": "Incorrect. The root user should not be used for day-to-day work."
     },
     "practicalNote": "The root user of an AWS account is the top-level privileged identity, signed in with the email address and password used at account creation, and has unrestricted access to every AWS service and resource. If the root user is compromised, the account billing information can be changed, all resources can be deleted, and large numbers of unauthorized resources can be launched, so its protection has the highest priority. The AWS best practice is to always enable MFA on the root user, avoid using it for day-to-day operations, and instead work with an IAM user or a user provisioned through IAM Identity Center.\n\nOn the exam, the typical question asks which configuration should be applied first to strengthen AWS account security, and the correct answer is to enable MFA for the root user. Distractors include creating multiple access keys for the root user, using the root user for day-to-day development work, and granting AdministratorAccess to all IAM users. All of these are the opposite of the principle of least privilege and root user protection guidance, and can be ruled out if you understand the best practices.\n\nIn practice, the recommended initial configuration immediately after opening an account typically consists of enabling MFA on the root user, avoiding the creation of root user access keys, creating an administrator IAM user or an IAM Identity Center user, setting up a budget alert with AWS Budgets, and enabling AWS CloudTrail to record API activity. CLF-C02 frequently asks about this initial configuration immediately after account creation, and the three keywords of the root user vs. IAM user division of roles, MFA, and the principle of least privilege come up repeatedly.",
     "officialDocs": [
@@ -2348,7 +2348,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon SQS"
+        "text": "AWS CloudTrail"
       },
       {
         "choiceId": "B",
@@ -2356,20 +2356,20 @@
       },
       {
         "choiceId": "C",
-        "text": "AWS CloudTrail"
+        "text": "Amazon Route 53"
       },
       {
         "choiceId": "D",
-        "text": "Amazon Route 53"
+        "text": "Amazon SQS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Amazon SQS is a message queue service that holds messages in a queue until the processing side retrieves them. It is used for asynchronous processing and loose coupling.",
     "choiceExplanations": {
-      "A": "Correct. SQS is well suited to asynchronous processing using a queue.",
+      "A": "Incorrect. CloudTrail is a service that records API activity.",
       "B": "Incorrect. SNS is a publish/subscribe notification service. It is suitable for delivering to multiple subscribers, but accumulating messages in a queue is not its primary purpose.",
-      "C": "Incorrect. CloudTrail is a service that records API activity.",
-      "D": "Incorrect. Route 53 is a DNS service, not a message queue."
+      "C": "Incorrect. Route 53 is a DNS service, not a message queue.",
+      "D": "Correct. SQS is well suited to asynchronous processing using a queue."
     },
     "practicalNote": "Amazon SQS (Simple Queue Service) is a fully managed message queue service provided by AWS. The sender (producer) places messages into the SQS queue, where they are held temporarily, and the receiver (consumer) retrieves and processes them at its own pace. The sender and receiver do not need to be running at the same time, and processing can continue even if one side is down, so SQS serves as the foundation for loosely coupling components.\n\nOn the exam, the typical question asks which service is appropriate when you want to accumulate messages in a queue between multiple AWS services or applications and process them asynchronously, or when you want to absorb processing spikes and decouple components. Amazon SQS is the answer. Distractors that frequently appear include Amazon SNS (publish/subscribe notifications), AWS CloudTrail (API activity history), and Amazon Route 53 (DNS). SNS is for pushing the same message to multiple subscribers, which is a different role from SQS, which holds messages in a queue and processes them in order.\n\nIn practice, SQS is often used with EC2 worker fleets or AWS Lambda behind the queue to process asynchronous jobs. There are two types: Standard queues and FIFO queues. Choose FIFO when ordering and deduplication are required. CLF-C02 tends to test the division of roles between queue and pub/sub, comparing SQS and SNS. From SAA-C03 and above, message visibility timeout, dead-letter queues, and the SNS plus SQS fan-out pattern (SNS to multiple SQS queues) are also tested.",
     "officialDocs": [
@@ -2412,28 +2412,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Cost Explorer"
-      },
-      {
-        "choiceId": "B",
         "text": "Amazon CloudFront"
       },
       {
+        "choiceId": "B",
+        "text": "Amazon VPC"
+      },
+      {
         "choiceId": "C",
-        "text": "AWS IAM"
+        "text": "AWS Cost Explorer"
       },
       {
         "choiceId": "D",
-        "text": "Amazon VPC"
+        "text": "AWS IAM"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "AWS Cost Explorer is a service that visualizes and analyzes AWS charges and usage by service, time period, and other dimensions.",
     "choiceExplanations": {
-      "A": "Correct. Cost Explorer is used for cost analysis.",
-      "B": "Incorrect. CloudFront is a CDN service, not a cost analysis service.",
-      "C": "Incorrect. IAM is a service for managing authentication and authorization.",
-      "D": "Incorrect. VPC is a service for creating virtual networks."
+      "A": "Incorrect. CloudFront is a CDN service, not a cost analysis service.",
+      "B": "Incorrect. VPC is a service for creating virtual networks.",
+      "C": "Correct. Cost Explorer is used for cost analysis.",
+      "D": "Incorrect. IAM is a service for managing authentication and authorization."
     },
     "practicalNote": "AWS Cost Explorer is a cost management service that visualizes and analyzes AWS charges and usage by service, time period, account, tag, and other dimensions. You can review up to 12 months of historical data as charts and tables, and view a forecast for up to 12 months ahead. You can also view coverage and utilization analysis for Reserved Instances and Savings Plans from the same console.\n\nOn the exam, the typical question asks which service to use to analyze AWS charges by service and identify which services are driving costs, with Cost Explorer as the correct answer. Distractors include Amazon CloudFront (CDN), AWS IAM (authentication and authorization), and Amazon VPC (network). All of these are unrelated to cost analysis, so as long as you understand the scope of each service, you can rule them out.\n\nIn practice, Cost Explorer is used together with AWS Budgets. Cost Explorer is for analyzing past and current costs, while AWS Budgets is for alerting when a predefined threshold is crossed. On CLF-C02, the division of roles between these two services, and the distinction from AWS Cost and Usage Report (CUR), which exports detailed line items to Amazon S3, are common topics. Remember that Cost Explorer is for analysis and visualization, Budgets is for notifications, and CUR is for exporting detailed line items, and the three services are easy to keep separate.",
     "officialDocs": [
@@ -2472,27 +2472,27 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Concentrate all processing on a single physical server"
-      },
-      {
-        "choiceId": "B",
         "text": "Use multiple Availability Zones to reduce the impact of failures"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "Do not take any backups"
+      },
+      {
+        "choiceId": "C",
+        "text": "Concentrate all processing on a single physical server"
       },
       {
         "choiceId": "D",
         "text": "Restrict all communication to HTTP only"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "A",
     "explanation": "To achieve high availability, it is important to reduce single points of failure and to distribute resources across multiple Availability Zones.",
     "choiceExplanations": {
-      "A": "Incorrect. Concentrating on a single server becomes a single point of failure.",
-      "B": "Correct. Using multiple AZs limits the impact of a single AZ failure.",
-      "C": "Incorrect. A design without backups is fragile when recovering from failures.",
+      "A": "Correct. Using multiple AZs limits the impact of a single AZ failure.",
+      "B": "Incorrect. A design without backups is fragile when recovering from failures.",
+      "C": "Incorrect. Concentrating on a single server becomes a single point of failure.",
       "D": "Incorrect. Restricting all communication to HTTP is not an approach for high availability."
     },
     "practicalNote": "High availability is a design philosophy aimed at minimizing the time that an overall system is unavailable. In AWS, each Region consists of multiple Availability Zones (AZs). An AZ is a set of physically independent data centers with separated power, cooling, and networking, so a failure in one AZ does not propagate to other AZs. By distributing resources across multiple AZs, you can avoid a complete outage caused by a failure in a single AZ.\n\nOn the exam, the typical question asks which approach achieves high availability, with multiple AZs as the correct answer. Distractors include concentrating all processing on a single physical server, not taking any backups, and restricting all communication to HTTP only. These contradict the definition of high availability. Extreme concentration, abandoning backups, and protocol restriction all increase single points of failure and are incorrect from an availability standpoint.\n\nIn practice, a multi-AZ configuration is implemented by placing EC2 instances behind an Application Load Balancer or Network Load Balancer across multiple AZs, configuring an Amazon RDS Multi-AZ deployment so that the standby is in a different AZ, or choosing services such as Amazon S3 that store data redundantly across multiple AZs by default. CLF-C02 repeatedly tests the difference among Region, AZ, and edge location, and the distinction between Multi-AZ for AZ-level failures and multi-Region for large-scale disasters.",
@@ -2536,7 +2536,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS CloudTrail"
+        "text": "Amazon S3"
       },
       {
         "choiceId": "B",
@@ -2544,19 +2544,19 @@
       },
       {
         "choiceId": "C",
-        "text": "Amazon S3"
+        "text": "AWS CloudTrail"
       },
       {
         "choiceId": "D",
         "text": "AWS Budgets"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "AWS CloudTrail is a service that records API activity in an AWS account. It is used for auditing, security investigations, and reviewing change history.",
     "choiceExplanations": {
-      "A": "Correct. CloudTrail records API activity history.",
+      "A": "Incorrect. S3 is object storage. It can be used as a destination for storing logs, but the service that records the activity itself is CloudTrail.",
       "B": "Incorrect. CloudFront is a CDN service. Recording API activity is not its primary purpose.",
-      "C": "Incorrect. S3 is object storage. It can be used as a destination for storing logs, but the service that records the activity itself is CloudTrail.",
+      "C": "Correct. CloudTrail records API activity history.",
       "D": "Incorrect. Budgets is a budget management and cost notification service. It is not used to review API activity."
     },
     "practicalNote": "AWS CloudTrail is a service that records the history of API actions performed within an AWS account. It records API calls made from the AWS Management Console, the AWS CLI, the SDKs, and from AWS services themselves as events (who performed which action, when, from which IP address, and on which resource), and you can search the most recent 90 days of event history from the console. By configuring a trail that delivers to an S3 bucket, you can retain logs for longer and run log analysis.\n\nOn the exam, the typical question asks which service to use to determine who performed which API action and when within an AWS account, with CloudTrail as the correct answer. Distractors that frequently appear include Amazon CloudFront (CDN), Amazon S3 (object storage), and AWS Budgets (budget alerts). None of these are primarily for recording API activity, so as long as you understand the role of each service, you can rule them out.\n\nIn practice, CloudTrail is used for auditing, security investigations, and reviewing change history. When an unintended resource change occurs, CloudTrail provides the foundation to trace who did what and when. CLF-C02 frequently tests the division of roles among CloudTrail (API activity history), Amazon CloudWatch (metrics, logs, and alarms), and AWS Config (resource configuration history and compliance evaluation). Remember that CloudTrail records who called which API, CloudWatch covers resource metrics and operational logs, and Config tracks resource configuration state and how it changes. With this framing, the three services do not get confused.",
@@ -2600,28 +2600,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon CloudFront"
+        "text": "AWS IAM"
       },
       {
         "choiceId": "B",
-        "text": "AWS CloudTrail"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon RDS"
       },
       {
+        "choiceId": "C",
+        "text": "AWS CloudTrail"
+      },
+      {
         "choiceId": "D",
-        "text": "AWS IAM"
+        "text": "Amazon CloudFront"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Amazon CloudFront is a content delivery network (CDN) service. It uses edge locations to deliver static and dynamic content with low latency. It is also commonly used in combination with Amazon S3 for static site delivery.",
     "choiceExplanations": {
-      "A": "Correct. CloudFront delivers content at high speed as a CDN.",
-      "B": "CloudTrail is a service that records AWS API call history.",
-      "C": "RDS is a relational database service.",
-      "D": "IAM is the service that manages authentication and authorization."
+      "A": "IAM is the service that manages authentication and authorization.",
+      "B": "RDS is a relational database service.",
+      "C": "CloudTrail is a service that records AWS API call history.",
+      "D": "Correct. CloudFront delivers content at high speed as a CDN."
     },
     "practicalNote": "Amazon CloudFront is the content delivery network (CDN) service provided by AWS. It caches content at edge locations around the world and delivers it from the edge geographically closest to the end user, reducing latency. Supported origins include Amazon S3 buckets, applications running on Amazon EC2, Application Load Balancer, and external HTTP/HTTPS servers. Both static and dynamic content can be delivered.\n\nOn the exam, CloudFront is the expected answer for the prompt asking which AWS service is used to deliver static content to users around the world with low latency. Common distractors include AWS CloudTrail (API call history), Amazon RDS (relational database), and AWS IAM (authentication and authorization). None of these services have content delivery as their primary purpose, so they can be eliminated as long as the scope of each service is understood.\n\nIn practice, placing Amazon S3 as the origin with CloudFront in front of it is the standard pattern for static site delivery. This combination provides HTTPS delivery, custom domain support, reduced data transfer through caching, and request protection through AWS WAF integration. CLF-C02 asks about the role of CloudFront and the hierarchical relationship among edge locations, Regions, and Availability Zones. SAA-C03 and higher exams go further into Origin Access Control (OAC) for preventing direct access to Amazon S3, restricted distribution through signed URLs and signed cookies, and edge processing with CloudFront Functions and Lambda@Edge.",
     "officialDocs": [
@@ -2723,28 +2723,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Basic Support"
-      },
-      {
-        "choiceId": "B",
-        "text": "Developer Support"
-      },
-      {
-        "choiceId": "C",
         "text": "Business Support"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "Basic Support"
+      },
+      {
+        "choiceId": "C",
         "text": "Enterprise Support"
+      },
+      {
+        "choiceId": "D",
+        "text": "Developer Support"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "Basic Support is the basic support plan available to all AWS accounts. It provides support for account, billing, and service limit inquiries.",
     "choiceExplanations": {
-      "A": "Correct. Basic Support is included with all AWS accounts.",
-      "B": "Developer Support is a paid support plan for developers.",
-      "C": "Business Support is a paid support plan intended for production workloads.",
-      "D": "Enterprise Support is a paid support plan intended for large organizations."
+      "A": "Business Support is a paid support plan intended for production workloads.",
+      "B": "Correct. Basic Support is included with all AWS accounts.",
+      "C": "Enterprise Support is a paid support plan intended for large organizations.",
+      "D": "Developer Support is a paid support plan for developers."
     },
     "practicalNote": "AWS Support has five plans: Basic, Developer, Business, Enterprise On-Ramp, and Enterprise. Among these, Basic Support is the free support plan included by default with every AWS account. The scope of Basic Support is limited to 24/7 customer service for account and billing inquiries, the core checks of AWS Trusted Advisor (6 items), AWS Personal Health Dashboard, service quota increase requests, and access to documentation, whitepapers, and support forums. It does not include responses to technical questions or an SLA for production workloads.\n\nOn the exam, Basic Support is the expected answer for the prompt asking which basic support plan is available to all AWS accounts. Common distractors include Developer Support (for individual developers and non-production workloads), Business Support (for production workloads), and Enterprise Support (for mission-critical workloads). The other three plans are all paid and therefore contradict the condition of being included with every account.\n\nIn practice, plans at Developer Support and above allow technical case opening. Features such as case response SLAs, the full set of Trusted Advisor checks (the 6 core checks plus over 100 additional checks), Infrastructure Event Management, and a dedicated AWS Technical Account Manager (TAM) are added in tiers according to the plan. CLF-C02 repeatedly asks about the differences in coverage among the five plans, especially the tiered structure of \"Basic cannot open technical cases,\" \"24/7 technical support starts at Business,\" and \"a TAM is included at Enterprise.\" The number of AWS Trusted Advisor checks (6 core for Basic and Developer, the full set for Business and above) is also a frequently tested point.",
     "officialDocs": [
@@ -2782,11 +2782,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "You can scale resources up and down based on demand"
+        "text": "You must always purchase physical servers in-house"
       },
       {
         "choiceId": "B",
-        "text": "You must always purchase physical servers in-house"
+        "text": "You can scale resources up and down based on demand"
       },
       {
         "choiceId": "C",
@@ -2797,11 +2797,11 @@
         "text": "All services are always free to use"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "In the cloud, you can add resources when you need them and reduce them when you don't. This makes it easier to respond to changes in demand and reduce upfront investment.",
     "choiceExplanations": {
-      "A": "Correct. Scalability and elasticity are representative advantages of the cloud.",
-      "B": "In the cloud, you do not need to purchase physical servers in-house.",
+      "A": "In the cloud, you do not need to purchase physical servers in-house.",
+      "B": "Correct. Scalability and elasticity are representative advantages of the cloud.",
       "C": "Security configuration is still required. You need to understand the shared responsibility model.",
       "D": "AWS has a free tier, but not all services are always free."
     },
@@ -2849,24 +2849,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon S3"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon CloudFront"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "Amazon RDS is a service that lets you run relational databases such as MySQL, PostgreSQL, MariaDB, Oracle, and SQL Server as a managed service.",
     "choiceExplanations": {
       "A": "Correct. RDS is a managed relational database service.",
-      "B": "S3 is object storage. It is not a relational database.",
-      "C": "CloudFront is a CDN service.",
-      "D": "CloudTrail is a service that records AWS API call history."
+      "B": "CloudFront is a CDN service.",
+      "C": "CloudTrail is a service that records AWS API call history.",
+      "D": "S3 is object storage. It is not a relational database."
     },
     "practicalNote": "Amazon RDS (Relational Database Service) is a service that provides relational databases as a managed offering. It supports six database engines: MySQL, PostgreSQL, MariaDB, Oracle Database, Microsoft SQL Server, and Amazon Aurora (the AWS-developed engine with MySQL and PostgreSQL compatibility). AWS handles operational tasks such as OS patching, minor database engine version upgrades, automated backups, snapshot creation, and failover during outages, so users can focus on schema design, query tuning, and application logic.\n\nOn the exam, Amazon RDS is the expected answer for the prompt asking which service to choose when you want a managed relational database. Common distractors include services that are not data stores, such as Amazon S3 (object storage), Amazon CloudFront (CDN), and AWS CloudTrail (recording API call history). When the keyword \"relational\" is explicit, document database Amazon DocumentDB, key-value or document NoSQL Amazon DynamoDB, and data warehouse Amazon Redshift do not fit, so even if they appear among the choices they can be eliminated.\n\nIn practice, the criterion for selection is the difference in responsibility between self-hosting a database on Amazon EC2 and using Amazon RDS. With a self-hosted database on Amazon EC2, the user is responsible for patching, backup, and failover design. With Amazon RDS, those tasks fall under AWS responsibility. CLF-C02 frequently asks about the principle in the shared responsibility model that \"the more managed the service, the lower the operational burden on the user,\" as well as the difference in role between Amazon RDS Multi-AZ deployments (high availability) and read replicas (distributing read load). The distinction between Amazon RDS and Amazon DynamoDB (relational versus key-value or NoSQL) should also be understood.",
     "officialDocs": [
@@ -2908,28 +2908,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Key Management Service"
+        "text": "AWS Budgets"
       },
       {
         "choiceId": "B",
-        "text": "Amazon Route 53"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon CloudFront"
       },
       {
+        "choiceId": "C",
+        "text": "AWS Key Management Service"
+      },
+      {
         "choiceId": "D",
-        "text": "AWS Budgets"
+        "text": "Amazon Route 53"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "AWS Key Management Service is a managed service that creates and manages encryption keys and can be used to encrypt data in services such as S3, EBS, RDS, and DynamoDB.",
     "choiceExplanations": {
-      "A": "Correct. KMS is used to create and manage encryption keys.",
-      "B": "Route 53 is a DNS service.",
-      "C": "CloudFront is a CDN service.",
-      "D": "Budgets is a service for budget management and cost notifications."
+      "A": "Budgets is a service for budget management and cost notifications.",
+      "B": "CloudFront is a CDN service.",
+      "C": "Correct. KMS is used to create and manage encryption keys.",
+      "D": "Route 53 is a DNS service."
     },
     "practicalNote": "AWS Key Management Service (AWS KMS) is a managed service that creates and manages encryption keys (Customer Master Keys, CMKs, now called KMS keys) and lets you use them to encrypt data in various AWS services. KMS keys are stored in Hardware Security Modules (HSMs) and are designed never to leave the hardware in plaintext. From major services such as Amazon S3, Amazon EBS, Amazon RDS, Amazon DynamoDB, AWS Secrets Manager, and AWS Systems Manager Parameter Store, you can specify a KMS key to encrypt data at rest.\n\nOn the exam, AWS KMS is the expected answer for the prompt asking which service is used to create and manage encryption keys for data at rest. Common distractors include services unrelated to encryption, such as Amazon Route 53 (DNS), Amazon CloudFront (CDN), and AWS Budgets (budget management). When the keyword \"create and manage encryption keys\" is explicit, a distinction from AWS CloudHSM (use of a dedicated HSM) may sometimes be needed, but at the CLF-C02 level the simple separation of \"managed shared HSM equals KMS\" and \"dedicated single-tenant HSM equals CloudHSM\" is enough.\n\nIn practice, KMS keys come in two types: AWS managed keys (per-service keys managed on the AWS side) and customer managed keys (keys created and managed by the user). Operational tasks include enabling key rotation, controlling key use permissions through IAM policies and KMS key policies, and recording key usage logs for auditing with AWS CloudTrail. CLF-C02 frequently asks about the principle in the shared responsibility model that \"data encryption is the user's responsibility\" and the point that KMS is at the center of encryption at rest. The division of role with AWS Certificate Manager (ACM), which is used for encryption in transit, should also be understood.",
     "officialDocs": [
@@ -2975,7 +2975,7 @@
       },
       {
         "choiceId": "B",
-        "text": "AWS CloudTrail"
+        "text": "Amazon SQS"
       },
       {
         "choiceId": "C",
@@ -2983,16 +2983,16 @@
       },
       {
         "choiceId": "D",
-        "text": "Amazon SQS"
+        "text": "AWS CloudTrail"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "Amazon CloudWatch is a monitoring service that handles metrics, logs, and alarms for AWS resources and applications. It is also used to view Lambda logs and monitor metrics.",
     "choiceExplanations": {
       "A": "Correct. CloudWatch is used for metrics, logs, and alarms.",
-      "B": "CloudTrail records API call history. Take care not to confuse this with monitoring logs.",
+      "B": "SQS is a message queue service.",
       "C": "AWS Config is a service that lets you review the history of resource configurations and their compliance status.",
-      "D": "SQS is a message queue service."
+      "D": "CloudTrail records API call history. Take care not to confuse this with monitoring logs."
     },
     "practicalNote": "Amazon CloudWatch is a monitoring service that handles, in an integrated way, the metrics, logs, events, and alarms for AWS resources and the applications that run on them. Standard metrics such as Amazon EC2 CPU utilization, Elastic Load Balancing request counts, and Amazon RDS connection counts, along with AWS Lambda execution logs and custom metrics emitted by applications, can all be collected in CloudWatch. A common pattern is to use CloudWatch Alarms to trigger Amazon SNS notifications or Auto Scaling actions when a threshold is breached.\n\nOn the exam, CloudWatch is the expected answer for the prompt asking which monitoring service handles metrics, logs, and alarms for AWS resources. Common distractors include AWS CloudTrail (API call auditing), AWS Config (resource configuration change history and compliance evaluation), and Amazon SQS (message queue). CloudTrail, Config, and CloudWatch differ in \"what they record,\" and CLF-C02 repeatedly asks about the difference in coverage among these three services.\n\nIn practice, the basic pattern is a three-layer setup: CloudWatch Logs aggregates application logs from AWS Lambda, Amazon ECS, and Amazon EC2; CloudWatch Metrics accumulates time-series metrics; and CloudWatch Alarms detects threshold violations. The observability features needed for operations, such as CloudWatch Logs Insights for querying logs, CloudWatch Dashboards for metric visualization, and CloudWatch Synthetics for synthetic monitoring, are consolidated in a single service. Remembering CloudTrail as \"who called which API (audit log),\" Config as \"how resource configurations changed and whether they comply with rules,\" and CloudWatch as \"the operational state of resources and applications\" helps you avoid wrong answers.",
     "officialDocs": [
@@ -3039,7 +3039,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Reserved Instances"
+        "text": "Security Group"
       },
       {
         "choiceId": "B",
@@ -3047,20 +3047,20 @@
       },
       {
         "choiceId": "C",
-        "text": "Amazon S3 Standard"
+        "text": "Reserved Instances"
       },
       {
         "choiceId": "D",
-        "text": "Security Group"
+        "text": "Amazon S3 Standard"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "Reserved Instances are a purchasing option that lets you use services such as EC2 at a lower price than on-demand pricing in exchange for committing to a usage period.",
     "choiceExplanations": {
-      "A": "Correct. They are used to reduce the cost of workloads that run continuously.",
+      "A": "A Security Group is a virtual firewall. It is not a cost-saving purchasing option.",
       "B": "CloudTrail is a service that records API call history.",
-      "C": "S3 Standard is an S3 storage class, not an EC2 purchasing option.",
-      "D": "A Security Group is a virtual firewall. It is not a cost-saving purchasing option."
+      "C": "Correct. They are used to reduce the cost of workloads that run continuously.",
+      "D": "S3 Standard is an S3 storage class, not an EC2 purchasing option."
     },
     "practicalNote": "Reserved Instances (RIs) are a purchasing option that lets you use resources such as Amazon EC2 at a significantly discounted price compared with on-demand pricing in exchange for committing to a 1-year or 3-year usage period. Three payment options are available: All Upfront, Partial Upfront, and No Upfront. The larger the upfront payment, the higher the discount rate. An RI is a reservation that applies to a combination of instance type, Region, OS, and tenancy, and is effective for workloads that run continuously for long periods.\n\nOn the exam, Reserved Instances are the expected answer for the prompt asking which purchasing option reduces the cost of EC2 instances that run for a long time. Common distractors include AWS CloudTrail (audit logs), Amazon S3 Standard (a storage class), and Security Group (a virtual firewall). None of these are purchasing options, and they have other roles as services or features. The keywords \"purchasing option\" and \"cost reduction\" help separate them.\n\nIn practice, cost optimization for Amazon EC2 is done by combining the four options of Reserved Instances, Savings Plans, Spot Instances, and on-demand. A typical pattern is to assign RIs or Savings Plans to always-on production workloads, Spot to development environments and batch jobs, and on-demand to workloads with hard-to-predict demand. Savings Plans are similar to RIs as a long-term commitment discount, but they differ in that they commit to a specific dollar-per-hour usage amount regardless of instance type, providing more flexibility than RIs. CLF-C02 frequently asks about the differences among the three options of Reserved Instances, Savings Plans, and Spot Instances and the workload characteristics that suit each one.",
     "officialDocs": [
@@ -3109,24 +3109,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon EBS"
-      },
-      {
-        "choiceId": "C",
         "text": "AWS Lambda"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Amazon DynamoDB"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EBS"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "Amazon Route 53 is the AWS DNS service. It is used to map custom domains to targets such as CloudFront and ALB.",
     "choiceExplanations": {
       "A": "Correct. Route 53 is used for DNS management.",
-      "B": "EBS is block storage attached to EC2.",
-      "C": "Lambda is a service that runs code in a serverless way.",
-      "D": "DynamoDB is a NoSQL database service."
+      "B": "Lambda is a service that runs code in a serverless way.",
+      "C": "DynamoDB is a NoSQL database service.",
+      "D": "EBS is block storage attached to EC2."
     },
     "practicalNote": "Amazon Route 53 is the authoritative DNS service provided by AWS. By acquiring and managing custom domains and registering DNS records (A, AAAA, CNAME, MX, TXT, and others) for those domains, it provides name resolution from domain names to AWS resources (CloudFront distributions, Application Load Balancer, Amazon S3 static sites, Amazon EC2, and so on). For AWS resources, there is a Route 53–specific mechanism called an Alias record, which lets you register the DNS name of a CloudFront distribution or ALB as an Alias instead of a CNAME. Alias records are free to use and can also be set on the zone apex (example.com itself), which differs from CNAMEs.\n\nOn the exam, Route 53 is the expected answer for the prompt asking which AWS service provides DNS name resolution. Common distractors include services unrelated to DNS, such as Amazon EBS (block storage), AWS Lambda (serverless compute), and Amazon DynamoDB (NoSQL database). Once the keywords \"DNS,\" \"domain name,\" and \"name resolution\" appear together, the other choices can be eliminated.\n\nIn practice, the key point in selection is the routing policies of Route 53. Simple routing, weighted routing (A/B testing and gradual releases), latency-based routing (directing users to the closest Region), geolocation routing (branching destinations by country or region), failover routing (switchover based on health checks), and multivalue answer routing are available, and you choose among them based on workload requirements. CLF-C02 frequently asks about the basic equation \"Route 53 equals DNS,\" along with the fact that it also provides domain registration and health check functions.",
     "officialDocs": [
@@ -3170,28 +3170,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Config"
+        "text": "AWS Budgets"
       },
       {
         "choiceId": "B",
-        "text": "Amazon SQS"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon CloudFront"
       },
       {
+        "choiceId": "C",
+        "text": "AWS Config"
+      },
+      {
         "choiceId": "D",
-        "text": "AWS Budgets"
+        "text": "Amazon SQS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "AWS Config is a service that records the configuration history of AWS resources and evaluates whether the configurations comply with rules. It is often confused with CloudWatch and CloudTrail.",
     "choiceExplanations": {
-      "A": "Correct. AWS Config is used to review resource configuration history and compliance status.",
-      "B": "SQS is a message queue service.",
-      "C": "CloudFront is a CDN service.",
-      "D": "Budgets is a service for cost budgets and alerts."
+      "A": "Budgets is a service for cost budgets and alerts.",
+      "B": "CloudFront is a CDN service.",
+      "C": "Correct. AWS Config is used to review resource configuration history and compliance status.",
+      "D": "SQS is a message queue service."
     },
     "practicalNote": "AWS Config is a service that continuously records the configuration information of AWS resources, retains configuration change history, and evaluates whether the configurations comply with rules defined in advance (Config Rules). It records the \"composition (configuration values) of resources,\" such as Amazon EC2 security groups, Amazon S3 bucket encryption settings, and IAM role policies, on a time series basis, so you can track when, by whom, and what was changed. By enabling Config Rules, you can continuously evaluate compliance conditions such as \"block public access on Amazon S3 buckets\" or \"Amazon EBS volumes are encrypted\" and detect non-compliant resources.\n\nOn the exam, AWS Config is the expected answer for the prompt asking which service records configuration change history of AWS resources and checks whether the configurations comply with rules. Common distractors include Amazon SQS (message queue), Amazon CloudFront (CDN), and AWS Budgets (budget alerts). None of these are related to configuration change history or compliance evaluation. Confusion with CloudWatch and CloudTrail is a frequently tested point. Config covers \"how resource configurations have changed\" and \"whether configurations comply,\" CloudTrail covers \"who called which API,\" and CloudWatch covers \"the operational state of resources and applications.\"\n\nIn practice, Config is used for auditing and compliance purposes. More than 100 managed rules, such as s3-bucket-public-read-prohibited, encrypted-volumes, and root-account-mfa-enabled, are provided in advance, and continuous compliance monitoring can be started simply by enabling them. A common pattern is to combine Config with AWS Security Hub to aggregate the compliance status across an entire organization. CLF-C02 repeatedly asks about the division of role among Config, CloudTrail, and CloudWatch, and the organization of \"Config Rules for compliance monitoring,\" \"CloudTrail for API auditing,\" and \"CloudWatch for operational monitoring.\"",
     "officialDocs": [

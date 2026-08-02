@@ -90,6 +90,10 @@ export function QuestionPlayer({
 
   const [selectedChoiceId, setSelectedChoiceId] = useState<ChoiceId | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  // 解説セクションは isSubmitted と独立させる（ACR-010）。
+  // 初期値 false = SSG 出力の <details> に open 属性が付かない。
+  // 子要素は静的 HTML に常時含まれるが、ブラウザ初期表示では閉じている。
+  const [isExplanationOpen, setIsExplanationOpen] = useState<boolean>(false);
 
   const selectedChoice = useMemo(() => {
     return question.choices.find((choice) => choice.choiceId === selectedChoiceId) ?? null;
@@ -122,8 +126,10 @@ export function QuestionPlayer({
     }
 
     setIsSubmitted(true);
+    setIsExplanationOpen(true);
   };
 
+  // retry では isExplanationOpen に触れない（開いたまま維持する）。
   const handleRetry = () => {
     setSelectedChoiceId(null);
     setIsSubmitted(false);
@@ -276,8 +282,29 @@ export function QuestionPlayer({
                   : resolvedLabels.unselectedLabel}
               </span>
             </p>
+          </div>
+        </section>
+      ) : null}
 
-            <p className="mt-2 text-sm leading-6 text-slate-800">
+      {/* 解説セクション: isSubmitted に一切依存させず常時レンダーする（ACR-010）。
+          回答前のネタバレ回避は <details> の閉じ状態と summary の明示文言で担保する。
+          静的 HTML には open 属性なしで出力されるため、クローラは本文を読める。 */}
+      <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-bold text-slate-950">
+          {resolvedLabels.explanationSectionTitle}
+        </h2>
+
+        <details
+          className="group"
+          open={isExplanationOpen}
+          onToggle={(event) => setIsExplanationOpen(event.currentTarget.open)}
+        >
+          <summary className="cursor-pointer list-none rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-100">
+            {resolvedLabels.explanationSummaryLabel}
+          </summary>
+
+          <div className="mt-5">
+            <p className="mb-5 rounded-xl border border-green-600 bg-green-50 p-4 text-sm leading-6 text-slate-900">
               {resolvedLabels.correctAnswerLabel}
               <span className="font-bold">
                 {correctChoice
@@ -285,83 +312,83 @@ export function QuestionPlayer({
                   : question.correctChoiceId}
               </span>
             </p>
-          </div>
 
-          <div className="mb-6">
-            <h3 className="mb-2 text-base font-bold text-slate-950">
-              {resolvedLabels.explanationTitle}
-            </h3>
-            <p className="whitespace-pre-line leading-7 text-slate-800">{question.explanation}</p>
-          </div>
-
-          {question.choiceExplanations ? (
-            <div className="mb-6">
-              <h3 className="mb-3 text-base font-bold text-slate-950">
-                {resolvedLabels.choiceExplanationsTitle}
-              </h3>
-              <div className="space-y-3">
-                {question.choices.map((choice) => {
-                  const explanation = question.choiceExplanations?.[choice.choiceId];
-
-                  if (!explanation) {
-                    return null;
-                  }
-
-                  return (
-                    <div
-                      key={choice.choiceId}
-                      className="rounded-xl border border-slate-200 bg-slate-50 p-4"
-                    >
-                      <p className="mb-1 text-sm font-bold text-slate-950">
-                        {choice.choiceId}. {choice.text}
-                      </p>
-                      <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{explanation}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-
-          {/* 実務での使いどころ: 客観的な実務文脈・よくある誤解の枠（体験談・一人称感想は入れない）。
-              practicalNote が存在する設問のみ表示。存在しない場合はセクションごと非表示。 */}
-          {question.practicalNote ? (
             <div className="mb-6">
               <h3 className="mb-2 text-base font-bold text-slate-950">
-                {resolvedLabels.practicalNoteTitle}
+                {resolvedLabels.explanationTitle}
               </h3>
-              <p className="whitespace-pre-line leading-7 text-slate-800">{question.practicalNote}</p>
+              <p className="whitespace-pre-line leading-7 text-slate-800">{question.explanation}</p>
             </div>
-          ) : null}
 
-          {/* 公式ドキュメント: officialDocs が存在かつ allowlist を通過した件が1件以上の場合のみ表示。 */}
-          {(() => {
-            const validDocs = filterValidOfficialDocs(question.officialDocs);
-            return validDocs.length > 0 ? (
-              <div>
+            {question.choiceExplanations ? (
+              <div className="mb-6">
                 <h3 className="mb-3 text-base font-bold text-slate-950">
-                  {resolvedLabels.officialDocsTitle}
+                  {resolvedLabels.choiceExplanationsTitle}
                 </h3>
-                <ul className="space-y-2">
-                  {validDocs.map((doc) => (
-                    <li key={doc.url}>
-                      <a
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
+                <div className="space-y-3">
+                  {question.choices.map((choice) => {
+                    const explanation = question.choiceExplanations?.[choice.choiceId];
+
+                    if (!explanation) {
+                      return null;
+                    }
+
+                    return (
+                      <div
+                        key={choice.choiceId}
+                        className="rounded-xl border border-slate-200 bg-slate-50 p-4"
                       >
-                        {doc.label}
-                        <span aria-hidden="true">↗</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                        <p className="mb-1 text-sm font-bold text-slate-950">
+                          {choice.choiceId}. {choice.text}
+                        </p>
+                        <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{explanation}</p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            ) : null;
-          })()}
-        </section>
-      ) : null}
+            ) : null}
+
+            {/* 実務での使いどころ: 客観的な実務文脈・よくある誤解の枠（体験談・一人称感想は入れない）。
+                practicalNote が存在する設問のみ表示。存在しない場合はセクションごと非表示。 */}
+            {question.practicalNote ? (
+              <div className="mb-6">
+                <h3 className="mb-2 text-base font-bold text-slate-950">
+                  {resolvedLabels.practicalNoteTitle}
+                </h3>
+                <p className="whitespace-pre-line leading-7 text-slate-800">{question.practicalNote}</p>
+              </div>
+            ) : null}
+
+            {/* 公式ドキュメント: officialDocs が存在かつ allowlist を通過した件が1件以上の場合のみ表示。 */}
+            {(() => {
+              const validDocs = filterValidOfficialDocs(question.officialDocs);
+              return validDocs.length > 0 ? (
+                <div>
+                  <h3 className="mb-3 text-base font-bold text-slate-950">
+                    {resolvedLabels.officialDocsTitle}
+                  </h3>
+                  <ul className="space-y-2">
+                    {validDocs.map((doc) => (
+                      <li key={doc.url}>
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-blue-700 underline hover:text-blue-900"
+                        >
+                          {doc.label}
+                          <span aria-hidden="true">↗</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null;
+            })()}
+          </div>
+        </details>
+      </section>
 
       <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-bold text-slate-950">
