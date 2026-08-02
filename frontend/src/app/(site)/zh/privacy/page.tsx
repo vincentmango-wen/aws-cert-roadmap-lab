@@ -163,7 +163,7 @@ const policySections: PolicySection[] = [
     body: (
       <>
         <p>
-          本網站可能會為了アクセス解析、廣告配信與改善使用體驗而使用
+          本網站可能會為了存取分析、廣告配信與改善使用體驗而使用
           Cookie。
         </p>
         <p>
@@ -176,7 +176,7 @@ const policySections: PolicySection[] = [
         <p>
           若使用者不希望使用 Cookie，可以透過瀏覽器設定停用
           Cookie。不過，停用 Cookie
-          後，部分アクセス解析或廣告顯示功能可能受到限制。
+          後，部分存取分析或廣告顯示功能可能受到限制。
         </p>
       </>
     ),
@@ -291,7 +291,7 @@ const policySections: PolicySection[] = [
           年為目安進行檢視。不過，若因法律要求、不正當使用處理或持續中的聯絡處理而有必要，保存期間可能會延長。
         </p>
         <p>
-          アクセス解析資訊與 Cookie
+          存取分析資訊與 Cookie
           相關資訊的保存期間，依 Google Analytics、Google AdSense
           與瀏覽器設定等外部服務的規則而定。
         </p>
@@ -322,7 +322,7 @@ const policySections: PolicySection[] = [
           官方文件與其他外部網站的連結。
         </p>
         <p>
-          外部網站對個人資料、Cookie、廣告配信與アクセス解析的處理方式，請確認各外部網站的隱私權政策。
+          外部網站對個人資料、Cookie、廣告配信與存取分析的處理方式，請確認各外部網站的隱私權政策。
         </p>
         <p>
           本網站不對外部網站中發生的損害或問題承擔責任。
@@ -423,9 +423,9 @@ export default function ZhPrivacyPage(): ReactElement {
       <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-7 text-amber-900">
         <p className="font-semibold">關於本頁</p>
         <p className="mt-2">
-          本網站使用 Google Analytics 進行アクセス解析。
-          另外，作為收益化準備，本網站可能會使用 Google AdSense
-          等廣告配信服務。聯絡表單中取得的資訊會用於回覆聯絡、處理錯誤回報與改善網站內容。
+          本網站使用 Google Analytics 進行存取分析。
+          另外，本網站可能會使用 Google AdSense
+          等廣告服務。聯絡表單中取得的資訊會用於回覆聯絡、處理錯誤回報與改善網站內容。
         </p>
       </div>
 

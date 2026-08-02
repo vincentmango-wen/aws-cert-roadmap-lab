@@ -43,7 +43,7 @@ const sitePurposes = [
   "Organize AWS Cloud Practitioner and SAA learning topics in a practical way.",
   "Help learners understand AWS services through glossary pages, comparisons, practice questions, and architecture diagrams.",
   "Show hands-on implementation experience using Amazon S3, CloudFront, Lambda, API Gateway, and DynamoDB.",
-  "Grow the site into a learning media platform connected to SEO content, portfolio value, and future monetization.",
+  "Use the AWS official documentation as the primary source, and publish the points beginners tend to stumble on in an organized form.",
 ];
 
 const techStacks = [
@@ -89,7 +89,7 @@ const roadmapItems = [
   {
     title: "Phase 4",
     description:
-      "Improve SEO, add more learning content, prepare for AdSense, and introduce a custom domain.",
+      "Keep published content under review, and follow AWS service changes and exam guide revisions.",
   },
   {
     title: "Phase 5",

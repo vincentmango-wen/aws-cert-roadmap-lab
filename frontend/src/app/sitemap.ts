@@ -181,6 +181,14 @@ function getStaticRoutes(): SitemapRouteInput[] {
       priority: 0.3,
       changeFrequency: "yearly",
     },
+    {
+      // 利用規約は ja のみ提供する。/en /zh の利用規約ページは存在しないため
+      // availableLocales を ja に絞り、sitemap に 404 URL を載せない（#305 の 200 ゲート対策）。
+      pathname: "/terms-of-service",
+      priority: 0.3,
+      changeFrequency: "yearly",
+      availableLocales: ["ja"],
+    },
   ];
 }
 

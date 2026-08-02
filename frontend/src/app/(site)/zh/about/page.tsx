@@ -48,7 +48,7 @@ const sitePurposes = [
   "整理AWS Cloud Practitioner與SAA的學習內容，讓知識不只停留在背誦。",
   "透過術語集、服務比較、模擬題與架構圖，幫助初學者理解AWS服務的角色與差異。",
   "展示使用Amazon S3、CloudFront、Lambda、API Gateway、DynamoDB等服務的實作經驗。",
-  "將網站逐步發展成兼具學習輸出、SEO內容與作品集價值的AWS學習媒體。",
+  "以AWS官方文件為第一手資料，整理初學者容易卡關的重點並公開。",
 ];
 
 const techStacks = [
@@ -94,7 +94,7 @@ const roadmapItems = [
   {
     title: "Phase 4",
     description:
-      "增加SEO文章、改善內容導線，準備AdSense、Search Console與自訂網域。",
+      "持續檢視既有內容，並跟進AWS服務規格變更與考試指南的修訂。",
   },
   {
     title: "Phase 5",
