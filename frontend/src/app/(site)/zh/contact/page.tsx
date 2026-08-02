@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import ContactForm from "@/components/contact/ContactForm";
-import { createAbsoluteUrl } from "@/lib/seo";
+import { createAbsoluteUrl, createLocaleAwareRobots } from "@/lib/seo";
 
 const pagePath = "/zh/contact";
 
@@ -12,13 +12,8 @@ export const metadata: Metadata = {
     "如需回報AWS學習內容錯誤、詢問本站內容、或聯繫作品集相關合作，請使用此表單與AWS資格路線圖實驗室聯絡。",
   alternates: {
     canonical: createAbsoluteUrl(pagePath),
-    languages: {
-      ja: createAbsoluteUrl("/contact"),
-      en: createAbsoluteUrl("/en/contact"),
-      "zh-Hant": createAbsoluteUrl(pagePath),
-      "x-default": createAbsoluteUrl("/contact"),
-    },
   },
+  robots: createLocaleAwareRobots(pagePath),
   openGraph: {
     title: "聯絡我們 | AWS資格路線圖實驗室",
     description:
