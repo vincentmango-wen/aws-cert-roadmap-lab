@@ -1,0 +1,159 @@
+# Differences between IAM users, IAM roles, and IAM policies
+
+## Conclusion
+
+AWS Identity and Access Management (IAM) is the AWS permission management service.
+
+IAM users, IAM roles, and IAM policies each play different roles.
+
+| Term | In one line | Main use cases |
+|---|---|---|
+| IAM user | An AWS principal tied to a person or application | Sign-in for administrators and developers |
+| IAM role | A mechanism for temporarily assuming permissions | AWS Lambda, Amazon EC2, GitHub Actions, etc. |
+| IAM policy | A permission definition that states what is allowed or denied | Granting Amazon S3 read access, Amazon DynamoDB write access, etc. |
+
+When in doubt, decide as follows.
+
+- Who uses it: IAM user
+- Grant permissions to an AWS service: IAM role
+- What to allow: IAM policy
+
+## Comparison table
+
+| Item | IAM user | IAM role | IAM policy |
+|---|---|---|---|
+| Kind | An identity | A mechanism for assuming permissions | A set of permission rules |
+| Main subject | A person or application | An AWS service, an external identity, or another account | A user, group, or role |
+| Credentials | Password and access keys | Temporary credentials | Holds no credentials |
+| Main usage | Signing in to the AWS Management Console, using the AWS CLI | Running AWS Lambda, granting permissions to Amazon EC2, OIDC federation | Defining allowed actions and target resources |
+| Security considerations | MFA and access key management are critical | Easier to keep secure because no long-lived keys are needed | The principle of least privilege is critical |
+| Use in this project | For administrator sign-in | AWS Lambda execution role, GitHub Actions role | Granting AWS Lambda Amazon DynamoDB PutItem, Amazon S3 deploy permissions, etc. |
+
+## Explanations for beginners
+
+### IAM user
+
+An IAM user is an identity that represents a person or an application that operates AWS.
+
+It can be used to sign in to the AWS Management Console and to operate AWS from the AWS CLI.
+
+However, issuing access keys creates a leak risk, so they require careful handling.
+
+### IAM role
+
+An IAM role is a mechanism that allows a specific principal to assume permissions temporarily.
+
+For example, when AWS Lambda writes to Amazon DynamoDB, an IAM role is attached to the AWS Lambda function.
+
+In this project, the design is to give only Amazon DynamoDB write permissions to the inquiry-submission AWS Lambda function.
+
+### IAM policy
+
+An IAM policy is a JSON document that defines which actions are allowed on which resources.
+
+For example, the inquiry AWS Lambda function is granted only `dynamodb:PutItem`.
+
+Unnecessary `dynamodb:*` or `AdministratorAccess` is not attached.
+
+## Points that appear on the exam
+
+### Points commonly asked on CLF-C02
+
+- IAM is the service that manages authentication and authorization in AWS
+- Configure MFA for IAM users
+- Do not use the root user for day-to-day work
+- Permissions are defined using IAM policies
+- The principle of least privilege is critical
+- IAM roles are commonly used to grant permissions to AWS services
+
+### Points commonly asked on SAA-C03
+
+- Use an IAM role when granting permissions to Amazon EC2 or AWS Lambda
+- Prefer IAM roles over long-lived access keys
+- Use IAM roles for cross-account access
+- For integration with external services such as GitHub Actions, OIDC combined with IAM roles is the safer option
+- Scope policies down to the resource level
+- Avoid over-broad permissions that rely heavily on `*`
+
+## When to use each in practice
+
+### When to use an IAM user
+
+- A developer signs in to the AWS Management Console
+- An administrator reviews billing or resources
+- Using the AWS CLI in the early stages of learning
+
+Always configure MFA, and keep access key issuance to a minimum.
+
+### When to use an IAM role
+
+- AWS Lambda writes to Amazon DynamoDB
+- Amazon EC2 reads from Amazon S3
+- GitHub Actions deploys to Amazon S3
+- Temporary access from another AWS account
+
+The IAM roles that appear in this project are as follows.
+
+- The role for the AWS Lambda inquiry-submission function
+- The role for GitHub Actions deployment
+
+### When to use an IAM policy
+
+- Grant AWS Lambda only Amazon DynamoDB PutItem
+- Grant GitHub Actions only Amazon S3 upload
+- Grant only Amazon CloudFront Invalidation
+- Grant read access to an Amazon S3 bucket only to Amazon CloudFront
+
+In policies, scoping Action and Resource is critical.
+
+## Common mistakes
+
+### Mistake 1: Routinely using AdministratorAccess on an IAM user
+
+In the early stages of learning, it is tempting to proceed with broad permissions.
+
+However, this is dangerous in production and in portfolio walkthroughs.
+
+In the long run, permissions should be separated by task.
+
+### Mistake 2: Writing AWS access keys inside AWS Lambda code
+
+Attach an IAM role to AWS Lambda.
+
+Writing AWS access keys in code is dangerous.
+
+In this project as well, embedding secrets directly in code is prohibited.
+
+### Mistake 3: Thinking that an IAM role and an IAM policy are the same thing
+
+An IAM role is a container that assumes permissions.
+
+An IAM policy is the content of the permissions.
+
+Attaching a policy to a role is what determines what can actually be done.
+
+### Mistake 4: Always setting Resource to `*`
+
+`*` means everything.
+
+In practice, scope it down to the target Amazon S3 bucket, Amazon DynamoDB table, and so on.
+
+## Related terms
+
+- [AWS IAM](/terms/iam)
+- [AWS Lambda](/terms/lambda)
+- [Amazon S3](/terms/s3)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon CloudFront](/terms/cloudfront)
+
+## Related questions
+
+- [CLF practice question list](/questions/clf)
+
+## Summary
+
+IAM users, IAM roles, and IAM policies are the foundation of AWS security.
+
+An IAM user represents the user, an IAM role is a mechanism for temporarily assuming permissions, and an IAM policy is the content of the permissions.
+
+Being able to explain this distinction also makes it easier to explain the security design of an AWS portfolio.

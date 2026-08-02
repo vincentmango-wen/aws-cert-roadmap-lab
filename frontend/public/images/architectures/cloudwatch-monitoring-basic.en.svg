@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">CloudWatch monitoring architecture</title>
+  <desc id="desc">CloudFront, API Gateway, Lambda and DynamoDB publish logs and metrics to CloudWatch, while Budgets notifies developer about cost alerts.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafc}
+      .box{fill:#ffffff;stroke:#cbd5e1;stroke-width:2}
+      .aws{fill:#eff6ff;stroke:#60a5fa;stroke-width:2}
+      .mon{fill:#f0fdf4;stroke:#22c55e;stroke-width:2}
+      .cost{fill:#fff7ed;stroke:#fb923c;stroke-width:2}
+      .title{font:700 26px sans-serif;fill:#0f172a}
+      .label{font:700 18px sans-serif;fill:#0f172a}
+      .small{font:500 14px sans-serif;fill:#475569}
+      .line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#64748b;stroke-width:2;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="680" rx="28"/>
+  <text class="title" x="60" y="58">CloudWatch Serverless Monitoring Architecture</text>
+
+  <rect class="box" x="70" y="125" width="190" height="80" rx="16"/>
+  <text class="label" x="128" y="172">User</text>
+
+  <rect class="aws" x="340" y="105" width="210" height="80" rx="16"/>
+  <text class="label" x="387" y="152">CloudFront</text>
+
+  <rect class="aws" x="625" y="105" width="210" height="80" rx="16"/>
+  <text class="label" x="710" y="152">S3</text>
+
+  <rect class="aws" x="340" y="285" width="210" height="80" rx="16"/>
+  <text class="label" x="390" y="332">API Gateway</text>
+
+  <rect class="aws" x="625" y="285" width="210" height="80" rx="16"/>
+  <text class="label" x="680" y="332">Lambda</text>
+
+  <rect class="aws" x="900" y="285" width="210" height="80" rx="16"/>
+  <text class="label" x="948" y="332">DynamoDB</text>
+
+  <rect class="mon" x="625" y="475" width="210" height="80" rx="16"/>
+  <text class="label" x="666" y="522">CloudWatch</text>
+  <text class="small" x="668" y="546">Logs / Metrics</text>
+
+  <rect class="cost" x="900" y="475" width="210" height="80" rx="16"/>
+  <text class="label" x="950" y="522">Budgets</text>
+  <text class="small" x="947" y="546">Cost Alerts</text>
+
+  <rect class="box" x="70" y="475" width="190" height="80" rx="16"/>
+  <text class="label" x="116" y="522">Developer</text>
+
+  <path class="line" d="M260 165 H340"/>
+  <path class="line" d="M550 145 H625"/>
+  <path class="line" d="M260 325 H340"/>
+  <path class="line" d="M550 325 H625"/>
+  <path class="line" d="M835 325 H900"/>
+  <path class="dash" d="M445 185 C500 260 555 430 625 500"/>
+  <path class="dash" d="M445 365 C520 430 555 500 625 515"/>
+  <path class="dash" d="M730 365 V475"/>
+  <path class="dash" d="M1005 365 V475"/>
+  <path class="dash" d="M900 515 H835"/>
+  <path class="dash" d="M625 515 H260"/>
+  <text class="small" x="92" y="610">Point: Separate Logs, Metrics, and Budgets to monitor MVP operations at low cost</text>
+</svg>

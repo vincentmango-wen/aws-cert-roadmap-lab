@@ -2,7 +2,9 @@ export type ComparisonLevel = "beginner" | "intermediate" | "advanced";
 
 export type ComparisonPriority = "high" | "medium" | "low";
 
-export type ComparisonExamScope = "CLF-C02" | "SAA-C03";
+export type ComparisonExamScope = "CLF-C02" | "SAA-C03" | "AIF-C01";
+
+export type ComparisonLocale = "ja" | "en" | "zh";
 
 export type Comparison = {
   comparisonId: string;
@@ -18,4 +20,9 @@ export type Comparison = {
   published: boolean;
   publishedAt: string;
   updatedAt: string;
+  locale?: ComparisonLocale;
+};
+
+export type ComparisonArticle = Comparison & {
+  content: string;
 };

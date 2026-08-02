@@ -1,0 +1,166 @@
+---
+comparisonId: "cmp-012"
+slug: "bedrock-vs-sagemaker"
+title: "Bedrock・SageMakerの違いを初心者向けに解説"
+description: "AWSの生成AI・機械学習サービスであるAmazon BedrockとAmazon SageMakerの違い、試験ポイント、実務での使い分けを整理します。"
+category: "MachineLearning"
+level: "beginner"
+examScopes:
+  - "AIF-C01"
+services:
+  - "bedrock"
+  - "sagemaker"
+tags:
+  - "ai"
+  - "machine-learning"
+  - "bedrock"
+  - "sagemaker"
+  - "comparison"
+  - "aif"
+priority: "high"
+published: true
+publishedAt: "2026-07-25"
+updatedAt: "2026-07-25"
+---
+
+# Bedrock・SageMakerの違い
+
+## 結論
+
+Amazon BedrockとAmazon SageMakerは、どちらもAWSの生成AI・機械学習サービスです。
+
+ただし、扱うレイヤーと得意なことが違います。
+
+| サービス | 一言でいうと | 主な使いどころ |
+|---|---|---|
+| Amazon Bedrock | 基盤モデルをAPIで呼び出すマネージド生成AIサービス | チャットボット、文章生成、Knowledge Basesを使ったRAG |
+| Amazon SageMaker | 機械学習モデルの構築・学習・デプロイのためのフルマネージドプラットフォーム | 独自モデルの学習、MLOpsパイプライン、カスタム推論エンドポイント |
+
+迷ったら、まずはこう判断します。
+
+- 既存の基盤モデルをAPI経由ですぐ使いたい：Bedrock
+- 独自データで機械学習モデルをゼロから学習・カスタマイズしたい：SageMaker
+- サーバーレスで生成AI機能を組み込みたい：Bedrock
+- ノートブック環境でデータサイエンティストが試行錯誤したい：SageMaker
+
+## 比較表
+
+| 項目 | Amazon Bedrock | Amazon SageMaker |
+|---|---|---|
+| 正式名称 | Amazon Bedrock | Amazon SageMaker |
+| 種類 | マネージド生成AI基盤モデルAPI | 機械学習のフルマネージド開発プラットフォーム |
+| 提供するもの | Anthropic Claude、Amazon Titan、Meta Llama、Mistral、AI21 LabsなどのAPI | ノートブック、学習ジョブ、モデルレジストリ、推論エンドポイント、パイプライン |
+| モデルの扱い | 既存の基盤モデルをAPI経由で呼び出す | 自前のモデルを学習・チューニング・デプロイする |
+| インフラ管理 | サーバーレス。インフラ管理不要 | 学習・推論インスタンスの選定や管理が必要 |
+| カスタマイズ | ファインチューニング、Knowledge Bases、Agentsなど | フルカスタム学習、ハイパーパラメータ調整、独自アルゴリズム |
+| 典型的な使い方 | 生成AIアプリのバックエンドAPI呼び出し | 予測モデルの学習からMLOpsパイプライン構築まで |
+| データサイエンス作業 | ほぼ不要（プロンプト設計が中心） | 前処理・学習・評価などデータサイエンスの工程が中心 |
+| 代表的な機能 | Knowledge Bases（RAG）、Guardrails、Agents | JumpStart、Studio、Pipelines、Model Registry |
+| このプロジェクトでの用途 | AI章コンテンツのドッグフーディング対象 | MVPでは直接利用しない |
+
+## 初学者向け説明
+
+### Amazon Bedrock
+
+Bedrockは、複数のAIスタートアップやAmazon自身が提供する基盤モデル（Foundation Model）を、API経由で簡単に呼び出せるマネージドサービスです。
+
+Anthropic Claude、Amazon Titan、Meta Llama、Mistral、AI21 LabsといったモデルをBedrockの共通APIで呼び出せるため、モデルを乗り換えるときの実装変更を最小限にできます。
+
+サーバーやGPUインスタンスを自分で管理する必要はなく、モデルの学習もBedrock側の基盤モデルに任せられるため、「生成AI機能をアプリに組み込みたいが、モデルの学習・運用はしたくない」というケースに向いています。
+
+### Amazon SageMaker
+
+SageMakerは、機械学習モデルを一から構築・学習・デプロイするためのフルマネージド開発プラットフォームです。
+
+Jupyterベースのノートブック環境（SageMaker Studio）、大規模データでの学習ジョブ、学習済みモデルのデプロイ、MLOpsパイプラインの構築など、機械学習プロジェクトのライフサイクル全体をカバーします。
+
+独自データを使ってゼロからモデルを学習したい、既存の基盤モデルでは対応できない特殊なタスクに取り組みたい、といった場合にSageMakerを使います。
+
+## 試験で問われるポイント
+
+### AIF-C01で問われやすいポイント
+
+- BedrockはマネージドサービスでAPI経由の呼び出しが中心、SageMakerはモデル構築・学習・デプロイのプラットフォーム
+- Bedrockはサーバーレスでインフラ管理が不要
+- SageMakerは学習・推論インスタンスの選定や管理を伴う
+- 「責任あるAI（Responsible AI）」の文脈でBedrock Guardrailsが問われることがある
+- Amazon Bedrock Knowledge Basesは、RAG（検索拡張生成）を実現する機能として登場する
+- SageMaker JumpStartは、事前学習済みモデルやソリューションテンプレートをすばやく使い始める機能
+- 基盤モデルを選ぶ観点（精度、コスト、レイテンシ、モダリティ）の理解が問われる
+- 「既存の基盤モデルをすぐ使いたい」ならBedrock、「独自データでモデルを一から作りたい」ならSageMakerという使い分けが基本の判断軸
+
+## 実務での使い分け
+
+### Bedrockを選ぶケース
+
+- 既存の基盤モデルをAPI経由ですぐ使いたい
+- サーバーレスで生成AI機能を組み込みたい
+- チャットボットや文章生成などの生成AIユースケース
+- RAG構成をKnowledge Basesで手早く作りたい
+- 複数モデルを切り替えて比較検証したい
+
+例：
+
+- 社内向けチャットボット
+- カスタマーサポートの自動応答
+- ドキュメント検索・要約（RAG）
+- マーケティング文章の自動生成
+
+### SageMakerを選ぶケース
+
+- 独自データで機械学習モデルを一から学習したい
+- 基盤モデルでは対応できない専用タスクがある
+- MLOpsパイプラインを構築して継続的にモデルを再学習したい
+- データサイエンティストがノートブックで試行錯誤したい
+
+例：
+
+- 需要予測モデルの構築
+- 不正検知モデルの学習
+- 独自の画像分類モデルの開発
+- レコメンデーションエンジンの構築
+
+## よくある間違い
+
+### 間違い1：BedrockとSageMakerを完全に別物だと思う
+
+BedrockとSageMakerは競合するサービスではなく、組み合わせて使うこともできます。
+
+例えば、SageMakerで学習したカスタムモデルをBedrock経由で呼び出す、といった構成も可能です。
+
+### 間違い2：Bedrockでモデルを「学習」できると思う
+
+Bedrockは既存の基盤モデルをAPI経由で呼び出すサービスで、ファインチューニングは可能ですが、ゼロからのモデル学習は想定していません。
+
+大規模なモデルをゼロから学習したい場合はSageMakerが向いています。
+
+### 間違い3：SageMakerを使えばインフラ管理が不要だと思う
+
+SageMakerはマネージドサービスですが、学習・推論に使うインスタンスタイプの選定や、コスト管理などは利用者側で考える必要があります。
+
+「マネージド」と「インフラ管理が完全に不要」は同じ意味ではありません。
+
+### 間違い4：生成AIならとりあえずBedrockと考えてしまう
+
+生成AIユースケースでもBedrockが最適とは限りません。
+
+自社データで大規模に事前学習したい、独自アーキテクチャを試したいといった場合は、SageMakerでの独自開発が適切なこともあります。
+
+## 関連用語
+
+- [AWS IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [AWS Lambda](/terms/lambda)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 関連問題
+
+- [模擬問題一覧を見る](/questions)
+
+## まとめ
+
+BedrockとSageMakerの違いは、「基盤モデルをAPI経由で使うか、モデルを一から構築・学習するか」で考えると整理しやすいです。
+
+Bedrockはマネージド生成AI基盤モデルAPI、SageMakerは機械学習のフルマネージド開発プラットフォームです。
+
+AIF-C01では、この2つのサービスの役割の違いと、責任あるAIやRAGといった関連機能の理解が問われます。

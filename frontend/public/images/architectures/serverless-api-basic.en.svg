@@ -1,0 +1,63 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="32" fill="#F8FAFC"/>
+
+  <text x="600" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#0F172A">
+    API Gateway + Lambda + DynamoDB Serverless API Architecture
+  </text>
+
+  <text x="600" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#475569">
+    Basic architecture for receiving, processing, and storing HTTP requests like contact forms serverlessly
+  </text>
+
+  <rect x="60" y="250" width="190" height="120" rx="20" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+  <circle cx="155" cy="290" r="28" fill="#DBEAFE"/>
+  <text x="155" y="299" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#1D4ED8">U</text>
+  <text x="155" y="342" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#0F172A">User</text>
+  <text x="155" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#64748B">Contact Form</text>
+
+  <rect x="335" y="230" width="220" height="160" rx="24" fill="#FFFFFF" stroke="#7C3AED" stroke-width="3"/>
+  <rect x="370" y="262" width="150" height="52" rx="14" fill="#EDE9FE"/>
+  <text x="445" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#6D28D9">API Gateway</text>
+  <text x="445" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">HTTP API</text>
+  <text x="445" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">POST /contact</text>
+
+  <rect x="665" y="230" width="220" height="160" rx="24" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
+  <rect x="710" y="262" width="130" height="52" rx="14" fill="#FFEDD5"/>
+  <text x="775" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#C2410C">Lambda</text>
+  <text x="775" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">Validation</text>
+  <text x="775" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">Business Logic</text>
+
+  <rect x="970" y="230" width="180" height="160" rx="24" fill="#FFFFFF" stroke="#22C55E" stroke-width="3"/>
+  <rect x="1005" y="262" width="110" height="52" rx="14" fill="#DCFCE7"/>
+  <text x="1060" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#15803D">DynamoDB</text>
+  <text x="1060" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">ContactsTable</text>
+  <text x="1060" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">PutItem</text>
+
+  <path d="M250 310H316" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+  <path d="M306 298L326 310L306 322" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="288" y="287" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#1D4ED8">HTTPS</text>
+
+  <path d="M555 310H646" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+  <path d="M636 298L656 310L636 322" stroke="#7C3AED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="605" y="287" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#6D28D9">Invoke</text>
+
+  <path d="M885 310H951" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+  <path d="M941 298L961 310L941 322" stroke="#EA580C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="923" y="287" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#C2410C">Write</text>
+
+  <rect x="665" y="500" width="220" height="100" rx="20" fill="#FFFFFF" stroke="#0EA5E9" stroke-width="2"/>
+  <text x="775" y="542" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#0369A1">CloudWatch Logs</text>
+  <text x="775" y="574" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#64748B">Logs &amp; error monitoring</text>
+
+  <rect x="970" y="500" width="180" height="100" rx="20" fill="#FFFFFF" stroke="#A855F7" stroke-width="2"/>
+  <text x="1060" y="542" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#7E22CE">IAM Role</text>
+  <text x="1060" y="574" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#64748B">Least privilege</text>
+
+  <path d="M775 390V482" stroke="#0EA5E9" stroke-width="3" stroke-dasharray="8 8"/>
+  <path d="M970 500L870 390" stroke="#A855F7" stroke-width="3" stroke-dasharray="8 8"/>
+
+  <rect x="110" y="650" width="980" height="42" rx="21" fill="#E2E8F0"/>
+  <text x="600" y="677" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
+    Key point: No always-on server required. Runs only on request, enabling low-cost API construction
+  </text>
+</svg>

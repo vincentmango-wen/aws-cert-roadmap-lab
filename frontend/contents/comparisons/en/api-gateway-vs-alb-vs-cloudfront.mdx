@@ -1,0 +1,193 @@
+# Differences between API Gateway, ALB, and CloudFront
+
+## Summary
+
+Amazon API Gateway, Application Load Balancer (ALB), and Amazon CloudFront can all act as the entry point for incoming requests.
+
+Their purposes, however, are different.
+
+- Use API Gateway to publish a serverless API.
+- Use ALB to load balance a web application running on Amazon EC2 or Amazon ECS.
+- Use Amazon CloudFront to deliver and cache content close to users.
+
+In this project, CloudFront is used for static site delivery and API Gateway is used for the contact API.
+
+## Comparison table
+
+| Item | API Gateway | ALB | CloudFront |
+|---|---|---|---|
+| Category | API management service | Load balancer | CDN |
+| Main use case | Publishing REST API / HTTP API / WebSocket API | Load balancing web applications | High-speed delivery of static and dynamic content |
+| Typical backends | AWS Lambda, HTTP endpoints, AWS services | Amazon EC2, Amazon ECS, AWS Lambda | Amazon S3, ALB, API Gateway, HTTP origins |
+| Authentication and authorization | AWS IAM, Lambda Authorizer, Amazon Cognito | OIDC authentication and similar | Signed URLs, AWS WAF integration |
+| Caching | Built-in API cache | Not the primary purpose | Core strength |
+| Fit with serverless | High | Medium | High |
+| WebSocket | Supported | Not the primary purpose | Not the primary purpose |
+| Exam keywords | serverless API, REST, HTTP API, Lambda | load balancing, HTTP routing | CDN, edge, cache, static content |
+
+## Beginner-friendly explanation
+
+API Gateway is the entry point for APIs.
+
+```text
+Frontend
+↓ POST /contact
+API Gateway
+↓
+Lambda
+```
+
+The contact form in this project is also designed to go through API Gateway.
+
+ALB is the entry point for web applications.
+
+```text
+User
+↓
+ALB
+↓
+EC2 / ECS
+```
+
+ALB distributes traffic across multiple application servers.
+
+CloudFront is a CDN that returns content from a location close to the user.
+
+```text
+User
+↓
+CloudFront
+↓
+S3
+```
+
+It is widely used for static sites and image delivery.
+
+## Points that come up on the exam
+
+### When API Gateway tends to be the correct answer
+
+- You want to build an API on AWS Lambda.
+- You want to publish an HTTP API or REST API.
+- You want to build a WebSocket API.
+- You want per-API authentication, rate limiting, and monitoring.
+- The requirements call for a serverless architecture.
+
+### When ALB tends to be the correct answer
+
+- You want to load balance a web application running on Amazon EC2 or Amazon ECS.
+- You need HTTP / HTTPS path-based routing.
+- You want to distribute requests to container-based applications.
+- You need an entry point for a web application.
+
+### When CloudFront tends to be the correct answer
+
+- You want to deliver static content at high speed.
+- You want to use Amazon S3 as the origin.
+- You want low-latency delivery to a global audience.
+- You want to reduce the number of requests hitting the origin.
+- You want to combine HTTPS delivery with caching.
+
+## How to choose them in practice
+
+### Serverless contact API
+
+Use API Gateway.
+
+```text
+Contact Form
+↓
+API Gateway
+↓
+Lambda
+↓
+DynamoDB
+```
+
+In the MVP for this project, this pattern is the core of the contact API.
+
+### Web applications on Amazon EC2 or Amazon ECS
+
+Use ALB.
+
+```text
+User
+↓
+ALB
+↓
+ECS Service
+```
+
+When containers or EC2 instances are scaled to multiple nodes, ALB handles load balancing across them.
+
+### Static sites and image delivery
+
+Use CloudFront.
+
+```text
+User
+↓
+CloudFront
+↓
+S3
+```
+
+Instead of exposing Amazon S3 directly, you can serve content through CloudFront.
+
+### CloudFront in front of API Gateway
+
+CloudFront can also sit in front of an API.
+
+```text
+User
+↓
+CloudFront
+↓
+API Gateway
+↓
+Lambda
+```
+
+That said, the MVP avoids this added complexity. Serving the static site through CloudFront and the API through the API Gateway URL is enough for the initial release.
+
+## Common mistakes
+
+### Mistake 1: Treating API Gateway and ALB as the same kind of API entry point
+
+Both accept HTTP requests, but the design intent is different.
+
+For a Lambda-centric serverless API, use API Gateway. For load balancing an Amazon EC2 or Amazon ECS web application, use ALB.
+
+### Mistake 2: Using CloudFront as a substitute for API Gateway
+
+CloudFront is a CDN.
+
+API creation, authentication, stage management, and API key management belong to API Gateway.
+
+### Mistake 3: Using API Gateway for static site delivery
+
+Static site delivery is built on Amazon S3 and CloudFront.
+
+API Gateway is the entry point for APIs.
+
+## Related terms
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Lambda](/terms/lambda)
+- [Amazon S3](/terms/s3)
+
+## Related questions
+
+- [CLF practice questions](/questions/clf)
+
+## Wrap-up
+
+Separating API Gateway, ALB, and CloudFront by purpose makes them easier to remember.
+
+- API Gateway: the entry point for APIs.
+- ALB: load balancing for web applications.
+- CloudFront: high-speed content delivery.
+
+This project uses both CloudFront and API Gateway, so this comparison also matters when explaining the portfolio.

@@ -1,0 +1,72 @@
+---
+postId: "blog-016"
+slug: "s3-beginner-object-storage"
+title: "什麼是 Amazon S3?物件儲存初學者指南"
+description: "為 AWS 初學者整理 Amazon S3 的基礎、使用情境、計費重點與安全注意事項。"
+category: "AWS 服務"
+tags:
+  - "S3"
+  - "Storage"
+  - "CLF-C02"
+  - "SAA-C03"
+targetKeywords:
+  - "Amazon S3 是什麼"
+  - "S3 初學者"
+  - "AWS 物件儲存"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 什麼是 Amazon S3?物件儲存初學者指南
+
+Amazon S3 是學習 AWS 時最先要理解的代表性儲存服務。它廣泛應用於靜態網站、圖片儲存、日誌保存、備份等場景。
+
+## 結論
+
+S3 是物件儲存服務。它將檔案以物件的形式保存,並透過稱為 bucket 的容器來管理。
+
+## 什麼是物件儲存
+
+物件儲存是一種將檔案本體與 metadata 一併保存的儲存方式。它與作為 EC2 磁碟使用的 EBS,以及供多台 EC2 共享的 EFS,扮演著不同的角色。
+
+S3 擅長保存大量檔案,常用於網站圖片、靜態 HTML、日誌、備份、資料湖等用途。
+
+## Bucket 與物件
+
+在 S3 中,您先建立 bucket,然後將物件保存在裡面。每個物件都有一個 key,可以像路徑一樣處理。
+
+本網站將 Next.js 靜態輸出產生的 HTML、CSS、JavaScript 與圖片放置於 S3 上。
+
+## 安全注意事項
+
+使用 S3 時最需要留意的是公開設定。如果不小心將內容設為 public,可能會讓不該對外公開的檔案被外部看到。
+
+在發布靜態網站時,不要直接公開 S3,而是透過 CloudFront OAC 來存取,這樣的設計才安全。
+
+## 成本注意事項
+
+S3 會依儲存容量、請求次數、資料傳輸量等項目計費。如果一直放著大容量的圖片或影片,成本就會增加。
+
+對於個人 MVP,建議將圖片進行輕量化、不放置影片,並且不要保留不必要的 build 產物。
+
+## 考試重點
+
+- S3 是物件儲存服務
+- 將物件保存在 bucket 中
+- 可用於靜態網站與備份
+- 可透過儲存類別(Storage Class)進行成本最佳化
+- 可與 CloudFront 搭配進行內容發布
+
+## 相關術語
+
+- [Amazon S3](/terms/s3)
+- [Amazon EBS](/terms/ebs)
+- [Amazon EFS](/terms/efs)
+
+## 延伸閱讀
+
+- [S3、EBS、EFS 的差異](/comparisons/s3-vs-ebs-vs-efs)
+- [使用 S3 與 CloudFront OAC 安全發布靜態網站的設計](/blog/saa-s3-cloudfront-oac-design)

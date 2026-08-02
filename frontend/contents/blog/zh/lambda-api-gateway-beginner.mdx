@@ -1,0 +1,179 @@
+---
+postId: "blog-004"
+slug: "lambda-api-gateway-beginner"
+title: "給初學者的 Lambda 與 API Gateway 入門解說"
+description: "為初學者解說 AWS Lambda 與 Amazon API Gateway 各自的角色、差異、整合方式,以及在聯絡表單 API 中的應用。"
+category: "Serverless"
+tags:
+  - "aws"
+  - "lambda"
+  - "api-gateway"
+  - "serverless"
+  - "backend"
+targetKeywords:
+  - "Lambda API Gateway 初學者"
+  - "AWS Lambda 是什麼"
+  - "API Gateway 是什麼"
+author: "AWS 認證學習路線實驗室"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# 給初學者的 Lambda 與 API Gateway 入門解說
+
+## 結論
+
+Lambda 是執行處理邏輯的服務。
+
+API Gateway 則是接收外部 API 請求的入口。
+
+把這兩個服務組合起來,就能在不需要持續啟動伺服器的情況下建立 API。
+
+本站的設定情境是:用這個組合來處理聯絡表單的送出邏輯。
+
+## 什麼是 Lambda
+
+AWS Lambda 是一種執行程式碼的 Serverless 服務。
+
+Serverless 並不是「沒有伺服器」的意思。
+
+它的意思是「把伺服器的管理工作交給 AWS 處理」。
+
+使用者不需要像 EC2 那樣管理作業系統,也不需要讓伺服器一直保持啟動狀態。
+
+## 什麼是 API Gateway
+
+API Gateway 是接收 HTTP 請求的入口。
+
+當前端發送像 `POST /contact` 這樣的請求時,API Gateway 就會接收這個請求。
+
+接著,API Gateway 會呼叫 Lambda。
+
+簡單來說,API Gateway 是大門,Lambda 是負責處理的人。
+
+## 角色差異
+
+| 服務 | 角色 |
+|---|---|
+| API Gateway | 公開 API 的 URL |
+| Lambda | 實際執行處理邏輯 |
+| DynamoDB | 儲存處理結果或資料 |
+| CloudWatch Logs | 查看執行紀錄 |
+| IAM Role | 賦予 Lambda 所需的權限 |
+
+理解這樣的角色分工,就能掌握 Serverless API 的整體樣貌。
+
+## 聯絡表單的使用方式
+
+聯絡表單的流程如下。
+
+| 順序 | 處理內容 |
+|---|---|
+| 1 | 使用者填寫表單 |
+| 2 | 前端進行輸入檢查 |
+| 3 | 對 API Gateway 發送 POST 請求 |
+| 4 | API Gateway 呼叫 Lambda |
+| 5 | Lambda 驗證輸入值 |
+| 6 | Lambda 寫入 DynamoDB |
+| 7 | Lambda 回傳成功的回應 |
+| 8 | 畫面顯示送出完成的訊息 |
+
+像這樣,如果只是處理表單送出,就不需要架設大型的後端伺服器。
+
+## Lambda 要做的事
+
+Lambda 主要會做以下這些事。
+
+| 處理 | 內容 |
+|---|---|
+| JSON 解析 | 讀取請求的 body |
+| honeypot 檢查 | 排除機器人投稿 |
+| 驗證 | 驗證 name、email、subject、message |
+| 產生 ID | 建立 contactId |
+| 產生時間 | 建立 createdAt |
+| 寫入 DynamoDB | 儲存聯絡內容 |
+| 建立回應 | 回傳成功或錯誤 |
+
+雖然前端也會做輸入檢查,但光是這樣並不夠。
+
+API 有可能被外部直接呼叫,所以 Lambda 端也一定要驗證。
+
+## API Gateway 要做的事
+
+API Gateway 主要會設定以下項目。
+
+| 設定 | 內容 |
+|---|---|
+| Route | 建立 `POST /contact` |
+| Integration | 與 Lambda 串接 |
+| CORS | 限制允許的前端 Origin |
+| Method | 處理 POST、OPTIONS |
+| Logs | 在必要範圍內查看紀錄 |
+
+在 MVP 階段不使用身分驗證。
+
+未來如果要加入登入功能,會搭配 Cognito 與 JWT Authorizer。
+
+## 什麼是 CORS
+
+CORS 是瀏覽器在向不同 Origin 發送請求時所做的控管。
+
+舉例來說,如果前端在 `https://example.com`,API 在 API Gateway 的 URL 上,兩者的 Origin 就不同。
+
+所以要在 API Gateway 端設定允許的 Origin。
+
+正式環境中不要使用 `*`,只允許正式環境前端的 URL。
+
+## IAM 所需的權限
+
+要讓 Lambda 寫入 DynamoDB,就需要對 DynamoDB 的權限。
+
+但是,不能給予什麼都能做的權限。
+
+聯絡表單 Lambda 所需的,只是對 ContactsTable 的 `dynamodb:PutItem` 權限。
+
+如果不需要讀取或刪除,就不要加上。
+
+這種最小權限的思維,在 AWS 認證考試和實務上都很重要。
+
+## 在 CloudWatch Logs 要確認的事
+
+執行 Lambda 之後,CloudWatch Logs 會輸出紀錄。
+
+不過,聯絡的內文或完整 email 地址不應該輸出到 log 裡。
+
+如果要輸出 log,應該記錄以下這類資訊。
+
+| 可以輸出的 log | 理由 |
+|---|---|
+| contactId | 可用於追蹤 |
+| requestId | 可用於故障排查 |
+| 驗證失敗的項目 | 可用於確認原因 |
+| DynamoDB 寫入失敗 | 可用於故障排查 |
+
+個人資訊或機密資訊不要輸出到 log。
+
+## 考試會考的重點
+
+在 Cloud Practitioner 考試中,把 Lambda 理解為 Serverless 運算服務,把 API Gateway 理解為 API 公開服務。
+
+在 SAA 考試中,如果能理解 Serverless API、身分驗證、CORS、IAM、log、DynamoDB 整合等內容會更有優勢。
+
+| 觀點 | 重點 |
+|---|---|
+| 成本 | Lambda 依執行次數與執行時間計費 |
+| 可用性 | 使用受管服務 |
+| 安全性 | 用 IAM Role 套用最小權限 |
+| 維運 | 用 CloudWatch Logs 確認 |
+| 擴充 | 可延伸到 Cognito 身分驗證或 DynamoDB 整合 |
+
+## 總結
+
+使用 Lambda 與 API Gateway,就能在不需要持續啟動伺服器的情況下建立 API。
+
+像聯絡表單這種小型的動態處理,很適合用 Serverless 架構。
+
+重點是要分開理解三個角色:API Gateway 是入口、Lambda 是處理邏輯、DynamoDB 是儲存位置。
+
+如果能做出這樣的架構,就能把 AWS 認證的知識當作實作經驗來說明,寫履歷或面試時都會更有說服力。

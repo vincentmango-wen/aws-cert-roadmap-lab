@@ -1,0 +1,75 @@
+---
+postId: "blog-023"
+slug: "github-actions-oidc-deploy"
+title: "使用 GitHub Actions OIDC 安全部署到 AWS"
+description: "解說從 GitHub Actions 部署到 AWS 時,不使用長期存取金鑰,改用 OIDC 進行臨時驗證的設計思路。"
+category: "AWS 免費方案・作品集"
+tags:
+  - "GitHub Actions"
+  - "OIDC"
+  - "IAM"
+  - "CI/CD"
+  - "CloudFront"
+targetKeywords:
+  - "GitHub Actions OIDC AWS"
+  - "AWS 部署 OIDC"
+  - "GitHub Actions IAM Role"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-08-02"
+---
+
+# 使用 GitHub Actions OIDC 安全部署到 AWS
+
+從 GitHub Actions 部署到 AWS 時,有一種做法是把 AWS 存取金鑰存放在 GitHub Secrets。不過,還有一種更安全的設計方式,就是採用 OIDC。
+
+## 結論
+
+OIDC 方式讓 GitHub Actions 臨時擔任 AWS IAM Role。因為不必把長期存取金鑰存放在 GitHub,所以可以降低外洩風險。
+
+## 問題在哪裡
+
+把 AWS_ACCESS_KEY_ID 和 AWS_SECRET_ACCESS_KEY 存在 GitHub Secrets,雖然運用上很簡單,但長期存取金鑰一旦外洩,造成的風險很大。
+
+即使是個人開發,只要打算當作作品集公開,就必須謹慎處理憑證資訊。
+
+## OIDC 方式的運作原理
+
+當 GitHub Actions 執行時,GitHub 會發行 OIDC token。在 AWS IAM 端則設定 GitHub 的 OIDC Provider 與 Trust Policy,讓 IAM Role 只能由特定的 repository、特定的 branch 來擔任。
+
+在這個專案中,正式環境的 branch 名稱使用 `master`。因此 Trust Policy 的 sub 條件也對應為 `refs/heads/master`。
+
+## 採用最小權限
+
+給 GitHub Actions 使用的 Role,只授予部署所需的權限:上傳到 S3、刪除 S3 內的檔案、執行 CloudFront Invalidation。
+
+至於 IAM 操作、DynamoDB 刪除、EC2 操作等與部署無關的權限,則不予授予。
+
+## 本專案的流程
+
+1. 推送到 master branch
+2. GitHub Actions 啟動
+3. 執行 Next.js 的 build
+4. 透過 OIDC 擔任 AWS IAM Role
+5. 將 out/ 同步到 S3
+6. 執行 CloudFront Invalidation
+
+## 考試與實務上的重點
+
+- IAM Role 可用於臨時的權限委派
+- 最小權限原則很重要
+- 減少長期存取金鑰可以降低外洩風險
+- CI/CD 同樣需要安全設計
+
+## 相關用語
+
+- [IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+
+## 延伸閱讀
+
+- [為 Cloud Practitioner 整理 IAM 基礎](/blog/clf-iam-basics)
+- [AWS 作品集為什麼要選 Serverless 架構](/blog/aws-portfolio-serverless-architecture)

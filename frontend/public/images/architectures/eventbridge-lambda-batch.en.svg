@@ -1,0 +1,84 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="32" fill="#F8FAFC"/>
+
+  <text x="600" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#0F172A">
+    EventBridge + Lambda Batch Processing
+  </text>
+
+  <text x="600" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#475569">
+    Run Lambda on a schedule as the foundation for periodic jobs, aggregation, and notifications
+  </text>
+
+  <rect x="80" y="260" width="230" height="140" rx="24" fill="#FFFFFF" stroke="#7C3AED" stroke-width="3"/>
+  <rect x="120" y="292" width="150" height="52" rx="14" fill="#EDE9FE"/>
+  <text x="195" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#6D28D9">
+    EventBridge
+  </text>
+  <text x="195" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Schedule Rule
+  </text>
+  <text x="195" y="392" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    cron / rate
+  </text>
+
+  <rect x="475" y="260" width="230" height="140" rx="24" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
+  <rect x="525" y="292" width="130" height="52" rx="14" fill="#FFEDD5"/>
+  <text x="590" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#C2410C">
+    Lambda
+  </text>
+  <text x="590" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Batch Logic
+  </text>
+  <text x="590" y="392" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
+    Scheduled Execution
+  </text>
+
+  <rect x="880" y="210" width="230" height="110" rx="22" fill="#FFFFFF" stroke="#22C55E" stroke-width="3"/>
+  <rect x="930" y="240" width="130" height="42" rx="12" fill="#DCFCE7"/>
+  <text x="995" y="267" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#15803D">
+    DynamoDB
+  </text>
+  <text x="995" y="299" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#475569">
+    Read / Write
+  </text>
+
+  <rect x="880" y="380" width="230" height="110" rx="22" fill="#FFFFFF" stroke="#0EA5E9" stroke-width="3"/>
+  <rect x="920" y="410" width="150" height="42" rx="12" fill="#E0F2FE"/>
+  <text x="995" y="437" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0369A1">
+    CloudWatch Logs
+  </text>
+  <text x="995" y="469" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#475569">
+    Logs / Metrics
+  </text>
+
+  <path d="M310 330H456" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+  <path d="M446 318L466 330L446 342" stroke="#7C3AED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="388" y="306" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#6D28D9">
+    Trigger
+  </text>
+
+  <path d="M705 310H861" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M851 298L871 310L851 322" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="788" y="286" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#15803D">
+    Data Access
+  </text>
+
+  <path d="M705 365H861" stroke="#0EA5E9" stroke-width="4" stroke-linecap="round"/>
+  <path d="M851 353L871 365L851 377" stroke="#0EA5E9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="788" y="397" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0369A1">
+    Log Output
+  </text>
+
+  <rect x="260" y="510" width="680" height="92" rx="22" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+  <text x="600" y="548" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">
+    Use Cases
+  </text>
+  <text x="600" y="580" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#475569">
+    Daily question delivery / Periodic aggregation / Cleanup / Reporting / Notifications
+  </text>
+
+  <rect x="125" y="650" width="950" height="42" rx="21" fill="#E2E8F0"/>
+  <text x="600" y="677" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
+    Key point: Run Lambda only at scheduled times without keeping a server always on
+  </text>
+</svg>

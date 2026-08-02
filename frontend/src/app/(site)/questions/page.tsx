@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import rawClfQuestions from "../../../../contents/questions/clf-c02.json";
-import rawSaaQuestions from "../../../../contents/questions/saa-c03.json";
+import rawClfQuestions from "../../../../contents/questions/clf-c02.ja.json";
+import rawSaaQuestions from "../../../../contents/questions/saa-c03.ja.json";
 import {
   getBeginnerRecommendedQuestions,
   getPublishedQuestions,

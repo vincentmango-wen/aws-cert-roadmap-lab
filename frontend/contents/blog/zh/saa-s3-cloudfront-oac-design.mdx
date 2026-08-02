@@ -1,0 +1,71 @@
+---
+postId: "blog-013"
+slug: "saa-s3-cloudfront-oac-design"
+title: "用 S3 與 CloudFront OAC 安全傳遞靜態網站的設計"
+description: "解析不直接公開 S3、而是透過 CloudFront OAC 傳遞的架構,從 SAA 與作品集兩個角度切入。"
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "S3"
+  - "CloudFront"
+  - "OAC"
+  - "靜態網站"
+targetKeywords:
+  - "CloudFront OAC S3"
+  - "S3 靜態網站 安全性"
+  - "SAA CloudFront"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 用 S3 與 CloudFront OAC 安全傳遞靜態網站的設計
+
+要在 AWS 上發佈靜態網站,S3 + CloudFront 是基本架構。不過,我們會避免直接公開 S3 儲存貯體 (bucket) 的設計。
+
+## 結論
+
+讓 S3 維持私有,並透過 CloudFront OAC 設定,只允許 CloudFront 取得 S3 物件。使用者則透過 CloudFront 以 HTTPS 存取網站。
+
+## 為什麼不直接公開 S3
+
+如果將 S3 儲存貯體設為公開,容易導致非預期的檔案外洩或存取控制失誤。即使只是用來傳遞靜態網站,以 CloudFront 作為入口,也比直接公開 S3 安全。
+
+## 什麼是 OAC
+
+OAC 是 Origin Access Control 的縮寫,是 CloudFront 用來存取 S3 來源 (origin) 的機制。透過 S3 儲存貯體政策 (bucket policy),只允許特定 CloudFront Distribution 來源的存取。
+
+## 架構流程
+
+1. 使用者存取自訂網域或 CloudFront 網域
+2. CloudFront 接收請求
+3. 若有快取,直接由 CloudFront 回應
+4. 若沒有快取,CloudFront 向 S3 取得內容
+5. S3 只允許來自 CloudFront 的存取
+
+## SAA 考試會問的重點
+
+- S3 靜態網站傳遞要搭配 CloudFront
+- 不直接公開 S3,改用 OAC
+- 在 CloudFront 處理 HTTPS 傳遞與快取
+- 若使用自訂網域,需將 ACM 憑證綁定到 CloudFront
+- 更新快取要使用 Invalidation
+
+## 在本專案中的角色
+
+本網站將 Next.js 的靜態輸出檔案放到 S3,並透過 CloudFront 傳遞。透過 GitHub Actions 執行 S3 sync,部署後再執行 CloudFront Invalidation。
+
+如此一來,就能將低成本、HTTPS 傳遞、S3 非公開、CI/CD 等要素整合在一起,做為作品集的說明素材。
+
+## 相關名詞
+
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Certificate Manager](/terms/acm)
+
+## 延伸閱讀
+
+- [S3 + CloudFront 靜態網站架構](/architectures/static-site-s3-cloudfront)
+- [S3、EBS、EFS 的差異](/comparisons/s3-vs-ebs-vs-efs)

@@ -2,11 +2,16 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { QuestionPlayer } from "@/components/questions/QuestionPlayer";
 import type { ResolvedLink } from "@/components/questions/QuestionPlayer";
+import { questionPlayerLabelsByLocale } from "@/components/questions/question-player-labels";
+import { buildQuestionQuizJsonLd } from "@/lib/questionJsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import { isExistingTerm, isExistingComparison } from "@/lib/termGuards";
-import type { Question } from "@/types/question";
-import rawClfQuestions from "../../../../../contents/questions/clf-c02.json";
-import rawSaaQuestions from "../../../../../contents/questions/saa-c03.json";
+import {
+  createQuestionDetailMetadataInput,
+  getAdjacentQuestionIds,
+  getPublishedQuestionByIdLocale,
+  getQuestionStaticParams,
+} from "../question-detail-data";
 
 type QuestionDetailPageProps = {
   params: Promise<{
@@ -14,80 +19,37 @@ type QuestionDetailPageProps = {
   }>;
 };
 
-type QuestionStaticParams = {
-  questionId: string;
-};
+const LOCALE = "ja" as const;
 
-const questions = [
-  ...(rawClfQuestions as Question[]),
-  ...(rawSaaQuestions as Question[]),
-];
+export const dynamicParams = false;
 
-export function generateStaticParams(): QuestionStaticParams[] {
-  return questions
-    .filter((question) => question.published)
-    .map((question) => ({
-      questionId: question.questionId,
-    }));
-}
-
-function truncateDescription(text: string, maxLength: number): string {
-  if (text.length <= maxLength) {
-    return text;
-  }
-
-  return `${text.slice(0, maxLength - 1)}…`;
+export function generateStaticParams() {
+  return getQuestionStaticParams(LOCALE);
 }
 
 export async function generateMetadata({
   params,
 }: QuestionDetailPageProps): Promise<Metadata> {
   const { questionId } = await params;
-  const question = questions.find((item) => item.questionId === questionId);
-
-  if (!question) {
-    return createPageMetadata({
-      title: "模擬問題が見つかりません",
-      description:
-        "指定された模擬問題は見つかりませんでした。模擬問題一覧からAWS資格対策の問題を確認できます。",
-      path: `/questions/${questionId}`,
-      noIndex: true,
-    });
-  }
-
-  return createPageMetadata({
-    title: `${question.questionId.toUpperCase()} | ${question.exam}模擬問題`,
-    description: truncateDescription(
-      `${question.category}分野のAWS模擬問題です。${question.question}`,
-      120,
-    ),
-    path: `/questions/${question.questionId}`,
-    keywords: [
-      question.exam,
-      question.category,
-      question.difficulty,
-      "AWS",
-      "模擬問題",
-      ...(question.relatedServices ?? []),
-      ...(question.tags ?? []),
-    ],
-    modifiedTime: question.updatedAt,
-  });
+  return createPageMetadata(
+    createQuestionDetailMetadataInput(LOCALE, questionId),
+  );
 }
 
 export default async function QuestionDetailPage({
   params,
 }: QuestionDetailPageProps): Promise<React.JSX.Element> {
   const { questionId } = await params;
-  const question = getPublishedQuestions().find(
-    (item) => item.questionId === questionId,
-  );
+  const question = getPublishedQuestionByIdLocale(LOCALE, questionId);
 
   if (!question) {
     notFound();
   }
 
-  const adjacentQuestionIds = getAdjacentQuestionIds(questionId);
+  const { previousQuestionId, nextQuestionId } = getAdjacentQuestionIds(
+    LOCALE,
+    questionId,
+  );
 
   // server 側で存在チェックを済ませ、解決済み構造を client に渡す。
   // QuestionPlayer ("use client") から termGuards (terms.json 85KB) の
@@ -98,47 +60,32 @@ export default async function QuestionDetailPage({
   const resolvedTerms: ResolvedLink[] = (question.relatedTerms ?? []).map(
     (id) => ({ id, exists: isExistingTerm(id) }),
   );
-  const resolvedComparisons: ResolvedLink[] = (question.relatedComparisons ?? []).map(
-    (id) => ({ id, exists: isExistingComparison(id) }),
-  );
+  const resolvedComparisons: ResolvedLink[] = (
+    question.relatedComparisons ?? []
+  ).map((id) => ({ id, exists: isExistingComparison(id) }));
+
+  // Quiz 構造化データ（ja のみ）。sd-policies 準拠のため、ここで出力する
+  // テキストは QuestionPlayer が静的 HTML に常時描画しているものに限る。
+  const quizJsonLd = buildQuestionQuizJsonLd(question, LOCALE);
 
   return (
-    <QuestionPlayer
-      question={question}
-      previousQuestionId={adjacentQuestionIds.previousQuestionId ?? undefined}
-      nextQuestionId={adjacentQuestionIds.nextQuestionId ?? undefined}
-      resolvedServices={resolvedServices}
-      resolvedTerms={resolvedTerms}
-      resolvedComparisons={resolvedComparisons}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(quizJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <QuestionPlayer
+        locale={LOCALE}
+        labels={questionPlayerLabelsByLocale[LOCALE]}
+        question={question}
+        previousQuestionId={previousQuestionId ?? undefined}
+        nextQuestionId={nextQuestionId ?? undefined}
+        resolvedServices={resolvedServices}
+        resolvedTerms={resolvedTerms}
+        resolvedComparisons={resolvedComparisons}
+      />
+    </>
   );
-}
-
-function getPublishedQuestions(): Question[] {
-  return questions.filter((question) => question.published);
-}
-
-function getAdjacentQuestionIds(questionId: string): {
-  previousQuestionId: string | null;
-  nextQuestionId: string | null;
-} {
-  const publishedQuestions = getPublishedQuestions();
-  const currentIndex = publishedQuestions.findIndex(
-    (question) => question.questionId === questionId,
-  );
-
-  if (currentIndex === -1) {
-    return {
-      previousQuestionId: null,
-      nextQuestionId: null,
-    };
-  }
-
-  const previousQuestion = publishedQuestions[currentIndex - 1] ?? null;
-  const nextQuestion = publishedQuestions[currentIndex + 1] ?? null;
-
-  return {
-    previousQuestionId: previousQuestion ? previousQuestion.questionId : null,
-    nextQuestionId: nextQuestion ? nextQuestion.questionId : null,
-  };
 }

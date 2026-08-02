@@ -1,0 +1,73 @@
+---
+postId: "blog-015"
+slug: "saa-decoupling-sqs-sns-eventbridge"
+title: "Understanding Decoupled Design with SQS, SNS, and EventBridge"
+description: "Learn the decoupled design patterns essential for SAA, and how to choose between SQS, SNS, and EventBridge based on their roles."
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "SQS"
+  - "SNS"
+  - "EventBridge"
+  - "Decoupling"
+targetKeywords:
+  - "SQS SNS EventBridge differences"
+  - "AWS decoupled architecture"
+  - "SAA messaging services"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# Understanding Decoupled Design with SQS, SNS, and EventBridge
+
+The SAA exam often tests your understanding of decoupled system design. The three main services for this are SQS, SNS, and EventBridge.
+
+## Summary
+
+SQS is a queue, SNS is Pub/Sub notifications, and EventBridge is event routing. By avoiding direct connections between systems, you build architectures that are more resilient to failures and easier to scale.
+
+## What Is Decoupling?
+
+Decoupling is a design approach that reduces the dependencies between components. When Service A calls Service B directly, slowness in B easily affects A.
+
+Placing a queue or event bus between them lets you process work asynchronously, so a failure on one side is less likely to bring down the whole system.
+
+## The Role of SQS
+
+SQS is a message queue. It temporarily stores messages waiting to be processed, and downstream workers pick them up in order.
+
+Use it whenever you want asynchronous processing, such as image conversion, order processing, or batch jobs.
+
+## The Role of SNS
+
+SNS is a Pub/Sub notification service. A single message can be delivered to many subscribers.
+
+Use it when you want to fan out the same event in several directions, such as sending email notifications, invoking Lambda functions, or pushing to SQS.
+
+## The Role of EventBridge
+
+EventBridge is an event bus. It routes events from AWS services, SaaS providers, and custom applications based on rules you define.
+
+It also supports scheduled execution, so a feature like "deliver one question per day" is a good fit for EventBridge + Lambda.
+
+## Key Points for the SAA Exam
+
+- SQS is an asynchronous queue
+- SNS sends notifications to multiple subscribers
+- EventBridge handles event routing and scheduled execution
+- Decoupling improves fault tolerance and scalability
+- Consider replacing synchronous calls with asynchronous patterns
+
+## Related Terms
+
+- [Amazon SQS](/terms/sqs)
+- [Amazon SNS](/terms/sns)
+- [Amazon EventBridge](/terms/eventbridge)
+
+## Next Reading
+
+- [Differences Between SNS, SQS, and EventBridge](/comparisons/sns-vs-sqs-vs-eventbridge)
+- [EventBridge + Lambda Batch Processing Architecture](/architectures/eventbridge-lambda-batch)

@@ -1,0 +1,70 @@
+---
+postId: "blog-019"
+slug: "dynamodb-beginner-nosql"
+title: "What Is Amazon DynamoDB? A Beginner's Guide to NoSQL"
+description: "A beginner-friendly overview of DynamoDB, including tables, partition keys, on-demand billing, and Lambda integration."
+category: "AWS Services"
+tags:
+  - "DynamoDB"
+  - "NoSQL"
+  - "Lambda"
+  - "Database"
+targetKeywords:
+  - "What is DynamoDB"
+  - "DynamoDB for beginners"
+  - "AWS NoSQL"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# What Is Amazon DynamoDB? A Beginner's Guide to NoSQL
+
+Amazon DynamoDB is AWS's managed NoSQL database service. It works well with serverless architectures and is easy to use from Lambda.
+
+## Summary
+
+DynamoDB is a NoSQL database that reads and writes data quickly using keys. Instead of relying on complex SQL joins, you design your tables around the access patterns your application needs.
+
+## What Is NoSQL?
+
+NoSQL is a broad term for databases that use a different data model from traditional relational databases. In DynamoDB, you store items in tables and retrieve them using keys.
+
+Unlike SQL, where you can freely join tables, you decide up front "which key to store data under, and which key to retrieve it with."
+
+## Partition Keys
+
+The partition key is the foundation of DynamoDB. It is the key used to distribute and retrieve items within a table.
+
+For a contact inquiry table, you might use `contactId` as the partition key. For per-user study history, `userId` is a good candidate for the partition key.
+
+## On-Demand Billing
+
+DynamoDB offers an on-demand capacity mode. This is an easy starting point for personal MVPs with low traffic.
+
+However, costs can rise when you have heavy traffic or rely on frequent Scan operations. Monitor your usage with AWS Budgets and CloudWatch Metrics.
+
+## How This Project Uses DynamoDB
+
+On this site, the name, email, subject, and body submitted through the contact form are saved to DynamoDB. For the MVP, only contact submissions are treated as dynamic data. Articles and quiz questions are managed as static files.
+
+## Key Exam Points
+
+- DynamoDB is a managed NoSQL database
+- It pairs well with serverless architectures
+- Partition key design matters
+- It can handle large volumes of traffic
+- It uses a different data model from RDS
+
+## Related Terms
+
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon RDS](/terms/rds)
+- [AWS Lambda](/terms/lambda)
+
+## Further Reading
+
+- [Differences Between RDS and DynamoDB](/comparisons/rds-vs-dynamodb)
+- [Choosing Between RDS and DynamoDB for the SAA Exam](/blog/saa-database-selection-rds-dynamodb)

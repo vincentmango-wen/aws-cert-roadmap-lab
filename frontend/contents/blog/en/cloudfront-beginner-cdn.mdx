@@ -1,0 +1,72 @@
+---
+postId: "blog-020"
+slug: "cloudfront-beginner-cdn"
+title: "What Is Amazon CloudFront? A Beginner's Guide to CDN"
+description: "Learn the basics of CloudFront, CDN, caching, S3 delivery, HTTPS, and invalidation in a beginner-friendly way."
+category: "AWS Services"
+tags:
+  - "CloudFront"
+  - "CDN"
+  - "S3"
+  - "Cache"
+targetKeywords:
+  - "What is CloudFront"
+  - "AWS CDN for beginners"
+  - "CloudFront S3 delivery"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# What Is Amazon CloudFront? A Beginner's Guide to CDN
+
+Amazon CloudFront is the CDN service provided by AWS. It is used for static website delivery, image delivery, API acceleration, and similar use cases.
+
+## Summary
+
+CloudFront delivers content from edge locations close to your users, improving both response speed and availability.
+
+## What Is a CDN?
+
+CDN stands for Content Delivery Network. It is a mechanism that caches content close to users and delivers it from those nearby locations.
+
+For example, if users in Japan access a server in the United States every time, the response will be slow. With CloudFront, content can be returned from a nearby edge location's cache, which improves loading speed.
+
+## Combining CloudFront With S3
+
+For static websites, a common pattern is to store HTML, CSS, JavaScript, and images in S3 and deliver them through CloudFront.
+
+In this setup, do not expose S3 directly. Instead, use CloudFront OAC so that S3 can only be accessed through CloudFront. This is a more secure design.
+
+## HTTPS Delivery
+
+CloudFront is also used for HTTPS delivery. When you use a custom domain, issue a certificate with ACM and attach it to the CloudFront distribution.
+
+Note that ACM certificates for CloudFront must be requested in a specific region, so pay attention to the region requirement.
+
+## What Is Invalidation?
+
+Because CloudFront caches content, a new file uploaded to S3 may not be reflected right away. Invalidation is used in this case.
+
+In a CI/CD pipeline, run CloudFront Invalidation after an `S3 sync` to make sure updates are reflected.
+
+## Key Points for the Exam
+
+- CloudFront is a CDN service
+- It delivers content from edge locations
+- It can be combined with S3 to deliver static websites
+- It is used for HTTPS delivery and cache control
+- Use Invalidation to apply updates
+
+## Related Terms
+
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [AWS Certificate Manager](/terms/acm)
+
+## Recommended Next Reads
+
+- [ALB vs NLB vs CloudFront](/comparisons/alb-vs-nlb-vs-cloudfront)
+- [Securely Delivering a Static Site With S3 and CloudFront OAC](/blog/saa-s3-cloudfront-oac-design)

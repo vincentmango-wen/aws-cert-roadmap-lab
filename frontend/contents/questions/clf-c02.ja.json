@@ -1,0 +1,3234 @@
+[
+  {
+    "questionId": "clf-001",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "AWSクラウドの主な利点として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "すべてのAWSサービスを永続的に無料で利用できる"
+      },
+      {
+        "choiceId": "B",
+        "text": "すべてのセキュリティ責任をAWSが負う"
+      },
+      {
+        "choiceId": "C",
+        "text": "物理サーバーを購入してから利用開始する必要がある"
+      },
+      {
+        "choiceId": "D",
+        "text": "需要に応じてリソースを拡張・縮小できる"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "正解は「需要に応じてリソースを拡張・縮小できる」です。AWSクラウドの代表的な利点は「需要に応じてリソースを増減できること」、\nつまりスケーラビリティ（拡張性）とエラスティシティ（弾力性）です。\n\nオンプレミス環境では、ピーク時のアクセスを見込んでサーバーをあらかじめ多めに用意して\nおく方式が一般的だった。この方式では、平常時は余ったサーバーが遊んで固定費になり、\n想定を超えるアクセスが来た場合には処理能力が不足する。AWSでは、Auto Scaling や\nElastic Load Balancing といった仕組みにより、アクセスの増加に応じて EC2 インスタンスを\n自動で増やし、減少に応じて自動で減らせる。使った分だけ支払う従量課金とこの弾力性が\n組み合わさることで、平常時は小さく、繁忙期だけ大きく、という運用が成立する。\n\nここで区別しておきたいのは、クラウドの利点は「安さ」そのものではなく「必要な量を\n必要なときだけ確保できる柔軟性」だという点である。需要が読みにくいワークロードや、\nアクセスに波があるワークロードほど、この弾力性の効果が大きくなる。CLF-C02 では、\nスケーラビリティ・弾力性・俊敏性（アジリティ）・従量課金が「クラウドのメリット」として\n繰り返し問われる。選択肢が「物理サーバーの購入」「AWSが全責任を負う」「永続無料」の\nように極端な言い切りになっている場合、それらはクラウドの特性と矛盾するため誤答である\nことが多い。",
+    "choiceExplanations": {
+      "A": "誤り。AWSには無料利用枠（AWS無料利用枠）があるが、それは一部サービスの一定量まで、\n多くは利用開始から12か月などの条件付きである。すべてのサービスが永続的に無料という\nことはない。「永続無料」「完全無料」のような無条件の言い切りは誤りであることが多い。",
+      "B": "誤り。AWSのセキュリティは「責任共有モデル」に基づき、AWSとユーザーで責任を分担する。\nAWSはデータセンターやハードウェアなど「クラウドそのもの（of the cloud）」の安全を\n担い、ユーザーはOSの更新・IAMの権限設定・データの暗号化など「クラウドの中身\n（in the cloud）」を担う。「すべてAWSが負う」は責任共有モデルの理解を問う典型的な誤り。",
+      "C": "誤り。これはむしろオンプレミス（自社で物理サーバーを保有する形態）の説明である。\nAWSでは物理サーバーを自分で購入・設置する必要はなく、必要なときに EC2 インスタンスを\n起動し、不要になれば停止・削除できる。初期投資なしで開始できる点がクラウドの利点で\nあり、この選択肢は「クラウドの利点」とは逆方向の記述である。",
+      "D": "正解。需要に応じてリソースを拡張・縮小できること（スケーラビリティ／弾力性）は、\nクラウドの最も代表的な利点である。アクセスのピークに合わせて自動でリソースを増減\nできるため、過剰なリソースによる無駄なコストと、不足による機会損失の両方を抑えられる。"
+    },
+    "practicalNote": "スケーラビリティ・弾力性が実務で効くのは、需要の変動が大きいワークロードである。\nたとえば、キャンペーンやニュース掲載で一時的にアクセスが急増する Web サイト、月末や\nセール時に処理量が跳ね上がるバッチ・決済系、昼夜でアクセス量が変わる社内システムなどが\n代表例となる。こうしたワークロードでは、Auto Scaling で EC2 を自動増減させる構成や、\nそもそもリソースを常駐させずリクエストに応じて起動するサーバーレス構成（Lambda 等）が\nよく使われる。\n\n一方で、弾力性は万能ではない。負荷が常に一定のワークロードでは、オンデマンドの従量課金\nよりも、リザーブドインスタンスや Savings Plans のような長期コミットの方が安くなる場合が\nある。受験者がやりがちな誤解は「クラウド＝常に安い」と捉えることだが、正確には「需要に\n合わせて無駄を減らせる」のが利点であり、コストが下がるかどうかはワークロードの特性に\n依存する。試験でも「弾力性で無駄を抑える」文脈と「安定負荷ならコミットで割引」文脈は\n別物として問われる。",
+    "officialDocs": [
+      {
+        "label": "クラウドコンピューティングとは（AWS公式）",
+        "url": "https://aws.amazon.com/jp/what-is-cloud-computing/"
+      },
+      {
+        "label": "Amazon EC2 Auto Scaling とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "責任共有モデル（AWS公式）",
+        "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      }
+    ],
+    "relatedServices": [
+      "ec2",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "scalability",
+      "elasticity"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "cloud-concepts",
+      "scalability",
+      "elasticity"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-002",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "クラウドの従量課金モデルを説明したものとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "使った分に応じて料金が発生する"
+      },
+      {
+        "choiceId": "B",
+        "text": "初期費用だけで、その後の利用料は発生しない"
+      },
+      {
+        "choiceId": "C",
+        "text": "常に一定額の料金だけが発生する"
+      },
+      {
+        "choiceId": "D",
+        "text": "利用量に関係なくすべて無料で使える"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWSの多くのサービスは、利用したリソース量やリクエスト数に応じて料金が発生します。これを従量課金と呼びます。",
+    "choiceExplanations": {
+      "A": "正解です。従量課金は使った分だけ支払う考え方です。",
+      "B": "誤りです。クラウドでは初期費用を抑えられますが、利用料は発生します。",
+      "C": "誤りです。一部に固定費が発生するサービスもありますが、クラウド全体の説明としては不十分です。",
+      "D": "誤りです。無料枠の範囲を超えれば料金が発生します。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "pay-as-you-go"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "pay-as-you-go"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "従量課金モデル（Pay-as-you-go）は、AWS の多くのサービスで採用されている課金体系であり、\nEC2 の稼働時間、S3 の保存容量、Lambda の実行回数、データ転送量など、利用したリソースの\n種類と量に応じて料金が発生する。前払いや長期契約を必須としないため、検証用に短期間だけ\nリソースを起動して破棄する使い方や、需要が読みにくいワークロードでまず小さく始めて\n段階的にスケールさせる使い方と相性が良い。\n\n一方で、従量課金は「常に最安」を意味しない。安定して稼働し続けるサーバーや、長期に\nわたって利用が確定しているワークロードでは、リザーブドインスタンスや Savings Plans の\nような長期コミットによる割引、あるいは Spot インスタンスのような余剰キャパシティ活用\n方式の方が、オンデマンド従量課金よりも単価が下がるケースが多い。さらに、リソースを\n停止し忘れたまま放置すると、利用が無くても課金が継続するため、AWS Budgets でしきい値\nを設定し、Cost Explorer で実績を可視化する運用がセットで必要となる。\n\nCLF-C02 では、従量課金は「使った分だけ支払う（Pay only for what you use）」という表現\nで繰り返し問われる。誤答の選択肢としては「利用量に関係なく無料」「初期投資のみで以降\nは無料」「常に定額」のような言い切り型が多く、これらはクラウドの料金特性と矛盾する\nため除外できる。「無料利用枠（AWS Free Tier）」と「従量課金」を混同させる選択肢にも\n注意が必要であり、無料利用枠はサービスごとに上限と期間が定められた限定的な仕組みで\nある点を押さえておく。",
+    "officialDocs": [
+      {
+        "label": "AWS の料金体系（AWS公式）",
+        "url": "https://aws.amazon.com/jp/pricing/"
+      },
+      {
+        "label": "AWS Overview ホワイトペーパー（AWS公式）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/"
+      },
+      {
+        "label": "AWS 無料利用枠（AWS公式）",
+        "url": "https://aws.amazon.com/jp/free/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-003",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "AWSのグローバルインフラストラクチャにおけるリージョンの説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "1台の物理サーバー"
+      },
+      {
+        "choiceId": "B",
+        "text": "1つ以上のアベイラビリティゾーンを含む地理的なエリア"
+      },
+      {
+        "choiceId": "C",
+        "text": "IAMユーザーを管理する単位"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3バケット内のフォルダ"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "リージョンは、東京リージョンやバージニア北部リージョンのような地理的エリアです。各リージョンには複数のアベイラビリティゾーンがあります。",
+    "choiceExplanations": {
+      "A": "誤りです。リージョンは単一サーバーではありません。",
+      "B": "正解です。リージョンは複数のAZを含む地理的エリアです。",
+      "C": "誤りです。IAMはグローバルサービスであり、リージョンとは別概念です。",
+      "D": "誤りです。S3のフォルダ風表示とは関係ありません。"
+    },
+    "relatedServices": [
+      "ec2",
+      "rds"
+    ],
+    "relatedTerms": [
+      "region",
+      "availability-zone"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "global-infrastructure",
+      "region",
+      "availability-zone"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "リージョンは、AWS のグローバルインフラストラクチャの最上位の単位であり、世界中の特定の\n地理的エリアに配置された独立したインフラ群を指す。東京（ap-northeast-1）、大阪\n（ap-northeast-3）、バージニア北部（us-east-1）、アイルランド（eu-west-1）などが代表例\nである。各リージョンは複数のアベイラビリティゾーン（AZ）で構成され、リージョン間は\n互いに物理的・電源的・ネットワーク的に分離されている。実務でリージョンを選ぶ判断軸は、\nユーザーからの地理的近さ（レイテンシ）、データ所在地に関する法令や社内ポリシー、利用\nしたいサービスの提供状況、そしてリージョン別の料金差である。\n\nリージョン選択で実務上特に注意が必要な点は、サービスのリージョン提供状況に差がある\nことと、一部サービスがリージョンを跨いで動作するグローバルサービスである点である。\nIAM、Route 53、CloudFront、AWS Organizations などはグローバルサービスとして扱われ、\nリージョンを指定しないか、特定の固定リージョン（CloudFront 用の ACM 証明書は\nus-east-1）で操作する必要がある。また、リージョン間のデータ転送には料金が発生するため、\nバックアップ目的でリージョンを跨いだコピーを設計する際は転送量と頻度を見積もる必要が\nある。\n\nCLF-C02 では、リージョンと AZ、エッジロケーションの関係性が頻出する。リージョンは\n「複数の AZ を含む地理的エリア」、AZ は「1 つ以上のデータセンターから構成される独立した\n施設」、エッジロケーションは「CloudFront などが利用する配信用拠点」として明確に区別\nされて出題される。「1 台の物理サーバー」「IAM ユーザーを管理する単位」「S3 内のフォルダ」\nなど、概念的に別レイヤーのものを選ばせる誤答が多い。",
+    "officialDocs": [
+      {
+        "label": "AWS グローバルインフラストラクチャ（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/"
+      },
+      {
+        "label": "AWS リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      },
+      {
+        "label": "リージョンとアベイラビリティーゾーン（EC2 ユーザーガイド）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-004",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "アベイラビリティゾーンを複数利用する主な目的はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "IAMユーザーの数を増やすため"
+      },
+      {
+        "choiceId": "B",
+        "text": "すべてのAWS利用料を無料にするため"
+      },
+      {
+        "choiceId": "C",
+        "text": "CloudWatch Logsを無効化するため"
+      },
+      {
+        "choiceId": "D",
+        "text": "単一障害点を減らし、可用性を高めるため"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "複数のアベイラビリティゾーンにリソースを配置すると、1つのAZに障害が発生してもサービスを継続しやすくなります。",
+    "choiceExplanations": {
+      "A": "誤りです。IAMユーザー数とは関係ありません。",
+      "B": "誤りです。複数AZ構成はコストが増える場合もあります。",
+      "C": "誤りです。CloudWatch Logsの有効・無効とは関係ありません。",
+      "D": "正解です。複数AZ構成は可用性向上の基本です。"
+    },
+    "relatedServices": [
+      "ec2",
+      "rds",
+      "elb"
+    ],
+    "relatedTerms": [
+      "availability-zone",
+      "high-availability"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "high-availability",
+      "multi-az"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "アベイラビリティゾーン（AZ）を複数利用するマルチ AZ 構成は、単一の物理データセンター\n障害（停電・ネットワーク機器故障・自然災害など）が発生した際に、サービス全体を停止\nさせない設計の基本である。実務では、EC2 を Auto Scaling Group で複数 AZ に配置し、\nALB を前面に立ててトラフィックを分散する Web 層構成、RDS を Multi-AZ 配置にして\nスタンバイ DB を別 AZ に置く DB 層構成、ファイルストレージを EFS のようなリージョン内\n冗長化されたサービスに置く構成などが標準的に採用される。\n\n複数 AZ 構成にはトレードオフも存在する。AZ を跨ぐデータ転送には料金が発生し、AZ 間の\nレイテンシは同一 AZ 内の通信より高くなる。また、RDS の Multi-AZ はスタンバイ用の DB\nインスタンスが追加で起動するため、シングル AZ 構成と比較して概ね 2 倍のコンピュート\nコストが発生する。可用性を高めるとコストも上がるため、ワークロードに求められる SLA\n（例: 99.9% / 99.99%）に応じて、シングル AZ で十分か、Multi-AZ が必要か、さらに\nマルチリージョンまで広げるかを段階的に判断することになる。\n\nCLF-C02 では、複数 AZ 配置の目的は「単一障害点（SPOF）の排除」「高可用性の実現」\nという文脈で問われる。誤答の典型は「コストを下げるため」「IAM ユーザー数を増やすため」\n「監視を不要にするため」のような、可用性とは別軸の話を当て込んでくるパターンである。\nさらに、「マルチ AZ」と「マルチリージョン」の混同にも注意が必要で、マルチ AZ は同一\nリージョン内の可用性向上策、マルチリージョンは地理的災害対策やレイテンシ最適化に\n位置付けられる。",
+    "officialDocs": [
+      {
+        "label": "AWS リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      },
+      {
+        "label": "Amazon RDS Multi-AZ 配置（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "AWS Well-Architected フレームワーク 信頼性の柱（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/reliability-pillar/welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-005",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "クラウドにおけるスケーラビリティの説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "データを必ず紙で保存する性質"
+      },
+      {
+        "choiceId": "B",
+        "text": "負荷に応じてリソース量を増減できる性質"
+      },
+      {
+        "choiceId": "C",
+        "text": "サーバーを1台だけで運用する性質"
+      },
+      {
+        "choiceId": "D",
+        "text": "すべての通信を手動で承認する性質"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "スケーラビリティとは、負荷や利用者数の増減に合わせて、システムの処理能力を増減できる性質です。",
+    "choiceExplanations": {
+      "A": "誤りです。紙での保存とは関係ありません。",
+      "B": "正解です。負荷変動に合わせてリソースを増減できます。",
+      "C": "誤りです。1台構成は単一障害点になりやすく、スケーラビリティの説明ではありません。",
+      "D": "誤りです。通信承認の説明ではありません。"
+    },
+    "relatedServices": [
+      "auto-scaling",
+      "ec2",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "scalability"
+    ],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "scalability",
+      "auto-scaling"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "スケーラビリティは、負荷の増減に合わせてシステムの処理能力を増減できる性質を指す。\n拡張方向には大きく 2 つの軸があり、1 台あたりのスペックを上げる垂直スケール\n（スケールアップ／スケールダウン）と、台数を増減させる水平スケール\n（スケールアウト／スケールイン）に分かれる。AWS では水平スケールを自動化する仕組みが\n充実しており、EC2 Auto Scaling Group は CloudWatch メトリクス（CPU 使用率・リクエスト数\nなど）をトリガに自動でインスタンスを増減させる。Lambda はリクエストごとに実行環境が\n起動するため、利用者側がスケーリング設定をほとんど意識せずに済む。\n\nスケーラビリティと混同されやすい概念にエラスティシティ（弾力性）がある。スケーラビリティ\nは「拡張できる能力そのもの」を指す静的な性質であり、エラスティシティは「需要に応じて\n動的に拡張・縮小し、無駄なリソースを抱え込まない」という動的な振る舞いを指す。\n両者は近い概念だが試験では区別されて問われることがあり、特に「需要が下がったときに\nリソースを減らせる」という文脈はエラスティシティの方が適切である。スケーラビリティを\nうたう一方で、実装上はステートをローカルに持つアプリケーションになっていると水平\nスケールできないため、設計時にステートレス化やセッションストアの外出しを検討する\n必要がある。\n\nCLF-C02 では、スケーラビリティは「負荷に応じてリソース量を増減できる性質」という\n直接的な定義で問われる。「データを紙で保存する」「通信を手動で承認する」「サーバーを\n1 台だけで運用する」のような、概念とまったく無関係な選択肢が誤答として並ぶことが多く、\n正解はほぼ一意に絞れる。一方で、Well-Architected Framework のパフォーマンス効率の柱と\n関連付けた応用問題では、スケーラビリティとエラスティシティ、Auto Scaling と\nサーバーレスの使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Auto Scaling とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html"
+      },
+      {
+        "label": "AWS Auto Scaling（AWS公式）",
+        "url": "https://aws.amazon.com/jp/autoscaling/"
+      },
+      {
+        "label": "AWS Well-Architected フレームワーク（AWS公式）",
+        "url": "https://aws.amazon.com/jp/architecture/well-architected/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-006",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "高可用性を実現する設計として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "バックアップを一切取得しない"
+      },
+      {
+        "choiceId": "B",
+        "text": "監視サービスをすべて停止する"
+      },
+      {
+        "choiceId": "C",
+        "text": "すべてのデータを1台のEC2インスタンスだけに保存する"
+      },
+      {
+        "choiceId": "D",
+        "text": "複数のアベイラビリティゾーンにリソースを配置する"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "高可用性を高めるには、複数AZや冗長化を利用し、単一障害点を減らす設計が重要です。",
+    "choiceExplanations": {
+      "A": "誤りです。バックアップは復旧に重要です。",
+      "B": "誤りです。監視を停止すると障害検知が遅れます。",
+      "C": "誤りです。1台に集約すると障害時に停止しやすくなります。",
+      "D": "正解です。複数AZに分散すると障害に強くなります。"
+    },
+    "relatedServices": [
+      "elb",
+      "rds",
+      "auto-scaling"
+    ],
+    "relatedTerms": [
+      "high-availability",
+      "fault-tolerance"
+    ],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "high-availability",
+      "resilience"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "高可用性（High Availability, HA）は、システムが予期しない障害に遭遇しても、サービス\n提供を継続できる性質を指す。AWS で高可用性を実現する基本パターンは、複数の\nアベイラビリティゾーンへのリソース分散、ロードバランサーによるトラフィック分配、\nスタンバイ系を含むデータベース冗長化、定期的なバックアップと監視の組み合わせである。\nWeb 層は ALB + Auto Scaling Group を 2 つ以上の AZ にまたがせ、データ層は RDS の\nMulti-AZ や Aurora のクラスタ構成で書き込み系と読み取り系を冗長化する、というのが\n標準構成になる。\n\n高可用性と関連する概念には、耐障害性（Fault Tolerance）、災害復旧（Disaster Recovery）、\nバックアップ・リストアがあり、それぞれ目的と達成手段が異なる。高可用性は「単一の\nコンポーネント障害が起きてもサービスを止めない」ことが主眼であるのに対し、災害復旧は\n「リージョン規模の障害が発生した場合に別リージョンへ切り替える」ことが主眼であり、\nRTO（目標復旧時間）と RPO（目標復旧時点）の指標で設計される。可用性を高めるほど\n構成は複雑になり、コストも増えるため、ビジネス要件として許容できるダウンタイムを\n明確にしたうえで設計するのが実務上の基本となる。\n\nCLF-C02 では、高可用性の設計として「複数 AZ への分散」が正解として出題される頻度が\n高い。誤答としては「1 台の EC2 にすべて集約する」「バックアップを取得しない」\n「監視を停止する」のように、可用性を直接損なう極端な選択肢が並ぶ。SAA-C03 などの上位\n試験では、Multi-AZ と Read Replica の使い分け（前者は可用性、後者は読み取り性能）、\nあるいはアクティブ／パッシブ構成とアクティブ／アクティブ構成の違いといった、より\n踏み込んだ設計判断が問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Well-Architected フレームワーク 信頼性の柱（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/reliability-pillar/welcome.html"
+      },
+      {
+        "label": "Amazon RDS Multi-AZ 配置（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      },
+      {
+        "label": "AWS リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-007",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "AWS Well-Architected Frameworkの柱に含まれるものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "手動サーバー調達"
+      },
+      {
+        "choiceId": "B",
+        "text": "コスト最適化"
+      },
+      {
+        "choiceId": "C",
+        "text": "固定料金保証"
+      },
+      {
+        "choiceId": "D",
+        "text": "紙帳票管理"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "AWS Well-Architected Frameworkには、運用上の優秀性、セキュリティ、信頼性、パフォーマンス効率、コスト最適化、サステナビリティなどの柱があります。",
+    "choiceExplanations": {
+      "A": "誤りです。手動調達ではなく、自動化やクラウド活用が重要です。",
+      "B": "正解です。コスト最適化はWell-Architected Frameworkの重要な柱です。",
+      "C": "誤りです。AWSは多くのサービスで従量課金です。",
+      "D": "誤りです。紙帳票管理は柱ではありません。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "well-architected-framework",
+      "cost-optimization"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "well-architected",
+      "cost-optimization"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Well-Architected Framework は、クラウド上のワークロード設計をレビューするための\nベストプラクティス集であり、現在は 6 つの柱（運用上の優秀性 / セキュリティ / 信頼性 /\nパフォーマンス効率 / コスト最適化 / 持続可能性）で構成されている。実務では、新規システム\nの設計レビュー、既存システムのリアーキテクト判断、社内アーキテクトレビュー時の共通言語\nとして利用される。AWS が無償提供する Well-Architected Tool を使うと、ワークロード単位\nで各柱に沿った質問に回答し、改善ポイント（High Risk Issue / Medium Risk Issue）を一覧化\nできる。\n\n各柱の中心テーマは異なる役割を持つ。運用上の優秀性はデプロイ自動化や運用標準化、\nセキュリティは IAM 最小権限・暗号化・監査ログ、信頼性は Multi-AZ 配置やバックアップ、\nパフォーマンス効率は適切なインスタンスタイプ選定やキャッシュ活用、コスト最適化は\nリソース棚卸しや料金モデルの最適化、持続可能性はリソース効率と環境負荷低減を扱う。\n柱は独立しているが相互に影響し合うため、たとえばコスト最適化のためにリソースを縮小\nしすぎると信頼性が下がる、というトレードオフを意識する必要がある。\n\nCLF-C02 では、「Well-Architected Framework の柱に含まれるものはどれか」「コスト最適化の\n柱が扱う領域はどれか」という形で問われる。誤答の典型は「紙帳票管理」「手動サーバー\n調達」「固定料金保証」のように、クラウド設計の柱として明らかに不適切な選択肢である。\nSAA-C03 以降では、特定のシナリオから「どの柱の観点で改善すべきか」を問う応用問題が\n出題されるため、6 つの柱の名称とそれぞれの中心テーマを正確に対応付けておく必要がある。",
+    "officialDocs": [
+      {
+        "label": "AWS Well-Architected フレームワーク（AWS公式）",
+        "url": "https://aws.amazon.com/jp/architecture/well-architected/"
+      },
+      {
+        "label": "AWS Well-Architected Framework（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/framework/welcome.html"
+      },
+      {
+        "label": "コスト最適化の柱（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/cost-optimization-pillar/welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-008",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "AWSクラウドを利用することで、オンプレミス環境と比べて削減しやすいものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "アプリケーション設計の責任"
+      },
+      {
+        "choiceId": "B",
+        "text": "ユーザーアカウント管理の責任"
+      },
+      {
+        "choiceId": "C",
+        "text": "データ分類の責任"
+      },
+      {
+        "choiceId": "D",
+        "text": "物理サーバーの購入・設置・保守作業"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "AWSを利用すると、物理サーバーやデータセンター設備の購入・設置・保守をAWS側に任せられます。",
+    "choiceExplanations": {
+      "A": "誤りです。アプリケーション設計は利用者側の責任です。",
+      "B": "誤りです。ユーザーや権限管理は利用者側の責任です。",
+      "C": "誤りです。データの分類や扱いは利用者側で判断します。",
+      "D": "正解です。物理インフラの管理負荷を減らせます。"
+    },
+    "relatedServices": [
+      "ec2",
+      "rds",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "cloud-computing",
+      "undifferentiated-heavy-lifting"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "cloud-benefits",
+      "managed-infrastructure"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS クラウドの利用によってオンプレミス環境と比較して大きく削減できるのは、物理サーバー\nの購入・データセンターの設備投資・ハードウェア保守・ネットワーク機器の調達といった、\n「アプリケーションの差別化に直接寄与しないインフラ作業」である。AWS ではこの領域を\n「Undifferentiated Heavy Lifting（差別化されない重労働）」と呼び、利用者はこれらを\nAWS に任せて、本来注力すべきアプリケーション設計・データモデリング・ユーザー体験\n設計に時間を振り向けることができる。EC2 の起動、S3 への保存、RDS の構築といった操作\nは、いずれも物理機器の調達工程を介さずに数分で完了する。\n\n一方で、AWS に任せられる範囲は「クラウドそのもの（of the cloud）」までであり、\n「クラウドの中身（in the cloud）」については利用者側の責任が残る。具体的には、\nアプリケーションの設計と実装、データの分類と暗号化方式の選定、IAM ユーザーや権限の\n管理、OS パッチ適用（EC2 の場合）、ネットワーク設定（セキュリティグループ・VPC）\nなどは、AWS がインフラを提供しても利用者側で意思決定し運用する必要がある。これは\n責任共有モデルとして整理されており、削減できる対象とできない対象を切り分ける際の\n判断基準になる。\n\nCLF-C02 では、「クラウド化で削減できるものは何か」が責任共有モデルと絡めて問われる。\n正解は「物理サーバーの購入・設置・保守作業」のような、インフラ側の作業である。\n誤答としては「アプリケーション設計の責任」「ユーザーアカウント管理の責任」「データ\n分類の責任」のように、利用者側の責任として残る項目が並ぶ。CapEx（資本支出）から\nOpEx（運用支出）への転換、初期投資の削減、市場投入までの時間短縮といったキーワードも\n同じ文脈で繰り返し出題される。",
+    "officialDocs": [
+      {
+        "label": "AWS クラウドの経済性（AWS公式）",
+        "url": "https://aws.amazon.com/jp/economics/"
+      },
+      {
+        "label": "AWS Overview ホワイトペーパー（AWS公式）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/"
+      },
+      {
+        "label": "責任共有モデル(AWS公式)",
+        "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-009",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "AWS責任共有モデルにおいて、ユーザー側の責任として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWSデータセンターの物理セキュリティ"
+      },
+      {
+        "choiceId": "B",
+        "text": "IAMユーザーや権限の管理"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWSグローバルネットワーク機器の保守"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWSリージョンの建物管理"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "IAMユーザー、IAMロール、ポリシー、アクセス権限の設定はユーザー側の責任です。",
+    "choiceExplanations": {
+      "A": "誤りです。物理セキュリティはAWS側の責任です。",
+      "B": "正解です。IAM権限管理はユーザー側の責任です。",
+      "C": "誤りです。グローバルインフラの保守はAWS側の責任です。",
+      "D": "誤りです。データセンターや施設管理はAWS側の責任です。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "shared-responsibility-model"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "security",
+      "shared-responsibility",
+      "iam"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS の責任共有モデル（Shared Responsibility Model）は、AWS と利用者の間でセキュリティ\n責任をどう分担するかを定義する基本枠組みである。AWS 側は「クラウドそのもののセキュリ\nティ（Security OF the Cloud）」を担い、データセンターの物理セキュリティ、ハードウェア\nの保守、ハイパーバイザーやマネージドサービス基盤の運用までを責任範囲とする。一方、\n利用者側は「クラウド内のセキュリティ（Security IN the Cloud）」を担い、IAM ユーザーと\nロールの管理、データの分類と暗号化、ネットワーク設定（セキュリティグループ・VPC 設定）、\nOS パッチ適用（EC2 の場合）、アプリケーションのセキュリティ実装などを担当する。\n\n利用者側の責任範囲は、利用するサービス形態によって変動する。EC2 のような IaaS では\nOS から上のレイヤー全てが利用者責任になる一方、Lambda や DynamoDB のようなマネージド\nサービスでは OS・ミドルウェアの管理を AWS が担うため、利用者は IAM 権限・データ・\nアプリケーションロジックの管理に集中できる。実務では、IAM ポリシーの最小権限設計、\nS3 バケットの公開設定確認、Security Hub や AWS Config による設定ドリフト検出が、\n利用者責任を果たすための定型作業として組み込まれる。\n\nCLF-C02 では、「次のうちユーザー側の責任はどれか」「次のうち AWS 側の責任はどれか」\nという直接的な形で頻出する。ユーザー側責任の典型例は IAM ユーザーや権限の管理、データ\nの暗号化、アプリケーションのセキュリティ実装である。AWS 側責任の典型例はデータ\nセンターの物理セキュリティ、リージョン施設の管理、グローバルネットワーク機器の保守\nである。「責任の切れ目」を正確に押さえることが正答への近道となる。",
+    "officialDocs": [
+      {
+        "label": "責任共有モデル(AWS公式)",
+        "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス(AWS公式ドキュメント)",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-010",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "IAMロールの説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "一時的な認証情報を使ってAWSサービスやユーザーに権限を付与する仕組み"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3バケット内の画像を圧縮するサービス"
+      },
+      {
+        "choiceId": "C",
+        "text": "Route 53のドメイン登録機能"
+      },
+      {
+        "choiceId": "D",
+        "text": "EC2インスタンスのCPU使用率を表示するグラフ"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "IAMロールは、AWSサービスやユーザーなどに一時的な認証情報を使って権限を付与する仕組みです。",
+    "choiceExplanations": {
+      "A": "正解です。IAMロールは一時認証情報を使う点が重要です。",
+      "B": "誤りです。画像圧縮サービスではありません。",
+      "C": "誤りです。ドメイン登録はRoute 53の機能です。",
+      "D": "誤りです。メトリクス表示はCloudWatchの領域です。"
+    },
+    "relatedServices": [
+      "iam",
+      "ec2",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "iam-role",
+      "temporary-credentials"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "role",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "IAM ロールは、AWS リソースや利用者に対して一時的な認証情報を発行する形で権限を付与\nする仕組みである。IAM ユーザーが「人」に紐づく永続的なクレデンシャル（パスワード /\nアクセスキー）を持つのに対し、IAM ロールはエンティティに紐づかず、必要なタイミングで\nAssumeRole することで一時的なクレデンシャル(STS が発行するアクセスキー ID / シーク\nレットアクセスキー / セッショントークン)が払い出される。発行された認証情報には\n有効期限が設定されており、漏えい時の影響範囲が時間軸で制限される点が、長期間有効な\nアクセスキーと比較した最大の利点である。\n\n実務での代表的な利用パターンは 3 つある。1 つ目は EC2 インスタンスプロファイルで、\nEC2 上で動くアプリケーションから S3 や DynamoDB を操作する際に、アクセスキーを\nコードや環境変数に埋め込まず IAM ロール経由で権限を取得する構成である。2 つ目は\nLambda 実行ロールで、Lambda 関数が他の AWS サービスにアクセスする際の認証に使う。\n3 つ目はクロスアカウントアクセスで、別 AWS アカウントの IAM ユーザーやロールに\nAssumeRole を許可することで、長期クレデンシャルを共有せずにアカウント間連携を実現\nする。Identity Center（旧 SSO）や Cognito も、内部的には IAM ロールの一時クレデン\nシャル発行機構を利用している。\n\nCLF-C02 では、「IAM ロールの説明として最も適切なものはどれか」「アクセスキーを使わず\nEC2 から S3 にアクセスする方法は何か」という形で問われる。誤答として「画像圧縮\nサービス」「メトリクス表示」「ドメイン登録機能」のように、IAM とは別領域のサービスを\n当て込んでくるパターンが多い。SAA-C03 以降では、IAM ユーザー / グループ / ロール /\nポリシーの使い分け、信頼ポリシーとアクセス許可ポリシーの違い、AssumeRole の認可\nフローまで踏み込んで出題される。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management（AWS公式）",
+        "url": "https://aws.amazon.com/jp/iam/"
+      },
+      {
+        "label": "IAM ロール（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles.html"
+      },
+      {
+        "label": "IAM ロールの使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_manage-assume.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-011",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWSアカウントのrootユーザーに対する推奨事項として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "請求情報を確認できないようにする"
+      },
+      {
+        "choiceId": "B",
+        "text": "アクセスキーを作成してGitHubに保存する"
+      },
+      {
+        "choiceId": "C",
+        "text": "日常作業では使わず、MFAを有効化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "すべての開発者でパスワードを共有する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "rootユーザーは強力な権限を持つため、日常利用を避け、MFAを有効化し、アクセスキーを作成しない運用が推奨されます。",
+    "choiceExplanations": {
+      "A": "誤りです。請求情報の確認は課金事故防止に重要です。",
+      "B": "誤りです。アクセスキーをGitHubに保存するのは危険です。",
+      "C": "正解です。rootユーザーは保護し、日常利用しないのが基本です。",
+      "D": "誤りです。パスワード共有は避けます。"
+    },
+    "relatedServices": [
+      "iam",
+      "aws-budgets"
+    ],
+    "relatedTerms": [
+      "root-user",
+      "mfa"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "root-user",
+      "mfa",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS アカウントの root ユーザーは、当該アカウントに対するすべての操作権限（アカウント\nの解約、支払い情報の変更、サポートプランの変更を含む）を持つ最上位の特権アカウントで\nある。権限が強すぎるため、日常運用での利用は推奨されておらず、AWS 公式のベストプラク\nティスでは「root ユーザーは限定された数のタスク（例: 初回サインアップ後の IAM\nユーザー作成、サポートプランの変更、特定の請求設定）にのみ使用し、それ以外の日常作業\nには IAM ユーザーまたは IAM Identity Center で発行したユーザーを使う」運用が推奨されて\nいる。MFA（多要素認証）の有効化、強固なパスワード設定、アクセスキーを作成しない\n（または作成済みなら削除する）といった保護措置も必須に位置付けられる。\n\n実務では、初期セットアップ完了後すぐに管理者用 IAM ユーザー（または IAM Identity\nCenter のユーザー）を作成し、以後の作業はすべてその IAM ユーザー側で行う運用が標準\nである。AWS Organizations を使う場合、メンバーアカウントの root ユーザーは\nService Control Policy（SCP）でも完全には制限できないため、各アカウントの root\nユーザーごとに MFA を有効化し、認証情報を金庫やパスワードマネージャーで厳重に管理\nする必要がある。root ユーザーのアクセスキーが GitHub などのパブリックリポジトリに\n誤って公開された場合、第三者にアカウントを乗っ取られて高額なリソースを起動される\n事故が現実に発生しているため、アクセスキーを作成しないこと自体が最も確実な防御策と\nなる。\n\nCLF-C02 では、「root ユーザーに対する推奨事項として正しいものはどれか」という形で\n頻出する。正解は「日常作業では使わず、MFA を有効化する」のように、保護を強化し\n利用を限定する選択肢である。誤答の典型は「アクセスキーを作成して GitHub に保存する」\n「すべての開発者でパスワードを共有する」「請求情報を確認できないようにする」のように、\nセキュリティのベストプラクティスと明らかに矛盾するパターンである。",
+    "officialDocs": [
+      {
+        "label": "AWS アカウントのルートユーザー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_root-user.html"
+      },
+      {
+        "label": "ルートユーザーのみが実行できるタスク（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_root-user.html#root-user-tasks"
+      },
+      {
+        "label": "ルートユーザーの MFA の有効化（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/enable-virt-mfa-for-root.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-012",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "保存データを暗号化するために利用できるAWSサービスとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Key Management Service"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon Route 53"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS KMSは暗号鍵を作成・管理し、S3やDynamoDBなど多くのAWSサービスの暗号化で利用できます。",
+    "choiceExplanations": {
+      "A": "正解です。KMSは暗号鍵管理サービスです。",
+      "B": "誤りです。CloudFrontはCDNです。",
+      "C": "誤りです。Route 53はDNSサービスです。",
+      "D": "誤りです。AWS Budgetsはコスト監視サービスです。"
+    },
+    "relatedServices": [
+      "kms",
+      "s3",
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "encryption",
+      "key-management"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "kms",
+      "encryption",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS で保存データ（data at rest）の暗号化を中核的に担うサービスが AWS Key Management\nService（KMS）である。KMS は暗号鍵（カスタマーマスターキー / KMS キー）を作成・保管・\nローテーションするマネージドサービスであり、S3、EBS、RDS、DynamoDB、Lambda、\nCloudWatch Logs、Secrets Manager、SNS、SQS など、多くの AWS サービスから「保存先で\n暗号化する鍵」として指定できる。鍵そのものは FIPS 140-2 認証済みのハードウェア\nセキュリティモジュール（HSM）上で保護され、平文の鍵が KMS の外に出ない設計となって\nいる。\n\n実務での利用パターンは大きく 2 系統に分かれる。1 つは AWS マネージドキー（aws/s3,\naws/ebs など、サービスごとに AWS 側が作成する鍵）を使ってデフォルトで暗号化を有効化\nするパターンで、特別な要件がなければまずこれで保存データを暗号化する。もう 1 つは\nカスタマーマネージドキー（CMK）を自分で作成して使うパターンで、鍵のローテーション\nポリシー、鍵の使用権限を持つ IAM プリンシパルの制御、鍵ポリシーによるアカウント\n境界制御など、より細かい統制が必要なときに採用される。混同しやすいサービスとして\nCloudFront（CDN）、Route 53（DNS）、AWS Budgets（コスト監視）があり、いずれも暗号化\nの主担当ではない点を整理しておくと選択肢を絞りやすい。\n\nCLF-C02 では、「保存データを暗号化するために利用できるサービスはどれか」「S3 や\nDynamoDB の保存データ暗号化で使う鍵管理サービスは何か」という形で問われる。誤答\nとして CDN / DNS / コスト監視サービスを当て込んでくるパターンが頻出する。SAA-C03 以降\nでは、SSE-S3 / SSE-KMS / SSE-C / クライアントサイド暗号化の使い分け、鍵ポリシーと\nIAM ポリシーの組み合わせ、Envelope Encryption の仕組みが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Key Management Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kms/"
+      },
+      {
+        "label": "AWS Key Management Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "保存中および転送中のデータの暗号化（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/logical-separation/encrypting-data-at-rest-and--in-transit.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-013",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWS CloudTrailの主な用途として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DNS名前解決を提供する"
+      },
+      {
+        "choiceId": "B",
+        "text": "NoSQLデータベースを提供する"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWSアカウント内のAPI操作履歴を記録する"
+      },
+      {
+        "choiceId": "D",
+        "text": "静的Webサイトを配信する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "CloudTrailは、AWSアカウント内で実行されたAPI操作やユーザーアクティビティを記録し、監査に利用できます。",
+    "choiceExplanations": {
+      "A": "誤りです。DNSはRoute 53です。",
+      "B": "誤りです。NoSQLデータベースはDynamoDBです。",
+      "C": "正解です。CloudTrailは操作履歴の記録と監査に使います。",
+      "D": "誤りです。静的配信にはS3やCloudFrontを使います。"
+    },
+    "relatedServices": [
+      "cloudtrail",
+      "iam",
+      "cloudwatch"
+    ],
+    "relatedTerms": [
+      "audit",
+      "api-history"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudtrail",
+      "audit",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS CloudTrail は、AWS アカウント内で発生した API 呼び出しや管理イベントを記録し、\n誰がいつどのリソースに対してどの操作を実行したかを追跡可能にするサービスである。\nマネジメントコンソール、AWS CLI、AWS SDK、AWS サービス間の自動呼び出しなど、API を\n経由するあらゆる操作が記録対象となる。各イベントには操作元の IAM プリンシパル\n（ユーザー名・ロール名）、ソース IP アドレス、リクエストパラメータ、レスポンスが\n含まれ、セキュリティインシデントの調査、コンプライアンス監査、運用変更の原因追跡で\n中核的な役割を果たす。\n\nCloudTrail には大きく 2 つの利用形態がある。1 つは「イベント履歴」で、追加設定なしで\n過去 90 日間の管理イベントをコンソールから検索でき、緊急時の初動調査に使われる。\nもう 1 つは「証跡（Trail）」で、組織やアカウント単位で長期保存用に S3 バケットへ\n継続的にログを書き出す設定であり、コンプライアンス要件で長期保管が求められる本番\n環境では必須となる。データイベント（S3 オブジェクトレベルの操作、Lambda 関数呼び出し\nなど）はデフォルトでは記録されず、別途有効化が必要である点も実務上の重要ポイント\nとなる。\n\nCLF-C02 では、「AWS アカウント内の API 操作履歴を記録するサービスは何か」「監査\nログを取得するサービスは何か」という形で問われる。誤答として S3 / CloudFront（静的\n配信）、DynamoDB（NoSQL）、Route 53（DNS）といった用途が異なるサービスを当て込んで\nくる。CloudWatch（メトリクスとログ監視）/ AWS Config（リソース設定状態の評価）と\n混同しやすいが、CloudTrail は「API 呼び出しの記録」、CloudWatch は「メトリクスと\nアプリケーションログ」、Config は「リソース設定の状態と変更履歴」と守備範囲が\n異なるため、3 つの使い分けは頻出ポイントとなる。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      },
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-014",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "MFAを有効化する主な目的はどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3の保存容量を増やすため"
+      },
+      {
+        "choiceId": "B",
+        "text": "EC2のCPU性能を上げるため"
+      },
+      {
+        "choiceId": "C",
+        "text": "CloudFrontのキャッシュを削除するため"
+      },
+      {
+        "choiceId": "D",
+        "text": "パスワードだけに依存せず、認証を強化するため"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "MFAはパスワードに加えて認証アプリなどの追加要素を使うため、アカウント乗っ取りリスクを下げられます。",
+    "choiceExplanations": {
+      "A": "誤りです。S3容量とは関係ありません。",
+      "B": "誤りです。EC2性能とは関係ありません。",
+      "C": "誤りです。CloudFrontのキャッシュ削除とは関係ありません。",
+      "D": "正解です。MFAは認証を強化します。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "mfa",
+      "authentication"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "mfa",
+      "authentication",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "MFA（Multi-Factor Authentication, 多要素認証）は、サインイン時にパスワード（知識要素）\nに加えて、認証アプリで生成されるワンタイムコードやハードウェアセキュリティキー\n（所有要素）など、複数の異なる種類の要素を要求する仕組みである。AWS では IAM ユーザー\nと root ユーザーの両方に MFA を設定でき、有効化することでパスワード漏えい単独では\nアカウントを乗っ取れなくなる。GitHub などのパブリックリポジトリに資格情報が誤って\n公開された場合や、フィッシング被害でパスワードを盗まれた場合でも、第 2 の要素が\n攻撃者の手元にない限りログインを阻止できる点が、MFA を有効化する最大の目的である。\n\n実務で利用される MFA デバイスには、仮想 MFA デバイス（Authy / Google Authenticator\n等のスマートフォンアプリ）、U2F / FIDO2 セキュリティキー（YubiKey 等の物理デバイス）、\nハードウェア TOTP デバイスがある。AWS 公式のベストプラクティスでは、特権度の高い\nアカウント（root ユーザー、管理者 IAM ユーザー、本番デプロイ権限を持つ CI/CD 用\nロール）には必ず MFA を有効化することが推奨されている。さらに、MFA の状態を IAM\nポリシーの条件キー（`aws:MultiFactorAuthPresent`）で判定し、MFA を通したセッション\nにのみ機密操作を許可する設計も標準的に採用される。\n\nCLF-C02 では、「MFA を有効化する主な目的は何か」「アカウント乗っ取りリスクを下げる\nためにできることは何か」という形で問われる。正解は「パスワードだけに依存せず認証を\n強化する」のような選択肢であり、誤答として「S3 容量を増やす」「EC2 性能を上げる」\n「CloudFront キャッシュを削除する」のように、認証強化とは無関係なサービス操作を\n当て込むパターンが多い。",
+    "officialDocs": [
+      {
+        "label": "AWS Identity and Access Management で MFA を使用する（AWS公式）",
+        "url": "https://aws.amazon.com/jp/iam/features/mfa/"
+      },
+      {
+        "label": "AWS での多要素認証 (MFA)（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_credentials_mfa.html"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-015",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWS Artifactの説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "EC2インスタンスのバックアップを作成するサービス"
+      },
+      {
+        "choiceId": "B",
+        "text": "Lambda関数をスケジュール実行するサービス"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWSのコンプライアンスレポートや契約書類にアクセスできるサービス"
+      },
+      {
+        "choiceId": "D",
+        "text": "CloudFrontのエッジロケーションを選択するサービス"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Artifactでは、コンプライアンス関連のレポートや契約書類にアクセスできます。",
+    "choiceExplanations": {
+      "A": "誤りです。EC2バックアップはAMIやEBSスナップショットなどを使います。",
+      "B": "誤りです。スケジュール実行はEventBridgeを使います。",
+      "C": "正解です。AWS Artifactはコンプライアンス資料の確認に使います。",
+      "D": "誤りです。CloudFrontのエッジロケーションを個別選択するサービスではありません。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "compliance",
+      "artifact"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "compliance",
+      "artifact",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Artifact は、AWS のコンプライアンス関連ドキュメントを取得するためのセルフ\nサービスポータルである。SOC 1 / SOC 2 / SOC 3 レポート、ISO 認証関連書類、PCI DSS\nの AOC（Attestation of Compliance）、HIPAA や FedRAMP 関連の文書、各種国・地域固有の\nコンプライアンス文書、AWS との契約書類（BAA: ビジネスアソシエイト契約、NDA 等）が\n含まれる。これらは AWS のセキュリティ・コンプライアンス対応状況を第三者に説明する\n際の一次資料となり、社内監査・外部監査・顧客への提出資料として直接活用できる。\n\n実務での利用シーンとして、SOC 2 監査を受ける際に AWS が運用するインフラ部分の統制\n証拠として SOC 2 レポートを取得する、HIPAA 対応の医療系システムを構築する際に BAA\nを AWS と締結する、PCI DSS のカード会員データ保管環境で AWS の責任範囲を AOC で\n証明する、といったパターンがある。AWS Artifact 自体の利用料金は無料だが、文書は\nNDA 配下で配布されるため、ダウンロード時に契約条件への同意が求められる。組織として\nAWS Organizations を利用している場合、管理アカウントから委任して各メンバーアカウント\nで個別に取得することも可能である。\n\nCLF-C02 では、「AWS のコンプライアンスレポートにアクセスするサービスは何か」「監査\n資料を取得できるサービスは何か」という形で問われる。誤答として「EC2 バックアップ\nサービス」「Lambda スケジューラ」「CloudFront エッジ選択」のように、コンプライアンス\n資料配布とは別領域のサービス機能を当て込むパターンが多い。AWS Audit Manager\n（監査証跡の収集自動化）と名称が似ているが、Artifact は「AWS 自身のコンプライアンス\n資料の取得」、Audit Manager は「利用者環境の監査証跡収集」と役割が異なる点を整理\nしておく。",
+    "officialDocs": [
+      {
+        "label": "AWS Artifact（AWS公式）",
+        "url": "https://aws.amazon.com/jp/artifact/"
+      },
+      {
+        "label": "AWS Artifact とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/artifact/latest/ug/what-is-aws-artifact.html"
+      },
+      {
+        "label": "AWS コンプライアンスプログラム（AWS公式）",
+        "url": "https://aws.amazon.com/jp/compliance/programs/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-016",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "最小権限の原則を説明したものとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "作業に必要な権限だけを付与する"
+      },
+      {
+        "choiceId": "B",
+        "text": "アクセスキーを全員で共有する"
+      },
+      {
+        "choiceId": "C",
+        "text": "権限管理を行わない"
+      },
+      {
+        "choiceId": "D",
+        "text": "すべてのユーザーにAdministratorAccessを付与する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "最小権限の原則では、ユーザーやサービスに対して、業務に必要な範囲の権限のみを付与します。",
+    "choiceExplanations": {
+      "A": "正解です。必要な操作とリソースに絞って権限を付与します。",
+      "B": "誤りです。アクセスキー共有は避けます。",
+      "C": "誤りです。権限管理はセキュリティの基本です。",
+      "D": "誤りです。AdministratorAccessの常用は危険です。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [
+      "least-privilege"
+    ],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "least-privilege",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "最小権限の原則（Principle of Least Privilege）は、ユーザー・ロール・サービスに対して\n「業務上必要な操作とリソースに対する権限のみを付与し、それ以上は付与しない」という\nセキュリティ設計の基本原則である。AWS では IAM ポリシーを通じて、Action（操作）\nResource（対象リソース）/ Condition（条件）の 3 軸で権限を細かく絞り込める。たとえば\n「特定の S3 バケット配下のオブジェクトに対する `GetObject` のみ許可し、書き込みや\n削除は許可しない」「特定のリージョンでのみ EC2 起動を許可する」「MFA を経由した\nセッションでのみ機密操作を許可する」といった粒度で制御できる。\n\n実務でこの原則を運用する際の標準的なアプローチは、まず広めの権限（AWS マネージド\nポリシーや `*:*` に近い権限）でアプリケーションを動かし、CloudTrail で実際に呼ばれた\nAPI を集計し、その結果を元に IAM Access Analyzer のポリシー生成機能を使って必要最小限\nのポリシーへ絞り込むという段階的縮小である。逆に、`AdministratorAccess` を全ユーザー\nに付与した状態を放置すると、内部不正・誤操作・資格情報漏えい時の被害範囲が無制限に\n広がる。アクセスキーの共有はもう 1 段階手前の禁止事項であり、人ごとに IAM ユーザーを\n分け、できれば IAM Identity Center 経由で一時クレデンシャルを使う運用が望ましい。\n\nCLF-C02 では、「最小権限の原則を説明したものとして最も適切なものはどれか」という\n直接的な定義問題として頻出する。正解は「業務に必要な権限だけを付与する」という\n選択肢であり、誤答は「全員に AdministratorAccess を付与する」「権限管理を行わない」\n「アクセスキーを全員で共有する」のように、原則の真逆をいくパターンが並ぶ。SAA-C03\n以降では、IAM ポリシーの条件キー、リソースベースポリシーとアイデンティティベース\nポリシーの組み合わせ、Permissions Boundaries や SCP による上限管理が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      },
+      {
+        "label": "IAM ポリシーによるアクセスの制御（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/access_controlling.html"
+      },
+      {
+        "label": "IAM のポリシーとアクセス許可（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/access_policies.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-017",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "Amazon S3の主な用途として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "仮想サーバーを実行する"
+      },
+      {
+        "choiceId": "B",
+        "text": "リレーショナルデータベースを管理する"
+      },
+      {
+        "choiceId": "C",
+        "text": "オブジェクト形式でファイルを保存する"
+      },
+      {
+        "choiceId": "D",
+        "text": "DNS名前解決を提供する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Amazon S3はオブジェクトストレージサービスで、画像、HTML、ログ、バックアップなどのファイル保存に利用できます。",
+    "choiceExplanations": {
+      "A": "誤りです。仮想サーバーはEC2です。",
+      "B": "誤りです。リレーショナルデータベースはRDSです。",
+      "C": "正解です。S3はオブジェクトストレージです。",
+      "D": "誤りです。DNSはRoute 53です。"
+    },
+    "relatedServices": [
+      "s3",
+      "cloudfront"
+    ],
+    "relatedTerms": [
+      "object-storage"
+    ],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "storage",
+      "object-storage"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon S3（Simple Storage Service）は、ファイルを「オブジェクト」という単位で保存する\nフルマネージドのオブジェクトストレージサービスである。バケット（保存先の論理的な\n入れ物）にオブジェクトをキー名付きで配置し、HTTP/HTTPS 経由で読み書きする。ストレージ\n容量に上限がなく、1 オブジェクトあたり最大 5 TB まで保存できる。耐久性は 11 ナイン\n（99.999999999%）の年間オブジェクト耐久性で設計されており、複数の物理拠点へ自動的に\nレプリケートされる。\n\n実務での代表的な用途は、静的 Web サイトのアセット（画像・CSS・JavaScript・HTML）\n配信、データレイク（CSV / JSON / Parquet 等の分析用元データ保管）、バックアップと\nアーカイブ（EBS スナップショットや RDS スナップショットの保管先も内部的に S3）、\nログ集約（CloudTrail / ALB / VPC Flow Logs の保存先）、CloudFront のオリジン、\nソフトウェア配布用パッケージの置き場である。アクセス頻度に応じてストレージクラスを\n選べ（Standard / Standard-IA / Intelligent-Tiering / Glacier 系）、ライフサイクル\nポリシーで自動的に低コストなクラスへ移行させてコスト最適化できる。S3 はブロック\nストレージ（EBS / EC2 にアタッチして OS から見える「ディスク」）でもファイル\nストレージ（EFS / NFS マウント）でもないため、用途が異なる点を理解しておく必要が\nある。\n\nCLF-C02 では、「S3 の主な用途として最も適切なのはどれか」「画像やバックアップを\n保存するのに適したサービスはどれか」という形で問われる。誤答として EC2（仮想\nサーバー）/ Route 53（DNS）/ RDS（リレーショナル DB）など、ストレージ用途ではない\nサービスが並ぶ。SAA-C03 以降では、ストレージクラスの選定、バージョニング、レプリ\nケーション、署名付き URL、バケットポリシーと IAM ポリシーの組み合わせ、暗号化方式\n（SSE-S3 / SSE-KMS / SSE-C）の使い分けが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3（AWS公式）",
+        "url": "https://aws.amazon.com/jp/s3/"
+      },
+      {
+        "label": "Amazon S3 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3 ストレージクラスを利用する（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/storage-class-intro.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-018",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "Amazon EC2の説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "オブジェクトストレージサービス"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS上で仮想サーバーを起動できるサービス"
+      },
+      {
+        "choiceId": "C",
+        "text": "DNSサービス"
+      },
+      {
+        "choiceId": "D",
+        "text": "コスト予算通知サービス"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Amazon EC2は、AWS上で仮想サーバーを起動し、OSやミドルウェアを設定して利用できるサービスです。",
+    "choiceExplanations": {
+      "A": "誤りです。オブジェクトストレージはS3です。",
+      "B": "正解です。EC2は仮想サーバーサービスです。",
+      "C": "誤りです。DNSはRoute 53です。",
+      "D": "誤りです。予算通知はAWS Budgetsです。"
+    },
+    "relatedServices": [
+      "ec2",
+      "ebs",
+      "vpc"
+    ],
+    "relatedTerms": [
+      "virtual-server",
+      "compute"
+    ],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "ec2",
+      "compute",
+      "virtual-server"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon EC2（Elastic Compute Cloud）は、AWS が提供する IaaS（Infrastructure as a\nService）型の仮想サーバーサービスである。ユーザーは OS、ミドルウェア、ランタイム、\nアプリケーションのすべてを自分でインストール・設定・管理する責任を持ち、ハード\nウェアや仮想化基盤（ハイパーバイザー）の管理は AWS が担う。AWSの責任共有モデルで\n「クラウド内のセキュリティ」（OS以上）はユーザー側に分類される。\n\nEC2 の主な使われ方は、既存のオンプレミス・サーバーをそのままクラウドへ移行する\n「リフトアンドシフト」、Webサーバー・AP サーバー・DB サーバーの構築、バッチ処理\nサーバー、機械学習モデルのトレーニングなどである。課金はインスタンスの起動時間\n単位（秒単位）で発生し、停止中は EC2 インスタンス料金がかからないが、アタッチ\nされた EBS ボリューム（ストレージ）には停止中でも課金が続く。\n\n購入オプションは複数用意されており、利用状況に応じて選択する。オンデマンドは\n時間単位で必要な分だけ使う基本形態。リザーブドインスタンス（RI）は 1 年または\n3 年のコミットメントと引き換えに大幅な割引が得られる。Savings Plans は RI と同様\nのコミット割引を、インスタンスタイプを問わず柔軟に適用できる統合的な割引方式。スポットインスタンスは AWS の余剰\nキャパシティを市場価格で使う形態で最大 90% 割引になるが、AWS の都合で中断される\nリスクがある。Dedicated Host は物理サーバーを占有する形式で、ライセンス持ち込み\n（BYOL）対応に使われる。\n\nCLF-C02 では「EC2 は何をするサービスか」「仮想サーバーはどれか」という形で問われる。\n誤答として S3（オブジェクトストレージ）/ Route 53（DNS）/ Budgets（予算管理）が\n並ぶことが多い。SAA-C03 以降では Auto Scaling グループ・ELB との組み合わせ、\nAMI の仕組み、セキュリティグループと Network ACL の差異、購入オプションの使い分け\nが踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/"
+      },
+      {
+        "label": "Amazon EC2 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "label": "Amazon EC2 インスタンスタイプ（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/instance-types.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-019",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "AWS Lambdaの特徴として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "サーバーを管理せずにコードを実行できる"
+      },
+      {
+        "choiceId": "B",
+        "text": "DNSレコードだけを管理する"
+      },
+      {
+        "choiceId": "C",
+        "text": "物理サーバーを購入して設置する"
+      },
+      {
+        "choiceId": "D",
+        "text": "ユーザーの請求書を郵送する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Lambdaはサーバーレスコンピューティングサービスで、サーバー管理をせずにイベントに応じてコードを実行できます。",
+    "choiceExplanations": {
+      "A": "正解です。Lambdaはサーバーレスでコードを実行できます。",
+      "B": "誤りです。DNS管理はRoute 53です。",
+      "C": "誤りです。物理サーバーの購入は不要です。",
+      "D": "誤りです。請求書郵送のサービスではありません。"
+    },
+    "relatedServices": [
+      "lambda",
+      "api-gateway",
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "serverless",
+      "event-driven"
+    ],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "lambda",
+      "serverless",
+      "compute"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Lambda は、サーバーの調達・管理を一切行わずにコードを実行できるサーバーレス\nコンピューティングサービスである。関数単位でデプロイし、イベント（API Gateway\nへのリクエスト、S3 へのファイルアップロード、SQS へのメッセージ到着、CloudWatch\nEvents のスケジュールなど）をトリガーとして自動起動する。実行時間が実際に使われた\nミリ秒単位で課金される（1 リクエストあたり 0.0000002 USD 前後）ため、リクエスト数\nが少ない小規模なワークロードやイベント駆動な処理では EC2 より大幅に安くなる。\n\n主な特徴として、最大実行時間が 15 分に制限されている点がある。長時間の処理（バッチ\nや動画変換など）には不向きであり、その場合は EC2 や ECS/Fargate が選択肢になる。\nサポートするランタイムは Node.js / Python / Java / Go / Ruby / .NET 系が公式提供\nされており、カスタムランタイムを使えば任意の言語を動かすこともできる。同時実行数の\nデフォルトの上限はリージョン単位であり、急激なトラフィック増加に対してコールド\nスタートによるレイテンシが発生する可能性がある。\n\nCLF-C02 では「サーバーを管理せずにコードを実行できるのはどれか」「Lambda の特徴\nとして正しいのはどれか」という形で問われる。サーバーレスという概念そのものの理解\n（インフラ管理不要・イベント駆動・ミリ秒課金・実行時間上限あり）を押さえておく\nことが重要である。誤答として EC2（サーバー管理が必要）/ ECS（コンテナ管理が\n必要）が並ぶことが多い。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda（AWS公式）",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      },
+      {
+        "label": "AWS Lambda とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-020",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "Amazon RDSの説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "リレーショナルデータベースをマネージドで利用できるサービス"
+      },
+      {
+        "choiceId": "B",
+        "text": "メッセージキューサービス"
+      },
+      {
+        "choiceId": "C",
+        "text": "コンテンツ配信ネットワーク"
+      },
+      {
+        "choiceId": "D",
+        "text": "NoSQLキーバリューデータベースサービス"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon RDSは、MySQL、PostgreSQL、MariaDB、Oracle、SQL Serverなどのリレーショナルデータベースをマネージドで利用できるサービスです。",
+    "choiceExplanations": {
+      "A": "正解です。RDSはリレーショナルデータベースのマネージドサービスです。",
+      "B": "誤りです。メッセージキューはSQSです。",
+      "C": "誤りです。CDNはCloudFrontです。",
+      "D": "誤りです。NoSQLキーバリュー用途はDynamoDBです。"
+    },
+    "relatedServices": [
+      "rds",
+      "dynamodb"
+    ],
+    "relatedTerms": [
+      "relational-database",
+      "managed-service"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "rds",
+      "database",
+      "relational"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon RDS（Relational Database Service）は、リレーショナルデータベース（RDB）の\n構築・運用・スケーリングをマネージドで提供するサービスである。OS のパッチ適用、\nデータベースエンジンのアップグレード、自動スナップショット（バックアップ）、\nフェイルオーバー（Multi-AZ 構成時の自動切り替え）を AWS が担う。利用者はデータ\nモデル設計・SQL チューニング・アプリケーション開発に集中できる。\n\n対応エンジンは Amazon Aurora（MySQL / PostgreSQL 互換）/ MySQL / PostgreSQL /\nMariaDB / Oracle / Microsoft SQL Server の 6 系統である。Aurora は AWS 独自の\nクラウドネイティブエンジンであり、通常の MySQL より高スループット・低遅延を謳う。\nEC2 に RDB を自分でインストールする方法と比べて、RDS は運用の手間を大幅に省ける\n代わりに OS レベルのカスタマイズができなくなる点が制約となる。\n\nMulti-AZ 配置を有効にすると、別のアベイラビリティゾーンにスタンバイ・レプリカが\n作成され、プライマリの障害時に自動的にフェイルオーバーする。Read Replica を作成\nすることで読み取りのスケールアウトが可能になる。\n\nCLF-C02 では「リレーショナルデータベースのマネージドサービスはどれか」という直球の\n問いで登場する。誤答として NoSQL の DynamoDB、CDN の CloudFront、メッセージキュー\nの SQS が並ぶ。RDS = リレーショナル DB のマネージドという軸を押さえておけば確実\nに正答できる。SAA-C03 以降では Multi-AZ と Read Replica の違い、Aurora の特性、\nパラメータグループ、暗号化、スナップショットの共有・コピーが深掘りされる。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/"
+      },
+      {
+        "label": "Amazon RDS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS DB インスタンス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Overview.DBInstance.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-021",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "Amazon DynamoDBの説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "静的ファイルだけを配信するCDN"
+      },
+      {
+        "choiceId": "B",
+        "text": "フルマネージドのNoSQLデータベースサービス"
+      },
+      {
+        "choiceId": "C",
+        "text": "仮想サーバーを起動するサービス"
+      },
+      {
+        "choiceId": "D",
+        "text": "仮想ネットワークを作成するサービス"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Amazon DynamoDBは、フルマネージドのNoSQLデータベースサービスで、キーバリューやドキュメントデータの保存に向いています。",
+    "choiceExplanations": {
+      "A": "誤りです。CDNはCloudFrontです。",
+      "B": "正解です。DynamoDBはフルマネージドNoSQLデータベースです。",
+      "C": "誤りです。仮想サーバーはEC2です。",
+      "D": "誤りです。仮想ネットワークはVPCです。"
+    },
+    "relatedServices": [
+      "dynamodb",
+      "lambda",
+      "api-gateway"
+    ],
+    "relatedTerms": [
+      "nosql",
+      "key-value"
+    ],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "dynamodb",
+      "database",
+      "nosql"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon DynamoDB は AWS が提供するフルマネージドの NoSQL データベースサービスである。\nCLF-C02 の試験文脈では、「リレーショナル DB が必要か、NoSQL が必要か」という\n二択の判断軸として理解することが重要である。\n\n試験で問われる DynamoDB の特徴は以下の 4 点に集約される。（1）NoSQL であること\n（スキーマレス・非リレーショナル）、（2）フルマネージドであること（サーバー管理\n不要・スケーリング自動）、（3）高スループットと一桁ミリ秒レイテンシが特徴、\n（4）Lambda・API Gateway との組み合わせでサーバーレスアーキテクチャの\nバックエンドとして使われることが多い。\n\n判断軸としては、既存の RDB スキーマがあり JOIN が必要なシステムには RDS、\nアクセスパターンが単純で大量の読み書きが必要な場合や NoSQL 指向のシステムには\nDynamoDB を選ぶ、という基本を押さえる。CLF では「NoSQLキーバリュー型のマネージド\nサービスはどれか」「Lambda と組み合わせてサーバーレス構成で使うDBはどれか」の\n問いで正答として DynamoDB を選ぶことができる。誤答として RDS（リレーショナル DB）、\nVPC（仮想ネットワーク）、EC2（仮想サーバー）、CloudFront（CDN）が並ぶ。",
+    "officialDocs": [
+      {
+        "label": "Amazon DynamoDB（AWS公式）",
+        "url": "https://aws.amazon.com/jp/dynamodb/"
+      },
+      {
+        "label": "Amazon DynamoDB とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/Introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-022",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "easy",
+    "question": "Amazon CloudFrontの主な用途として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS請求額の予算通知だけを行う"
+      },
+      {
+        "choiceId": "B",
+        "text": "ユーザーに近いエッジロケーションからコンテンツを配信する"
+      },
+      {
+        "choiceId": "C",
+        "text": "IAMユーザーを作成する"
+      },
+      {
+        "choiceId": "D",
+        "text": "RDSのSQLクエリを実行する"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "CloudFrontはCDNサービスで、エッジロケーションを利用してWebコンテンツを高速に配信します。",
+    "choiceExplanations": {
+      "A": "誤りです。予算通知はAWS Budgetsです。",
+      "B": "正解です。CloudFrontはエッジからコンテンツを配信します。",
+      "C": "誤りです。IAMユーザー管理はIAMです。",
+      "D": "誤りです。SQL実行はRDSなどのDBで行います。"
+    },
+    "relatedServices": [
+      "cloudfront",
+      "s3",
+      "acm"
+    ],
+    "relatedTerms": [
+      "cdn",
+      "edge-location"
+    ],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "cloudfront",
+      "cdn",
+      "edge"
+    ],
+    "practicalNote": "Amazon CloudFront は、AWS が世界中のエッジロケーションで運用する CDN（Content\nDelivery Network）サービスである。S3 バケット / ALB / API Gateway / 自前のオリジン\nサーバー等を「オリジン」として登録し、エッジロケーション側がオリジンから取得した\nコンテンツをキャッシュしてユーザーへ近距離から配信する。これにより、地理的距離に\nよる遅延を縮め、オリジンへの直接トラフィックを減らしてオリジン負荷とデータ転送\nコストを抑える。\n\n試験文脈では「コンテンツをエッジから高速配信するサービスはどれか」「CDN サービス\nはどれか」というキーワードで CloudFront を選ばせる問題が中心となる。誤答として\n頻出するのは IAM（ユーザー / 権限管理）/ RDS（リレーショナル DB の SQL 実行）/\nAWS Budgets（予算超過アラート）など、配信とは全く異なる守備範囲のサービスで、\nサービスの役割を取り違えていないかを問う典型パターンである。CloudFront 本体は\nコンテンツを「保存」するサービスではなくキャッシュして配信するサービスである点、\nHTTPS 配信に使う点、ACM 証明書を組み合わせる点が CLF-C02 の頻出ポイントである。\n\nSAA-C03 以降では、S3 オリジンを OAC（Origin Access Control）で保護してバケットを\n非公開のまま配信する設計、キャッシュ TTL と Invalidation の運用、ACM 証明書を\nCloudFront で使う場合のリージョン（us-east-1 固定）の制約、WAF との組み合わせ\nによる攻撃緩和、署名付き URL / 署名付き Cookie によるアクセス制御が踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudfront/"
+      },
+      {
+        "label": "Amazon CloudFront とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-023",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "Amazon Route 53の主な役割として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "CloudWatch Logsを削除するサービス"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3オブジェクトを暗号化する専用サービス"
+      },
+      {
+        "choiceId": "C",
+        "text": "Lambda関数のソースコードを自動生成する"
+      },
+      {
+        "choiceId": "D",
+        "text": "DNS名前解決とドメイン関連機能を提供する"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Route 53はDNSサービスで、ドメイン名をIPアドレスやCloudFrontなどのリソースに解決するために利用します。",
+    "choiceExplanations": {
+      "A": "誤りです。ログ削除専用サービスではありません。",
+      "B": "誤りです。暗号鍵管理はKMSです。",
+      "C": "誤りです。Lambdaコード生成サービスではありません。",
+      "D": "正解です。Route 53はDNS関連サービスです。"
+    },
+    "relatedServices": [
+      "route53",
+      "cloudfront",
+      "acm"
+    ],
+    "relatedTerms": [
+      "dns",
+      "hosted-zone"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "route-53",
+      "dns",
+      "networking"
+    ],
+    "practicalNote": "Amazon Route 53 は、AWS が提供するマネージドの権威 DNS サービスである。中核機能は\n3 つで、ドメイン名登録（レジストラ機能）、DNS 名前解決（権威 DNS サーバー機能）、\nヘルスチェックと連動したルーティングポリシーである。利用者は「ホストゾーン」を\n作成して DNS レコード（A / AAAA / CNAME / MX / TXT / Alias 等）を登録し、世界中の\nDNS リゾルバからの問い合わせに対して AWS のエッジロケーション群が応答する。\n\nルーティングポリシーには、シンプル（単純な 1:1 解決）/ 重み付け（A/B テスト）/\nレイテンシーベース（ユーザーから最も低遅延のリージョンへ振る）/ 位置情報（国・\n地域別に振る）/ フェイルオーバー（ヘルスチェック失敗時に予備へ切替）/ マルチ\nバリュー（複数 IP を返す）/ 地理的近接（トラフィックバイアス付き）があり、要件に\n応じて使い分ける。Alias レコードは AWS リソース（CloudFront / ALB / S3 静的サイト /\nAPI Gateway 等）への参照を CNAME ではなく Apex（ルート）ドメインから直接張れる\n点が CNAME と異なる重要な特徴である。\n\n試験文脈では「DNS 名前解決のサービスはどれか」「ドメイン関連機能を提供するサービス\nはどれか」という形で問われる。誤答として「Lambda コードを自動生成する」「S3\nオブジェクトを暗号化する」「CloudWatch Logs を削除する」など、DNS と全く関係のない\n役割の選択肢が並ぶパターンが頻出する。CLF-C02 ではサービスの守備範囲を取り違え\nないかが主眼となり、SAA-C03 以降では Alias レコードと CNAME の使い分け、ルーティング\nポリシーの選定、ヘルスチェックと DR 設計（Route 53 フェイルオーバー）、Private\nHosted Zone と VPC の関係が踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      },
+      {
+        "label": "Amazon Route 53 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Route 53 のルーティングポリシー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/routing-policy.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-024",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "Amazon SQSの説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWSアカウントの利用料金を予測するサービス"
+      },
+      {
+        "choiceId": "B",
+        "text": "コンテンツを世界中にキャッシュ配信するサービス"
+      },
+      {
+        "choiceId": "C",
+        "text": "アプリケーション間でメッセージをキューとして受け渡すサービス"
+      },
+      {
+        "choiceId": "D",
+        "text": "仮想プライベートネットワークを作成するサービス"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Amazon SQSはメッセージキューサービスで、システム間を疎結合にするために利用できます。",
+    "choiceExplanations": {
+      "A": "誤りです。料金分析はCost Explorerなどを使います。",
+      "B": "誤りです。キャッシュ配信はCloudFrontです。",
+      "C": "正解です。SQSはメッセージキューです。",
+      "D": "誤りです。仮想ネットワークはVPCです。"
+    },
+    "relatedServices": [
+      "sqs",
+      "sns",
+      "eventbridge",
+      "lambda"
+    ],
+    "relatedTerms": [
+      "message-queue",
+      "decoupling"
+    ],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "queue",
+      "integration"
+    ],
+    "practicalNote": "Amazon SQS（Simple Queue Service）は、フルマネージドのメッセージキューサービスで\nある。送信側（プロデューサー）がメッセージをキューに投入し、受信側（コンシューマ）が\nキューからメッセージを取り出して処理する。送信側と受信側が直接通信しないため、\n両者を「疎結合」にできる点が最大の特徴である。コンシューマが一時的に停止していても\nメッセージはキューに保持され、復帰後に処理を継続できるため、システム全体の耐障害性\nが向上する。\n\nキューには 2 種類あり、標準キューは「ほぼ無制限のスループット」「最低 1 回配信」\n「ベストエフォートの順序保証」が特徴で、ほとんどの非同期ワークロードに適する。\nFIFO キューは「順序保証」「重複排除」「スループットは標準キューより低い」という\n性質を持ち、注文処理や決済イベントのように順序と重複排除が必須のワークロードで\n使う。各メッセージには可視性タイムアウト（受信中の他コンシューマからの不可視期間）\nが設定され、その間に処理完了しないとメッセージが再度キューに戻されて再処理対象\nとなる。\n\n試験文脈では「アプリケーション間でメッセージをキュー方式で受け渡すサービスはどれ\nか」「システムを疎結合にするサービスはどれか」という形で問われる。誤答として\nCloudFront（キャッシュ配信）/ Cost Explorer（料金分析）/ VPC（仮想ネットワーク）\nなど、メッセージング以外のサービスが並ぶ。SNS（Pub/Sub）/ EventBridge（イベント\nルーティング）/ SQS（メッセージキュー）の 3 つの使い分けは頻出比較ポイントで、\n1:1 ポーリング型なら SQS、1:N ファンアウトなら SNS、ルールベースのイベント分配\nなら EventBridge という整理になる。SAA-C03 以降では、可視性タイムアウト設計、\nDLQ（デッドレターキュー）、ロングポーリング、SNS+SQS ファンアウト構成が踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      },
+      {
+        "label": "Amazon SQS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon SQS キューの種類（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-025",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "Amazon CloudWatchの主な用途として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DNSレコードを管理する"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3バケット名を自動生成する"
+      },
+      {
+        "choiceId": "C",
+        "text": "IAMポリシーを自動で削除する"
+      },
+      {
+        "choiceId": "D",
+        "text": "メトリクス、ログ、アラームによってAWSリソースを監視する"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "CloudWatchは、AWSリソースやアプリケーションのメトリクス、ログ、アラームを管理する監視サービスです。",
+    "choiceExplanations": {
+      "A": "誤りです。DNS管理はRoute 53です。",
+      "B": "誤りです。S3バケット名生成サービスではありません。",
+      "C": "誤りです。IAMポリシー削除サービスではありません。",
+      "D": "正解です。CloudWatchは監視とログ管理に使います。"
+    },
+    "relatedServices": [
+      "cloudwatch",
+      "lambda",
+      "ec2"
+    ],
+    "relatedTerms": [
+      "monitoring",
+      "metrics",
+      "logs"
+    ],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudwatch",
+      "monitoring",
+      "logs"
+    ],
+    "practicalNote": "Amazon CloudWatch は、AWS リソースとアプリケーションのメトリクス・ログ・アラーム\nを集約管理する監視サービスである。EC2 / RDS / Lambda / ECS / API Gateway など主要\nサービスが標準でメトリクス（CPU 使用率・ネットワーク I/O・リクエスト数・実行時間\n等）を CloudWatch に送出し、利用者は追加設定なしで時系列データを確認できる。アプリ\nケーション側からカスタムメトリクスを送出することもでき、ビジネス指標（注文数・\nエラー率・課金額など）を統合的に可視化できる。\n\nCloudWatch Logs ではアプリケーションログを集約保存し、Logs Insights によるクエリ\n検索、保管期間（リテンション）設定、S3 への長期エクスポート、Metric Filter による\nログからのメトリクス抽出ができる。CloudWatch Alarms はメトリクスのしきい値超過を\n検知して SNS 経由でメール / Slack / PagerDuty 等へ通知するほか、Auto Scaling や\nEC2 アクションのトリガとしても使える。CloudWatch Dashboards でこれらをまとめて\n表示し、運用ダッシュボードを構築する。\n\n試験文脈では「AWS リソースを監視するサービスはどれか」「メトリクスやログを管理\nするサービスはどれか」という形で問われる。誤答として Route 53（DNS）/ S3 バケット\n生成 / IAM ポリシー削除など、監視・観測とは全く異なる役割の選択肢が並ぶ。CloudWatch\n（リソース・アプリケーションの「動き」を監視）/ CloudTrail（AWS API 呼び出しの監査\nログ）/ AWS Config（リソース構成変更の履歴）の 3 つの使い分けは CLF-C02 / SAA-C03\nともに頻出比較ポイントで、SAA-C03 以降ではアラームと Auto Scaling 連携、複合\nアラーム、Logs Insights クエリ設計、X-Ray との分散トレーシング連携が踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "Amazon CloudWatch とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch Logs とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-026",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "AWS Budgetsの主な用途として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "設定した予算に対して利用料金の超過を通知する"
+      },
+      {
+        "choiceId": "B",
+        "text": "EC2インスタンスのOSを更新する"
+      },
+      {
+        "choiceId": "C",
+        "text": "S3バケットを暗号化する"
+      },
+      {
+        "choiceId": "D",
+        "text": "DNSレコードを作成する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Budgetsでは、月額予算や使用量のしきい値を設定し、超過または超過予測時に通知できます。",
+    "choiceExplanations": {
+      "A": "正解です。AWS Budgetsは課金アラートに使います。",
+      "B": "誤りです。OS更新のサービスではありません。",
+      "C": "誤りです。暗号化にはSSEやKMSなどを使います。",
+      "D": "誤りです。DNSはRoute 53です。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "budget",
+      "cost-alert"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "budget",
+      "cost-management"
+    ],
+    "practicalNote": "AWS Budgets は、利用料金や使用量に対して予算（しきい値）を設定し、超過または超過\n予測時にアラートを発火する予算管理サービスである。コスト予算（月次・四半期・年次\nの課金額に対するしきい値）、使用量予算（特定サービスの利用量に対するしきい値）、\nリザベーション利用率予算、Savings Plans 利用率予算といった種類の予算を作成でき、\n通知先には Email・SNS トピックを指定する。Budgets Actions を使うと、しきい値超過\n時に IAM ポリシーを自動付与してリソース起動を抑止するなどの自動アクションも設定\nできる。\n\n実務での代表的な使い方は、個人開発・検証用 AWS アカウントの「うっかり高額課金」\n事故防止である。月次予算 1,000 円 / 5,000 円のような小さなしきい値で設定し、50%\n通過 / 80% 通過 / 100% 通過 / 予測超過 の 4 段階でメール通知させると、想定外の\nコスト発生を早期に検知できる。本番アカウントでは、プロジェクト別タグ予算でチーム\nごとの予算管理を行うパターンが多い。混同しやすいサービスとして Cost Explorer が\nあり、Cost Explorer は「コスト構造を可視化・分析する」のに対し、Budgets は「予算\nしきい値を設定して超過時にアラートを発火する」点で役割が異なる。\n\n試験文脈では「予算を設定して超過時に通知するサービスはどれか」「課金アラートを\n設定できるサービスはどれか」という形で問われる。誤答として S3 暗号化 / EC2 OS\n更新 / DNS レコード作成など、予算管理とは全く異なる役割の選択肢が並ぶ。CLF-C02\nではサービスの守備範囲を取り違えないかが主眼で、AWS Budgets（予算アラート）/\nCost Explorer（コスト可視化・分析）/ Cost and Usage Report（詳細な利用料金 CSV\nを S3 へエクスポート）の 3 つの使い分けは頻出整理ポイントとなる。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      },
+      {
+        "label": "AWS Budgets でコストを管理する（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      }
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-027",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "AWS Cost Explorerの主な用途として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Lambda関数のコードを保存する"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS利用料金や使用量の傾向を分析する"
+      },
+      {
+        "choiceId": "C",
+        "text": "Route 53のDNS問い合わせを停止する"
+      },
+      {
+        "choiceId": "D",
+        "text": "IAMユーザーのパスワードをリセットする"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Cost Explorerは、AWS利用料金や使用量を可視化し、サービス別・期間別のコスト分析に利用できます。",
+    "choiceExplanations": {
+      "A": "誤りです。Lambdaコード保存の説明ではありません。",
+      "B": "正解です。Cost Explorerはコスト分析に使います。",
+      "C": "誤りです。DNS問い合わせ停止のサービスではありません。",
+      "D": "誤りです。IAM操作はIAMで行います。"
+    },
+    "relatedServices": [
+      "cost-explorer",
+      "aws-budgets"
+    ],
+    "relatedTerms": [
+      "cost-analysis",
+      "billing"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "cost-explorer",
+      "cost-management"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Cost Explorer は、AWS アカウントで発生したコストと使用量を可視化・分析するための\n無料のマネジメントコンソール機能である。日次・月次の利用料金推移、サービス別の内訳、\nリージョン別の内訳、リンクされたアカウント別の内訳、タグやコスト配分タグによる\nグルーピングなどを、グラフと表で参照できる。最大過去 13 か月の実績データに加え、\n将来 12 か月の予測も提供される。\n\n試験文脈では「AWS の利用料金や使用量の傾向を分析するサービスはどれか」という形で\n出題され、Cost Explorer を選ばせる問題が中心となる。誤答として「IAM ユーザーの\nパスワードリセット」「Lambda コードの保存」「Route 53 の DNS 問い合わせ停止」など、\nコスト管理と全く異なる守備範囲の選択肢が並ぶパターンが頻出する。サービスの役割を\n取り違えていないかを問う典型問題である。\n\n実務では Cost Explorer と AWS Budgets を組み合わせて使うことが多い。Cost Explorer は\n過去の傾向を「分析」する用途、AWS Budgets は事前に決めた予算超過を「アラート」する\n用途と役割が分かれる。CLF-C02 ではこの 2 サービスの役割分担も繰り返し問われる。\nさらに踏み込んだコスト最適化の文脈では、Cost Explorer のレポートを起点に Savings\nPlans の購入推奨を確認したり、リザーブドインスタンスのカバレッジ・使用率を把握\nしたりする使い方が一般的である。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-028",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "AWS Trusted Advisorで確認できる内容として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "EC2のソースコード自動生成"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3オブジェクトの画像編集"
+      },
+      {
+        "choiceId": "C",
+        "text": "Lambda関数のプログラミング学習教材"
+      },
+      {
+        "choiceId": "D",
+        "text": "コスト最適化、セキュリティ、耐障害性などの推奨事項"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "AWS Trusted Advisorは、AWS環境をチェックし、コスト最適化、セキュリティ、耐障害性、パフォーマンスなどの観点で推奨事項を提示します。",
+    "choiceExplanations": {
+      "A": "誤りです。ソースコード生成サービスではありません。",
+      "B": "誤りです。画像編集サービスではありません。",
+      "C": "誤りです。教材サービスではありません。",
+      "D": "正解です。Trusted AdvisorはAWS環境の改善提案に使います。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "trusted-advisor",
+      "optimization"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "trusted-advisor",
+      "cost",
+      "security"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS Trusted Advisor は、AWS アカウント内のリソース構成を自動でチェックし、\nコスト最適化・セキュリティ・耐障害性・パフォーマンス・サービスクォータの 5 つの\nカテゴリで改善推奨事項を提示するサービスである。代表的なチェック項目には、未使用の\nElastic IP / 使用率の低い EC2 インスタンス / 公開状態の S3 バケット / IAM 用 MFA の\n有無 / EBS スナップショットの世代管理状況などがある。\n\n提供されるチェック項目はサポートプランによって異なる。Basic / Developer サポートでは\nコアチェック（セキュリティとサービスクォータの一部）に限定され、Business 以上の\n有料サポートに加入すると全カテゴリのフルチェックが利用できるようになる。CLF-C02 では\nこの「サポートプランによる機能差」がしばしば問われる。\n\n試験文脈では「AWS 環境のコスト・セキュリティ・耐障害性の改善提案を確認できるサービス\nはどれか」という形で出題される。誤答には「S3 オブジェクトの画像編集」「EC2 ソース\nコードの自動生成」「Lambda の学習教材」など、Trusted Advisor の役割と全く関係のない\n選択肢が並ぶパターンが多い。Trusted Advisor は「推奨事項を提示する」サービスであり、\n自動で構成を変更するサービスではない点も押さえておく必要がある。",
+    "officialDocs": [
+      {
+        "label": "AWS Trusted Advisor（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      },
+      {
+        "label": "AWS Trusted Advisor の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-029",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "長期間利用するEC2ワークロードのコストを下げる選択肢として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "CloudWatch Logsを無期限保存する"
+      },
+      {
+        "choiceId": "B",
+        "text": "常にオンデマンド料金だけを使う"
+      },
+      {
+        "choiceId": "C",
+        "text": "Savings PlansまたはReserved Instancesを検討する"
+      },
+      {
+        "choiceId": "D",
+        "text": "すべてのデータを高頻度アクセス用ストレージに固定する"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "長期間安定して利用するワークロードでは、Savings PlansやReserved Instancesを使うことでオンデマンドよりコストを下げられる場合があります。",
+    "choiceExplanations": {
+      "A": "誤りです。ログの無期限保存はコスト増につながります。",
+      "B": "誤りです。オンデマンドは柔軟ですが、長期固定利用では割高になる場合があります。",
+      "C": "正解です。長期利用では割引オプションを検討します。",
+      "D": "誤りです。アクセス頻度に応じたストレージ選択が重要です。"
+    },
+    "relatedServices": [
+      "ec2",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "savings-plans",
+      "reserved-instances"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "pricing",
+      "ec2",
+      "savings-plans"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "EC2 の課金モデルには、オンデマンド / Savings Plans / リザーブドインスタンス（RI）/\nスポットインスタンスの 4 種類がある。オンデマンドは予約なしで秒・時間単位の従量課金、\nSavings Plans と RI は 1 年または 3 年のコミットで時間あたり単価を割引く方式、スポットは\n余剰キャパシティを大幅割引で利用する代わりに中断のリスクがある方式である。長期間\n安定して稼働するワークロードでは、Savings Plans または RI を組み合わせることでオン\nデマンドより最大 70% 前後のコスト削減が可能になる。\n\nSavings Plans は EC2 / Fargate / Lambda にまたがってコミット時間あたりの利用額を約束\nする方式で、Compute Savings Plans はインスタンスファミリー・リージョン・OS・テナンシー\nの変更にも追従できる柔軟性が特徴である。RI は EC2 専用でインスタンスタイプを特定する\n代わりに、Standard RI は最大の割引率、Convertible RI はファミリー変更の柔軟性が得られる。\nCLF-C02 では「長期利用なら割引オプションを検討する」という方向性が問われる程度で、\nSAA-C03 以降で Savings Plans と RI の使い分けや Compute / EC2 Instance Savings Plans の\n差分が踏み込んで問われる。\n\n誤答として頻出するのは「常にオンデマンド料金だけを使う」「CloudWatch Logs を無期限\n保存する」「データを高頻度アクセス用ストレージに固定する」など、コスト削減ではなく\nコスト増を招く選択肢である。「長期固定利用 = 割引コミット」「変動が大きい = オン\nデマンドやサーバーレス」「中断に耐えられる = スポット」という対応関係を押さえて\nおきたい。",
+    "officialDocs": [
+      {
+        "label": "AWS Savings Plans（AWS公式）",
+        "url": "https://aws.amazon.com/jp/savingsplans/"
+      },
+      {
+        "label": "Savings Plans とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/savingsplans/latest/userguide/what-is-savings-plans.html"
+      },
+      {
+        "label": "Amazon EC2 リザーブドインスタンス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ec2-reserved-instances.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-030",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "AWSサポートプランに関する説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "サポートプランを使うとAWSサービスの利用料金がすべて無料になる"
+      },
+      {
+        "choiceId": "B",
+        "text": "用途や必要なサポートレベルに応じて複数のプランが用意されている"
+      },
+      {
+        "choiceId": "C",
+        "text": "すべてのサポートプランで専任のテクニカルアカウントマネージャーが必ず付く"
+      },
+      {
+        "choiceId": "D",
+        "text": "サポートプランはAWS利用料金に関係なく完全無料である"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "AWSにはBasic、Developer、Business、Enterprise系など、用途や必要なサポートレベルに応じたサポートプランがあります。",
+    "choiceExplanations": {
+      "A": "誤りです。サポートプランはAWS利用料を無料にするものではありません。",
+      "B": "正解です。必要なサポート内容に応じてプランを選びます。",
+      "C": "誤りです。専任担当者が付くかどうかはプランによります。",
+      "D": "誤りです。有料サポートプランがあります。"
+    },
+    "relatedServices": [],
+    "relatedTerms": [
+      "support-plan",
+      "basic-support",
+      "business-support"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "support",
+      "billing",
+      "clf-c02"
+    ],
+    "published": true,
+    "createdAt": "2026-06-01",
+    "updatedAt": "2026-06-01",
+    "practicalNote": "AWS サポートには、Basic / Developer / Business / Enterprise On-Ramp / Enterprise の\n複数プランが用意されている。Basic はすべてのアカウントに無料で付帯する最小プランで、\n請求・アカウント関連の問い合わせと AWS のドキュメント・ホワイトペーパー・コミュニティ\nフォーラムへのアクセス、Trusted Advisor のコアチェック、AWS Personal Health Dashboard が\n含まれる。Developer 以上は有料で、技術サポートのケース起票・応答時間 SLA・Trusted\nAdvisor のフルチェック・サードパーティソフトウェアサポートなどがプランに応じて\n段階的に拡充される。Enterprise On-Ramp と Enterprise では Technical Account Manager\n（TAM）による定期的なアーキテクチャレビューや運用支援が提供される。\n\n試験文脈では「用途や必要なサポートレベルに応じて複数のプランが用意されている」と\nいう中立的な正解選択肢に対して、「すべてのプランで TAM が必ず付く」「サポートプランは\n完全無料である」「サポートプランを使うと AWS 利用料金が無料になる」のような極端な\n言い切り誤答が並ぶパターンが頻出する。Basic は無料で付帯するという事実と、技術\nサポートや TAM はプランによって異なるという事実の 2 つを押さえれば、極端な誤答は\n排除できる。\n\n実務でのプラン選定の目安は、本番ワークロードを 1 つでも持つなら Business 以上を検討、\nミッションクリティカルな本番運用を持つなら Enterprise On-Ramp / Enterprise を検討、\n学習用・検証用のみなら Basic または Developer に留める、という方向性が一般的である。\nサポートプランの料金は、月額固定額と AWS 利用料に対する一定割合の合算で、利用額が\n大きくなるほど料金も上がる構造である。",
+    "officialDocs": [
+      {
+        "label": "AWS サポートプラン比較（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/plans/"
+      },
+      {
+        "label": "AWS Trusted Advisor の使用（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-031",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "easy",
+    "question": "AWS責任共有モデルにおいて、通常ユーザー側の責任となるものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWSマネージドサービスの基盤ハードウェア交換"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWSデータセンターの電源設備の管理"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWSグローバルインフラストラクチャの物理的な保護"
+      },
+      {
+        "choiceId": "D",
+        "text": "IAMユーザーやIAMロールの権限設計"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "責任共有モデルでは、AWSはクラウドのセキュリティを担当し、ユーザーはクラウド内のセキュリティを担当します。IAMの権限設計やアクセス管理はユーザー側の責任です。",
+    "choiceExplanations": {
+      "A": "基盤ハードウェアの保守はAWS側の責任です。",
+      "B": "データセンター設備の管理はAWS側の責任です。",
+      "C": "AWSグローバルインフラストラクチャの物理的保護はAWS側の責任です。",
+      "D": "正解です。IAMの権限設計はユーザーが行うクラウド内のセキュリティです。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "security",
+      "shared-responsibility-model",
+      "iam",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-07",
+    "practicalNote": "AWS 責任共有モデル（Shared Responsibility Model）は、AWS とユーザーの責任範囲を\n「クラウドのセキュリティ（Security of the Cloud）」と「クラウド内のセキュリティ\n（Security in the Cloud）」に分割する考え方である。AWS 側は、データセンターの物理\nセキュリティ、サーバー・ストレージ・ネットワーク機器のハードウェア、ハイパーバイザー\nやマネージドサービスの基盤ソフトウェア、AWS グローバルインフラ全体の運用を担当する。\nユーザー側は、IAM の権限設計、OS やミドルウェアのパッチ適用（IaaS の場合）、データの\n暗号化、ネットワーク構成（VPC / Security Group / NACL）、アプリケーションコード、\nデータの分類と保護を担当する。\n\n責任範囲は利用するサービスのタイプによってシフトする。EC2 のような IaaS では OS 以上\nすべてがユーザー責任、RDS のようなマネージドサービスでは OS と DB エンジン本体が AWS\n責任に移り、ユーザーはスキーマ設計・データ・接続経路・IAM 認証の責任を負う。S3 や\nDynamoDB のようなフルマネージドサービスでは、ユーザー責任はさらに狭まりデータと\nアクセス制御に集中する。Lambda のようなサーバーレスサービスでも、関数コードと IAM\nロールはユーザー責任である。\n\n試験文脈では「次のうちユーザー側の責任はどれか」という形で出題され、IAM の権限設計 /\nデータの暗号化 / Security Group のルール設定 / ゲスト OS のパッチ適用などが正解選択肢に\nなる。誤答には「データセンターの電源設備管理」「グローバルインフラの物理保護」「マネージド\nサービスの基盤ハードウェア交換」など、明確に AWS 側責任である項目が並ぶ。CLF-C02 では\nこの境界線を取り違えないかが繰り返し問われる頻出領域である。",
+    "officialDocs": [
+      {
+        "label": "責任共有モデル（AWS公式）",
+        "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "AWS Identity and Access Management（IAM）とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-032",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "AWS利用料金が想定を超えそうな場合に通知を受け取るために使うサービスとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Shield"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS CloudTrail"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "AWS Budgetsは、予算額や使用量に対するしきい値を設定し、超過または超過予測時に通知を受け取るためのサービスです。",
+    "choiceExplanations": {
+      "A": "正解です。AWS Budgetsはコスト監視と予算アラートに使います。",
+      "B": "AWS ShieldはDDoS保護サービスです。コスト通知には使いません。",
+      "C": "CloudFrontはコンテンツ配信ネットワークです。予算通知サービスではありません。",
+      "D": "CloudTrailはAWSアカウント内のAPI操作履歴を記録するサービスです。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "budgets",
+      "cost-management",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Budgets は、AWS の利用料金や使用量に対してしきい値を設定し、しきい値を超過した、\nあるいは超過しそうな場合に通知を受け取るためのコスト管理サービスである。月次・四半期・\n年次の予算金額、リザーブドインスタンスやSavings Plans のカバレッジ・使用率、\n特定サービスやタグ単位の利用量など、複数の軸で予算を設定できる。通知先は Amazon SNS\nトピックや E メール、AWS Chatbot 経由の Slack / Microsoft Teams が選べる。\n\n試験文脈では「AWS 利用料金が想定を超えそうな場合に通知を受け取るために使うサービスは\nどれか」という形で出題される。誤答として CloudTrail（API 操作履歴の記録）、CloudFront\n（CDN）、Shield（DDoS 保護）などが並ぶパターンが頻出する。いずれもコスト通知が主目的の\nサービスではないため、サービスの守備範囲を取り違えていなければ容易に切り分けられる。\n\n実務では AWS Budgets と AWS Cost Explorer を組み合わせて使うケースが多い。Cost Explorer\nは過去から現在のコストを「分析」する用途、AWS Budgets は事前に決めたしきい値を超えた\nことを「アラート」する用途と役割が分かれる。CLF-C02 ではこの 2 サービスの役割分担も\n頻出論点となる。実費課金の事故防止としては、AWS Budgets でアカウント全体の月次予算\nアラートを 1 件設定しておくのが最も低コストの第一歩となる。",
+    "officialDocs": [
+      {
+        "label": "AWS Budgets を使用したコストの管理（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/budgets-managing-costs.html"
+      },
+      {
+        "label": "AWS Budgets（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-budgets/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-033",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "静的WebサイトのHTML、CSS、JavaScript、画像ファイルを低コストで保存する用途に最も適したAWSサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon EBS"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS IAM"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon S3"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon RDS"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Amazon S3はオブジェクトストレージであり、HTML、CSS、JavaScript、画像などの静的ファイル保存に向いています。CloudFrontと組み合わせることで高速かつ安全に配信できます。",
+    "choiceExplanations": {
+      "A": "EBSはEC2に接続するブロックストレージであり、静的サイトの公開用ストレージとしてはS3が一般的です。",
+      "B": "IAMは権限管理サービスであり、ファイル保存サービスではありません。",
+      "C": "正解です。S3は静的ファイル保存に適したオブジェクトストレージです。",
+      "D": "RDSはリレーショナルデータベースであり、静的ファイル保存が主用途ではありません。"
+    },
+    "relatedServices": [
+      "s3",
+      "cloudfront"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "s3-vs-ebs-vs-efs"
+    ],
+    "tags": [
+      "s3",
+      "static-site",
+      "storage",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon S3 は、HTML・CSS・JavaScript・画像などの静的ファイルを保管し、HTTP/HTTPS で\n直接配信できるオブジェクトストレージサービスである。静的ウェブサイトホスティング機能を\n有効にすると、バケット内のオブジェクトを Web サイトとして公開でき、サーバーを常駐させ\nなくても Web ページを提供できる。サーバー管理が不要で、転送量と保管量に応じた従量課金で\n利用できるため、静的サイト配信の基盤として広く使われる。\n\n試験文脈では「静的ウェブサイトのコンテンツを格納するために使うサービスはどれか」という\n形で出題され、Amazon S3 を選ばせる問題が中心となる。誤答として RDS（リレーショナル\nデータベース）、EBS（EC2 用のブロックストレージ）、IAM（認証・認可）などが並ぶ。\nいずれも静的サイトのコンテンツ配信が主目的のサービスではないため、サービスの守備範囲を\n取り違えていなければ切り分け可能である。\n\n実務では S3 単体で静的サイトを公開するより、S3 + CloudFront の組み合わせが一般的である。\nS3 をオリジン、CloudFront を CDN として前面に置き、HTTPS 配信・キャッシュ高速化・\nカスタムドメイン対応・WAF 連携などをまとめて実現する構成となる。CLF-C02 では S3 の\n役割を問う問題が中心だが、SAA-C03 以降では S3 + CloudFront 構成と Origin Access\nControl（OAC）による S3 直接公開の防止も繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon S3 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "label": "Amazon S3 を使用したウェブサイトのホスティング（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/WebsiteHosting.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-034",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "クラウドの「従量課金」の説明として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "利用量に関係なく毎月同じ金額を必ず支払う方式"
+      },
+      {
+        "choiceId": "B",
+        "text": "使ったリソース量に応じて料金が発生する方式"
+      },
+      {
+        "choiceId": "C",
+        "text": "リソースを作成したら必ず1年契約になる方式"
+      },
+      {
+        "choiceId": "D",
+        "text": "すべてのAWSサービスが無料になる方式"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "従量課金とは、利用したリソース量やリクエスト数、保存容量、実行時間などに応じて料金が発生する課金方式です。",
+    "choiceExplanations": {
+      "A": "固定料金の説明に近く、従量課金ではありません。",
+      "B": "正解です。AWSでは多くのサービスが使った分だけ課金されます。",
+      "C": "一部に長期契約で割引される購入オプションはありますが、従量課金の説明ではありません。",
+      "D": "AWSには無料枠がありますが、すべてのサービスが無料ではありません。"
+    },
+    "relatedServices": [
+      "aws-budgets",
+      "cost-explorer"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "cloud-concepts",
+      "pay-as-you-go",
+      "billing",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "従量課金（Pay-as-you-go）は、利用したリソース量に応じて料金が発生する課金モデルである。\nAWS のほぼすべてのサービスはこの考え方に基づき、EC2 インスタンスは起動していた時間、\nS3 は保管しているオブジェクト量と転送量、Lambda は実行回数と実行時間、というように\n「使った分だけ」課金される。リソースを停止・削除すれば課金は止まる、または下がる。\n\n試験文脈では「クラウドの従量課金とはどのような方式か」を問う形で出題される。誤答には\n「利用量に関係なく毎月同じ金額を必ず支払う方式」「すべてのAWSサービスが無料になる方式」\n「リソースを作成したら必ず1年契約になる方式」などが並ぶ。いずれも従量課金の定義と\n矛盾するため切り分け可能である。「すべて無料」「必ず固定額」「必ず長期契約」のような\n極端な言い切りは、クラウドの特性とずれていることが多く、誤答である可能性が高い。\n\n実務での注意点は、従量課金の利点である「使った分だけ」が、裏返せば「使い過ぎるとコストが\n青天井に増える」という性質でもあるという点である。リソースの停止忘れ・無料利用枠超過・\n意図しない大量データ転送などで請求額が想定を超える事故は珍しくない。対策として AWS\nBudgets で予算アラートを設定する・Cost Explorer で定期的に内訳を確認する・利用しない\nリソースは削除する、という運用が一般的である。負荷が常に一定のワークロードでは、\nリザーブドインスタンスや Savings Plans のような長期コミット型の割引と組み合わせて\nコストを下げる選択肢もある。CLF-C02 ではこれらの料金モデルも横断的に問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS の料金（AWS公式）",
+        "url": "https://aws.amazon.com/jp/pricing/"
+      },
+      {
+        "label": "クラウドコンピューティングとは（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/what-is-cloud-computing.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-035",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "サーバーを常時管理せず、イベント発生時だけコードを実行したい場合に使う代表的なAWSサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon EC2"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon Route 53"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Lambda"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "AWS Lambdaはサーバーレスコンピューティングサービスで、リクエストやイベントに応じてコードを実行できます。サーバーのプロビジョニングや常時管理をユーザーが行う必要はありません。",
+    "choiceExplanations": {
+      "A": "EFSはファイルストレージサービスです。",
+      "B": "EC2は仮想サーバーであり、OSやインスタンス管理が必要になります。",
+      "C": "Route 53はDNSサービスです。コード実行サービスではありません。",
+      "D": "正解です。Lambdaはイベント駆動でコードを実行するサーバーレスサービスです。"
+    },
+    "relatedServices": [
+      "lambda",
+      "api-gateway",
+      "eventbridge"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "lambda",
+      "serverless",
+      "compute",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Lambda は、サーバーを管理せずにコードを実行できるサーバーレスコンピューティング\nサービスである。コードを Lambda 関数として登録し、API Gateway 経由のリクエスト、\nS3 のオブジェクト作成、DynamoDB ストリーム、EventBridge スケジュール、SQS メッセージ\nなど、さまざまなイベントをトリガーに自動で実行される。実行された時間（ミリ秒単位）と\nリクエスト数に対してのみ課金され、待機している時間にコストはかからない。\n\n試験文脈では「サーバー管理なしにコードを実行できる、イベント駆動のコンピューティング\nサービスはどれか」という形で出題される。誤答として EC2（仮想サーバー）、EFS（共有\nファイルストレージ）、Route 53（DNS）などが並ぶ。EC2 はインスタンスの起動・停止・\nパッチ適用などのサーバー管理が必要で、サーバーレスではない。EFS と Route 53 は\nそもそもコンピューティングサービスではない。\n\n実務では Lambda は API バックエンド、定期バッチ、ファイルアップロード時の画像処理、\nログ加工、Slack 通知などの軽量処理で広く使われる。長時間処理（既定上限 15 分）、\n重い計算、大量のメモリを必要とする処理は Lambda には向かず、ECS / Fargate / EC2 など\n別の選択肢を検討することになる。CLF-C02 では「サーバーレスとは何か」「Lambda の\n役割は何か」を問う出題が中心であり、利用量に応じた課金・運用負荷の低さ・イベント駆動と\nいったキーワードが繰り返し登場する。",
+    "officialDocs": [
+      {
+        "label": "AWS Lambda とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda（AWS公式）",
+        "url": "https://aws.amazon.com/jp/lambda/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-036",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWSアカウントのrootユーザーに対して最初に実施すべきセキュリティ対策として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "rootユーザーのアクセスキーを複数作成する"
+      },
+      {
+        "choiceId": "B",
+        "text": "rootユーザーのMFAを有効化する"
+      },
+      {
+        "choiceId": "C",
+        "text": "すべてのIAMユーザーにAdministratorAccessを付与する"
+      },
+      {
+        "choiceId": "D",
+        "text": "rootユーザーを日常的な開発作業に使う"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "rootユーザーはAWSアカウント全体に強い権限を持つため、MFAを有効化し、日常作業では使わない運用が重要です。",
+    "choiceExplanations": {
+      "A": "rootユーザーのアクセスキーは作成しない、または不要なら削除するのが基本です。",
+      "B": "正解です。rootユーザーには必ずMFAを設定します。",
+      "C": "全員にAdministratorAccessを付けるのは最小権限の原則に反します。",
+      "D": "rootユーザーは日常作業には使いません。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "security",
+      "root-user",
+      "mfa",
+      "iam",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS アカウントの root ユーザーは、アカウント作成時のメールアドレスとパスワードで\nログインできる最上位の特権ユーザーであり、すべての AWS サービスとリソースに対する\n無制限のアクセス権を持つ。root ユーザーが侵害されると、アカウントの請求情報変更、\n全リソースの削除、不正なリソースの大量起動などが行えるため、保護の優先度が最も高い。\nAWS のベストプラクティスでは、root ユーザーには必ず MFA（多要素認証）を有効化し、\n日常的な操作には使わず、IAM ユーザーまたは IAM Identity Center のユーザーで作業する\nことが推奨されている。\n\n試験文脈では「AWS アカウントのセキュリティを高めるために最初に行うべき設定はどれか」と\nいう形で出題され、「root ユーザーの MFA を有効化する」が正解として選ばれる。誤答として\n「root ユーザーのアクセスキーを複数作成する」「root ユーザーを日常的な開発作業に使う」\n「すべての IAM ユーザーに AdministratorAccess を付与する」などが並ぶ。いずれも最小権限の\n原則や root ユーザー保護の方針と真逆の操作であり、ベストプラクティスを理解していれば\n切り分け可能である。\n\n実務でアカウント開設直後に推奨される初期設定は、root ユーザーへの MFA 設定、root ユーザー\nのアクセスキー作成回避、管理用 IAM ユーザーまたは IAM Identity Center ユーザーの作成、\nAWS Budgets による予算アラート、AWS CloudTrail による API 操作履歴の有効化、というのが\n一般的な並びとなる。CLF-C02 ではこの「アカウント開設直後の初期設定」を問う出題が頻出\nであり、root ユーザーと IAM ユーザーの役割分担、MFA、最小権限という 3 つのキーワードが\n繰り返し登場する。",
+    "officialDocs": [
+      {
+        "label": "AWS アカウントのルートユーザー（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_root-user.html"
+      },
+      {
+        "label": "IAM のセキュリティのベストプラクティス（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-037",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "複数のAWSサービスやアプリケーション間でメッセージをキューに蓄積し、非同期に処理したい場合に適したサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SNS"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon Route 53"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Amazon SQSはメッセージキューサービスで、処理する側がメッセージを取得するまでキューに蓄積できます。非同期処理や疎結合化に使われます。",
+    "choiceExplanations": {
+      "A": "CloudTrailはAPI操作履歴を記録するサービスです。",
+      "B": "SNSはpub/sub型の通知サービスです。複数購読者への配信に向いていますが、キュー蓄積が主目的ではありません。",
+      "C": "Route 53はDNSサービスです。メッセージキューではありません。",
+      "D": "正解です。SQSはキューを使った非同期処理に適しています。"
+    },
+    "relatedServices": [
+      "sqs",
+      "sns",
+      "eventbridge",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "sns-vs-sqs-vs-eventbridge"
+    ],
+    "tags": [
+      "sqs",
+      "messaging",
+      "decoupling",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon SQS（Simple Queue Service）は、AWS が提供するフルマネージドのメッセージキュー\nサービスである。送信側（プロデューサー）が送ったメッセージを SQS キューに一時的に\n蓄積し、受信側（コンシューマー）が任意のタイミングでメッセージを取得して処理する。\n送信側と受信側が同時稼働している必要がなく、片方が停止しても処理を継続できるため、\nコンポーネント間を疎結合化する基盤として用いられる。\n\n試験文脈では「複数の AWS サービスやアプリケーション間でメッセージをキューに蓄積し、\n非同期に処理したい場合」「処理ピークの吸収・コンポーネントの疎結合化を行いたい場合」\nに適したサービスとして Amazon SQS を選ばせる問題が出る。誤答として Amazon SNS（パブ\nリッシュ/サブスクライブ型の通知）、AWS CloudTrail（API 操作履歴の記録）、Amazon\nRoute 53（DNS）が並ぶパターンが頻出する。SNS は「複数の受信者へ同じメッセージを\nプッシュ配信する」用途であり、キューに蓄積して順次処理する SQS とは役割が異なる。\n\n実務では、SQS は EC2 ワーカー群や Lambda を後段に置いて非同期ジョブを処理する構成で\nよく使われる。スタンダードキューと FIFO キューの 2 種類があり、順序保証や重複排除を\n必要とする処理では FIFO を選ぶ。CLF-C02 ではキューと Pub/Sub の役割分担（SQS と SNS\nの対比）が問われやすく、SAA-C03 以降では SQS のメッセージ可視性タイムアウト・デッド\nレターキュー・SNS との Fan-out 構成（SNS → 複数 SQS）まで踏み込んで問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon SQS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+      },
+      {
+        "label": "Amazon Simple Queue Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/sqs/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-038",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "AWSのサービス別利用料金を分析し、どのサービスに費用がかかっているか確認するために使うサービスとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon VPC"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Cost Explorer"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS IAM"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Cost Explorerは、AWS利用料金や使用量をサービス別、期間別などで可視化・分析するためのサービスです。",
+    "choiceExplanations": {
+      "A": "CloudFrontはCDNサービスです。費用分析サービスではありません。",
+      "B": "VPCは仮想ネットワークを作成するサービスです。",
+      "C": "正解です。Cost Explorerはコスト分析に使います。",
+      "D": "IAMは認証・認可を管理するサービスです。"
+    },
+    "relatedServices": [
+      "cost-explorer",
+      "aws-budgets"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "billing",
+      "cost-explorer",
+      "cost-management",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Cost Explorer は、AWS の利用料金や使用量をサービス別・期間別・アカウント別・\nタグ別などで可視化・分析するためのコスト管理サービスである。過去 12 か月までの履歴を\nグラフや表で確認でき、最大 12 か月先までの利用予測も表示できる。リザーブドインスタンス\nや Savings Plans のカバレッジ・使用率分析もここから参照できる。\n\n試験文脈では「AWS のサービス別利用料金を分析し、どのサービスに費用がかかっているか\n確認するために使うサービス」として Cost Explorer を選ばせる問題が出る。誤答として\nAmazon CloudFront（CDN）、AWS IAM（認証・認可）、Amazon VPC（ネットワーク）など\nコスト分析と無関係なサービスが並ぶパターンが多く、サービスの守備範囲を取り違えて\nいなければ切り分け可能である。\n\n実務では Cost Explorer と AWS Budgets を組み合わせて使う。Cost Explorer は過去・現在の\nコストを「分析」する用途、AWS Budgets は事前に決めたしきい値を超えたことを「アラート」\nする用途と役割が分かれる。CLF-C02 ではこの 2 サービスの役割分担、および AWS Cost\nand Usage Report（詳細な明細を S3 へ出力するレポート）との位置づけの違いも頻出論点と\nなる。Cost Explorer は分析・可視化、Budgets は通知、CUR は詳細明細データの出力、と\n整理して覚えると切り分けやすい。",
+    "officialDocs": [
+      {
+        "label": "AWS Cost Explorer とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/ce-what-is.html"
+      },
+      {
+        "label": "AWS Cost Explorer（AWS公式）",
+        "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-039",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "normal",
+    "question": "クラウドの高可用性を実現する考え方として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "複数のアベイラビリティゾーンを活用して障害の影響を減らす"
+      },
+      {
+        "choiceId": "B",
+        "text": "バックアップを一切取得しない"
+      },
+      {
+        "choiceId": "C",
+        "text": "単一の物理サーバーだけにすべての処理を集中させる"
+      },
+      {
+        "choiceId": "D",
+        "text": "すべての通信をHTTPだけに固定する"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "高可用性を高めるには、単一障害点を減らし、複数のアベイラビリティゾーンにリソースを分散する設計が重要です。",
+    "choiceExplanations": {
+      "A": "正解です。複数AZを使うことで、1つのAZ障害の影響を抑えられます。",
+      "B": "バックアップを取らない設計は障害復旧に弱くなります。",
+      "C": "単一サーバー集中は単一障害点になります。",
+      "D": "HTTPだけに固定することは高可用性の考え方ではありません。"
+    },
+    "relatedServices": [
+      "ec2",
+      "rds",
+      "auto-scaling",
+      "elb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "multi-az-vs-read-replica"
+    ],
+    "tags": [
+      "cloud-concepts",
+      "availability",
+      "multi-az",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "高可用性（High Availability）は、システム全体が停止する時間をできる限り短くする\n設計思想である。AWS では、各リージョンが複数のアベイラビリティゾーン（AZ）で構成\nされている。AZ は物理的に独立したデータセンター群であり、電源・空調・ネットワーク\nが分離されているため、ある AZ で障害が発生しても他の AZ には波及しない設計となって\nいる。複数 AZ にリソースを分散させることで、単一 AZ 障害による全停止を避けられる。\n\n試験文脈では「クラウドの高可用性を実現する考え方」として「複数のアベイラビリティ\nゾーンを活用して障害の影響を減らす」を選ばせる問題が出る。誤答には「単一の物理\nサーバーだけにすべての処理を集中させる」「バックアップを一切取得しない」「すべての\n通信を HTTP だけに固定する」のような、高可用性の定義と明らかに矛盾する選択肢が\n並ぶ。極端な集中・バックアップ放棄・プロトコル固定はいずれも単一障害点を増やす\n方向の設計であり、可用性の観点から不正解となる。\n\n実務では、複数 AZ 構成は ELB（Application/Network Load Balancer）配下の EC2 を\n複数 AZ に配置する、RDS のマルチ AZ 配置でスタンバイを別 AZ に持つ、S3 のように\nそもそも複数 AZ にデータを冗長保存するサービスを選ぶ、といった形で実装される。\nCLF-C02 では「リージョン」「AZ」「エッジロケーション」の役割の違いと、マルチ AZ /\nマルチリージョンの使い分け（AZ 障害対策 vs 大規模災害対策）が繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS グローバルインフラストラクチャ（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/"
+      },
+      {
+        "label": "リージョンとアベイラビリティーゾーン（AWS公式）",
+        "url": "https://aws.amazon.com/jp/about-aws/global-infrastructure/regions_az/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-040",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWSアカウント内で「誰が、いつ、どのAPI操作を行ったか」を確認するために使うサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon S3"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Budgets"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS CloudTrailは、AWSアカウント内のAPI操作履歴を記録するサービスです。監査、セキュリティ調査、変更履歴確認に使います。",
+    "choiceExplanations": {
+      "A": "S3はオブジェクトストレージです。ログ保存先として使うことはありますが、操作履歴記録サービス自体はCloudTrailです。",
+      "B": "CloudFrontはCDNサービスです。API操作履歴の記録が主目的ではありません。",
+      "C": "正解です。CloudTrailはAPI操作履歴を記録します。",
+      "D": "Budgetsは予算管理・コスト通知のサービスです。API操作履歴の確認には使いません。"
+    },
+    "relatedServices": [
+      "cloudtrail",
+      "cloudwatch",
+      "aws-config"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "security",
+      "cloudtrail",
+      "audit",
+      "compliance",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS CloudTrail は、AWS アカウント内で実行された API 操作の履歴を記録するサービス\nである。マネジメントコンソール・AWS CLI・SDK・各 AWS サービスから発行された API\nコール（「誰が」「いつ」「どの IP から」「どの操作を」「どのリソースに対して」行ったか）\nをイベントとして記録し、過去 90 日分のイベント履歴をコンソールから検索できる。S3\nバケットへ Trail を出力する設定にすれば、より長期の保管とログ分析が可能になる。\n\n試験文脈では「AWS アカウント内で『誰が、いつ、どの API 操作を行ったか』を確認する\nために使うサービス」として CloudTrail を選ばせる問題が出る。誤答として Amazon\nCloudFront（CDN）、Amazon S3（オブジェクトストレージ）、AWS Budgets（予算アラート）\nが並ぶパターンが多い。いずれも API 操作履歴の記録が主目的のサービスではないため、\n役割を取り違えていなければ切り分け可能である。\n\n実務では CloudTrail は監査・セキュリティ調査・変更履歴確認に使われる。意図しない\nリソース変更が起きたとき「誰が、いつ、何をしたか」を後追いできる基盤となる。CLF-C02\nでは CloudTrail（API 操作履歴）と Amazon CloudWatch（メトリクス・ログ・アラーム）、\nAWS Config（リソース構成の変更履歴とコンプライアンス評価）の役割分担が頻出論点と\nなる。CloudTrail は「誰が API を叩いたか」、CloudWatch は「リソースの稼働メトリクス\nと運用ログ」、Config は「リソース設定そのものの状態とその変化」と整理して覚えると、\n3 サービスを混同せずに切り分けられる。",
+    "officialDocs": [
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "label": "AWS CloudTrail（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudtrail/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-041",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "静的コンテンツを世界中のユーザーへ低遅延で配信するために使うAWSサービスとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS IAM"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon CloudFront"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Amazon CloudFrontはCDNサービスで、エッジロケーションを使って静的・動的コンテンツを低遅延で配信できます。S3と組み合わせた静的サイト配信でもよく使われます。",
+    "choiceExplanations": {
+      "A": "IAMは認証・認可を管理するサービスです。",
+      "B": "RDSはリレーショナルデータベースサービスです。",
+      "C": "CloudTrailはAWS API操作履歴を記録するサービスです。",
+      "D": "正解です。CloudFrontはCDNとしてコンテンツを高速配信します。"
+    },
+    "relatedServices": [
+      "cloudfront",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "alb-vs-nlb-vs-cloudfront"
+    ],
+    "tags": [
+      "cloudfront",
+      "cdn",
+      "static-site",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon CloudFront は、AWS が提供するコンテンツデリバリーネットワーク（CDN）サービス\nである。世界各地のエッジロケーションにコンテンツをキャッシュし、エンドユーザーから\n地理的に最も近いエッジから配信することで、レイテンシーを下げる。オリジンには Amazon\nS3 バケット、EC2 上のアプリケーション、Application Load Balancer、外部の HTTP/HTTPS\nサーバーなどを指定できる。静的コンテンツも動的コンテンツも配信対象とできる。\n\n試験文脈では「静的コンテンツを世界中のユーザーへ低遅延で配信するために使う AWS\nサービス」として CloudFront を選ばせる問題が出る。誤答として AWS CloudTrail（API\n操作履歴）、Amazon RDS（リレーショナルデータベース）、AWS IAM（認証・認可）が\n並ぶパターンが多い。いずれもコンテンツ配信が主目的のサービスではないため、\nサービスの守備範囲を取り違えていなければ切り分け可能である。\n\n実務では、S3 をオリジン、CloudFront をその前面に置く「S3 + CloudFront」が静的サイト\n配信の標準構成となる。HTTPS 配信・カスタムドメイン対応・キャッシュによる転送量削減・\nAWS WAF 連携によるリクエスト保護をまとめて実現できる。CLF-C02 では CloudFront の\n役割と、エッジロケーション・リージョン・AZ の階層関係が問われる。SAA-C03 以降では\nOrigin Access Control（OAC）による S3 直接アクセスの防止、署名付き URL/Cookie に\nよる限定公開、CloudFront Functions / Lambda@Edge によるエッジ処理まで踏み込んで\n問われる。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudFront とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+      },
+      {
+        "label": "Amazon CloudFront（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudfront/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-042",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWSリソースへのアクセス許可を定義するJSON形式のドキュメントはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "IAMポリシー"
+      },
+      {
+        "choiceId": "B",
+        "text": "アベイラビリティゾーン"
+      },
+      {
+        "choiceId": "C",
+        "text": "リザーブドインスタンス"
+      },
+      {
+        "choiceId": "D",
+        "text": "リージョン"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "IAMポリシーは、どのAWSリソースに対して、どの操作を許可または拒否するかを定義するJSON形式のドキュメントです。",
+    "choiceExplanations": {
+      "A": "正解です。IAMポリシーはアクセス許可を定義します。",
+      "B": "アベイラビリティゾーンはリージョン内の独立したデータセンター群です。",
+      "C": "リザーブドインスタンスは長期利用による割引購入オプションです。",
+      "D": "リージョンはAWSがサービスを提供する地理的なエリアです。"
+    },
+    "relatedServices": [
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "iam-user-vs-role-vs-policy"
+    ],
+    "tags": [
+      "iam",
+      "policy",
+      "security",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Identity and Access Management（IAM）におけるポリシー（IAM ポリシー）は、AWS\nリソースに対する「誰が」「どのリソースに対して」「どの操作を」「許可するか/拒否するか」を\n定義する JSON 形式のドキュメントである。ポリシーは Version・Statement・Effect・Action・\nResource・Condition といった要素から構成され、Effect（Allow/Deny）と Action（API\nアクション名）、Resource（対象 ARN）の組み合わせでアクセス権限を表現する。ポリシーは\nIAM ユーザー・IAM グループ・IAM ロールにアタッチされて初めて効果を持つ。\n\n試験文脈では「AWS リソースへのアクセス許可を JSON 形式で定義するもの」として IAM\nポリシーを選ばせる問題が出る。誤答として「アベイラビリティゾーン（リージョン内の\n独立データセンター群）」「リザーブドインスタンス（割引購入オプション）」「リージョン\n（地理的エリア）」など、アクセス制御とは役割の異なるリソース概念が並ぶパターンが\n多い。「JSON 形式」「アクセス許可の定義」というキーワードが揃った時点で IAM ポリシー\n以外の選択肢は切り捨ててよい。\n\n実務では、ポリシーは AWS 管理ポリシー（AWS があらかじめ用意したもの）、カスタマー\n管理ポリシー（利用者が再利用可能な形で作成したもの）、インラインポリシー（特定の\nプリンシパルに直接埋め込んだもの）の 3 種類で運用する。最小権限の原則に従い、必要な\nAction を必要な Resource に対してのみ許可する設計が推奨される。CLF-C02 では IAM\nユーザー・IAM グループ・IAM ロール・IAM ポリシーの 4 概念の役割分担と、責任共有\nモデルにおける「IAM はユーザー責任の領域である」点が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "IAM のポリシーとアクセス許可（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/access_policies.html"
+      },
+      {
+        "label": "AWS Identity and Access Management (IAM)（AWS公式）",
+        "url": "https://aws.amazon.com/jp/iam/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-043",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "AWSの請求や料金に関する基本的なサポートを、すべてのAWSアカウントで利用できるサポートプランはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Business Support"
+      },
+      {
+        "choiceId": "B",
+        "text": "Basic Support"
+      },
+      {
+        "choiceId": "C",
+        "text": "Enterprise Support"
+      },
+      {
+        "choiceId": "D",
+        "text": "Developer Support"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Basic SupportはすべてのAWSアカウントで利用できる基本サポートです。アカウント、請求、サービス制限などに関するサポートを受けられます。",
+    "choiceExplanations": {
+      "A": "Business Supportは本番ワークロード向けの有料サポートプランです。",
+      "B": "正解です。Basic SupportはすべてのAWSアカウントに含まれます。",
+      "C": "Enterprise Supportは大規模組織向けの有料サポートプランです。",
+      "D": "Developer Supportは有料の開発者向けサポートプランです。"
+    },
+    "relatedServices": [],
+    "relatedTerms": [
+      "aws-support"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "support",
+      "billing",
+      "basic-support",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Support には、Basic / Developer / Business / Enterprise On-Ramp / Enterprise の\n5 つのプランがある。このうち Basic Support は、すべての AWS アカウントに標準で含まれる\n無料のサポートプランである。Basic Support の範囲は、アカウント・請求に関する 24/7 の\nカスタマーサービス、AWS Trusted Advisor のコアチェック（6 項目）、AWS Personal Health\nDashboard、サービスクォータ引き上げリクエスト、ドキュメント・ホワイトペーパー・サポート\nフォーラムへのアクセスに限定される。技術的な質問への対応や本番ワークロード向けの\nSLA は含まれない。\n\n試験文脈では「AWS のすべてのアカウントで利用できる基本サポートプラン」として\nBasic Support を選ばせる問題が出る。誤答として Developer Support（個人開発者・\n非本番ワークロード向け）、Business Support（本番ワークロード向け）、Enterprise\nSupport（ミッションクリティカルワークロード向け）が並ぶパターンが多い。Basic 以外の\n3 プランはいずれも有料であり、「すべてのアカウントに含まれる」という条件と矛盾する。\n\n実務では、Developer Support 以上のプランでは技術的なケース起票が可能になり、ケース\nへの応答 SLA・Trusted Advisor の全チェック項目（コア 6 + 全 100 超）・Infrastructure\nEvent Management・AWS の専任スタッフ（TAM: Technical Account Manager）といった機能が\nプランの階梯に応じて追加される。CLF-C02 では 5 プランの守備範囲の違い、特に「Basic は\n技術ケース起票不可」「Business 以降で 24/7 技術サポート」「Enterprise で TAM が付く」\nという階梯構造が繰り返し問われる。AWS Trusted Advisor のチェック項目数（Basic /\nDeveloper はコア 6、Business 以上で全項目）も頻出論点である。",
+    "officialDocs": [
+      {
+        "label": "AWS Support のプラン比較（AWS公式）",
+        "url": "https://aws.amazon.com/jp/premiumsupport/plans/"
+      },
+      {
+        "label": "AWS Support プラン（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/aws-support-plans.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-044",
+    "exam": "CLF-C02",
+    "category": "Cloud Concepts",
+    "domain": "Cloud Concepts",
+    "difficulty": "easy",
+    "question": "オンプレミス環境と比較したクラウドの利点として最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "物理サーバーを必ず自社で購入する必要がある"
+      },
+      {
+        "choiceId": "B",
+        "text": "需要に応じてリソースを拡張・縮小できる"
+      },
+      {
+        "choiceId": "C",
+        "text": "すべてのセキュリティ設定が不要になる"
+      },
+      {
+        "choiceId": "D",
+        "text": "すべてのサービスが常に無料で利用できる"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "クラウドでは必要なときにリソースを増やし、不要になれば減らせます。これにより需要変動への対応や初期投資の削減がしやすくなります。",
+    "choiceExplanations": {
+      "A": "クラウドでは物理サーバーを自社で購入する必要はありません。",
+      "B": "正解です。クラウドの代表的な利点はスケーラビリティと弾力性です。",
+      "C": "セキュリティ設定は引き続き必要です。責任共有モデルを理解する必要があります。",
+      "D": "AWSには無料枠がありますが、すべてのサービスが常に無料ではありません。"
+    },
+    "relatedServices": [
+      "ec2",
+      "lambda",
+      "auto-scaling"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "ec2-vs-lambda-vs-ecs"
+    ],
+    "tags": [
+      "cloud-concepts",
+      "scalability",
+      "elasticity",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "クラウドコンピューティングの代表的な利点は、需要に応じてリソースを拡張・縮小できる\nこと、すなわちスケーラビリティ（拡張性）と弾力性（エラスティシティ）である。\nオンプレミス環境では、ピーク時のアクセスを見込んでサーバーを事前に多めに用意する\n必要があり、平常時は余ったサーバーが固定費として残る。クラウドでは Auto Scaling や\nElastic Load Balancing、サーバーレス構成（AWS Lambda 等）により、需要に応じてリソース\n量を自動で増減でき、使った分だけ支払う従量課金と組み合わせて無駄を抑えられる。\n\n試験文脈では、オンプレミスと対比したクラウドの利点として「需要に応じてリソースを\n拡張・縮小できる」を選ばせる問題が出る。誤答として「物理サーバーを必ず自社で購入する\n必要がある（オンプレミスの説明）」「すべてのセキュリティ設定が不要になる（責任共有\nモデルと矛盾）」「すべてのサービスが常に無料で利用できる（無料利用枠の誤認）」のように、\nクラウドの定義と明らかに矛盾する選択肢が並ぶ。極端な言い切り（「必ず」「すべて」「常に」）\nが含まれる選択肢は誤答である可能性が高い。\n\n実務では、弾力性が効くワークロードと効かないワークロードの見極めが選定基準となる。\n需要変動が大きい Web サイト・キャンペーン・バッチ処理では Auto Scaling やサーバー\nレスが有効である一方、負荷が常に一定のワークロードではリザーブドインスタンスや\nSavings Plans のような長期コミット割引の方が単価を抑えられる。CLF-C02 では「クラウド\n＝常に安い」という単純化を避け、「需要に合わせて無駄を減らせる」という正確な定義で\n押さえることが求められる。スケーラビリティ・弾力性・俊敏性・従量課金の 4 つは\n「クラウドのメリット」として繰り返し出題される。",
+    "officialDocs": [
+      {
+        "label": "クラウドコンピューティングとは（AWS公式）",
+        "url": "https://aws.amazon.com/jp/what-is-cloud-computing/"
+      },
+      {
+        "label": "クラウドコンピューティングの 6 つの利点（AWS公式ホワイトペーパー）",
+        "url": "https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-overview/six-advantages-of-cloud-computing.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-045",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "AWS上でマネージド型のリレーショナルデータベースを利用したい場合に選ぶサービスとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon RDS"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon RDSは、MySQL、PostgreSQL、MariaDB、Oracle、SQL Serverなどのリレーショナルデータベースをマネージドで利用できるサービスです。",
+    "choiceExplanations": {
+      "A": "正解です。RDSはマネージド型リレーショナルデータベースサービスです。",
+      "B": "CloudFrontはCDNサービスです。",
+      "C": "CloudTrailはAWS API操作履歴を記録するサービスです。",
+      "D": "S3はオブジェクトストレージです。リレーショナルデータベースではありません。"
+    },
+    "relatedServices": [
+      "rds",
+      "dynamodb",
+      "aurora"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "rds-vs-dynamodb"
+    ],
+    "tags": [
+      "rds",
+      "database",
+      "relational-database",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "Amazon RDS（Relational Database Service）は、リレーショナルデータベースをマネージドで\n提供するサービスである。MySQL・PostgreSQL・MariaDB・Oracle Database・Microsoft SQL\nServer に加え、AWS が独自開発した Amazon Aurora（MySQL/PostgreSQL 互換）の 6 種類の\nDB エンジンをサポートする。OS パッチ適用・DB エンジンのマイナーバージョンアップ・\n自動バックアップ・スナップショット取得・障害時のフェイルオーバーといった運用作業を\nAWS 側が肩代わりするため、利用者はスキーマ設計・クエリチューニング・アプリケーション\n側のロジックに集中できる。\n\n試験文脈では「マネージド型のリレーショナルデータベースを利用したい場合に選ぶ\nサービス」として Amazon RDS を選ばせる問題が出る。誤答として Amazon S3（オブジェクト\nストレージ）、Amazon CloudFront（CDN）、AWS CloudTrail（API 操作履歴記録）など、データ\nストア以外のサービスが並ぶパターンが多い。「リレーショナル」というキーワードが\n明示されている場合、ドキュメント DB の Amazon DocumentDB、KVS / ドキュメント型の\nAmazon DynamoDB、データウェアハウスの Amazon Redshift は不適合となるため、選択肢の\n中に並んでいても切り捨てる。\n\n実務では、自前で EC2 上に DB を構築する場合と RDS を使う場合の責任分担の違いが\n選定基準となる。EC2 上の自前 DB ではパッチ適用・バックアップ・フェイルオーバー\n設計を利用者が担うのに対し、RDS ではこれらが AWS 側の責任範囲となる。CLF-C02 では\n責任共有モデル上の「マネージドサービスを使うほど利用者の運用負担が減る」原則と、\nRDS のマルチ AZ 配置（高可用性）/ リードレプリカ（読み取り負荷分散）の役割の違いが\n頻出論点となる。RDS と DynamoDB の使い分け（リレーショナル vs キーバリュー / NoSQL）も\nあわせて押さえる必要がある。",
+    "officialDocs": [
+      {
+        "label": "Amazon RDS とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon RDS（AWS公式）",
+        "url": "https://aws.amazon.com/jp/rds/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-046",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWSで保存データの暗号化キーを作成・管理するために使うサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Key Management Service"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Route 53"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Key Management Serviceは、暗号化キーを作成・管理し、S3、EBS、RDS、DynamoDBなどの暗号化に利用できるマネージドサービスです。",
+    "choiceExplanations": {
+      "A": "Budgetsは予算管理とコスト通知のサービスです。",
+      "B": "CloudFrontはCDNサービスです。",
+      "C": "正解です。KMSは暗号化キーの作成・管理に使います。",
+      "D": "Route 53はDNSサービスです。"
+    },
+    "relatedServices": [
+      "kms",
+      "s3",
+      "ebs",
+      "rds",
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "kms",
+      "encryption",
+      "security",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-19",
+    "practicalNote": "AWS Key Management Service（AWS KMS）は、暗号化キー（カスタマーマスターキー: CMK /\n現在は KMS キーと呼称）を作成・管理し、AWS 各サービスのデータ暗号化に利用できる\nマネージドサービスである。KMS キーは Hardware Security Module（HSM）に保管され、\n平文の状態でハードウェア外へ出ない設計となっている。Amazon S3・Amazon EBS・\nAmazon RDS・Amazon DynamoDB・AWS Secrets Manager・AWS Systems Manager Parameter\nStore といった主要サービスから、KMS キーを指定して保存データを暗号化できる。\n\n試験文脈では「AWS で保存データの暗号化キーを作成・管理するために使うサービス」として\nAWS KMS を選ばせる問題が出る。誤答として Amazon Route 53（DNS）、Amazon CloudFront\n（CDN）、AWS Budgets（予算管理）など、暗号化と無関係のサービスが並ぶパターンが\n多い。「暗号化キーの作成・管理」というキーワードが明示されている場合、AWS CloudHSM\n（専用 HSM の利用）と区別が必要になるケースもあるが、CLF-C02 レベルでは「マネージド\n共有 HSM = KMS」「専用占有 HSM = CloudHSM」と整理して切り分ければよい。\n\n実務では、KMS キーには AWS マネージドキー（AWS 側が管理する各サービス専用キー）と\nカスタマーマネージドキー（利用者が作成・管理するキー）の 2 種類がある。キーローテーションの\n有効化、IAM ポリシー・KMS キーポリシーによるキー利用権限の制御、AWS CloudTrail に\nよるキー利用ログの監査記録といった運用が組み合わさる。CLF-C02 では責任共有モデル\nにおける「データの暗号化はユーザー責任」の原則と、KMS が保存データ暗号化（at-rest\nencryption）の中心であることが頻出論点となる。転送中の暗号化（in-transit encryption）に\n使われる AWS Certificate Manager（ACM）との役割分担もあわせて押さえる必要がある。",
+    "officialDocs": [
+      {
+        "label": "AWS Key Management Service とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/kms/latest/developerguide/overview.html"
+      },
+      {
+        "label": "AWS Key Management Service（AWS公式）",
+        "url": "https://aws.amazon.com/jp/kms/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-047",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "AWSリソースやアプリケーションのメトリクス、ログ、アラームを扱う監視サービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon CloudWatch"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon SQS"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Config"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS CloudTrail"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon CloudWatchは、AWSリソースやアプリケーションのメトリクス、ログ、アラームを扱う監視サービスです。Lambdaのログ確認やメトリクス監視にも使います。",
+    "choiceExplanations": {
+      "A": "正解です。CloudWatchはメトリクス、ログ、アラームに使います。",
+      "B": "SQSはメッセージキューサービスです。",
+      "C": "AWS Configはリソース設定の履歴や準拠状況を確認するサービスです。",
+      "D": "CloudTrailはAPI操作履歴を記録します。監視ログと混同しやすいので注意です。"
+    },
+    "relatedServices": [
+      "cloudwatch",
+      "cloudtrail",
+      "aws-config",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "cloudwatch",
+      "monitoring",
+      "logs",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon CloudWatch は、AWS リソースおよびその上で稼働するアプリケーションのメトリクス・\nログ・イベント・アラームを統合的に扱う監視サービスである。EC2 の CPU 使用率、ELB の\nリクエスト数、RDS の接続数といった標準メトリクスをはじめ、Lambda の実行ログや、\nアプリケーションが出力するカスタムメトリクスも CloudWatch に集約できる。CloudWatch\nAlarms によりしきい値超過時に Amazon SNS 通知や Auto Scaling アクションを発火させる\n構成が一般的である。\n\n試験文脈では「AWS リソースのメトリクス・ログ・アラームを扱う監視サービス」として\nCloudWatch を選ばせる問題が出る。誤答として AWS CloudTrail（API コール監査）、AWS\nConfig（リソース設定変更履歴と準拠評価）、Amazon SQS（メッセージキュー）が並ぶ\nパターンが多い。CloudTrail / Config と CloudWatch は「何を記録するか」が異なる役割\nであり、CLF-C02 ではこの 3 サービスの守備範囲の違いが繰り返し問われる。\n\n実務では、CloudWatch Logs に Lambda・ECS・EC2 のアプリケーションログを集約し、\nCloudWatch Metrics で時系列メトリクスを蓄積し、CloudWatch Alarms でしきい値違反を\n検知する 3 層構成が基本となる。CloudWatch Logs Insights によるログクエリ、\nCloudWatch Dashboards によるメトリクス可視化、CloudWatch Synthetics による外形監視\nなど、運用に必要な観測機能が一つのサービスに集約されている。CloudTrail は「誰が\nどの API を叩いたか（監査ログ）」、Config は「リソース設定がどう変化したか・\nルールに準拠しているか」、CloudWatch は「リソースとアプリの稼働状況」と整理して\n覚えると誤答を避けやすい。",
+    "officialDocs": [
+      {
+        "label": "Amazon CloudWatch とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+      },
+      {
+        "label": "Amazon CloudWatch（AWS公式）",
+        "url": "https://aws.amazon.com/jp/cloudwatch/"
+      },
+      {
+        "label": "AWS CloudTrail ユーザーガイド（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-048",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "normal",
+    "question": "長期間継続して使用するEC2インスタンスのコストを削減する購入オプションとして最も適切なものはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Security Group"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS CloudTrail"
+      },
+      {
+        "choiceId": "C",
+        "text": "Reserved Instances"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3 Standard"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Reserved Instancesは、一定期間の利用を前提にオンデマンド料金より低い料金でEC2などを利用できる購入オプションです。",
+    "choiceExplanations": {
+      "A": "Security Groupは仮想ファイアウォールです。コスト削減の購入オプションではありません。",
+      "B": "CloudTrailはAPI操作履歴を記録するサービスです。",
+      "C": "正解です。継続利用するワークロードのコスト削減に使います。",
+      "D": "S3 StandardはS3のストレージクラスであり、EC2購入オプションではありません。"
+    },
+    "relatedServices": [
+      "ec2",
+      "cost-explorer"
+    ],
+    "relatedTerms": [
+      "reserved-instances"
+    ],
+    "relatedComparisons": [],
+    "tags": [
+      "ec2",
+      "reserved-instances",
+      "cost-optimization",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Reserved Instances（RI）は、1 年または 3 年の利用期間をコミットすることで、オンデマンド\n料金より大幅に割引された料金で EC2 などのリソースを利用できる購入オプションである。\n支払い方式は「全額前払い（All Upfront）」「一部前払い（Partial Upfront）」「前払いなし\n（No Upfront）」の 3 種類があり、前払い割合が大きいほど割引率が高くなる。RI は\nインスタンスタイプ・リージョン・OS・テナンシーに対して適用される予約であり、長期間\n継続して稼働させるワークロードに対して有効である。\n\n試験文脈では「長期間継続して使用する EC2 のコストを削減する購入オプション」として\nReserved Instances を選ばせる問題が出る。誤答として AWS CloudTrail（監査ログ）、\nAmazon S3 Standard（ストレージクラス）、Security Group（仮想ファイアウォール）が\n並ぶパターンが多い。これらはいずれも購入オプションではなく、別の役割を持つサービス・\n機能であるため、「購入オプション」「コスト削減」というキーワードで切り分けられる。\n\n実務では、EC2 のコスト最適化は Reserved Instances・Savings Plans・Spot Instances・\nオンデマンドの 4 種類を組み合わせて行う。常時稼働の本番ワークロードには RI または\nSavings Plans、開発環境やバッチには Spot、需要が読みにくいワークロードにはオンデマンドを\n割り当てる構成が典型的である。Savings Plans は RI と似た長期コミット型割引だが、\nインスタンスタイプを問わず特定の利用額（時間あたりドル）をコミットする点が異なり、\nRI よりも柔軟性が高い。CLF-C02 では Reserved Instances・Savings Plans・Spot Instances の\n3 オプションの違いと、それぞれが向くワークロード特性が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon EC2 Reserved Instances（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ec2-reserved-instances.html"
+      },
+      {
+        "label": "Amazon EC2 リザーブドインスタンス（AWS公式）",
+        "url": "https://aws.amazon.com/jp/ec2/pricing/reserved-instances/"
+      },
+      {
+        "label": "AWS Savings Plans（AWS公式）",
+        "url": "https://aws.amazon.com/jp/savingsplans/"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-049",
+    "exam": "CLF-C02",
+    "category": "Cloud Technology and Services",
+    "domain": "Cloud Technology and Services",
+    "difficulty": "normal",
+    "question": "AWSでドメイン名をIPアドレスやCloudFront Distributionなどに紐づけるDNSサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon Route 53"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Lambda"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon DynamoDB"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EBS"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Amazon Route 53はAWSのDNSサービスです。独自ドメインをCloudFrontやALBなどに紐づけるために利用します。",
+    "choiceExplanations": {
+      "A": "正解です。Route 53はDNS管理に使います。",
+      "B": "Lambdaはサーバーレスでコードを実行するサービスです。",
+      "C": "DynamoDBはNoSQLデータベースサービスです。",
+      "D": "EBSはEC2に接続するブロックストレージです。"
+    },
+    "relatedServices": [
+      "route53",
+      "cloudfront",
+      "acm"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "route-53",
+      "dns",
+      "domain",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "Amazon Route 53 は、AWS が提供する権威 DNS サービスである。独自ドメインを取得・管理し、\nそのドメインに対する DNS レコード（A / AAAA / CNAME / MX / TXT 等）を登録することで、\nドメイン名から AWS リソース（CloudFront Distribution・ALB・S3 静的サイト・EC2 等）への\n名前解決を提供する。AWS リソースに対しては「Alias レコード」と呼ばれる Route 53 固有の\n仕組みがあり、CloudFront や ALB の DNS 名を CNAME ではなく Alias として登録できる。\nAlias は無料で利用でき、ZONE APEX（example.com そのもの）にも設定できる点が CNAME と\n異なる。\n\n試験文脈では「AWS で DNS 名前解決を提供するサービス」として Route 53 を選ばせる\n問題が出る。誤答として Amazon EBS（ブロックストレージ）、AWS Lambda（サーバーレス\nコンピュート）、Amazon DynamoDB（NoSQL データベース）など、DNS と無関係なサービスが\n並ぶパターンが多い。「DNS」「ドメイン名」「名前解決」というキーワードが揃った時点で\nRoute 53 以外の選択肢は切り捨てられる。\n\n実務では、Route 53 のルーティングポリシーが選定の要点となる。シンプルルーティング・\n加重ルーティング（A/B テスト・段階的リリース）・レイテンシーベース（ユーザーに最も近い\nリージョンへ誘導）・位置情報ルーティング（国・地域でルーティング先を分岐）・フェイルオーバー\n（ヘルスチェックに基づく障害切り替え）・複数値回答などのポリシーが用意されており、\nワークロードの要件に応じて使い分ける。CLF-C02 では「Route 53 = DNS」という基本に加え、\nドメイン登録機能とヘルスチェック機能を持つ点が頻出論点となる。",
+    "officialDocs": [
+      {
+        "label": "Amazon Route 53 とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/Welcome.html"
+      },
+      {
+        "label": "Amazon Route 53（AWS公式）",
+        "url": "https://aws.amazon.com/jp/route53/"
+      },
+      {
+        "label": "Route 53 ルーティングポリシーの選択（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/routing-policy.html"
+      }
+    ]
+  },
+  {
+    "questionId": "clf-050",
+    "exam": "CLF-C02",
+    "category": "Security and Compliance",
+    "domain": "Security and Compliance",
+    "difficulty": "normal",
+    "question": "AWSリソースの設定変更履歴や、設定がルールに準拠しているかを確認するために使うサービスはどれですか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon CloudFront"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Config"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Configは、AWSリソースの設定履歴を記録し、設定がルールに準拠しているかを評価できるサービスです。CloudWatchやCloudTrailと混同しやすいサービスです。",
+    "choiceExplanations": {
+      "A": "Budgetsはコスト予算とアラートのサービスです。",
+      "B": "CloudFrontはCDNサービスです。",
+      "C": "正解です。AWS Configはリソース設定履歴と準拠状況の確認に使います。",
+      "D": "SQSはメッセージキューサービスです。"
+    },
+    "relatedServices": [
+      "aws-config",
+      "cloudwatch",
+      "cloudtrail"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [
+      "cloudwatch-vs-cloudtrail-vs-config"
+    ],
+    "tags": [
+      "aws-config",
+      "compliance",
+      "configuration",
+      "clf"
+    ],
+    "published": true,
+    "createdAt": "2026-06-07",
+    "updatedAt": "2026-06-18",
+    "practicalNote": "AWS Config は、AWS リソースの設定情報を継続的に記録し、設定変更履歴を保持し、設定が\nあらかじめ定義したルール（Config Rules）に準拠しているかを評価するサービスである。\nEC2 のセキュリティグループ、S3 バケットの暗号化設定、IAM ロールのポリシーといった\n「リソースの構成（設定値）」を時系列で記録し、いつ・誰が・何を変えたかを追跡できる。\nConfig Rules を有効化することで「S3 バケットのパブリックアクセスをブロックする」\n「EBS ボリュームが暗号化されている」といった準拠条件を継続評価し、違反リソースを\n検知できる。\n\n試験文脈では「AWS リソースの設定変更履歴を記録し、設定がルールに準拠しているかを\n確認するサービス」として AWS Config を選ばせる問題が出る。誤答として Amazon SQS\n（メッセージキュー）、Amazon CloudFront（CDN）、AWS Budgets（予算アラート）が\n並ぶパターンが多いが、いずれも設定変更履歴や準拠評価とは無関係である。CloudWatch・\nCloudTrail との混同が頻出論点であり、Config は「リソース設定がどう変化したか」と\n「設定が準拠しているか」、CloudTrail は「誰がどの API を叩いたか」、CloudWatch は\n「リソースとアプリの稼働状況」と役割が分かれる。\n\n実務では、Config は監査・コンプライアンス用途で利用される。マネージドルールとして\n「s3-bucket-public-read-prohibited」「encrypted-volumes」「root-account-mfa-enabled」\nなど 100 種類以上のチェックがあらかじめ用意されており、有効化するだけで継続的な\n準拠監視を開始できる。AWS Security Hub と組み合わせて組織全体の準拠状況を集約する\n構成も一般的である。CLF-C02 では Config・CloudTrail・CloudWatch の役割分担と、\n「Config Rules で準拠監視」「CloudTrail で API 監査」「CloudWatch で稼働監視」と\nいう整理が繰り返し問われる。",
+    "officialDocs": [
+      {
+        "label": "AWS Config とは（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/WhatIsConfig.html"
+      },
+      {
+        "label": "AWS Config（AWS公式）",
+        "url": "https://aws.amazon.com/jp/config/"
+      },
+      {
+        "label": "AWS Config ルールによるリソースの評価（AWS公式ドキュメント）",
+        "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/evaluate-config.html"
+      }
+    ]
+  }
+]

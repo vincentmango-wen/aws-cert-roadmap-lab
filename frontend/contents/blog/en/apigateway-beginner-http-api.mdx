@@ -1,0 +1,70 @@
+---
+postId: "blog-018"
+slug: "apigateway-beginner-http-api"
+title: "What Is Amazon API Gateway? A Beginner's Guide to HTTP API"
+description: "A beginner-friendly overview of API Gateway's role, HTTP API, Lambda integration, and CORS considerations for AWS learners."
+category: "AWS Services"
+tags:
+  - "API Gateway"
+  - "HTTP API"
+  - "Lambda"
+  - "CORS"
+targetKeywords:
+  - "what is API Gateway"
+  - "HTTP API AWS"
+  - "API Gateway Lambda for beginners"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# What Is Amazon API Gateway? A Beginner's Guide to HTTP API
+
+Amazon API Gateway is a service that creates the entry point for your web APIs. By combining it with Lambda, you can build serverless APIs.
+
+## Summary
+
+API Gateway receives HTTP requests from browsers and frontends, then routes them to backends such as Lambda.
+
+## What API Gateway Does
+
+The frontend does not call Lambda directly. Instead, it sends HTTP requests to an API Gateway endpoint. API Gateway receives the request and invokes the configured Lambda function.
+
+In this project, the contact form calls `POST /contact`, and API Gateway invokes the `contact-submit` Lambda function.
+
+## HTTP API vs REST API
+
+API Gateway offers two main types: HTTP API and REST API. For an MVP, we prefer HTTP API because it is simpler and easier to keep low-cost.
+
+REST API has more features, but HTTP API is often enough for a small contact API.
+
+## CORS Considerations
+
+When you call an API from a browser, you need to configure CORS. In production, limit the allowed origin to your own domain or your CloudFront domain.
+
+If you allow `*` in production, external sites can use your API freely, which increases risk. Even in an MVP, design your CORS rules to restrict access to your production origin.
+
+## Rate Limiting and Spam Protection
+
+A contact API is an easy target for spam. Start with a honeypot field and input validation. As traffic grows, consider rate limiting on the API Gateway side and other countermeasures.
+
+## Key Points for the Exam
+
+- API Gateway is the entry point for APIs
+- Combining it with Lambda lets you build serverless APIs
+- HTTP API is a good fit for simple APIs
+- CORS configuration is often required
+- Use Cognito JWT Authorizer or similar when you need authentication
+
+## Related Terms
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## Read Next
+
+- [Building a Contact API with API Gateway, Lambda, and DynamoDB](/blog/serverless-contact-api-flow)
+- [How to Check Lambda Logs in CloudWatch](/blog/lambda-cloudwatch-logs-check)

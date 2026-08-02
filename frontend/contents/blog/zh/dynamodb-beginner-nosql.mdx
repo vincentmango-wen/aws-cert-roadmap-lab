@@ -1,0 +1,70 @@
+---
+postId: "blog-019"
+slug: "dynamodb-beginner-nosql"
+title: "什麼是 Amazon DynamoDB？為新手解說 NoSQL"
+description: "為新手整理 DynamoDB 的基本概念、資料表、Partition Key、On-Demand 計費、與 Lambda 整合等內容。"
+category: "AWS 服務"
+tags:
+  - "DynamoDB"
+  - "NoSQL"
+  - "Lambda"
+  - "Database"
+targetKeywords:
+  - "什麼是 DynamoDB"
+  - "DynamoDB 新手"
+  - "AWS NoSQL"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 什麼是 Amazon DynamoDB？為新手解說 NoSQL
+
+Amazon DynamoDB 是 AWS 提供的全託管 NoSQL 資料庫。它與無伺服器架構相容性高,從 Lambda 也很容易使用。
+
+## 結論
+
+DynamoDB 是一種使用 Key 進行高速讀寫的 NoSQL 資料庫。比起像 SQL 那樣的複雜 JOIN,更重要的是依照固定的存取模式來設計資料結構。
+
+## 什麼是 NoSQL
+
+NoSQL 是指採用與關聯式資料庫不同資料模型的資料庫總稱。在 DynamoDB 中,資料以 Item 的形式儲存於資料表中,並透過 Key 來取得。
+
+不像 SQL 那樣自由地進行 JOIN,而是要先想好「用什麼 Key 儲存、用什麼 Key 取得」。
+
+## Partition Key
+
+DynamoDB 的基礎是 Partition Key。它是用來分散與取得資料表中 Item 的 Key。
+
+例如聯絡表單的資料表,可以考慮把 contactId 設為 Partition Key。如果是按使用者區分的學習紀錄,則可以考慮把 userId 設為 Partition Key。
+
+## On-Demand 計費
+
+DynamoDB 提供 On-Demand 容量模式。對於存取量較少的個人 MVP,這是一個容易上手的選項。
+
+不過,若存取量大或頻繁使用 Scan,成本就會增加。建議使用 AWS Budgets 與 CloudWatch Metrics 進行監控。
+
+## 在這個專案中的使用方式
+
+在這個網站中,我們將聯絡表單送出的姓名、Email、主旨、內文儲存到 DynamoDB。MVP 階段只把聯絡資料當作動態資料來處理,文章與題目則以靜態檔案管理。
+
+## 考試會問的重點
+
+- DynamoDB 是全託管的 NoSQL 資料庫
+- 與無伺服器架構相容性高
+- Partition Key 的設計很重要
+- 能夠設計出可承受大量存取的架構
+- 與 RDS 的資料模型不同
+
+## 相關名詞
+
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon RDS](/terms/rds)
+- [AWS Lambda](/terms/lambda)
+
+## 接下來推薦閱讀
+
+- [RDS 與 DynamoDB 的差異](/comparisons/rds-vs-dynamodb)
+- [為 SAA 整理 RDS 與 DynamoDB 的選擇方式](/blog/saa-database-selection-rds-dynamodb)

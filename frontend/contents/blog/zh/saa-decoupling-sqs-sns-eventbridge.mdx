@@ -1,0 +1,73 @@
+---
+postId: "blog-015"
+slug: "saa-decoupling-sqs-sns-eventbridge"
+title: "用 SQS、SNS、EventBridge 理解鬆耦合設計"
+description: "整理 SAA 重點之一的鬆耦合設計，說明 SQS、SNS、EventBridge 各自的角色與使用時機。"
+category: "SAA"
+tags:
+  - "SAA-C03"
+  - "SQS"
+  - "SNS"
+  - "EventBridge"
+  - "鬆耦合"
+targetKeywords:
+  - "SQS SNS EventBridge 差異"
+  - "AWS 鬆耦合設計"
+  - "SAA 訊息傳遞"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 用 SQS、SNS、EventBridge 理解鬆耦合設計
+
+SAA 考試經常出現如何將系統設計成鬆耦合的題目，代表性的服務就是 SQS、SNS 與 EventBridge。
+
+## 結論
+
+SQS 是訊息佇列,SNS 是 Pub/Sub 通知,EventBridge 則是事件路由。避免讓系統之間直接緊密相連,就能打造出更耐故障、更容易擴充的架構。
+
+## 什麼是鬆耦合
+
+鬆耦合是指降低元件之間相依性的設計方式。如果 A 服務直接呼叫 B 服務,當 B 變慢時 A 也容易受到影響。
+
+在中間放入佇列或事件後,就能讓處理變成非同步,單邊發生故障時也比較不會直接導致整體停擺。
+
+## SQS 的角色
+
+SQS 是訊息佇列。它會暫時保留等待處理的訊息,後續的處理端再依序取出。
+
+適合用於影像轉檔、訂單處理、批次作業等需要將處理非同步化的場景。
+
+## SNS 的角色
+
+SNS 是用於通知的 Pub/Sub 服務,可以將一則訊息同時發送給多個訂閱者。
+
+當你想把同一個事件擴散到多個方向時(例如電子郵件通知、觸發 Lambda、轉送至 SQS),就會使用 SNS。
+
+## EventBridge 的角色
+
+EventBridge 是事件匯流排,可依規則將來自 AWS 服務、SaaS 與自家應用程式的事件分流到不同目的地。
+
+它也能用於排程執行,因此像「每天派送一題」這樣的功能,EventBridge + Lambda 就是常見的組合。
+
+## SAA 考試重點
+
+- SQS 是非同步佇列
+- SNS 用於將通知發送給多個訂閱者
+- EventBridge 負責事件路由與排程執行
+- 鬆耦合可提升耐故障性與擴充性
+- 思考將同步處理改為非同步的選項
+
+## 相關名詞
+
+- [Amazon SQS](/terms/sqs)
+- [Amazon SNS](/terms/sns)
+- [Amazon EventBridge](/terms/eventbridge)
+
+## 延伸閱讀
+
+- [SNS、SQS、EventBridge 的差異](/comparisons/sns-vs-sqs-vs-eventbridge)
+- [EventBridge + Lambda 批次處理架構](/architectures/eventbridge-lambda-batch)

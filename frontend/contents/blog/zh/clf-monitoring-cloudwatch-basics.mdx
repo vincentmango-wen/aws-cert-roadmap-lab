@@ -1,0 +1,74 @@
+---
+postId: "blog-010"
+slug: "clf-monitoring-cloudwatch-basics"
+title: "為 Cloud Practitioner 解說 CloudWatch 的基礎"
+description: "結合個人開發的運維監控情境,整理 CloudWatch Logs、Metrics、Alarm 各自的角色。"
+category: "CLF 對策"
+tags:
+  - "CLF-C02"
+  - "CloudWatch"
+  - "監控"
+  - "日誌"
+targetKeywords:
+  - "CloudWatch 入門"
+  - "AWS 監控 基礎"
+  - "Cloud Practitioner CloudWatch"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-08-02"
+---
+
+# 為 Cloud Practitioner 解說 CloudWatch 的基礎
+
+把應用程式部署到 AWS 之後,就需要確認它有沒有正常運作、有沒有發生錯誤、費用有沒有暴增。負責這個入口的服務就是 Amazon CloudWatch。
+
+## 結論
+
+CloudWatch 是處理 AWS 資源指標、日誌與告警的監控服務。即使是個人開發,在確認 Lambda 錯誤或 API 呼叫次數時也非常實用。
+
+## CloudWatch Metrics
+
+Metrics 指的是數值型資料。可以查看 Lambda 的執行次數、錯誤數、執行時間,API Gateway 的 4xx/5xx,以及 CloudFront 的請求次數等等。
+
+發生故障時,先用 Metrics 確認「哪個服務的錯誤正在增加」。
+
+## CloudWatch Logs
+
+Logs 是用來檢視應用程式或 Lambda 所輸出日誌的功能。當聯絡表單 API 發生錯誤時,可以透過 Lambda 的 CloudWatch Logs 來追查原因。
+
+不過,把完整的 Email 地址或聯絡表單全文寫進日誌是很危險的。設計上要避免將個資或機密資訊輸出到日誌中。
+
+## CloudWatch Alarm
+
+Alarm 是在符合指定條件時發出通知的機制。例如「當 Lambda Errors 超過一定數量時就通知」就是典型用法。
+
+在 MVP 階段不見得是必要的,但等到使用量開始增加時,導入的價值就會變高。
+
+## 與 CloudTrail、AWS Config 的差異
+
+CloudWatch 擅長監控與日誌,CloudTrail 擅長記錄 API 操作歷史,AWS Config 則擅長追蹤資源設定的變更。考試會考這三者的區別。
+
+## 在本專案的使用方式
+
+這個網站把聯絡表單 API 的 Lambda 日誌、Lambda Errors、API Gateway 的 4xx/5xx,以及 CloudFront 的 4xx/5xx 列為監控對象。至於費用,則不使用 CloudWatch,而是用 AWS Budgets 與 Cost Explorer 來確認。
+
+## 考試常考的重點
+
+- CloudWatch Logs 用於檢視日誌
+- CloudWatch Metrics 用於數值監控
+- CloudWatch Alarm 用於條件式通知
+- CloudTrail 用於 API 操作歷史
+- AWS Config 用於追蹤設定變更
+
+## 相關用語
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS CloudTrail](/terms/cloudtrail)
+- [AWS Config](/terms/aws-config)
+
+## 延伸閱讀
+
+- [CloudWatch、CloudTrail、AWS Config 的差異](/comparisons/cloudwatch-vs-cloudtrail-vs-config)
+- [用 CloudWatch 檢視 Lambda 日誌的方法](/blog/lambda-cloudwatch-logs-check)

@@ -1,0 +1,142 @@
+# Differences between Security Groups and Network ACLs
+
+## Conclusion
+
+Both Security Groups and Network ACLs are used to control traffic within an Amazon VPC.
+
+However, the place they protect and the way they behave are different.
+
+- Use Security Groups when controlling traffic at the resource level, such as for an Amazon EC2 instance
+- Use Network ACLs when controlling traffic at the subnet level
+- Security Groups are stateful
+- Network ACLs are stateless
+
+On the AWS exams, the distinction "stateful or stateless" is particularly important.
+
+## Comparison Table
+
+| Item | Security Group | Network ACL |
+|---|---|---|
+| Scope | Resource level, such as ENI or Amazon EC2 | Subnet level |
+| Behavior | Stateful | Stateless |
+| Rules | Allow rules only | Both allow rules and deny rules |
+| Return traffic | Automatically allowed | Must be explicitly allowed |
+| Evaluation order | All rules are evaluated | Evaluated in ascending order of rule number |
+| Default | The default security group allows traffic within the same security group | The default network ACL allows all traffic |
+| Main use cases | Instance-level firewall | Additional defense at the subnet boundary |
+| Exam keywords | stateful, instance level | stateless, subnet level, allow and deny |
+
+## Beginner-Friendly Explanation
+
+A security group is a firewall attached to resources such as an Amazon EC2 instance.
+
+```text
+EC2 Instance
+└─ Security Group
+```
+
+For example, a web server allows only HTTP and HTTPS traffic.
+
+A network ACL is a firewall attached to a subnet.
+
+```text
+Subnet
+└─ Network ACL
+   └─ EC2 Instance
+```
+
+It controls the traffic that enters and exits the subnet.
+
+## Points That Often Appear in the Exams
+
+### Cases where Security Group is the likely answer
+
+- You want to control traffic at the Amazon EC2 instance level
+- You need stateful traffic control
+- You want to allow only HTTP and HTTPS traffic to a web server
+- You want to allow only database connections to an application server
+
+### Cases where Network ACL is the likely answer
+
+- You want to control traffic at the subnet level
+- You want to use explicit deny rules
+- The question asks about stateless traffic control
+- You want to add another layer of defense
+
+## How to Choose in Practice
+
+### Basic traffic control
+
+Use a security group.
+
+```text
+ALB Security Group
+↓
+EC2 Security Group
+↓
+RDS Security Group
+```
+
+In practice, start by allowing the minimum required traffic with security groups.
+
+### When you want to restrict traffic at the subnet level
+
+Use a network ACL.
+
+```text
+Public Subnet
+└─ Network ACL
+
+Private Subnet
+└─ Network ACL
+```
+
+Note that network ACLs are stateless, so the rules must also consider return traffic.
+
+### How they fit this project
+
+The MVP of this project is centered on Amazon S3, Amazon CloudFront, AWS Lambda, and Amazon DynamoDB.
+
+AWS Lambda is not connected to a VPC in this design, so there are few situations where security groups or network ACLs are configured directly.
+
+That said, for SAA preparation they are essential as part of the fundamentals of VPC design.
+
+## Common Mistakes
+
+### Mistake 1: Thinking that security groups can have deny rules
+
+Security groups only have allow rules.
+
+When you need an explicit deny rule, consider a network ACL.
+
+### Mistake 2: Forgetting return traffic on a network ACL
+
+Network ACLs are stateless.
+
+Even when inbound traffic is allowed, communication will not work unless outbound return traffic is also allowed.
+
+### Mistake 3: Treating security groups and network ACLs at the same level of granularity
+
+A security group operates at the resource level, while a network ACL operates at the subnet level.
+
+Mixing this up leads to wrong answer choices on the exam.
+
+## Related Terms
+
+- [Amazon VPC](/terms/vpc)
+- [Amazon EC2](/terms/ec2)
+- [Elastic Load Balancing](/terms/elb)
+- [Amazon RDS](/terms/rds)
+
+## Related Questions
+
+- [CLF Practice Questions](/questions/clf)
+
+## Summary
+
+Remember Security Groups and Network ACLs in the following way.
+
+- Security Group: resource level, stateful, allow only
+- Network ACL: subnet level, stateless, allow and deny
+
+These appear frequently on the SAA exam, so organize them well enough to answer immediately from the table.

@@ -1,0 +1,172 @@
+---
+postId: "blog-023"
+slug: "github-actions-oidc-deploy"
+title: "GitHub Actions OIDCでAWSデプロイを安全にする"
+description: "GitHub ActionsからAWSへデプロイするときに、長期アクセスキーを使わずOIDCで一時認証する考え方を解説します。"
+category: "AWS無料枠・ポートフォリオ"
+tags:
+  - "GitHub Actions"
+  - "OIDC"
+  - "IAM"
+  - "CI/CD"
+  - "CloudFront"
+targetKeywords:
+  - "GitHub Actions OIDC AWS"
+  - "AWS デプロイ OIDC"
+  - "GitHub Actions IAM Role"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-08-02"
+---
+
+# GitHub Actions OIDCでAWSデプロイを安全にする
+
+GitHub ActionsからAWSへデプロイする場合、AWSアクセスキーをGitHub Secretsに保存する方法があります。ただし、より安全な構成としてOIDC方式があります。
+
+## 結論
+
+OIDC方式では、GitHub ActionsがAWS IAMロールを一時的に引き受けます。長期アクセスキーをGitHubに保存しないため、漏えいリスクを下げられます。
+
+## 何が問題なのか
+
+`AWS_ACCESS_KEY_ID` と `AWS_SECRET_ACCESS_KEY` をGitHub Secretsに保存すると、運用は簡単です。しかし、長期アクセスキーには次の性質があります。
+
+- 明示的に削除するまで有効であり、有効期限が来て自然に無効化されることがない
+- 漏えいに気づく手段が限られる。IAMのアクセスキー最終使用日以外に手がかりが少ない
+- ローテーションを人手で行う必要があり、忘れられやすい
+
+OIDC方式で発行される認証情報は、ジョブの実行中だけ有効な一時的なものです。仮にログに出力されても、時間が経てば使えません。
+
+## OIDC方式の仕組み
+
+処理の流れは次の通りです。
+
+1. ワークフローに `permissions: id-token: write` が指定されていると、GitHub がそのジョブ用の OIDC トークン（JWT）を発行する
+2. `aws-actions/configure-aws-credentials` がそのトークンを AWS STS の `AssumeRoleWithWebIdentity` に渡す
+3. AWS 側は、アカウントに登録された GitHub の OIDC プロバイダーでトークンの署名を検証する
+4. 引き受け先ロールの信頼ポリシー（Trust Policy）の条件に一致すれば、一時認証情報が返る
+
+AWS側で用意するものは2つです。IDプロバイダーとして `token.actions.githubusercontent.com` を登録すること、そして信頼ポリシー付きのIAMロールを作ることです。
+
+## 信頼ポリシーの実例
+
+信頼ポリシーは次の形になります。`OWNER/REPO` と AWS アカウントIDは自分の値に置き換えます。
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+          "token.actions.githubusercontent.com:sub": "repo:OWNER/REPO:ref:refs/heads/master"
+        }
+      }
+    }
+  ]
+}
+```
+
+`aud`（audience）は `sts.amazonaws.com` に固定します。`sub`（subject）が「誰が引き受けられるか」を決める中核です。
+
+このプロジェクトでは、本番ブランチは `master` として扱います。そのため `sub` 条件も `refs/heads/master` に合わせます。
+
+## sub の書式を間違えない
+
+`sub` はトリガーの種類によって形が変わります。ここを取り違えると、意図しない経路からロールを引き受けられてしまいます。
+
+| 発火元 | sub の値 |
+|---|---|
+| 特定ブランチへの push | `repo:OWNER/REPO:ref:refs/heads/master` |
+| 特定タグ | `repo:OWNER/REPO:ref:refs/tags/v1.0.0` |
+| プルリクエスト | `repo:OWNER/REPO:pull_request` |
+| GitHub Environment 指定 | `repo:OWNER/REPO:environment:production` |
+
+とくに注意すべきなのは、`repo:OWNER/REPO:*` のようなワイルドカードを `StringLike` で許可してしまう書き方です。これはフォークからのプルリクエストを含む広い範囲を許すことになり、OIDCに切り替えた意味が薄れます。ブランチを固定できるなら `StringEquals` で完全一致にします。
+
+なお、以前はIDプロバイダー登録時に GitHub 側の証明書サムプリントを手で設定する必要がありましたが、現在の AWS は主要なOIDCプロバイダーの証明書を信頼済みCAで検証するため、サムプリントの更新に追随し続ける必要はなくなっています。古い手順書を参考にする場合はこの点に注意します。
+
+## 最小権限にする
+
+GitHub Actions用ロールには、S3へのアップロード、S3内ファイル削除、CloudFront Invalidationに必要な権限だけを付与します。`aws s3 sync --delete` を使う場合、必要な権限は次の通りです。
+
+| アクション | 対象リソース | 用途 |
+|---|---|---|
+| `s3:ListBucket` | `arn:aws:s3:::BUCKET` | sync が差分を取るために一覧を読む |
+| `s3:PutObject` | `arn:aws:s3:::BUCKET/*` | ファイルのアップロード |
+| `s3:DeleteObject` | `arn:aws:s3:::BUCKET/*` | `--delete` で不要ファイルを消す |
+| `cloudfront:CreateInvalidation` | 該当ディストリビューションのARN | キャッシュの無効化 |
+
+`s3:ListBucket` の対象がバケット本体のARN（末尾に `/*` を付けない）である点は間違えやすい箇所です。オブジェクト操作系は `/*` 付き、バケット操作系は `/*` なしで指定します。
+
+IAM操作、DynamoDB削除、EC2操作など、デプロイに不要な権限は付与しません。CloudFront の Invalidation 権限も、`Resource: "*"` ではなくディストリビューションARNに絞れます。
+
+## ワークフロー側で必要な設定
+
+ワークフローには次の指定が必要です。
+
+```yaml
+permissions:
+  id-token: write
+  contents: read
+```
+
+`id-token: write` がないと、GitHub は OIDC トークンを発行しません。この指定漏れは、OIDC 導入時に最も多いつまずきの1つです。エラーメッセージが「認証情報が見つからない」系になるため、IAM側を疑って時間を溶かしやすい箇所でもあります。
+
+認証情報の設定は次のように書きます。
+
+```yaml
+- name: Configure AWS credentials
+  uses: aws-actions/configure-aws-credentials@v4
+  with:
+    role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+    aws-region: ${{ vars.AWS_REGION }}
+```
+
+ロールARN自体は秘密情報ではありませんが、アカウントIDが露出するため Secrets に置く構成にしています。
+
+## つまずきやすい箇所
+
+| 症状 | よくある原因 |
+|---|---|
+| `Credentials could not be loaded` | ワークフローに `id-token: write` がない |
+| `Not authorized to perform sts:AssumeRoleWithWebIdentity` | 信頼ポリシーの `sub` がブランチ名やリポジトリ名と一致していない |
+| `AccessDenied` が S3 sync で出る | `s3:ListBucket` をバケットARNに付けていない |
+| Invalidation だけ失敗する | CloudFront は グローバルサービスのため、ARN の指定やリージョン指定を誤りやすい |
+
+## このプロジェクトでの流れ
+
+1. `master` ブランチへ push する
+2. GitHub Actions が起動する
+3. Lint、型チェック、Next.js の build を実行する
+4. OIDC で AWS IAM ロールを引き受ける
+5. `out/` を S3 へ sync する
+6. CloudFront Invalidation を実行する
+
+ビルドが失敗した時点でジョブが止まるため、AWS 側の認証情報を取得する前に落ちます。認証の直前に検証を置くのは、権限を使う時間を短くするうえでも合理的です。
+
+## 試験・実務でのポイント
+
+- IAMロールは一時的な権限委譲に使える
+- 最小権限の原則が重要
+- 長期アクセスキーを減らすと漏えいリスクが下がる
+- IDフェデレーションでは、外部のIDプロバイダーが発行したトークンを信頼する設定が必要
+- CI/CDにもセキュリティ設計が必要
+
+## 関連用語
+
+- [IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+
+## 次に読む記事
+
+- [IAMの基本をCloud Practitioner向けに整理する](/blog/clf-iam-basics)
+- [AWSポートフォリオでサーバーレス構成を選ぶ理由](/blog/aws-portfolio-serverless-architecture)

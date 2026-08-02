@@ -1,0 +1,170 @@
+---
+postId: "blog-002"
+slug: "aws-free-tier-portfolio"
+title: "如何用 AWS 免費方案打造作品集"
+description: "為初學者解說如何活用 AWS 免費方案,使用 S3、CloudFront、Lambda、DynamoDB 打造作品集網站。"
+category: "作品集"
+tags:
+  - "aws"
+  - "免費方案"
+  - "作品集"
+  - "cloudfront"
+  - "lambda"
+targetKeywords:
+  - "AWS 免費方案 作品集"
+  - "AWS 作品集 初學者"
+  - "S3 CloudFront 靜態網站"
+author: "AWS 認證學習路線實驗室"
+published: true
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
+---
+
+# 如何用 AWS 免費方案打造作品集
+
+## 結論
+
+要在 AWS 上製作作品集,一開始建議採用 Serverless 架構。
+
+原因在於不需要持續啟動的伺服器,即使是個人開發也比較容易控制成本。
+
+本網站採用如下的架構配置。
+
+| 用途 | AWS 服務 |
+|---|---|
+| 靜態網站發布 | S3、CloudFront |
+| 聯絡表單 API | API Gateway、Lambda |
+| 聯絡表單儲存 | DynamoDB |
+| 紀錄確認 | CloudWatch Logs |
+| 權限管理 | IAM |
+| 費用監控 | AWS Budgets |
+
+這個架構與 Cloud Practitioner 及 SAA 的學習內容也相當契合。
+
+## 可用 AWS 免費方案打造的架構
+
+初學者在製作作品集時,應該避免容易產生固定費用的架構。
+
+舉例來說,如果讓 EC2 一直保持啟動,或長時間運行 RDS,即使是學習用途也容易產生費用。
+
+因此,一開始建議採用以下方針來建構。
+
+| 方針 | 內容 |
+|---|---|
+| 以靜態網站為主 | 將 HTML、CSS、JavaScript 放在 S3 |
+| 使用 CDN 發布 | 透過 CloudFront 進行 HTTPS 發布 |
+| API 最小化 | 僅將聯絡表單做成 API |
+| DB 使用範圍小 | 僅在 DynamoDB 儲存聯絡表單 |
+| 費用監控 | 一開始就設定 AWS Budgets |
+
+## 使用的服務
+
+### Amazon S3
+
+S3 用於儲存靜態檔案。
+
+當 Next.js 進行靜態輸出時,會產生 HTML、CSS、JavaScript 及圖片。
+
+將這些檔案放在 S3,就能作為網站檔案的存放位置。
+
+不過,應避免直接公開 S3 bucket。
+
+本網站採用的是透過 CloudFront 進行發布的方式。
+
+### Amazon CloudFront
+
+CloudFront 是用來將網站快速分發給使用者的 CDN。
+
+使用 CloudFront 有以下優點。
+
+| 優點 | 內容 |
+|---|---|
+| HTTPS 發布 | 可從瀏覽器安全存取 |
+| 快取 | 能夠快速分發靜態檔案 |
+| 保護 S3 | 不需要直接公開 S3 |
+| 作品集面向 | 可以解說 CDN 架構 |
+
+### AWS Lambda
+
+Lambda 用於處理聯絡表單。
+
+不需要持續啟動伺服器,只有在收到請求時才會執行處理。
+
+像個人開發的聯絡表單這種存取頻率較低的處理,Lambda 非常合適。
+
+### Amazon API Gateway
+
+API Gateway 是從前端呼叫 Lambda 的入口。
+
+當使用者在聯絡表單按下送出按鈕時,前端會向 API Gateway 發送 POST 請求。
+
+API Gateway 會呼叫 Lambda,Lambda 再將資料儲存到 DynamoDB。
+
+### Amazon DynamoDB
+
+DynamoDB 用於儲存聯絡表單的資料。
+
+本次的 MVP 不會處理複雜的關聯關係。
+
+只需要能夠儲存姓名、電子郵件、主旨、內文、建立時間就已足夠。
+
+因此選擇 DynamoDB 而非 RDS。
+
+## 有費用風險的服務
+
+即使使用 AWS 免費方案,費用風險也並非為零。
+
+初學者特別要留意以下服務。
+
+| 服務 | 注意事項 |
+|---|---|
+| EC2 | 持續啟動會產生時數計費 |
+| RDS | 即使是小規模架構也容易變成固定費用 |
+| NAT Gateway | 光是建立就容易產生費用 |
+| ALB | 容易產生持續性的使用費用 |
+| CloudWatch Logs | 紀錄無期限保存會累積費用 |
+| CloudFront | 大量存取或大容量圖片會增加傳輸費用 |
+
+本次的 MVP 不會使用 EC2、RDS、NAT Gateway、ALB。
+
+## 實作步驟
+
+實作的流程如下。
+
+1. 使用 Next.js 製作靜態網站
+2. 執行 `npm run build` 產生靜態檔案
+3. 建立 S3 bucket
+4. 將靜態檔案上傳到 S3
+5. 建立 CloudFront Distribution
+6. 使用 CloudFront OAC 將 S3 設為非公開
+7. 為聯絡表單建立 API Gateway、Lambda、DynamoDB
+8. 在 AWS Budgets 設定費用警示
+9. 在 README 寫上架構圖與設計意圖
+
+按照這個流程製作,就不會只是單純呈現畫面的作品集,而是能完整說明 AWS 架構的作品。
+
+## 作為作品集呈現的重點
+
+向招募負責人或面試官展示時,只看畫面會顯得單薄。
+
+如果能說明到以下觀點,通常比較容易獲得肯定。
+
+| 觀點 | 說明內容 |
+|---|---|
+| 為何選 S3 | 靜態網站不需要伺服器 |
+| 為何選 CloudFront | HTTPS、快取、S3 非公開化 |
+| 為何選 Lambda | 聯絡表單處理不需要持續啟動 |
+| 為何選 DynamoDB | 適合小規模的聯絡表單儲存 |
+| 為何不用 RDS | MVP 階段固定費用與管理負擔過重 |
+| 如何防止費用事故 | 一開始就設定 AWS Budgets |
+| 如何確保安全 | IAM 最小權限、S3 非公開、CORS 限制 |
+
+## 總結
+
+要用 AWS 免費方案製作作品集,從 S3 + CloudFront 的靜態網站架構開始是比較實際的做法。
+
+動態處理可以從聯絡表單這類小規模功能開始。
+
+組合 API Gateway、Lambda、DynamoDB,就能學習到 Serverless API。
+
+採用這個架構,可以一邊將 Cloud Practitioner 的知識轉換為實作,一邊培養通往 SAA 的設計能力。

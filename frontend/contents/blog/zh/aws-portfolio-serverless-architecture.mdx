@@ -1,0 +1,69 @@
+---
+postId: "blog-021"
+slug: "aws-portfolio-serverless-architecture"
+title: "為什麼 AWS 作品集要選擇 Serverless 架構"
+description: "整理在個人開發作品集中選擇 S3、CloudFront、API Gateway、Lambda、DynamoDB 的理由。"
+category: "AWS 免費方案・作品集"
+tags:
+  - "作品集"
+  - "Serverless"
+  - "S3"
+  - "CloudFront"
+  - "Lambda"
+targetKeywords:
+  - "AWS 作品集 Serverless"
+  - "AWS 個人開發 架構"
+  - "AWS 免費方案 作品集"
+author: "AWS 認證學習路線實驗室"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# 為什麼 AWS 作品集要選擇 Serverless 架構
+
+製作 AWS 作品集時,不需要一開始就用 EC2 或 RDS 建構完整的架構。對於個人開發的 MVP 來說,Serverless 架構是更實際的選擇。
+
+## 結論
+
+以靜態內容為主的學習網站,適合採用 S3 + CloudFront 為核心,只在需要動態處理的部分使用 API Gateway + Lambda + DynamoDB 的架構。
+
+## 可以避免固定費用
+
+個人開發最怕的就是即使沒在使用,費用仍持續產生的架構。EC2、RDS、NAT Gateway、ALB 雖然有學習價值,但在 MVP 階段會有固定費用以及忘記停止的風險。
+
+以 Serverless 為核心的架構,在存取量少的階段較容易維持低成本。
+
+## 與 AWS 認證學習直接相關
+
+S3、CloudFront、Lambda、API Gateway、DynamoDB、IAM、CloudWatch 不論是在 Cloud Practitioner 還是 SAA 都很重要。
+
+親自建構這套架構,就能把認證知識從單純的背誦,轉化為可以說明的實作經驗。
+
+## 面試時容易說明
+
+作品集中,比起做了什麼,更重要的是能說明「為什麼這樣設計」。
+
+例如「沒有直接公開 S3,而是使用 CloudFront OAC」、「只有聯絡表單將資料儲存到 DynamoDB」、「GitHub Actions 使用 OIDC 套用最小權限」等說明,都是容易獲得評價的重點。
+
+## 適合 MVP
+
+學習網站的主要內容是術語集、比較文章、模擬試題、架構圖、部落格等靜態內容。這些都可以透過 S3 + CloudFront 提供。
+
+只有聯絡表單需要儲存使用者輸入,因此採用 API Gateway + Lambda + DynamoDB 進行動態處理。
+
+## 注意事項
+
+採用 Serverless 並不表示什麼都不用考慮。CORS、IAM、Log、DynamoDB Key 設計、CloudFront 快取、費用監控仍然是必要的。
+
+## 相關術語
+
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Lambda](/terms/lambda)
+
+## 延伸閱讀
+
+- [如何使用 AWS 免費方案建立作品集](/blog/aws-free-tier-portfolio)
+- [API Gateway + Lambda + DynamoDB Serverless API 架構](/architectures/serverless-api-basic)

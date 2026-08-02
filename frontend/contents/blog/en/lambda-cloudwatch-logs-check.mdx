@@ -1,0 +1,80 @@
+---
+postId: "blog-025"
+slug: "lambda-cloudwatch-logs-check"
+title: "How to Check Lambda Logs in CloudWatch"
+description: "Learn how to view Lambda execution logs in CloudWatch Logs and use them to investigate errors in a contact form API."
+category: "Serverless"
+tags:
+  - "Lambda"
+  - "CloudWatch Logs"
+  - "Operations Monitoring"
+  - "Serverless"
+targetKeywords:
+  - "Lambda CloudWatch Logs how to check"
+  - "AWS Lambda logs"
+  - "CloudWatch Logs beginner"
+author: "AWS Cert Roadmap Lab"
+published: true
+noIndex: true
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+---
+
+# How to Check Lambda Logs in CloudWatch
+
+After building an API with Lambda, make sure you can review its logs in CloudWatch Logs. When you investigate issues with a contact form API, this is one of the first places to look.
+
+## Summary
+
+Lambda execution logs are written to CloudWatch Logs. When an error happens, open the Lambda log group and use the `requestId` and error messages to find the cause.
+
+## What to Look for in CloudWatch Logs
+
+For a contact form API, check the following points:
+
+- Whether the Lambda function was invoked
+- Whether validation errors occurred
+- Whether DynamoDB `PutItem` failed
+- Whether CORS or JSON parsing failed
+- Whether the function timed out
+
+## Log Groups
+
+When Lambda runs, it usually writes logs to a log group named `/aws/lambda/<function-name>`. In this project, you would check the log group for `contact-submit-prod`.
+
+Log streams are split by execution unit or time window. Find the most recent execution and read the error messages.
+
+## Logs You Should Emit
+
+Logs that are safe and useful to emit include: successful processing, the field name that failed validation, DynamoDB save failures, `requestId`, and `contactId`.
+
+For example, a log line such as `INFO contact submitted contactId=contact-xxxx` is helpful during investigation.
+
+## Logs You Must Not Emit
+
+Do not log full email addresses, full message bodies, AWS credentials, API keys, or JWTs.
+
+Logs are read by operators, but as retention grows, they also become a data leak risk. Design your logging so it never includes personal information.
+
+## Retention
+
+If you set CloudWatch Logs to retain logs indefinitely, the volume keeps growing. For a personal MVP, set a short retention period to reduce both cost and information-management risk.
+
+## Incident Investigation Flow
+
+1. Check the error message in the frontend
+2. Check the API Gateway status code
+3. Read the Lambda CloudWatch Logs
+4. Confirm whether the record was saved in DynamoDB
+5. Check CORS, environment variables, and IAM permissions
+
+## Related Terms
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+
+## What to Read Next
+
+- [CloudWatch Basics for Cloud Practitioner Candidates](/blog/clf-monitoring-cloudwatch-basics)
+- [Building a Contact API with API Gateway + Lambda + DynamoDB](/blog/serverless-contact-api-flow)
