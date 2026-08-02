@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { QuestionPlayer } from "@/components/questions/QuestionPlayer";
 import type { ResolvedLink } from "@/components/questions/QuestionPlayer";
 import { questionPlayerLabelsByLocale } from "@/components/questions/question-player-labels";
+import { buildQuestionQuizJsonLd } from "@/lib/questionJsonLd";
 import { createPageMetadata } from "@/lib/seo";
 import { isExistingTerm, isExistingComparison } from "@/lib/termGuards";
 import {
@@ -63,16 +64,28 @@ export default async function QuestionDetailPage({
     question.relatedComparisons ?? []
   ).map((id) => ({ id, exists: isExistingComparison(id) }));
 
+  // Quiz 構造化データ（ja のみ）。sd-policies 準拠のため、ここで出力する
+  // テキストは QuestionPlayer が静的 HTML に常時描画しているものに限る。
+  const quizJsonLd = buildQuestionQuizJsonLd(question, LOCALE);
+
   return (
-    <QuestionPlayer
-      locale={LOCALE}
-      labels={questionPlayerLabelsByLocale[LOCALE]}
-      question={question}
-      previousQuestionId={previousQuestionId ?? undefined}
-      nextQuestionId={nextQuestionId ?? undefined}
-      resolvedServices={resolvedServices}
-      resolvedTerms={resolvedTerms}
-      resolvedComparisons={resolvedComparisons}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(quizJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <QuestionPlayer
+        locale={LOCALE}
+        labels={questionPlayerLabelsByLocale[LOCALE]}
+        question={question}
+        previousQuestionId={previousQuestionId ?? undefined}
+        nextQuestionId={nextQuestionId ?? undefined}
+        resolvedServices={resolvedServices}
+        resolvedTerms={resolvedTerms}
+        resolvedComparisons={resolvedComparisons}
+      />
+    </>
   );
 }

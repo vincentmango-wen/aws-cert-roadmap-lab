@@ -36,14 +36,14 @@ type NotFoundContent = {
 const notFoundContent: Record<Locale, NotFoundContent> = {
   ja: {
     eyebrow: "404 Not Found",
-    title: "Coming Soon",
-    subtitle: "このページは準備中です",
+    title: "ページが見つかりません",
+    subtitle: "お探しのページは見つかりませんでした",
     description:
-      "このページはまだ整備されていないか、URLが変更された可能性があります。下のリンクから学習を続けてください。",
+      "URLが変更されたか、ページが削除された可能性があります。下のリンクから学習を続けてください。",
     balloonLine1: "下のリンクから",
     balloonLine2: "学べるよ！",
     svgAriaLabel:
-      "ロードマップの道の上にComing Soonのピンが立っており、雲のキャラクターが手を振っている",
+      "ロードマップの道の上に案内のピンが立っており、雲のキャラクターが手を振っている",
     links: [
       {
         href: "/",
@@ -72,14 +72,14 @@ const notFoundContent: Record<Locale, NotFoundContent> = {
   },
   en: {
     eyebrow: "404 Not Found",
-    title: "Coming Soon",
-    subtitle: "This page is coming soon.",
+    title: "Page not found",
+    subtitle: "We could not find the page you were looking for.",
     description:
-      "This page is still being built, or the URL may have changed. Use the links below to keep learning.",
+      "The URL may have changed, or the page may have been removed. Use the links below to keep learning.",
     balloonLine1: "Learn from the",
     balloonLine2: "links below!",
     svgAriaLabel:
-      "A road map path with a Coming Soon pin, and a cloud character waving its hand.",
+      "A road map path with a signpost pin, and a cloud character waving its hand.",
     links: [
       {
         href: "/en",
@@ -108,14 +108,14 @@ const notFoundContent: Record<Locale, NotFoundContent> = {
   },
   zh: {
     eyebrow: "404 Not Found",
-    title: "Coming Soon",
-    subtitle: "此頁面準備中。",
+    title: "找不到頁面",
+    subtitle: "找不到您要瀏覽的頁面。",
     description:
-      "此頁面尚未建置完成，或網址可能已更動。請從下方連結繼續學習。",
+      "網址可能已更動，或該頁面已被移除。請從下方連結繼續學習。",
     balloonLine1: "從下方連結",
     balloonLine2: "開始學習！",
     svgAriaLabel:
-      "一條路線圖小路上立著「準備中」的旗幟，旁邊有雲朵角色揮手。",
+      "一條路線圖小路上立著指引旗幟，旁邊有雲朵角色揮手。",
     links: [
       {
         href: "/zh",

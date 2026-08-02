@@ -31,6 +31,10 @@ export type QuestionPlayerLabels = {
   yourAnswerLabel: string;
   unselectedLabel: string;
   correctAnswerLabel: string;
+  /** 解説セクション（常時 DOM 出力・`<details>` で初期折りたたみ）の `<h2>`。 */
+  explanationSectionTitle: string;
+  /** 解説セクションの `<summary>` 文言。開くと正解が表示されることを必ず明示する。 */
+  explanationSummaryLabel: string;
   explanationTitle: string;
   choiceExplanationsTitle: string;
   practicalNoteTitle: string;
@@ -72,6 +76,9 @@ export const questionPlayerLabelsByLocale: Record<
     yourAnswerLabel: "あなたの回答：",
     unselectedLabel: "未選択",
     correctAnswerLabel: "正解：",
+    explanationSectionTitle: "解説と正解",
+    explanationSummaryLabel:
+      "解説と正解を読む（先に自分で回答してから開くのがおすすめです）",
     explanationTitle: "解説",
     choiceExplanationsTitle: "選択肢ごとの解説",
     practicalNoteTitle: "実務での使いどころ",
@@ -108,6 +115,9 @@ export const questionPlayerLabelsByLocale: Record<
     yourAnswerLabel: "Your answer: ",
     unselectedLabel: "Not selected",
     correctAnswerLabel: "Correct answer: ",
+    explanationSectionTitle: "Explanation and answer",
+    explanationSummaryLabel:
+      "Read the explanation and correct answer (spoiler — try answering first)",
     explanationTitle: "Explanation",
     choiceExplanationsTitle: "Per-choice explanations",
     practicalNoteTitle: "Practical Use",
@@ -144,6 +154,8 @@ export const questionPlayerLabelsByLocale: Record<
     yourAnswerLabel: "您的答案：",
     unselectedLabel: "未選擇",
     correctAnswerLabel: "正確答案：",
+    explanationSectionTitle: "解析與正確答案",
+    explanationSummaryLabel: "閱讀解析與正確答案（劇透：建議先自行作答）",
     explanationTitle: "解析",
     choiceExplanationsTitle: "各選項解析",
     practicalNoteTitle: "實際使用情境",
