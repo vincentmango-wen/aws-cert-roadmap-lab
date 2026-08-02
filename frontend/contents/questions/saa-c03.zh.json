@@ -13,24 +13,24 @@
       },
       {
         "choiceId": "B",
-        "text": "使用 CloudFront Origin Access Control,並於 S3 儲存貯體政策中僅允許來自 CloudFront Distribution 的 GetObject"
+        "text": "對每個 S3 物件設定公開讀取的 ACL"
       },
       {
         "choiceId": "C",
-        "text": "啟用 S3 靜態網站託管,並將 CloudFront 的來源設定為網站端點"
+        "text": "使用 CloudFront Origin Access Control,並於 S3 儲存貯體政策中僅允許來自 CloudFront Distribution 的 GetObject"
       },
       {
         "choiceId": "D",
-        "text": "對每個 S3 物件設定公開讀取的 ACL"
+        "text": "啟用 S3 靜態網站託管,並將 CloudFront 的來源設定為網站端點"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "C",
     "explanation": "若要避免直接公開 S3 並限制僅能透過 CloudFront 存取,適合採用 CloudFront Origin Access Control,並於 S3 儲存貯體政策中僅允許特定 CloudFront Distribution 的存取。",
     "choiceExplanations": {
       "A": "錯誤。會公開儲存貯體,違反避免 S3 直接公開的要求。",
-      "B": "正確。透過 OAC 即可在保持 S3 非公開的狀態下,安全地經由 CloudFront 傳遞。",
-      "C": "錯誤。S3 靜態網站端點無法與 OAC 搭配使用,且容易需要將儲存貯體公開。",
-      "D": "錯誤。透過物件 ACL 公開的方式,違反最小公開的設計原則。"
+      "B": "錯誤。透過物件 ACL 公開的方式,違反最小公開的設計原則。",
+      "C": "正確。透過 OAC 即可在保持 S3 非公開的狀態下,安全地經由 CloudFront 傳遞。",
+      "D": "錯誤。S3 靜態網站端點無法與 OAC 搭配使用,且容易需要將儲存貯體公開。"
     },
     "practicalNote": "CloudFront Origin Access Control(OAC)是用於在不公開 S3 儲存貯體的前提下,僅允許透過 CloudFront 進行傳遞的機制。將 S3 儲存貯體的 Block Public Access 維持啟用狀態,並於儲存貯體政策中明確指定「僅允許來自特定 CloudFront Distribution 的 GetObject」,即可從結構上阻擋對 S3 的直接存取。若搭配簽章 URL 或簽章 Cookie,還可在 CloudFront 層進一步疊加存取控制。OAC 被定位為舊有的 Origin Access Identity(OAI)的後繼方案,於新建構的環境中建議採用 OAC。\n\n設計上需注意的是,S3 靜態網站託管的端點無法與 OAC 搭配使用。網站端點以 HTTP 公開為前提,因此當有透過 OAC 進行保護的要求時,必須將 REST API 端點(儲存貯體 FQDN)指定為來源。此外,標準組態為將 CloudFront 的 Behaviors 中的 Viewer Protocol Policy 設為 Redirect HTTP to HTTPS,並綁定 ACM 憑證(於 us-east-1 核發),以強制使用 HTTPS 進行傳遞。\n\nSAA-C03 中,在「希望在 S3 非公開的狀態下透過 CloudFront 傳遞」「希望遵守最小公開原則」的情境下,OAC 經常作為正解出現。誤答則會列出停用 Block Public Access、設定物件 ACL 為公開、使用 S3 網站端點等,容易使儲存貯體公開的選項。OAI 與 OAC 的差異(OAC 更新,並支援 SSE-KMS 與 SigV4 區域簽章)也是常見的考點。",
     "officialDocs": [
@@ -77,28 +77,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "對所有 DynamoDB 資料表允許 dynamodb:*"
-      },
-      {
-        "choiceId": "B",
-        "text": "僅允許對目標資料表執行 dynamodb:PutItem"
-      },
-      {
-        "choiceId": "C",
         "text": "對 Lambda 執行角色授予 AdministratorAccess"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "將 DynamoDB 的存取金鑰儲存於 Lambda 環境變數"
+      },
+      {
+        "choiceId": "C",
+        "text": "對所有 DynamoDB 資料表允許 dynamodb:*"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅允許對目標資料表執行 dynamodb:PutItem"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "D",
     "explanation": "若 Lambda 僅執行查詢儲存的作業,僅允許對目標 DynamoDB 資料表執行 PutItem 才符合最小權限。",
     "choiceExplanations": {
-      "A": "錯誤。dynamodb:* 屬於權限過大。",
-      "B": "正確。已將對象資料表與必要的操作範圍限定。",
-      "C": "錯誤。AdministratorAccess 權限過於廣泛。",
-      "D": "錯誤。將 AWS 認證資訊儲存於環境變數的設計應予避免。應使用 Lambda 執行角色。"
+      "A": "錯誤。AdministratorAccess 權限過於廣泛。",
+      "B": "錯誤。將 AWS 認證資訊儲存於環境變數的設計應予避免。應使用 Lambda 執行角色。",
+      "C": "錯誤。dynamodb:* 屬於權限過大。",
+      "D": "正確。已將對象資料表與必要的操作範圍限定。"
     },
     "practicalNote": "對 Lambda 執行角色授予的 IAM 政策,最小權限原則為僅限定於函式實際所需的操作與目標資源。若函式僅負責將查詢寫入 DynamoDB 的特定資料表,適合採用 Action 僅為 `dynamodb:PutItem`、Resource 僅為對象資料表 ARN 的政策。若授予 `dynamodb:*` 或 AdministratorAccess,當函式遭入侵時影響範圍將大幅擴大,應予避免。\n\n實務上常見的反模式為,將 AWS 的存取金鑰(IAM 使用者的長期認證資訊)儲存於 Lambda 的環境變數的設計。Lambda 可透過執行角色自動取得暫時性的認證資訊,因此無需將長期金鑰帶入程式碼或環境變數。長期金鑰在外洩時需要進行輪替的運作,並使 IAM Access Analyzer 與 CloudTrail 的追蹤變得困難。即使要與 Secrets Manager 或 Systems Manager Parameter Store 搭配使用,儲存對象也應僅限於外部系統(DB 的 DSN、外部 API 金鑰等),對 AWS 的認證則應交由角色處理。\n\nSAA-C03 中,「最小權限」「IAM 角色 vs 存取金鑰」「將 Resource 限縮至 ARN 等級」等觀點經常出題。誤答模式為萬用字元 Action、AdministratorAccess、將存取金鑰儲存於 Lambda 環境變數等,皆違反最小權限與最佳實務,可據此排除。較高階的出題還會進一步考問,使用 Condition 限制來源 VPC 端點或 MFA、以 IAM Access Analyzer 監控實際使用權限等發展性題目。",
     "officialDocs": [
@@ -149,24 +149,24 @@
       },
       {
         "choiceId": "B",
-        "text": "將 Internet Gateway 直接關聯至私有子網路"
-      },
-      {
-        "choiceId": "C",
         "text": "建立 S3 Gateway VPC Endpoint,並關聯至目標子網路的路由表"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "為 EC2 指派公有 IP,並以此存取 S3"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 Internet Gateway 直接關聯至私有子網路"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "使用 S3 Gateway VPC Endpoint 後,即可從私有子網路透過 AWS 內部網路存取 S3,且無需 NAT Gateway 的固定費用。",
     "choiceExplanations": {
       "A": "錯誤。會產生需求中希望避免的 NAT Gateway 成本。",
-      "B": "錯誤。Internet Gateway 是附加於 VPC 的,不會直接關聯至私有子網路。",
-      "C": "正確。針對 S3 的 Gateway VPC Endpoint 可以低成本實現私有存取。",
-      "D": "錯誤。指派公有 IP 將導致透過網際網路通訊,違反需求。"
+      "B": "正確。針對 S3 的 Gateway VPC Endpoint 可以低成本實現私有存取。",
+      "C": "錯誤。指派公有 IP 將導致透過網際網路通訊,違反需求。",
+      "D": "錯誤。Internet Gateway 是附加於 VPC 的,不會直接關聯至私有子網路。"
     },
     "practicalNote": "從私有子網路上的 EC2 存取 S3 的路徑,存在透過 NAT Gateway(經由網際網路前往公開 S3 端點)與透過 VPC Endpoint(經由 AWS 內部網路)兩種方式。S3 與 DynamoDB 提供 Gateway 型 VPC Endpoint,Gateway Endpoint 本身不會產生額外費用。NAT Gateway 則以時間單價與資料處理量計費,因此光是將 S3 流量導至 VPC Endpoint,在資料傳輸量大的組態中,即可帶來顯著的成本削減。\n\nGateway Endpoint 與 Interface Endpoint(以 PrivateLink 為基礎,於各可用區域配置 ENI)為不同的機制,計費方式也不同。Gateway Endpoint 僅限 S3 與 DynamoDB 兩項服務,且免費;其他多數 AWS 服務則為 Interface Endpoint(ENI 時數計費與資料處理計費)。設計時,於端點政策中設定「僅允許對特定儲存貯體的操作」的限制,是實務上的基本做法,可堵住對非預期儲存貯體的迂迴存取路徑。由於路由表設定遺漏而導致部分子網路仍透過網際網路通訊的事故也容易發生,因此需確認對象 VPC 內的所有相關路由表皆已關聯 Endpoint。\n\nSAA-C03 中,在「希望從私有子網路以低成本存取 S3」「希望避免 NAT Gateway 的固定費用」等要求下,Gateway VPC Endpoint 為正解。Interface Endpoint 與 Gateway Endpoint 的區分使用、透過端點政策進行限縮、PrivateLink 的服務串接等,在較高階的考試也會出題。",
     "officialDocs": [
@@ -213,7 +213,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Secrets Manager"
+        "text": "Amazon S3 的公開儲存貯體"
       },
       {
         "choiceId": "B",
@@ -221,19 +221,19 @@
       },
       {
         "choiceId": "C",
-        "text": "Amazon S3 的公開儲存貯體"
+        "text": "AWS Secrets Manager"
       },
       {
         "choiceId": "D",
         "text": "AWS Budgets"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "DB 密碼等機密資訊可透過 AWS Secrets Manager 進行管理,並支援與 RDS 的整合與輪替。",
     "choiceExplanations": {
-      "A": "正確。適合用於機密資訊管理與輪替。",
+      "A": "錯誤。將機密資訊置於公開儲存貯體屬於重大資安風險。",
       "B": "錯誤。CloudWatch Logs 為日誌儲存服務,並非機密資訊的儲存位置。",
-      "C": "錯誤。將機密資訊置於公開儲存貯體屬於重大資安風險。",
+      "C": "正確。適合用於機密資訊管理與輪替。",
       "D": "錯誤。AWS Budgets 為計費監控服務。"
     },
     "practicalNote": "AWS Secrets Manager 是用於安全儲存與取得資料庫密碼、API 金鑰、OAuth Token 等機密資訊的受管服務。針對 RDS / Aurora / Redshift 等資料庫,Secrets Manager 直接支援輪替功能,可透過 Lambda 為基礎的輪替函式定期變更密碼,並與 DB 端同步,使此運作標準化。應用程式可透過 Secrets Manager API(或 AWS SDK 的自動快取功能)取得機密資訊,使程式碼與環境變數中無需保留明文認證資訊。\n\n類似的服務有 AWS Systems Manager Parameter Store 的 SecureString 參數,其標準層級可免費使用,但標準上並未提供自動輪替(需自行構成 Lambda)。若機密數量較少,或對於不需輪替的靜態機密(如外部 API 金鑰)而言,Parameter Store 較為合適;若是 DB 之類需要自動輪替的情境,則建議使用 Secrets Manager。Secrets Manager 會產生每組機密的月度固定費用與 API 呼叫計費,因此需依成本與運作負擔取得平衡。\n\nSAA-C03 中,在「希望安全儲存 DB 認證資訊並定期輪替」「希望避免硬編碼或明文環境變數」等要求下,Secrets Manager 為正解。將 CloudWatch Logs 或 S3 公開儲存貯體列為儲存位置的誤答,是將日誌用途、公開儲存等別種目的的服務拿來套用的典型模式。與 Parameter Store SecureString 的比較,以及透過 IAM 政策對每組 Secret 進行存取控制等議題,在較高階的考試也會出題。",
@@ -280,7 +280,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "對整個目標儲存貯體允許 s3:*"
+        "text": "將 S3 儲存貯體公開"
       },
       {
         "choiceId": "B",
@@ -292,16 +292,16 @@
       },
       {
         "choiceId": "D",
-        "text": "將 S3 儲存貯體公開"
+        "text": "對整個目標儲存貯體允許 s3:*"
       }
     ],
     "correctChoiceId": "B",
     "explanation": "在僅需讀取特定前置詞的要求下,將 Resource 限定於目標前置詞、Action 限定於 s3:GetObject 才符合最小權限。",
     "choiceExplanations": {
-      "A": "錯誤。s3:* 包含讀取以外的操作,屬於權限過多。",
+      "A": "錯誤。公開會產生非必要的公開範圍。",
       "B": "正確。已限定目標範圍與操作。",
       "C": "錯誤。共用 root 使用者認證資訊應絕對避免。",
-      "D": "錯誤。公開會產生非必要的公開範圍。"
+      "D": "錯誤。s3:* 包含讀取以外的操作,屬於權限過多。"
     },
     "practicalNote": "S3 的存取控制,藉由將 Resource 限縮至前置詞單位、Action 僅限必要的操作,可實現最小權限。若需求為讓內部使用者僅讀取特定前置詞下的物件,IAM 政策中將 Resource 限定為 `arn:aws:s3:::bucket/prefix/*`、Action 僅限定為 `s3:GetObject` 即為適切設定。儲存貯體內的其他前置詞,以及寫入或刪除操作,於政策上仍維持拒絕狀態,因此可從結構上縮小誤操作或權限濫用的影響範圍。\n\n設計上,IAM 政策(身分為基礎)與 S3 儲存貯體政策(資源為基礎)的區分使用也很重要。若要將權限交給同一帳戶內的特定 IAM 使用者/角色,IAM 政策較容易處理;若是跨帳戶存取或需強制「對儲存貯體的共通方針」,則儲存貯體政策較為適合。當兩者同時存在時,需依據明確 Deny 最優先的評估邏輯來組合政策。此外,ListBucket 部分可於 `s3:ListBucket` 權限的 Condition 中限定 `s3:prefix`,即可控制使前置詞外的物件清單不被看見。\n\nSAA-C03 中,在「僅讀取特定前置詞」「以最小公開達成」的情境中,本模式經常出題。誤答則為授予 `s3:*`、共用 root 認證資訊、將儲存貯體整體公開等典型 3 種模式,分別對應「權限過多」「公開設計的誤用」「直接使用 root」,皆違反 IAM 最佳實務。",
     "officialDocs": [
@@ -350,24 +350,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon SQS"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon ElastiCache"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Amazon EFS"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "AWS CloudTrail 會記錄 AWS 帳戶內的 API 操作歷程。透過集中組織整體的證跡,即可用於稽核。",
     "choiceExplanations": {
       "A": "正確。可用於追蹤 API 操作歷程與設定變更。",
-      "B": "錯誤。SQS 為訊息佇列服務,並非以稽核日誌為主要目的的服務。",
-      "C": "錯誤。ElastiCache 為記憶體內快取服務。",
-      "D": "錯誤。EFS 為共用檔案儲存服務。"
+      "B": "錯誤。ElastiCache 為記憶體內快取服務。",
+      "C": "錯誤。EFS 為共用檔案儲存服務。",
+      "D": "錯誤。SQS 為訊息佇列服務,並非以稽核日誌為主要目的的服務。"
     },
     "practicalNote": "AWS CloudTrail 是用於記錄 AWS 帳戶內所發生的 API 操作、主控台操作、透過 SDK 進行之操作的稽核日誌服務。管理事件(如建立 IAM 使用者、啟動 EC2、刪除 S3 儲存貯體等)預設保留 90 天,若另行建立將證跡儲存至 S3 儲存貯體的 Trail,即可對應更長期的稽核要求。與 AWS Organizations 搭配並啟用 Organization Trail 後,可將組織下所有帳戶的證跡集中至單一的 S3 儲存貯體(管理帳戶/委派管理帳戶),便可從稽核用帳戶橫向確認。\n\n與類似服務的區分使用為常見考點。CloudWatch 以收集與視覺化指標與日誌(應用程式日誌、系統日誌)為主要目的;AWS Config 以資源設定的變更歷程,以及「設定是否符合合規規則」的持續評估為主要目的;CloudTrail 則以「誰在何時呼叫了哪個 API」的操作證跡為主要目的。將三者組合,以偵測(CloudWatch Logs Insights / EventBridge 規則)、評估(Config Rules)、追蹤(CloudTrail)構成的,正是企業稽核的基本形態。\n\nSAA-C03 中,在「希望集中確認多帳戶的操作歷程」「希望集中 API 呼叫證跡以供稽核」等要求下,CloudTrail(Organization Trail)為正解。容易出現混淆 CloudWatch / Config 的誤答,尤其「設定變更歷程」的措辭會讓人聯想到 Config,但若希望連同 API 呼叫證跡一併「追蹤變更」,則需要 CloudTrail。",
     "officialDocs": [
@@ -415,28 +415,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "於 EC2 的 Security Group 中允許來自 0.0.0.0/0 的 HTTP"
-      },
-      {
-        "choiceId": "B",
-        "text": "於 EC2 的 Security Group 中僅允許來自 ALB Security Group 的 HTTP"
-      },
-      {
-        "choiceId": "C",
         "text": "於 ALB 的 Security Group 中僅允許來自 EC2 的 HTTP"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "於 EC2 的 Security Group 中允許來自 0.0.0.0/0 的 HTTP"
+      },
+      {
+        "choiceId": "C",
         "text": "為 EC2 指派 Elastic IP 以便直接存取"
+      },
+      {
+        "choiceId": "D",
+        "text": "於 EC2 的 Security Group 中僅允許來自 ALB Security Group 的 HTTP"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "D",
     "explanation": "ALB 後方的 EC2 應於 EC2 端的 Security Group 中,僅允許來自 ALB Security Group 的通訊。",
     "choiceExplanations": {
-      "A": "錯誤。屬於將 EC2 直接公開於網際網路的設定。",
-      "B": "正確。可僅允許透過 ALB 的通訊。",
-      "C": "錯誤。ALB 為從用戶端接收的入口。即使僅允許從 EC2 至 ALB 的 HTTP 也無法滿足需求。",
-      "D": "錯誤。指派 Elastic IP 將提高直接存取的可能性。"
+      "A": "錯誤。ALB 為從用戶端接收的入口。即使僅允許從 EC2 至 ALB 的 HTTP 也無法滿足需求。",
+      "B": "錯誤。屬於將 EC2 直接公開於網際網路的設定。",
+      "C": "錯誤。指派 Elastic IP 將提高直接存取的可能性。",
+      "D": "正確。可僅允許透過 ALB 的通訊。"
     },
     "practicalNote": "在 Application Load Balancer(ALB)後方的 EC2,於 EC2 端 Security Group(SG)中設定為「僅允許來自 ALB 的 SG 之輸入」,即可從結構上阻擋來自網際網路的直接存取。Security Group 的來源不僅可指定 CIDR,還可透過 ID 參照另一個 SG,因此將 ALB SG 的 ID 設為允許,即使 ALB 的 IP 變動,亦不必變更 EC2 端的規則。標準組態為兩段式:ALB 端 SG 接受來自 `0.0.0.0/0` 的 80/443,而 EC2 端 SG 則接受來自 ALB SG 的 80/8080 等。\n\nSecurity Group 屬於「僅允許規則、有狀態(stateful)」,而 Network ACL(NACL)則為「可寫入允許與拒絕、無狀態(stateless)」,兩者的區分使用也是 SAA-C03 的考點。一般組態為將 EC2 配置於 VPC 的私有子網路,並將 ALB 配置於公有子網路,EC2 無需指派公有 IP 或 Elastic IP。僅以私有 IP 與透過 ALB 的健康檢查、流量轉送即可使通訊成立。\n\nSAA-C03 中,在「不希望從網際網路直接存取 ALB 後方的 EC2」的要求下,經常出題僅允許 EC2 端 SG 來自 ALB SG 的模式。誤答則排列出開放 `0.0.0.0/0`、為 EC2 指派 Elastic IP、僅允許 ALB 端 SG 來自 EC2 的反向設定等,違反將入口集中至 ALB 之意圖的模式。SG 之間的相互參照僅限於同一 VPC 內(或 VPC Peering 的對端),也是實作時需注意的重點。",
     "officialDocs": [
@@ -552,11 +552,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "將 RDS 改為 Multi-AZ 組態"
+        "text": "將 RDS 的儲存類型變更為 gp3"
       },
       {
         "choiceId": "B",
-        "text": "將 RDS 的儲存類型變更為 gp3"
+        "text": "將 RDS 改為 Multi-AZ 組態"
       },
       {
         "choiceId": "C",
@@ -567,11 +567,11 @@
         "text": "將 RDS 執行個體移至公有子網路"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "RDS Multi-AZ 透過同步複寫與自動容錯移轉,可提高可用區域故障時的可用性。",
     "choiceExplanations": {
-      "A": "正確。為高可用性的代表性 RDS 組態。",
-      "B": "錯誤。雖與儲存效能或成本有關,但無法作為可用區域故障對策。",
+      "A": "錯誤。雖與儲存效能或成本有關,但無法作為可用區域故障對策。",
+      "B": "正確。為高可用性的代表性 RDS 組態。",
       "C": "錯誤。停用備份會降低復原性。",
       "D": "錯誤。移至公有子網路並非提升可用性,反而會增加資安風險。"
     },
@@ -619,11 +619,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "以多個可用區域組態 Application Load Balancer 與 Auto Scaling Group"
+        "text": "僅啟用 CloudWatch Logs"
       },
       {
         "choiceId": "B",
-        "text": "為單一可用區域的 EC2 執行個體指派 Elastic IP"
+        "text": "以多個可用區域組態 Application Load Balancer 與 Auto Scaling Group"
       },
       {
         "choiceId": "C",
@@ -631,16 +631,16 @@
       },
       {
         "choiceId": "D",
-        "text": "僅啟用 CloudWatch Logs"
+        "text": "為單一可用區域的 EC2 執行個體指派 Elastic IP"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "ALB 會透過健康檢查將流量分配給正常的目標。將 Auto Scaling Group 擴展至多個可用區域,即可構成對執行個體故障與可用區域故障皆具有耐受性的組態。",
     "choiceExplanations": {
-      "A": "正確。為高可用性 Web 應用程式的基本組態。",
-      "B": "錯誤。單一可用區域組態於可用區域故障時較為脆弱。",
+      "A": "錯誤。僅靠日誌收集無法實現流量控制或高可用性。",
+      "B": "正確。為高可用性 Web 應用程式的基本組態。",
       "C": "錯誤。S3 雖可用於儲存靜態檔案,但並非可直接取代 EC2 上動態 Web 應用程式的選項。",
-      "D": "錯誤。僅靠日誌收集無法實現流量控制或高可用性。"
+      "D": "錯誤。單一可用區域組態於可用區域故障時較為脆弱。"
     },
     "practicalNote": "將 Application Load Balancer(ALB)與 Auto Scaling Group(ASG)展開於多個可用區域的組態,是 AWS 中高可用性 Web 應用程式的基本模式。ALB 會依據設定的健康檢查(如 HTTP 回應碼等),向已登錄於目標群組的 EC2 執行個體分配流量。健康檢查失敗的執行個體會自動從目標中移除,並於復原後再次納入。將 ASG 以多個可用區域組態,即使於可用區域故障時,其他可用區域的執行個體仍會保留,可避免整體服務停止。\n\nASG 具備依據指標(CPU 使用率、請求數、自訂指標等)動態調整執行個體數量的擴展政策(Target Tracking、Step Scaling、Predictive Scaling)。此外,可於 Launch Template 中定義執行個體啟動時的使用者資料、IAM 角色、AMI 等,與 Immutable Infrastructure 式的運作搭配良好。ALB 於第 7 層支援路徑/主機為基礎的路由,並支援 HTTP/HTTPS / WebSocket / gRPC;而 Network Load Balancer(第 4 層,超低延遲)、CloudFront(CDN,邊緣傳遞)則依用途區分使用。\n\nSAA-C03 中,在「分散於多個可用區域」「不將流量送至故障執行個體」的要求下,ALB + ASG(Multi-AZ)為正解。單一可用區域 + Elastic IP 於可用區域故障時較為脆弱、以 S3 取代 EC2 的選項無法承擔動態處理、僅有 CloudWatch Logs 無法進行流量控制,誤答模式也容易整理。ALB / NLB / CloudFront 的區分使用、ASG 的擴展政策設計、Launch Template 與 Launch Configuration 的差異等,在較高階的考試會更深入考問。",
     "officialDocs": [
@@ -689,28 +689,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "由 API 同步呼叫庫存更新 Lambda"
-      },
-      {
-        "choiceId": "B",
         "text": "由 API 將訊息送至 SQS 佇列,庫存更新 Lambda 從 SQS 取出處理"
       },
       {
+        "choiceId": "B",
+        "text": "僅以 API Gateway 的 CORS 設定加以控制"
+      },
+      {
         "choiceId": "C",
-        "text": "由 API 將訂單內容輸出至 CloudWatch Logs 即可"
+        "text": "由 API 同步呼叫庫存更新 Lambda"
       },
       {
         "choiceId": "D",
-        "text": "僅以 API Gateway 的 CORS 設定加以控制"
+        "text": "由 API 將訂單內容輸出至 CloudWatch Logs 即可"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "A",
     "explanation": "使用 SQS 可讓訂單受理與庫存更新非同步且鬆耦合。即使處理端暫時停擺,訊息仍能保留於佇列中。",
     "choiceExplanations": {
-      "A": "同步呼叫時,庫存更新端的故障容易影響訂單受理。",
-      "B": "正解。SQS 適合非同步處理與緩衝。",
-      "C": "CloudWatch Logs 並非處理佇列。",
-      "D": "CORS 為瀏覽器存取控制,並非提升非同步處理可靠性的功能。"
+      "A": "正解。SQS 適合非同步處理與緩衝。",
+      "B": "CORS 為瀏覽器存取控制,並非提升非同步處理可靠性的功能。",
+      "C": "同步呼叫時,庫存更新端的故障容易影響訂單受理。",
+      "D": "CloudWatch Logs 並非處理佇列。"
     },
     "relatedServices": [
       "sqs",
@@ -812,28 +812,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon Aurora Global Database"
-      },
-      {
-        "choiceId": "B",
-        "text": "單一 AZ 的 RDS MySQL"
-      },
-      {
-        "choiceId": "C",
         "text": "僅手動取得 Amazon EBS 快照"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "Amazon SQS Standard Queue"
+      },
+      {
+        "choiceId": "C",
+        "text": "單一 AZ 的 RDS MySQL"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon Aurora Global Database"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Aurora Global Database 為全球分散式應用提供多區域組態與低延遲複寫。",
     "choiceExplanations": {
-      "A": "正解。適合跨區域 DR 與全球讀取。",
-      "B": "單一 AZ 對區域故障或 AZ 故障較為脆弱。",
-      "C": "僅靠手動快照難以滿足低 RPO/RTO 要求。",
-      "D": "SQS 為訊息佇列,並非關聯式資料庫的跨區域複寫機制。"
+      "A": "僅靠手動快照難以滿足低 RPO/RTO 要求。",
+      "B": "SQS 為訊息佇列,並非關聯式資料庫的跨區域複寫機制。",
+      "C": "單一 AZ 對區域故障或 AZ 故障較為脆弱。",
+      "D": "正解。適合跨區域 DR 與全球讀取。"
     },
     "relatedServices": [
       "rds",
@@ -879,24 +879,24 @@
       },
       {
         "choiceId": "B",
-        "text": "務必將 Lambda 的記憶體設為最大值"
+        "text": "將 CloudFront 的快取 TTL 設為 0"
       },
       {
         "choiceId": "C",
-        "text": "將 Lambda 部署於公用子網路"
+        "text": "務必將 Lambda 的記憶體設為最大值"
       },
       {
         "choiceId": "D",
-        "text": "將 CloudFront 的快取 TTL 設為 0"
+        "text": "將 Lambda 部署於公用子網路"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "非同步 Lambda 的失敗事件可透過 DLQ 或 Lambda Destinations 傳送至 SQS / SNS / EventBridge 等,便於後續調查與重新處理。",
     "choiceExplanations": {
       "A": "正解。可作為失敗事件的隔離保存目的地。",
-      "B": "增加記憶體有助於效能改善,但與保存失敗事件無關。",
-      "C": "屬於網路組態的議題,與保存失敗事件無關。",
-      "D": "CloudFront 的 TTL 與 Lambda 失敗事件保存無關。"
+      "B": "CloudFront 的 TTL 與 Lambda 失敗事件保存無關。",
+      "C": "增加記憶體有助於效能改善,但與保存失敗事件無關。",
+      "D": "屬於網路組態的議題,與保存失敗事件無關。"
     },
     "relatedServices": [
       "lambda",
@@ -945,24 +945,24 @@
       },
       {
         "choiceId": "B",
-        "text": "DynamoDB Accelerator"
+        "text": "將 Provisioned Capacity 設為最大值"
       },
       {
         "choiceId": "C",
-        "text": "僅啟用 DynamoDB Streams"
+        "text": "DynamoDB Accelerator"
       },
       {
         "choiceId": "D",
-        "text": "將 Provisioned Capacity 設為最大值"
+        "text": "僅啟用 DynamoDB Streams"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "啟用 DynamoDB 的 Point-in-time Recovery 後,可將資料表還原至過去特定時點。",
     "choiceExplanations": {
       "A": "正解。用於從誤操作中復原。",
-      "B": "DAX 為讀取快取,並非還原功能。",
-      "C": "Streams 用於擷取變更事件,僅靠其本身無法還原至任意時點。",
-      "D": "容量設定並非還原功能。"
+      "B": "容量設定並非還原功能。",
+      "C": "DAX 為讀取快取,並非還原功能。",
+      "D": "Streams 用於擷取變更事件,僅靠其本身無法還原至任意時點。"
     },
     "relatedServices": [
       "dynamodb"
@@ -1069,24 +1069,24 @@
       },
       {
         "choiceId": "B",
-        "text": "啟用 Multi-AZ,並將讀取查詢送至備用 DB"
-      },
-      {
-        "choiceId": "C",
         "text": "停用 RDS 的自動備份"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "將 DB 移至公用子網路"
+      },
+      {
+        "choiceId": "D",
+        "text": "啟用 Multi-AZ,並將讀取查詢送至備用 DB"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "Read Replica 用於讀取擴展。由應用端將讀取分流至 Replica,可降低主要 DB 的讀取負載。",
     "choiceExplanations": {
       "A": "正解。適合讀取負載分散。",
-      "B": "RDS Multi-AZ 的備用 DB 通常不可作讀取用途。",
-      "C": "停用備份並非效能改善方案,反而降低復原能力。",
-      "D": "移至公用子網路並非效能改善,且會增加安全風險。"
+      "B": "停用備份並非效能改善方案,反而降低復原能力。",
+      "C": "移至公用子網路並非效能改善,且會增加安全風險。",
+      "D": "RDS Multi-AZ 的備用 DB 通常不可作讀取用途。"
     },
     "relatedServices": [
       "rds"
@@ -1128,28 +1128,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "DynamoDB Accelerator"
-      },
-      {
-        "choiceId": "B",
-        "text": "Amazon EBS"
-      },
-      {
-        "choiceId": "C",
         "text": "AWS CloudFormation"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "AWS Budgets"
+      },
+      {
+        "choiceId": "C",
+        "text": "DynamoDB Accelerator"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon EBS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "DynamoDB Accelerator 是 DynamoDB 專用的記憶體內快取,可降低讀取延遲。",
     "choiceExplanations": {
-      "A": "正解。作為 DynamoDB 的讀取快取使用。",
-      "B": "EBS 為提供給 EC2 的區塊儲存。",
-      "C": "CloudFormation 為 IaC 服務。",
-      "D": "Budgets 為計費監控服務。"
+      "A": "CloudFormation 為 IaC 服務。",
+      "B": "Budgets 為計費監控服務。",
+      "C": "正解。作為 DynamoDB 的讀取快取使用。",
+      "D": "EBS 為提供給 EC2 的區塊儲存。"
     },
     "relatedServices": [
       "dynamodb"
@@ -1253,11 +1253,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon EFS"
+        "text": "Amazon EBS"
       },
       {
         "choiceId": "B",
-        "text": "Amazon EBS"
+        "text": "Amazon S3 Glacier Deep Archive"
       },
       {
         "choiceId": "C",
@@ -1265,16 +1265,16 @@
       },
       {
         "choiceId": "D",
-        "text": "Amazon S3 Glacier Deep Archive"
+        "text": "Amazon EFS"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Amazon EFS 為可由多台 EC2 共用存取的受管 NFS 檔案系統,適合來自多個 AZ 的共用檔案存取。",
     "choiceExplanations": {
-      "A": "正解。適合共用檔案儲存。",
-      "B": "EBS 基本上為附加於單一 AZ 內 EC2 的區塊儲存。",
+      "A": "EBS 基本上為附加於單一 AZ 內 EC2 的區塊儲存。",
+      "B": "Glacier Deep Archive 適用於長期封存,不適合頻繁的共用存取。",
       "C": "Instance Store 為臨時儲存,並非共用檔案系統。",
-      "D": "Glacier Deep Archive 適用於長期封存,不適合頻繁的共用存取。"
+      "D": "正解。適合共用檔案儲存。"
     },
     "relatedServices": [
       "efs",
@@ -1324,24 +1324,24 @@
       },
       {
         "choiceId": "B",
-        "text": "Amazon SQS FIFO Queue"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon EFS"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "AWS Config"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS FIFO Queue"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "SQS Standard Queue 適合高吞吐量的訊息處理。當不需嚴格保證順序時最為合適。",
     "choiceExplanations": {
       "A": "正解。適合高吞吐量的非同步處理。",
-      "B": "FIFO Queue 用於需要保證順序的情境,但相較於 Standard Queue,要求較為嚴苛。",
-      "C": "EFS 為共用檔案儲存。",
-      "D": "AWS Config 為資源設定的記錄與評估服務。"
+      "B": "EFS 為共用檔案儲存。",
+      "C": "AWS Config 為資源設定的記錄與評估服務。",
+      "D": "FIFO Queue 用於需要保證順序的情境,但相較於 Standard Queue,要求較為嚴苛。"
     },
     "relatedServices": [
       "sqs"
@@ -1387,7 +1387,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "增加 Lambda 的記憶體大小"
+        "text": "停用 CloudWatch Logs"
       },
       {
         "choiceId": "B",
@@ -1395,19 +1395,19 @@
       },
       {
         "choiceId": "C",
-        "text": "停用 CloudWatch Logs"
+        "text": "增加 Lambda 的記憶體大小"
       },
       {
         "choiceId": "D",
         "text": "務必將 Lambda 連接至 VPC"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "Lambda 在增加記憶體大小時,所分配的 CPU 效能亦會隨之提升。對於 CPU 負載高的處理,透過記憶體調整可能縮短處理時間。",
     "choiceExplanations": {
-      "A": "正解。為 Lambda 效能調整時最先確認的設定。",
+      "A": "停用日誌並非根本性的 CPU 效能改善方法。",
       "B": "變更函式名稱不會影響效能。",
-      "C": "停用日誌並非根本性的 CPU 效能改善方法。",
+      "C": "正解。為 Lambda 效能調整時最先確認的設定。",
       "D": "VPC 連接僅在必要時使用,並非為提升效能而必須連接。"
     },
     "relatedServices": [
@@ -1461,11 +1461,11 @@
       },
       {
         "choiceId": "C",
-        "text": "S3 Object Lambda"
+        "text": "變更 S3 的儲存貯體名稱"
       },
       {
         "choiceId": "D",
-        "text": "變更 S3 的儲存貯體名稱"
+        "text": "S3 Object Lambda"
       }
     ],
     "correctChoiceId": "A",
@@ -1473,8 +1473,8 @@
     "choiceExplanations": {
       "A": "正解。用於藉由儲存類別移轉達成成本最佳化。",
       "B": "Transfer Acceleration 為上傳加速功能,並非用於降低保存成本。",
-      "C": "Object Lambda 為取得物件時進行資料轉換的功能。",
-      "D": "變更儲存貯體名稱並非成本最佳化策略。"
+      "C": "變更儲存貯體名稱並非成本最佳化策略。",
+      "D": "Object Lambda 為取得物件時進行資料轉換的功能。"
     },
     "relatedServices": [
       "s3"
@@ -1520,7 +1520,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Reserved Instances 或 Savings Plans"
+        "text": "新增 Elastic IP"
       },
       {
         "choiceId": "B",
@@ -1532,16 +1532,16 @@
       },
       {
         "choiceId": "D",
-        "text": "新增 Elastic IP"
+        "text": "Reserved Instances 或 Savings Plans"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "對於可預期長期穩定使用的工作負載,透過 Reserved Instances 或 Savings Plans 可較隨需價格降低成本。",
     "choiceExplanations": {
-      "A": "正解。為適合長期使用的折扣選項。",
+      "A": "新增 Elastic IP 並非降低成本的策略。",
       "B": "Spot Instances 可能被中斷,對於需要常時運行的穩定工作負載,單獨使用可能不適合。",
       "C": "執行個體儲存為暫時性儲存,並非購買選項。",
-      "D": "新增 Elastic IP 並非降低成本的策略。"
+      "D": "正解。為適合長期使用的折扣選項。"
     },
     "relatedServices": [
       "ec2"
@@ -1585,28 +1585,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "使用 Spot Instances"
+        "text": "新增 NAT Gateway"
       },
       {
         "choiceId": "B",
-        "text": "僅使用 Dedicated Hosts"
-      },
-      {
-        "choiceId": "C",
         "text": "始終使用最大規格的隨需執行個體"
       },
       {
+        "choiceId": "C",
+        "text": "僅使用 Dedicated Hosts"
+      },
+      {
         "choiceId": "D",
-        "text": "新增 NAT Gateway"
+        "text": "使用 Spot Instances"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "Spot Instances 適合可容忍中斷的處理,相較於隨需可大幅降低成本。",
     "choiceExplanations": {
-      "A": "正解。適合可中斷的批次處理。",
-      "B": "Dedicated Hosts 用於需要專用主機的授權需求等情境,並非以成本削減為目的。",
-      "C": "始終使用最大規格的隨需執行個體會使成本提升。",
-      "D": "新增 NAT Gateway 並非降低批次處理 EC2 成本的策略。"
+      "A": "新增 NAT Gateway 並非降低批次處理 EC2 成本的策略。",
+      "B": "始終使用最大規格的隨需執行個體會使成本提升。",
+      "C": "Dedicated Hosts 用於需要專用主機的授權需求等情境,並非以成本削減為目的。",
+      "D": "正解。適合可中斷的批次處理。"
     },
     "relatedServices": [
       "ec2",
@@ -1651,28 +1651,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "建立 DynamoDB Gateway VPC Endpoint"
-      },
-      {
-        "choiceId": "B",
         "text": "在各可用區域建立 NAT Gateway"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "將 Internet Gateway 直接關聯至 Lambda"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "將 DynamoDB 資料表部署於公用子網路"
+      },
+      {
+        "choiceId": "D",
+        "text": "建立 DynamoDB Gateway VPC Endpoint"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "使用 DynamoDB Gateway VPC Endpoint 可讓 VPC 內資源以私有方式存取 DynamoDB,並可避免 NAT Gateway 的固定費用。",
     "choiceExplanations": {
-      "A": "正解。存取 DynamoDB 時可免除 NAT Gateway。",
-      "B": "NAT Gateway 會產生固定費用。",
-      "C": "Lambda 無法直接關聯 Internet Gateway。",
-      "D": "DynamoDB 並非部署於 VPC 內子網路的服務。"
+      "A": "NAT Gateway 會產生固定費用。",
+      "B": "Lambda 無法直接關聯 Internet Gateway。",
+      "C": "DynamoDB 並非部署於 VPC 內子網路的服務。",
+      "D": "正解。存取 DynamoDB 時可免除 NAT Gateway。"
     },
     "relatedServices": [
       "lambda",
@@ -1719,28 +1719,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "S3 Intelligent-Tiering"
-      },
-      {
-        "choiceId": "B",
         "text": "持續僅使用 S3 Standard"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "僅使用 S3 Glacier Deep Archive"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "Amazon EBS gp3"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 Intelligent-Tiering"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "S3 Intelligent-Tiering 會依存取模式自動移轉階層,適合存取頻率難以預測的資料之成本最佳化。",
     "choiceExplanations": {
-      "A": "正解。在存取模式不明時最為有效。",
-      "B": "低頻存取資料的保存成本容易變高。",
-      "C": "Deep Archive 取出需耗時較久,不適合頻繁存取的資料。",
-      "D": "EBS gp3 為適用於 EC2 的區塊儲存,並非 S3 物件的儲存類別。"
+      "A": "低頻存取資料的保存成本容易變高。",
+      "B": "Deep Archive 取出需耗時較久,不適合頻繁存取的資料。",
+      "C": "EBS gp3 為適用於 EC2 的區塊儲存,並非 S3 物件的儲存類別。",
+      "D": "正解。在存取模式不明時最為有效。"
     },
     "relatedServices": [
       "s3"
@@ -1786,11 +1786,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "S3 + CloudFront"
+        "text": "EC2 + RDS + NAT Gateway"
       },
       {
         "choiceId": "B",
-        "text": "EC2 + RDS + NAT Gateway"
+        "text": "S3 + CloudFront"
       },
       {
         "choiceId": "C",
@@ -1801,11 +1801,11 @@
         "text": "Redshift + SageMaker"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "將靜態網站置於 S3 並透過 CloudFront 發布的架構,成本低且運維負擔亦小,並可避免常時運行的伺服器。",
     "choiceExplanations": {
-      "A": "正解。為靜態網站發布的低成本架構。",
-      "B": "EC2、RDS、NAT Gateway 容易產生固定費用,對靜態網站而言過於繁複。",
+      "A": "EC2、RDS、NAT Gateway 容易產生固定費用,對靜態網站而言過於繁複。",
+      "B": "正解。為靜態網站發布的低成本架構。",
       "C": "EKS 對個人開發 MVP 而言,運維負擔與成本皆過重。",
       "D": "Redshift 與 SageMaker 適用於分析與機器學習,並非靜態網站發布所需。"
     },
@@ -1855,28 +1855,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "為 CloudWatch Logs 的日誌群組設定 Retention period"
-      },
-      {
-        "choiceId": "B",
         "text": "將 CloudWatch Logs 以 S3 儲存貯體公開"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "將 Lambda 的逾時設為最大值"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "停用 API Gateway 的 CORS"
+      },
+      {
+        "choiceId": "D",
+        "text": "為 CloudWatch Logs 的日誌群組設定 Retention period"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "設定 CloudWatch Logs 的 Retention period 可自動刪除超過指定期間的日誌,有助於抑制日誌保存成本。",
     "choiceExplanations": {
-      "A": "正解。可控制日誌保存期間。",
-      "B": "公開日誌的設計於安全性方面具危險性。",
-      "C": "將 Lambda 逾時設為最大值,並不能降低日誌保存成本。",
-      "D": "CORS 設定與日誌保存無關。"
+      "A": "公開日誌的設計於安全性方面具危險性。",
+      "B": "將 Lambda 逾時設為最大值,並不能降低日誌保存成本。",
+      "C": "CORS 設定與日誌保存無關。",
+      "D": "正解。可控制日誌保存期間。"
     },
     "relatedServices": [
       "cloudwatch",
@@ -1927,7 +1927,7 @@
       },
       {
         "choiceId": "B",
-        "text": "AWS CloudTrail"
+        "text": "Amazon Route 53 Resolver"
       },
       {
         "choiceId": "C",
@@ -1935,16 +1935,16 @@
       },
       {
         "choiceId": "D",
-        "text": "Amazon Route 53 Resolver"
+        "text": "AWS CloudTrail"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "透過 AWS Budgets 可依預算金額或預測超支設定郵件通知。在個人開發中為防止計費事故的基本設定。",
     "choiceExplanations": {
       "A": "正解。用於成本預算與警示。",
-      "B": "CloudTrail 用於 API 操作歷程的稽核。",
+      "B": "Route 53 Resolver 為 DNS 名稱解析相關服務。",
       "C": "EFS 為共用檔案儲存。",
-      "D": "Route 53 Resolver 為 DNS 名稱解析相關服務。"
+      "D": "CloudTrail 用於 API 操作歷程的稽核。"
     },
     "relatedServices": [
       "aws-budgets",
@@ -1989,28 +1989,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "在 ALB 的安全群組中,持續新增拒絕攻擊來源 IP 位址的傳入規則"
+        "text": "在子網路的網路 ACL 中,新增拒絕含有攻擊字串之請求的傳入規則"
       },
       {
         "choiceId": "B",
-        "text": "簽訂 AWS Shield Advanced,以 DDoS 緩解功能阻擋含有攻擊的請求"
-      },
-      {
-        "choiceId": "C",
         "text": "將 AWS WAF 的 Web ACL 關聯至 ALB,並套用 AWS 受管規則(Core rule set / SQL database)"
       },
       {
+        "choiceId": "C",
+        "text": "在 ALB 的安全群組中,持續新增拒絕攻擊來源 IP 位址的傳入規則"
+      },
+      {
         "choiceId": "D",
-        "text": "在子網路的網路 ACL 中,新增拒絕含有攻擊字串之請求的傳入規則"
+        "text": "簽訂 AWS Shield Advanced,以 DDoS 緩解功能阻擋含有攻擊的請求"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "SQL 注入與 XSS 若不檢查 HTTP 請求的內容(第 7 層)便無法判定。將 AWS WAF 的 Web ACL 關聯至 ALB,並套用由 AWS 持續更新的受管規則群組,即可在不自行維護特徵碼的情況下阻擋已知的攻擊模式。",
     "choiceExplanations": {
-      "A": "安全群組僅檢視來源 IP 或連接埠等第 3/4 層的資訊,因此無法判定請求內容中的攻擊字串。此外,安全群組本身並不存在拒絕規則,僅由允許規則構成。",
-      "B": "AWS Shield 的目的為緩解以第 3/4 層為主的 DDoS 攻擊,並不進行 SQL 注入或 XSS 這類酬載檢查。AWS Shield Advanced 的合約雖包含 AWS WAF 的使用費,但實際檢查並封鎖請求的仍是 WAF 的規則。",
-      "C": "正解。將 Web ACL 關聯至 ALB 並套用 AWS 受管規則群組,即可將第 7 層的攻擊模式於到達應用程式之前阻擋。",
-      "D": "網路 ACL 為於子網路邊界評估 IP 位址、通訊協定、連接埠的無狀態篩選器,無法檢視 HTTP 請求的內容。"
+      "A": "網路 ACL 為於子網路邊界評估 IP 位址、通訊協定、連接埠的無狀態篩選器,無法檢視 HTTP 請求的內容。",
+      "B": "正解。將 Web ACL 關聯至 ALB 並套用 AWS 受管規則群組,即可將第 7 層的攻擊模式於到達應用程式之前阻擋。",
+      "C": "安全群組僅檢視來源 IP 或連接埠等第 3/4 層的資訊,因此無法判定請求內容中的攻擊字串。此外,安全群組本身並不存在拒絕規則,僅由允許規則構成。",
+      "D": "AWS Shield 的目的為緩解以第 3/4 層為主的 DDoS 攻擊,並不進行 SQL 注入或 XSS 這類酬載檢查。AWS Shield Advanced 的合約雖包含 AWS WAF 的使用費,但實際檢查並封鎖請求的仍是 WAF 的規則。"
     },
     "relatedServices": [
       "waf",
@@ -2060,28 +2060,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "建立供應商專用的 IAM 使用者並附加 ReadOnlyAccess,將發行的存取金鑰共用給供應商並每 90 天輪替一次"
-      },
-      {
-        "choiceId": "B",
-        "text": "建立僅信任供應商 AWS 帳戶 ID 的 IAM 角色,並附加 ReadOnlyAccess"
-      },
-      {
-        "choiceId": "C",
         "text": "為每個目標資源新增以資源為基礎的政策,允許供應商的 AWS 帳戶進行讀取"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "建立供應商專用的 IAM 使用者並附加 ReadOnlyAccess,將發行的存取金鑰共用給供應商並每 90 天輪替一次"
+      },
+      {
+        "choiceId": "C",
         "text": "建立信任供應商 AWS 帳戶的 IAM 角色,並於信任政策的 Condition 子句中要求 sts:ExternalId 為供應商發行的唯一值"
+      },
+      {
+        "choiceId": "D",
+        "text": "建立僅信任供應商 AWS 帳戶 ID 的 IAM 角色,並附加 ReadOnlyAccess"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "C",
     "explanation": "在對第三方的跨帳戶存取中,於 IAM 角色的信任政策加入 sts:ExternalId 的 Condition 子句為 AWS 的建議做法。不知道 External ID 的第三方即使透過供應商的帳戶也無法擔任該角色,因此可防止混淆代理人問題。",
     "choiceExplanations": {
-      "A": "將長期存取金鑰交給外部組織的方式,一旦外洩影響範圍極大,失效處理也必須手動進行。即使進行輪替,跨帳戶仍建議採用透過 IAM 角色取得的臨時憑證。",
-      "B": "使用角色這點正確,但若沒有 External ID,便無法防止供應商將其為其他客戶持有的權限張冠李戴,而對自家資源進行操作的混淆代理人問題,不符合需求。",
-      "C": "可透過以資源為基礎的政策允許的僅限 S3 儲存貯體或 KMS 金鑰等部分服務,且每當讀取對象增加就必須逐一新增,營運容易崩潰,亦不具備 External ID 的保護。",
-      "D": "正解。將供應商發行的 External ID 設為信任政策 Condition 的必要條件,即可從結構上防止混淆代理人問題。"
+      "A": "可透過以資源為基礎的政策允許的僅限 S3 儲存貯體或 KMS 金鑰等部分服務,且每當讀取對象增加就必須逐一新增,營運容易崩潰,亦不具備 External ID 的保護。",
+      "B": "將長期存取金鑰交給外部組織的方式,一旦外洩影響範圍極大,失效處理也必須手動進行。即使進行輪替,跨帳戶仍建議採用透過 IAM 角色取得的臨時憑證。",
+      "C": "正解。將供應商發行的 External ID 設為信任政策 Condition 的必要條件,即可從結構上防止混淆代理人問題。",
+      "D": "使用角色這點正確,但若沒有 External ID,便無法防止供應商將其為其他客戶持有的權限張冠李戴,而對自家資源進行操作的混淆代理人問題,不符合需求。"
     },
     "relatedServices": [
       "iam"
@@ -2128,28 +2128,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "以 Amazon Cognito 使用者集區管理使用者,並以 API Gateway 的 Cognito 授權方驗證所發行的權杖"
-      },
-      {
-        "choiceId": "B",
         "text": "為每位終端使用者建立 IAM 使用者,在應用程式中嵌入存取金鑰並以 SigV4 簽章呼叫 API"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "以 AWS IAM Identity Center 管理終端使用者,並將 SAML 判斷提示串接至應用程式"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "將使用者名稱與密碼的雜湊值儲存於 AWS Secrets Manager,並以 Lambda 自行實作認證處理"
+      },
+      {
+        "choiceId": "D",
+        "text": "以 Amazon Cognito 使用者集區管理使用者,並以 API Gateway 的 Cognito 授權方驗證所發行的權杖"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "D",
     "explanation": "應用程式的終端使用者認證適合採用 Amazon Cognito 使用者集區。其以受管方式提供註冊、登入、MFA 與外部身分提供者整合,所發行的 ID 權杖與存取權杖可直接由 API Gateway 的 Cognito 授權方驗證。",
     "choiceExplanations": {
-      "A": "正解。由使用者集區擔任使用者目錄與權杖發行,並由 API Gateway 的 Cognito 授權方負責權杖驗證,因此無須自行實作認證處理。",
-      "B": "IAM 為供操作 AWS 資源的主體(公司內部人員、應用程式)使用的機制,並非用來將應用程式的終端使用者逐一以 IAM 使用者管理的設計。將長期存取金鑰嵌入應用程式這點也不安全。",
-      "C": "IAM Identity Center 適用於員工等勞動力的單一登入,並未設想一般消費者的自助式註冊。",
-      "D": "自行實作認證處理,等同於必須自製密碼保管、MFA、權杖失效、外部 IdP 整合等全部功能。Secrets Manager 的用途為保管應用程式使用的憑證,並非使用者目錄。"
+      "A": "IAM 為供操作 AWS 資源的主體(公司內部人員、應用程式)使用的機制,並非用來將應用程式的終端使用者逐一以 IAM 使用者管理的設計。將長期存取金鑰嵌入應用程式這點也不安全。",
+      "B": "IAM Identity Center 適用於員工等勞動力的單一登入,並未設想一般消費者的自助式註冊。",
+      "C": "自行實作認證處理,等同於必須自製密碼保管、MFA、權杖失效、外部 IdP 整合等全部功能。Secrets Manager 的用途為保管應用程式使用的憑證,並非使用者目錄。",
+      "D": "正解。由使用者集區擔任使用者目錄與權杖發行,並由 API Gateway 的 Cognito 授權方負責權杖驗證,因此無須自行實作認證處理。"
     },
     "relatedServices": [
       "cognito",
@@ -2271,11 +2271,11 @@
       },
       {
         "choiceId": "B",
-        "text": "以 Amazon Inspector 掃描 EC2 執行個體與 ECR 映像的弱點"
+        "text": "啟用 AWS CloudTrail 的追蹤,並將日誌儲存至 S3 儲存貯體"
       },
       {
         "choiceId": "C",
-        "text": "啟用 AWS CloudTrail 的追蹤,並將日誌儲存至 S3 儲存貯體"
+        "text": "以 Amazon Inspector 掃描 EC2 執行個體與 ECR 映像的弱點"
       },
       {
         "choiceId": "D",
@@ -2286,8 +2286,8 @@
     "explanation": "Amazon GuardDuty 會由 AWS 端自動擷取 CloudTrail 事件、VPC 流量日誌、Route 53 DNS 查詢日誌等,並以威脅情資與機器學習偵測可疑行為。不需要導入代理程式,也不需要建置日誌平台,只要啟用即可開始偵測。",
     "choiceExplanations": {
       "A": "AWS Config 進行的是資源設定變更歷程的記錄,以及設定是否符合所定規則的評估,屬於設定合規的領域,通訊內容或憑證不當使用等威脅的偵測並非其對象。",
-      "B": "Amazon Inspector 為持續掃描軟體弱點與未預期網路可達性的弱點管理服務。雖能找出已知的 CVE,但無法偵測實際正在進行中的可疑通訊或憑證濫用。",
-      "C": "CloudTrail 僅記錄 API 操作,不具備從該記錄中判定威脅的功能。若要偵測則另需分析機制。GuardDuty 即將此 CloudTrail 日誌作為輸入之一加以利用。",
+      "B": "CloudTrail 僅記錄 API 操作,不具備從該記錄中判定威脅的功能。若要偵測則另需分析機制。GuardDuty 即將此 CloudTrail 日誌作為輸入之一加以利用。",
+      "C": "Amazon Inspector 為持續掃描軟體弱點與未預期網路可達性的弱點管理服務。雖能找出已知的 CVE,但無法偵測實際正在進行中的可疑通訊或憑證濫用。",
       "D": "正解。只要啟用即可開始日誌擷取與威脅偵測,偵測結果可經由 Security Hub 或 EventBridge 串接至通知與自動因應。"
     },
     "relatedServices": [
@@ -2408,27 +2408,27 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "在關聯至該子網路的網路 ACL 中,以小於既有允許規則的規則編號新增拒絕該範圍的傳入規則"
-      },
-      {
-        "choiceId": "B",
         "text": "在各執行個體的安全群組中,新增拒絕該範圍的傳入規則"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "以安全群組的傳出規則拒絕送往該範圍的通訊"
+      },
+      {
+        "choiceId": "C",
+        "text": "在關聯至該子網路的網路 ACL 中,以小於既有允許規則的規則編號新增拒絕該範圍的傳入規則"
       },
       {
         "choiceId": "D",
         "text": "在子網路的路由表中,新增送往該範圍的黑洞路由"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "由於安全群組不存在拒絕規則,若要封鎖特定來源則須使用網路 ACL。網路 ACL 依規則編號由小至大評估,並套用最先符合的規則,因此拒絕規則必須設定為小於既有允許規則的編號。",
     "choiceExplanations": {
-      "A": "正解。網路 ACL 以子網路為單位套用,因此可對子網路內的所有執行個體一併生效。規則編號的順序即為判斷的關鍵。",
-      "B": "安全群組僅由允許規則構成,無法撰寫拒絕規則,屬於「未明確允許者即無法通過」的白名單型機制。",
-      "C": "即使限制傳出,也無法阻止從外部到達的傳入嘗試本身。此外,安全群組本身也不存在拒絕規則。",
+      "A": "安全群組僅由允許規則構成,無法撰寫拒絕規則,屬於「未明確允許者即無法通過」的白名單型機制。",
+      "B": "即使限制傳出,也無法阻止從外部到達的傳入嘗試本身。此外,安全群組本身也不存在拒絕規則。",
+      "C": "正解。網路 ACL 以子網路為單位套用,因此可對子網路內的所有執行個體一併生效。規則編號的順序即為判斷的關鍵。",
       "D": "路由表是決定各目的地網路的轉送目標,無法依來源位址進行篩選,也不是在到達前阻斷子網路內通訊的機制。"
     },
     "relatedServices": [
@@ -2477,28 +2477,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "以 Route 53 的加權路由將東京設為權重 100、大阪設為權重 0,偵測到故障時手動對調權重"
+        "text": "建立橫跨東京與大阪的 Auto Scaling 群組,於東京端異常時在大阪啟動執行個體"
       },
       {
         "choiceId": "B",
-        "text": "以 Route 53 的容錯移轉路由政策將東京設為主要、大阪設為次要,並為主要記錄關聯健康檢查"
+        "text": "以 Route 53 的加權路由將東京設為權重 100、大阪設為權重 0,偵測到故障時手動對調權重"
       },
       {
         "choiceId": "C",
-        "text": "在 Application Load Balancer 的目標群組中同時註冊東京與大阪的 EC2 執行個體,並以健康檢查分流"
+        "text": "以 Route 53 的容錯移轉路由政策將東京設為主要、大阪設為次要,並為主要記錄關聯健康檢查"
       },
       {
         "choiceId": "D",
-        "text": "建立橫跨東京與大阪的 Auto Scaling 群組,於東京端異常時在大阪啟動執行個體"
+        "text": "在 Application Load Balancer 的目標群組中同時註冊東京與大阪的 EC2 執行個體,並以健康檢查分流"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "C",
     "explanation": "若要在維持相同網域名稱的情況下於區域間自動切換,應結合 Route 53 的容錯移轉路由政策與健康檢查。當主要的健康檢查失敗時,DNS 回應會自動切換至次要的端點。",
     "choiceExplanations": {
-      "A": "加權路由本身雖為有效功能,但既然權重的變更為手動,便不符合「自動切換」的需求。從故障偵測到切換的時間也取決於人員的反應速度。",
-      "B": "正解。可藉由健康檢查的失敗次數與間隔調整切換速度,並將 DNS 記錄的 TTL 設得較短以加快生效。",
-      "C": "Application Load Balancer 本身就是東京區域內的資源,因此東京發生區域規模的故障時 ALB 也會一併無法使用,不構成跨區域的切換。若使用 IP 位址類型的目標群組搭配跨區域 VPC 對等互連,確實可以將其他區域的執行個體註冊為目標(執行個體 ID 類型的目標則僅限於負載平衡器所在的 VPC),但 ALB 依賴單一區域這一點並未改變。",
-      "D": "Auto Scaling 群組雖可橫跨單一區域內的多個可用區域,但無法橫跨區域。"
+      "A": "Auto Scaling 群組雖可橫跨單一區域內的多個可用區域,但無法橫跨區域。",
+      "B": "加權路由本身雖為有效功能,但既然權重的變更為手動,便不符合「自動切換」的需求。從故障偵測到切換的時間也取決於人員的反應速度。",
+      "C": "正解。可藉由健康檢查的失敗次數與間隔調整切換速度,並將 DNS 記錄的 TTL 設得較短以加快生效。",
+      "D": "Application Load Balancer 本身就是東京區域內的資源,因此東京發生區域規模的故障時 ALB 也會一併無法使用,不構成跨區域的切換。若使用 IP 位址類型的目標群組搭配跨區域 VPC 對等互連,確實可以將其他區域的執行個體註冊為目標(執行個體 ID 類型的目標則僅限於負載平衡器所在的 VPC),但 ALB 依賴單一區域這一點並未改變。"
     },
     "relatedServices": [
       "route53",
@@ -2547,28 +2547,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "於來源儲存貯體與目的地儲存貯體皆啟用版本控制,並設定 S3 的跨區域複寫規則"
-      },
-      {
-        "choiceId": "B",
-        "text": "設定 S3 生命週期規則,將經過一定期間的物件移轉至其他區域的儲存貯體"
-      },
-      {
-        "choiceId": "C",
         "text": "將 AWS DataSync 的任務設為每日執行 1 次,以同步兩個儲存貯體之間"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "在其他區域建立 Amazon EFS 檔案系統,掛載 S3 儲存貯體並同步"
+      },
+      {
+        "choiceId": "C",
+        "text": "於來源儲存貯體與目的地儲存貯體皆啟用版本控制,並設定 S3 的跨區域複寫規則"
+      },
+      {
+        "choiceId": "D",
+        "text": "設定 S3 生命週期規則,將經過一定期間的物件移轉至其他區域的儲存貯體"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "C",
     "explanation": "S3 的跨區域複寫(CRR)會將新物件自動非同步複製至其他區域的儲存貯體。來源與目的地皆啟用版本控制為前提條件,藉此在複寫目的地亦得以保留版本。",
     "choiceExplanations": {
-      "A": "正解。版本控制為 CRR 的必要條件,複寫會在保留版本 ID 的情況下複製。",
-      "B": "S3 生命週期規則能做到的僅有儲存類別的轉換與依有效期限的刪除,並無將物件移至其他區域儲存貯體的功能。",
-      "C": "DataSync 雖也可在儲存貯體之間複製,但屬於排程執行的批次處理,對於「新物件自動複寫」的需求而言延遲過大,且執行間隔之間的變更不受保護。",
-      "D": "Amazon S3 為物件儲存,並非可作為 EFS 檔案系統掛載的架構,屬於技術上不成立的選項。"
+      "A": "DataSync 雖也可在儲存貯體之間複製,但屬於排程執行的批次處理,對於「新物件自動複寫」的需求而言延遲過大,且執行間隔之間的變更不受保護。",
+      "B": "Amazon S3 為物件儲存,並非可作為 EFS 檔案系統掛載的架構,屬於技術上不成立的選項。",
+      "C": "正解。版本控制為 CRR 的必要條件,複寫會在保留版本 ID 的情況下複製。",
+      "D": "S3 生命週期規則能做到的僅有儲存類別的轉換與依有效期限的刪除,並無將物件移至其他區域儲存貯體的功能。"
     },
     "relatedServices": [
       "s3",
@@ -2620,24 +2620,24 @@
       },
       {
         "choiceId": "B",
-        "text": "提高 Auto Scaling 群組的最小台數,使縮減不會發生"
-      },
-      {
-        "choiceId": "C",
         "text": "為各執行個體掛載專用的 EBS 磁碟區,並將工作階段檔案儲存於其中"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "將工作階段資訊移至 Amazon ElastiCache 或 Amazon DynamoDB 等外部資料存放區,使應用程式層無狀態化"
+      },
+      {
+        "choiceId": "D",
+        "text": "提高 Auto Scaling 群組的最小台數,使縮減不會發生"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "C",
     "explanation": "根本原因在於將狀態保存於執行個體這類生命週期短暫的資源上。若將工作階段資訊外部化至 ElastiCache 或 DynamoDB 等共用資料存放區並使應用程式層無狀態化,則無論哪台執行個體終止,工作階段皆不會遺失。",
     "choiceExplanations": {
       "A": "黏性工作階段僅是持續轉送至同一執行個體,一旦該執行個體終止,工作階段仍會遺失。故障時的登出問題並未解決,還會衍生負載偏斜的另一個問題。",
-      "B": "即使提高最小台數,執行個體故障或健康檢查失敗導致的替換仍會發生,只會增加成本而無法根本解決。",
-      "C": "EBS 磁碟區掛載於單一執行個體,並固定於單一可用區域。一旦執行個體終止,其他執行個體便無法讀取該工作階段。",
-      "D": "正解。將狀態外部化後,即可將執行個體視為「隨時可丟棄」的用完即棄資源。"
+      "B": "EBS 磁碟區掛載於單一執行個體,並固定於單一可用區域。一旦執行個體終止,其他執行個體便無法讀取該工作階段。",
+      "C": "正解。將狀態外部化後,即可將執行個體視為「隨時可丟棄」的用完即棄資源。",
+      "D": "即使提高最小台數,執行個體故障或健康檢查失敗導致的替換仍會發生,只會增加成本而無法根本解決。"
     },
     "relatedServices": [
       "elasticache",
@@ -2687,11 +2687,11 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "6 台(每個可用區域 2 台)"
+        "text": "7 台"
       },
       {
         "choiceId": "B",
-        "text": "7 台"
+        "text": "12 台(每個可用區域 4 台)"
       },
       {
         "choiceId": "C",
@@ -2699,16 +2699,16 @@
       },
       {
         "choiceId": "D",
-        "text": "12 台(每個可用區域 4 台)"
+        "text": "6 台(每個可用區域 2 台)"
       }
     ],
     "correctChoiceId": "C",
     "explanation": "平均配置於 3 個可用區域時,失去 1 個可用區域即等同於同時失去整體的三分之一台數。必須以剩餘的三分之二支應尖峰時段所需的 6 台,因此需要 6 ÷ (1 - 1/3) = 9 台。若每個可用區域各配置 3 台,在失去 1 個可用區域後仍會剩下 6 台。",
     "choiceExplanations": {
-      "A": "每個可用區域 2 台、合計 6 台的情況下,失去 1 個可用區域後只剩 4 台,低於尖峰時段所需的 6 台。",
-      "B": "7 台無法被 3 整除,各可用區域的台數並不均等,若失去台數最多的可用區域,剩餘將為 5 台以下,不符合需求。",
+      "A": "7 台無法被 3 整除,各可用區域的台數並不均等,若失去台數最多的可用區域,剩餘將為 5 台以下,不符合需求。",
+      "B": "雖然滿足需求本身,但失去 1 個可用區域後仍剩下 8 台,屬於過度的配置。由於常態會產生 4 台份的多餘成本,作為最小台數並不適切。",
       "C": "正解。失去 1 個可用區域後仍剩下 6 台,可維持尖峰時段的處理能力。",
-      "D": "雖然滿足需求本身,但失去 1 個可用區域後仍剩下 8 台,屬於過度的配置。由於常態會產生 4 台份的多餘成本,作為最小台數並不適切。"
+      "D": "每個可用區域 2 台、合計 6 台的情況下,失去 1 個可用區域後只剩 4 台,低於尖峰時段所需的 6 台。"
     },
     "relatedServices": [
       "auto-scaling",
@@ -2761,24 +2761,24 @@
       },
       {
         "choiceId": "B",
-        "text": "以 AWS Backup 建立備份計畫與備份保存庫,並以標籤為基礎指派資源"
+        "text": "以 AWS Config 規則評估備份設定的合規狀態,不合規時執行自動修復動作"
       },
       {
         "choiceId": "C",
-        "text": "以 Amazon Data Lifecycle Manager 的政策統一管理所有目標服務的備份"
+        "text": "以 AWS Backup 建立備份計畫與備份保存庫,並以標籤為基礎指派資源"
       },
       {
         "choiceId": "D",
-        "text": "以 AWS Config 規則評估備份設定的合規狀態,不合規時執行自動修復動作"
+        "text": "以 Amazon Data Lifecycle Manager 的政策統一管理所有目標服務的備份"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "C",
     "explanation": "AWS Backup 為可將橫跨多個 AWS 服務的備份,以備份計畫這個單一定義統一管理的受管服務。由於可用標籤指派資源,易於防止遺漏取得,亦支援以合規報告進行稽核。",
     "choiceExplanations": {
       "A": "由於各服務的設定方式與保留期間的指定方式皆不同,無法維持設定的一致性,新資源也容易發生遺漏取得。自製彙總的營運負擔亦依然存在。",
-      "B": "正解。以備份計畫定義頻率、保留期間、複製目的地,並將資源指派設為標籤基礎,新資源也會自動成為保護對象。",
-      "C": "Amazon Data Lifecycle Manager 可管理的僅限 EBS 快照與 EBS-backed AMI,RDS、DynamoDB、EFS 皆非其對象。",
-      "D": "AWS Config 為評估設定是否符合所定規則的服務,並不進行備份取得本身。雖可作為稽核的輔助,但不滿足需求核心的統一取得管理。"
+      "B": "AWS Config 為評估設定是否符合所定規則的服務,並不進行備份取得本身。雖可作為稽核的輔助,但不滿足需求核心的統一取得管理。",
+      "C": "正解。以備份計畫定義頻率、保留期間、複製目的地,並將資源指派設為標籤基礎,新資源也會自動成為保護對象。",
+      "D": "Amazon Data Lifecycle Manager 可管理的僅限 EBS 快照與 EBS-backed AMI,RDS、DynamoDB、EFS 皆非其對象。"
     },
     "relatedServices": [
       "aws-backup",
@@ -2830,28 +2830,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "將 5 項處理整合為 1 個 Lambda 函式,並於函式內以 try-catch 實作錯誤處理"
+        "text": "以 AWS Step Functions 的狀態機定義工作流程,並於各狀態設定 Retry 與 Catch"
       },
       {
         "choiceId": "B",
-        "text": "以 Amazon SQS 佇列串連各函式的呼叫,失敗的訊息則於可見性逾時經過後重新傳遞"
+        "text": "將 5 項處理整合為 1 個 Lambda 函式,並於函式內以 try-catch 實作錯誤處理"
       },
       {
         "choiceId": "C",
-        "text": "以 Amazon EventBridge 的規則依序觸發各函式,並將失敗事件輸出至 CloudWatch Logs"
+        "text": "以 Amazon SQS 佇列串連各函式的呼叫,失敗的訊息則於可見性逾時經過後重新傳遞"
       },
       {
         "choiceId": "D",
-        "text": "以 AWS Step Functions 的狀態機定義工作流程,並於各狀態設定 Retry 與 Catch"
+        "text": "以 Amazon EventBridge 的規則依序觸發各函式,並將失敗事件輸出至 CloudWatch Logs"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "A",
     "explanation": "AWS Step Functions 會將工作流程的各步驟定義為狀態,並以執行歷程加以視覺化。由於可對各狀態宣告式地設定 Retry(附退避的重試)與 Catch(錯誤時的分歧),因此易於追蹤在何處失敗,以及進行部分的重新執行。",
     "choiceExplanations": {
-      "A": "整合為 1 個函式後,容易觸及執行時間的上限(最長 15 分鐘),失敗時也必須從頭重來,對於在哪個步驟失敗的可視性亦無改善。",
-      "B": "以 SQS 串連雖可達成鬆散耦合,但無法保有整個工作流程進行到哪裡的狀態,分歧、平行執行、以步驟為單位的重新執行也都必須自行實作。",
-      "C": "EventBridge 負責事件的傳遞,並不進行工作流程的狀態管理或以步驟為單位的重試控制。即使留下失敗的記錄,重新執行的控制仍須自製。",
-      "D": "正解。可從執行歷程的圖表找出失敗的狀態,並藉由 Retry / Catch 宣告式地撰寫暫時性故障的自動回復與失敗時的補償處理。"
+      "A": "正解。可從執行歷程的圖表找出失敗的狀態,並藉由 Retry / Catch 宣告式地撰寫暫時性故障的自動回復與失敗時的補償處理。",
+      "B": "整合為 1 個函式後,容易觸及執行時間的上限(最長 15 分鐘),失敗時也必須從頭重來,對於在哪個步驟失敗的可視性亦無改善。",
+      "C": "以 SQS 串連雖可達成鬆散耦合,但無法保有整個工作流程進行到哪裡的狀態,分歧、平行執行、以步驟為單位的重新執行也都必須自行實作。",
+      "D": "EventBridge 負責事件的傳遞,並不進行工作流程的狀態管理或以步驟為單位的重試控制。即使留下失敗的記錄,重新執行的控制仍須自製。"
     },
     "relatedServices": [
       "step-functions",
@@ -2901,28 +2901,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "AWS Global Accelerator"
-      },
-      {
-        "choiceId": "B",
-        "text": "Amazon CloudFront"
-      },
-      {
-        "choiceId": "C",
         "text": "Amazon Route 53 的延遲型路由"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
+        "text": "AWS Global Accelerator"
+      },
+      {
+        "choiceId": "C",
         "text": "Application Load Balancer 的跨區域設定"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon CloudFront"
       }
     ],
-    "correctChoiceId": "A",
+    "correctChoiceId": "B",
     "explanation": "AWS Global Accelerator 提供 2 個固定的任播 IP 位址,並從最近的邊緣站點經由 AWS 的全球網路轉送至最適當的端點。其同時支援 TCP 與 UDP,且健康檢查失敗時的切換不依賴 DNS 的 TTL,因此速度快。",
     "choiceExplanations": {
-      "A": "正解。靜態 IP、支援 UDP、經由 AWS 骨幹的低延遲、不依賴 DNS 的快速容錯移轉等需求皆可滿足。",
-      "B": "CloudFront 為以 HTTP/HTTPS 內容傳遞為對象的 CDN,無法處理 UDP 流量,也不是提供固定 IP 位址作為連線目的地的機制。",
-      "C": "延遲型路由雖可回傳延遲最小的區域,但由於是以 DNS 為基礎,會受到用戶端或解析器快取 TTL 的影響,切換需要時間,也不滿足固定 IP 位址的需求。",
-      "D": "Application Load Balancer 為處理 HTTP/HTTPS 的第 7 層負載平衡器,不支援 UDP。雖然使用 IP 位址類型的目標群組搭配跨區域 VPC 對等互連,確實可以註冊其他區域的執行個體,但既然無法處理 UDP,就無法滿足本題需求,而且 ALB 也不提供固定的 IP 位址。"
+      "A": "延遲型路由雖可回傳延遲最小的區域,但由於是以 DNS 為基礎,會受到用戶端或解析器快取 TTL 的影響,切換需要時間,也不滿足固定 IP 位址的需求。",
+      "B": "正解。靜態 IP、支援 UDP、經由 AWS 骨幹的低延遲、不依賴 DNS 的快速容錯移轉等需求皆可滿足。",
+      "C": "Application Load Balancer 為處理 HTTP/HTTPS 的第 7 層負載平衡器,不支援 UDP。雖然使用 IP 位址類型的目標群組搭配跨區域 VPC 對等互連,確實可以註冊其他區域的執行個體,但既然無法處理 UDP,就無法滿足本題需求,而且 ALB 也不提供固定的 IP 位址。",
+      "D": "CloudFront 為以 HTTP/HTTPS 內容傳遞為對象的 CDN,無法處理 UDP 流量,也不是提供固定 IP 位址作為連線目的地的機制。"
     },
     "relatedServices": [
       "elb",
@@ -2972,28 +2972,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "建立大容量的 gp2 磁碟區,並利用隨容量等比增加的基準 IOPS"
-      },
-      {
-        "choiceId": "B",
         "text": "建立 gp3 磁碟區,並將 IOPS 佈建為 30,000"
       },
       {
-        "choiceId": "C",
+        "choiceId": "B",
         "text": "建立 io2 磁碟區,並佈建所需的 IOPS"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "建立 st1(輸送量最佳化 HDD)磁碟區"
+      },
+      {
+        "choiceId": "D",
+        "text": "建立大容量的 gp2 磁碟區,並利用隨容量等比增加的基準 IOPS"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "通用型 SSD(gp2 / gp3)的 IOPS 上限為每個磁碟區 16,000 IOPS。若要以單一磁碟區穩定發揮 30,000 IOPS,則必須選擇屬於佈建 IOPS SSD 的 io2(或 io2 Block Express)。io2 可提供一致的低延遲與較高的耐久性。",
     "choiceExplanations": {
-      "A": "gp2 的 IOPS 會以每 1 GiB 容量 3 IOPS 的比例增加,但上限為 16,000 IOPS。即使增加容量也無法達到 30,000 IOPS,亦無法將 IOPS 與容量獨立指定。",
-      "B": "gp3 雖可將 IOPS 與輸送量獨立於容量之外佈建,但每個磁碟區的上限為 16,000 IOPS,無法指定 30,000 IOPS。",
-      "C": "正解。io2 可佈建 IOPS,並以單一磁碟區提供大幅超過 16,000 IOPS 的效能與一致的低延遲。",
-      "D": "st1 以 HDD 為基礎,針對大區塊的循序讀寫最佳化,不適合資料庫這類隨機 I/O 較多的工作負載。"
+      "A": "gp3 雖可將 IOPS 與輸送量獨立於容量之外佈建,但每個磁碟區的上限為 16,000 IOPS,無法指定 30,000 IOPS。",
+      "B": "正解。io2 可佈建 IOPS,並以單一磁碟區提供大幅超過 16,000 IOPS 的效能與一致的低延遲。",
+      "C": "st1 以 HDD 為基礎,針對大區塊的循序讀寫最佳化,不適合資料庫這類隨機 I/O 較多的工作負載。",
+      "D": "gp2 的 IOPS 會以每 1 GiB 容量 3 IOPS 的比例增加,但上限為 16,000 IOPS。即使增加容量也無法達到 30,000 IOPS,亦無法將 IOPS 與容量獨立指定。"
     },
     "relatedServices": [
       "ebs",
@@ -3042,7 +3042,7 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "建立 Amazon Redshift 的佈建叢集,載入日誌後進行查詢"
+        "text": "將日誌匯入 Amazon RDS for PostgreSQL 執行個體,並以 SQL 彙總"
       },
       {
         "choiceId": "B",
@@ -3050,7 +3050,7 @@
       },
       {
         "choiceId": "C",
-        "text": "將日誌匯入 Amazon RDS for PostgreSQL 執行個體,並以 SQL 彙總"
+        "text": "建立 Amazon Redshift 的佈建叢集,載入日誌後進行查詢"
       },
       {
         "choiceId": "D",
@@ -3060,9 +3060,9 @@
     "correctChoiceId": "B",
     "explanation": "Amazon Athena 為可對 S3 上的資料直接執行 SQL 的無伺服器查詢服務,僅依掃描的資料量計費。既不需要建置叢集也不需要常態運作,因此最適合執行頻率較低的臨時分析。",
     "choiceExplanations": {
-      "A": "Redshift 的佈建叢集在啟動期間會持續計費,也需要載入日誌的作業,對於每月數次的使用而言屬於過度的架構。",
+      "A": "RDS 為常態運作的執行個體計費,也需要匯入數 TB 日誌的處理與確保儲存空間,不適合臨時性的分析用途。",
       "B": "正解。只要將資料表定義註冊至 Glue 資料目錄,即可在資料留於 S3 的狀態下立即查詢。",
-      "C": "RDS 為常態運作的執行個體計費,也需要匯入數 TB 日誌的處理與確保儲存空間,不適合臨時性的分析用途。",
+      "C": "Redshift 的佈建叢集在啟動期間會持續計費,也需要載入日誌的作業,對於每月數次的使用而言屬於過度的架構。",
       "D": "EMR 叢集雖也可採用僅在需要時啟動的營運方式,但需要叢集的組態管理與作業的實作,若目的僅為 SQL 分析,營運負擔過大。"
     },
     "relatedServices": [
@@ -3111,28 +3111,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "Amazon SQS 的標準佇列"
-      },
-      {
-        "choiceId": "B",
-        "text": "Amazon SQS 的 FIFO 佇列"
-      },
-      {
-        "choiceId": "C",
         "text": "在 Amazon SNS 的主題訂閱 2 個 Lambda 函式以進行扇出"
       },
       {
-        "choiceId": "D",
+        "choiceId": "B",
         "text": "Amazon Kinesis Data Streams"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon SQS 的 FIFO 佇列"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon SQS 的標準佇列"
       }
     ],
-    "correctChoiceId": "D",
+    "correctChoiceId": "B",
     "explanation": "Kinesis Data Streams 以分割索引鍵為單位(於分片內)保證順序,並在保留期間(預設 24 小時、最長 365 天)內將記錄保留於串流上。由於多個取用方可從各自獨立的位置讀取相同記錄,因此可同時滿足平行處理與重新處理兩項需求。",
     "choiceExplanations": {
-      "A": "標準佇列不保證順序。此外,訊息以由單一取用方處理後刪除為前提,因此既無法將相同資料流向 2 項處理,也無法讀回已刪除的訊息。",
-      "B": "FIFO 佇列雖以訊息群組為單位保證順序,但訊息於消費後即遭刪除,因此無法讀回過去的資料,也不滿足將相同訊息分送給 2 項獨立處理的需求。",
-      "C": "SNS 雖可將相同訊息傳遞給多個訂閱者,但標準主題的傳遞僅有一次,既不具備保留與重新讀取的機制,也沒有順序保證。若要保證順序則需使用 FIFO 主題,而 FIFO 主題能夠傳遞的目標只有 SQS 佇列(FIFO 或標準)。無法直接訂閱 Lambda 函式,必須在中間放置 SQS 佇列;若放置的是 SQS 標準佇列,訊息群組 ID 不會被傳遞,順序保證仍然會失效。",
-      "D": "正解。分片內的順序保證、保留期間內的重新讀取、多個取用方的獨立讀取等 3 項特性皆與需求一致。"
+      "A": "SNS 雖可將相同訊息傳遞給多個訂閱者,但標準主題的傳遞僅有一次,既不具備保留與重新讀取的機制,也沒有順序保證。若要保證順序則需使用 FIFO 主題,而 FIFO 主題能夠傳遞的目標只有 SQS 佇列(FIFO 或標準)。無法直接訂閱 Lambda 函式,必須在中間放置 SQS 佇列;若放置的是 SQS 標準佇列,訊息群組 ID 不會被傳遞,順序保證仍然會失效。",
+      "B": "正解。分片內的順序保證、保留期間內的重新讀取、多個取用方的獨立讀取等 3 項特性皆與需求一致。",
+      "C": "FIFO 佇列雖以訊息群組為單位保證順序,但訊息於消費後即遭刪除,因此無法讀回過去的資料,也不滿足將相同訊息分送給 2 項獨立處理的需求。",
+      "D": "標準佇列不保證順序。此外,訊息以由單一取用方處理後刪除為前提,因此既無法將相同資料流向 2 項處理,也無法讀回已刪除的訊息。"
     },
     "relatedServices": [
       "kinesis",
@@ -3186,24 +3186,24 @@
       },
       {
         "choiceId": "B",
-        "text": "將執行個體配置於分散放置群組"
-      },
-      {
-        "choiceId": "C",
         "text": "將執行個體配置於分割放置群組"
       },
       {
-        "choiceId": "D",
+        "choiceId": "C",
         "text": "將執行個體分散至多個可用區域,並以 Auto Scaling 群組管理"
+      },
+      {
+        "choiceId": "D",
+        "text": "將執行個體配置於分散放置群組"
       }
     ],
     "correctChoiceId": "A",
     "explanation": "叢集放置群組會在單一可用區域內將執行個體實體上就近配置,實現節點間的低延遲與高網路輸送量,是適合 HPC 與緊密耦合分散運算的配置策略。",
     "choiceExplanations": {
       "A": "正解。藉由就近配置,可將節點間通訊的延遲降至最低,並最大限度運用執行個體之間的頻寬。",
-      "B": "分散放置群組是將執行個體分散至各自不同的實體硬體以避免同時故障的配置,雖可提升可用性,但無法改善節點間的延遲。",
-      "C": "分割放置群組是在大規模分散式系統(如 HDFS 或 Cassandra)中,以分割為單位隔離故障影響範圍的配置,目的並非低延遲通訊。",
-      "D": "橫跨可用區域的分散雖可提高可用性,但因可用區域間的實體距離,通訊延遲會變大,屬於與需求反方向的設計。"
+      "B": "分割放置群組是在大規模分散式系統(如 HDFS 或 Cassandra)中,以分割為單位隔離故障影響範圍的配置,目的並非低延遲通訊。",
+      "C": "橫跨可用區域的分散雖可提高可用性,但因可用區域間的實體距離,通訊延遲會變大,屬於與需求反方向的設計。",
+      "D": "分散放置群組是將執行個體分散至各自不同的實體硬體以避免同時故障的配置,雖可提升可用性,但無法改善節點間的延遲。"
     },
     "relatedServices": [
       "ec2",
@@ -3245,28 +3245,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "以生命週期規則移轉至 S3 Standard-IA(低頻率存取)並保存 7 年"
+        "text": "啟用 S3 Intelligent-Tiering,交由其依存取模式自動分層"
       },
       {
         "choiceId": "B",
-        "text": "以生命週期規則移轉至 S3 Glacier Deep Archive,並於經過 7 年後以有效期限刪除"
-      },
-      {
-        "choiceId": "C",
         "text": "以生命週期規則移轉至 S3 Glacier Flexible Retrieval 並保存 7 年"
       },
       {
+        "choiceId": "C",
+        "text": "以生命週期規則移轉至 S3 Standard-IA(低頻率存取)並保存 7 年"
+      },
+      {
         "choiceId": "D",
-        "text": "啟用 S3 Intelligent-Tiering,交由其依存取模式自動分層"
+        "text": "以生命週期規則移轉至 S3 Glacier Deep Archive,並於經過 7 年後以有效期限刪除"
       }
     ],
-    "correctChoiceId": "B",
+    "correctChoiceId": "D",
     "explanation": "S3 Glacier Deep Archive 為 S3 之中保存單價最便宜的儲存類別,標準取出約需 12 小時。此與「幾乎不會發生參照」「取出花費半天亦可」的條件一致,可將 7 年的保存成本最小化。",
     "choiceExplanations": {
-      "A": "S3 Standard-IA 雖可以毫秒為單位立即取出,但保存單價大幅高於 Glacier 系列。在本需求不需要即時取出的情況下,成本無法達到最小。",
-      "B": "正解。以生命週期規則移轉,並於同一規則中一併定義經過 7 年時依有效期限刪除,即可將保存期間的管理也一併自動化。",
-      "C": "S3 Glacier Flexible Retrieval 為可於數分鐘至 12 小時取出的中間類別,但保存單價高於 Deep Archive。對於可等待半天的需求而言,等同於為過剩的取出速度付費。",
-      "D": "Intelligent-Tiering 在存取模式難以預測時為有效的選項。如本需求已知「幾乎不會被存取」的情況下,會因額外加上以物件為單位的監控費用而較為不利。"
+      "A": "Intelligent-Tiering 在存取模式難以預測時為有效的選項。如本需求已知「幾乎不會被存取」的情況下,會因額外加上以物件為單位的監控費用而較為不利。",
+      "B": "S3 Glacier Flexible Retrieval 為可於數分鐘至 12 小時取出的中間類別,但保存單價高於 Deep Archive。對於可等待半天的需求而言,等同於為過剩的取出速度付費。",
+      "C": "S3 Standard-IA 雖可以毫秒為單位立即取出,但保存單價大幅高於 Glacier 系列。在本需求不需要即時取出的情況下,成本無法達到最小。",
+      "D": "正解。以生命週期規則移轉,並於同一規則中一併定義經過 7 年時依有效期限刪除,即可將保存期間的管理也一併自動化。"
     },
     "relatedServices": [
       "s3"
@@ -3313,28 +3313,28 @@
     "choices": [
       {
         "choiceId": "A",
-        "text": "以 AWS Budgets 設定 EC2 的成本預算,並於超過門檻時收到通知"
+        "text": "以 Amazon CloudWatch 收集記憶體使用率的自訂指標,並以儀表板視覺化"
       },
       {
         "choiceId": "B",
-        "text": "確認 AWS Trusted Advisor 的「低使用率 Amazon EC2 執行個體」檢查"
-      },
-      {
-        "choiceId": "C",
         "text": "啟用 AWS Compute Optimizer,並確認依使用率指標所得的建議執行個體類型"
       },
       {
+        "choiceId": "C",
+        "text": "以 AWS Budgets 設定 EC2 的成本預算,並於超過門檻時收到通知"
+      },
+      {
         "choiceId": "D",
-        "text": "以 Amazon CloudWatch 收集記憶體使用率的自訂指標,並以儀表板視覺化"
+        "text": "確認 AWS Trusted Advisor 的「低使用率 Amazon EC2 執行個體」檢查"
       }
     ],
-    "correctChoiceId": "C",
+    "correctChoiceId": "B",
     "explanation": "AWS Compute Optimizer 會以機器學習分析 CloudWatch 的使用率指標,並針對 EC2 執行個體、Auto Scaling 群組、EBS 磁碟區、Lambda 函式等提示具體的建議資源組態、預估節省金額與效能風險。連移轉目標候選也一併提示這點即符合需求。",
     "choiceExplanations": {
-      "A": "AWS Budgets 為通知預算門檻超支的服務,並不進行哪台執行個體過剩的分析或移轉目標的建議。",
-      "B": "Trusted Advisor 的成本最佳化檢查雖會「偵測」低使用率的執行個體,但使用上需要商業級以上的支援方案,且依使用率分析提出具體移轉目標執行個體類型的建議仍屬於 Compute Optimizer 的職掌。",
-      "C": "正解。可免費啟用,並可確認建議與現況的比較,以及預估的成本節省金額。",
-      "D": "指標的視覺化雖有助於掌握現況,但不具備判斷並提示適當執行個體類型的功能。"
+      "A": "指標的視覺化雖有助於掌握現況,但不具備判斷並提示適當執行個體類型的功能。",
+      "B": "正解。可免費啟用,並可確認建議與現況的比較,以及預估的成本節省金額。",
+      "C": "AWS Budgets 為通知預算門檻超支的服務,並不進行哪台執行個體過剩的分析或移轉目標的建議。",
+      "D": "Trusted Advisor 的成本最佳化檢查雖會「偵測」低使用率的執行個體,但使用上需要商業級以上的支援方案,且依使用率分析提出具體移轉目標執行個體類型的建議仍屬於 Compute Optimizer 的職掌。"
     },
     "relatedServices": [
       "ec2",
