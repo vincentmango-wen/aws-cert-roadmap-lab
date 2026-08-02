@@ -123,33 +123,26 @@ export default function ContactPage(): ReactElement {
       </section>
 
       {/*
-        FUMI_INPUT: 代替連絡手段の掲載方針。issue #321「4. /contact 充実」の選択肢 A / B / C から選んでください。
-
-        A: メールアドレスを本文に直書きする
-           → 最も明快だが、スパム収集ボットに拾われる。以後アドレスを変更しづらい。非推奨。
-        B: フォームのみを維持し、送信できない場合の代替として X (@fumikun_gengen) の DM を案内する
-           → 追加のアドレス露出がなく、既存アカウントで完結する。再申請までに間に合わせるならこれ。
-        C: 問い合わせ専用エイリアス（例: contact@aws-cert-roadmap-lab.com）を作って掲載する
-           → スパムが来ても本アドレスに影響しない。ドメインのメール受信設定（SES 受信 or 転送）が必要。推奨。
-
-        スパム対策の補足:
-        - テキストの直書きは、HTML を巡回する収集ボットに機械的に拾われる。out/ は静的 HTML なので確実に読まれる。
-        - 画像化（アドレスを PNG にする）は収集を減らせるが、スクリーンリーダーで読めずアクセシビリティを損なう。
-          代替テキストにアドレスを書くと結局収集されるため、対策としては中途半端。
-        - mailto: リンクの JS 難読化は静的書き出し (output: "export") と相性が悪く、JS 無効環境で連絡手段が消える。
-        - 最も安全なのは C（使い捨て可能な専用エイリアス）か B（フォーム + 既存 SNS）。
-
-        下の <p> の文字列を、選んだ選択肢の文面に差し替えてください。
-        例 (B): 「フォームから送信できない場合は、X（@fumikun_gengen）のDMからも連絡を受け付けています。」
-        例 (C): 「フォームから送信できない場合は、contact@aws-cert-roadmap-lab.com 宛にメールしてください。」
+        代替連絡手段は X の DM 案内を採用している（issue #321 の選択肢 B）。
+        メールアドレスを静的 HTML に直書きすると収集ボットに確実に拾われ、以後変更しづらいため。
+        専用エイリアス（contact@aws-cert-roadmap-lab.com 等）に移行する場合は、
+        ドメインのメール受信設定（SES 受信 or 転送）を先に用意してから文面を差し替えること。
       */}
       <section className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6">
         <h2 className="text-xl font-bold text-slate-900">
           フォームが送信できない場合
         </h2>
         <p className="mt-3 text-sm leading-7 text-slate-700 sm:text-base">
-          ブラウザの設定や通信環境により、フォームの送信が失敗することがあります。その場合の代替の連絡手段は次のとおりです：
-          {"{{FUMI_INPUT: 連絡先の掲載方針 A/B/C と、掲載する場合の実アドレスまたはSNSアカウント}}"}
+          ブラウザの設定や通信環境により、フォームの送信が失敗することがあります。その場合は、X（
+          <a
+            href="https://x.com/fumikun_gengen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-blue-700 underline hover:text-blue-900"
+          >
+            @fumikun_gengen
+          </a>
+          ）のDMからも連絡を受け付けています。記事の誤りの報告など、内容が短いものはDMでも構いません。
         </p>
       </section>
 
