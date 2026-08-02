@@ -505,10 +505,9 @@ export default function EnglishPrivacyPage(): ReactElement {
         <p className="font-semibold">About this page</p>
         <p className="mt-2">
           This site uses Google Analytics for access analytics. This site may
-          also use advertising services such as Google AdSense as part of
-          monetization preparation. Information submitted through the contact
-          form is used for inquiry handling, correction reports, and site
-          improvement.
+          also use advertising services such as Google AdSense. Information
+          submitted through the contact form is used for inquiry handling,
+          correction reports, and site improvement.
         </p>
       </div>
 

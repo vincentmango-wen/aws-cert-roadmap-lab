@@ -31,6 +31,7 @@ const footerSections: FooterSection[] = [
       { label: "問い合わせ", href: "/contact" },
       { label: "プライバシーポリシー", href: "/privacy" },
       { label: "免責事項", href: "/disclaimer" },
+      { label: "利用規約", href: "/terms-of-service" },
     ],
   },
   {
