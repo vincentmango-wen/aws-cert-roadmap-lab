@@ -119,7 +119,7 @@ export function QuestionListClient({
               )}
               className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
             >
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div className="flex flex-col gap-3">
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
