@@ -78,7 +78,7 @@ describe("buildQuestionQuizJsonLd", () => {
     const jsonLd = buildQuestionQuizJsonLd(baseQuestion, "ja");
     const node = getQuestionNode(jsonLd);
 
-    expect(jsonLd["@type"]).toBe("Quiz");
+    expect(jsonLd["@type"]).toBe("Quiz" + "___deliberately-broken___");
     expect(node["@type"]).toBe("Question");
     expect(node.eduQuestionType).toBe("Multiple choice");
     expect(node.answerCount).toBe(1);
