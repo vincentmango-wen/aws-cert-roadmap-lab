@@ -89,6 +89,15 @@ export type QuestionsDictionary = {
   viewQuestionLabel: string;
   emptyStateTitle: string;
   emptyStateDescription: string;
+  paginationNavAriaLabel: string;
+  paginationPreviousLabel: string;
+  paginationNextLabel: string;
+  paginationGoToPageAriaLabelPrefix: string;
+  paginationGoToPageAriaLabelSuffix: string;
+  paginationRangeBefore: string;
+  paginationRangeBetweenStartEnd: string;
+  paginationRangeBetweenEndTotal: string;
+  paginationRangeAfter: string;
 };
 
 export type UiDictionary = {
@@ -403,5 +412,14 @@ export const jaDictionary: UiDictionary = {
     viewQuestionLabel: "問題を見る →",
     emptyStateTitle: "条件に一致する問題がありません。",
     emptyStateDescription: "カテゴリまたは難易度の条件を変更してください。",
+    paginationNavAriaLabel: "ページ送り",
+    paginationPreviousLabel: "前へ",
+    paginationNextLabel: "次へ",
+    paginationGoToPageAriaLabelPrefix: "ページ ",
+    paginationGoToPageAriaLabelSuffix: "",
+    paginationRangeBefore: "",
+    paginationRangeBetweenStartEnd: "〜",
+    paginationRangeBetweenEndTotal: "問を表示中（全",
+    paginationRangeAfter: "問）",
   },
 };
