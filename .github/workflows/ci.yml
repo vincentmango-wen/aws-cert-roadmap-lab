@@ -55,6 +55,9 @@ jobs:
       - name: Run typecheck
         run: npm run typecheck
 
+      - name: Run tests
+        run: npm test
+
       - name: Build static site
         run: npm run build
         env:
