@@ -103,7 +103,7 @@ aws cloudfront describe-function \
   --output table
 aws cloudfront get-distribution-config \
   --id EHIV14NX361T7 \
-  --query 'DistributionConfig.CacheBehaviors.Items[].LambdaFunctionAssociations.Items[]' \
+  --query 'DistributionConfig.DefaultCacheBehavior.FunctionAssociations.Items' \
   --output json
 ```
 
