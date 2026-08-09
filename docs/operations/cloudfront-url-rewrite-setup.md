@@ -146,11 +146,7 @@ bash scripts/sweep-sitemap-status.sh
 
 ## ロールバック
 
-公開URLの確認でエラーが発生した場合は、まずCloudflare DNSを現行Aレコードへ戻し、名前解決の安定を待つ。
-
-- apex (`@`) のCNAME `d25a018o7xkwid.cloudfront.net` を削除する。
-- apex (`@`) にA `18.204.152.241` を戻す。
-- `www` とACM検証レコードは変更しない。
+旧Aレコード `18.204.152.241` はTLSが成立せず、Heroku由来の204レスポンスを返すことを2026-08-09に確認したため、ロールバック先として使用しない。apexのCloudFront CNAMEは維持し、障害箇所をFunctionへ限定して戻す。
 
 Functionだけを戻す必要がある場合は、反映前バックアップの `live-function.js` を使い、DEV Functionを更新・test・publishする。バックアップ取得時のFunctionConfigが空Comment、Runtime `cloudfront-js-2.0` であることを確認してから実行する。
 
@@ -164,7 +160,7 @@ aws cloudfront update-function \
   --name aws-cert-url-rewrite \
   --if-match "$ROLLBACK_ETAG" \
   --function-config '{"Comment":"","Runtime":"cloudfront-js-2.0"}' \
-  --function-code fileb://$BACKUP_DIR/live-function.js
+  --function-code "fileb://$BACKUP_DIR/live-function.js"
 ROLLBACK_ETAG="$(aws cloudfront describe-function \
   --name aws-cert-url-rewrite \
   --stage DEVELOPMENT \
