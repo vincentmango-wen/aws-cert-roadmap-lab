@@ -18,7 +18,7 @@ function serializeQueryString(querystring) {
             if (typeof value === 'undefined') {
                 value = '';
             }
-            pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+            pairs.push(key + '=' + value);
         }
     }
 

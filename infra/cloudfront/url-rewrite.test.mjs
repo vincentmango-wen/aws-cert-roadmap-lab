@@ -25,7 +25,7 @@ test('apexのトップページをwwwへ301リダイレクトする', () => {
 test('apexのパスとquery stringをLocationへ保持する', () => {
   const response = handler({
     request: request('AWS-CERT-ROADMAP-LAB.COM', '/blog/example', {
-      ref: { value: 'search console' },
+      ref: { value: 'search%20console' },
       tag: { multiValue: [{ value: 'seo' }, { value: 'gsc' }] }
     })
   });
@@ -33,6 +33,22 @@ test('apexのパスとquery stringをLocationへ保持する', () => {
   assert.equal(
     response.headers.location.value,
     'https://www.aws-cert-roadmap-lab.com/blog/example?ref=search%20console&tag=seo&tag=gsc'
+  );
+});
+
+test('percent encoding・plus・値なし・重複queryを再エンコードしない', () => {
+  const response = handler({
+    request: request('aws-cert-roadmap-lab.com', '/blog/example', {
+      flag: { value: '' },
+      encoded: { value: '%2F' },
+      plus: { value: 'a+b' },
+      dup: { multiValue: [{ value: '1' }, { value: '2' }] }
+    })
+  });
+
+  assert.equal(
+    response.headers.location.value,
+    'https://www.aws-cert-roadmap-lab.com/blog/example?flag=&encoded=%2F&plus=a+b&dup=1&dup=2'
   );
 });
 

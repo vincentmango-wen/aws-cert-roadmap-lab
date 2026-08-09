@@ -274,7 +274,7 @@ Google 側の実測（2〜4 章）とは別に、**サイトが何を配信し�
 ### 13.1 CloudFront / DNS
 
 - CloudFront Function `aws-cert-url-rewrite` にapexからwwwへの301正規化を追加し、LIVEへ反映した。
-- LIVE Functionは `DEPLOYED`、ETagは `E3UN6WX5RRO2AG`。リポジトリとLIVEコードのSHA-256は `5ed35b2b26192099964ca46700725e1a2f752c41f50aba2b2e1e15009263214a` で一致した。
+- LIVE Functionは `DEPLOYED`、ETagは `E1F83G8C2ARO7P`。query再エンコード修正後のリポジトリとLIVEコードのSHA-256は `7c8c52f8e6260f11a0610354a17a1cef6297bfde8c236083735e4ea99d3a36b0` で一致した。
 - Distribution `EHIV14NX361T7` は `Deployed`、viewer-request associationは変更なし。
 - Cloudflare apexはCNAME `d25a018o7xkwid.cloudfront.net`、DNS only、TTL Autoで確定した。`www` とACM検証用CNAMEは変更していない。
 - Cloudflare/Google DoHとDNS/TCPでCloudFrontの4 IP（`3.166.205.31`、`3.166.205.36`、`3.166.205.73`、`3.166.205.87`）を確認した。
@@ -283,6 +283,7 @@ Google 側の実測（2〜4 章）とは別に、**サイトが何を配信し�
 ### 13.2 公開URL
 
 - apex HTTPSは301でwwwへ遷移し、pathとquery stringを保持した。
+- `%2F`、`+`、値なし、重複parameterを含むqueryでも二重エンコードせずwwwへ引き継ぐことを確認した。CloudFrontのイベント表現上、parameter順と値なしparameterの末尾 `=` は正規化される。
 - apex HTTPは最終的にHTTPS/wwwの200へ遷移した。
 - wwwトップとSearch Consoleで指摘された代表7 URLはすべて200だった。
 - noindex報告対象は現行HTMLで `index, follow`、canonicalはwwwだった。
