@@ -6,8 +6,11 @@
 set -u
 SITEMAP="${1:-https://www.aws-cert-roadmap-lab.com/sitemap.xml}"
 UA="Mozilla/5.0 (compatible; reachability-sweep/1.0)"
-mapfile -t URLS < <(
-  curl -sS --max-time 30 -A "$UA" "$SITEMAP" \
+URLS=()
+while IFS= read -r url; do
+  URLS+=("$url")
+done < <(
+  curl -sS --http1.1 --max-time 30 -A "$UA" "$SITEMAP" \
   | grep -o '<loc>[^<]*</loc>' \
   | sed -e 's#<loc>##' -e 's#</loc>##'
 )
@@ -17,7 +20,7 @@ fi
 echo "sitemap: $SITEMAP"; echo "total urls: ${#URLS[@]}"; echo "----------------------------------------"
 tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
 for url in "${URLS[@]}"; do
-  code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 -A "$UA" "$url")"
+  code="$(curl -s --http1.1 -o /dev/null -w '%{http_code}' --max-time 20 -A "$UA" "$url")"
   printf '%s  %s\n' "$code" "$url"; echo "$code" >> "$tmp"
 done
 echo "----------------------------------------"; echo "=== status summary ==="
