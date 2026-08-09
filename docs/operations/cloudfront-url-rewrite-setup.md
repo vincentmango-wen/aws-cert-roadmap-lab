@@ -99,15 +99,33 @@ aws cloudfront publish-function \
 aws cloudfront describe-function \
   --name aws-cert-url-rewrite \
   --stage LIVE \
-  --query 'FunctionSummary.{Status:Status,Runtime:FunctionConfig.Runtime,ARN:FunctionMetadata.FunctionARN}' \
+  --query 'FunctionSummary.{Stage:FunctionMetadata.Stage,Status:Status,Runtime:FunctionConfig.Runtime,ARN:FunctionMetadata.FunctionARN}' \
   --output table
 aws cloudfront get-distribution-config \
   --id EHIV14NX361T7 \
   --query 'DistributionConfig.DefaultCacheBehavior.FunctionAssociations.Items' \
   --output json
+aws cloudfront wait distribution-deployed \
+  --id EHIV14NX361T7
+attempt=1
+while [ "$attempt" -le 30 ]; do
+  FUNCTION_STATUS="$(aws cloudfront describe-function \
+    --name aws-cert-url-rewrite \
+    --stage LIVE \
+    --query FunctionSummary.Status \
+    --output text)"
+  [ "$FUNCTION_STATUS" = "DEPLOYED" ] && break
+  attempt=$((attempt + 1))
+  sleep 2
+done
+[ "$FUNCTION_STATUS" = "DEPLOYED" ]
+aws cloudfront get-distribution \
+  --id EHIV14NX361T7 \
+  --query 'Distribution.{Status:Status,DomainName:DomainName}' \
+  --output table
 ```
 
-LIVE FunctionのStatusが `DEPLOYED` で、viewer-request associationが `arn:aws:cloudfront::526261728564:function/aws-cert-url-rewrite` のままであることを確認する。distributionのDeployed反映を確認するまではDNS変更へ進まない。
+LIVE FunctionのStageが `LIVE`、Statusが実環境の正常値 `DEPLOYED` で、viewer-request associationが `arn:aws:cloudfront::526261728564:function/aws-cert-url-rewrite` のままであることを確認する。distributionのwaiterが正常終了してもFunctionが一時的に `IN_PROGRESS` の場合があるため、両方が反映済みになるまでDNS変更へ進まない。
 
 ## Cloudflare DNS変更
 
@@ -166,9 +184,15 @@ ROLLBACK_ETAG="$(aws cloudfront describe-function \
   --stage DEVELOPMENT \
   --query ETag \
   --output text)"
+aws cloudfront test-function \
+  --name aws-cert-url-rewrite \
+  --if-match "$ROLLBACK_ETAG" \
+  --stage DEVELOPMENT \
+  --event-object fileb://infra/cloudfront/test-events/apex-request.json \
+  --output json
 aws cloudfront publish-function \
   --name aws-cert-url-rewrite \
   --if-match "$ROLLBACK_ETAG"
 ```
 
-ロールバック後も `curl -4 --http1.1 -I https://www.aws-cert-roadmap-lab.com/` が200であること、distribution associationが残っていることを確認し、原因と時刻を作業ログへ記録する。
+`test-function` の `FunctionErrorMessage` が空で、`FunctionOutput` が反映前バックアップの期待動作と一致する場合だけpublishする。ロールバック後も `curl -4 --http1.1 -I https://www.aws-cert-roadmap-lab.com/` が200であること、distribution associationが残っていることを確認し、原因と時刻を作業ログへ記録する。
