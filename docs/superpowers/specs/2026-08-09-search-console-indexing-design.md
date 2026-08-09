@@ -189,4 +189,3 @@ Search Consoleの「修正を検証」送信は外部状態を変更するため
 - CloudFront Functionのソースと手順がリポジトリに残る
 - Search Consoleの404・redirect・canonical・noindexについて、修正済み／経過観察／意図的除外の判断が記録される
 - 「検出 - インデックス未登録」150件は、修正対象ではなく週次観測対象として明記される
-
