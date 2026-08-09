@@ -6,11 +6,18 @@
 set -u
 SITEMAP="${1:-https://www.aws-cert-roadmap-lab.com/sitemap.xml}"
 UA="Mozilla/5.0 (compatible; reachability-sweep/1.0)"
+curl_with_dns() {
+  if [ -n "${CURL_DOH_URL:-}" ]; then
+    curl --doh-url "$CURL_DOH_URL" "$@"
+  else
+    curl "$@"
+  fi
+}
 URLS=()
 while IFS= read -r url; do
   URLS+=("$url")
 done < <(
-  curl -sS --http1.1 --max-time 30 -A "$UA" "$SITEMAP" \
+  curl_with_dns -sS --http1.1 --max-time 30 -A "$UA" "$SITEMAP" \
   | grep -o '<loc>[^<]*</loc>' \
   | sed -e 's#<loc>##' -e 's#</loc>##'
 )
@@ -20,7 +27,7 @@ fi
 echo "sitemap: $SITEMAP"; echo "total urls: ${#URLS[@]}"; echo "----------------------------------------"
 tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
 for url in "${URLS[@]}"; do
-  code="$(curl -s --http1.1 -o /dev/null -w '%{http_code}' --max-time 20 -A "$UA" "$url")"
+  code="$(curl_with_dns -s --http1.1 -o /dev/null -w '%{http_code}' --max-time 20 -A "$UA" "$url")"
   printf '%s  %s\n' "$code" "$url"; echo "$code" >> "$tmp"
 done
 echo "----------------------------------------"; echo "=== status summary ==="
