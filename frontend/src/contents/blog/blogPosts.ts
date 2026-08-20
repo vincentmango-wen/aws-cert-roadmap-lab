@@ -143,7 +143,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-008",
@@ -179,7 +179,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-010",
@@ -215,7 +215,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-012",
@@ -251,7 +251,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-014",
@@ -287,7 +287,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-016",
@@ -305,7 +305,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-017",
@@ -323,7 +323,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-018",
@@ -341,7 +341,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-019",
@@ -359,7 +359,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-020",
@@ -377,7 +377,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-021",
@@ -395,7 +395,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-022",
@@ -449,7 +449,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-025",
@@ -467,6 +467,6 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
 ];
