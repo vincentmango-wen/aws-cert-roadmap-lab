@@ -17,7 +17,7 @@ targetKeywords:
 author: "AWS Cert Roadmap Lab"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-20"
+updatedAt: "2026-06-07"
 ---
 
 # AWSポートフォリオでサーバーレス構成を選ぶ理由
@@ -61,6 +61,10 @@ S3、CloudFront、Lambda、API Gateway、DynamoDB、IAM、CloudWatchは、Cloud 
 - [Amazon S3](/terms/s3)
 - [Amazon CloudFront](/terms/cloudfront)
 - [AWS Lambda](/terms/lambda)
+
+## 公開後の確認を成果物に残す
+
+公開後は、静的ページの配信、フォーム送信、Lambda の request ID、DynamoDB の保存結果、CloudWatch Logs のエラー分類を一連で確認します。失敗時にどの順序で切り分けるか、CI と実行ロールがどの権限を持つか、ログに個人情報を残さない理由を README に記録すると、構成図だけでは伝わりにくい運用判断もポートフォリオの成果として示せます。
 
 ## 構成ごとの責務を説明できるようにする
 
