@@ -66,12 +66,6 @@ CORSを `*` にして本番運用するのは避けます。
 - AWS資格で学ぶ主要サービスを実装で使える
 - ポートフォリオで設計意図を説明しやすい
 
-## 関連用語
-
-- [Amazon API Gateway](/terms/api-gateway)
-- [AWS Lambda](/terms/lambda)
-- [Amazon DynamoDB](/terms/dynamodb)
-
 ## リリース後に確認する処理の記録
 
 API を公開したら、正常な問い合わせを1件送信し、ブラウザの送信時刻、API Gateway のリクエスト、Lambda の request ID、DynamoDB に作られた `contactId` を順に照合します。この4点がつながれば、画面から保存先までの経路が実際に通っていることを確認できます。デプロイしたバージョンや環境名もログに含めると、古いLambdaや別環境のテーブルを見てしまう調査ミスを防げます。
@@ -127,6 +121,12 @@ AccessDenied が出たときに AdministratorAccess を付けて動かすのは�
 確認用に、正常送信、必須項目不足、不正な JSON、DynamoDB 権限不足のケースを用意します。それぞれで期待するHTTPステータス、Lambdaのログ、DynamoDBへの保存有無を記録します。`400` と `500` を混ぜないことにより、利用者の入力ミスと運用障害を区別できます。
 
 リリース後は、実際に1件送信して request ID からログを追い、保存先の `contactId` と一致することまで確認します。次の学習として、[Amazon API Gatewayとは？HTTP APIを初心者向けに解説](/blog/apigateway-beginner-http-api) と [LambdaのログをCloudWatchで確認する方法](/blog/lambda-cloudwatch-logs-check) を読むと、HTTP境界と調査方法をつなげて理解できます。
+
+## 関連用語
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
 
 ## 次に読む記事
 

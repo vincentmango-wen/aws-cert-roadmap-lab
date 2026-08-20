@@ -56,12 +56,6 @@ S3、CloudFront、Lambda、API Gateway、DynamoDB、IAM、CloudWatchは、Cloud 
 
 サーバーレスでも何も考えなくてよいわけではありません。CORS、IAM、ログ、DynamoDBキー設計、CloudFrontキャッシュ、課金監視は必要です。
 
-## 関連用語
-
-- [Amazon S3](/terms/s3)
-- [Amazon CloudFront](/terms/cloudfront)
-- [AWS Lambda](/terms/lambda)
-
 ## 公開後の確認を成果物に残す
 
 公開後は、静的ページの配信、フォーム送信、Lambda の request ID、DynamoDB の保存結果、CloudWatch Logs のエラー分類を一連で確認します。失敗時にどの順序で切り分けるか、CI と実行ロールがどの権限を持つか、ログに個人情報を残さない理由を README に記録すると、構成図だけでは伝わりにくい運用判断もポートフォリオの成果として示せます。
@@ -125,6 +119,12 @@ Solutions Architect Associate（SAA）では、可用性、セキュリティ、
 「サーバーレスなら運用コストはゼロ」という誤解は危険です。OS の保守の一部は AWS に委ねられますが、権限、ログ、監視、コスト通知、障害時の判断は利用者側の責任です。「S3 を公開すれば速い」「CORS を `*` にすれば動く」という短絡も、公開範囲を広げる失敗につながります。
 
 最初は[AWS無料枠でポートフォリオを作る方法](/blog/aws-free-tier-portfolio)を参考に小さく構築し、問い合わせAPIを追加したら[API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ](/blog/serverless-contact-api-flow)のように、入力検証、実行ロール、ログ、重複送信への注意まで確認します。動いた状態で終わらせず、失敗時にどこを調べるかまで残すことが実装経験になります。
+
+## 関連用語
+
+- [Amazon S3](/terms/s3)
+- [Amazon CloudFront](/terms/cloudfront)
+- [AWS Lambda](/terms/lambda)
 
 ## 次に読む記事
 

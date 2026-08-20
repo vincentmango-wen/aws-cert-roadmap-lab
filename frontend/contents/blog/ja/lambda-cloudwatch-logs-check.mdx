@@ -67,12 +67,6 @@ CloudWatch Logsは無期限保存にするとログ量が増えます。個人MV
 4. DynamoDB保存有無を確認する
 5. CORS、環境変数、IAM権限を確認する
 
-## 関連用語
-
-- [Amazon CloudWatch](/terms/cloudwatch)
-- [AWS Lambda](/terms/lambda)
-- [Amazon API Gateway](/terms/api-gateway)
-
 ## ログを障害対応の記録として整える
 
 デプロイ直後には、正常送信、必須項目不足、不正な JSON の3ケースを実行し、それぞれの request ID を控えます。正常時には `contactId` と処理時間、入力不備では検証エラーコード、障害時には例外分類が残ることを確認します。これをリリースチェックにすると、ログの出力先やフィールド名を変えたときに、実際に調査できる状態かを確認できます。
@@ -130,6 +124,12 @@ CloudWatch Logs は無制限に保管する前提にせず、障害調査に必�
 「ログにエラーがないのに `502` が返る」場合は、Lambda の戻り値が API Gateway の期待する形式かを確認します。「ログが見つからない」場合は、リージョン、関数名、エイリアス、時刻のタイムゾーンを確認します。別環境のロググループを見ている設定ミスは、コード不具合に見える典型例です。
 
 正常送信、必須項目不足、不正JSON、DynamoDB権限不足のケースで、期待するHTTPステータス、ログ項目、アラートの有無を記録します。リリース後に一度再現し、request ID から保存結果まで追えることを確認します。基本的な監視の位置づけは[CloudWatchの基本をCloud Practitioner向けに解説](/blog/clf-monitoring-cloudwatch-basics)も参照してください。
+
+## 関連用語
+
+- [Amazon CloudWatch](/terms/cloudwatch)
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
 
 ## 次に読む記事
 
