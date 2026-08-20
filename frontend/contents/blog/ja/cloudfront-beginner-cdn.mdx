@@ -67,7 +67,7 @@ CloudFrontを初めて使う人、S3に置いた静的サイトを公開しよ�
 
 ## ALB、API Gateway、S3との役割分担
 
-CloudFrontは配信とキャッシュの前段です。アプリケーションの処理を実行するALB、HTTP APIを公開するAPI Gateway、ファイルを保存するS3とは担当が異なります。画像、JavaScript、HTMLの配信はCloudFrontとS3の組み合わせが分かりやすく、ログイン後の動的画面はCloudFrontの背後にALBを置く構成もあります。Lambdaを呼ぶ問い合わせAPIは、API Gatewayを入口にするのが自然です。
+CloudFrontは配信とキャッシュの前段です。アプリケーションを実行するターゲットへリクエストを分散するALB、HTTP APIを公開するAPI Gateway、ファイルを保存するS3とは担当が異なります。画像、JavaScript、HTMLの配信はCloudFrontとS3の組み合わせが分かりやすく、ログイン後の動的画面はCloudFrontの背後にALBを置く構成もあります。Lambdaを呼ぶ問い合わせAPIは、API Gatewayを入口にするのが自然です。
 
 いずれか一つが他を完全に置き換えるわけではありません。常駐アプリへリクエストを振り分けるならALB、APIの認証やルートを扱うならAPI Gateway、オブジェクトを保管するならS3、利用者に近い場所で配信を最適化するならCloudFrontです。[ALB・NLB・CloudFrontの違い](/comparisons/alb-vs-nlb-vs-cloudfront)も併せて読むと境界が明確になります。
 
