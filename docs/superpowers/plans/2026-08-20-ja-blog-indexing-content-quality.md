@@ -92,7 +92,7 @@ const targetBatches = [
 
 **Interfaces:**
 - Consumes: `loadBlogContent(locale, slug)`, `createBlogDetailMetadataInput(locale, slug)`, `getBlogSitemapRoutes()`, `blogPosts`.
-- Produces: batch-scoped test names workers can run with `pnpm test -- src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "AWSサービス基礎"`.
+- Produces: batch-scoped test names workers can run with `pnpm exec vitest run src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "AWSサービス基礎"`.
 
 - [ ] **Step 1: Create the failing test file**
 
@@ -278,7 +278,7 @@ describe("blog indexing policy for Search Console noindex remediation", () => {
 Run from `frontend`:
 
 ```bash
-pnpm test -- src/contents/blog/__tests__/blog-indexing-policy.test.ts
+pnpm exec vitest run src/contents/blog/__tests__/blog-indexing-policy.test.ts
 ```
 
 Expected: FAIL for the 13 target article cases because Japanese MDX still contains `noIndex: true`, body length is thin, and AWS official documentation links are missing. The registry test also fails until Task 6.
@@ -418,8 +418,8 @@ Required internal links:
 Run from the worker's `frontend` directory:
 
 ```bash
-pnpm test -- src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "AWSサービス基礎"
-pnpm test -- src/contents/blog/__tests__/blog-locale-parity.test.ts
+pnpm exec vitest run src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "AWSサービス基礎"
+pnpm exec vitest run src/contents/blog/__tests__/blog-locale-parity.test.ts
 git diff --check
 ```
 
@@ -510,8 +510,8 @@ Required internal links:
 - [ ] **Step 6: Run worker tests and commit**
 
 ```bash
-pnpm test -- src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "SAA設計"
-pnpm test -- src/contents/blog/__tests__/blog-locale-parity.test.ts
+pnpm exec vitest run src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "SAA設計"
+pnpm exec vitest run src/contents/blog/__tests__/blog-locale-parity.test.ts
 git diff --check
 git add frontend/contents/blog/ja/saa-decoupling-sqs-sns-eventbridge.mdx frontend/contents/blog/ja/saa-multi-az-high-availability.mdx frontend/contents/blog/ja/saa-s3-cloudfront-oac-design.mdx
 git commit -m "docs: improve SAA design blog indexing content"
@@ -576,8 +576,8 @@ Required internal links:
 - [ ] **Step 5: Run worker tests and commit**
 
 ```bash
-pnpm test -- src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "CLF基礎"
-pnpm test -- src/contents/blog/__tests__/blog-locale-parity.test.ts
+pnpm exec vitest run src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "CLF基礎"
+pnpm exec vitest run src/contents/blog/__tests__/blog-locale-parity.test.ts
 git diff --check
 git add frontend/contents/blog/ja/clf-iam-basics.mdx frontend/contents/blog/ja/clf-aws-global-infrastructure.mdx
 git commit -m "docs: improve CLF basics blog indexing content"
@@ -661,8 +661,8 @@ Required internal links:
 - [ ] **Step 6: Run worker tests and commit**
 
 ```bash
-pnpm test -- src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "実装・ポートフォリオ"
-pnpm test -- src/contents/blog/__tests__/blog-locale-parity.test.ts
+pnpm exec vitest run src/contents/blog/__tests__/blog-indexing-policy.test.ts -t "実装・ポートフォリオ"
+pnpm exec vitest run src/contents/blog/__tests__/blog-locale-parity.test.ts
 git diff --check
 git add frontend/contents/blog/ja/serverless-contact-api-flow.mdx frontend/contents/blog/ja/lambda-cloudwatch-logs-check.mdx frontend/contents/blog/ja/aws-portfolio-serverless-architecture.mdx
 git commit -m "docs: improve serverless implementation blog indexing content"
@@ -723,7 +723,7 @@ Do not remove `noIndex: true` from `/en` or `/zh` MDX files.
 - [ ] **Step 4: Run the indexing policy test**
 
 ```bash
-pnpm test -- src/contents/blog/__tests__/blog-indexing-policy.test.ts
+pnpm exec vitest run src/contents/blog/__tests__/blog-indexing-policy.test.ts
 ```
 
 Expected: PASS.
