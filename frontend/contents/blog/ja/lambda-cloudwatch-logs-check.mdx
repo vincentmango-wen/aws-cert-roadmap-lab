@@ -15,9 +15,8 @@ targetKeywords:
   - "CloudWatch Logs 初心者"
 author: "AWS Cert Roadmap Lab"
 published: true
-noIndex: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-06-07"
+updatedAt: "2026-08-20"
 ---
 
 # LambdaのログをCloudWatchで確認する方法
@@ -73,6 +72,50 @@ CloudWatch Logsは無期限保存にするとログ量が増えます。個人MV
 - [Amazon CloudWatch](/terms/cloudwatch)
 - [AWS Lambda](/terms/lambda)
 - [Amazon API Gateway](/terms/api-gateway)
+
+## ロググループとログストリームを理解する
+
+Lambda が標準出力または標準エラーへ書いた内容は CloudWatch Logs に送られます。通常は関数ごとのロググループに、実行環境や実行時間帯ごとのログストリームが作られます。1回の送信だけを調べたいときは、時刻から候補を絞り、開始、アプリケーションログ、終了、実行レポートの順に確認します。
+
+[Lambda 関数のログ記録](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-cloudwatchlogs.html) には Lambda のログ出力と送信の前提が、[CloudWatch Logs とは](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html) にはログの保存・検索・監視の基本がまとまっています。ログストリームは利用者やAPIルートと一対一ではないため、ストリーム名だけで判断せず、識別子で実行を追います。
+
+ログが増えていない場合は、Lambda のコードより前の区間を疑います。HTTP メソッドとパスが API Gateway のルートに一致しているか、CORS の preflight で止まっていないか、統合先が意図した関数・エイリアスかを順番に確認します。Lambda に到達していない失敗を関数内で探し続けないことが重要です。
+
+## request IDで1回の処理を追跡する
+
+調査用のログは文章だけでなく、検索できるフィールドを持たせます。`level`、`event`、`requestId`、`contactId`、`statusCode`、`durationMs` を JSON として出力すると、同じ失敗を集計し、成功時との差分を見つけやすくなります。Lambda のコンテキストで得られる request ID と、アプリケーションが発行した `contactId` を合わせると、API Gateway、Lambda、DynamoDB の記録を関連付けられます。
+
+問い合わせ本文、メールアドレス、Authorization ヘッダー、Cookie を丸ごとログに出すのは避けます。再現に必要な場合も、文字数、必須項目の有無、ハッシュ化した識別子などに置き換えます。個人情報をログに複製すると、閲覧権限や保持期間が増えたときの取り扱い範囲も広がります。
+
+利用者へのエラー応答に request ID を含める場合は、内部構造や認証情報を含まない値だけにします。画面で表示する一般的なエラーと、運用者がログで見る詳細を分けると、情報を必要以上に公開せずに問い合わせ対応できます。
+
+## API Gatewayの4xxと5xxを分けて調べる
+
+API Gateway の `4xx` は、JSON の形式不正、必須項目不足、認可、ルート、CORS に近い失敗を確認する入口です。Lambda が入力検証した結果なら、検証ルール名と request ID をログに残し、本文全体は残しません。急増している場合は、フロントエンドのリリースで送信形式が変わっていないかも照合します。
+
+`5xx` は、Lambda の例外、タイムアウト、DynamoDB の権限不足、統合設定の不整合を疑います。`AccessDeniedException` なら IAM ポリシー、タイムアウトなら外部呼び出しや処理量、`502` なら API Gateway が期待する `statusCode`、`headers`、JSON文字列の body を返しているかを確認します。ステータスだけで断定せず、API Gateway のアクセスログと Lambda の request ID を照合します。
+
+スタックトレースを API のレスポンスへ返すのは失敗例です。ブラウザには必要最小限のエラーコードを返し、詳細は request ID を起点にログで確認します。問い合わせAPIのリクエスト全体は[API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ](/blog/serverless-contact-api-flow)で確認できます。
+
+## IAMでログ出力の権限を確認する
+
+Lambda の実行ロールには、CloudWatch Logs でログストリームを作成し、イベントを書き込む権限が必要です。ログが出ないときはアプリケーションコードの前に、実行ロールと対象ロググループへの許可を確認します。DynamoDB の `PutItem` 権限と CloudWatch Logs の書込み権限は別の目的なので、どちらが不足しているかをエラーから切り分けます。
+
+権限エラーを解消するために管理者権限を付けるのは避けます。必要な Action と対象 Resource を限定し、デプロイ用ロールと Lambda 実行ロールも分離します。デプロイ後の確認項目に「成功ログを1件確認する」「入力エラーが期待する分類で残る」を入れると、権限変更の影響を早く見つけられます。
+
+## 保存期間とコストを運用で決める
+
+CloudWatch Logs は無制限に保管する前提にせず、障害調査に必要な期間とデータの性質に合わせて保持設定を決めます。トラフィック、ログ量、リージョン、設定で費用や制限に関わる条件は変わるため、「この構成なら必ず無料」「何日なら必ず安全」と固定値で断定しません。
+
+成功時の詳細ログやリクエスト本文を大量に出すと、調査価値より保存量が大きくなります。通常時は要約ログにし、障害調査時だけ追加の診断ログを有効にする方法もあります。ロググループの保持設定とアクセス権をインフラ定義に含めると、新しい環境での設定漏れを減らせます。
+
+## 失敗例から確認手順を作る
+
+「関数は成功しているのにブラウザで CORS エラーになる」場合は、Lambda の成功ログだけで完了とせず、Network タブで `OPTIONS` と `POST` の応答を確認します。許可 Origin、メソッド、ヘッダーが環境に合っているかを照合します。
+
+「ログにエラーがないのに `502` が返る」場合は、Lambda の戻り値が API Gateway の期待する形式かを確認します。「ログが見つからない」場合は、リージョン、関数名、エイリアス、時刻のタイムゾーンを確認します。別環境のロググループを見ている設定ミスは、コード不具合に見える典型例です。
+
+正常送信、必須項目不足、不正JSON、DynamoDB権限不足のケースで、期待するHTTPステータス、ログ項目、アラートの有無を記録します。リリース後に一度再現し、request ID から保存結果まで追えることを確認します。基本的な監視の位置づけは[CloudWatchの基本をCloud Practitioner向けに解説](/blog/clf-monitoring-cloudwatch-basics)も参照してください。
 
 ## 次に読む記事
 
