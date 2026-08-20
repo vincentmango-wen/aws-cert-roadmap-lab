@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { createBlogDetailMetadataInput } from "../../../app/(site)/blog/blog-detail-data";
 import { loadBlogContent } from "../../../app/(site)/blog/blog-content-loader";
 import { getBlogSitemapRoutes } from "../../../app/sitemap";
+import { createPageMetadata } from "../../../lib/seo";
 import architecturesJa from "../../../../contents/architectures/architectures.ja.json";
 import comparisonsJa from "../../../../contents/comparisons/comparisons.ja.json";
 import termsJa from "../../../../contents/terms/terms.ja.json";
@@ -15,6 +16,9 @@ type TermEntry = { termId?: string; published?: boolean };
 
 const FRONTEND_ROOT = path.resolve(__dirname, "../../../../");
 const JA_BLOG_DIR = path.join(FRONTEND_ROOT, "contents", "blog", "ja");
+const EXPECTED_SITE_URL = "https://www.aws-cert-roadmap-lab.com";
+
+process.env.NEXT_PUBLIC_SITE_URL = EXPECTED_SITE_URL;
 
 const targetBatches = [
   {
@@ -171,6 +175,7 @@ describe("blog indexing policy for Search Console noindex remediation", () => {
           const body = extractBody(rawFile);
           const loaded = loadBlogContent("ja", slug);
           const metadataInput = createBlogDetailMetadataInput("ja", slug);
+          const metadata = createPageMetadata(metadataInput);
           const officialDocLinks = extractMarkdownLinks(body).filter((href) =>
             href.startsWith("https://docs.aws.amazon.com/"),
           );
@@ -194,6 +199,10 @@ describe("blog indexing policy for Search Console noindex remediation", () => {
             metadataInput.noIndex,
             `${slug} metadata remains noIndex`,
           ).toBe(false);
+          expect(
+            String(metadata.alternates?.canonical),
+            `${slug} canonical is not the production HTTPS www self URL`,
+          ).toBe(`${EXPECTED_SITE_URL}/blog/${slug}`);
           expect(
             sitemapPathnames,
             `${slug} missing from blog sitemap routes`,
