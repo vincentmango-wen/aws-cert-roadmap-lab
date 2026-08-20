@@ -57,17 +57,6 @@ DynamoDBにはオンデマンドキャパシティがあります。アクセス
 - 大量アクセスに強い設計ができる
 - RDSとはデータモデルが違う
 
-## 関連用語
-
-- [Amazon DynamoDB](/terms/dynamodb)
-- [Amazon RDS](/terms/rds)
-- [AWS Lambda](/terms/lambda)
-
-## 次に読む記事
-
-- [RDS・DynamoDBの違い](/comparisons/rds-vs-dynamodb)
-- [SAA向けにRDSとDynamoDBの選び方を整理する](/blog/saa-database-selection-rds-dynamodb)
-
 ## DynamoDBを選ぶ前に考えること
 
 DynamoDBは、キーと値を中心に扱うマネージドなNoSQLデータベースで、属性を持つドキュメント形式のアイテムも保存できます。[Amazon DynamoDB とは](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html)を読むと、サーバー運用を意識せずに利用できる一方で、アクセス方法を先に設計する重要性が分かります。
@@ -147,3 +136,14 @@ DynamoDBはSQLを実行するRDSではなく、キーによる取得を前提に
 設計の変更は、読み取りと書き込みの両方に影響します。利用者が見る画面、管理者が使う画面、バッチ処理の順に影響を確認し、ロールバックが必要な場合の手順も残します。
 
 変更理由を記録すると、将来の改善判断にも使えます。
+
+## 関連用語
+
+- [Amazon DynamoDB](/terms/dynamodb)
+- [Amazon RDS](/terms/rds)
+- [AWS Lambda](/terms/lambda)
+
+## 次に読む記事
+
+- [RDS・DynamoDBの違い](/comparisons/rds-vs-dynamodb)
+- [SAA向けにRDSとDynamoDBの選び方を整理する](/blog/saa-database-selection-rds-dynamodb)

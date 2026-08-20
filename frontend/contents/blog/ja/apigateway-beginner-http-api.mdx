@@ -57,17 +57,6 @@ REST APIの方が機能は豊富ですが、小規模な問い合わせAPIでは
 - CORS設定が必要になる場合がある
 - 認証が必要な場合はCognito JWT Authorizerなどを使う
 
-## 関連用語
-
-- [Amazon API Gateway](/terms/api-gateway)
-- [AWS Lambda](/terms/lambda)
-- [Amazon DynamoDB](/terms/dynamodb)
-
-## 次に読む記事
-
-- [API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ](/blog/serverless-contact-api-flow)
-- [LambdaのログをCloudWatchで確認する方法](/blog/lambda-cloudwatch-logs-check)
-
 ## API Gatewayが必要になる場面
 
 ブラウザ、モバイルアプリ、外部連携先からHTTPでバックエンド機能を呼び出したいとき、API Gatewayは入口を一元化できます。URLのパスとHTTPメソッドを処理へ対応付け、リクエスト形式、認証、CORSなどを入口側で管理しやすくなります。フロントエンドがLambdaの呼び出し権限を直接持つ構成より、公開境界を明確にできます。[Amazon API Gateway とは](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)も最初に確認しておくと、統合先との違いを整理できます。
@@ -137,3 +126,14 @@ APIの入力値は、画面側で検証していてもサーバー側で再度�
 リリース後には、実際の利用者が送るリクエストの形式と仕様書の差分を確認します。予期しない利用方法が見つかったら、入力検証、エラーメッセージ、ドキュメントを合わせて更新し、曖昧な契約を残さないことが重要です。
 
 開発用の許可設定を本番へ持ち込まないために、環境ごとのOrigin、認証設定、ログ出力先をレビュー対象にします。URLが動くことと、安全に公開できることは別の確認項目です。
+
+## 関連用語
+
+- [Amazon API Gateway](/terms/api-gateway)
+- [AWS Lambda](/terms/lambda)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 次に読む記事
+
+- [API Gateway + Lambda + DynamoDBで問い合わせAPIを作る流れ](/blog/serverless-contact-api-flow)
+- [LambdaのログをCloudWatchで確認する方法](/blog/lambda-cloudwatch-logs-check)

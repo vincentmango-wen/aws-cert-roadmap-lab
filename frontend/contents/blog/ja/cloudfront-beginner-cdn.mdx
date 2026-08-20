@@ -59,17 +59,6 @@ CI/CDでは、S3 sync後にCloudFront Invalidationを実行して、更新内容
 - HTTPS配信やキャッシュ制御に使う
 - 更新反映にはInvalidationを使う
 
-## 関連用語
-
-- [Amazon CloudFront](/terms/cloudfront)
-- [Amazon S3](/terms/s3)
-- [AWS Certificate Manager](/terms/acm)
-
-## 次に読む記事
-
-- [ALB・NLB・CloudFrontの違い](/comparisons/alb-vs-nlb-vs-cloudfront)
-- [S3とCloudFront OACで安全に静的サイトを配信する設計](/blog/saa-s3-cloudfront-oac-design)
-
 ## まず判断したいこと
 
 CloudFrontを初めて使う人、S3に置いた静的サイトを公開しようとしている人、試験で配信サービスの選択肢を整理したい人に向けた記事です。読み終えたら、画像やHTMLを世界中へ配る場面でCloudFrontを選ぶ理由、APIの入口にAPI Gatewayを置く理由、S3を直接公開しない理由を説明できるようになります。
@@ -133,3 +122,14 @@ CDNの導入後も、オリジンの障害時に何を返すか、キャッシ�
 CloudFrontの設定変更は即時に全利用者へ同じように見えるとは限りません。設定反映とキャッシュの反映を区別し、変更日時、対象パス、確認結果を記録します。画像のように更新頻度が低いものと、利用規約や価格案内のように正確な最新版が必要なものを同一のTTLで扱わないことが、配信品質と運用負荷の両方を整えます。
 
 利用者へ返す内容の鮮度と、オリジンを守る効果の間には常に調整があります。ページ種別ごとに期待する更新速度を書き出し、キャッシュ設定の理由を残すと、後の変更でも判断を再利用できます。
+
+## 関連用語
+
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [AWS Certificate Manager](/terms/acm)
+
+## 次に読む記事
+
+- [ALB・NLB・CloudFrontの違い](/comparisons/alb-vs-nlb-vs-cloudfront)
+- [S3とCloudFront OACで安全に静的サイトを配信する設計](/blog/saa-s3-cloudfront-oac-design)

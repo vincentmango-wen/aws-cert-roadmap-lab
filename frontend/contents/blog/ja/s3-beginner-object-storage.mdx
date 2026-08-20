@@ -59,17 +59,6 @@ S3は保存容量、リクエスト、データ転送などで課金されます
 - ストレージクラスでコスト最適化できる
 - CloudFrontと組み合わせて配信できる
 
-## 関連用語
-
-- [Amazon S3](/terms/s3)
-- [Amazon EBS](/terms/ebs)
-- [Amazon EFS](/terms/efs)
-
-## 次に読む記事
-
-- [S3・EBS・EFSの違い](/comparisons/s3-vs-ebs-vs-efs)
-- [S3とCloudFront OACで安全に静的サイトを配信する設計](/blog/saa-s3-cloudfront-oac-design)
-
 ## S3を理解するための基本モデル
 
 S3はファイルをオブジェクトとして保存するストレージです。保存先の入れ物がバケット、バケット内でオブジェクトを識別する名前がキー、実体とメタデータを合わせたものがオブジェクトです。[Amazon S3 とは](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html)を確認し、フォルダのように見える表示はキーの接頭辞による整理であることを押さえましょう。
@@ -147,3 +136,14 @@ S3は多くのAWSサービスの保存先として使われます。だからこ
 データを外部へ共有する必要がある場合も、バケット全体を公開するのではなく、対象、期間、操作を限定します。公開後に不要になった権限を取り消す手順まで決めておくと、継続的な安全性を保てます。
 
 定期的な権限レビューを運用に組み込みます。
+
+## 関連用語
+
+- [Amazon S3](/terms/s3)
+- [Amazon EBS](/terms/ebs)
+- [Amazon EFS](/terms/efs)
+
+## 次に読む記事
+
+- [S3・EBS・EFSの違い](/comparisons/s3-vs-ebs-vs-efs)
+- [S3とCloudFront OACで安全に静的サイトを配信する設計](/blog/saa-s3-cloudfront-oac-design)

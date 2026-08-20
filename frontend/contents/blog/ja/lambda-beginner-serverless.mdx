@@ -59,17 +59,6 @@ Lambdaには実行時間、メモリ、同時実行数などの制約があり�
 - DynamoDBなどのAWSサービスと連携しやすい
 - 常時起動サーバーを管理しない
 
-## 関連用語
-
-- [AWS Lambda](/terms/lambda)
-- [Amazon API Gateway](/terms/api-gateway)
-- [Amazon DynamoDB](/terms/dynamodb)
-
-## 次に読む記事
-
-- [LambdaとAPI Gatewayを初心者向けに解説](/blog/lambda-api-gateway-beginner)
-- [API Gateway + Lambda + DynamoDB サーバーレスAPI構成](/architectures/serverless-api-basic)
-
 ## サーバーレスの実行モデル
 
 Lambdaは、イベントが届いたときに関数を実行するサービスです。サーバーが存在しない意味ではなく、OSの更新、常時起動、容量管理といった基盤の運用をAWSへ任せ、開発者は関数のコードと設定に集中します。[AWS Lambda とは](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)で、対応するイベントソースと実行環境の考え方を確認できます。
@@ -151,3 +140,14 @@ Lambdaは常駐Webサーバーではなくイベント駆動の実行サービ�
 試験では、実行するコード、イベントを渡すサービス、保存先、権限を順に分けて考えます。Lambdaを中心に見ても、周辺サービスの役割が消えるわけではありません。
 
 本番障害の調査では、直前のデプロイ、設定変更、入力の変化を時系列で見ます。ログに相関IDを残しておくと、複数のサービスをまたぐ処理でも同じリクエストを追跡できます。
+
+## 関連用語
+
+- [AWS Lambda](/terms/lambda)
+- [Amazon API Gateway](/terms/api-gateway)
+- [Amazon DynamoDB](/terms/dynamodb)
+
+## 次に読む記事
+
+- [LambdaとAPI Gatewayを初心者向けに解説](/blog/lambda-api-gateway-beginner)
+- [API Gateway + Lambda + DynamoDB サーバーレスAPI構成](/architectures/serverless-api-basic)
