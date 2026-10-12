@@ -16,6 +16,7 @@ export type QuestionPlayerLabels = {
   questionsLabel: string;
   clfLabel: string;
   saaLabel: string;
+  questionDisclaimer: string;
   difficultyLabel: string;
   difficulty: {
     easy: string;
@@ -61,6 +62,8 @@ export const questionPlayerLabelsByLocale: Record<
     questionsLabel: "模擬問題",
     clfLabel: "CLF-C02",
     saaLabel: "SAA-C03",
+    questionDisclaimer:
+      "この問題は学習目的で独自に作成した非公式の練習問題です。AWS公式試験問題、実試験問題、試験ダンプではありません。",
     difficultyLabel: "難易度",
     difficulty: {
       easy: "やさしい",
@@ -100,6 +103,8 @@ export const questionPlayerLabelsByLocale: Record<
     questionsLabel: "Practice Questions",
     clfLabel: "CLF-C02",
     saaLabel: "SAA-C03",
+    questionDisclaimer:
+      "These questions are independently created for study purposes. They are not official AWS exam questions, actual exam questions, leaked questions, or exam dumps.",
     difficultyLabel: "Difficulty",
     difficulty: {
       easy: "Easy",
@@ -139,6 +144,8 @@ export const questionPlayerLabelsByLocale: Record<
     questionsLabel: "模擬題",
     clfLabel: "CLF-C02",
     saaLabel: "SAA-C03",
+    questionDisclaimer:
+      "這些題目為學習目的而獨立製作，並非 AWS 官方考題、實際考題、外流題或考題庫。",
     difficultyLabel: "難度",
     difficulty: {
       easy: "簡單",

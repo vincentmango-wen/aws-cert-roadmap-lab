@@ -187,6 +187,13 @@ export function QuestionPlayer({
         </ol>
       </nav>
 
+      <p
+        role="note"
+        className="mb-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700"
+      >
+        {resolvedLabels.questionDisclaimer}
+      </p>
+
       <header className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex flex-wrap gap-2">
           <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
