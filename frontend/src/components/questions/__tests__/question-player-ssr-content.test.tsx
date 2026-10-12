@@ -203,4 +203,15 @@ describe("QuestionPlayer 初期レンダー HTML (SSG 出力相当)", () => {
 
     expect(violations, `<details> の invariant 違反:\n${violations.join("\n")}`).toEqual([]);
   });
+
+  it("invariant(4): 承認済みの免責文が各言語で回答UIより前に表示される", () => {
+    for (const { locale, text } of RENDERED) {
+      const disclaimer = questionPlayerLabelsByLocale[locale].questionDisclaimer;
+      const disclaimerIndex = text.indexOf(disclaimer);
+      const choicesIndex = text.indexOf(questionPlayerLabelsByLocale[locale].choicesTitle);
+
+      expect(disclaimerIndex, `${locale}: 免責文が初期 HTML に含まれる`).toBeGreaterThanOrEqual(0);
+      expect(disclaimerIndex, `${locale}: 免責文が回答UIより前にある`).toBeLessThan(choicesIndex);
+    }
+  });
 });
