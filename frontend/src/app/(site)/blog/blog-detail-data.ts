@@ -107,41 +107,51 @@ export const blogDetailLabelsByLocale: Record<Locale, BlogDetailLabels> = {
 /**
  * locale 別の公開ブログ記事メタを返す。
  *
- * - registry の 25 件を起点に、各 slug について `loadBlogContent(locale, slug)`
- *   で MDX frontmatter を読み、locale 別の title / description / tags /
- *   targetKeywords / noIndex を上書きする。
+ * - registry の `published: false` は全 locale 共通で非公開にする。
+ * - locale MDX の `published: false` は、その locale のみ非公開にする。
+ * - frontmatter の `published` 未指定、または MDX 不在は公開扱いにする。
+ * - 各記事の MDX frontmatter から locale 別の title / description / tags /
+ *   targetKeywords / noIndex を取得する。
  * - locale が en/zh で MDX が存在しないときは、registry の値 (ja 由来) が
  *   そのまま表示される (scaffold モード / Phase 2 翻訳追加で自動的に
  *   locale 値に切り替わる)。
  */
 export function getPublishedBlogPosts(locale: Locale): BlogPostMeta[] {
-  return blogPosts
-    .filter((post) => post.published)
-    .map((post) => {
-      const loaded = loadBlogContent(locale, post.slug);
+  const posts: BlogPostMeta[] = [];
 
-      if (!loaded) {
-        return post;
-      }
+  for (const post of blogPosts) {
+    if (!post.published) {
+      continue;
+    }
 
-      const { frontmatter } = loaded;
+    const loaded = loadBlogContent(locale, post.slug);
+    if (loaded?.frontmatter.published === false) {
+      continue;
+    }
 
-      return {
-        ...post,
-        title: frontmatter.title || post.title,
-        description: frontmatter.description || post.description,
-        category: frontmatter.category || post.category,
-        tags: frontmatter.tags.length > 0 ? frontmatter.tags : post.tags,
-        targetKeywords:
-          frontmatter.targetKeywords.length > 0
-            ? frontmatter.targetKeywords
-            : post.targetKeywords,
-        noIndex: frontmatter.noIndex,
-      } satisfies BlogPostMeta;
-    })
-    .sort((firstPost, secondPost) =>
-      secondPost.publishedAt.localeCompare(firstPost.publishedAt),
-    );
+    if (!loaded) {
+      posts.push(post);
+      continue;
+    }
+
+    const { frontmatter } = loaded;
+    posts.push({
+      ...post,
+      title: frontmatter.title || post.title,
+      description: frontmatter.description || post.description,
+      category: frontmatter.category || post.category,
+      tags: frontmatter.tags.length > 0 ? frontmatter.tags : post.tags,
+      targetKeywords:
+        frontmatter.targetKeywords.length > 0
+          ? frontmatter.targetKeywords
+          : post.targetKeywords,
+      noIndex: frontmatter.noIndex,
+    });
+  }
+
+  return posts.sort((firstPost, secondPost) =>
+    secondPost.publishedAt.localeCompare(firstPost.publishedAt),
+  );
 }
 
 /**

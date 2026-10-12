@@ -24,8 +24,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
+import {
+  getBlogPostBySlug,
+  getBlogStaticParams,
+  getPublishedBlogPosts,
+} from "@/app/(site)/blog/blog-detail-data";
 import { blogPosts } from "../blogPosts";
 
 const FRONTEND_ROOT = path.resolve(__dirname, "../../../../");
@@ -159,6 +164,84 @@ const registrySlugs = blogPosts.map((post) => post.slug).sort();
 const isScaffoldMode = enSlugs.length === 0 || zhSlugs.length === 0;
 
 describe("blog locale parity", () => {
+  it("locale published=false is enforced even when no fixture currently uses it", async () => {
+    const target = blogPosts.find((post) => post.published);
+    expect(target, "published registry fixture is required").toBeDefined();
+    const slug = target!.slug;
+
+    vi.resetModules();
+    vi.doMock("@/app/(site)/blog/blog-content-loader", async () => {
+      const actual = await vi.importActual<
+        typeof import("@/app/(site)/blog/blog-content-loader")
+      >("@/app/(site)/blog/blog-content-loader");
+
+      return {
+        ...actual,
+        loadBlogContent: (locale: "ja" | "en" | "zh", postSlug: string) => {
+          const loaded = actual.loadBlogContent(locale, postSlug);
+          if (locale !== "en" || postSlug !== slug || !loaded) return loaded;
+          return {
+            ...loaded,
+            frontmatter: { ...loaded.frontmatter, published: false },
+          };
+        },
+      };
+    });
+
+    try {
+      const {
+        getBlogPostBySlug: getPost,
+        getBlogStaticParams: getParams,
+        getPublishedBlogPosts: getPosts,
+      } = await import("@/app/(site)/blog/blog-detail-data");
+
+      expect(getPosts("en").some((post) => post.slug === slug)).toBe(false);
+      expect(getParams("en").some((param) => param.postSlug === slug)).toBe(
+        false,
+      );
+      expect(getPost("en", slug)).toBeNull();
+
+      for (const locale of ["ja", "zh"] as const) {
+        expect(getPosts(locale).some((post) => post.slug === slug)).toBe(true);
+        expect(
+          getParams(locale).some((param) => param.postSlug === slug),
+        ).toBe(true);
+        expect(getPost(locale, slug)).not.toBeNull();
+      }
+    } finally {
+      vi.doUnmock("@/app/(site)/blog/blog-content-loader");
+      vi.resetModules();
+    }
+  });
+
+  it("locale frontmatter published=false excludes only that locale from public blog routes", () => {
+    for (const locale of ["ja", "en", "zh"] as const) {
+      const publishedSlugs = new Set(
+        getPublishedBlogPosts(locale).map((post) => post.slug),
+      );
+      const staticSlugs = new Set(
+        getBlogStaticParams(locale).map((param) => param.postSlug),
+      );
+
+      for (const post of blogPosts) {
+        const frontmatter = loadFrontmatterAndBody(locale, post.slug)?.fm;
+        const shouldBePublished =
+          post.published && frontmatter?.published !== false;
+
+        expect(publishedSlugs.has(post.slug), `${locale}/${post.slug}`).toBe(
+          shouldBePublished,
+        );
+        expect(staticSlugs.has(post.slug), `${locale}/${post.slug}`).toBe(
+          shouldBePublished,
+        );
+        expect(
+          getBlogPostBySlug(locale, post.slug) !== null,
+          `${locale}/${post.slug}`,
+        ).toBe(shouldBePublished);
+      }
+    }
+  });
+
   it("(R) registry slug set equals ja MDX slug set (25 entries)", () => {
     expect(new Set(registrySlugs)).toEqual(new Set(jaSlugs));
     expect(registrySlugs.length).toBe(25);
