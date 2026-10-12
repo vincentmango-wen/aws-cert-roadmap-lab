@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import type { Locale } from "../locales";
 import { createLocalizedPath, defaultLocale, locales } from "../locales";
-import { isPublishedLocale } from "../release-gate";
+import { LOCALIZED_ROUTES_PUBLISHED, isPublishedLocale } from "../release-gate";
 
 export type SitemapItem = MetadataRoute.Sitemap[number];
 
@@ -124,6 +124,10 @@ export function createAlternateLanguageUrls(
       [hreflang]: createSitemapAbsoluteUrl(localizedPathname),
     };
   }, {});
+
+  if (!LOCALIZED_ROUTES_PUBLISHED) {
+    return languageUrls;
+  }
 
   return {
     ...languageUrls,

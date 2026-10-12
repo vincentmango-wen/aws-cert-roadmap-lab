@@ -9,6 +9,7 @@ import {
   type SitemapItem,
 } from "../i18n/seo/sitemap";
 import { isSealedPathname } from "../i18n/release-gate";
+import { getAvailableLocalesForPathname } from "../i18n/locales";
 
 export const dynamic = "force-static";
 
@@ -189,7 +190,7 @@ function getStaticRoutes(): SitemapRouteInput[] {
       pathname: "/terms-of-service",
       priority: 0.3,
       changeFrequency: "yearly",
-      availableLocales: ["ja"],
+      availableLocales: getAvailableLocalesForPathname("/terms-of-service"),
     },
   ];
 }

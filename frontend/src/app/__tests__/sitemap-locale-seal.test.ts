@@ -35,12 +35,12 @@ describe.skipIf(LOCALIZED_ROUTES_PUBLISHED)("sitemap locale seal", () => {
     expect(sealedUrls).toEqual([]);
   });
 
-  it("emits a ja self-reference and x-default alternate only", () => {
+  it("emits only a ja self-reference while sealed", () => {
     const alternateKeySets = new Set(
       items.map((item) => Object.keys(item.alternates?.languages ?? {}).sort().join(",")),
     );
 
-    expect([...alternateKeySets]).toEqual(["ja,x-default"]);
+    expect([...alternateKeySets]).toEqual(["ja"]);
   });
 
   it("does not hollow out the sitemap (>= 150 URLs)", () => {

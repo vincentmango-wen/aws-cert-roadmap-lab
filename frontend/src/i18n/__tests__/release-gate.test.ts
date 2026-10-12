@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { defaultLocale, locales } from "../locales";
+import { defaultLocale, getAvailableLocalesForPathname, locales } from "../locales";
 import {
   LOCALIZED_ROUTES_PUBLISHED,
   isPublishedLocale,
@@ -61,6 +61,17 @@ describe("release gate constant", () => {
     for (const marker of ["#319", "#305", "#334", "createLocaleAwareRobots", "x-default"]) {
       expect(releaseGateSource, `解封前提条件から ${marker} が消えています`).toContain(marker);
     }
+  });
+});
+
+describe("available locales for a pathname", () => {
+  it("hides locale switches for the Japanese-only terms of service route", () => {
+    expect(getAvailableLocalesForPathname("/terms-of-service")).toEqual(["ja"]);
+    expect(getAvailableLocalesForPathname("/terms-of-service/")).toEqual(["ja"]);
+  });
+
+  it("returns all locales for translated routes", () => {
+    expect(getAvailableLocalesForPathname("/zh/roadmap")).toEqual([...locales]);
   });
 });
 

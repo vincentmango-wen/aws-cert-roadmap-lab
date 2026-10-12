@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import type { ReactElement } from "react";
 import {
   createLocalizedPath,
+  getAvailableLocalesForPathname,
   getHtmlLang,
   getLocaleFromPathname,
   getLocaleConfig,
-  locales,
   type Locale,
 } from "@/i18n/locales";
 
@@ -40,17 +40,22 @@ const languageSwitcherText: Record<Locale, LanguageSwitcherText> = {
   },
 };
 
-export function LanguageSwitcher({ onNavigate }: LanguageSwitcherProps): ReactElement {
+export function LanguageSwitcher({ onNavigate }: LanguageSwitcherProps): ReactElement | null {
   const pathname = usePathname();
+  const availableLocales = getAvailableLocalesForPathname(pathname);
   const currentLocale = getLocaleFromPathname(pathname);
   const text = languageSwitcherText[currentLocale];
+
+  if (availableLocales.length < 2) {
+    return null;
+  }
 
   return (
     <nav
       aria-label={text.ariaLabel}
       className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 p-1"
     >
-      {locales.map((locale) => {
+      {availableLocales.map((locale) => {
         const config = getLocaleConfig(locale);
         const isCurrent = locale === currentLocale;
         const href = createLocalizedPath(locale, pathname);
