@@ -103,4 +103,9 @@ describe.runIf(LOCALIZED_ROUTES_PUBLISHED)("sitemap localized detail URLs (en/zh
     expect(urls).toContain(`${SITE_URL}/en/comparisons`);
     expect(urls).toContain(`${SITE_URL}/zh/comparisons`);
   });
+
+  it("contains localized Roadmap index pages in en/zh", () => {
+    expect(urls).toContain(`${SITE_URL}/en/roadmap`);
+    expect(urls).toContain(`${SITE_URL}/zh/roadmap`);
+  });
 });

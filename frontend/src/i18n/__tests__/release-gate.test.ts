@@ -32,6 +32,10 @@ describe("release gate constant", () => {
     expect(typeof LOCALIZED_ROUTES_PUBLISHED).toBe("boolean");
   });
 
+  it("publishes localized routes for the approved release", () => {
+    expect(LOCALIZED_ROUTES_PUBLISHED).toBe(true);
+  });
+
   it("always publishes the default locale", () => {
     expect(publishedLocales).toContain(defaultLocale);
     expect(isPublishedLocale(defaultLocale)).toBe(true);
@@ -54,7 +58,7 @@ describe("release gate constant", () => {
 
   it("keeps the unsealing preconditions documented", () => {
     // 解封手順が消えると「フラグを true にするだけ」で既知欠陥ごと公開されてしまう。
-    for (const marker of ["#319", "#305", "#312", "createLocaleAwareRobots", "x-default"]) {
+    for (const marker of ["#319", "#305", "#334", "createLocaleAwareRobots", "x-default"]) {
       expect(releaseGateSource, `解封前提条件から ${marker} が消えています`).toContain(marker);
     }
   });

@@ -2,19 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import ContactForm from "@/components/contact/ContactForm";
-import { createLocaleAwareRobots } from "@/lib/seo";
+import { createPageMetadata } from "@/lib/seo";
 
 const pagePath = "/en/contact";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Contact | AWS Cert Roadmap Lab",
   description:
     "Contact AWS Cert Roadmap Lab to report content issues, ask questions about the AWS learning site, or discuss portfolio and work inquiries.",
-  alternates: {
-    canonical: pagePath,
-  },
-  robots: createLocaleAwareRobots(pagePath),
-};
+  path: pagePath,
+});
 
 export default function EnglishContactPage() {
   return (

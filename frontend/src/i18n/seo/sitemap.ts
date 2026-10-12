@@ -115,16 +115,22 @@ export function createAlternateLanguageUrls(
 ): Record<string, string> {
   const normalizedPathname = normalizeSitemapPathname(pathname);
   const resolvedLocales = resolveAvailableLocales(availableLocales);
-
-  return resolvedLocales.reduce<Record<string, string>>((languageUrls, locale) => {
+  const languageUrls = resolvedLocales.reduce<Record<string, string>>((urls, locale) => {
     const hreflang = hreflangByLocale[locale];
     const localizedPathname = createLocalizedPath(locale, normalizedPathname);
 
     return {
-      ...languageUrls,
+      ...urls,
       [hreflang]: createSitemapAbsoluteUrl(localizedPathname),
     };
   }, {});
+
+  return {
+    ...languageUrls,
+    "x-default": createSitemapAbsoluteUrl(
+      createLocalizedPath(defaultLocale, normalizedPathname),
+    ),
+  };
 }
 
 export function createLocalizedSitemapItems(
