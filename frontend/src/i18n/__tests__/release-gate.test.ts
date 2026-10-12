@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { defaultLocale, locales } from "../locales";
+import { defaultLocale, getAvailableLocalesForPathname, locales } from "../locales";
 import {
   LOCALIZED_ROUTES_PUBLISHED,
   isPublishedLocale,
@@ -30,6 +30,10 @@ const FLAG_DECLARATION = /LOCALIZED_ROUTES_PUBLISHED\s*:\s*boolean\s*=\s*(true|f
 describe("release gate constant", () => {
   it("is a boolean", () => {
     expect(typeof LOCALIZED_ROUTES_PUBLISHED).toBe("boolean");
+  });
+
+  it("publishes localized routes for the approved release", () => {
+    expect(LOCALIZED_ROUTES_PUBLISHED).toBe(true);
   });
 
   it("always publishes the default locale", () => {
@@ -54,9 +58,20 @@ describe("release gate constant", () => {
 
   it("keeps the unsealing preconditions documented", () => {
     // 解封手順が消えると「フラグを true にするだけ」で既知欠陥ごと公開されてしまう。
-    for (const marker of ["#319", "#305", "#312", "createLocaleAwareRobots", "x-default"]) {
+    for (const marker of ["#319", "#305", "#334", "createLocaleAwareRobots", "x-default"]) {
       expect(releaseGateSource, `解封前提条件から ${marker} が消えています`).toContain(marker);
     }
+  });
+});
+
+describe("available locales for a pathname", () => {
+  it("hides locale switches for the Japanese-only terms of service route", () => {
+    expect(getAvailableLocalesForPathname("/terms-of-service")).toEqual(["ja"]);
+    expect(getAvailableLocalesForPathname("/terms-of-service/")).toEqual(["ja"]);
+  });
+
+  it("returns all locales for translated routes", () => {
+    expect(getAvailableLocalesForPathname("/zh/roadmap")).toEqual([...locales]);
   });
 });
 

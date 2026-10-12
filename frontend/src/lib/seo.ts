@@ -85,6 +85,10 @@ export function getDefaultOgImageForLocale(locale: SeoLocale): string {
     return siteConfig.englishOgImage;
   }
 
+  if (locale === "zh") {
+    return siteConfig.chineseOgImage;
+  }
+
   return siteConfig.defaultOgImage;
 }
 

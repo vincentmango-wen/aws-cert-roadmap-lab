@@ -1,14 +1,15 @@
 export const locales = ["ja", "en", "zh"] as const;
 
 export type Locale = (typeof locales)[number];
+export type Pathname = "/" | `/${string}`;
 
 export const defaultLocale = "ja" satisfies Locale;
+
+const japaneseOnlyPathnames = ["/terms-of-service"] as const satisfies readonly Pathname[];
 
 export const prefixedLocales = ["en", "zh"] as const satisfies readonly Locale[];
 
 export type PrefixedLocale = (typeof prefixedLocales)[number];
-
-export type Pathname = "/" | `/${string}`;
 
 export type LocalePrefix = "" | `/${PrefixedLocale}`;
 
@@ -179,6 +180,15 @@ export function createLocalizedPath(locale: Locale, pathname: string): Pathname 
   }
 
   return `${prefix}${normalizedPathname}` as Pathname;
+}
+
+/** ロケール切替リンクを表示できる言語を pathname から返す。 */
+export function getAvailableLocalesForPathname(pathname: string): readonly Locale[] {
+  const normalizedPathname = removeLocalePrefix(normalizePathname(pathname));
+
+  return japaneseOnlyPathnames.some((jaOnlyPathname) => jaOnlyPathname === normalizedPathname)
+    ? [defaultLocale]
+    : locales;
 }
 
 export function createAlternateLocalePaths(pathname: string): Record<Locale, Pathname> {

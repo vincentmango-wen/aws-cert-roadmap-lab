@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import type { Locale } from "../locales";
 import { createLocalizedPath, defaultLocale, locales } from "../locales";
-import { isPublishedLocale } from "../release-gate";
+import { LOCALIZED_ROUTES_PUBLISHED, isPublishedLocale } from "../release-gate";
 
 export type SitemapItem = MetadataRoute.Sitemap[number];
 
@@ -115,16 +115,26 @@ export function createAlternateLanguageUrls(
 ): Record<string, string> {
   const normalizedPathname = normalizeSitemapPathname(pathname);
   const resolvedLocales = resolveAvailableLocales(availableLocales);
-
-  return resolvedLocales.reduce<Record<string, string>>((languageUrls, locale) => {
+  const languageUrls = resolvedLocales.reduce<Record<string, string>>((urls, locale) => {
     const hreflang = hreflangByLocale[locale];
     const localizedPathname = createLocalizedPath(locale, normalizedPathname);
 
     return {
-      ...languageUrls,
+      ...urls,
       [hreflang]: createSitemapAbsoluteUrl(localizedPathname),
     };
   }, {});
+
+  if (!LOCALIZED_ROUTES_PUBLISHED) {
+    return languageUrls;
+  }
+
+  return {
+    ...languageUrls,
+    "x-default": createSitemapAbsoluteUrl(
+      createLocalizedPath(defaultLocale, normalizedPathname),
+    ),
+  };
 }
 
 export function createLocalizedSitemapItems(

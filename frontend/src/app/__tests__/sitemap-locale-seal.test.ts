@@ -35,7 +35,7 @@ describe.skipIf(LOCALIZED_ROUTES_PUBLISHED)("sitemap locale seal", () => {
     expect(sealedUrls).toEqual([]);
   });
 
-  it("emits only the ja self-referencing hreflang alternate", () => {
+  it("emits only a ja self-reference while sealed", () => {
     const alternateKeySets = new Set(
       items.map((item) => Object.keys(item.alternates?.languages ?? {}).sort().join(",")),
     );
@@ -72,10 +72,45 @@ describe.runIf(LOCALIZED_ROUTES_PUBLISHED)("sitemap without locale seal", () => 
       items.map((item) => Object.keys(item.alternates?.languages ?? {}).sort().join(",")),
     );
 
-    expect([...alternateKeySets]).toContain("en,ja,zh-Hant");
+    expect([...alternateKeySets]).toContain("en,ja,x-default,zh-Hant");
 
     // ja 単独クラスタは `availableLocales: ["ja"]` を明示した route（/terms-of-service）だけ。
     // それ以外の組み合わせ（en 単独 / zh 単独など）が出たら生成ロジックの破損。
-    expect([...alternateKeySets].sort()).toEqual(["en,ja,zh-Hant", "ja"]);
+    expect([...alternateKeySets].sort()).toEqual([
+      "en,ja,x-default,zh-Hant",
+      "ja,x-default",
+    ]);
+  });
+
+  it("emits self-referencing reciprocal alternates and ja x-default", () => {
+    const expectedLanguages = {
+      ja: `${SITE_URL}/roadmap`,
+      en: `${SITE_URL}/en/roadmap`,
+      "zh-Hant": `${SITE_URL}/zh/roadmap`,
+      "x-default": `${SITE_URL}/roadmap`,
+    };
+    const roadmapItems = items.filter((item) =>
+      [
+        `${SITE_URL}/roadmap`,
+        `${SITE_URL}/en/roadmap`,
+        `${SITE_URL}/zh/roadmap`,
+      ].includes(item.url),
+    );
+
+    expect(roadmapItems).toHaveLength(3);
+    for (const item of roadmapItems) {
+      expect(item.alternates?.languages).toEqual(expectedLanguages);
+    }
+  });
+
+  it("keeps ja-only routes limited to ja and x-default", () => {
+    const termsOfService = items.find(
+      (item) => item.url === `${SITE_URL}/terms-of-service`,
+    );
+
+    expect(termsOfService?.alternates?.languages).toEqual({
+      ja: `${SITE_URL}/terms-of-service`,
+      "x-default": `${SITE_URL}/terms-of-service`,
+    });
   });
 });
