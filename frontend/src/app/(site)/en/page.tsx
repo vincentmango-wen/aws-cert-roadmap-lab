@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo";
+import { getPublishedBlogPosts } from "@/app/(site)/blog/blog-detail-data";
 
 export const metadata: Metadata = createPageMetadata({
   title: "AWS Cert Roadmap Lab",
@@ -94,6 +95,14 @@ const blogPreviews: BlogPreview[] = [
     category: "Serverless",
   },
 ];
+
+const publishedBlogSlugs = new Set(
+  getPublishedBlogPosts("en").map((post) => post.slug),
+);
+const visibleBlogPreviews = blogPreviews.filter((post) => {
+  const slug = post.href.split("/").pop();
+  return slug !== undefined && publishedBlogSlugs.has(slug);
+});
 
 const awsServices: AwsService[] = [
   {
@@ -297,7 +306,7 @@ export default function EnglishHomePage() {
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
-          {blogPreviews.map((post) => (
+          {visibleBlogPreviews.map((post) => (
             <article
               key={post.href}
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
