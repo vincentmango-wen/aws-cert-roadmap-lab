@@ -301,9 +301,6 @@ export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
  * 記事詳細ページと同じく registry の公開状態に従う。
  */
 export function getBlogSitemapRoutes(): SitemapRouteInput[] {
-  const publishedRegistrySlugs = new Set(
-    blogPosts.filter((post) => post.published).map((post) => post.slug),
-  );
   const metasByLocale = new Map(
     locales.map((locale) => [
       locale,
@@ -316,16 +313,18 @@ export function getBlogSitemapRoutes(): SitemapRouteInput[] {
     ] as const),
   );
 
-  return readMdxContentMetas(path.join("blog", "ja"))
-    .filter((meta) => meta.published)
-    .filter((meta) => publishedRegistrySlugs.has(meta.slug))
-    .map((meta) => ({
-      pathname: `/blog/${meta.slug}`,
+  return blogPosts
+    .filter((post) => post.published)
+    .map((post) => ({
+      pathname: `/blog/${post.slug}`,
       priority: 0.7,
       changeFrequency: "weekly",
-      lastModified: meta.updatedAt,
+      lastModified:
+        metasByLocale.get("ja")?.get(post.slug)?.updatedAt ??
+        post.updatedAt ??
+        post.publishedAt,
       availableLocales: locales.filter((locale) => {
-        const localizedMeta = metasByLocale.get(locale)?.get(meta.slug);
+        const localizedMeta = metasByLocale.get(locale)?.get(post.slug);
         return !localizedMeta || (localizedMeta.published && !localizedMeta.noIndex);
       }),
     }));

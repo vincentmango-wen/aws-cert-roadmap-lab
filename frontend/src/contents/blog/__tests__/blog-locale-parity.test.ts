@@ -331,14 +331,14 @@ describe("blog locale parity", () => {
   );
 
   it.skipIf(isScaffoldMode)(
-    "(3) shared metadata fields (publishedAt/updatedAt/published) are identical across ja/en/zh per slug",
+    "(3) shared metadata fields (publishedAt/updatedAt) are identical across ja/en/zh per slug",
     () => {
+      // published は locale ごとの公開制御に使うため、locale 間で一致させない。
       // category は ja="AWSサービス解説" / en="AWS Services" / zh="AWS 服務解說" のように
       // locale 別に翻訳されるため、title/description/tags と同様に除外する。
       const SHARED_FIELDS: Array<keyof ParsedFrontmatter> = [
         "publishedAt",
         "updatedAt",
-        "published",
       ];
 
       for (const slug of jaSlugs) {
