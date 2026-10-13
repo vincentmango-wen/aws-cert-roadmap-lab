@@ -315,19 +315,27 @@ export function getBlogSitemapRoutes(): SitemapRouteInput[] {
 
   return blogPosts
     .filter((post) => post.published)
-    .map((post) => ({
-      pathname: `/blog/${post.slug}`,
-      priority: 0.7,
-      changeFrequency: "weekly",
-      lastModified:
-        metasByLocale.get("ja")?.get(post.slug)?.updatedAt ??
-        post.updatedAt ??
-        post.publishedAt,
-      availableLocales: locales.filter((locale) => {
+    .flatMap((post) => {
+      const availableLocales = locales.filter((locale) => {
         const localizedMeta = metasByLocale.get(locale)?.get(post.slug);
         return !localizedMeta || (localizedMeta.published && !localizedMeta.noIndex);
-      }),
-    }));
+      });
+
+      if (availableLocales.length === 0) {
+        return [];
+      }
+
+      return [{
+        pathname: `/blog/${post.slug}`,
+        priority: 0.7,
+        changeFrequency: "weekly",
+        lastModified:
+          metasByLocale.get("ja")?.get(post.slug)?.updatedAt ??
+          post.updatedAt ??
+          post.publishedAt,
+        availableLocales,
+      }];
+    });
 }
 
 function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
