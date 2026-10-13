@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { blogPosts } from "../contents/blog/blogPosts";
 import {
   createLocalizedSitemapItems,
   getSitemapSiteUrl,
@@ -8,6 +9,7 @@ import {
   type LocalizedSitemapRouteInput,
   type SitemapItem,
 } from "../i18n/seo/sitemap";
+import { locales } from "../i18n/locales";
 import { isSealedPathname } from "../i18n/release-gate";
 
 export const dynamic = "force-static";
@@ -83,7 +85,10 @@ function readFrontmatterValue(frontmatter: string, key: string): string | undefi
   return match?.[1]?.trim();
 }
 
-function readMdxContentMetas(directoryName: string): MdxContentMeta[] {
+function readMdxContentMetas(
+  directoryName: string,
+  includeHidden = false,
+): MdxContentMeta[] {
   const directoryPath = path.join(CONTENT_ROOT, directoryName);
 
   if (!existsSync(directoryPath)) {
@@ -112,7 +117,11 @@ function readMdxContentMetas(directoryName: string): MdxContentMeta[] {
         noIndex: noIndexValue === "true",
       };
     })
-    .filter((meta) => meta.slug.length > 0 && meta.published && !meta.noIndex)
+    .filter(
+      (meta) =>
+        meta.slug.length > 0 &&
+        (includeHidden || (meta.published && !meta.noIndex)),
+    )
     .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
@@ -284,23 +293,49 @@ export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
 }
 
 /**
- * blog detail URL を ja MDX (`contents/blog/ja/<slug>.mdx`) の slug 集合から生成する。
+ * blog detail URL を locale ごとの公開状態に合わせて生成する。
  *
  * P5-050 で MDX を locale サブディレクトリ配下 (ja/en/zh) に移したため、旧
- * `getMdxRoutes("blog", "/blog", ...)` は `contents/blog/` 直下を非再帰走査し
- * 空配列を返すようになっていた。本関数は ja MDX を「公開されている全 slug」の
- * 真の集合として扱い、`createLocalizedSitemapItems` が 3 言語の URL を一度に
- * 生成する。
+ * `getPublishedBlogPosts` と同じ判定を sitemap にも使い、各 locale で非公開の記事の
+ * URL と hreflang alternate が生成されないようにする。翻訳 MDX が未作成の場合は
+ * 記事詳細ページと同じく registry の公開状態に従う。
  */
 export function getBlogSitemapRoutes(): SitemapRouteInput[] {
-  return readMdxContentMetas(path.join("blog", "ja"))
-    .filter((meta) => meta.published)
-    .map((meta) => ({
-      pathname: `/blog/${meta.slug}`,
-      priority: 0.7,
-      changeFrequency: "weekly",
-      lastModified: meta.updatedAt,
-    }));
+  const metasByLocale = new Map(
+    locales.map((locale) => [
+      locale,
+      new Map(
+        readMdxContentMetas(path.join("blog", locale), true).map((meta) => [
+          meta.slug,
+          meta,
+        ]),
+      ),
+    ] as const),
+  );
+
+  return blogPosts
+    .filter((post) => post.published)
+    .flatMap((post) => {
+      const availableLocales = locales.filter((locale) => {
+        const localizedMeta = metasByLocale.get(locale)?.get(post.slug);
+        return !localizedMeta || (localizedMeta.published && !localizedMeta.noIndex);
+      });
+
+      if (availableLocales.length === 0) {
+        return [];
+      }
+
+      return [{
+        pathname: `/blog/${post.slug}`,
+        priority: 0.7,
+        changeFrequency: "weekly",
+        lastModified:
+          metasByLocale.get("ja")?.get(post.slug)?.updatedAt ??
+          post.updatedAt ??
+          post.publishedAt,
+        availableLocales,
+      }];
+    });
 }
 
 function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {

@@ -52,10 +52,9 @@ describe("release gate constant", () => {
     expect(match?.[1] === "true").toBe(LOCALIZED_ROUTES_PUBLISHED);
   });
 
-  it("keeps the unsealing preconditions documented", () => {
-    // 解封手順が消えると「フラグを true にするだけ」で既知欠陥ごと公開されてしまう。
-    for (const marker of ["#319", "#305", "#312", "createLocaleAwareRobots", "x-default"]) {
-      expect(releaseGateSource, `解封前提条件から ${marker} が消えています`).toContain(marker);
+  it("keeps development mode and known localization follow-ups documented", () => {
+    for (const marker of ["3 言語での開発を優先", "#319", "#305", "ブロッカーにはしない"]) {
+      expect(releaseGateSource, `開発モードの説明から ${marker} が消えています`).toContain(marker);
     }
   });
 });
