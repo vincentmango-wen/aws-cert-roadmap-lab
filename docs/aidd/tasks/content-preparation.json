@@ -1,0 +1,15 @@
+{
+  "id": "aidd-content-contract-prep-2026-11-08",
+  "goal": "接入可審核的多語內容契約及基準新增題驗收，保留既有工程驗收與獨立語意審查",
+  "baseCommit": "9881f79853516d6fe1f2736b5b9b06500552c860",
+  "allowed": ["tools/aidd/", "docs/aidd/", "docs/superpowers/plans/2026-11-08-aidd-content-contract.md", "frontend/src/contents/questions/__tests__/questions-locale-parity.test.ts", "frontend/src/contents/questions/__tests__/baseline-question-ids.json"],
+  "maxRepairs": 3,
+  "allowedOperations": ["read", "write", "verify", "commit", "push", "draft-pr"],
+  "humanAcceptance": [
+    "審查基準及新增 ID 的失敗 fixtures、三語版本與機械驗收界線",
+    "人工確認翻譯語意、技術事實、唯一答案、圖面及難度仍須獨立審查",
+    "確認完整 profile 的安裝限制及發布安全；review 不等於合併或部署授權"
+  ],
+  "prohibited": ["修改或匯入已封存 aws-content-pilot-001", "安裝新套件、啟動本機服務或手動部署", "AWS 資源、訂閱或帳號權限變更", "改 dev/update 分支策略、降低 CI 或驗收", "未授權第四次修復", "merge、auto-merge、production 部署、內容發布或排程"],
+  "publication": "Task branch commit, push and Draft PR authorized, including automatic Vercel Preview triggered by this push. Human review required before merge; production deployment not authorized."
+}

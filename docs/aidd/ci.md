@@ -14,7 +14,7 @@
 
 1. Node syntax of `cli.mjs` and `pilot.mjs`.
 2. Parse the real pilot profile and contract, validate required field types, unique check IDs, positive timeouts, known report format, explicit human acceptance and the three-repair limit. Check the profile Node version against the executing Node.
-3. Execute `node --test tools/aidd/pilot.test.mjs` (currently 13 disposable fixtures).
+3. Execute `node --test tools/aidd/pilot.test.mjs`, including disposable multilingual-contract, baseline-ID and replay fixtures. Its imported content validator is parsed and exercised by this same entry point.
 
 The fixtures use their own temporary profiles/contracts, so JSON validation is a separate step. The JSON step never executes check commands. This is basic configuration validation, not a general schema engine or a substitute for the full profile. Keep the Node pin aligned when the frontend CI version changes; frontend CI-only edits do not trigger this workflow.
 
