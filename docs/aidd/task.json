@@ -1,0 +1,13 @@
+{
+  "id": "aidd-pilot-v02-2026-11-08",
+  "goal": "建立單一 repo 的合作型 AIDD 驗證入口及可重跑證據，不修改產品或部署策略",
+  "allowed": ["tools/aidd/", "docs/aidd/", "docs/superpowers/plans/2026-11-08-aidd-pilot.md"],
+  "maxRepairs": 3,
+  "humanAcceptance": [
+    "審查 evidence bundle 與每項驗收對照",
+    "確認合作型控制、程序停止與本機結果的限制",
+    "確認發布路徑及 PR base；使用者 review 後另行指示才可合併或部署"
+  ],
+  "prohibited": ["修改產品、依賴或 workflow", "降低驗收或刪除必要測試", "第四次未授權修復", "合併、auto-merge 或部署"],
+  "publication": "commit allowed; push and draft PR require verified remote/head/base and deployment safety"
+}
