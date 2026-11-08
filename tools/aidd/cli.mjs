@@ -11,8 +11,13 @@ try {
   let result;
   if (command === 'init') {
     const root = path.resolve(args[0] || '.');
-    const contract = JSON.parse(fs.readFileSync(path.join(root, 'docs/aidd/task.json'), 'utf8'));
+    const contractPath = args[1] || 'docs/aidd/task.json';
+    if (path.isAbsolute(contractPath) || contractPath.includes('\\') || contractPath.includes(':') || contractPath.split('/').some(part => !part || part === '..' || part === '.')) throw Error('Contract must be a relative path within root');
+    const resolved = fs.realpathSync(path.join(root, contractPath));
+    if (!resolved.startsWith(fs.realpathSync(root) + path.sep)) throw Error('Contract outside root');
+    const contract = JSON.parse(fs.readFileSync(resolved, 'utf8'));
     const profile = JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), 'profile.json'), 'utf8'));
+    profile.protected = [...new Set([...profile.protected, contractPath])];
     result = createTask({ root, bundle, contract, profile });
   } else if (command === 'verify') result = await verify(bundle, args[0]);
   else if (command === 'repair') result = beginRepair(bundle, { problem: args[0], hypothesis: args[1], expected: args[2] });

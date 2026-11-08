@@ -1,8 +1,8 @@
 /**
  * Post-P3b invariants keeping contents/questions/{exam}.{ja,en,zh}.json synchronized across locales
  * (task spec T1):
- * 1. Identical CLF-C02 questionId sets (50 questions per locale).
- * 2. Identical SAA-C03 questionId sets (50 questions per locale).
+ * 1. Identical CLF-C02 questionId sets, retaining baseline IDs without a fixed total.
+ * 2. Identical SAA-C03 questionId sets, retaining baseline IDs without a fixed total.
  * 3. Matching immutable fields per questionId: exam, category, domain, difficulty, correctChoiceId,
  * published, relatedServices, relatedTerms, relatedComparisons and tags.
  * 4. Four choices with matching A/B/C/D ID sets in every locale.
@@ -10,6 +10,7 @@
  */
 
 import { describe, expect, it } from "vitest";
+import baseline from "./baseline-question-ids.json";
 
 import clfEn from "../../../../contents/questions/clf-c02.en.json";
 import clfJa from "../../../../contents/questions/clf-c02.ja.json";
@@ -38,7 +39,7 @@ const sortedArr = (arr: string[] | undefined): string[] =>
 
 type ExamDataset = {
   name: string;
-  expectedCount: number;
+  baselineIds: string[];
   ja: Question[];
   en: Question[];
   zh: Question[];
@@ -47,14 +48,14 @@ type ExamDataset = {
 const DATASETS: ExamDataset[] = [
   {
     name: "CLF-C02",
-    expectedCount: 50,
+    baselineIds: baseline.exams["clf-c02"],
     ja: clfJa as Question[],
     en: clfEn as Question[],
     zh: clfZh as Question[],
   },
   {
     name: "SAA-C03",
-    expectedCount: 50,
+    baselineIds: baseline.exams["saa-c03"],
     ja: saaJa as Question[],
     en: saaEn as Question[],
     zh: saaZh as Question[],
@@ -67,30 +68,26 @@ const DATASETS: ExamDataset[] = [
 
 describe("questions locale parity", () => {
   for (const dataset of DATASETS) {
-    const { name, expectedCount, ja, en, zh } = dataset;
+    const { name, baselineIds, ja, en, zh } = dataset;
 
     const jaMap = toMap(ja);
     const enMap = toMap(en);
     const zhMap = toMap(zh);
 
     describe(`${name}`, () => {
-      it(`(1)/(2) ja/en/zh have the same questionId set (${expectedCount} items each)`, () => {
+      it("(1)/(2) ja/en/zh retain baseline IDs with identical unique questionId sets", () => {
         const jaIds = new Set(ja.map((q) => q.questionId));
         const enIds = new Set(en.map((q) => q.questionId));
         const zhIds = new Set(zh.map((q) => q.questionId));
 
-        expect(
-          ja.length,
-          `ja should have ${expectedCount} questions`,
-        ).toBe(expectedCount);
-        expect(
-          en.length,
-          `en should have ${expectedCount} questions`,
-        ).toBe(expectedCount);
-        expect(
-          zh.length,
-          `zh should have ${expectedCount} questions`,
-        ).toBe(expectedCount);
+        // The frozen inventory is a deletion/replacement guard, not a maximum.
+        // Exact additions belong to the task's Git-baseline content contract.
+        expect(jaIds.size, "duplicate ja ID").toBe(ja.length);
+        expect(enIds.size, "duplicate en ID").toBe(en.length);
+        expect(zhIds.size, "duplicate zh ID").toBe(zh.length);
+        for (const id of baselineIds) {
+          expect(jaIds.has(id), `baseline ID removed: ${id}`).toBe(true);
+        }
 
         expect(enIds, "en questionId set must equal ja").toEqual(jaIds);
         expect(zhIds, "zh questionId set must equal ja").toEqual(jaIds);

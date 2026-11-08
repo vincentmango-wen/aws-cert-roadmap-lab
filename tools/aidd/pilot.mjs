@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { captureContentBaseline, validateContentContract, verifyContent } from './content.mjs';
 
 const engineDir = path.dirname(fileURLToPath(import.meta.url));
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
@@ -60,10 +61,16 @@ function event(bundle, type, detail) {
 }
 
 export function createTask({ root, bundle, profile, contract }) {
+  return initializeTask({ root, bundle, profile, contract });
+}
+
+function initializeTask({ root, bundle, profile, contract }, replayContentBaseline) {
   root = fs.realpathSync(root); bundle = path.resolve(bundle);
   if (fs.existsSync(bundle)) throw Error('Task bundle already exists; reuse it to preserve repair count');
   if (!contract.id || !contract.goal || contract.maxRepairs !== 3 || !Array.isArray(contract.allowed) || !Array.isArray(contract.humanAcceptance)) throw Error('Invalid contract');
   if (!profile.checks?.length || !Array.isArray(profile.generated) || !Array.isArray(profile.protected)) throw Error('Invalid profile');
+  validateContentContract(contract, profile);
+  const contentBaseline = replayContentBaseline === undefined ? captureContentBaseline(root, contract, profile) : replayContentBaseline;
   const common = execFileSync('git', ['-C', root, 'rev-parse', '--path-format=absolute', '--git-common-dir']).toString().trim();
   const registry = path.join(common, 'aidd-pilot', hash(contract.id) + '.json');
   if (fs.existsSync(registry)) throw Error('Task ID already registered; reuse the existing bundle (including after worktree/run changes)');
@@ -77,14 +84,15 @@ export function createTask({ root, bundle, profile, contract }) {
   write(path.join(bundle, 'contract.json'), contract);
   write(path.join(bundle, 'profile.json'), profile);
   write(path.join(bundle, 'initial-manifest.json'), initial);
+  if (contentBaseline) write(path.join(bundle, 'content-baseline.json'), contentBaseline);
   const engine = {};
-  for (const name of ['pilot.mjs', 'cli.mjs']) {
+  for (const name of ['pilot.mjs', 'cli.mjs', 'content.mjs']) {
     const content = fs.readFileSync(path.join(engineDir, name));
     fs.mkdirSync(path.join(bundle, 'engine'), { recursive: true });
     fs.writeFileSync(path.join(bundle, 'engine', name), content);
     engine[name] = hash(content);
   }
-  write(path.join(bundle, 'task.json'), { root, contractHash: jsonHash(contract), profileHash: jsonHash(profile), initialHash: jsonHash(initial), engine, repairs: [], state: 'CREATED', baseline: null, latest: null });
+  write(path.join(bundle, 'task.json'), { root, contractHash: jsonHash(contract), profileHash: jsonHash(profile), initialHash: jsonHash(initial), contentBaselineHash: contentBaseline ? jsonHash(contentBaseline) : null, engine, repairs: [], state: 'CREATED', baseline: null, latest: null });
   fs.mkdirSync(path.dirname(registry), { recursive: true });
   fs.writeFileSync(registry, JSON.stringify({ id: contract.id, bundle }), { flag: 'wx' });
   event(bundle, 'created', { task: contract.id });
@@ -96,11 +104,13 @@ function loadTask(bundle) {
   const profile = read(path.join(bundle, 'profile.json'));
   const contract = read(path.join(bundle, 'contract.json'));
   const initial = read(path.join(bundle, 'initial-manifest.json'));
+  const contentBaseline = contract.content ? read(path.join(bundle, 'content-baseline.json')) : null;
+  if (contentBaseline && jsonHash(contentBaseline) !== task.contentBaselineHash) throw Error('Content baseline drift');
   if (jsonHash(profile) !== task.profileHash || jsonHash(contract) !== task.contractHash || jsonHash(initial) !== task.initialHash) throw Error('Contract/profile/baseline drift');
   for (const [name, digest] of Object.entries(task.engine)) {
     if (hash(fs.readFileSync(path.join(bundle, 'engine', name))) !== digest || hash(fs.readFileSync(path.join(engineDir, name))) !== digest) throw Error('Verifier drift: review and re-establish baseline');
   }
-  return { task, profile, contract, initial };
+  return { task, profile, contract, initial, contentBaseline };
 }
 
 export function beginRepair(bundle, detail) {
@@ -189,7 +199,7 @@ function checkSeal(bundle, run, expectedHash) {
 
 export async function verify(bundle, phase) {
   bundle = path.resolve(bundle);
-  const { task, profile, contract, initial } = loadTask(bundle);
+  const { task, profile, contract, initial, contentBaseline } = loadTask(bundle);
   if (!['baseline', 'candidate'].includes(phase)) throw Error('Expected baseline or candidate');
   if (fs.existsSync(path.join(bundle, 'active.json'))) throw Error('INTERRUPTED: do not overlap runs; inspect and reconcile active.json manually');
   if (task.state === 'STOP_UNCONFIRMED') throw Error('STOP_UNCONFIRMED: process-tree status requires human reconciliation');
@@ -220,6 +230,8 @@ export async function verify(bundle, phase) {
   try {
     write(path.join(runDir, 'before.json'), before);
     snapshot(task.root, path.join(runDir, 'source'), before);
+    const content = verifyContent(task.root, contract, contentBaseline, task.replayContentPhase || phase, before);
+    if (content) write(path.join(runDir, 'content.json'), content);
     write(path.join(runDir, 'environment.json'), { node: process.versions.node, npm: npmVersion, platform: process.platform, arch: process.arch, dependencyLock: before['frontend/package-lock.json'] ?? null, contract: task.contractHash, profile: task.profileHash, engine: task.engine, variables: { CI: '1', NEXT_TELEMETRY_DISABLED: '1' }, limitations: ['No secrets or ambient environment values recorded', 'Dependencies are rebuilt by the profile install check', 'Local results do not imply Ubuntu CI or deployment readiness'] });
     for (const check of profile.checks) {
       const result = await runCheck(task.root, runDir, check); checks.push(result);
@@ -268,7 +280,7 @@ export function readStatus(bundle) {
 
 export async function replay(bundle, run, destination) {
   bundle = path.resolve(bundle); destination = path.resolve(destination);
-  const { task, profile, contract } = loadTask(bundle);
+  const { task, profile, contract, contentBaseline } = loadTask(bundle);
   const ref = [task.latest, task.baseline].find(item => item?.run === run);
   if (!ref) throw Error('Replay requires sealed latest or baseline run');
   const dir = checkSeal(bundle, run, ref.seal);
@@ -282,11 +294,13 @@ export async function replay(bundle, run, destination) {
   execFileSync('git', ['-C', root, '-c', 'core.autocrlf=false', 'add', '--force', '--all']);
   if (!same(manifest(root, profile), read(path.join(dir, 'before.json')))) throw Error('Replay source manifest differs from sealed input');
   const newBundle = path.join(destination, 'evidence');
-  createTask({ root, bundle: newBundle, profile, contract });
+  initializeTask({ root, bundle: newBundle, profile, contract }, contentBaseline);
   // Install is a normal profile check, so interruption/timeout uses the same latch.
   const replayTask = read(path.join(newBundle, 'task.json'));
   replayTask.repairs = task.repairs;
   replayTask.replayExpected = read(path.join(dir, 'identities.json'));
+  // Replay a candidate's exact declared additions even during its setup baseline.
+  if (contract.content) replayTask.replayContentPhase = read(path.join(dir, 'content.json')).phase;
   replayTask.replayedFrom = { bundle, run, seal: ref.seal };
   write(path.join(newBundle, 'task.json'), replayTask);
   const baseline = await verify(newBundle, 'baseline');

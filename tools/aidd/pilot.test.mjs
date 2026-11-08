@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { createTask, beginRepair, readStatus, verify, replay, parseVitest, manifest } from './pilot.mjs';
 
 function fixture(t, script = 'console.log("ok")') {
@@ -20,6 +21,141 @@ function fixture(t, script = 'console.log("ok")') {
   const contract = { id: 'fixture-task', goal: 'Exercise pilot', allowed: ['source.txt', 'new.txt'], humanAcceptance: ['Inspect result'], maxRepairs: 3 };
   return { dir, root, bundle, profile, contract };
 }
+
+function contentFixture(t, collections) {
+  const f = fixture(t);
+  const sample = id => ({ questionId: id, exam: 'SAA-C03', category: 'Resilient', domain: '2.2', difficulty: 'easy', published: false,
+    question: 'Original scenario', choices: ['A', 'B', 'C', 'D'].map(choiceId => ({ choiceId, text: 'Choice ' + choiceId })),
+    correctChoiceId: 'B', explanation: 'Reason', choiceExplanations: { A: 'No', B: 'Yes', C: 'No', D: 'No' }, practicalNote: 'Test recovery', officialDocs: [{ label: 'AWS', url: 'https://docs.aws.amazon.com/example' }] });
+  const files = {};
+  for (const locale of ['zh', 'ja', 'en']) {
+    files[locale] = { path: `content/questions.${locale}.json`, sourceRevision: 1 };
+    fs.mkdirSync(path.join(f.root, 'content'), { recursive: true });
+    fs.writeFileSync(path.join(f.root, files[locale].path), JSON.stringify(collections?.[locale] || [sample('old-1')]));
+  }
+  execFileSync('git', ['-C', f.root, '-c', 'core.autocrlf=false', 'add', '.']);
+  execFileSync('git', ['-C', f.root, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'baseline']);
+  f.contract.allowed.push('content/');
+  f.contract.content = { baseCommit: execFileSync('git', ['-C', f.root, 'rev-parse', 'HEAD']).toString().trim(), allowedOperations: ['read', 'write', 'verify'],
+    deliverables: [{ id: 'questions', kind: 'questions', sourceLocale: 'zh', sourceRevision: 1, locales: files, addedIds: ['new-1'] },
+      { id: 'article', kind: 'article', sourceLocale: 'zh', sourceRevision: 1, locales: Object.fromEntries(['zh', 'ja', 'en'].map(locale => [locale, { path: `content/article.${locale}.md`, sourceRevision: 1 }])) }] };
+  f.add = () => {
+    for (const locale of ['zh', 'ja', 'en']) {
+      fs.writeFileSync(path.join(f.root, files[locale].path), JSON.stringify([sample('old-1'), sample('new-1')]));
+      fs.writeFileSync(path.join(f.root, `content/article.${locale}.md`), '# Original article\n\nText');
+    }
+  };
+  return f;
+}
+
+test('real repository question source references are accepted without rewriting product data', async t => {
+  for (const exam of ['clf-c02', 'saa-c03']) {
+    const collections = Object.fromEntries(['zh', 'ja', 'en'].map(locale => [locale,
+      JSON.parse(fs.readFileSync(new URL(`../../frontend/contents/questions/${exam}.${locale}.json`, import.meta.url)))]));
+    const f = contentFixture(t, collections); createTask(f);
+    assert.equal((await verify(f.bundle, 'baseline')).state, 'BASELINE_READY');
+  }
+});
+
+test('content additions use frozen Git baseline IDs and leave semantic acceptance pending on replay', async t => {
+  const f = contentFixture(t); createTask(f);
+  assert.equal((await verify(f.bundle, 'baseline')).state, 'BASELINE_READY');
+  f.add();
+  const result = await verify(f.bundle, 'candidate');
+  assert.equal(result.state, 'AUTO_VERIFIED_AWAITING_HUMAN');
+  const report = JSON.parse(fs.readFileSync(path.join(f.bundle, 'runs', result.run, 'content.json')));
+  assert.deepEqual(report.deliverables[0].addedIds, ['new-1']);
+  assert.equal(report.semanticReview, 'pending');
+  assert.equal(report.baseCommit, f.contract.content.baseCommit);
+  assert.equal((await replay(f.bundle, result.run, path.join(f.dir, 'content-replay'))).state, 'AUTO_VERIFIED_AWAITING_HUMAN');
+  fs.appendFileSync(path.join(f.root, 'content/article.ja.md'), '\nchanged');
+  assert.equal(readStatus(f.bundle).state, 'INPUT_DRIFT');
+});
+
+test('content contract rejects stale translations, unsafe paths, reused IDs and invalid base before registration', t => {
+  const mutations = [
+    c => { c.content.deliverables[0].locales.ja.sourceRevision = 0; },
+    c => { delete c.content.deliverables[0].locales.en; },
+    c => { c.content.deliverables[0].locales.en.path = '../escape.json'; },
+    c => { c.content.deliverables[0].addedIds = ['old-1']; },
+    c => { c.content.deliverables[0].addedIds = ['new-1', 'new-1']; },
+    c => { c.content.baseCommit = '0'.repeat(40); },
+    c => { c.content.allowedOperations = ['deploy']; },
+  ];
+  for (const mutate of mutations) {
+    const f = contentFixture(t); mutate(f.contract);
+    assert.throws(() => createTask(f), /content|base|revision|locale|path|operation|existing|duplicate/i);
+    assert.equal(fs.existsSync(f.bundle), false);
+  }
+});
+
+test('content replay preserves its effective phase through a second replay generation', async t => {
+  for (const phase of ['baseline', 'candidate']) {
+    const f = contentFixture(t); createTask(f);
+    let source = await verify(f.bundle, 'baseline');
+    if (phase === 'candidate') { f.add(); source = await verify(f.bundle, 'candidate'); }
+    const child = path.join(f.dir, 'child');
+    assert.equal((await replay(f.bundle, source.run, child)).state, 'AUTO_VERIFIED_AWAITING_HUMAN');
+    const childBundle = path.join(child, 'evidence');
+    const childTask = JSON.parse(fs.readFileSync(path.join(childBundle, 'task.json')));
+    // These runs have wrapper phases opposite to their effective content phase.
+    const selected = phase === 'candidate' ? childTask.baseline : childTask.latest;
+    const result = await replay(childBundle, selected.run, path.join(f.dir, 'grandchild'));
+    assert.equal(result.state, 'AUTO_VERIFIED_AWAITING_HUMAN', phase);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(f.dir, 'grandchild/evidence/runs', result.run, 'content.json'))).phase, phase);
+  }
+});
+
+test('content validation rejects missing, duplicate, replaced and undeclared added IDs', async t => {
+  for (const mode of ['missing', 'duplicate', 'replacement', 'extra']) {
+    const f = contentFixture(t); createTask(f); await verify(f.bundle, 'baseline'); f.add();
+    const file = path.join(f.root, 'content/questions.en.json');
+    const qs = JSON.parse(fs.readFileSync(file));
+    if (mode === 'missing') qs.pop();
+    if (mode === 'duplicate') qs.push(qs[1]);
+    if (mode === 'replacement') qs.shift();
+    if (mode === 'extra') qs.push({ ...qs[1], questionId: 'undeclared' });
+    fs.writeFileSync(file, JSON.stringify(qs));
+    assert.equal((await verify(f.bundle, 'candidate')).state, 'VERIFICATION_BLOCKED', mode);
+  }
+});
+
+test('content validation rejects malformed choices, answer drift, empty explanations and missing articles', async t => {
+  for (const mode of ['choice', 'answer', 'explanation', 'article']) {
+    const f = contentFixture(t); createTask(f); await verify(f.bundle, 'baseline'); f.add();
+    const file = path.join(f.root, 'content/questions.ja.json');
+    const qs = JSON.parse(fs.readFileSync(file));
+    if (mode === 'choice') qs[1].choices[3].choiceId = 'A';
+    if (mode === 'answer') qs[1].correctChoiceId = 'A';
+    if (mode === 'explanation') qs[1].choiceExplanations.C = '';
+    if (mode === 'article') fs.unlinkSync(path.join(f.root, 'content/article.en.md'));
+    fs.writeFileSync(file, JSON.stringify(qs));
+    assert.equal((await verify(f.bundle, 'candidate')).state, 'VERIFICATION_BLOCKED', mode);
+  }
+});
+
+test('CLI selects a reviewed contract and protects its source path; traversal is rejected', t => {
+  const f = contentFixture(t);
+  const selected = 'reviewed.json';
+  fs.writeFileSync(path.join(f.root, selected), JSON.stringify(f.contract));
+  const cli = fileURLToPath(new URL('./cli.mjs', import.meta.url));
+  const result = JSON.parse(execFileSync(process.execPath, [cli, 'init', f.bundle, f.root, selected], { stdio: 'pipe' }));
+  assert.equal(result.state, 'CREATED');
+  assert.equal(JSON.parse(fs.readFileSync(path.join(f.bundle, 'contract.json'))).id, f.contract.id);
+  assert.ok(JSON.parse(fs.readFileSync(path.join(f.bundle, 'profile.json'))).protected.includes(selected));
+  const other = path.join(f.dir, 'outside-bundle');
+  assert.throws(() => execFileSync(process.execPath, [cli, 'init', other, f.root, '../reviewed.json'], { stdio: 'pipe' }), /relative path/);
+  assert.equal(fs.existsSync(other), false);
+});
+
+test('content baseline tampering invalidates evidence; baseline rejects premature additions', async t => {
+  const f = contentFixture(t); createTask(f); f.add();
+  assert.equal((await verify(f.bundle, 'baseline')).state, 'VERIFICATION_BLOCKED');
+  const file = path.join(f.bundle, 'content-baseline.json');
+  const data = JSON.parse(fs.readFileSync(file)); data.sets.questions.ids.push('invented');
+  fs.writeFileSync(file, JSON.stringify(data));
+  assert.equal(readStatus(f.bundle).state, 'EVIDENCE_INVALID');
+});
 
 test('successful checks preserve dirty source and leave human acceptance pending; bundle replays', async t => {
   const f = fixture(t);

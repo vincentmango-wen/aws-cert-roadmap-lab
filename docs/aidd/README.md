@@ -10,6 +10,8 @@
 
 ## 固定入口
 
+人工觸發的三語內容／新增題任務可使用 [內容契約](content-contract.md)。`init` 可在 ROOT 後指定 repo 內的契約路徑；未指定時沿用以下預設。這不啟動排程或發布。
+
 在 repo 根目錄使用下列命令（bundle 可放忽略的 `tmp/` 或 repo 外；不要將它公開提交）：
 
 ```powershell
