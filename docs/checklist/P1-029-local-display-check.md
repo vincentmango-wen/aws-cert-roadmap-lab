@@ -1,153 +1,153 @@
-# P1-029 ローカル表示確認チェックリスト
+# P1-029 Local Display Verification Checklist
 
-## 1. タスク情報
+## 1. Task information
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| タスクID | P1-029 |
-| タスク名 | ローカル表示確認 |
-| 対象フェーズ | Phase 1 静的サイトMVP |
-| 確認目的 | 主要ページがローカル環境で表示・遷移できることを確認する |
-| 確認URL | http://localhost:3000 |
-| 実施日 |  |
-| 実施者 |  |
+| Task ID | P1-029 |
+| Task name | Local display verification |
+| Phase | Phase 1: Static website MVP |
+| Purpose | Verify that the main pages render locally and navigation works |
+| Test URL | http://localhost:3000 |
+| Date performed |  |
+| Performed by |  |
 
 ---
 
-## 2. 事前確認
+## 2. Prerequisites
 
-| チェック | 期待結果 | 結果 | メモ |
+| Check | Expected result | Result | Notes |
 |---|---|---|---|
-| `git status` を確認した | 意図しない変更がない |  |  |
-| `git branch` を確認した | 作業ブランチが正しい |  |  |
-| `npm install` 済み | 依存関係が入っている |  |  |
-| `npm run typecheck` が成功する | TypeScriptエラーがない |  |  |
-| `npm run lint` が成功する | ESLintエラーがない |  |  |
-| `npm run dev` が起動する | localhostで表示できる |  |  |
+| Check `git status` | No unintended changes |  |  |
+| Check `git branch` | The correct working branch is selected |  |  |
+| Run `npm install` | Dependencies are installed |  |  |
+| `npm run typecheck` succeeds | No TypeScript errors |  |  |
+| `npm run lint` succeeds | No ESLint errors |  |  |
+| `npm run dev` starts | The site is available on localhost |  |  |
 
 ---
 
-## 3. 主要ページ表示確認
+## 3. Main page rendering
 
-| URL | 画面 | 期待結果 | 結果 | メモ |
+| URL | Page | Expected result | Result | Notes |
 |---|---|---|---|---|
-| `/` | トップページ | サイト概要、CTA、主要導線が表示される |  |  |
-| `/roadmap` | 学習ロードマップ | CLFからSAAまでの学習導線が表示される |  |  |
-| `/terms` | AWS用語集一覧 | 用語カード、検索、カテゴリが表示される |  |  |
-| `/terms/s3` | AWS用語詳細 | サービス概要、用途、試験ポイントが表示される |  |  |
-| `/comparisons` | サービス比較一覧 | 比較記事カードが表示される |  |  |
-| `/comparisons/s3-vs-ebs-vs-efs` | サービス比較詳細 | 比較表、試験ポイント、関連リンクが表示される |  |  |
-| `/questions` | 模擬問題トップ | 模擬問題への導線が表示される |  |  |
-| `/questions/clf` | CLF模擬問題一覧 | 問題一覧が表示される |  |  |
-| `/questions/clf-001` | 模擬問題詳細 | 問題文、選択肢、回答ボタンが表示される |  |  |
-| `/architectures` | 構成図一覧 | 構成図カードが表示される |  |  |
-| `/architectures/static-site-s3-cloudfront` | 構成図詳細 | 構成図、使用サービス、設計ポイントが表示される |  |  |
-| `/blog` | ブログ一覧 | 記事カードが表示される |  |  |
-| `/blog/aws-free-tier-portfolio` | ブログ詳細 | 記事本文、関連導線が表示される |  |  |
-| `/contact` | 問い合わせ | 入力フォームが表示される |  |  |
-| `/about` | 運営者情報 | 運営者情報が表示される |  |  |
-| `/privacy` | プライバシーポリシー | 個人情報・Cookie関連の説明が表示される |  |  |
-| `/disclaimer` | 免責事項 | 学習情報・試験情報の免責が表示される |  |  |
-| `/github` | GitHub誘導ページ | GitHubや技術構成への導線が表示される |  | 任意ページ |
+| `/` | Home | Site overview, CTAs, and main navigation are displayed |  |  |
+| `/roadmap` | Learning roadmap | The learning path from CLF to SAA is displayed |  |  |
+| `/terms` | AWS glossary | Glossary cards, search, and categories are displayed |  |  |
+| `/terms/s3` | AWS glossary detail | Service overview, use cases, and exam points are displayed |  |  |
+| `/comparisons` | Service comparisons | Comparison article cards are displayed |  |  |
+| `/comparisons/s3-vs-ebs-vs-efs` | Service comparison detail | Comparison table, exam points, and related links are displayed |  |  |
+| `/questions` | Practice question home | Links to practice questions are displayed |  |  |
+| `/questions/clf` | CLF practice question list | The question list is displayed |  |  |
+| `/questions/clf-001` | Practice question detail | Question text, choices, and the answer button are displayed |  |  |
+| `/architectures` | Architectures | Architecture cards are displayed |  |  |
+| `/architectures/static-site-s3-cloudfront` | Architecture detail | The diagram, services used, and design points are displayed |  |  |
+| `/blog` | Blog | Article cards are displayed |  |  |
+| `/blog/aws-free-tier-portfolio` | Blog post | Article content and related navigation are displayed |  |  |
+| `/contact` | Contact | The input form is displayed |  |  |
+| `/about` | About | Site operator information is displayed |  |  |
+| `/privacy` | Privacy policy | Personal information and cookie explanations are displayed |  |  |
+| `/disclaimer` | Disclaimer | Learning and exam information disclaimers are displayed |  |  |
+| `/github` | GitHub landing page | Links to GitHub and the technology stack are displayed |  | Optional page |
 
 ---
 
-## 4. ヘッダー導線確認
+## 4. Header navigation
 
-| 導線 | 遷移先 | 期待結果 | 結果 | メモ |
+| Link | Destination | Expected result | Result | Notes |
 |---|---|---|---|---|
-| ホーム | `/` | トップページへ移動できる |  |  |
-| 用語集 | `/terms` | 用語集一覧へ移動できる |  |  |
-| 比較 | `/comparisons` | 比較一覧へ移動できる |  |  |
-| 模擬問題 | `/questions` | 模擬問題トップへ移動できる |  |  |
-| 構成図 | `/architectures` | 構成図一覧へ移動できる |  |  |
-| ブログ | `/blog` | ブログ一覧へ移動できる |  |  |
-| ロードマップ | `/roadmap` | ロードマップへ移動できる |  |  |
+| Home | `/` | Opens the home page |  |  |
+| Glossary | `/terms` | Opens the glossary list |  |  |
+| Comparisons | `/comparisons` | Opens the comparison list |  |  |
+| Practice questions | `/questions` | Opens the practice question home page |  |  |
+| Architectures | `/architectures` | Opens the architecture list |  |  |
+| Blog | `/blog` | Opens the blog list |  |  |
+| Roadmap | `/roadmap` | Opens the roadmap |  |  |
 
 ---
 
-## 5. フッター導線確認
+## 5. Footer navigation
 
-| 導線 | 遷移先 | 期待結果 | 結果 | メモ |
+| Link | Destination | Expected result | Result | Notes |
 |---|---|---|---|---|
-| 運営者情報 | `/about` | 運営者情報へ移動できる |  |  |
-| 問い合わせ | `/contact` | 問い合わせへ移動できる |  |  |
-| プライバシーポリシー | `/privacy` | プライバシーポリシーへ移動できる |  |  |
-| 免責事項 | `/disclaimer` | 免責事項へ移動できる |  |  |
-| GitHub | `/github` または外部GitHub | GitHub関連ページへ移動できる |  |  |
-| note | 外部note | noteへ移動できる |  | 任意 |
+| About | `/about` | Opens the about page |  |  |
+| Contact | `/contact` | Opens the contact page |  |  |
+| Privacy policy | `/privacy` | Opens the privacy policy |  |  |
+| Disclaimer | `/disclaimer` | Opens the disclaimer |  |  |
+| GitHub | `/github` or external GitHub URL | Opens the GitHub-related page |  |  |
+| note | External note URL | Opens note |  | Optional |
 
 ---
 
-## 6. 詳細ページ遷移確認
+## 6. Detail page navigation
 
-| 起点 | 操作 | 期待結果 | 結果 | メモ |
+| Starting point | Action | Expected result | Result | Notes |
 |---|---|---|---|---|
-| `/terms` | 用語カードをクリック | `/terms/[termId]` へ遷移する |  |  |
-| `/comparisons` | 比較記事カードをクリック | `/comparisons/[comparisonSlug]` へ遷移する |  |  |
-| `/questions/clf` | 問題カードをクリック | `/questions/[questionId]` へ遷移する |  |  |
-| `/architectures` | 構成図カードをクリック | `/architectures/[architectureSlug]` へ遷移する |  |  |
-| `/blog` | 記事カードをクリック | `/blog/[postSlug]` へ遷移する |  |  |
+| `/terms` | Click a glossary card | Opens `/terms/[termId]` |  |  |
+| `/comparisons` | Click a comparison article card | Opens `/comparisons/[comparisonSlug]` |  |  |
+| `/questions/clf` | Click a question card | Opens `/questions/[questionId]` |  |  |
+| `/architectures` | Click an architecture card | Opens `/architectures/[architectureSlug]` |  |  |
+| `/blog` | Click an article card | Opens `/blog/[postSlug]` |  |  |
 
 ---
 
-## 7. 問い合わせフォーム確認
+## 7. Contact form
 
-| チェック | 期待結果 | 結果 | メモ |
+| Check | Expected result | Result | Notes |
 |---|---|---|---|
-| 名前入力欄 | 入力できる |  |  |
-| メールアドレス入力欄 | 入力できる |  |  |
-| 件名入力欄 | 入力できる |  |  |
-| 本文入力欄 | 入力できる |  |  |
-| 送信ボタン | 表示される |  |  |
-| 必須項目未入力 | エラー表示または送信不可になる |  |  |
-| honeypot項目 | 画面上に表示されない |  |  |
+| Name input | Accepts input |  |  |
+| Email address input | Accepts input |  |  |
+| Subject input | Accepts input |  |  |
+| Message input | Accepts input |  |  |
+| Submit button | Is displayed |  |  |
+| Required fields left blank | An error is displayed or submission is prevented |  |  |
+| Honeypot field | Is not visible on screen |  |  |
 
 ---
 
-## 8. 404確認
+## 8. 404 behavior
 
-| URL | 期待結果 | 結果 | メモ |
+| URL | Expected result | Result | Notes |
 |---|---|---|---|
-| `/not-found-test` | 404ページが表示される |  |  |
-| `/terms/not-existing-term` | 404または未存在表示になる |  |  |
-| `/questions/not-existing-question` | 404または未存在表示になる |  |  |
+| `/not-found-test` | The 404 page is displayed |  |  |
+| `/terms/not-existing-term` | A 404 or not-found message is displayed |  |  |
+| `/questions/not-existing-question` | A 404 or not-found message is displayed |  |  |
 
 ---
 
-## 9. 表示品質確認
+## 9. Display quality
 
-| チェック | 期待結果 | 結果 | メモ |
+| Check | Expected result | Result | Notes |
 |---|---|---|---|
-| PC幅 | レイアウトが崩れない |  |  |
-| タブレット幅 | 横スクロールが発生しない |  |  |
-| スマホ幅 | 文字・ボタンが見切れない |  |  |
-| ヘッダー | 主要導線が使える |  |  |
-| フッター | 信頼性ページへ移動できる |  |  |
-| CTA | 次の学習行動へ移動できる |  |  |
-| 画像 | 表示される |  |  |
-| 長い本文 | 読みづらい横幅にならない |  |  |
+| Desktop width | Layout remains intact |  |  |
+| Tablet width | No horizontal scrolling |  |  |
+| Mobile width | Text and buttons are not clipped |  |  |
+| Header | Main navigation works |  |  |
+| Footer | Trust-related pages can be reached |  |  |
+| CTAs | Lead to the next learning action |  |  |
+| Images | Are displayed |  |  |
+| Long body text | Line width remains readable |  |  |
 
 ---
 
-## 10. 確認結果まとめ
+## 10. Verification summary
 
-| 項目 | 判定 |
+| Item | Status |
 |---|---|
-| 主要ページ表示 | 未確認 |
-| ヘッダー導線 | 未確認 |
-| フッター導線 | 未確認 |
-| 詳細ページ遷移 | 未確認 |
-| 問い合わせフォームUI | 未確認 |
-| 404ページ | 未確認 |
-| レスポンシブ表示 | 未確認 |
-| P1-029完了可否 | 未完了 |
+| Main page rendering | Not verified |
+| Header navigation | Not verified |
+| Footer navigation | Not verified |
+| Detail page navigation | Not verified |
+| Contact form UI | Not verified |
+| 404 page | Not verified |
+| Responsive layout | Not verified |
+| P1-029 completion | Incomplete |
 
 ---
 
-## 11. 発見した問題
+## 11. Issues found
 
-| No | 内容 | 該当URL | 優先度 | 対応方針 |
+| No. | Description | Affected URL | Priority | Resolution approach |
 |---:|---|---|---|---|
 | 1 |  |  |  |  |
 | 2 |  |  |  |  |
@@ -155,14 +155,14 @@
 
 ---
 
-## 12. 完了条件
+## 12. Completion criteria
 
-P1-029は、以下を満たしたら完了とする。
+P1-029 is complete when all of the following are satisfied:
 
-- `npm run dev` でローカルサーバーが起動する
-- MVP対象の主要ページが表示できる
-- 一覧ページから詳細ページへ遷移できる
-- ヘッダーとフッターの主要リンクが機能する
-- 問い合わせフォームUIが表示される
-- 404ページが表示される
-- PC・スマホ幅で重大な表示崩れがない
+- `npm run dev` starts the local server
+- The main pages in the MVP scope render
+- List pages link successfully to detail pages
+- Main header and footer links work
+- The contact form UI is displayed
+- The 404 page is displayed
+- There are no major layout defects at desktop or mobile widths

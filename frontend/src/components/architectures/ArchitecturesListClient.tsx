@@ -1,9 +1,6 @@
 /**
- * ArchitecturesListClient.tsx
- *
- * 一覧ページ本体 (locale 引数で全文言切替). server component として動作する
- * (interactivity 不要 / 既存 ja 一覧と同じ静的 layout).
- * comparisons の ComparisonsListClient と同型構造.
+ * List-page body with all labels selected by locale. Runs as a server component: no interactivity is
+ * needed, and the layout matches the static Japanese list. Mirrors ComparisonsListClient.
  */
 import Link from "next/link";
 import {

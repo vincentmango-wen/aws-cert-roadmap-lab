@@ -1,22 +1,13 @@
 import type { BlogPostMeta } from "../../types/blog";
 
 /**
- * blogPosts.ts (registry SSoT)
- *
- * 25 件のブログ記事の共通メタ (postId / slug / publishedAt / updatedAt /
- * published / author / category / tags / targetKeywords / title / description).
- *
- * - locale 共通フィールド (postId / slug / publishedAt / updatedAt / published /
- *   category) は本ファイルが正本.
- * - locale 別の表示用 title / description / tags / targetKeywords は、
- *   本フェーズ (P5-050) では ja の値を初期値として保持する。後続フェーズで
- *   `contents/blog/{en,zh}/<slug>.mdx` の frontmatter を読んで locale 別に
- *   差し替える `blog-content-loader.ts` 経由で取得する。
- * - title / description / tags 等が翻訳されるとき、各 locale MDX frontmatter を
- *   優先 (registry はフォールバック).
- *
- * locale-parity test (`__tests__/blog-locale-parity.test.ts`) で
- * 「registry の slug 集合 = ja MDX の slug 集合」を不変条件として検証する.
+ * Blog-post registry source of truth. Shared metadata for 25 posts includes postId, slug, publishedAt,
+ * updatedAt, published, author, category, tags, targetKeywords, title and description. This file defines
+ * shared identity and publication fields. In P5-050, display fields initially retain Japanese defaults;
+ * blog-content-loader.ts reads localized frontmatter from contents/blog/{en,zh}/<slug>.mdx in subsequent
+ * phases. Localized MDX frontmatter takes precedence for translated title, description, tags and other
+ * display fields; the registry remains a fallback. __tests__/blog-locale-parity.test.ts enforces
+ * registry-slug equality with Japanese MDX slugs.
  */
 export const blogPosts: BlogPostMeta[] = [
   {

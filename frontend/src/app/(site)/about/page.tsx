@@ -5,17 +5,15 @@ import { createPageMetadata, pageSeo } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata(pageSeo.about);
 
 /*
- * このセクションの値は運営者本人の事実に基づく記載です。
- *
- * 資格を追加取得したとき、実務でAWSを扱うようになったとき、執筆体制が変わったときは
- * 必ずここも更新してください。実態と乖離した経歴の記載は AdSense のポリシー違反であり、
- * 運営者本人の信用問題にもなります。推測や一般論で書き足さないこと。
+ * This section must reflect verified facts about the operator. Update it when qualifications,
+ * professional AWS experience or authorship arrangements change. Misrepresenting credentials violates
+ * AdSense policies and damages the operator's credibility. Do not add assumptions or generic claims.
  */
 
 const profileItems = [
   {
     label: "運営者",
-    // 屋号・実名を併記するかどうかは運営者の判断。ハンドルネームのみで公開する方針。
+    // The operator decides whether to publish a business or legal name. The current policy is to publish only the handle.
     value: "ふみくん",
   },
   {
@@ -24,19 +22,19 @@ const profileItems = [
   },
   {
     label: "保有AWS資格",
-    // 未取得の資格や学習中の資格を「保有」として書かないこと。学習中であれば「学習中」と明記する。
+    // Do not list unearned or in-progress qualifications as held. Explicitly label ongoing study.
     value:
       "AWS Certified Cloud Practitioner（CLF-C02）、AWS Certified AI Practitioner（AIF-C01）",
   },
   {
     label: "AWS実務経験",
-    // 実務でAWSを扱うようになったら、年数・職種・触れているサービスの範囲に書き換えること。
+    // When professional AWS work begins, update the years of experience, role and services used.
     value:
       "業務でのAWS利用経験はありません。個人での学習と、本サイト自体をAWS上に構築・運用する過程で学んでいます。",
   },
   {
     label: "執筆・監修体制",
-    // 存在しない監修者・編集部を書かないこと。
+    // Do not invent reviewers or an editorial team.
     value:
       "記事と模擬問題の作成は運営者本人が行っています。生成AIを下書きや構成の整理に活用したうえで、公開前に本人が内容を確認しています。外部の監修者はいません。",
   },

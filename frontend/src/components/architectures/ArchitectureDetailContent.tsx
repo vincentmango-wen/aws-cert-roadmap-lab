@@ -1,8 +1,6 @@
 /**
- * ArchitectureDetailContent.tsx
- *
- * locale 別の構成図記事詳細ページ本体. ja/en/zh いずれの route からも薄いラッパーで呼ばれる.
- * comparisons の ComparisonDetailContent と同型構造.
+ * Localized architecture-detail page body, called through thin wrappers from ja/en/zh routes. Mirrors
+ * ComparisonDetailContent.
  */
 import Link from "next/link";
 import {

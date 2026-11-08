@@ -1,204 +1,204 @@
-# P4-020 Search Consoleエラー確認ログ
+# P4-020 Search Console Error Review Log
 
-## 1. タスク情報
+## 1. Task information
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| タスクID | P4-020 |
-| タスク名 | Search Consoleエラー確認 |
-| 初版作成日 | 2026-06-09（全項目「未確認」のまま停止していた） |
-| 実測更新日 | 2026-08-09（インデックス登録レポート確認、DNS/CloudFront修正、再検証開始） |
-| 対象サイト | https://www.aws-cert-roadmap-lab.com |
-| 対象プロパティ | https://www.aws-cert-roadmap-lab.com/ |
-| 依存タスク | P4-005 Google Search Console登録 |
-| 完了条件 | Search Console上のエラー確認済み |
-| 関連 Issue | #133（本タスク） / #323（AdSense 再申請ゲート。本ドキュメントを D セクションの成果物として参照） |
+| Task ID | P4-020 |
+| Task name | Search Console error review |
+| Initial version | 2026-06-09 (work had stopped with every item still Not checked) |
+| Observation update | 2026-08-09 (indexing report reviewed, DNS/CloudFront fixed, and revalidation started) |
+| Target site | https://www.aws-cert-roadmap-lab.com |
+| Target property | https://www.aws-cert-roadmap-lab.com/ |
+| Dependency | P4-005 Google Search Console registration |
+| Completion criterion | Search Console errors reviewed |
+| Related Issues | #133 (this task) / #323 (AdSense resubmission gate; references this document as the section D deliverable) |
 
-**このドキュメントの位置づけ**: 2026-08-02 の本番反映（PR #328）以降、AdSense 再申請の可否を判定するための実測ログとして継続更新する。
-「サイト側の HTML に解説が入っているか」と「Google が解説入りの HTML をクロール済みか」は別問題であり、後者が取れるまで再申請しない。
+**Role of this document**: Following the 2026-08-02 production deployment (PR #328), maintain this as an observation log for deciding whether AdSense resubmission is appropriate.
+Whether the site's HTML includes explanations and whether Google has crawled that HTML are separate questions. Do not resubmit until evidence of the latter is available.
 
 ---
 
-## 2. 確認対象
+## 2. Review scope
 
-| 確認項目 | 確認結果 | 対応要否 | メモ |
+| Check | Result | Action needed | Notes |
 |---|---|---|---|
-| サマリー画面 | **確認済み** | 経過観察 | 2026-08-09確認。登録済み48、未登録160、レポート最終更新2026-08-05 |
-| ページのインデックス登録 | **確認済み** | **対応中** | 非ゼロの未登録理由5件。3.3節に内訳と検証状態を記録 |
-| サイトマップ | **成功** | 不要 | 2026-08-06最終読み込み、検出202 URL、ステータス「成功」 |
-| URL検査：トップページ | **確認済み** | 不要 | www URLは登録済み。ユーザー指定・Google選択canonicalともにwww |
-| URL検査：用語集 | 未確認 | 未判定 | `/terms` |
-| URL検査：模擬問題 | **確認済み** | **経過観察** | `/questions/clf-001` は未クロールだが、2026-08-09ライブテストで登録可能。代表1 URLのみ登録リクエスト済み |
-| URL検査：構成図一覧 | 未確認 | 未判定 | `/architectures` |
-| URL検査：ブログ一覧 | 未確認 | 未判定 | `/blog` |
-| HTTPS | **確認済み** | 不要 | sitemap 掲載 202 URL をすべて HTTPS で取得し、全件 200（10 章） |
-| モバイルユーザビリティ | **確認対象外** | 不要 | モバイルユーザビリティレポートは 2023-12 に Search Console から廃止済み。代替として PageSpeed Insights / Lighthouse で確認する |
+| Summary | **Checked** | Monitor | Checked on 2026-08-09: 48 indexed, 160 not indexed; report last updated 2026-08-05. |
+| Page indexing | **Checked** | **In progress** | Five nonzero exclusion reasons. Section 3.3 records counts and validation status. |
+| Sitemap | **Success** | None | Last read 2026-08-06; 202 URLs discovered; status Success. |
+| URL inspection: home | **Checked** | None | www URL indexed. User-declared and Google-selected canonicals both use www. |
+| URL inspection: glossary | Not checked | Undetermined | `/terms` |
+| URL inspection: practice questions | **Checked** | **Monitor** | `/questions/clf-001` has not been crawled, but its 2026-08-09 live test found it indexable. Indexing requested for this one representative URL only. |
+| URL inspection: architecture list | Not checked | Undetermined | `/architectures` |
+| URL inspection: blog list | Not checked | Undetermined | `/blog` |
+| HTTPS | **Checked** | None | Fetched all 202 sitemap URLs over HTTPS; all returned 200 (section 10). |
+| Mobile usability | **Not applicable** | None | Search Console retired the Mobile Usability report in 2023-12. Use PageSpeed Insights / Lighthouse instead. |
 
 ---
 
-## 3. Search Console確認結果
+## 3. Search Console findings
 
-### 3.1 サマリー
+### 3.1 Summary
 
-2026-08-09にドメインプロパティの「ページのインデックス登録」を確認した。レポート最終更新日は2026-08-05。
+Reviewed Page indexing for the domain property on 2026-08-09. The report was last updated on 2026-08-05.
 
-| 項目 | 結果 |
+| Item | Result |
 |---|---|
-| 非ゼロの未登録理由 | 5 |
-| インデックス登録済みページ数 | **48** |
-| インデックス未登録ページ数 | **160** |
-| サイトマップ検出URL数 | **202** |
-| クロール済み - インデックス未登録 | **0** |
+| Nonzero exclusion reasons | 5 |
+| Indexed pages | **48** |
+| Pages not indexed | **160** |
+| URLs discovered in sitemap | **202** |
+| Crawled - currently not indexed | **0** |
 
 ---
 
-### 3.2 サイトマップ確認
+### 3.2 Sitemap review
 
-| 項目 | 結果 |
+| Item | Result |
 |---|---|
 | sitemap URL | https://www.aws-cert-roadmap-lab.com/sitemap.xml |
-| ステータス | **成功**（2026-08-02 再送信） |
-| 検出されたURL数 | **202** |
-| 最終読み込み日時 | **2026-08-06** |
-| エラー内容 | なし |
+| Status | **Success** (resubmitted 2026-08-02) |
+| Discovered URLs | **202** |
+| Last read | **2026-08-06** |
+| Errors | None |
 
-サイト側実測（2026-08-02）: `<loc>` 総数 **202**、うち `/en/` `/zh/` を含む URL **0 件**。Phase 3 の ja 単独方針と整合している。
+Site-side measurement (2026-08-02): **202** total `<loc>` entries, including **0** URLs containing `/en/` or `/zh/`. This matches Phase 3's Japanese-only policy.
 
 ---
 
-### 3.3 インデックス未登録理由
+### 3.3 Reasons for non-indexing
 
-2026-08-09実測。DNS/CloudFront修正後に、再検証可能な項目は同日開始した。
+Observed on 2026-08-09. After the DNS/CloudFront fix, revalidation was started that day for eligible categories.
 
-| 理由 | 件数 | 対応方針 |
+| Reason | Count | Response |
 |---|---:|---|
-| 見つかりませんでした（404） | **6** | 対象6 URLは現在200またはapex→www 301。2026-07-04開始の既存検証を継続 |
-| ページにリダイレクトがあります | **2** | HTTP/apexをHTTPS/wwwへ正規化。2026-08-09に新しい検証を開始 |
-| noindexタグによって除外されました | **1** | 対象ブログは現在 `index, follow`。2026-08-09に検証開始 |
-| robots.txtによりブロックされました | **0（該当行なし）** | 対応不要 |
-| 代替ページ（適切なcanonicalタグあり） | **1** | apexをwwwへ301。2026-08-09に新しい検証を開始 |
-| クロール済み - インデックス未登録 | **0** | 現時点でthin contentの直接指標は0 |
-| 検出 - インデックス未登録 | **150** | 一括リクエストは行わず週次観測。代表の `/questions/clf-001` のみ登録リクエスト済み |
+| Not found (404) | **6** | All six URLs now return 200 or apex→www 301. Continue validation started on 2026-07-04. |
+| Page with redirect | **2** | Normalize HTTP/apex to HTTPS/www. New validation started on 2026-08-09. |
+| Excluded by noindex tag | **1** | The blog post now serves `index, follow`. Validation started on 2026-08-09. |
+| Blocked by robots.txt | **0 (no corresponding row)** | No action needed. |
+| Alternate page with proper canonical tag | **1** | Redirect apex to www with 301. New validation started on 2026-08-09. |
+| Crawled - currently not indexed | **0** | The current direct indicator of thin content is zero. |
+| Discovered - currently not indexed | **150** | Observe weekly without bulk requests. Indexing requested only for representative `/questions/clf-001`. |
 
 ---
 
-## 4. 重要URLのURL検査
+## 4. Important URL inspections
 
-| URL | Google登録状況 | クロール可否 | インデックス登録リクエスト | 対応要否 |
+| URL | Google indexing status | Crawlability | Indexing request | Action needed |
 |---|---|---|---|---|
-| https://www.aws-cert-roadmap-lab.com/ | **登録済み** | **取得成功**（前回クロール2026-08-01） | 未実施 | canonicalはユーザー指定・Google選択ともにwww。対応不要 |
-| https://www.aws-cert-roadmap-lab.com/terms | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/questions | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/questions/clf-001 | **検出 - インデックス未登録** | **ライブテストで登録可能**（2026-08-09 13:35） | **2026-08-09実施** | 優先クロールキューへ追加。週次で最終クロール日を確認 |
-| https://www.aws-cert-roadmap-lab.com/architectures | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/comparisons | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/blog | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/about | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/contact | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/privacy | 未確認 | 未確認 | 未実施 | 未判定 |
-| https://www.aws-cert-roadmap-lab.com/disclaimer | 未確認 | 未確認 | 未実施 | 未判定 |
+| https://www.aws-cert-roadmap-lab.com/ | **Indexed** | **Fetched successfully** (last crawl 2026-08-01) | Not requested | Both user-declared and Google-selected canonicals use www. No action needed. |
+| https://www.aws-cert-roadmap-lab.com/terms | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/questions | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/questions/clf-001 | **Discovered - currently not indexed** | **Indexable in live test** (2026-08-09 13:35) | **Requested 2026-08-09** | Added to priority crawl queue. Check the last crawl date weekly. |
+| https://www.aws-cert-roadmap-lab.com/architectures | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/comparisons | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/blog | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/about | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/contact | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/privacy | Not checked | Not checked | Not requested | Undetermined |
+| https://www.aws-cert-roadmap-lab.com/disclaimer | Not checked | Not checked | Not requested | Undetermined |
 
-**注**: URL パスは `/questions/clf-c02/q001` ではなく `/questions/clf-001` 形式。#323 の検証手順に書かれた例示パスは実ルーティングと異なるため、こちらを正とする。
+**Note**: Actual URL paths use `/questions/clf-001`, not `/questions/clf-c02/q001`. The example path in #323's verification procedure differs from actual routing; use the path documented here.
 
 ---
 
-## 5. 発見した問題
+## 5. Issues found
 
-| ID | 問題 | 重要度 | 原因候補 | 対応方針 | 対応状況 |
+| ID | Problem | Severity | Possible cause | Response | Status |
 |---|---|---|---|---|---|
-| GSC-002 | 代表の模擬問題ページが未クロールで、Googleが解説入りHTMLをまだ取得していない | 高 | サイトマップでは検出済みだが、クロール未実施 | クロールが追いつくまで待つ。コード修正は不要 | **経過観察中。これが解消するまで再申請しない** |
-| GSC-003 | URL 検査で「公開URLをテスト」しか実施しておらず、クロール済みスナップショットの HTML を未確認 | 中 | 手順の見落とし | 「クロール済みのページを表示 → HTML」で解説本文の有無を目視する（最低 2 URL） | 未対応。週次チェックの必須項目 |
-| GSC-004 | 3.1 / 3.3 の数値が未取得のため、インデックス推移の day 0 ベースラインが存在しない | 中 | 2026-08-02 の作業で記録しなかった | 2026-08-09に登録済み48・未登録160と内訳を取得 | **対応済み** |
-| GSC-005 | `scripts/sweep-sitemap-status.sh` が Git 管理外（SMB 共有上にのみ存在）。猶予期間中の週次到達性チェックが再現できない | 中 | 到達性スクリプト一式が未コミット | macOS Bash互換化と任意DoH指定を追加し、202 URLの実走査を完了 | **対応済み** |
-| GSC-006 | apexが旧Heroku IPへ到達し、TLS接続に失敗していた | 高 | Cloudflare apex DNSとCloudFront Functionの正規化処理が未整合 | apex CNAMEをCloudFrontへ確定し、apex hostをwwwへ301するFunctionをLIVE反映 | **対応済み。Search Console検証中** |
-| GSC-007 | noindex報告1 URLと現行HTMLが不一致 | 中 | Search Consoleの前回クロール2026-07-25が旧状態 | 現行HTMLの `index, follow` とwww canonicalを確認し、2026-08-09検証開始 | **検証中** |
-| GSC-008 | このPCの通常DNS経路がCloudFront CNAMEを旧IPへ解決する | 低 | ローカル回線のUDP/53キャッシュ。Cloudflare/Google DoHとDNS/TCPは正常 | 到達性スクリプトへ `CURL_DOH_URL` オプションを追加。公開状態の判定はDoH/TCPを正とする | **対策済み** |
+| GSC-002 | The representative practice question has not been crawled, so Google has not fetched its HTML containing explanations. | High | Discovered through the sitemap but not yet crawled | Wait for crawling to catch up. No code change needed. | **Monitoring. Do not resubmit until resolved.** |
+| GSC-003 | URL inspection used only Test live URL; the crawled HTML snapshot has not been checked. | Medium | Missed procedural step | Use View crawled page → HTML to inspect explanation text visually for at least two URLs. | Not addressed; mandatory weekly check. |
+| GSC-004 | Missing figures in 3.1 / 3.3 meant no day-zero indexing baseline. | Medium | Not recorded during 2026-08-02 work | Captured 48 indexed, 160 not indexed, and the breakdown on 2026-08-09. | **Resolved** |
+| GSC-005 | `scripts/sweep-sitemap-status.sh` was not tracked in Git and existed only on the SMB share, preventing reproducible weekly reachability checks during the grace period. | Medium | Reachability scripts were uncommitted | Added macOS Bash compatibility and optional DoH; completed a real scan of 202 URLs. | **Resolved** |
+| GSC-006 | Apex reached an old Heroku IP and failed TLS. | High | Cloudflare apex DNS and CloudFront Function normalization were inconsistent | Set apex CNAME to CloudFront and deployed the apex→www 301 Function to LIVE. | **Resolved; Search Console validation in progress** |
+| GSC-007 | One noindex report disagreed with current HTML. | Medium | Search Console's 2026-07-25 crawl retained the old state | Verified current `index, follow` and www canonical; validation started 2026-08-09. | **Validating** |
+| GSC-008 | This PC's ordinary DNS path resolved the CloudFront CNAME to the old IP. | Low | Local-network UDP/53 cache; Cloudflare/Google DoH and DNS/TCP were correct | Added `CURL_DOH_URL` to the reachability script; use DoH/TCP as the authority for publication checks. | **Mitigated** |
 
 ---
 
-## 6. 対応判断
+## 6. Response decisions
 
-| 判断 | 内容 |
+| Decision | Details |
 |---|---|
-| すぐ修正するもの | GSC-006（DNS/CloudFront正規化）を2026-08-09に反映済み |
-| 経過観察するもの | GSC-002（最終クロール日）、GSC-006（再検証）、GSC-007（noindex再検証）、`検出 - インデックス未登録` 150件 |
-| 対応不要と判断したもの | モバイルユーザビリティ（レポート自体が廃止済み） |
+| Immediate fix | GSC-006 DNS/CloudFront normalization deployed on 2026-08-09. |
+| Monitor | GSC-002 last crawl date, GSC-006 revalidation, GSC-007 noindex revalidation, and 150 Discovered - currently not indexed URLs. |
+| No action | Mobile usability: the report itself has been retired. |
 
 ---
 
-## 7. 完了判定
+## 7. Completion assessment
 
-| 項目 | 判定 |
+| Item | Assessment |
 |---|---|
-| Search Consoleサマリーを確認した | **完了**（3.1に2026-08-09実測を記録） |
-| sitemap.xmlの状態を確認した | **完了**（2026-08-02 再送信・ステータス成功） |
-| インデックス登録エラーを確認した | **完了**（3.3に理由・件数・検証状態を記録） |
-| 重要URLのURL検査を行った | **一部完了**（トップと代表問題を確認。代表問題は未クロールのため週次継続） |
-| 修正要否を判断した | **完了**（DNS/CloudFrontを修正し、Search Console再検証を開始） |
-| 確認結果を記録した | **完了**（本ドキュメント 2026-08-09 更新） |
+| Reviewed Search Console summary | **Complete** (2026-08-09 measurements recorded in 3.1). |
+| Checked sitemap.xml status | **Complete** (resubmitted 2026-08-02; status Success). |
+| Reviewed indexing errors | **Complete** (reasons, counts, and validation status recorded in 3.3). |
+| Inspected important URLs | **Partially complete** (home and representative question checked; continue weekly because the question remains uncrawled). |
+| Decided whether fixes are needed | **Complete** (fixed DNS/CloudFront and started Search Console revalidation). |
+| Recorded findings | **Complete** (this document updated 2026-08-09). |
 
 ---
 
-## 8. 次回確認予定
+## 8. Next review
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 次回確認日 | 2026-08-16（day 14） |
-| 確認理由 | 2026-08-09開始のredirect/canonical/noindex検証と代表URLの優先クロール結果を確認する |
-| 次回見る項目 | ①登録済み/未登録件数 ②4分類の検証状態 ③`/questions/clf-001` の最終クロール日 ④クロール済みHTMLに解説本文が含まれるか |
+| Next review date | 2026-08-16 (day 14) |
+| Reason | Check redirect/canonical/noindex validation started 2026-08-09 and priority-crawl results for the representative URL. |
+| Items to check | ① Indexed/not-indexed counts ② Validation status for four categories ③ Last crawl date of `/questions/clf-001` ④ Explanation text in crawled HTML |
 
 ---
 
-## 9. 本番反映の記録（起算日）
+## 9. Production deployment record (starting date)
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 本番反映日（**猶予期間の起算日**） | **2026-08-02** |
-| 反映内容 | AdSense 再申請対応 Phase 1〜3（#320 / #321 / #322） |
+| Production deployment date (**grace-period starting date**) | **2026-08-02** |
+| Changes | AdSense resubmission preparation Phases 1–3 (#320 / #321 / #322) |
 | PR | #328（dev → master） |
-| master コミット | `b12236b` |
-| デプロイ | `deploy-frontend.yml` run 30746201014 = success |
-| 備考 | 初回 run 30745446674 は「Configure AWS credentials」で 20 分以上ハングしたためキャンセルし、`gh workflow run deploy-frontend.yml --ref master` で再実行した |
+| master commit | `b12236b` |
+| Deployment | `deploy-frontend.yml` run 30746201014 = success |
+| Notes | Initial run 30745446674 was canceled after hanging at Configure AWS credentials for over 20 minutes. Rerun with `gh workflow run deploy-frontend.yml --ref master`. |
 
 ---
 
-## 10. 到達性・静的 HTML の実測（2026-08-02、2026-08-09再確認）
+## 10. Reachability and static HTML observations (2026-08-02, rechecked 2026-08-09)
 
-Google 側の実測（2〜4 章）とは別に、**サイトが何を配信しているか**をコマンドで実測した結果。
+Command-based measurements of **what the site serves**, distinct from Google's observations in sections 2–4.
 
-### 10.1 到達性スイープ
+### 10.1 Reachability sweep
 
-| 項目 | 結果 |
+| Item | Result |
 |---|---|
-| sitemap 掲載 URL 数 | **202**（反映前 141） |
-| HTTP 200 の URL 数 | **202** |
-| non-200 の URL 数 | **0** |
-| `/en/` `/zh/` を含む URL | **0**（Phase 3 の ja 単独方針と整合） |
+| Sitemap URLs | **202** (141 before deployment) |
+| URLs returning HTTP 200 | **202** |
+| Non-200 URLs | **0** |
+| URLs containing `/en/` or `/zh/` | **0** (consistent with Phase 3's Japanese-only policy) |
 
-到達性ゲート（#323 B）は通過。1 回目の落選原因（ほぼ全 URL が 404）は再発していない。
-2026-08-09のDNS変更後も、Cloudflare DoHを明示した再走査で **202/202が200、non-200は0** だった。
+The reachability gate (#323 B) passed. The cause of the first rejection, almost all URLs returning 404, has not recurred.
+After the DNS change on 2026-08-09, a new scan explicitly using Cloudflare DoH again found **202/202 returning 200 and zero non-200 responses**.
 
-### 10.2 模擬問題ページの静的 HTML（`/questions/clf-001`、JS 実行なし）
+### 10.2 Static practice-question HTML (`/questions/clf-001`, without executing JS)
 
-| 検査項目 | 実測値 | 判定 |
+| Check | Observed value | Assessment |
 |---|---:|---|
-| HTML サイズ | 61,667 bytes | — |
-| 「解説」の出現回数 | 8 | OK |
-| 「選択肢ごとの解説」の出現回数 | 2 | OK |
-| 「実務での使いどころ」の出現回数 | 2 | OK |
-| `docs.aws.amazon.com` へのリンク | 4 | OK |
-| `<details>` 要素 | 1 | OK（折りたたみで UX を維持） |
-| `<details open>` | **0** | OK（初期状態は閉じている＝クローキングではない） |
-| `application/ld+json` | 2 | OK（Quiz 構造化データ + 既存の JSON-LD） |
-| `<meta name="robots">` | `index, follow` | OK（ja は過剰封印なし） |
+| HTML size | 61,667 bytes | — |
+| Occurrences of Japanese “解説” (explanation) | 8 | OK |
+| Occurrences of Japanese “選択肢ごとの解説” (explanation by choice) | 2 | OK |
+| Occurrences of Japanese “実務での使いどころ” (practical use cases) | 2 | OK |
+| Links to `docs.aws.amazon.com` | 4 | OK |
+| `<details>` elements | 1 | OK (collapsing preserves UX) |
+| `<details open>` | **0** | OK (closed initially; not cloaking) |
+| `application/ld+json` | 2 | OK (Quiz structured data plus existing JSON-LD) |
+| `<meta name="robots">` | `index, follow` | OK (no excessive gating for ja) |
 
-反映前は解説系の出現回数がすべて **0** だった。Phase 1 の目的（クローラーから解説が見えること）はサイト側では達成済み。
+Before deployment, every explanation-related occurrence count was **0**. Phase 1's goal of making explanations visible to crawlers is achieved on the site side.
 
-### 10.2.1 抜き取り検査（CLF 3 問 + SAA 3 問、2026-08-02）
+### 10.2.1 Sampling (three CLF + three SAA questions, 2026-08-02)
 
-1 ページだけの確認では全 100 ページに反映されている保証がないため、先頭・中間・末尾から 6 問を抜き取って実測した。
+Checking one page does not guarantee coverage across all 100 pages. Six questions were sampled from the beginning, middle, and end.
 
-| URL | HTTP | bytes | 解説 | 選択肢ごとの解説 | 実務での使いどころ | aws docs リンク | `<details open>` |
+| URL | HTTP | bytes | Explanation | Choice explanations | Practical use cases | AWS docs links | `<details open>` |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | `/questions/clf-001` | 200 | 61,667 | 8 | 2 | 2 | 4 | 0 |
 | `/questions/clf-025` | 200 | 51,502 | 8 | 2 | 2 | 8 | 0 |
@@ -207,96 +207,96 @@ Google 側の実測（2〜4 章）とは別に、**サイトが何を配信し�
 | `/questions/saa-025` | 200 | 52,229 | 8 | 2 | 2 | 8 | 0 |
 | `/questions/saa-050` | 200 | 58,706 | 8 | 2 | 2 | 4 | 0 |
 
-全 6 問で 4 つの解説要素がそろっており、`<details open>` は 1 件もない。#323 の C セクションは通過。
+All six questions contain all four explanation elements, and none has `<details open>`. Section C of #323 passed.
 
-### 10.3 固有テキスト量の変化（ビルド出力での計測）
+### 10.3 Change in unique text volume (measured from build output)
 
-| 指標 | 反映前 | 反映後 |
+| Metric | Before | After |
 |---|---:|---:|
-| ja 模擬問題 100 ページの固有テキスト（平均） | 335 字 | **1,760 字** |
-| boilerplate 比率 | 62.5% | **24.1%** |
-| CLF 正解の A 偏り | 90% | **26%**（#312 で是正済み・クローズ） |
+| Average unique text across 100 ja practice-question pages | 335 characters | **1,760 characters** |
+| Boilerplate ratio | 62.5% | **24.1%** |
+| CLF correct-answer bias toward A | 90% | **26%** (corrected in #312; closed) |
 
 ---
 
-## 11. クロール猶予中の週次記録
+## 11. Weekly records during the crawl grace period
 
-**起算日 2026-08-02 / 最短再申請可能日 2026-08-16（14 日）/ 推奨 2026-08-23〜2026-08-30（21〜28 日）**
+**Starting date: 2026-08-02 / earliest resubmission: 2026-08-16 (14 days) / recommended: 2026-08-23–2026-08-30 (21–28 days)**
 
-| 計測日 | 経過日数 | インデックス登録済 | 未登録 | クロール済-未登録 | 模擬問題の最終クロール日 | クロール済 HTML に解説 |
+| Measurement date | Days elapsed | Indexed | Not indexed | Crawled - not indexed | Last practice-question crawl | Explanations in crawled HTML |
 |---|---:|---:|---:|---:|---|---|
-| 2026-08-02 | 0 | 未取得 | 未取得 | 未取得 | **デプロイ日より前** | 未確認（ライブ取得のみ） |
-| 2026-08-09 | 7 | **48** | **160** | **0** | 該当なし（`/questions/clf-001` は未クロール） | なし（クロール済みHTMLなし。ライブテストは登録可能） |
+| 2026-08-02 | 0 | Not captured | Not captured | Not captured | **Before deployment date** | Not checked (live fetch only) |
+| 2026-08-09 | 7 | **48** | **160** | **0** | Not applicable (`/questions/clf-001` not crawled) | No (no crawled HTML; live test finds it indexable) |
 | 2026-08-16 | 14 | | | | | |
 | 2026-08-23 | 21 | | | | | |
 | 2026-08-30 | 28 | | | | | |
 
-記入手順（1 回 5 分程度）:
+Recording procedure (about five minutes each time):
 
-1. Search Console → ページ（インデックス作成）→ 「登録済み」「未登録」の件数を転記
-2. 未登録の内訳から「クロール済み - インデックス未登録」の件数を転記
-3. 上部の URL 検査バーに `https://www.aws-cert-roadmap-lab.com/questions/clf-001` を入力
-4. 「ページのインデックス登録」→ **最終クロール日**を転記
-5. 「クロール済みのページを表示」→ **HTML** タブ → 「実務での使いどころ」で検索 → ヒットすれば「あり」
+1. Search Console → Pages (Indexing) → record Indexed and Not indexed counts.
+2. From the non-indexed breakdown, record Crawled - currently not indexed.
+3. Enter `https://www.aws-cert-roadmap-lab.com/questions/clf-001` in the top URL inspection bar.
+4. Under Page indexing, record the **last crawl date**.
+5. Open View crawled page → **HTML** and search for the literal Japanese text “実務での使いどころ” (practical use cases). Record Yes if found.
 
 ---
 
-## 12. 再申請ゲート判定（2026-08-09 時点）
+## 12. Resubmission gate assessment (as of 2026-08-09)
 
-| ゲート | 条件 | 現状 | 判定 |
+| Gate | Condition | Current status | Assessment |
 |---|---|---|---|
-| A. 本番反映 | Phase 1〜3 が master にマージされ、デプロイ成功 | PR #328 / run 30746201014 success | **通過** |
-| B. 到達性 | sitemap 全 URL が 200、non-200 = 0 | 202/202 が 200 | **通過** |
-| C. 静的 HTML | 解説・選択肢別解説・practicalNote・公式ドキュメントが JS なしで出力される | 10.2 のとおり全項目 OK | **通過** |
-| D. Search Console 実測 | 3.1 / 3.3 / 4 章が実測値で埋まっている | 登録済み48、未登録160、トップと代表問題のURL検査を記録 | **通過** |
-| E. クロール猶予 | 起算日から 14 日以上、かつ**模擬問題ページの最終クロール日がデプロイ日以降** | 経過7日／代表問題は未クロール | **未達** |
-| F. 再申請 | A〜E がすべて通過 | — | **不可** |
+| A. Production deployment | Phases 1–3 merged to master and deployed successfully | PR #328 / run 30746201014 success | **Passed** |
+| B. Reachability | Every sitemap URL returns 200; non-200 = 0 | 202/202 return 200 | **Passed** |
+| C. Static HTML | Explanations, choice explanations, practicalNote, and official documentation are rendered without JS | All checks OK as in 10.2 | **Passed** |
+| D. Search Console observations | Sections 3.1 / 3.3 / 4 contain actual measurements | 48 indexed, 160 not indexed, home and representative-question inspections recorded | **Passed** |
+| E. Crawl grace period | At least 14 days since the start, and **practice-question last crawl date is on or after deployment** | Seven days elapsed; representative question not crawled | **Not met** |
+| F. Resubmission | All gates A–E pass | — | **Not permitted** |
 
-### 結論
+### Conclusion
 
-**現時点で AdSense に再申請してはいけない。**
+**Do not resubmit to AdSense at this stage.**
 
-理由は E。代表の模擬問題ページはまだクロールされておらず、Google が解説入りHTMLを取得した証拠がない。
-この状態で審査をリクエストすると、Phase 1〜3 の修正が一切考慮されないまま同じ理由（有用性の低いコンテンツ）で 3 回目の落選になる。
-落選を繰り返すと審査間隔が延びる運用上のデメリットもある。
+Gate E is the reason. The representative question page has not been crawled, and there is no evidence that Google fetched the HTML containing explanations.
+The original assessment was that requesting review in this state would lead to a third rejection for the same reason (low-value content), without the Phase 1–3 fixes being considered.
+Repeated rejection also has the operational disadvantage of longer review intervals.
 
-再申請してよいのは、次の 2 つが**同時に**満たされたとき:
+Resubmit only when **both** conditions are met:
 
-1. 起算日（2026-08-02）から 14 日以上（推奨 21〜28 日）経過している
-2. 11 章の表で「模擬問題の最終クロール日」がデプロイ日以降になり、かつ「クロール済み HTML に解説」が **あり** になっている
+1. At least 14 days have passed since 2026-08-02 (21–28 days recommended).
+2. Section 11 shows a practice-question last crawl date on or after deployment and **Yes** for explanations in crawled HTML.
 
-2 が取れなければ 28 日を超えても待つ。日数ではなく **Google が新しい HTML を見た証拠**が再申請の条件である。
+If condition 2 is not met, wait even beyond 28 days. **Evidence that Google has seen the new HTML**, rather than elapsed days, is the resubmission condition.
 
 ---
 
-## 13. 2026-08-09 インデックス修正・再検証の実施記録
+## 13. Indexing remediation and revalidation record: 2026-08-09
 
 ### 13.1 CloudFront / DNS
 
-- CloudFront Function `aws-cert-url-rewrite` にapexからwwwへの301正規化を追加し、LIVEへ反映した。
-- LIVE Functionは `DEPLOYED`、ETagは `E1F83G8C2ARO7P`。query再エンコード修正後のリポジトリとLIVEコードのSHA-256は `7c8c52f8e6260f11a0610354a17a1cef6297bfde8c236083735e4ea99d3a36b0` で一致した。
-- Distribution `EHIV14NX361T7` は `Deployed`、viewer-request associationは変更なし。
-- Cloudflare apexはCNAME `d25a018o7xkwid.cloudfront.net`、DNS only、TTL Autoで確定した。`www` とACM検証用CNAMEは変更していない。
-- Cloudflare/Google DoHとDNS/TCPでCloudFrontの4 IP（`3.166.205.31`、`3.166.205.36`、`3.166.205.73`、`3.166.205.87`）を確認した。
-- このPCの通常UDP/53経路だけは旧IPを返したため、公開状態の確認ではDoH/TCPを正とした。
+- Added apex→www 301 normalization to CloudFront Function `aws-cert-url-rewrite` and deployed it to LIVE.
+- The LIVE Function is `DEPLOYED`, with ETag `E1F83G8C2ARO7P`. After the query re-encoding fix, repository and LIVE code SHA-256 matched: `7c8c52f8e6260f11a0610354a17a1cef6297bfde8c236083735e4ea99d3a36b0`.
+- Distribution `EHIV14NX361T7` is `Deployed`; viewer-request association unchanged.
+- Cloudflare apex was set to CNAME `d25a018o7xkwid.cloudfront.net`, DNS only, TTL Auto. `www` and ACM validation CNAMEs were unchanged.
+- Cloudflare/Google DoH and DNS/TCP resolved four CloudFront IPs: `3.166.205.31`, `3.166.205.36`, `3.166.205.73`, `3.166.205.87`.
+- Only this PC's ordinary UDP/53 path returned the old IP, so publication checks treated DoH/TCP as authoritative.
 
-### 13.2 公開URL
+### 13.2 Public URLs
 
-- apex HTTPSは301でwwwへ遷移し、pathとquery stringを保持した。
-- `%2F`、`+`、値なし、重複parameterを含むqueryでも二重エンコードせずwwwへ引き継ぐことを確認した。CloudFrontのイベント表現上、parameter順と値なしparameterの末尾 `=` は正規化される。
-- apex HTTPは最終的にHTTPS/wwwの200へ遷移した。
-- wwwトップとSearch Consoleで指摘された代表7 URLはすべて200だった。
-- noindex報告対象は現行HTMLで `index, follow`、canonicalはwwwだった。
-- `CURL_DOH_URL=https://cloudflare-dns.com/dns-query bash scripts/sweep-sitemap-status.sh` を実行し、sitemap掲載202 URLすべて200、non-200は0だった。
+- Apex HTTPS returned 301 to www while preserving the path and query string.
+- Queries containing `%2F`, `+`, valueless parameters, and duplicate parameters were confirmed to carry over to www without double encoding. CloudFront's event representation normalizes parameter order and the trailing `=` on valueless parameters.
+- Apex HTTP ultimately reached HTTPS/www with a 200 response.
+- The www home page and all seven representative URLs flagged by Search Console returned 200.
+- The reported noindex URL's current HTML had `index, follow` and a www canonical.
+- Ran `CURL_DOH_URL=https://cloudflare-dns.com/dns-query bash scripts/sweep-sitemap-status.sh`; all 202 sitemap URLs returned 200, with zero non-200 responses.
 
 ### 13.3 Search Console
 
-- 「ページにリダイレクトがあります」2件は、2026-08-09に新しい検証を開始した。
-- 「代替ページ（適切なcanonicalタグあり）」1件は、2026-08-09に新しい検証を開始した。
-- 「noindexタグによって除外されました」1件は、2026-08-09に検証を開始した。
-- 404の6件は2026-07-04開始の既存検証を継続した。
-- `/questions/clf-001` はライブテストで登録可能を確認し、代表1 URLだけインデックス登録をリクエストした。150 URLへの一括リクエストは行っていない。
+- Started new validation on 2026-08-09 for two Page with redirect URLs.
+- Started new validation on 2026-08-09 for one Alternate page with proper canonical tag URL.
+- Started validation on 2026-08-09 for one Excluded by noindex tag URL.
+- Continued the existing 2026-07-04 validation for six 404 URLs.
+- Confirmed `/questions/clf-001` is indexable in the live test and requested indexing for that one representative URL only. No bulk request for 150 URLs was made.
 
-### 13.4 次アクション
+### 13.4 Next actions
 
-2026-08-16に、各検証状態、登録済み/未登録件数、`/questions/clf-001` の最終クロール日とクロール済みHTMLを確認する。AdSense再申請は、12章のゲートEが通過するまで行わない。推奨再申請時期は2026-08-23〜2026-08-30だが、Googleが解説入りHTMLを取得した証拠を日数より優先する。
+On 2026-08-16, check each validation status, indexed/not-indexed counts, and `/questions/clf-001` last crawl date and crawled HTML. Do not resubmit to AdSense until section 12 gate E passes. The recommended resubmission window is 2026-08-23–2026-08-30, but evidence that Google fetched HTML containing explanations takes priority over elapsed days.

@@ -1,78 +1,78 @@
-# P5-000 グローバル競合・SEO仮説整理
+# P5-000 Global Competitor and SEO Hypotheses
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| タスクID | P5-000 |
-| タスク名 | グローバル競合・SEO仮説整理 |
-| 対象フェーズ | Phase 5：グローバルSEO・ローカライゼーション |
-| 対象プロダクト | AWS Cert Roadmap Lab |
-| 対象言語 | 日本語 / 英語 / 繁体字中国語 |
-| 作成目的 | 翻訳前に、狙う市場・検索意図・競合・キーワード・差別化方針を決める |
-| 実装対象 | なし |
-| 後続タスク | P5-000-1 以降、P5-001 以降 |
+| Task ID | P5-000 |
+| Task name | Global Competitor and SEO Hypotheses |
+| Target phase | Phase 5：Global SEO and Localization |
+| Target product | AWS Cert Roadmap Lab |
+| Target languages | Japanese / English / Traditional Chinese |
+| Purpose | Decide target markets, search intent, competitors, keywords, and differentiation policy before translation |
+| Implementation scope | None |
+| Subsequent tasks | P5-000-1 onward, P5-001 onward |
 
 ---
 
-## 2. 結論
+## 2. Conclusion
 
-Phase 5では、英語圏のビッグキーワードを正面から狙わない。
+In Phase 5, do not directly target broad English-language keywords.
 
-狙うべき領域は以下である。
+The target area is as follows.
 
 ```text
-AWS資格対策
-× 初学者向け
-× 用語集
-× サービス比較
-× 構成図
-× 実装ポートフォリオ
-× 日本語・英語・繁体字中国語
+AWS certification preparation
+× Beginner-friendly
+× Glossary
+× Service comparisons
+× Architecture diagrams
+× Implementation portfolio
+× Japanese, English, and Traditional Chinese
 ````
 
-理由は、英語圏の「AWS practice exam」「AWS Cloud Practitioner practice test」領域は、AWS公式、Tutorials Dojo、Whizlabs、Digital Cloud Trainingなどの既存競合が強いためである。
+The reason is that established competitors such as official AWS resources, Tutorials Dojo, Whizlabs, and Digital Cloud Training are strong in English-language searches for "AWS practice exam" and "AWS Cloud Practitioner practice test".
 
-本サイトは、問題演習単体ではなく、以下を差別化軸にする。
+Rather than question practice alone, differentiate this site through the following.
 
-1. AWSサービス比較が見やすい
-2. 構成図で理解できる
-3. 資格知識と実装ポートフォリオがつながっている
-4. 日本語・英語・繁体字中国語を同じ構造で読める
-5. 初学者が「試験」と「実務設計」の両方を理解できる
+1. Easy-to-read AWS service comparisons.
+2. Understanding through architecture diagrams.
+3. Connections between certification knowledge and an implementation portfolio.
+4. The same structure readable in Japanese, English, and Traditional Chinese.
+5. Beginners can understand both exams and practical design.
 
 ---
 
-## 3. 競合カテゴリ整理
+## 3. Competitor Categories
 
-## 3.1 英語圏の競合カテゴリ
+## 3.1 English-Language Competitor Categories
 
-| カテゴリ        | 代表例                                                | 強み          | 弱み                | 本サイトの狙い            |
+| Category | Examples | Strengths | Weaknesses | This site's approach |
 | ----------- | -------------------------------------------------- | ----------- | ----------------- | ------------------ |
-| AWS公式       | AWS Skill Builder / Official Practice Question Set | 信頼性が最強      | 初学者には体系化が難しいことがある | 公式情報を補助する用語・比較・図解  |
-| 有料模擬試験      | Tutorials Dojo / Whizlabs / Digital Cloud Training | 問題数・模試形式が強い | 実装ポートフォリオ説明は弱い    | 模試ではなく理解補助に寄せる     |
-| 個人ブログ       | Medium / DEV / 個人ブログ                               | 体験談が豊富      | 情報の粒度・正確性がばらつく    | 更新日・構成図・比較表で信頼性を補う |
-| YouTube講座   | freeCodeCamp / ExamPro系                            | 視覚的に学びやすい   | 検索回遊・辞書性は弱い       | テキスト検索と内部リンクで補完    |
-| GitHub学習ノート | Awesome系 / study guide repo                        | 無料で網羅的      | UI・SEO・初心者導線が弱い   | Webサイトとして読みやすくする   |
-| exam dump系  | braindump / actual questions系                      | 検索流入は強い     | 倫理・規約・信頼性リスクが高い   | 明確に排除する            |
+| Official AWS | AWS Skill Builder / Official Practice Question Set | Strongest trustworthiness | Beginners may find it difficult to organize systematically | Terms, comparisons, and diagrams supplementing official information |
+| Paid practice exams | Tutorials Dojo / Whizlabs / Digital Cloud Training | Strong question volume and mock exam formats | Limited implementation portfolio explanations | Focus on supporting understanding rather than mock exams |
+| Personal blogs | Medium / DEV / Personal blogs | Rich personal experiences | Uneven detail and accuracy | Reinforce trust with update dates, architecture diagrams, and comparison tables |
+| YouTube courses | freeCodeCamp / ExamPro-style resources | Easy visual learning | Limited search navigation and reference utility | Complement with text search and internal links |
+| GitHub study notes | Awesome lists / study guide repo | Free and comprehensive | Weak UI, SEO, and beginner navigation | Make content easy to read as a website |
+| Exam dump resources | braindump / actual questions resources | Strong search traffic | High ethical, terms-of-service, and credibility risks | Explicitly exclude |
 
-## 3.2 中国語・繁体字圏の競合カテゴリ
+## 3.2 Chinese and Traditional Chinese Competitor Categories
 
-| カテゴリ         | 代表例                    | 強み        | 弱み                 | 本サイトの狙い              |
+| Category | Examples | Strengths | Weaknesses | This site's approach |
 | ------------ | ---------------------- | --------- | ------------------ | -------------------- |
-| AWS公式中国語ページ  | AWS公式認定ページ             | 信頼性が高い    | 学習導線が硬い            | 初学者向けに噛み砕く           |
-| 中国語体験談ブログ    | Medium / 個人ブログ / CSDN系 | 受験体験が豊富   | 古い試験コードやdump誘導が混ざる | 最新試験・非dump方針を明示      |
-| 中国語問題サイト     | 題庫サイト / examtopics系    | 問題検索流入が強い | 正確性・権利面にリスク        | 独自問題・理解重視で差別化        |
-| 台湾向けIT教育サイト  | 研修・講座サイト               | 現地ユーザーに近い | 無料の体系コンテンツは少ない     | 繁体字の無料学習導線を作る        |
-| 日本語学習サイトの翻訳版 | ほぼ少ない                  | 競合が弱い     | 品質の高い翻訳が少ない        | 日本語・英語・繁体字の三言語対応を差別化 |
+| Official AWS Chinese pages | Official AWS certification pages | Highly trustworthy | Rigid learning navigation | Explain in beginner-friendly language |
+| Chinese experience blogs | Medium / Personal blogs / CSDN-style resources | Rich exam experiences | May mix outdated exam codes and links to dumps | Explicitly state current exam coverage and no-dump policy |
+| Chinese question sites | Question-bank sites / examtopics-style resources | Strong question-search traffic | Accuracy and rights risks | Differentiate with original questions and understanding |
+| IT education sites for Taiwan | Training and course sites | Close to local users | Limited free systematic content | Create a free Traditional Chinese learning journey |
+| Translations of Japanese learning sites | Very few | Weak competition | Few high-quality translations | Differentiate with Japanese, English, and Traditional Chinese support |
 
 ---
 
-## 4. SEO仮説
+## 4. SEO Hypotheses
 
-## 4.1 英語SEO仮説
+## 4.1 English SEO Hypothesis
 
-英語圏では、以下のビッグキーワードは初期段階で狙わない。
+Do not initially target the following broad English-language keywords.
 
 * AWS Cloud Practitioner practice exam
 * AWS Cloud Practitioner practice test
@@ -80,9 +80,9 @@ AWS資格対策
 * SAA-C03 practice exam
 * AWS exam dumps
 
-理由は、公式・大手講座・模試サイト・dump系サイトが強すぎるためである。
+Official resources, major courses, mock exam sites, and dump sites are too strong in these areas.
 
-初期で狙うのは以下のロングテールである。
+Initially target the following long-tail terms.
 
 * beginner
 * explained
@@ -94,18 +94,18 @@ AWS資格対策
 * portfolio
 * serverless
 
-## 4.2 中国語SEO仮説
+## 4.2 Chinese SEO Hypothesis
 
-中国語圏では、簡体字より繁体字から開始する。
+For Chinese-speaking audiences, start with Traditional Chinese rather than Simplified Chinese.
 
-理由は以下である。
+The reasons are as follows.
 
-1. 台湾・香港ユーザー向けの繁体字AWS資格コンテンツは英語圏より競合が少ない
-2. ユーザー本人の言語背景と相性が良い
-3. 中国語圏では題庫・考古題系の検索が強いため、あえて非dump・理解重視で差別化できる
-4. 将来 `/zh-cn` を追加する余地を残せる
+1. Traditional Chinese AWS certification content for Taiwan and Hong Kong faces less competition than English content.
+2. It fits the user's own language background.
+3. Searches for question banks and past questions are strong in Chinese-speaking regions, so an explicit focus on understanding rather than dumps can differentiate the site.
+4. It leaves room to add `/zh-cn` in the future.
 
-初期で狙うのは以下である。
+Initially target the following original Traditional Chinese keyword specimens.
 
 * AWS 服務比較
 * AWS 初學者
@@ -116,9 +116,9 @@ AWS資格対策
 
 ---
 
-## 5. 狙うべき英語キーワード
+## 5. English Keywords to Target
 
-| 優先度    | キーワード                                        | 対応候補ページ                                            |
+| Priority | Keyword | Candidate target page |
 | ------ | -------------------------------------------- | -------------------------------------------------- |
 | High   | AWS services comparison for beginners        | /en/comparisons                                    |
 | High   | S3 vs EBS vs EFS explained                   | /en/comparisons/s3-vs-ebs-vs-efs                   |
@@ -143,9 +143,9 @@ AWS資格対策
 
 ---
 
-## 6. 狙うべき繁体字中国語キーワード
+## 6. Traditional Chinese Keywords to Target (Original Specimens)
 
-| 優先度    | キーワード                               | 対応候補ページ                                            |
+| Priority | Keyword | Candidate target page |
 | ------ | ----------------------------------- | -------------------------------------------------- |
 | High   | AWS 服務比較 初學者                        | /zh/comparisons                                    |
 | High   | S3 EBS EFS 差異                       | /zh/comparisons/s3-vs-ebs-vs-efs                   |
@@ -170,11 +170,11 @@ AWS資格対策
 
 ---
 
-## 7. 避けるキーワード
+## 7. Keywords to Avoid
 
-## 7.1 英語で避けるキーワード
+## 7.1 English Keywords to Avoid
 
-以下は意図的に狙わない。
+Deliberately do not target the following.
 
 * AWS exam dump
 * AWS Cloud Practitioner dump
@@ -187,9 +187,9 @@ AWS資格対策
 * latest actual AWS exam questions
 * free AWS dump PDF
 
-## 7.2 中国語で避けるキーワード
+## 7.2 Chinese Keywords to Avoid (Original Specimens)
 
-以下は意図的に狙わない。
+Deliberately do not target the following.
 
 * AWS 題庫
 * AWS 考古題
@@ -202,9 +202,9 @@ AWS資格対策
 * AWS 最新真題
 * AWS 考試答案
 
-## 7.3 禁止表現
+## 7.3 Prohibited Expressions
 
-サイト内で以下の表現は禁止する。
+The following expressions are prohibited on the site (original localized specimens).
 
 * 本番試験問題
 * 実際に出た問題
@@ -222,9 +222,9 @@ AWS資格対策
 * 題庫
 * 保證通過
 
-## 7.4 代替表現
+## 7.4 Alternative Expressions (Original Localized Specimens)
 
-| 禁止寄り表現  | 代替表現         |
+| Expression leaning toward prohibited wording | Alternative expression |
 | ------- | ------------ |
 | 実試験問題   | 独自作成の練習問題    |
 | 本番と同じ問題 | 試験範囲に沿った演習問題 |
@@ -236,140 +236,140 @@ AWS資格対策
 
 ---
 
-## 8. 差別化メッセージ
+## 8. Differentiation Messages
 
-## 8.1 英語サイト説明文
+## 8.1 English Site Description
 
 AWS Cert Roadmap Lab is a beginner-friendly AWS certification learning site that explains AWS services through comparisons, architecture diagrams, practice questions, and real serverless portfolio implementation.
 
-## 8.2 英語 meta description
+## 8.2 English Meta Description
 
 Learn AWS Cloud Practitioner and SAA basics with beginner-friendly service comparisons, architecture diagrams, practice questions, and a real AWS serverless portfolio project.
 
-## 8.3 英語 OGP 文言
+## 8.3 English OGP Copy
 
 AWS certification learning with diagrams, comparisons, and real serverless implementation.
 
-## 8.4 繁体字中国語サイト説明文
+## 8.4 Traditional Chinese Site Description (Original Copy)
 
 AWS Cert Roadmap Lab 是一個面向初學者的 AWS 認證學習網站，透過服務比較、架構圖、練習題與實際 Serverless 作品集，幫助學習者理解 AWS Cloud Practitioner 與 SAA 的基礎。
 
-## 8.5 繁体字中国語 meta description
+## 8.5 Traditional Chinese Meta Description (Original Copy)
 
 透過 AWS 服務比較、架構圖、練習題與 Serverless 實作作品集，學習 AWS Cloud Practitioner 與 SAA 的基礎概念。
 
-## 8.6 繁体字中国語 OGP 文言
+## 8.6 Traditional Chinese OGP Copy (Original Copy)
 
 用服務比較、架構圖與實作作品集學習 AWS 認證。
 
 ---
 
-## 9. 最初に翻訳するページ優先順位
+## 9. Initial Page Translation Priorities
 
-## 9.1 優先度 High：最初に翻訳するページ
+## 9.1 High Priority: Pages to Translate First
 
-| No | 日本語ページ                             | 英語URL                                       | 中国語URL                                      | 理由            |
+| No | Japanese page | English URL | Chinese URL | Reason |
 | -- | ---------------------------------- | ------------------------------------------- | ------------------------------------------- | ------------- |
-| 1  | トップページ                             | /en                                         | /zh                                         | 言語別入口になる      |
-| 2  | ロードマップ                             | /en/roadmap                                 | /zh/roadmap                                 | 資格学習導線の中心     |
-| 3  | 用語集一覧                              | /en/terms                                   | /zh/terms                                   | SEO入口になる      |
-| 4  | 比較一覧                               | /en/comparisons                             | /zh/comparisons                             | 差別化しやすい       |
-| 5  | 構成図一覧                              | /en/architectures                           | /zh/architectures                           | 競合差別化の中心      |
-| 6  | Blog一覧                             | /en/blog                                    | /zh/blog                                    | 記事流入の入口       |
-| 7  | About                              | /en/about                                   | /zh/about                                   | 信頼性・AdSense対応 |
-| 8  | Privacy                            | /en/privacy                                 | /zh/privacy                                 | 広告・計測対応       |
-| 9  | Disclaimer                         | /en/disclaimer                              | /zh/disclaimer                              | 試験情報の免責       |
-| 10 | S3用語                               | /en/terms/s3                                | /zh/terms/s3                                | 検索需要が大きい      |
-| 11 | Lambda用語                           | /en/terms/lambda                            | /zh/terms/lambda                            | サーバーレス文脈に強い   |
-| 12 | CloudFront用語                       | /en/terms/cloudfront                        | /zh/terms/cloudfront                        | 本サイト構成と一致     |
-| 13 | IAM用語                              | /en/terms/iam                               | /zh/terms/iam                               | 試験頻出          |
-| 14 | DynamoDB用語                         | /en/terms/dynamodb                          | /zh/terms/dynamodb                          | サーバーレス構成と一致   |
-| 15 | API Gateway用語                      | /en/terms/api-gateway                       | /zh/terms/api-gateway                       | サーバーレス構成と一致   |
-| 16 | S3/EBS/EFS比較                       | /en/comparisons/s3-vs-ebs-vs-efs            | /zh/comparisons/s3-vs-ebs-vs-efs            | 比較SEO向き       |
-| 17 | RDS/DynamoDB比較                     | /en/comparisons/rds-vs-dynamodb             | /zh/comparisons/rds-vs-dynamodb             | 比較SEO向き       |
-| 18 | IAM User/Role/Policy比較             | /en/comparisons/iam-user-role-policy        | /zh/comparisons/iam-user-role-policy        | 試験頻出          |
-| 19 | S3 + CloudFront構成図                 | /en/architectures/static-site-s3-cloudfront | /zh/architectures/static-site-s3-cloudfront | 本サイトの実装構成と一致  |
-| 20 | API Gateway + Lambda + DynamoDB構成図 | /en/architectures/serverless-api-basic      | /zh/architectures/serverless-api-basic      | ポートフォリオ性が強い   |
+| 1  | Home page                             | /en                                         | /zh                                         | Language-specific entry point      |
+| 2  | Roadmap                             | /en/roadmap                                 | /zh/roadmap                                 | Central to certification learning navigation     |
+| 3  | Glossary index                              | /en/terms                                   | /zh/terms                                   | SEO entry point      |
+| 4  | Comparison index                               | /en/comparisons                             | /zh/comparisons                             | Easy to differentiate       |
+| 5  | Architecture diagram index                              | /en/architectures                           | /zh/architectures                           | Central to differentiation from competitors      |
+| 6  | Blog index                             | /en/blog                                    | /zh/blog                                    | Entry point for article traffic       |
+| 7  | About                              | /en/about                                   | /zh/about                                   | Trustworthiness and AdSense requirements |
+| 8  | Privacy                            | /en/privacy                                 | /zh/privacy                                 | Advertising and analytics requirements       |
+| 9  | Disclaimer                         | /en/disclaimer                              | /zh/disclaimer                              | Disclaimer for exam information       |
+| 10 | S3 term                               | /en/terms/s3                                | /zh/terms/s3                                | High search demand      |
+| 11 | Lambda term                           | /en/terms/lambda                            | /zh/terms/lambda                            | Strong serverless relevance   |
+| 12 | CloudFront term                       | /en/terms/cloudfront                        | /zh/terms/cloudfront                        | Matches this site's architecture     |
+| 13 | IAM term                              | /en/terms/iam                               | /zh/terms/iam                               | Frequently tested          |
+| 14 | DynamoDB term                         | /en/terms/dynamodb                          | /zh/terms/dynamodb                          | Matches the serverless architecture   |
+| 15 | API Gateway term                      | /en/terms/api-gateway                       | /zh/terms/api-gateway                       | Matches the serverless architecture   |
+| 16 | S3/EBS/EFS comparison                       | /en/comparisons/s3-vs-ebs-vs-efs            | /zh/comparisons/s3-vs-ebs-vs-efs            | Suitable for comparison SEO       |
+| 17 | RDS/DynamoDB comparison                     | /en/comparisons/rds-vs-dynamodb             | /zh/comparisons/rds-vs-dynamodb             | Suitable for comparison SEO       |
+| 18 | IAM User/Role/Policy comparison             | /en/comparisons/iam-user-role-policy        | /zh/comparisons/iam-user-role-policy        | Frequently tested          |
+| 19 | S3 + CloudFront architecture diagram                 | /en/architectures/static-site-s3-cloudfront | /zh/architectures/static-site-s3-cloudfront | Matches this site's implemented architecture  |
+| 20 | API Gateway + Lambda + DynamoDB architecture diagram | /en/architectures/serverless-api-basic      | /zh/architectures/serverless-api-basic      | Strong portfolio relevance   |
 
-## 9.2 優先度 Medium：次に翻訳するページ
+## 9.2 Medium Priority: Pages to Translate Next
 
-| No | 対象                                 | 理由          |
+| No | Target | Reason |
 | -- | ---------------------------------- | ----------- |
-| 21 | CloudWatch / CloudTrail / Config比較 | 試験頻出        |
-| 22 | SQS / SNS / EventBridge比較          | 試験頻出        |
-| 23 | EC2 / Lambda / ECS比較               | 初学者が混同しやすい  |
-| 24 | AWS無料枠ポートフォリオ記事                    | 本サイトの独自性に合う |
-| 25 | AWS Cloud Practitionerとは？記事        | 初学者入口になる    |
-| 26 | S3 + CloudFront公開記事                | 実装導線になる     |
-| 27 | VPC用語                              | SAA接続に必要    |
-| 28 | Route 53用語                         | 独自ドメイン構成と接続 |
-| 29 | CloudWatch用語                       | 運用監視と接続     |
-| 30 | AWS Budgets用語                      | コスト最適化と接続   |
+| 21 | CloudWatch / CloudTrail / Config comparison | Frequently tested        |
+| 22 | SQS / SNS / EventBridge comparison          | Frequently tested        |
+| 23 | EC2 / Lambda / ECS comparison               | Commonly confused by beginners  |
+| 24 | AWS Free Tier portfolio article                    | Fits this site's distinctive value |
+| 25 | What is AWS Cloud Practitioner? article        | Entry point for beginners    |
+| 26 | S3 + CloudFront publishing article                | Leads to implementation     |
+| 27 | VPC term                              | Needed to connect to SAA learning    |
+| 28 | Route 53 term                         | Connects to custom domain architecture |
+| 29 | CloudWatch term                       | Connects to operational monitoring     |
+| 30 | AWS Budgets term                      | Connects to cost optimization   |
 
 ---
 
-## 10. ページ種別ごとのSEO方針
+## 10. SEO Policy by Page Type
 
-| ページ種別  | SEO方針                             |
+| Page type | SEO policy |
 | ------ | --------------------------------- |
-| トップページ | ブランド・学習サイト全体説明                    |
-| ロードマップ | 初学者向け学習順序                         |
-| 用語詳細   | 「what is」「是什麼」系キーワード              |
-| 比較詳細   | 「difference」「差異」系キーワード            |
-| 構成図詳細  | 「architecture diagram」「架構圖」系キーワード |
-| ブログ    | 体験・実装・無料枠・学習方法                    |
-| 模擬問題   | Phase 5後半。dump回避文言を必ず入れる          |
+| Home page | Brand and overall learning site description                    |
+| Roadmap | Study sequence for beginners                         |
+| Term detail   | Keywords such as "what is" and "是什麼"              |
+| Comparison detail   | Keywords such as "difference" and "差異"            |
+| Architecture diagram detail  | Keywords such as "architecture diagram" and "架構圖" |
+| Blog | Experiences, implementation, Free Tier, and study methods                    |
+| Practice questions | Latter half of Phase 5. Always include wording clarifying the no-dump policy          |
 
 ---
 
-## 11. 成功指標
+## 11. Success Metrics
 
 ## 11.1 Search Console
 
-| 指標          | 初期目標       |
+| Metric | Initial target |
 | ----------- | ---------- |
-| /en インデックス  | 主要20ページ以上  |
-| /zh インデックス  | 主要20ページ以上  |
-| 英語クエリ表示回数   | 30日で100回以上 |
-| 中国語クエリ表示回数  | 30日で50回以上  |
-| 比較ページの表示回数  | 増加傾向       |
-| 構成図ページの表示回数 | 増加傾向       |
+| /en indexing  | At least 20 main pages  |
+| /zh indexing  | At least 20 main pages  |
+| English query impressions   | At least 100 in 30 days |
+| Chinese query impressions  | At least 50 in 30 days  |
+| Comparison page impressions  | Upward trend       |
+| Architecture diagram page impressions | Upward trend       |
 
 ## 11.2 Google Analytics
 
-| 指標           | 初期目標                 |
+| Metric | Initial target |
 | ------------ | -------------------- |
-| 海外ユーザー比率     | 現状より増加               |
-| /en PV       | 計測できる状態              |
-| /zh PV       | 計測できる状態              |
-| 平均エンゲージメント時間 | 日本語ページとの差を見る         |
-| 内部リンククリック    | 用語 → 比較 → 構成図への遷移を確認 |
+| International user share     | Increase from the current level               |
+| /en PV       | Measurable              |
+| /zh PV       | Measurable              |
+| Average engagement time | Compare against Japanese pages         |
+| Internal link clicks    | Verify navigation from terms → comparisons → architecture diagrams |
 
 ---
 
-## 12. 実装への引き継ぎ
+## 12. Handoff to Implementation
 
-P5-000完了後、次に進めるタスクは以下である。
+After P5-000 is complete, proceed to the following tasks.
 
-1. P5-000-1 多言語コンテンツ優先順位決定
-2. P5-000-2 差別化メッセージ作成
-3. P5-000-3 禁止表現リスト作成
-4. P5-001 多言語対応方針確定
-5. P5-002 多言語URL設計
+1. P5-000-1 Decide multilingual content priorities
+2. P5-000-2 Create differentiation messages
+3. P5-000-3 Create prohibited expression lists
+4. P5-001 Finalize multilingual support policy
+5. P5-002 Multilingual URL design
 
-ただし、本ドキュメント内で P5-000-1 から P5-000-3 の材料は作成済みである。
+However, materials for P5-000-1 through P5-000-3 have already been prepared in this document.
 
 ---
 
-## 13. 完了条件チェック
+## 13. Completion Criteria Check
 
-| 条件                  | 判定 |
+| Criterion | Assessment |
 | ------------------- | -- |
-| 英語圏の競合カテゴリが整理されている  | OK |
-| 中国語圏の競合カテゴリが整理されている | OK |
-| 狙うキーワードが整理されている     | OK |
-| 避けるキーワードが整理されている    | OK |
-| 差別化方針が整理されている       | OK |
-| 翻訳優先ページの仮説がある       | OK |
-| 後続タスクへ引き継げる         | OK |
+| English-language competitor categories are organized  | OK |
+| Chinese-language competitor categories are organized | OK |
+| Target keywords are organized     | OK |
+| Keywords to avoid are organized    | OK |
+| Differentiation policy is organized       | OK |
+| A hypothesis exists for page translation priorities       | OK |
+| Ready for handoff to subsequent tasks         | OK |
 

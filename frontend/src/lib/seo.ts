@@ -93,17 +93,11 @@ export function getDefaultOgImageForLocale(locale: SeoLocale): string {
 }
 
 /**
- * path に応じた robots ディレクティブを返す（ACR-012 / #322）。
- *
- * 封印中の en/zh 配下は `index: false, follow: false`。
- * `follow: false` にする理由は、en/zh の静的 HTML に実体の無い
- * `/en/roadmap` `/zh/roadmap`（#305）へのリンクが焼き込まれており、
- * Googlebot にこの死にリンクをクロール候補として収穫させないため。
- *
- * `createPageMetadata` を経由しない素の `Metadata` リテラルを書いているページは、
- * `robots: {index:false, follow:false}` のリテラル直書きではなく
- * **必ずこの関数の呼び出し**で書くこと。直書きするとフラグが届かず、
- * 解封してもそのページだけ永久に noindex のまま残る。
+ * Return path-specific robots directives (ACR-012 / #322). Sealed en/zh paths use index:false,
+ * follow:false. Historically, follow:false prevented Googlebot from harvesting links to missing
+ * /en/roadmap and /zh/roadmap pages (#305) embedded in static HTML. Pages with raw Metadata literals
+ * that bypass createPageMetadata must call this helper instead of hardcoding robots directives;
+ * otherwise the release flag cannot restore indexing on those pages.
  */
 export function createLocaleAwareRobots(path: string): NonNullable<Metadata["robots"]> {
   if (isSealedPathname(path)) {
@@ -146,9 +140,9 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
     description: input.description,
     keywords: input.keywords,
     alternates: {
-      // 封印ページでも canonical は自己参照のまま残す。
-      // `/en/x` の canonical を `/x` に向けると noindex とクロスカノニカルの併用になり、
-      // Google に矛盾シグナルを送って ja 側の評価まで巻き込む。
+      // Keep self-referencing canonical URLs even on sealed pages.
+      // Pointing /en/x's canonical to /x would combine noindex with cross-canonicalization,
+      // sending conflicting signals to Google and potentially affecting Japanese-page rankings.
       canonical: canonicalUrl,
       ...(Object.keys(languages).length > 0 ? { languages } : {}),
     },
@@ -180,7 +174,7 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
       ? createLocaleAwareRobots(input.path)
       : input.noIndex
         ? {
-            // ja 用の既存 noIndex セマンティクス（`follow: true`）は変えない。
+            // Preserve the existing Japanese noIndex semantics (follow:true).
             index: false,
             follow: true,
           }

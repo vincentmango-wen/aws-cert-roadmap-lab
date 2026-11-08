@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# 本番 sitemap.xml の全URLを叩き HTTP ステータスを列挙。non-200 が到達性の問題箇所。
-# 使い方: bash scripts/sweep-sitemap-status.sh            # 本番 sitemap を検証
-#         bash scripts/sweep-sitemap-status.sh <URL>      # 別 sitemap を検証
-# ネット疎通する環境（ふみさんのマシン等）で実行すること。CI 前・再審査前の到達性ゲート。
+# Request every production sitemap.xml URL and list HTTP statuses; non-200 responses indicate reachability problems.
+# Usage: bash scripts/sweep-sitemap-status.sh            # Check the production sitemap
+#        bash scripts/sweep-sitemap-status.sh <URL>      # Check another sitemap
+# Run in a network-enabled environment, such as the operator's computer, before CI or review resubmission.
 set -u
 SITEMAP="${1:-https://www.aws-cert-roadmap-lab.com/sitemap.xml}"
 UA="Mozilla/5.0 (compatible; reachability-sweep/1.0)"
@@ -22,7 +22,7 @@ done < <(
   | sed -e 's#<loc>##' -e 's#</loc>##'
 )
 if [ "${#URLS[@]}" -eq 0 ]; then
-  echo "ERROR: sitemap から URL を抽出できません: $SITEMAP" >&2; exit 1
+  echo "ERROR: Could not extract URLs from sitemap: $SITEMAP" >&2; exit 1
 fi
 echo "sitemap: $SITEMAP"; echo "total urls: ${#URLS[@]}"; echo "----------------------------------------"
 tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT

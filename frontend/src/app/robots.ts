@@ -11,21 +11,15 @@ function getSiteUrl(): string {
 }
 
 /**
- * robots.txt。
+ * robots.txt. Never add Disallow: /en/ or Disallow: /zh/ (ACR-012 / #322). Locale sealing uses each
+ * page's noindex, nofollow robots meta tag. Disallow would prevent Googlebot from fetching pages such as
+ * /en/questions/clf-001 and reading noindex. URLs found through external links could remain indexed as
+ * information-free URL-only entries, recreating the empty-page issue flagged by AdSense. Allow crawling
+ * with noindex first so pages can be removed.
  *
- * **`Disallow: /en/` `Disallow: /zh/` を絶対に追加しないこと**（ACR-012 / #322）。
- *
- * en/zh の封印は各ページの `<meta name="robots" content="noindex, nofollow">` で行っている。
- * `Disallow` はクロール自体を止めるため、Googlebot が `/en/questions/clf-001` を取得できず、
- * そのページの noindex メタを **読めなくなる**。結果、外部リンク等で発見された URL が
- * 「情報なし」の URL-only エントリとしてインデックスに残りうる。これは clean な noindex より
- * 厳密に悪く、AdSense が罰した「中身の無いページ」そのものになる。
- * 正しい順序は「まず noindex でクロールさせて落とす」。
- *
- * また `Disallow: /*.txt$` のような広いパターンは `/ads.txt` を巻き込み AdSense の検証を壊す。
- *
- * 将来 Search Console で en/zh が全件「noindex タグにより除外」になった後に、
- * クロールバジェット節約目的で `Disallow` を足すのは任意。現時点では不要。
+ * Broad patterns such as Disallow: /*.txt$ also block /ads.txt and break AdSense verification. Once
+ * Search Console confirms every en/zh page is excluded by noindex, Disallow could optionally reduce
+ * crawling. It is unnecessary now.
  */
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();

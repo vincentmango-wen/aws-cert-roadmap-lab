@@ -33,9 +33,14 @@ export type Question = {
   correctChoiceId: ChoiceId;
   explanation: string;
   choiceExplanations?: Partial<Record<ChoiceId, string>>;
-  /** 客観的な実務での使いどころ・よくある誤解を記述する枠（体験談・一人称感想は入れない）。\n\n 区切りで複数段落。 */
+  /**
+   * Objective practical uses and common misconceptions; no personal anecdotes or first-person opinions.
+   * Separate multiple paragraphs with double newlines (\n\n).
+   */
   practicalNote?: string;
-  /** 公式ドキュメントへの外部リンク配列。空または未定義の場合はセクション非表示。 */
+  /**
+   * External official-document links. Hide the section when undefined or empty.
+   */
   officialDocs?: OfficialDoc[];
   relatedServices?: string[];
   relatedTerms?: string[];

@@ -1,12 +1,7 @@
 /**
- * comparison-content-loader.ts
- *
- * locale 別 MDX 本文ローダー (server-only).
- * frontend/contents/comparisons/{ja,en,zh}/<slug>.mdx を読み込み、frontmatter があれば
- * 剥がして本文だけ返す。本フェーズ (P5-034) では新規 en/zh MDX は frontmatter なしを正とするが、
- * 既存 ja MDX には frontmatter が残っているため、両対応する。
- *
- * NOTE: Node-only API (fs/path) を使うため、server component 経由でのみ呼ぶ。
+ * Server-only localized MDX body loader. Read frontend/contents/comparisons/{ja,en,zh}/<slug>.mdx and
+ * strip any frontmatter. New en/zh MDX in P5-034 has no frontmatter, while existing Japanese files may
+ * retain it; support both. Call only from server components because fs/path are Node-only APIs.
  */
 import fs from "fs";
 import path from "path";
@@ -67,12 +62,12 @@ function removeLeadingH1(content: string, title: string): string {
 
   const h1Text = h1Match[1].trim();
 
-  // タイトルと一致するときのみ strip。
-  // ページ上では meta.title が H1 として描画されるため、本文先頭の同タイトル H1 を除く。
-  // R2 fix: LONG タイトル (例: "S3・EBS・EFSの違いを初心者向けに解説") と
-  // body 先頭 H1 (SHORT 例: "S3・EBS・EFSの違い") の二重描画を防ぐため、
-  // title が h1Text で始まる短縮一致パターンも strip 対象に含める。
-  // 他の H1 (本文中の見出し意図 / title の prefix と無関係) は破壊しないようガード継続。
+  // Strip only headings matching the title.
+  // The page renders meta.title as H1, so remove a matching leading H1 from the body.
+  // R2 fix: avoid rendering both a long title (e.g. a beginner's guide to S3/EBS/EFS differences)
+  // and a short body H1 (e.g. S3/EBS/EFS differences).
+  // Also strip abbreviated matches where title starts with h1Text.
+  // Keep unrelated H1 headings that are intentional body headings rather than title prefixes.
   if (h1Text !== title && !title.startsWith(h1Text)) {
     return content;
   }
@@ -83,10 +78,9 @@ function removeLeadingH1(content: string, title: string): string {
 }
 
 /**
- * locale 別の MDX ファイルから本文 (frontmatter / leading H1 を除いた content) を返す。
- * ファイルが存在しなければ null を返す (Phase B 翻訳前の空状態でも build エラーにならないため)。
- *
- * title: 比較記事のメタタイトル。本文先頭の H1 がこの title と一致する場合のみ strip する。
+ * Return the localized MDX body without frontmatter or a matching leading H1. Return null for missing
+ * files so builds work before Phase B translations exist. title is the comparison article's metadata
+ * title used to decide whether to strip the heading.
  */
 export function loadComparisonContent(
   locale: ComparisonLocale,
@@ -116,7 +110,7 @@ export function loadComparisonContent(
 }
 
 /**
- * locale 別の MDX ディレクトリに存在する slug 一覧を返す (.mdx 拡張子を除く).
+ * Return slugs in the localized MDX directory, without the .mdx extension.
  */
 export function listComparisonContentSlugs(
   locale: ComparisonLocale,

@@ -182,7 +182,9 @@ export function createLocalizedPath(locale: Locale, pathname: string): Pathname 
   return `${prefix}${normalizedPathname}` as Pathname;
 }
 
-/** ロケール切替リンクを表示できる言語を pathname から返す。 */
+/**
+ * Return the locales whose switch links are available for this pathname.
+ */
 export function getAvailableLocalesForPathname(pathname: string): readonly Locale[] {
   const normalizedPathname = removeLocalePrefix(normalizePathname(pathname));
 

@@ -45,8 +45,8 @@ export const metadata: Metadata = {
         alt: `${pageTitle} - ${siteConfig.shortName}`,
       },
     ],
-    // 封印中は他ロケール版の存在を宣言しない（他の en/zh ページと揃える）。
-    // 解封時は release-gate.ts の JSDoc「解封前提条件」に従って再投入すること。
+    // Do not declare other locale versions while sealed, consistent with other en/zh pages.
+    // Restore them on publication according to the preconditions in release-gate.ts JSDoc.
     locale: "zh_TW",
     type: "website",
   },

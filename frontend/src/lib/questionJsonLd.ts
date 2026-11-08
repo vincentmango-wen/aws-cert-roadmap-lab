@@ -1,27 +1,26 @@
 /**
- * 模擬問題詳細ページ用 Quiz 構造化データ（JSON-LD）ビルダー。
+ * Quiz JSON-LD builder for practice-question detail pages. Its purpose is schema.org machine readability
+ * for Bing/LLM crawlers and stronger E-E-A-T signals. Google's practice-problems rich results and
+ * documentation were removed in January 2026; this does not change search-result appearance, and Rich
+ * Results Test reporting no valid items is expected.
  *
- * 目的は schema.org 語彙としての機械可読性（Bing / LLM クローラ）と
- * E-E-A-T シグナルの底上げに限られる。Google の practice problems
- * リッチリザルトは 2026-01 にドキュメントごと削除済みで、本対応で
- * 検索結果の見た目は変わらない（Rich Results Test が「有効な項目なし」
- * を返すのが正常）。
+ * Design restrictions to avoid structured-data policy violations/manual actions:
+ * - Do not use eduQuestionType: Flashcard; Education Q&A is for flashcards.
+ * - Do not use QAPage/FAQPage in this implementation.
+ * - Do not use the nonexistent schema.org answerExplanation property; use Answer.comment with a Comment
+ * object containing text.
+ * - Do not emit practicalNote, difficulty, relatedComparisons or published.
  *
- * 設計上の禁止事項（sd-policies 違反 / 手動対策リスクの回避）:
- *   - `eduQuestionType: "Flashcard"` は使わない（Education Q&A はフラッシュカード専用）
- *   - `QAPage` / `FAQPage` は使わない（ユーザー投稿型ページ専用）
- *   - `answerExplanation` は使わない（schema.org に存在しない）。解説は
- *     `Answer.comment` → `{"@type":"Comment","text":…}` に入れる
- *   - `practicalNote` / `difficulty` / `relatedComparisons` / `published` は出力しない
- *
- * また sd-policies「不可視コンテンツのマークアップ禁止」に従い、ここで出力する
- * テキストはすべて QuestionPlayer が静的 HTML に常時出力しているものに限る。
+ * To comply with the prohibition on marking up invisible content, emit only text that QuestionPlayer
+ * always includes in static HTML.
  */
 import { filterValidOfficialDocs } from "@/lib/official-doc";
 import { createAbsoluteUrl, type SeoLocale } from "@/lib/seo";
 import type { ChoiceId, ExamCode, Question } from "@/types/question";
 
-/** 資格コード → 正式名称。educationalAlignment の targetName に使う。 */
+/**
+ * Certification code to official name, used for educationalAlignment.targetName.
+ */
 const examLabelByExam: Record<ExamCode, string> = {
   "CLF-C02": "AWS Certified Cloud Practitioner (CLF-C02)",
   "SAA-C03": "AWS Certified Solutions Architect – Associate (SAA-C03)",
@@ -114,14 +113,11 @@ function buildCitation(
 }
 
 /**
- * 1 問ぶんの Quiz JSON-LD を組み立てる純関数。
- *
- * `Question` は schema.org 上 `Comment` のサブタイプなので、1 問ページでも
- * トップレベルには置かず `Quiz.hasPart` に長さ 1 の配列でネストする。
- *
- * @param question 対象の模擬問題
- * @param locale 出力ロケール。現状 ja 固定運用だが、en/zh 解封時の
- *   `inLanguage` / URL 切り替えの見落としを防ぐため必須引数とする。
+ * Pure function building Quiz JSON-LD for one question. Since schema.org Question is a Comment subtype,
+ * nest even a single question in a one-element Quiz.hasPart array rather than at the top level.
+ * @param question The practice question.
+ * @param locale Output locale. Required even during Japanese-only operation so inLanguage and URL
+ * changes are not overlooked when publishing en/zh.
  */
 export function buildQuestionQuizJsonLd(
   question: Question,

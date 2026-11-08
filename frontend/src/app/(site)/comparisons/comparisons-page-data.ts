@@ -1,8 +1,6 @@
 /**
- * comparisons-page-data.ts
- *
- * 一覧ページ用の locale 別ラベル + データ提供 (SSoT).
- * terms の terms-page-data.ts と命名・配置を 1:1 で揃える。
+ * Localized list-page labels and data (single source of truth). Match terms-page-data.ts naming and
+ * placement.
  */
 import type { PageMetadataInput } from "@/lib/seo";
 import type {

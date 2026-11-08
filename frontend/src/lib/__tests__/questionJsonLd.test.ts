@@ -1,11 +1,7 @@
 /**
- * questionJsonLd.test.ts
- *
- * buildQuestionQuizJsonLd() の構造 invariant を担保する。
- *
- * 注意: 選択肢の並び順・正解 ID は別チケット（#312 正解偏り是正）で変動するため、
- * 「clf-001 の正解は B」のような具体値をハードコードしない。
- * `correctChoiceId` に対応する選択肢が acceptedAnswer になる、という関係で検証する。
+ * Structural invariants for buildQuestionQuizJsonLd(). Choice order and correct IDs can change through
+ * #312 answer rebalancing; do not hardcode facts such as clf-001's answer being B. Assert that
+ * acceptedAnswer corresponds to correctChoiceId instead.
  */
 import { describe, expect, it } from "vitest";
 
@@ -74,7 +70,7 @@ function getQuestionNode(jsonLd: Record<string, unknown>): QuestionNode {
 }
 
 describe("buildQuestionQuizJsonLd", () => {
-  it("(1) correctChoiceId の選択肢が acceptedAnswer、残りが suggestedAnswer になる", () => {
+  it("(1) correctChoiceId becomes acceptedAnswer and remaining choices become suggestedAnswer", () => {
     const jsonLd = buildQuestionQuizJsonLd(baseQuestion, "ja");
     const node = getQuestionNode(jsonLd);
 
@@ -98,14 +94,14 @@ describe("buildQuestionQuizJsonLd", () => {
     expect(suggestedTexts).not.toContain(
       baseQuestion.choices[correctIndex].text,
     );
-    // position は choices 配列内の index を保持する
+    // position retains the index in the choices array.
     for (const answer of node.suggestedAnswer) {
       expect(baseQuestion.choices[answer.position].text).toBe(answer.text);
       expect(answer["@type"]).toBe("Answer");
     }
   });
 
-  it("(1b) 実データ（clf-c02.ja.json）全件で acceptedAnswer が correctChoiceId と対応する", () => {
+  it("(1b) acceptedAnswer matches correctChoiceId for every real clf-c02.ja.json question", () => {
     const violations: string[] = [];
 
     for (const question of clfQuestions) {
@@ -138,7 +134,7 @@ describe("buildQuestionQuizJsonLd", () => {
     ).toHaveLength(0);
   });
 
-  it("(2) acceptedAnswer.comment は [正解選択肢の解説, explanation] の順になる", () => {
+  it("(2) acceptedAnswer.comment contains the correct-choice explanation before the overall explanation", () => {
     const jsonLd = buildQuestionQuizJsonLd(baseQuestion, "ja");
     const node = getQuestionNode(jsonLd);
     const comments = node.acceptedAnswer.comment ?? [];
@@ -153,7 +149,7 @@ describe("buildQuestionQuizJsonLd", () => {
       text: baseQuestion.explanation,
     });
 
-    // 誤答側は単一オブジェクトの comment を持つ
+    // Incorrect answers have a single comment object.
     for (const answer of node.suggestedAnswer) {
       const choiceId = baseQuestion.choices[answer.position].choiceId;
       expect(answer.comment).toEqual({
@@ -163,7 +159,7 @@ describe("buildQuestionQuizJsonLd", () => {
     }
   });
 
-  it("(2b) choiceExplanations 未定義の誤答は comment キー自体を出力しない", () => {
+  it("(2b) incorrect choices without choiceExplanations omit the comment key", () => {
     const question: Question = {
       ...baseQuestion,
       choiceExplanations: { C: "正解。C の解説" },
@@ -175,7 +171,7 @@ describe("buildQuestionQuizJsonLd", () => {
     }
   });
 
-  it("(3) officialDocs が 0 件のとき citation キーごと省略される", () => {
+  it("(3) empty officialDocs omits the citation key", () => {
     const withDocs = buildQuestionQuizJsonLd(baseQuestion, "ja");
     expect(Object.keys(withDocs)).toContain("citation");
     expect(withDocs.citation).toEqual([
@@ -192,17 +188,17 @@ describe("buildQuestionQuizJsonLd", () => {
     const undefinedDocs = buildQuestionJsonLdWith({ officialDocs: undefined });
     expect(Object.keys(undefinedDocs)).not.toContain("citation");
 
-    // allowlist 外 URL のみの場合も 0 件扱いになる
+    // URLs outside the allowlist also produce zero valid entries.
     const invalidOnly = buildQuestionJsonLdWith({
       officialDocs: [{ label: "外部", url: "https://example.com/doc" }],
     });
     expect(Object.keys(invalidOnly)).not.toContain("citation");
   });
 
-  it("(4) keywords は tags + relatedServices + relatedTerms を重複除去して結合する", () => {
+  it("(4) keywords combine and deduplicate tags, relatedServices and relatedTerms", () => {
     const jsonLd = buildQuestionQuizJsonLd(baseQuestion, "ja");
 
-    // tags: scalability, クラウド / relatedServices: ec2 / relatedTerms: ec2, scalability
+    // Fixture tags include scalability and the Japanese cloud label; services include ec2; related terms include ec2 and scalability.
     expect(jsonLd.keywords).toBe("scalability, クラウド, ec2");
 
     const noKeywords = buildQuestionJsonLdWith({
@@ -213,7 +209,7 @@ describe("buildQuestionQuizJsonLd", () => {
     expect(Object.keys(noKeywords)).not.toContain("keywords");
   });
 
-  it("(5) JSON.stringify + replace 済み文字列に生の `<` が含まれない", () => {
+  it("(5) JSON.stringify plus replacement leaves no raw less-than characters", () => {
     const question: Question = {
       ...baseQuestion,
       question: "<script>alert(1)</script> を含む設問",
@@ -225,12 +221,12 @@ describe("buildQuestionQuizJsonLd", () => {
 
     expect(serialized.indexOf("<")).toBe(-1);
     expect(serialized).toContain("\\u003cscript>");
-    // エスケープしても JSON としては同じ値に復元される
+    // Escaped JSON decodes to the same value.
     const parsed = JSON.parse(serialized) as Record<string, unknown>;
     expect(getQuestionNode(parsed).text).toBe(question.question);
   });
 
-  it("(6) 禁止プロパティ・禁止値を出力しない", () => {
+  it("(6) does not emit prohibited properties or values", () => {
     const serialized = JSON.stringify(buildQuestionQuizJsonLd(baseQuestion, "ja"));
 
     expect(serialized).not.toContain("answerExplanation");
@@ -244,7 +240,7 @@ describe("buildQuestionQuizJsonLd", () => {
     expect(serialized).not.toContain("published");
   });
 
-  it("(7) locale に応じて url / inLanguage が切り替わる", () => {
+  it("(7) url and inLanguage change with the locale", () => {
     const ja = buildQuestionQuizJsonLd(baseQuestion, "ja");
     const en = buildQuestionQuizJsonLd(baseQuestion, "en");
 
@@ -257,7 +253,7 @@ describe("buildQuestionQuizJsonLd", () => {
     expect(String(en.url).endsWith("/en/questions/test-001")).toBe(true);
   });
 
-  it("(8) educationalAlignment は資格名を持ち、domain が category と異なるときだけ 2 件になる", () => {
+  it("(8) educationalAlignment includes the certification name and has two entries only when domain differs from category", () => {
     const sameDomain = buildQuestionQuizJsonLd(baseQuestion, "ja");
     expect(sameDomain.educationalAlignment).toEqual([
       {

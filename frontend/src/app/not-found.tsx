@@ -169,7 +169,7 @@ export default function NotFound(): ReactElement {
     <main className="mx-auto flex min-h-[calc(100vh-160px)] w-full max-w-5xl flex-col justify-center px-4 py-16 sm:px-6 lg:px-8">
       <section className="rounded-3xl border border-slate-200 bg-white px-6 py-10 shadow-sm sm:px-10 sm:py-14">
         <div className="mx-auto max-w-3xl text-center">
-          {/* イラスト */}
+          {/* Illustration */}
           <NotFoundIllustration
             balloonLine1={content.balloonLine1}
             balloonLine2={content.balloonLine2}
@@ -180,25 +180,25 @@ export default function NotFound(): ReactElement {
             {content.eyebrow}
           </p>
 
-          {/* POP 表題 */}
+          {/* Pop-style heading */}
           <h1
             className={`${fredoka.className} mt-3 text-5xl text-[#0284c7] sm:text-6xl`}
           >
             {content.title}
           </h1>
 
-          {/* ロケール別副題 */}
+          {/* Localized subtitle */}
           <p className="mt-2 text-lg font-semibold text-slate-800">
             {content.subtitle}
           </p>
 
-          {/* 説明文 */}
+          {/* Description */}
           <p className="mt-4 text-base leading-7 text-slate-600">
             {content.description}
           </p>
         </div>
 
-        {/* リンクカード */}
+        {/* Link cards */}
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           {content.links.map((link) => (
             <Link
@@ -216,7 +216,7 @@ export default function NotFound(): ReactElement {
           ))}
         </div>
 
-        {/* 次の学習へバナー */}
+        {/* Next-learning banner */}
         <div className="mt-10 rounded-2xl bg-sky-50 p-5">
           <h2 className="text-base font-semibold text-slate-950">
             {content.nextStepTitle}

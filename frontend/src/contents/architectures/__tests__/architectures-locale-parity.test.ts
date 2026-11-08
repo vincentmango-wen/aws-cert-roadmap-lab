@@ -1,32 +1,23 @@
 /**
- * architectures-locale-parity.test.ts
+ * Invariant tests for design P5-042 section 8-2, full-implementation mode. Keep
+ * architectures.{ja,en,zh}.json and localized MDX/SVG files synchronized across three locales, detecting
+ * missing translations, slug drift, metadata inconsistency, missing MDX and SVG naming errors. Phase 7
+ * completed 10 articles in all locales; the scaffold flag remains but all normal invariants now run.
+ * Subsequent locale additions, slugs and translations must not update only one language.
  *
- * 設計書 P5-042 §8-2 の invariant test (本実装モード).
+ * When en/zh arrays are nonempty, verify:
+ * 1. Identical slug sets across ja/en/zh (10 articles).
+ * 2. Matching architectureId per slug.
+ * 3. Matching services/category/level/examScopes/mermaid/published/publishedAt/updatedAt; exclude
+ * translated tags.
+ * 4. Every localized MDX file exists.
+ * 5. Every SVG exists: <slug>.svg, <slug>.en.svg and <slug>.zh.svg.
+ * 6. JSON diagramPath matches the unsuffixed Japanese path in all locales, and resolveDiagramPath
+ * returns the files verified in (5).
+ * 7. Leading MDX H1 equals the JSON title or is its prefix, allowing removeLeadingH1 to strip it.
  *
- * `contents/architectures/architectures.{ja,en,zh}.json` と各 locale 配下の MDX が、
- * 翻訳追加忘れ・slug ズレ・メタデータ不整合・MDX 消失・SVG 命名ミスなしに 3 言語完全
- * 並列で維持されていることを構造的に担保する。
- *
- * Phase 7 で 3 言語 10 件揃ったため、scaffold モードフラグは残置しつつも全 invariant
- * を実発火させる。Phase B 後のいかなる locale 追加 / slug 増加 / 翻訳改稿でも、
- * 1 言語だけ更新して残り 2 言語を放置する事故をこのテストが構造的にブロックする。
- *
- * 検証 invariant (en/zh が空でないときのみ発火):
- *  (1) ja/en/zh JSON の slug 集合が完全一致 (10 件)
- *  (2) 同 slug で architectureId が ja/en/zh 一致
- *  (3) 同 slug で services/category/level/examScopes/mermaid/published/
- *      publishedAt/updatedAt が ja/en/zh 一致 (tags は locale 別翻訳のため除外)
- *  (4) 全 slug について contents/architectures/{ja,en,zh}/<slug>.mdx が
- *      fs.existsSync = true
- *  (5) 全 slug について SVG が存在: ja は <slug>.svg / en は <slug>.en.svg /
- *      zh は <slug>.zh.svg (SVG 多言語化の命名ミス・翻訳忘れを構造検出)
- *  (6) 3 言語 JSON の diagramPath が共通 (ja 無印基準で一致) であり、かつ
- *      resolveDiagramPath(locale, meta) が (5) で存在確認したファイルパスと一致
- *  (7) MDX 先頭 H1 が JSON title と一致 or title.startsWith(h1Text)
- *      (loader removeLeadingH1 が strip できる形であること)
- *
- * scaffold モード (en/zh いずれかが空配列) は将来 locale 追加直後の中間状態
- * (翻訳追加前) を build 落ちさせない安全弁として残置. 通常運用では非発火.
+ * Scaffold mode (an empty en or zh array) remains a safety valve for temporary states before new
+ * translations exist; normal operation does not use it.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -43,7 +34,7 @@ const jaList = architecturesJa as ArchitectureMeta[];
 const enList = architecturesEn as ArchitectureMeta[];
 const zhList = architecturesZh as ArchitectureMeta[];
 
-// frontend ディレクトリ基準で MDX / SVG の絶対パスを解決する。
+// Resolve absolute MDX/SVG paths relative to the frontend directory.
 const FRONTEND_ROOT = path.resolve(__dirname, "../../../../");
 const mdxPathFor = (locale: "ja" | "en" | "zh", slug: string): string =>
   path.join(FRONTEND_ROOT, "contents", "architectures", locale, `${slug}.mdx`);
@@ -119,7 +110,7 @@ describe("architectures locale parity", () => {
   it.skipIf(isScaffoldMode)(
     "(3) shared metadata fields are identical across ja/en/zh per slug",
     () => {
-      // locale 非依存メタ. title/description/tags は翻訳対象のため対象外.
+      // Locale-independent metadata; exclude translated title, description and tags.
       const SHARED_FIELDS = [
         "services",
         "category",
@@ -183,15 +174,15 @@ describe("architectures locale parity", () => {
   it.skipIf(isScaffoldMode)(
     "(6) diagramPath is identical across ja/en/zh per slug, and resolveDiagramPath(locale, meta) resolves to the file existence checked in (5)",
     () => {
-      // CR1-M2 是正: 旧版はテスト内で resolveDiagramPath ロジックを再実装していたが、
-      // 二重実装の片肺バグが検出できないため、SSoT 関数を直接 import して検証する。
-      // 不変条件: 実 resolveDiagramPath(locale, meta) の戻りパスが (5) の存在ファイルと一致.
+      // CR1-M2: the old test reimplemented resolveDiagramPath, which could hide divergence.
+      // Import and test the actual source-of-truth function instead of maintaining a second implementation.
+      // Invariant: resolveDiagramPath(locale, meta) returns the existing file verified in (5).
       for (const slug of jaMap.keys()) {
         const ja = jaMap.get(slug)!;
         const en = enMap.get(slug)!;
         const zh = zhMap.get(slug)!;
 
-        // (6-a) 3 言語 JSON の diagramPath は ja 無印基準で一致.
+        // (6-a) All three JSON diagramPath values match the unsuffixed Japanese path.
         expect(en.diagramPath, `diagramPath mismatch (en) slug=${slug}`).toBe(
           ja.diagramPath,
         );
@@ -199,9 +190,9 @@ describe("architectures locale parity", () => {
           ja.diagramPath,
         );
 
-        // (6-b) resolveDiagramPath(locale, meta) が (5) で存在確認したファイル
-        // パスに一致する. /images/... の URL パス↔ファイルシステムパスの変換は
-        // /images/<rest> -> public/images/<rest> の規則を再現する.
+        // (6-b) resolveDiagramPath(locale, meta) must match the file verified in (5).
+        // Convert the /images/... URL to a filesystem path
+        // using the rule /images/<rest> -> public/images/<rest>.
         for (const locale of ["ja", "en", "zh"] as const) {
           const meta =
             locale === "ja" ? ja : locale === "en" ? en : zh;
@@ -209,9 +200,9 @@ describe("architectures locale parity", () => {
           expect(resolved, `resolveDiagramPath undefined slug=${slug} locale=${locale}`).toBeDefined();
 
           const expectedFsPath = svgPathFor(locale, slug);
-          // resolved は URL パス ("/images/architectures/foo.en.svg") なので
-          // public/ プレフィックスを付与して FS パスへ変換し、(5) と同じ
-          // path を指していることを確認する.
+          // resolved is a URL path such as /images/architectures/foo.en.svg.
+          // Prefix it with public/ to convert to a filesystem path, then verify
+          // that it points to the same path as (5).
           const resolvedFsPath = path.join(
             FRONTEND_ROOT,
             "public",
@@ -233,8 +224,8 @@ describe("architectures locale parity", () => {
   it.skipIf(isScaffoldMode)(
     "(7) MDX first H1 matches JSON title (or title.startsWith(h1Text))",
     () => {
-      // loader removeLeadingH1 と同型の判定: 完全一致 or title.startsWith(h1Text)
-      // を許容する (LONG title vs SHORT body H1 の短縮一致パターン).
+      // Match the loader's removeLeadingH1 rule: exact equality or title.startsWith(h1Text).
+      // This permits a short body H1 paired with a longer title.
       const stripFrontmatter = (rawFile: string): string => {
         const m = rawFile.match(
           /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/,
@@ -276,7 +267,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  // ── Step 6 追加 invariant ────────────────────────────────────────────────
+  // Additional Step 6 invariants.
 
   it("(8) en JSON contains exactly 10 architectures", () => {
     expect(enList.length).toBe(10);
@@ -319,7 +310,7 @@ describe("architectures locale parity", () => {
   it.skipIf(isScaffoldMode)(
     "(12) shared metadata fields (category/level/examScopes/services/publishedAt/mermaid) are identical across ja/en/zh per slug",
     () => {
-      // tags は locale 別翻訳のため除外. 空でないことは invariant (13) で担保.
+      // Exclude translated tags; invariant (13) ensures they are nonempty.
       const SHARED_FIELDS = [
         "category",
         "level",

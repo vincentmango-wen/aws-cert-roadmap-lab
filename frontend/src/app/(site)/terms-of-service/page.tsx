@@ -4,16 +4,15 @@ import Link from "next/link";
 import { createPageMetadata, pageSeo } from "@/lib/seo";
 
 /*
- * 【重要】
- * このページの条文はAIが一般的な利用規約の構成に沿って起草した文面であり、法的助言ではありません。
- * 公開前に運営者自身の目で内容を確認し、必要に応じて専門家の確認を受けてください。
+ * IMPORTANT: These terms were drafted by AI using a generic terms-of-service structure and are not legal
+ * advice. The operator must review them before publication and seek professional review when needed.
  *
- * 運営実態が変わったら必ず見直すこと。特に次の3点は現状の「個人が無償で情報提供するのみ」
- * という前提に依存しています。
- *   - 第1条の事業者表記: ハンドルネームのみの開示。有料サービスを始めると
- *     特定商取引法により氏名・所在地・連絡先の表示が必要になる
- *   - 第7条: 準拠法（日本法）のみを定め、専属的合意管轄裁判所は置いていない
- *   - 第4条の免責: /disclaimer と併せて適用される前提の要約になっている
+ * Revisit them whenever operations change. Three provisions depend on the current model of an individual
+ * providing information free of charge:
+ * - Article 1 identifies the operator only by handle. Paid services may require disclosure of name,
+ * address and contact details under Japan's Act on Specified Commercial Transactions.
+ * - Article 7 specifies Japanese governing law without an exclusive jurisdiction clause.
+ * - Article 4 summarizes disclaimers intended to apply together with /disclaimer.
  */
 
 export const metadata: Metadata = createPageMetadata(pageSeo.termsOfService);
@@ -58,12 +57,7 @@ const termsSections: TermsSection[] = [
           </Link>
           が、それぞれ本規約と併せて適用されます。内容が矛盾する場合は、当該事項について定めた個別のページの記載を優先します。
         </p>
-        {/*
-          事業者表記はハンドルネームのみの開示としている。
-          特定商取引法上の表示義務は物品販売や有料サービスを行う場合に発生するため、
-          無償の情報提供のみの現状では必須ではない。
-          有料サービス（教材販売等）を始める場合は、氏名・所在地・連絡先の表示が必要になる。
-        */}
+        {/* The operator is identified only by a handle. Disclosure requirements under Japan's Act on Specified Commercial Transactions arise for goods or paid services, not the current free-information model. If paid services such as learning-material sales begin, disclose the operator's name, address and contact information. */}
         <p>
           当サイトは個人が運営する学習サイトです。運営者はハンドルネーム「ふみくん」として運営しており、法人ではありません。運営者に関する情報は
           <Link
@@ -231,12 +225,7 @@ const termsSections: TermsSection[] = [
     title: "7. 準拠法および管轄裁判所",
     body: (
       <>
-        {/*
-          専属的合意管轄裁判所は意図的に定めていない。
-          住所地の地方裁判所を指定すると運営者の居住地域が推測できてしまうため、
-          無償の情報提供のみを行う個人サイトの現状では、準拠法の定めのみとしている。
-          有料サービスを始める場合や紛争リスクが上がる場合は、管轄の合意条項の追加を検討すること。
-        */}
+        {/* No exclusive jurisdiction clause is specified intentionally. Naming the operator's local court would reveal their residential area, so this free personal information site specifies only governing law. Consider a jurisdiction agreement if paid services begin or dispute risk increases. */}
         <p>
           本規約は日本法に準拠し、日本法に従って解釈されます。
         </p>

@@ -16,12 +16,12 @@ export function NotFoundIllustration({
       className="mx-auto w-full max-w-sm sm:max-w-md"
       style={{ overflow: "visible" }}
     >
-      {/* 背景 */}
+      {/* Background */}
       <rect x="0" y="0" width="480" height="150" fill="#f8fafc" />
-      {/* 地面 楕円 */}
+      {/* Ground ellipse */}
       <ellipse cx="230" cy="178" rx="210" ry="24" fill="#e2e8f0" opacity="0.45" />
 
-      {/* ロードマップ小径 — 道の塗り */}
+      {/* Roadmap path fill */}
       <path
         d="M 24 170 Q 80 156 140 150 Q 200 144 240 140 Q 290 134 340 128 Q 390 122 440 118"
         stroke="#cbd5e1"
@@ -30,7 +30,7 @@ export function NotFoundIllustration({
         fill="none"
         opacity="0.7"
       />
-      {/* 道の中央線（点線） */}
+      {/* Dashed path centerline */}
       <path
         d="M 24 170 Q 80 156 140 150 Q 200 144 240 140 Q 290 134 340 128 Q 390 122 440 118"
         stroke="#94a3b8"
@@ -41,7 +41,7 @@ export function NotFoundIllustration({
         opacity="0.6"
       />
 
-      {/* チェックポイント 1 */}
+      {/* Checkpoint 1 */}
       <circle cx="96" cy="157" r="5" fill="#0ea5e9" opacity="0.5" />
       <path
         d="M 93 157 l 2.5 2.5 l 4 -4"
@@ -52,7 +52,7 @@ export function NotFoundIllustration({
         strokeLinejoin="round"
         opacity="0.9"
       />
-      {/* チェックポイント 2 */}
+      {/* Checkpoint 2 */}
       <circle cx="158" cy="148" r="5" fill="#0ea5e9" opacity="0.5" />
       <path
         d="M 155 148 l 2.5 2.5 l 4 -4"
@@ -64,7 +64,7 @@ export function NotFoundIllustration({
         opacity="0.9"
       />
 
-      {/* ピン ポール（高く伸ばす） */}
+      {/* Tall pin pole */}
       <line
         x1="232"
         y1="140"
@@ -74,10 +74,10 @@ export function NotFoundIllustration({
         strokeWidth="2"
         strokeLinecap="round"
       />
-      {/* ピン pennant（三角旗） */}
+      {/* Triangular pennant */}
       <path d="M 232 58 L 258 65 L 232 72 Z" fill="#38bdf8" />
 
-      {/* 吹き出し */}
+      {/* Speech bubble */}
       <g className="mascot-balloon">
         <rect
           x="236"
@@ -89,7 +89,7 @@ export function NotFoundIllustration({
           stroke="#7dd3fc"
           strokeWidth="1.4"
         />
-        {/* 吹き出しのしっぽ（マスコット方向へ延長） */}
+        {/* Speech-bubble tail extended toward the mascot */}
         <path
           d="M 356 122 L 386 152 L 366 124 Z"
           fill="#f0f9ff"
@@ -120,22 +120,22 @@ export function NotFoundIllustration({
         </text>
       </g>
 
-      {/* 雲マスコット（1.5x / 右下 / 頬の赤み） */}
+      {/* Cloud mascot (1.5x, bottom right, rosy cheeks) */}
       <g>
-        {/* 影 */}
+        {/* Shadow */}
         <ellipse cx="404" cy="186" rx="52" ry="13" fill="#0ea5e9" opacity="0.12" />
-        {/* 雲の本体（3 円） */}
+        {/* Cloud body (three circles) */}
         <circle cx="405" cy="180" r="33" fill="#fff" stroke="#cbd5e1" strokeWidth="1.6" />
         <circle cx="432" cy="186" r="25" fill="#fff" stroke="#cbd5e1" strokeWidth="1.6" />
         <circle cx="380" cy="185" r="24" fill="#fff" stroke="#cbd5e1" strokeWidth="1.6" />
-        {/* 底面を塞ぐ rect */}
+        {/* Rectangle closing the base */}
         <rect x="356" y="190" width="98" height="24" fill="#fff" />
-        {/* 底辺ライン */}
+        {/* Bottom outline */}
         <line x1="356" y1="214" x2="454" y2="214" stroke="#cbd5e1" strokeWidth="1.6" />
-        {/* 目 */}
+        {/* Eyes */}
         <circle cx="398" cy="180" r="3.8" fill="#334155" />
         <circle cx="414" cy="180" r="3.8" fill="#334155" />
-        {/* 笑顔 */}
+        {/* Smile */}
         <path
           d="M 393 190 Q 406 200 419 190"
           stroke="#334155"
@@ -143,10 +143,10 @@ export function NotFoundIllustration({
           fill="none"
           strokeLinecap="round"
         />
-        {/* 頬の赤み */}
+        {/* Rosy cheeks */}
         <ellipse cx="389" cy="188" rx="4" ry="2.5" fill="#fca5a5" opacity="0.55" />
         <ellipse cx="423" cy="188" rx="4" ry="2.5" fill="#fca5a5" opacity="0.55" />
-        {/* 右腕（手を振る） */}
+        {/* Right arm waving */}
         <path
           d="M 446 174 Q 463 150 455 133"
           stroke="#cbd5e1"
@@ -155,9 +155,9 @@ export function NotFoundIllustration({
           fill="none"
           className="mascot-arm"
         />
-        {/* 右腕の手 */}
+        {/* Right hand */}
         <circle cx="455" cy="130" r="7" fill="#fff" stroke="#cbd5e1" strokeWidth="1.6" />
-        {/* 左腕 */}
+        {/* Left arm */}
         <path
           d="M 370 188 Q 358 198 363 209"
           stroke="#cbd5e1"

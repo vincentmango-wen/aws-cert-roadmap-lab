@@ -36,15 +36,15 @@ export type ArchitectureMeta = {
   publishedAt: string;
   updatedAt: string;
   /**
-   * 旧 architectures.ts 由来の inline 本文 (sections[]). 本文 SSoT は MDX に移管したため、
-   * JSON データには含めない。compat / 既存 import 互換のため optional フィールドとして残す。
+   * Legacy inline body sections[] from architectures.ts. MDX now owns body content, so JSON omits these
+   * sections. Retain the optional field for compatibility with existing imports.
    */
   sections?: ArchitectureSection[];
   locale?: ArchitectureLocale;
 };
 
 /**
- * 本文付き型 — 詳細ページが MDX 本文と一緒に扱うときに利用する。
+ * Article type including the body, used by detail pages that work with MDX content.
  */
 export type Architecture = ArchitectureMeta;
 
@@ -53,8 +53,8 @@ export type ArchitectureArticle = ArchitectureMeta & {
 };
 
 /**
- * ja 既存ラベル定義. compat 層 (`src/contents/architectures/architectures.ts`) から
- * re-export して既存 import 経路を維持する.
+ * Existing Japanese labels, re-exported by src/contents/architectures/architectures.ts to preserve
+ * import compatibility.
  */
 export const architectureLevelLabels: Record<ArchitectureLevel, string> = {
   beginner: "初級",

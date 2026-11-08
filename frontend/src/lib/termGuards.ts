@@ -1,25 +1,15 @@
 /**
- * termGuards.ts
+ * Existence helpers for terms, comparisons and architectures, preventing QuestionPlayer and pages from
+ * linking to nonexistent IDs. Sources of truth: all terms.ja.json IDs (shared across locales and treated
+ * as published), publishedComparisons and publishedArchitectures (published:true only).
  *
- * isExistingTerm / isExistingComparison / isExistingArchitecture:
- * term/comparison/architecture の存在チェックヘルパー。
- * QuestionPlayer や各ページで「存在しない ID へのリンク」を防ぐために使う。
+ * Localized published sets were added through P5-033/P5-034/P5-042. Comparisons gained en/zh in P5-034;
+ * architectures gained them in P5-042, using common slugs. Related sections navigate to same-language
+ * pages.
  *
- * SSoT:
- * - terms: terms.ja.json 全件（locale 間で termId は共通 / 全件 published 扱い）
- * - comparisons: comparisons.ts の publishedComparisons（published: true のみ）
- * - architectures: architectures.ts の publishedArchitectures（published: true のみ）
- *
- * locale 別 published セット (P5-033 → P5-034 → P5-042 で 3 言語化完了):
- * - comparisons は P5-034 で en/zh ページを追加済 (3 言語共通 slug)。
- * - architectures は P5-042 で en/zh ページを追加済 (3 言語共通 slug)。
- * - terms / comparisons / architectures の関連セクションは、同言語ページへ
- *   自動遷移する (= 同一言語内遷移を完了条件として担保)。
- *
- * NOTE: このファイルは server component でのみ import すること。
- * "use client" なコンポーネントから直接 import すると
- * terms.ja.json(85KB) や comparisons/architectures のデータが client bundle に含まれる。
- * client component には server page 側で解決した真偽値を props 経由で渡す。
+ * Import only from server components. Direct use-client imports would include terms.ja.json (85KB) and
+ * comparison/architecture data in the client bundle. Resolve existence on the server and pass booleans
+ * to client components via props.
  */
 
 import termsJaData from "../../contents/terms/terms.ja.json";
@@ -36,21 +26,21 @@ const termIdSet: Set<string> = new Set(
   (termsJaData as RawTerm[]).map((t) => t.termId),
 );
 
-// SSoT: published フィルタ後の comparison slug 集合
+// Source of truth: comparison slugs after filtering to published entries.
 const comparisonSlugSet: Set<string> = new Set(
   publishedComparisons.map((c) => c.slug),
 );
 
-// SSoT: published フィルタ後の architecture slug 集合
+// Source of truth: architecture slugs after filtering to published entries.
 const architectureSlugSet: Set<string> = new Set(
   publishedArchitectures.map((a) => a.slug),
 );
 
-// locale 別 published セット (P5-033 / P5-034 で comparison 系を 3 言語公開化 /
-// P5-042 で architectures 系も 3 言語公開化).
-// comparisons は P5-034 で en/zh ページを追加し、11 slug すべてを 3 言語公開する。
-// architectures は P5-042 で en/zh ページを追加し、10 slug すべてを 3 言語公開する。
-// 内部リンク (terms の関連構成図セクション等) はこれにより同言語遷移が有効化される。
+// Localized published sets: comparisons gained three-language support in P5-033/P5-034;
+// architectures followed in P5-042.
+// P5-034 added en/zh comparison pages, publishing all 11 slugs in three locales.
+// P5-042 added en/zh architecture pages, publishing all 10 slugs in three locales.
+// These sets enable same-language internal navigation, including related architecture links on term pages.
 const comparisonSlugSetByLocale: Record<Locale, Set<string>> = {
   ja: comparisonSlugSet,
   en: comparisonSlugSet,
@@ -64,35 +54,32 @@ const architectureSlugSetByLocale: Record<Locale, Set<string>> = {
 };
 
 /**
- * termId が terms.ja.json に存在するか判定する。
- * termId は locale 間で共通のため ja で代表する。
- * 存在しない termId へのリンクは 404 になるため、呼び出し元で
- * 「準備中」チップとリンクを切り替えるために使う。
+ * Check termId against terms.ja.json; IDs are shared across locales, so Japanese represents all of them.
+ * Callers can choose a coming-soon chip instead of a link to a nonexistent term that would return 404.
  */
 export function isExistingTerm(termId: string): boolean {
   return termIdSet.has(termId);
 }
 
 /**
- * slug が publishedComparisons（published: true のみ）に存在するか判定する。
- * 存在しない / 未公開 comparison slug へのリンクは 404 になるため、同様に使う。
+ * Check whether a slug exists in publishedComparisons (published:true only), avoiding links to missing
+ * or unpublished comparisons that return 404.
  */
 export function isExistingComparison(slug: string): boolean {
   return comparisonSlugSet.has(slug);
 }
 
 /**
- * slug が publishedArchitectures（published: true のみ）に存在するか判定する。
- * 存在しない / 未公開 architecture slug へのリンクは 404 になるため、同様に使う。
+ * Check whether a slug exists in publishedArchitectures (published:true only), avoiding links to missing
+ * or unpublished architectures that return 404.
  */
 export function isExistingArchitecture(slug: string): boolean {
   return architectureSlugSet.has(slug);
 }
 
 /**
- * locale 別の comparison 存在チェック (P5-033)。
- * en/zh では空セットを参照するため、必ず false を返す。
- * 将来 en/zh 配下に comparisons ページを追加したら自動的にリンク表示が復活する。
+ * Localized comparison existence check (P5-033). An empty localized published set returns false; adding
+ * published en/zh pages automatically restores links.
  */
 export function isExistingComparisonForLocale(
   locale: Locale,
@@ -102,9 +89,8 @@ export function isExistingComparisonForLocale(
 }
 
 /**
- * locale 別の architecture 存在チェック (P5-033)。
- * en/zh では空セットを参照するため、必ず false を返す。
- * 将来 en/zh 配下に architectures ページを追加したら自動的にリンク表示が復活する。
+ * Localized architecture existence check (P5-033). An empty localized published set returns false;
+ * adding published en/zh pages automatically restores links.
  */
 export function isExistingArchitectureForLocale(
   locale: Locale,

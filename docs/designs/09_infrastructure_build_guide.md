@@ -1,37 +1,37 @@
-AWS資格学習サイト インフラ構築手順書
+AWS Certification Study Site Infrastructure Setup Guide
 
-1. 文書情報
+1. Document Information
 
 |   |   |
 |---|---|
-|項目|内容|
-|文書名|AWS資格学習サイト インフラ構築手順書|
-|対象プロダクト|AWS資格ロードマップラボ|
-|対象フェーズ|Phase 1 静的サイト公開 / Phase 2 問い合わせAPI追加 / Phase 3 収益化準備 / Phase 4 学習アプリ化|
-|目的|AWS上に低コスト・安全・拡張可能な学習サイト基盤を構築する手順を定義する|
-|想定作業者|開発者本人|
-|基本リージョン|ap-northeast-1 / 東京リージョン|
-|例外リージョン|CloudFront用ACM証明書は us-east-1 / バージニア北部|
+|Item|Description|
+|Document name|AWS Certification Study Site Infrastructure Setup Guide|
+|Target product|AWS Certification Roadmap Lab|
+|Target phases|Phase 1: static-site publication / Phase 2: contact API / Phase 3: monetization preparation / Phase 4: learning application|
+|Purpose|Define procedures for building a low-cost, secure, extensible learning-site infrastructure on AWS|
+|Intended operator|The developer|
+|Primary region|ap-northeast-1 / Tokyo Region|
+|Exception region|CloudFront ACM certificates: us-east-1 / Northern Virginia|
 
   
 
-2. 本手順書の目的
+2. Purpose of This Guide
 
-本手順書では、AWS資格学習サイト「AWS資格ロードマップラボ」をAWS上に構築するための具体的な手順を定義する。
+This guide defines concrete procedures for building the AWS Certification Roadmap Lab certification study site on AWS.
 
-MVPでは以下を構築対象とする。
+The MVP includes the following infrastructure.
 
-S3 + CloudFront 静的サイト配信
+S3 + CloudFront static-site delivery
 
-API Gateway + Lambda + DynamoDB 問い合わせAPI
+API Gateway + Lambda + DynamoDB contact API
 
-CloudWatch Logs ログ確認
+CloudWatch Logs log inspection
 
-IAM 最小権限
+IAM least privilege
 
-AWS Budgets 課金監視
+AWS Budgets billing monitoring
 
-初期段階では、以下は構築しない。
+Do not build the following during the initial stage.
 
 EC2
 
@@ -55,57 +55,57 @@ Cognito
 
 SES
 
-理由は、MVPではコストを抑えて公開実績を作ることを最優先にするためである。
+This is because the MVP prioritizes keeping costs down and establishing a published project.
 
   
 
-3. 全体構築フロー
+3. Overall Setup Flow
 
-3.1 MVP構築順序
+3.1 MVP Setup Sequence
 
-1. AWSアカウント初期安全設定
+1. Configure initial AWS account security
 
-2. AWS Budgets設定
+2. Configure AWS Budgets
 
-3. S3バケット作成
+3. Create an S3 bucket
 
-4. フロントエンド静的ファイル作成
+4. Build frontend static files
 
-5. S3へ静的ファイルアップロード
+5. Upload static files to S3
 
-6. CloudFront Distribution作成
+6. Create a CloudFront Distribution
 
-7. CloudFront OAC設定
+7. Configure CloudFront OAC
 
-8. S3 Bucket Policy設定
+8. Configure the S3 Bucket Policy
 
-9. CloudFront経由でサイト表示確認
+9. Verify site display through CloudFront
 
-10. DynamoDB ContactsTable作成
+10. Create DynamoDB ContactsTable
 
-11. Lambda contact-submit-function作成
+11. Create Lambda contact-submit-function
 
-12. Lambda IAM Role設定
+12. Configure the Lambda IAM Role
 
-13. API Gateway HTTP API作成
+13. Create an API Gateway HTTP API
 
-14. API GatewayとLambda接続
+14. Connect API Gateway and Lambda
 
-15. CORS設定
+15. Configure CORS
 
-16. 問い合わせAPI動作確認
+16. Verify the contact API
 
-17. CloudWatch Logs確認
+17. Inspect CloudWatch Logs
 
-18. GitHub Actionsデプロイ設定
+18. Configure GitHub Actions deployment
 
-19. READMEに構成図・設計意図を記載
+19. Document the architecture diagram and design rationale in README
 
-20. 不要リソース確認
+20. Check for unnecessary resources
 
-3.2 MVP完成時の構成
+3.2 Completed MVP Architecture
 
-ユーザー
+User
 
   ↓ HTTPS
 
@@ -113,11 +113,11 @@ CloudFront
 
   ↓ OAC
 
-S3 静的サイト
+S3 static site
 
   
 
-ユーザー
+User
 
   ↓ POST /contact
 
@@ -137,60 +137,60 @@ CloudWatch Logs
 
   
 
-4. 前提条件
+4. Prerequisites
 
-4.1 必要なもの
-
-|   |   |
-|---|---|
-|項目|内容|
-|AWSアカウント|個人AWSアカウント|
-|GitHubアカウント|ソースコード管理用|
-|ローカル開発環境|Node.js、Python、Git、VS Code|
-|フロントエンド|Next.js / TypeScript想定|
-|バックエンド|Lambda Python想定|
-|決済手段|AWSアカウント作成時に登録済みのカード|
-
-4.2 ローカル推奨環境
+4.1 Requirements
 
 |   |   |
 |---|---|
-|項目|推奨|
-|Node.js|LTS版|
-|Python|3.11以上|
-|パッケージ管理|pnpm または npm|
-|Git|最新安定版|
-|エディタ|VS Code|
-|AWS CLI|任意。最初はコンソール操作でも可|
+|Item|Description|
+|AWS account|Personal AWS account|
+|GitHub account|Source-code management|
+|Local development environment|Node.js, Python, Git, VS Code|
+|Frontend|Assumes Next.js / TypeScript|
+|Backend|Assumes Lambda Python|
+|Payment method|Card registered when creating the AWS account|
 
-4.3 リージョン方針
+4.2 Recommended Local Environment
 
 |   |   |
 |---|---|
-|用途|リージョン|
+|Item|Recommendation|
+|Node.js|LTS version|
+|Python|3.11 or later|
+|Package management|pnpm or npm|
+|Git|Latest stable version|
+|Editor|VS Code|
+|AWS CLI|Optional; console operations are acceptable initially|
+
+4.3 Region Policy
+
+|   |   |
+|---|---|
+|Purpose|Region|
 |S3|ap-northeast-1|
 |Lambda|ap-northeast-1|
 |DynamoDB|ap-northeast-1|
 |API Gateway|ap-northeast-1|
 |CloudWatch Logs|ap-northeast-1|
-|CloudFront|グローバルサービス|
-|ACM CloudFront用|us-east-1|
+|CloudFront|Global service|
+|ACM for CloudFront|us-east-1|
 
   
 
-5. 命名規則
+5. Naming Conventions
 
-5.1 リソース命名方針
+5.1 Resource Naming Policy
 
-プロジェクト名は以下を基本とする。
+Use the following as the base project name.
 
 aws-cert-roadmap-lab
 
-5.2 MVPリソース名
+5.2 MVP Resource Names
 
 |   |   |
 |---|---|
-|リソース|名前例|
+|Resource|Example name|
 |S3 Bucket|aws-cert-roadmap-lab-prod|
 |CloudFront Distribution|aws-cert-roadmap-lab-prod-cf|
 |DynamoDB Table|ContactsTableProd|
@@ -200,127 +200,127 @@ aws-cert-roadmap-lab
 |Budget|aws-cert-roadmap-lab-monthly-budget|
 |GitHub Actions Role|github-actions-deploy-role-prod|
 
-5.3 注意点
+5.3 Notes
 
-S3バケット名はグローバルで一意である必要がある。
+S3 bucket names must be globally unique.
 
-そのため、実際には以下のようにユーザー名や日付を含めてもよい。
+Therefore, actual names may include a username or date as follows.
 
 aws-cert-roadmap-lab-prod-vincent-2026
 
   
 
-6. Step 0：AWSアカウント初期安全設定
+6. Step 0: Initial AWS Account Security
 
-6.1 rootユーザーMFA設定
+6.1 Configure Root-user MFA
 
-目的
+Purpose
 
-AWSアカウント乗っ取りを防ぐ。
+Prevent AWS account takeover.
 
-手順
+Procedure
 
-1. AWS Management Consoleにrootユーザーでログイン
+1. Sign in to the AWS Management Console as the root user
 
-2. 右上のアカウント名をクリック
+2. Click the account name in the upper-right corner
 
-3. Security credentialsを開く
+3. Open Security credentials
 
-4. Multi-factor authentication / MFAを選択
+4. Select Multi-factor authentication / MFA
 
-5. MFA deviceを割り当てる
+5. Assign an MFA device
 
-6. 認証アプリでQRコードを読み取る
+6. Scan the QR code with an authenticator app
 
-7. 連続するMFAコードを入力して有効化する
+7. Enter consecutive MFA codes to enable it
 
-完了条件
+Completion criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|rootユーザーにMFAが設定されている|必須|
-|rootアクセスキーが存在しない|必須|
+|Criterion|Requirement|
+|Root-user MFA configured|Required|
+|No root access keys exist|Required|
 
-6.2 管理用IAMユーザー作成
+6.2 Create an Administrative IAM User
 
-目的
+Purpose
 
-rootユーザーを日常利用しないようにする。
+Avoid using the root user for routine work.
 
-手順
+Procedure
 
-1. IAMコンソールを開く
+1. Open the IAM console
 
-2. Usersを選択
+2. Select Users
 
-3. Create userを選択
+3. Select Create user
 
-4. ユーザー名を入力
+4. Enter a username
 
-5. Management Console accessを有効化
+5. Enable Management Console access
 
-6. 必要な権限を付与
+6. Grant necessary permissions
 
-7. MFAを設定
+7. Configure MFA
 
-8. rootユーザーからログアウトし、IAMユーザーでログイン確認
+8. Sign out as root and verify login as the IAM user
 
-初期学習時の注意
+Precautions for Initial Learning
 
-学習初期はAdministratorAccessを一時的に使うこともあるが、長期的には最小権限へ分離する。
+AdministratorAccess may be used temporarily during initial learning, but separate permissions according to least privilege over the long term.
 
-ポートフォリオ用には以下を分ける。
+Separate the following for the portfolio.
 
-管理者用IAMユーザー
+Administrative IAM user
 
-Lambda実行ロール
+Lambda execution role
 
-GitHub Actionsデプロイロール
+GitHub Actions deployment role
 
   
 
-7. Step 1：AWS Budgets設定
+7. Step 1: Configure AWS Budgets
 
-7.1 目的
+7.1 Purpose
 
-課金事故を防ぐ。
+Prevent unexpected charges.
 
-このプロジェクトではAWS Budgetsを最初に設定する。
+Configure AWS Budgets first in this project.
 
-7.2 予算設定方針
+7.2 Budget Configuration Policy
 
 |   |   |
 |---|---|
-|項目|値|
+|Item|Value|
 |Budget type|Cost budget|
 |Period|Monthly|
-|Budget amount|初期は 1 USD または低額|
+|Budget amount|Initially 1 USD or another low amount|
 |Scope|All AWS services|
 |Alert threshold|50%、80%、100%、Forecasted 100%|
-|Notification|メール|
+|Notification|Email|
 
-7.3 コンソール手順
+7.3 Console Procedure
 
-1. AWS Billing and Cost Managementを開く
+1. Open AWS Billing and Cost Management
 
-2. 左メニューからBudgetsを選択
+2. Select Budgets from the left menu
 
-3. Create budgetを選択
+3. Select Create budget
 
-4. Cost budgetを選択
+4. Select Cost budget
 
-5. Monthlyを選択
+5. Select Monthly
 
-6. 予算名を入力
+6. Enter a budget name
 
-   例：aws-cert-roadmap-lab-monthly-budget
+   Example: aws-cert-roadmap-lab-monthly-budget
 
-7. 予算額を入力
+7. Enter the budget amount
 
-   例：1 USD
+   Example: 1 USD
 
-8. Alert thresholdを設定
+8. Configure Alert threshold
 
    - Actual 50%
 
@@ -330,82 +330,82 @@ GitHub Actionsデプロイロール
 
    - Forecasted 100%
 
-9. 通知先メールアドレスを入力
+9. Enter the notification email address
 
-10. 作成する
+10. Create the budget
 
-7.4 完了条件
+7.4 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|Monthly Cost Budgetが作成されている|必須|
-|通知先メールが設定されている|必須|
-|予測超過通知が設定されている|推奨|
+|Criterion|Requirement|
+|Monthly Cost Budget created|Required|
+|Notification email configured|Required|
+|Forecasted overrun notification configured|Recommended|
 
   
 
-8. Step 2：S3バケット作成
+8. Step 2: Create an S3 Bucket
 
-8.1 目的
+8.1 Purpose
 
-静的サイトのビルド成果物を保存する。
+Store static-site build artifacts.
 
-8.2 設定方針
+8.2 Configuration Policy
 
 |   |   |
 |---|---|
-|項目|設定|
+|Item|Setting|
 |Region|ap-northeast-1|
-|Bucket name|aws-cert-roadmap-lab-prod-任意の一意名|
-|Public Access|すべてブロック|
-|Versioning|MVPでは任意。初期は無効でも可|
-|Encryption|SSE-S3で可|
-|Static website hosting|原則使わない|
+|Bucket name|aws-cert-roadmap-lab-prod-<unique-name>|
+|Public Access|Block all|
+|Versioning|Optional for MVP; may initially be disabled|
+|Encryption|SSE-S3 is acceptable|
+|Static website hosting|Generally do not use|
 
-重要：CloudFront OACを使うため、S3静的Webサイトホスティングのエンドポイントではなく、通常のS3オリジンとしてCloudFrontに接続する。
+Important: Because CloudFront OAC is used, connect CloudFront to a regular S3 origin rather than the S3 static-website hosting endpoint.
 
-8.3 コンソール手順
+8.3 Console Procedure
 
-1. S3コンソールを開く
+1. Open the S3 console
 
-2. Create bucketを選択
+2. Select Create bucket
 
-3. Bucket nameを入力
+3. Enter the Bucket name
 
-   例：aws-cert-roadmap-lab-prod-vincent-2026
+   Example: aws-cert-roadmap-lab-prod-vincent-2026
 
-4. AWS Regionでap-northeast-1を選択
+4. Select ap-northeast-1 for AWS Region
 
-5. Block all public accessをONのままにする
+5. Leave Block all public access ON
 
-6. Bucket Versioningは初期はDisableでよい
+6. Bucket Versioning may initially remain Disabled
 
-7. Default encryptionはSSE-S3を選択
+7. Select SSE-S3 for Default encryption
 
-8. Create bucketをクリック
+8. Click Create bucket
 
-8.4 完了条件
+8.4 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|S3バケットが作成されている|必須|
-|Block all public accessが有効|必須|
-|Static website hostingを有効化していない|推奨|
-|バケット名を記録した|必須|
+|Criterion|Requirement|
+|S3 bucket created|Required|
+|Block all public access enabled|Required|
+|Static website hosting not enabled|Recommended|
+|Bucket name recorded|Required|
 
   
 
-9. Step 3：フロントエンド静的ファイル作成
+9. Step 3: Build Frontend Static Files
 
-9.1 目的
+9.1 Purpose
 
-S3へアップロードする静的ファイルを作成する。
+Create static files to upload to S3.
 
-9.2 Next.js想定設定
+9.2 Assumed Next.js Configuration
 
-next.config.js または next.config.mjs に静的エクスポート設定を行う。
+Configure static export in next.config.js or next.config.mjs.
 
 const nextConfig = {
 
@@ -423,27 +423,27 @@ const nextConfig = {
 
 export default nextConfig;
 
-9.3 ビルドコマンド例
+9.3 Example Build Commands
 
-pnpmの場合：
+With pnpm:
 
 pnpm install
 
 pnpm build
 
-npmの場合：
+With npm:
 
 npm install
 
 npm run build
 
-静的エクスポート後の出力先は通常以下になる。
+The static export output directory is normally the following.
 
 out/
 
-9.4 最初の最小ページ
+9.4 Initial Minimal Pages
 
-最初の確認用として、以下だけでもよい。
+The following alone are sufficient for initial verification.
 
 /
 
@@ -457,116 +457,116 @@ out/
 
 /contact
 
-9.5 完了条件
+9.5 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|ビルドが成功する|必須|
-|out/ ディレクトリが生成される|必須|
-|index.htmlが存在する|必須|
-|画像ファイルが大きすぎない|推奨|
+|Criterion|Requirement|
+|Build succeeds|Required|
+|out/ directory generated|Required|
+|index.html exists|Required|
+|Images are not excessively large|Recommended|
 
   
 
-10. Step 4：S3へ静的ファイルアップロード
+10. Step 4: Upload Static Files to S3
 
-10.1 コンソール手順
+10.1 Console Procedure
 
-1. S3コンソールで対象バケットを開く
+1. Open the target bucket in the S3 console
 
-2. Objectsタブを開く
+2. Open the Objects tab
 
-3. Uploadを選択
+3. Select Upload
 
-4. out/ 配下のファイルとフォルダをアップロード
+4. Upload the files and folders under out/
 
-5. Upload完了を確認
+5. Confirm upload completion
 
-10.2 AWS CLIを使う場合
+10.2 Using AWS CLI
 
 aws s3 sync ./out s3://aws-cert-roadmap-lab-prod-vincent-2026 --delete
 
-10.3 注意点
+10.3 Notes
 
-S3バケットは非公開のため、S3オブジェクトURLに直接アクセスしても表示できないのが正しい。
+Because the S3 bucket is private, failure to display content through direct S3 object URLs is the correct behavior.
 
-10.4 完了条件
+10.4 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|S3にindex.htmlがアップロードされている|必須|
-|assetsや画像もアップロードされている|必須|
-|S3直接URLでアクセスできない|必須|
+|Criterion|Requirement|
+|index.html uploaded to S3|Required|
+|Assets and images uploaded|Required|
+|Direct S3 URL access unavailable|Required|
 
   
 
-11. Step 5：CloudFront Distribution作成
+11. Step 5: Create a CloudFront Distribution
 
-11.1 目的
+11.1 Purpose
 
-S3に配置した静的サイトをHTTPSで配信する。
+Deliver the static site stored in S3 over HTTPS.
 
-11.2 設定方針
+11.2 Configuration Policy
 
 |   |   |
 |---|---|
-|項目|設定|
+|Item|Setting|
 |Origin|S3 bucket|
 |Origin access|Origin Access Control / OAC|
 |Viewer protocol policy|Redirect HTTP to HTTPS|
 |Allowed HTTP methods|GET, HEAD|
 |Default root object|index.html|
-|Web Application Firewall|MVPでは無効|
-|Price class|初期は低コスト優先で範囲を限定してもよい|
+|Web Application Firewall|Disabled for MVP|
+|Price class|Initially, the geographic range may be limited to prioritize low cost|
 
-11.3 コンソール手順
+11.3 Console Procedure
 
-1. CloudFrontコンソールを開く
+1. Open the CloudFront console
 
-2. Create distributionを選択
+2. Select Create distribution
 
-3. Origin domainで作成したS3バケットを選択
+3. Select the created S3 bucket as Origin domain
 
-4. Origin accessでOrigin access control settingsを選択
+4. Select Origin access control settings under Origin access
 
-5. Create new OACを選択
+5. Select Create new OAC
 
-6. OAC名を入力
+6. Enter an OAC name
 
-   例：aws-cert-roadmap-lab-oac-prod
+   Example: aws-cert-roadmap-lab-oac-prod
 
-7. Viewer protocol policyでRedirect HTTP to HTTPSを選択
+7. Select Redirect HTTP to HTTPS for Viewer protocol policy
 
-8. Allowed HTTP methodsはGET, HEADを選択
+8. Select GET, HEAD for Allowed HTTP methods
 
-9. Default root objectにindex.htmlを入力
+9. Enter index.html as Default root object
 
-10. WAFは初期では無効
+10. Disable WAF initially
 
-11. Create distributionを実行
+11. Execute Create distribution
 
-11.4 作成後に記録する値
+11.4 Values to Record After Creation
 
 |   |   |
 |---|---|
-|値|用途|
+|Value|Purpose|
 |Distribution ID|Invalidation、Bucket Policy、GitHub Actions|
-|Distribution domain name|動作確認URL|
-|OAC ID|S3アクセス制御|
+|Distribution domain name|Verification URL|
+|OAC ID|S3 access control|
 
   
 
-12. Step 6：S3 Bucket Policy設定
+12. Step 6: Configure the S3 Bucket Policy
 
-12.1 目的
+12.1 Purpose
 
-CloudFront DistributionからのみS3オブジェクトを取得できるようにする。
+Allow S3 objects to be retrieved only from the CloudFront Distribution.
 
-12.2 Bucket Policy例
+12.2 Example Bucket Policy
 
-以下の値を置換する。
+Replace the following values.
 
 <bucket-name>
 
@@ -612,91 +612,91 @@ CloudFront DistributionからのみS3オブジェクトを取得できるよう�
 
 }
 
-12.3 コンソール手順
+12.3 Console Procedure
 
-1. S3コンソールを開く
+1. Open the S3 console
 
-2. 対象バケットを選択
+2. Select the target bucket
 
-3. Permissionsタブを開く
+3. Open the Permissions tab
 
-4. Bucket policyを編集
+4. Edit Bucket policy
 
-5. 上記ポリシーを貼り付ける
+5. Paste the policy above
 
-6. bucket-name / account-id / distribution-idを置換
+6. Replace bucket-name / account-id / distribution-id
 
-7. Save changesをクリック
+7. Click Save changes
 
-12.4 完了条件
+12.4 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|Bucket Policyが設定されている|必須|
-|Principalがcloudfront.amazonaws.comになっている|必須|
-|SourceArnが対象Distributionに限定されている|必須|
-|S3直接アクセスは拒否される|必須|
-|CloudFront経由では表示できる|必須|
+|Criterion|Requirement|
+|Bucket Policy configured|Required|
+|Principal is cloudfront.amazonaws.com|Required|
+|SourceArn restricted to the target Distribution|Required|
+|Direct S3 access denied|Required|
+|Content displays through CloudFront|Required|
 
   
 
-13. Step 7：CloudFront表示確認
+13. Step 7: Verify CloudFront Display
 
-13.1 確認手順
+13.1 Verification Procedure
 
-1. CloudFront DistributionのDeploy完了を待つ
+1. Wait for CloudFront Distribution deployment to complete
 
-2. Distribution domain nameをコピー
+2. Copy the Distribution domain name
 
-   例：https://xxxxxxxx.cloudfront.net
+   Example: https://xxxxxxxx.cloudfront.net
 
-3. ブラウザでアクセスする
+3. Open it in a browser
 
-4. トップページが表示されることを確認
+4. Verify that the home page appears
 
-5. /terms や /about などのページも確認
+5. Check pages such as /terms and /about as well
 
-6. HTTPアクセス時にHTTPSへリダイレクトされることを確認
+6. Verify that HTTP access redirects to HTTPS
 
-13.2 確認項目
+13.2 Verification Items
 
 |   |   |
 |---|---|
-|項目|期待結果|
-|CloudFront URL|表示できる|
-|HTTPアクセス|HTTPSへリダイレクト|
-|S3直接URL|Access Denied|
-|画像|表示される|
-|CSS|適用される|
-|JS|動作する|
+|Item|Expected result|
+|CloudFront URL|Content displays|
+|HTTP access|Redirects to HTTPS|
+|Direct S3 URL|Access Denied|
+|Images|Displayed|
+|CSS|Applied|
+|JS|Works|
 
-13.3 よくあるエラー
+13.3 Common Errors
 
 |   |   |   |
 |---|---|---|
-|エラー|原因|対応|
-|Access Denied|Bucket Policy未設定、OAC不一致|Bucket Policyを確認|
-|403|S3アクセス許可不足|SourceArn、OACを確認|
-|404|ファイル未アップロード|out/ の中身を確認|
-|CSSが当たらない|assets未アップロード|S3 syncを確認|
-|ページ遷移で404|静的エクスポート設定・CloudFrontエラーページ確認|Next.js設定を確認|
+|Error|Cause|Response|
+|Access Denied|Missing Bucket Policy or mismatched OAC|Check Bucket Policy|
+|403|Insufficient S3 access permissions|Check SourceArn and OAC|
+|404|Files not uploaded|Check out/ contents|
+|CSS not applied|Assets not uploaded|Check S3 sync|
+|404 on navigation|Check static export settings and CloudFront error pages|Check Next.js configuration|
 
   
 
-14. Step 8：CloudFrontエラーページ設定
+14. Step 8: Configure CloudFront Error Pages
 
-14.1 目的
+14.1 Purpose
 
-静的サイトでルーティングや404ページを適切に扱う。
+Handle routing and 404 pages appropriately for the static site.
 
-14.2 基本方針
+14.2 Basic Policy
 
-Next.js静的エクスポートで各パスにHTMLが生成されている場合、特別なSPAリライトは不要なことが多い。
+When Next.js static export generates HTML for each path, special SPA rewrites are often unnecessary.
 
-ただし、存在しないURLにアクセスされた場合は404ページを表示する。
+However, display a 404 page for nonexistent URLs.
 
-14.3 設定候補
+14.3 Candidate Configuration
 
 |   |   |   |
 |---|---|---|
@@ -704,102 +704,102 @@ Next.js静的エクスポートで各パスにHTMLが生成されている場合
 |403|/404.html|404|
 |404|/404.html|404|
 
-14.4 注意点
+14.4 Notes
 
-SPAのようにすべて /index.html へ返す設定も可能だが、SEOサイトでは存在しないページを200で返すのは避けた方がよい。
+Returning /index.html for every path like an SPA is possible, but an SEO site should avoid returning 200 for nonexistent pages.
 
-本プロダクトはSEOメディアでもあるため、原則として404は404として返す。
+Since this product is also an SEO publication, generally return 404 responses as 404.
 
   
 
-15. Step 9：DynamoDB ContactsTable作成
+15. Step 9: Create DynamoDB ContactsTable
 
-15.1 目的
+15.1 Purpose
 
-問い合わせフォームの送信内容を保存する。
+Store contact-form submissions.
 
-15.2 テーブル設計
+15.2 Table Design
 
 |   |   |
 |---|---|
-|項目|値|
+|Item|Value|
 |Table name|ContactsTableProd|
 |Partition key|contactId|
-|Sort key|なし|
-|Billing mode|On-demand推奨|
-|Encryption|AWS owned key または AWS managed key|
-|PITR|MVPでは任意|
-|Streams|無効|
+|Sort key|None|
+|Billing mode|On-demand recommended|
+|Encryption|AWS owned key or AWS managed key|
+|PITR|Optional for MVP|
+|Streams|Disabled|
 
-15.3 コンソール手順
+15.3 Console Procedure
 
-1. DynamoDBコンソールを開く
+1. Open the DynamoDB console
 
-2. Tablesを選択
+2. Select Tables
 
-3. Create tableを選択
+3. Select Create table
 
-4. Table nameにContactsTableProdを入力
+4. Enter ContactsTableProd as Table name
 
-5. Partition keyにcontactIdを入力
+5. Enter contactId as Partition key
 
-6. TypeはString
+6. Set Type to String
 
-7. Table settingsはCustomizeまたはDefault
+7. Choose Customize or Default for Table settings
 
-8. Billing modeはOn-demandを選択
+8. Select On-demand for Billing mode
 
-9. Create tableをクリック
+9. Click Create table
 
-15.4 完了条件
+15.4 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|ContactsTableProdが作成されている|必須|
-|Partition keyがcontactId|必須|
-|On-demandになっている|推奨|
-|Streamsが無効|推奨|
+|Criterion|Requirement|
+|ContactsTableProd created|Required|
+|Partition key is contactId|Required|
+|On-demand selected|Recommended|
+|Streams disabled|Recommended|
 
   
 
-16. Step 10：Lambda実行ロール作成
+16. Step 10: Create a Lambda Execution Role
 
-16.1 目的
+16.1 Purpose
 
-問い合わせLambdaがDynamoDBに問い合わせデータを書き込めるようにする。
+Allow the contact Lambda to write contact data to DynamoDB.
 
-16.2 権限方針
+16.2 Permission Policy
 
-Lambdaには以下のみ許可する。
+Allow Lambda only the following.
 
-DynamoDB ContactsTableProdへのPutItem
+PutItem to DynamoDB ContactsTableProd
 
-CloudWatch Logsへのログ出力
+Write logs to CloudWatch Logs
 
-16.3 IAM Role作成手順
+16.3 IAM Role Creation Procedure
 
-1. IAMコンソールを開く
+1. Open the IAM console
 
-2. Rolesを選択
+2. Select Roles
 
-3. Create roleを選択
+3. Select Create role
 
-4. Trusted entity typeでAWS serviceを選択
+4. Select AWS service for Trusted entity type
 
-5. Use caseでLambdaを選択
+5. Select Lambda for Use case
 
-6. Role名を入力
+6. Enter the Role name
 
-   例：lambda-contact-submit-role-prod
+   Example: lambda-contact-submit-role-prod
 
-7. いったん作成する
+7. Create the role initially
 
-8. 後でインラインポリシーを追加する
+8. Add an inline policy afterward
 
-16.4 インラインポリシー例
+16.4 Example Inline Policy
 
-<account-id> を置換する。
+Replace <account-id>.
 
 {
 
@@ -847,69 +847,69 @@ CloudWatch Logsへのログ出力
 
 }
 
-16.5 完了条件
+16.5 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|Lambda用Roleが作成されている|必須|
-|ContactsTableProdへのPutItemのみ許可|必須|
-|CloudWatch Logs出力権限がある|必須|
-|AdministratorAccessを付けていない|必須|
+|Criterion|Requirement|
+|Lambda Role created|Required|
+|Only PutItem to ContactsTableProd allowed|Required|
+|CloudWatch Logs output permissions granted|Required|
+|AdministratorAccess not attached|Required|
 
   
 
-17. Step 11：Lambda contact-submit-function作成
+17. Step 11: Create Lambda contact-submit-function
 
-17.1 目的
+17.1 Purpose
 
-問い合わせAPIの処理を実行する。
+Execute contact API processing.
 
-17.2 設定方針
+17.2 Configuration Policy
 
 |   |   |
 |---|---|
-|項目|値|
+|Item|Value|
 |Function name|contact-submit-prod|
-|Runtime|Python 3.11以上|
-|Architecture|x86_64 または arm64|
+|Runtime|Python 3.11 or later|
+|Architecture|x86_64 or arm64|
 |Execution role|lambda-contact-submit-role-prod|
 |Memory|128MB〜256MB|
-|Timeout|3〜5秒|
-|VPC|接続しない|
+|Timeout|3–5 seconds|
+|VPC|Do not connect|
 
-17.3 コンソール手順
+17.3 Console Procedure
 
-1. Lambdaコンソールを開く
+1. Open the Lambda console
 
-2. Create functionを選択
+2. Select Create function
 
-3. Author from scratchを選択
+3. Select Author from scratch
 
-4. Function nameにcontact-submit-prodを入力
+4. Enter contact-submit-prod as Function name
 
-5. RuntimeでPython 3.11以上を選択
+5. Select Python 3.11 or later as Runtime
 
-6. Change default execution roleを開く
+6. Open Change default execution role
 
-7. Use an existing roleを選択
+7. Select Use an existing role
 
-8. lambda-contact-submit-role-prodを選択
+8. Select lambda-contact-submit-role-prod
 
-9. Create functionをクリック
+9. Click Create function
 
-17.4 環境変数
+17.4 Environment Variables
 
 |   |   |
 |---|---|
 |Key|Value|
 |CONTACTS_TABLE_NAME|ContactsTableProd|
-|ALLOWED_ORIGIN|CloudFront URLまたは独自ドメイン|
+|ALLOWED_ORIGIN|CloudFront URL or custom domain|
 |LOG_LEVEL|INFO|
 
-17.5 最小Lambdaコード例
+17.5 Minimal Lambda Code Example
 
-実装詳細は後続のLambda実装設計書で定義するが、動作確認用の最小イメージは以下。
+Implementation details are defined in the subsequent Lambda implementation design document. The following is a minimal verification example; Japanese response and validation strings are retained as localized site-output examples.
 
 import json
 
@@ -1099,108 +1099,108 @@ def lambda_handler(event, context):
 
     })
 
-17.6 注意点
+17.6 Notes
 
-上記コードは最小確認用である。
+The code above is for minimal verification.
 
-本番品質では以下を改善する。
+Improve the following for production quality.
 
-メール形式バリデーション強化
+Stronger email-format validation
 
-requestId付与
+Add requestId
 
-エラー処理強化
+Stronger error handling
 
-CORS Origin動的判定
+Dynamic CORS origin determination
 
-ログ出力制御
+Log output control
 
-ユニットテスト
-
-  
-
-18. Step 12：CloudWatch Logs保存期間設定
-
-18.1 目的
-
-ログ蓄積による課金を防ぐ。
-
-18.2 手順
-
-1. CloudWatchコンソールを開く
-
-2. Logs > Log groupsを選択
-
-3. /aws/lambda/contact-submit-prod を開く
-
-4. Retention settingsを選択
-
-5. 14 days または 30 days を選択
-
-6. 保存
-
-18.3 完了条件
-
-|   |   |
-|---|---|
-|条件|確認|
-|Lambdaロググループが存在する|必須|
-|RetentionがNever expireではない|必須|
-|14日〜30日に設定されている|推奨|
+Unit tests
 
   
 
-19. Step 13：API Gateway HTTP API作成
+18. Step 12: Configure CloudWatch Logs Retention
 
-19.1 目的
+18.1 Purpose
 
-問い合わせLambdaをHTTP APIとして公開する。
+Prevent charges from accumulating logs.
 
-19.2 設定方針
+18.2 Procedure
+
+1. Open the CloudWatch console
+
+2. Select Logs > Log groups
+
+3. Open /aws/lambda/contact-submit-prod
+
+4. Select Retention settings
+
+5. Select 14 days or 30 days
+
+6. Save
+
+18.3 Completion Criteria
 
 |   |   |
 |---|---|
-|項目|値|
+|Criterion|Requirement|
+|Lambda log group exists|Required|
+|Retention is not Never expire|Required|
+|Set to 14–30 days|Recommended|
+
+  
+
+19. Step 13: Create an API Gateway HTTP API
+
+19.1 Purpose
+
+Expose the contact Lambda as an HTTP API.
+
+19.2 Configuration Policy
+
+|   |   |
+|---|---|
+|Item|Value|
 |API type|HTTP API|
 |API name|aws-cert-roadmap-lab-api-prod|
 |Route|POST /contact|
 |Integration|Lambda contact-submit-prod|
-|CORS|CloudFrontドメインのみ許可|
-|Auth|MVPではなし|
+|CORS|Allow only the CloudFront domain|
+|Auth|None for MVP|
 
-19.3 コンソール手順
+19.3 Console Procedure
 
-1. API Gatewayコンソールを開く
+1. Open the API Gateway console
 
-2. Create APIを選択
+2. Select Create API
 
-3. HTTP APIを選択
+3. Select HTTP API
 
-4. Add integrationでLambdaを選択
+4. Select Lambda under Add integration
 
-5. contact-submit-prodを選択
+5. Select contact-submit-prod
 
-6. API nameにaws-cert-roadmap-lab-api-prodを入力
+6. Enter aws-cert-roadmap-lab-api-prod as API name
 
-7. Routeを追加
+7. Add a Route
 
    Method: POST
 
    Path: /contact
 
-8. Stageを作成
+8. Create a Stage
 
-   例：$default または prod
+   Example: $default or prod
 
-9. APIを作成
+9. Create the API
 
-19.4 CORS設定
+19.4 CORS Configuration
 
 Allowed origins:
 
   https://xxxxxxxx.cloudfront.net
 
-  独自ドメイン導入後：https://example.com
+  After adding a custom domain: https://example.com
 
   
 
@@ -1218,36 +1218,36 @@ Allowed headers:
 
   Authorization
 
-開発時のみ以下を許可してもよい。
+The following may also be allowed during development only.
 
 http://localhost:3000
 
-本番ではlocalhostを削除する。
+Remove localhost in production.
 
-19.5 Lambda Invoke権限
+19.5 Lambda Invoke Permission
 
-API Gateway作成時に、Lambdaを呼び出す権限が自動付与されることが多い。
+Permission to invoke Lambda is often granted automatically when creating API Gateway.
 
-動作しない場合はLambdaのResource-based policyを確認する。
+If it does not work, check the Lambda resource-based policy.
 
-19.6 完了条件
+19.6 Completion Criteria
 
 |   |   |
 |---|---|
-|条件|確認|
-|HTTP APIが作成されている|必須|
-|POST /contact routeが存在する|必須|
-|Lambda統合されている|必須|
-|CORSが設定されている|必須|
-|Invoke URLを記録した|必須|
+|Criterion|Requirement|
+|HTTP API created|Required|
+|POST /contact route exists|Required|
+|Lambda integrated|Required|
+|CORS configured|Required|
+|Invoke URL recorded|Required|
 
   
 
-20. Step 14：問い合わせAPI動作確認
+20. Step 14: Verify the Contact API
 
-20.1 curlで確認
+20.1 Verify with curl
 
-<api-url> をAPI GatewayのInvoke URLに置き換える。
+Replace <api-url> with the API Gateway Invoke URL. The Japanese test payload below exercises localized input.
 
 curl -X POST "<api-url>/contact" \
 
@@ -1269,7 +1269,7 @@ curl -X POST "<api-url>/contact" \
 
   }'
 
-20.2 期待レスポンス
+20.2 Expected Response (Localized Japanese Example)
 
 {
 
@@ -1287,89 +1287,89 @@ curl -X POST "<api-url>/contact" \
 
 }
 
-20.3 DynamoDB確認
+20.3 Verify DynamoDB
 
-1. DynamoDBコンソールを開く
+1. Open the DynamoDB console
 
-2. ContactsTableProdを開く
+2. Open ContactsTableProd
 
-3. Explore table itemsを開く
+3. Open Explore table items
 
-4. contactId付きのデータが保存されているか確認
+4. Confirm that data with a contactId is saved
 
-20.4 CloudWatch Logs確認
+20.4 Verify CloudWatch Logs
 
-1. CloudWatch Logsを開く
+1. Open CloudWatch Logs
 
-2. /aws/lambda/contact-submit-prod を開く
+2. Open /aws/lambda/contact-submit-prod
 
-3. 最新ログストリームを開く
+3. Open the latest log stream
 
-4. INFO contact saved contactId=... が出ているか確認
+4. Check for INFO contact saved contactId=...
 
-5. メールアドレスや本文全文がログに出ていないか確認
+5. Confirm that full email addresses and message bodies are not logged
 
-20.5 異常系テスト
+20.5 Error-path Tests
 
 |   |   |
 |---|---|
-|テスト|期待結果|
-|emailなし|400|
-|email形式不正|400|
-|message空|400|
-|message 2,000文字超過|400|
-|honeypotに値あり|201扱い、DynamoDB保存なし|
+|Test|Expected result|
+|Missing email|400|
+|Invalid email format|400|
+|Empty message|400|
+|message exceeds 2,000 characters|400|
+|honeypot contains a value|Treated as 201; no DynamoDB storage|
 
   
 
-21. Step 15：フロントエンド問い合わせフォーム接続
+21. Step 15: Connect the Frontend Contact Form
 
-21.1 環境変数設定
+21.1 Configure Environment Variables
 
-フロントエンドにAPI URLを設定する。
+Configure the API URL in the frontend.
 
 NEXT_PUBLIC_API_BASE_URL=https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com
 
-21.2 フロントエンド処理方針
+21.2 Frontend Processing Policy
 
-1. フォーム入力
+1. Enter form data
 
-2. フロント側バリデーション
+2. Validate on the frontend
 
-3. POST /contact 呼び出し
+3. Call POST /contact
 
-4. 成功時に完了メッセージ表示
+4. Display a completion message on success
 
-5. 失敗時にエラーメッセージ表示
+5. Display an error message on failure
 
-21.3 CORS確認
+21.3 Verify CORS
 
-CloudFront上のサイトから問い合わせ送信できるか確認する。
+Confirm that inquiries can be submitted from the site on CloudFront.
 
 |   |   |
 |---|---|
-|状況|確認|
-|localhostから送信|開発時のみ成功|
-|CloudFront URLから送信|成功|
-|許可外Originから送信|ブラウザでCORSエラー|
+|Scenario|Expected behavior|
+|Submission from localhost|Succeeds only during development|
+|Submission from CloudFront URL|Succeeds|
+|Submission from unauthorized origin|Browser CORS error|
 
   
 
-22. Step 16：GitHub Actionsデプロイ設定
+22. Step 16: Configure GitHub Actions Deployment
 
-22.1 目的
+22.1 Purpose
 
-mainブランチにpushしたら、自動でS3へデプロイし、CloudFrontキャッシュを無効化する。
+Automatically deploy to S3 and invalidate the CloudFront cache when pushing to main.
 
-22.2 推奨方針
+22.2 Recommended Policy
 
-最初は手動デプロイでもよい。
+Manual deployment is acceptable initially.
 
-ただし、ポートフォリオ価値を高めるため、GitHub Actionsを導入する。
+However, introduce GitHub Actions to strengthen the portfolio.
 
-22.3 GitHub Actions用IAM権限
+22.3 IAM Permissions for GitHub Actions
 
-必要な権限は以下。
+The following permissions are required.
 
 s3:PutObject
 
@@ -1383,16 +1383,16 @@ cloudfront:CreateInvalidation
 
 |   |   |
 |---|---|
-|Secret名|内容|
-|AWS_ACCESS_KEY_ID|デプロイ用アクセスキー。OIDC化前のみ|
-|AWS_SECRET_ACCESS_KEY|デプロイ用シークレット。OIDC化前のみ|
+|Secret name|Description|
+|AWS_ACCESS_KEY_ID|Deployment access key; only before OIDC migration|
+|AWS_SECRET_ACCESS_KEY|Deployment secret; only before OIDC migration|
 |AWS_REGION|ap-northeast-1|
-|S3_BUCKET_NAME|S3バケット名|
+|S3_BUCKET_NAME|S3 bucket name|
 |CLOUDFRONT_DISTRIBUTION_ID|CloudFront Distribution ID|
 
-可能なら、長期アクセスキーではなくGitHub OIDCを利用する。
+Use GitHub OIDC rather than long-lived access keys if possible.
 
-22.5 workflow例
+22.5 Example Workflow
 
 .github/workflows/deploy.yml
 
@@ -1486,185 +1486,185 @@ jobs:
 
             --paths "/*"
 
-22.6 コスト注意点
+22.6 Cost Precautions
 
-/* のInvalidationを頻繁に実行しすぎない。
+Do not invalidate /* too frequently.
 
-MVPではデプロイ頻度が低いため許容できるが、本格運用では変更ファイルだけ無効化する、またはファイル名にhashを付ける方針にする。
-
-  
-
-23. Step 17：独自ドメイン導入 Phase 3
-
-23.1 導入タイミング
-
-MVPでは不要。
-
-以下のタイミングで導入を検討する。
-
-記事が10〜20本になった
-
-AdSense申請を考え始めた
-
-ポートフォリオとして見栄えを上げたい
-
-長期運用する意思が固まった
-
-23.2 利用サービス
-
-|   |   |
-|---|---|
-|サービス|用途|
-|Route 53|DNS管理|
-|ACM|SSL/TLS証明書|
-|CloudFront|独自ドメイン配信|
-
-23.3 ACM証明書作成手順
-
-重要：CloudFront用のACM証明書は us-east-1 で作成する。
-
-1. AWSコンソール右上のリージョンをus-east-1に変更
-
-2. ACMを開く
-
-3. Request certificateを選択
-
-4. Public certificateを選択
-
-5. ドメイン名を入力
-
-   例：example.com
-
-   例：www.example.com
-
-6. DNS validationを選択
-
-7. 証明書をリクエスト
-
-8. Route 53で検証用CNAMEを作成
-
-9. StatusがIssuedになるまで待つ
-
-23.4 CloudFrontに独自ドメインを設定
-
-1. CloudFront Distributionを開く
-
-2. GeneralタブでEditまたはAdd alternate domain nameを選択
-
-3. Alternate domain nameにドメインを追加
-
-4. Custom SSL certificateでACM証明書を選択
-
-5. 保存
-
-23.5 Route 53レコード設定
-
-1. Route 53 Hosted Zoneを開く
-
-2. Create recordを選択
-
-3. Aレコードを作成
-
-4. Aliasを有効化
-
-5. Alias targetにCloudFront Distributionを選択
-
-6. 保存
-
-23.6 完了条件
-
-|   |   |
-|---|---|
-|条件|確認|
-|独自ドメインでアクセスできる|必須|
-|HTTPSでアクセスできる|必須|
-|HTTPがHTTPSへリダイレクトされる|必須|
-|CloudFrontデフォルトドメインも必要に応じて動作|任意|
+This is acceptable for the MVP because deployments are infrequent, but full-scale operations should invalidate only changed files or use hashed filenames.
 
   
 
-24. Step 18：Search Console / Analytics / AdSense準備 Phase 3
+23. Step 17: Add a Custom Domain in Phase 3
 
-24.1 事前に必要なページ
+23.1 Adoption Timing
 
-AdSenseやSEO運用を考える場合、以下を用意する。
+Not required for MVP.
+
+Consider adoption at the following points.
+
+There are 10–20 articles
+
+An AdSense application is being considered
+
+You want better portfolio presentation
+
+You have decided to operate the site long term
+
+23.2 Services Used
 
 |   |   |
 |---|---|
-|ページ|必須度|
-|運営者情報|高|
-|問い合わせ|高|
-|プライバシーポリシー|高|
-|免責事項|高|
-|記事20本程度|推奨|
-|サイトマップ|推奨|
-|robots.txt|推奨|
+|Service|Purpose|
+|Route 53|DNS management|
+|ACM|SSL/TLS certificates|
+|CloudFront|Custom-domain delivery|
+
+23.3 ACM Certificate Creation Procedure
+
+Important: Create ACM certificates for CloudFront in us-east-1.
+
+1. Change the region in the upper-right corner of the AWS console to us-east-1
+
+2. Open ACM
+
+3. Select Request certificate
+
+4. Select Public certificate
+
+5. Enter the domain name
+
+   Example: example.com
+
+   Example: www.example.com
+
+6. Select DNS validation
+
+7. Request the certificate
+
+8. Create the validation CNAME in Route 53
+
+9. Wait until Status becomes Issued
+
+23.4 Configure the Custom Domain in CloudFront
+
+1. Open the CloudFront Distribution
+
+2. Select Edit or Add alternate domain name on the General tab
+
+3. Add the domain under Alternate domain name
+
+4. Select the ACM certificate under Custom SSL certificate
+
+5. Save
+
+23.5 Configure Route 53 Records
+
+1. Open the Route 53 Hosted Zone
+
+2. Select Create record
+
+3. Create an A record
+
+4. Enable Alias
+
+5. Select the CloudFront Distribution as Alias target
+
+6. Save
+
+23.6 Completion Criteria
+
+|   |   |
+|---|---|
+|Criterion|Requirement|
+|Custom domain accessible|Required|
+|HTTPS access works|Required|
+|HTTP redirects to HTTPS|Required|
+|Default CloudFront domain also works as needed|Optional|
+
+  
+
+24. Step 18: Prepare Search Console / Analytics / AdSense in Phase 3
+
+24.1 Prerequisite Pages
+
+Prepare the following when considering AdSense and SEO operations.
+
+|   |   |
+|---|---|
+|Page|Priority|
+|About the operator|High|
+|Contact|High|
+|Privacy policy|High|
+|Disclaimer|High|
+|Approximately 20 articles|Recommended|
+|Sitemap|Recommended|
+|robots.txt|Recommended|
 
 24.2 Google Search Console
 
-1. Google Search Consoleを開く
+1. Open Google Search Console
 
-2. プロパティを追加
+2. Add a property
 
-3. ドメインまたはURLプレフィックスを選択
+3. Select Domain or URL prefix
 
-4. 所有権確認を行う
+4. Verify ownership
 
-5. sitemap.xmlを送信
+5. Submit sitemap.xml
 
-6. インデックス状況を確認
+6. Check indexing status
 
 24.3 Google Analytics
 
-1. Google Analyticsでプロパティ作成
+1. Create a property in Google Analytics
 
-2. 測定IDを取得
+2. Obtain the measurement ID
 
-3. フロントエンドに設置
+3. Install it on the frontend
 
-4. プライバシーポリシーにアクセス解析利用を記載
+4. Disclose analytics usage in the privacy policy
 
 24.4 Google AdSense
 
-1. AdSenseにサイトを追加
+1. Add the site to AdSense
 
-2. 審査コードをサイトに設置
+2. Install the review code on the site
 
-3. プライバシーポリシーを確認
+3. Check the privacy policy
 
-4. 独自性のある記事を用意
+4. Prepare original articles
 
-5. 審査申請
+5. Apply for review
 
-24.5 注意点
+24.5 Notes
 
-広告やAnalyticsタグを入れる場合、CSPを設定しているなら許可先の見直しが必要。
+When adding advertising or Analytics tags, review allowed sources if CSP is configured.
 
   
 
-25. Step 19：Cognito導入 Phase 4
+25. Step 19: Add Cognito in Phase 4
 
-25.1 導入タイミング
+25.1 Adoption Timing
 
-CognitoはMVPでは導入しない。
+Do not introduce Cognito in the MVP.
 
-以下を実装する段階で導入する。
+Introduce it when implementing the following.
 
-ログイン
+Login
 
-マイページ
+My page
 
-学習履歴
+Learning history
 
-正答率
+Accuracy
 
-復習問題
+Review questions
 
-弱点分析
+Weak-area analysis
 
-有料機能
+Paid features
 
-25.2 構成
+25.2 Architecture
 
 Frontend
 
@@ -1684,215 +1684,215 @@ Lambda
 
 DynamoDB UserAnswersTable / UserProgressTable
 
-25.3 重要ルール
+25.3 Important Rules
 
-リクエストBodyのuserIdを信用しない。
+Do not trust userId in the request body.
 
-必ずCognito JWTのsubをuserIdとして使う。
+Always use Cognito JWT sub as userId.
 
-25.4 導入手順概要
+25.4 Setup Overview
 
-1. Cognito User Pool作成
+1. Create a Cognito User Pool
 
-2. App client作成
+2. Create an App client
 
-3. メールログイン設定
+3. Configure email login
 
-4. フロントエンドにAmplifyまたはCognito SDK導入
+4. Add Amplify or the Cognito SDK to the frontend
 
-5. API GatewayにJWT Authorizer設定
+5. Configure a JWT Authorizer in API Gateway
 
-6. 認証付きAPIを追加
+6. Add authenticated APIs
 
-7. UserProfileTable作成
+7. Create UserProfileTable
 
-8. UserAnswersTable作成
+8. Create UserAnswersTable
 
-9. UserProgressTable作成
+9. Create UserProgressTable
 
-詳細はPhase 4で別途作成する。
+Create detailed documentation separately in Phase 4.
 
   
 
-26. Step 20：不要リソース確認
+26. Step 20: Check for Unnecessary Resources
 
-26.1 確認対象
+26.1 Inspection Targets
 
-MVP構築後、以下が作成されていないか確認する。
+After building the MVP, check that the following have not been created.
 
 |   |   |
 |---|---|
-|リソース|状態|
-|EC2|作成されていないこと|
-|RDS|作成されていないこと|
-|NAT Gateway|作成されていないこと|
-|ALB|作成されていないこと|
-|Elastic IP|作成されていないこと|
-|EBS Volume|不要なものがないこと|
-|OpenSearch|作成されていないこと|
-|SageMaker|作成されていないこと|
-|WAF|MVPでは作成されていないこと|
+|Resource|State|
+|EC2|Must not exist|
+|RDS|Must not exist|
+|NAT Gateway|Must not exist|
+|ALB|Must not exist|
+|Elastic IP|Must not exist|
+|EBS Volume|No unnecessary volumes|
+|OpenSearch|Must not exist|
+|SageMaker|Must not exist|
+|WAF|Must not exist in MVP|
 
-26.2 全リージョン確認
+26.2 Check All Regions
 
-AWSコンソールでは、リージョンごとにリソースが分かれる。
+Resources in the AWS console are separated by region.
 
-以下を確認する。
+Check the following.
 
 ap-northeast-1
 
 us-east-1
 
-その他、誤って触ったリージョン
+Any other region accidentally used
 
-26.3 請求確認
+26.3 Billing Check
 
-1. Billing Dashboardを開く
+1. Open Billing Dashboard
 
-2. 当月利用額を確認
+2. Check current-month usage charges
 
-3. Cost Explorerでサービス別費用を確認
+3. Check per-service costs in Cost Explorer
 
-4. 想定外のサービスがないか確認
-
-  
-
-5. 動作確認チェックリスト
-
-27.1 静的サイト
-
-|   |   |
-|---|---|
-|チェック|期待結果|
-|CloudFront URLでトップページ表示|成功|
-|/termsが表示される|成功|
-|/questionsが表示される|成功|
-|/contactが表示される|成功|
-|CSSが適用される|成功|
-|画像が表示される|成功|
-|HTTPがHTTPSへリダイレクトされる|成功|
-|S3直接URLが拒否される|成功|
-
-27.2 問い合わせAPI
-
-|   |   |
-|---|---|
-|チェック|期待結果|
-|正常フォーム送信|201|
-|DynamoDBに保存|成功|
-|CloudWatch Logs出力|成功|
-|email不正|400|
-|message空|400|
-|honeypot入力|保存せず成功扱い|
-|許可外Origin|CORSエラー|
-
-27.3 コスト・セキュリティ
-
-|   |   |
-|---|---|
-|チェック|期待結果|
-|AWS Budgets設定済み|成功|
-|CloudWatch Logs保存期間設定済み|成功|
-|Lambda Roleが最小権限|成功|
-|GitHubに.envがない|成功|
-|不要リソースなし|成功|
+4. Check for unexpected services
 
   
 
-28. トラブルシューティング
+5. Functional Verification Checklist
 
-28.1 CloudFrontでAccess Denied
-
-|   |   |
-|---|---|
-|原因|対応|
-|S3 Bucket Policy未設定|CloudFront Distribution ARNを許可する|
-|OAC未設定|CloudFront Origin設定を確認|
-|Distribution ID誤り|Bucket PolicyのSourceArnを確認|
-|ファイル未アップロード|S3内のindex.htmlを確認|
-
-28.2 CSSやJSが読み込まれない
+27.1 Static Site
 
 |   |   |
 |---|---|
-|原因|対応|
-|assets未アップロード|S3 sync対象を確認|
-|パス設定ミス|Next.jsの出力設定を確認|
-|CloudFrontキャッシュ|Invalidation実行|
+|Check|Expected result|
+|Home page displays at CloudFront URL|Success|
+|/terms displays|Success|
+|/questions displays|Success|
+|/contact displays|Success|
+|CSS applied|Success|
+|Images displayed|Success|
+|HTTP redirects to HTTPS|Success|
+|Direct S3 URL denied|Success|
 
-28.3 問い合わせAPIがCORSエラー
-
-|   |   |
-|---|---|
-|原因|対応|
-|Origin未許可|API Gateway CORSにCloudFront URLを追加|
-|OPTIONS未対応|API Gateway CORS設定を確認|
-|Lambda側ヘッダー不足|Access-Control-Allow-Originを確認|
-
-28.4 LambdaがDynamoDBに保存できない
+27.2 Contact API
 
 |   |   |
 |---|---|
-|原因|対応|
-|IAM権限不足|dynamodb:PutItemを確認|
-|テーブル名誤り|環境変数CONTACTS_TABLE_NAMEを確認|
-|リージョン違い|LambdaとDynamoDBのリージョンを確認|
-|JSON不正|Lambdaログを確認|
+|Check|Expected result|
+|Valid form submission|201|
+|Stored in DynamoDB|Success|
+|CloudWatch Logs output|Success|
+|Invalid email|400|
+|Empty message|400|
+|Honeypot input|Success without storage|
+|Unauthorized origin|CORS error|
 
-28.5 AWS料金が発生している
+27.3 Cost and Security
 
 |   |   |
 |---|---|
-|原因|対応|
-|不要リソース作成|Cost Explorerで特定して削除|
-|CloudWatch Logs肥大化|保存期間設定|
-|API大量アクセス|API Gatewayメトリクス確認|
-|NAT Gateway誤作成|即削除|
-|RDS誤作成|即削除|
+|Check|Expected result|
+|AWS Budgets configured|Success|
+|CloudWatch Logs retention configured|Success|
+|Lambda Role follows least privilege|Success|
+|No .env in GitHub|Success|
+|No unnecessary resources|Success|
 
   
 
-29. 削除手順
+28. Troubleshooting
 
-29.1 一時停止・削除したい場合
+28.1 Access Denied in CloudFront
 
-課金を止めたい場合は、以下を削除する。
+|   |   |
+|---|---|
+|Cause|Response|
+|S3 Bucket Policy missing|Allow the CloudFront Distribution ARN|
+|OAC not configured|Check CloudFront Origin configuration|
+|Incorrect Distribution ID|Check SourceArn in Bucket Policy|
+|Files not uploaded|Check index.html in S3|
 
-1. CloudFront DistributionをDisable
+28.2 CSS or JS Does Not Load
 
-2. CloudFront DistributionをDelete
+|   |   |
+|---|---|
+|Cause|Response|
+|Assets not uploaded|Check S3 sync targets|
+|Incorrect path configuration|Check Next.js output settings|
+|CloudFront cache|Run Invalidation|
 
-3. S3バケット内オブジェクト削除
+28.3 CORS Error in the Contact API
 
-4. S3バケット削除
+|   |   |
+|---|---|
+|Cause|Response|
+|Origin not allowed|Add CloudFront URL to API Gateway CORS|
+|OPTIONS not handled|Check API Gateway CORS configuration|
+|Lambda headers missing|Check Access-Control-Allow-Origin|
 
-5. API Gateway削除
+28.4 Lambda Cannot Save to DynamoDB
 
-6. Lambda削除
+|   |   |
+|---|---|
+|Cause|Response|
+|Insufficient IAM permissions|Check dynamodb:PutItem|
+|Incorrect table name|Check CONTACTS_TABLE_NAME environment variable|
+|Region mismatch|Check Lambda and DynamoDB regions|
+|Invalid JSON|Check Lambda logs|
 
-7. DynamoDB ContactsTable削除
+28.5 AWS Charges Are Accruing
 
-8. CloudWatch Logs削除
-
-9. IAM Role削除
-
-10. Route 53 Hosted Zone削除 任意
-
-11. ACM証明書削除 任意
-
-29.2 注意点
-
-CloudFrontはDisable後、削除可能になるまで時間がかかる。
-
-S3バケットは中身が空でないと削除できない。
-
-Route 53 Hosted Zoneやドメイン登録は削除・更新タイミングに注意する。
+|   |   |
+|---|---|
+|Cause|Response|
+|Unnecessary resources created|Identify with Cost Explorer and delete|
+|CloudWatch Logs accumulation|Configure retention|
+|Excessive API access|Check API Gateway metrics|
+|Accidentally created NAT Gateway|Delete immediately|
+|Accidentally created RDS|Delete immediately|
 
   
 
-30. READMEに記載するインフラ概要
+29. Deletion Procedure
 
-GitHub READMEには以下を記載する。
+29.1 When Pausing or Deleting the Infrastructure
+
+Delete the following to stop charges.
+
+1. Disable the CloudFront Distribution
+
+2. Delete the CloudFront Distribution
+
+3. Delete objects in the S3 bucket
+
+4. Delete the S3 bucket
+
+5. Delete API Gateway
+
+6. Delete Lambda
+
+7. Delete DynamoDB ContactsTable
+
+8. Delete CloudWatch Logs
+
+9. Delete the IAM Role
+
+10. Delete the Route 53 Hosted Zone (optional)
+
+11. Delete the ACM certificate (optional)
+
+29.2 Notes
+
+After disabling CloudFront, it takes time before deletion becomes possible.
+
+An S3 bucket cannot be deleted until empty.
+
+Pay attention to deletion and renewal timing for Route 53 Hosted Zones and domain registrations.
+
+  
+
+30. Infrastructure Overview for README
+
+Include the following in the GitHub README.
 
 ## AWS Architecture
 
@@ -1922,80 +1922,80 @@ This project uses a serverless architecture on AWS.
 
 The project avoids always-on resources such as EC2, RDS, NAT Gateway, and ALB in the MVP phase to minimize cost.
 
-日本語では以下。
+English translation of the original Japanese alternative:
 
-## AWS構成
-
-  
-
-本プロジェクトは、AWSのサーバーレス構成で構築しています。
+## AWS Architecture
 
   
 
-- Amazon S3：静的ファイル配置
-
-- Amazon CloudFront：CDN配信・HTTPS配信
-
-- Origin Access Control：S3直接公開の防止
-
-- Amazon API Gateway：問い合わせAPIの公開
-
-- AWS Lambda：問い合わせ保存処理
-
-- Amazon DynamoDB：問い合わせデータ保存
-
-- Amazon CloudWatch Logs：Lambdaログ確認
-
-- AWS Budgets：課金監視
+This project is built using a serverless AWS architecture.
 
   
 
-MVPでは、EC2、RDS、NAT Gateway、ALBなどの常時課金が発生しやすいサービスは使用せず、低コスト運用を重視しています。
+- Amazon S3: static-file hosting
+
+- Amazon CloudFront: CDN delivery and HTTPS
+
+- Origin Access Control: prevention of direct S3 exposure
+
+- Amazon API Gateway: expose the contact API
+
+- AWS Lambda: save contact submissions
+
+- Amazon DynamoDB: store contact data
+
+- Amazon CloudWatch Logs: inspect Lambda logs
+
+- AWS Budgets: billing monitoring
 
   
 
-31. 構築完了の定義
+The MVP prioritizes low-cost operations without services likely to incur ongoing charges, such as EC2, RDS, NAT Gateway, or ALB.
 
-MVPインフラは、以下を満たしたら完了とする。
+  
+
+31. Definition of Setup Completion
+
+MVP infrastructure is complete when the following conditions are met.
 
 |   |   |
 |---|---|
-|ID|完了条件|
-|INF-001|AWS Budgetsが設定されている|
-|INF-002|S3バケットが作成され、Public Access Blockが有効である|
-|INF-003|CloudFront Distributionが作成されている|
-|INF-004|OACでCloudFrontからのみS3へアクセスできる|
-|INF-005|CloudFront URLでサイトが表示される|
-|INF-006|S3直接URLではアクセスできない|
-|INF-007|DynamoDB ContactsTableProdが作成されている|
-|INF-008|Lambda contact-submit-prodが作成されている|
-|INF-009|Lambda実行ロールが最小権限である|
-|INF-010|API Gateway POST /contactが作成されている|
-|INF-011|問い合わせフォームからDynamoDBへ保存できる|
-|INF-012|CloudWatch LogsでLambdaログを確認できる|
-|INF-013|CloudWatch Logs保存期間が設定されている|
-|INF-014|GitHubに秘密情報が含まれていない|
-|INF-015|EC2、RDS、NAT Gateway、ALBを使用していない|
+|ID|Completion criterion|
+|INF-001|AWS Budgets configured|
+|INF-002|S3 bucket created with Public Access Block enabled|
+|INF-003|CloudFront Distribution created|
+|INF-004|OAC allows S3 access only from CloudFront|
+|INF-005|Site displays at CloudFront URL|
+|INF-006|Direct S3 URL inaccessible|
+|INF-007|DynamoDB ContactsTableProd created|
+|INF-008|Lambda contact-submit-prod created|
+|INF-009|Lambda execution role follows least privilege|
+|INF-010|API Gateway POST /contact created|
+|INF-011|Contact form can save to DynamoDB|
+|INF-012|Lambda logs visible in CloudWatch Logs|
+|INF-013|CloudWatch Logs retention configured|
+|INF-014|No secrets in GitHub|
+|INF-015|No EC2, RDS, NAT Gateway, or ALB used|
 
   
 
-32. 次に作成するドキュメント
+32. Documents to Create Next
 
-本手順書の次に、以下を作成する。
+Create the following after this guide.
 
-1. Lambda実装設計書
-2. CI/CD設計書
-3. 運用監視設計書
-4. 開発タスク一覧
-5. GitHub README草案
-6. MVP実装スケジュール
-7. 初期コンテンツ作成テンプレート
+1. Lambda implementation design
+2. CI/CD design
+3. Operations and monitoring design
+4. Development task list
+5. GitHub README draft
+6. MVP implementation schedule
+7. Initial-content creation template
 
   
 
-8. 結論
+8. Conclusion
 
-本インフラ構築手順では、MVPを以下の構成で構築する。
+This infrastructure guide builds the MVP with the following architecture.
 
 S3 + CloudFront + OAC
 
@@ -2003,19 +2003,19 @@ API Gateway + Lambda + DynamoDB
 
 CloudWatch Logs
 
-IAM最小権限
+IAM least privilege
 
 AWS Budgets
 
-この構成により、以下を実現する。
+This architecture provides the following.
 
-- AWS上で公開されたポートフォリオを作れる
-- EC2やRDSを使わず、固定費を抑えられる
-- S3を直接公開せず、CloudFront経由で安全に配信できる
-- 問い合わせAPIでサーバーレス実装経験を示せる
-- DynamoDB、Lambda、API Gateway、CloudWatch、IAMを実践できる
-- AWS Budgetsで課金事故を防げる
+- A portfolio published on AWS
+- Reduced fixed costs without EC2 or RDS
+- Secure delivery through CloudFront without direct S3 exposure
+- Demonstration of serverless implementation experience through the contact API
+- Practical use of DynamoDB, Lambda, API Gateway, CloudWatch, and IAM
+- Prevention of unexpected charges through AWS Budgets
 
-最初に作るべき範囲は、静的サイト公開と問い合わせAPIまでで十分である。
+Static-site publication and the contact API are sufficient for the initial implementation scope.
 
-Cognito、SES、EventBridge、独自ドメイン、AdSense対応は、MVP公開後に段階的に追加する。
+Add Cognito, SES, EventBridge, a custom domain, and AdSense support gradually after publishing the MVP.

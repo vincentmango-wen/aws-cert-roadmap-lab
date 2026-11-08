@@ -184,7 +184,7 @@ export const zhDictionary: UiDictionary = {
     noNextQuestion: "沒有下一題",
     examDumpDisclaimer: "本網站所有題目皆為原創，並非實際考試題目（試題傾印）。",
     difficultyLabel: "難度",
-    // 網域名稱引用自 AWS 官方繁體中文考試指南
+    // Domain names follow the official AWS Traditional Chinese exam guides
     //（AWS Certified Cloud Practitioner CLF-C02 /
     //  AWS Certified Solutions Architect - Associate SAA-C03）。
     categoryLabels: {

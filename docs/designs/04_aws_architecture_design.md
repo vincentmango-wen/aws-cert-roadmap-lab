@@ -1,172 +1,172 @@
-# AWS資格学習サイト AWS構成図設計書
+# AWS Certification Learning Site: AWS Architecture Design
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 文書名 | AWS資格学習サイト AWS構成図設計書 |
-| 対象プロダクト | AWS資格ロードマップラボ |
-| 対象フェーズ | MVP開発 〜 SAA対策機能拡張 〜 収益化準備 〜 学習アプリ化 |
-| 目的 | AWS上で低コスト・高可用・拡張可能な学習サイトを構築するためのクラウド構成を定義する |
-| 想定利用者 | 開発者本人、採用担当者、面接官、将来の保守担当者 |
+| Document name | AWS Certification Learning Site: AWS Architecture Design |
+| Target product | AWS Cert Roadmap Lab |
+| Target phases | MVP development through SAA preparation feature expansion, monetization preparation, and transition to a learning application |
+| Purpose | Define the cloud architecture for a low-cost, highly available, extensible learning site on AWS |
+| Intended users | The developer, recruiters, interviewers, and future maintainers |
 
 ---
 
-## 2. 本設計書の目的
+## 2. Purpose of This Document
 
-本設計書では、AWS資格学習サイト「AWS資格ロードマップラボ」をAWS上で構築するためのアーキテクチャを定義する。
+This document defines the architecture for building the AWS certification learning site, AWS Cert Roadmap Lab, on AWS.
 
-本プロダクトの主目的は、以下である。
+The main objectives of this product are as follows.
 
-1. AWS Cloud Practitioner / SAA の学習サイトを公開する
-2. AWSサーバーレス構成を実践し、ポートフォリオとして提示できる状態にする
-3. 運用コストを可能な限りゼロに近づける
-4. 将来的にログイン、学習履歴、弱点分析、広告収益化、有料教材販売へ拡張できる構成にする
+1. Publish a learning site for AWS Cloud Practitioner / SAA
+2. Put an AWS serverless architecture into practice and make it presentable as a portfolio
+3. Keep operating costs as close to zero as possible
+4. Enable future extensions for login, learning history, weakness analysis, advertising revenue, and paid learning-material sales
 
-本設計書では、MVP段階の最小構成と、将来拡張時の構成を分けて定義する。
+This document defines the minimum MVP architecture separately from the architecture for future expansion.
 
 ---
 
-## 3. アーキテクチャ基本方針
+## 3. Basic Architecture Policy
 
-## 3.1 基本方針
+## 3.1 Basic Policy
 
-| 方針 | 内容 |
+| Policy | Details |
 |---|---|
-| サーバーレス優先 | EC2常時起動を避け、S3、CloudFront、Lambda、API Gateway、DynamoDBを中心に構成する |
-| 低コスト運用 | 無料枠・従量課金サービスを活用し、アクセスが少ない段階では実質ゼロ円に近い運用を目指す |
-| 静的コンテンツ優先 | 用語集、記事、比較ページ、構成図は静的生成を基本とする |
-| APIは必要最小限 | MVPでは問い合わせフォームなど、必要な箇所のみAPI化する |
-| セキュリティ重視 | S3は直接公開せず、CloudFront経由で配信する。IAMは最小権限にする |
-| 拡張可能性確保 | 将来的にCognito、EventBridge、SES、学習履歴機能を追加できる構成にする |
-| ポートフォリオ性重視 | AWSサービスの選定理由、構成図、コスト設計、セキュリティ設計を説明できるようにする |
+| Serverless first | Avoid always-on EC2 and build primarily with S3, CloudFront, Lambda, API Gateway, and DynamoDB |
+| Low-cost operation | Use Free Tier and pay-as-you-go services, aiming for effectively near-zero costs while traffic is low |
+| Static content first | Use static generation as the default for the glossary, articles, comparison pages, and architecture diagrams |
+| Minimum necessary APIs | In the MVP, create APIs only where needed, such as the contact form |
+| Security focus | Do not expose S3 directly; serve through CloudFront. Use least-privilege IAM permissions |
+| Extensibility | Allow future additions of Cognito, EventBridge, SES, and learning-history functionality |
+| Portfolio value | Make service-selection rationale, architecture diagrams, cost design, and security design explainable |
 
 ---
 
-## 4. 全体構成の段階定義
+## 4. Architecture Stages
 
-本プロダクトでは、AWS構成を以下の4段階で拡張する。
+Expand the AWS architecture in the following four stages.
 
-| Phase | 構成名 | 目的 | 主なAWSサービス |
+| Phase | Architecture name | Objective | Main AWS services |
 |---|---|---|---|
-| Phase 1 | 静的サイト公開構成 | まずサイトをAWS上に公開する | S3, CloudFront, IAM, AWS Budgets |
-| Phase 2 | サーバーレスAPI構成 | 問い合わせ・問題取得などのAPIを追加する | API Gateway, Lambda, DynamoDB, CloudWatch |
-| Phase 3 | SEO・収益化構成 | 独自ドメイン、HTTPS、アクセス解析、広告対応を行う | Route 53, ACM, CloudFront, S3 |
-| Phase 4 | 学習アプリ構成 | ログイン、学習履歴、弱点分析、通知を追加する | Cognito, DynamoDB, EventBridge, SES, Lambda |
+| Phase 1 | Static site publishing architecture | First publish the site on AWS | S3, CloudFront, IAM, AWS Budgets |
+| Phase 2 | Serverless API architecture | Add APIs for contact submissions, question retrieval, etc. | API Gateway, Lambda, DynamoDB, CloudWatch |
+| Phase 3 | SEO and monetization architecture | Support a custom domain, HTTPS, analytics, and advertising | Route 53, ACM, CloudFront, S3 |
+| Phase 4 | Learning application architecture | Add login, learning history, weakness analysis, and notifications | Cognito, DynamoDB, EventBridge, SES, Lambda |
 
 ---
 
-## 5. Phase 1：静的サイト公開構成
+## 5. Phase 1: Static Site Publishing Architecture
 
-## 5.1 構成概要
+## 5.1 Architecture Overview
 
-Phase 1では、AWS上に最小コストでWebサイトを公開する。
+In Phase 1, publish the website on AWS at minimum cost.
 
-対象コンテンツは以下である。
+The content includes the following.
 
-- トップページ
-- AWS用語集
-- サービス比較ページ
-- 模擬問題ページ
-- 構成図ページ
-- ブログ記事
-- 運営者情報
-- プライバシーポリシー
-- 免責事項
+- Home page
+- AWS glossary
+- Service comparison pages
+- Practice-question pages
+- Architecture diagram pages
+- Blog articles
+- Site operator information
+- Privacy policy
+- Disclaimer
 
-コンテンツはNext.jsの静的出力、またはAstroなどの静的サイトジェネレーターで生成し、S3に配置する。
+Generate content using Next.js static export or a static site generator such as Astro, and place it in S3.
 
 ---
 
-## 5.2 構成図
+## 5.2 Architecture Diagram
 
 ```mermaid
 flowchart TD
-    User[ユーザー]
+    User[User]
     CF[Amazon CloudFront]
-    S3[(Amazon S3<br/>静的ファイル)]
+    S3[(Amazon S3<br/>Static files)]
     OAC[Origin Access Control]
-    Budget[AWS Budgets<br/>課金アラート]
+    Budget[AWS Budgets<br/>Billing alerts]
 
-    User -->|HTTPSアクセス| CF
-    CF -->|OAC経由で取得| S3
+    User -->|HTTPS access| CF
+    CF -->|Fetch through OAC| S3
     OAC -.-> S3
-    Budget -.->|課金監視| CF
-    Budget -.->|課金監視| S3
+    Budget -.->|Billing monitoring| CF
+    Budget -.->|Billing monitoring| S3
 ```
 
 ---
 
-## 5.3 サービス構成
+## 5.3 Service Configuration
 
-| AWSサービス | 用途 | 選定理由 |
+| AWS service | Purpose | Reason for selection |
 |---|---|---|
-| Amazon S3 | 静的ファイル配置 | HTML、CSS、JavaScript、画像、構成図を低コストで保存できる |
-| Amazon CloudFront | CDN配信 | HTTPS配信、キャッシュ、高速表示、S3の直接公開防止ができる |
-| Origin Access Control | CloudFrontからS3への安全なアクセス | S3バケットを非公開にし、CloudFront経由のみ許可できる |
-| IAM | 権限管理 | S3更新、CloudFront操作、デプロイ権限を最小化する |
-| AWS Budgets | 課金監視 | 想定外の課金を早期検知する |
+| Amazon S3 | Store static files | Low-cost storage for HTML, CSS, JavaScript, images, and architecture diagrams |
+| Amazon CloudFront | CDN delivery | Provides HTTPS, caching, fast rendering, and prevention of direct public S3 access |
+| Origin Access Control | Secure CloudFront access to S3 | Keeps the S3 bucket private and permits access only through CloudFront |
+| IAM | Permission management | Minimize permissions for S3 updates, CloudFront operations, and deployment |
+| AWS Budgets | Billing monitoring | Detect unexpected charges early |
 
 ---
 
-## 5.4 処理フロー
+## 5.4 Processing Flow
 
 ```text
-1. ユーザーがブラウザでサイトURLにアクセスする
-2. CloudFrontがリクエストを受け取る
-3. CloudFrontキャッシュにファイルがあれば、そのまま返却する
-4. キャッシュがなければ、CloudFrontがS3からファイルを取得する
-5. S3はCloudFrontからのアクセスのみ許可する
-6. ユーザーにHTML、CSS、JavaScript、画像を返却する
+1. The user accesses the site URL in a browser
+2. CloudFront receives the request
+3. If the file is in the CloudFront cache, return it directly
+4. Otherwise, CloudFront retrieves the file from S3
+5. S3 permits access only from CloudFront
+6. Return HTML, CSS, JavaScript, and images to the user
 ```
 
 ---
 
-## 5.5 この構成で実現できること
+## 5.5 What This Architecture Enables
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 低コスト公開 | EC2を使わず、静的サイトとして低コスト公開できる |
-| 高速配信 | CloudFrontのキャッシュにより表示速度を高められる |
-| セキュリティ | S3を直接公開せず、CloudFront経由に限定できる |
-| SEO対応 | 静的HTMLとして配信しやすく、SEOに向いている |
-| ポートフォリオ性 | S3、CloudFront、IAM、OACの理解を示せる |
+| Low-cost publishing | Publish a static site inexpensively without EC2 |
+| Fast delivery | Improve rendering speed with CloudFront caching |
+| Security | Restrict access to CloudFront rather than exposing S3 directly |
+| SEO support | Static HTML delivery is straightforward and suitable for SEO |
+| Portfolio value | Demonstrate understanding of S3, CloudFront, IAM, and OAC |
 
 ---
 
-## 5.6 Phase 1の注意点
+## 5.6 Phase 1 Considerations
 
-| 注意点 | 内容 |
+| Consideration | Details |
 |---|---|
-| 動的処理はできない | 問い合わせ保存、ユーザー別学習履歴などは未対応 |
-| 管理画面はない | 記事・問題はMarkdownやJSONを更新して再デプロイする |
-| ログインはない | 全ユーザーが同じコンテンツを見る構成 |
-| CloudFrontキャッシュ | 更新後すぐ反映したい場合はキャッシュ無効化が必要 |
+| No dynamic processing | Saving contact submissions and per-user learning history are not yet supported |
+| No administration interface | Update Markdown or JSON articles/questions and redeploy |
+| No login | All users see the same content |
+| CloudFront cache | Cache invalidation is needed for updates to appear immediately |
 
 ---
 
-## 6. Phase 2：サーバーレスAPI構成
+## 6. Phase 2: Serverless API Architecture
 
-## 6.1 構成概要
+## 6.1 Architecture Overview
 
-Phase 2では、静的サイトにAPI機能を追加する。
+In Phase 2, add API functionality to the static site.
 
-MVPでAPI化する対象は以下である。
+MVP API candidates are as follows.
 
-- 問い合わせフォーム送信
-- 模擬問題データ取得
-- AWS用語データ取得
-- 将来的な正誤記録の土台
+- Contact form submission
+- Practice-question data retrieval
+- AWS terminology data retrieval
+- A foundation for future correctness records
 
-ただし、初期段階ではすべてをAPI化する必要はない。問い合わせフォームのみAPI化し、用語・問題・記事は静的JSON/Markdown管理でもよい。
+However, not everything needs an API initially. Only the contact form may use an API, while terminology, questions, and articles remain in static JSON/Markdown.
 
 ---
 
-## 6.2 構成図
+## 6.2 Architecture Diagram
 
 ```mermaid
 flowchart TD
-    User[ユーザー]
+    User[User]
     CF[Amazon CloudFront]
     S3[(Amazon S3<br/>Frontend)]
     APIGW[Amazon API Gateway<br/>HTTP API]
@@ -177,121 +177,121 @@ flowchart TD
     Budget[AWS Budgets]
 
     User -->|HTTPS| CF
-    CF -->|静的ファイル取得| S3
-    User -->|APIリクエスト| APIGW
+    CF -->|Fetch static files| S3
+    User -->|API request| APIGW
     APIGW -->|Lambda Invoke| Lambda
     Lambda -->|Read / Write| DDB
-    Lambda -->|ログ出力| CW
-    IAM -.->|実行権限| Lambda
-    IAM -.->|DBアクセス制御| DDB
-    Budget -.->|課金監視| APIGW
-    Budget -.->|課金監視| Lambda
-    Budget -.->|課金監視| DDB
+    Lambda -->|Log output| CW
+    IAM -.->|Execution permissions| Lambda
+    IAM -.->|DB access control| DDB
+    Budget -.->|Billing monitoring| APIGW
+    Budget -.->|Billing monitoring| Lambda
+    Budget -.->|Billing monitoring| DDB
 ```
 
 ---
 
-## 6.3 サービス構成
+## 6.3 Service Configuration
 
-| AWSサービス | 用途 | 選定理由 |
+| AWS service | Purpose | Reason for selection |
 |---|---|---|
-| API Gateway | フロントエンドからAPIを呼び出す入口 | HTTP APIとして低コスト・シンプルにAPI公開できる |
-| Lambda | 問い合わせ送信、データ取得処理 | 必要な時だけ実行されるため、常時起動コストが不要 |
-| DynamoDB | 問い合わせ、問題、用語データ保存 | サーバーレスと相性が良く、小規模運用で低コストにしやすい |
-| CloudWatch Logs | Lambdaログ確認 | エラー調査・運用監視に必要 |
-| IAM Role | Lambda実行権限管理 | 最小権限を実装できる |
+| API Gateway | Entry point for frontend API calls | Expose a simple, low-cost HTTP API |
+| Lambda | Contact submission and data retrieval | Executes only when needed, avoiding always-on costs |
+| DynamoDB | Store contact, question, and terminology data | Works well with serverless architectures and supports low-cost small-scale operation |
+| CloudWatch Logs | Inspect Lambda logs | Required for error investigation and operational monitoring |
+| IAM Role | Manage Lambda execution permissions | Implement least privilege |
 
 ---
 
-## 6.4 API処理フロー：問い合わせ送信
+## 6.4 API Processing Flow: Contact Submission
 
 ```mermaid
 sequenceDiagram
-    participant U as ユーザー
+    participant U as User
     participant FE as Frontend
     participant API as API Gateway
     participant L as Lambda
     participant DB as DynamoDB
     participant CW as CloudWatch Logs
 
-    U->>FE: 問い合わせフォーム入力
-    FE->>FE: 入力チェック
+    U->>FE: Fill in the contact form
+    FE->>FE: Validate input
     FE->>API: POST /contact
-    API->>L: Lambda呼び出し
-    L->>L: バリデーション
-    L->>DB: 問い合わせデータ保存
-    L->>CW: ログ出力
-    L-->>API: 成功レスポンス
+    API->>L: Invoke Lambda
+    L->>L: Validate
+    L->>DB: Save contact data
+    L->>CW: Write logs
+    L-->>API: Success response
     API-->>FE: 200 OK
-    FE-->>U: 送信完了メッセージ表示
+    FE-->>U: Display submission confirmation
 ```
 
 ---
 
-## 6.5 API処理フロー：模擬問題取得
+## 6.5 API Processing Flow: Practice-Question Retrieval
 
 ```mermaid
 sequenceDiagram
-    participant U as ユーザー
+    participant U as User
     participant FE as Frontend
     participant API as API Gateway
     participant L as Lambda
     participant DB as DynamoDB
 
-    U->>FE: 模擬問題ページを開く
+    U->>FE: Open the practice-question page
     FE->>API: GET /questions/clf
-    API->>L: Lambda呼び出し
-    L->>DB: QuestionsTableから取得
-    DB-->>L: 問題データ返却
-    L-->>API: JSONレスポンス
-    API-->>FE: 問題一覧返却
-    FE-->>U: 問題一覧表示
+    API->>L: Invoke Lambda
+    L->>DB: Retrieve from QuestionsTable
+    DB-->>L: Return question data
+    L-->>API: JSON response
+    API-->>FE: Return question list
+    FE-->>U: Display question list
 ```
 
 ---
 
-## 6.6 API設計概要
+## 6.6 API Design Overview
 
-| メソッド | パス | 用途 | MVP |
+| Method | Path | Purpose | MVP |
 |---|---|---|---|
-| POST | /contact | 問い合わせ送信 | 対象 |
-| GET | /terms | 用語一覧取得 | 任意 |
-| GET | /terms/{termId} | 用語詳細取得 | 任意 |
-| GET | /questions/clf | CLF問題一覧取得 | 任意 |
-| GET | /questions/{questionId} | 問題詳細取得 | 任意 |
-| GET | /architectures | 構成図一覧取得 | 将来 |
-| POST | /answers | 回答履歴保存 | 将来 |
+| POST | /contact | Submit a contact inquiry | In scope |
+| GET | /terms | Retrieve terminology list | Optional |
+| GET | /terms/{termId} | Retrieve terminology detail | Optional |
+| GET | /questions/clf | Retrieve CLF question list | Optional |
+| GET | /questions/{questionId} | Retrieve question detail | Optional |
+| GET | /architectures | Retrieve architecture diagram list | Future |
+| POST | /answers | Save answer history | Future |
 
 ---
 
-## 6.7 Phase 2で実現できること
+## 6.7 What Phase 2 Enables
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 問い合わせ保存 | ユーザーからの問い合わせをDynamoDBに保存できる |
-| API実装経験 | API Gateway + Lambda + DynamoDBの実装経験を示せる |
-| 運用監視 | CloudWatch Logsでエラー確認できる |
-| 拡張性 | 将来の学習履歴保存やユーザー別機能に拡張しやすい |
-| SAA対策 | サーバーレスAPI構成を自分の作品で説明できる |
+| Contact persistence | Save user contact submissions in DynamoDB |
+| API implementation experience | Demonstrate API Gateway + Lambda + DynamoDB implementation experience |
+| Operational monitoring | Inspect errors in CloudWatch Logs |
+| Extensibility | Easily extend to saved learning history and per-user features |
+| SAA preparation | Explain a serverless API architecture through a personal project |
 
 ---
 
-## 7. Phase 3：独自ドメイン・収益化準備構成
+## 7. Phase 3: Custom Domain and Monetization Preparation Architecture
 
-## 7.1 構成概要
+## 7.1 Architecture Overview
 
-Phase 3では、SEO・広告収益化・信頼性向上のため、独自ドメイン、HTTPS、Google Search Console、Google Analytics、AdSense導入を想定した構成にする。
+In Phase 3, plan for a custom domain, HTTPS, Google Search Console, Google Analytics, and AdSense to support SEO, advertising revenue, and greater credibility.
 
-AWS側では、Route 53とACMを利用する。
+On AWS, use Route 53 and ACM.
 
 ---
 
-## 7.2 構成図
+## 7.2 Architecture Diagram
 
 ```mermaid
 flowchart TD
-    User[ユーザー]
-    Domain[独自ドメイン]
+    User[User]
+    Domain[Custom domain]
     R53[Amazon Route 53]
     ACM[AWS Certificate Manager]
     CF[Amazon CloudFront]
@@ -306,82 +306,82 @@ flowchart TD
     User -->|https://example.com| Domain
     Domain --> R53
     R53 --> CF
-    ACM -.->|SSL/TLS証明書| CF
+    ACM -.->|SSL/TLS certificate| CF
     CF --> S3
-    User -->|API通信| APIGW
+    User -->|API communication| APIGW
     APIGW --> Lambda
     Lambda --> DDB
-    User -.->|アクセス解析| GA
-    GSC -.->|検索管理| Domain
-    Ads -.->|広告表示| User
+    User -.->|Traffic analytics| GA
+    GSC -.->|Search management| Domain
+    Ads -.->|Ad display| User
 ```
 
 ---
 
-## 7.3 サービス構成
+## 7.3 Service Configuration
 
-| サービス | 用途 | 補足 |
+| Service | Purpose | Notes |
 |---|---|---|
-| Route 53 | 独自ドメインのDNS管理 | 独自ドメイン利用時に設定 |
-| ACM | HTTPS証明書発行 | CloudFrontで使う場合、基本的にus-east-1で発行する |
-| CloudFront | HTTPS配信 | 独自ドメインと証明書を紐付ける |
-| Google Search Console | 検索パフォーマンス確認 | AWS外部サービス |
-| Google Analytics | アクセス解析 | AWS外部サービス |
-| Google AdSense | 広告収益化 | AWS外部サービス |
+| Route 53 | Custom-domain DNS management | Configure when using a custom domain |
+| ACM | Issue HTTPS certificates | Generally issue in us-east-1 when used with CloudFront |
+| CloudFront | HTTPS delivery | Associate the custom domain and certificate |
+| Google Search Console | Inspect search performance | Service outside AWS |
+| Google Analytics | Traffic analytics | Service outside AWS |
+| Google AdSense | Advertising revenue | Service outside AWS |
 
 ---
 
-## 7.4 独自ドメイン設定フロー
+## 7.4 Custom Domain Setup Flow
 
 ```text
-1. ドメインを取得する
-2. Route 53にHosted Zoneを作成する
-3. ACMでSSL/TLS証明書を発行する
-4. CloudFrontに独自ドメインと証明書を設定する
-5. Route 53でAレコードまたはAliasレコードをCloudFrontへ向ける
-6. HTTPSでサイトへアクセスできることを確認する
-7. Search Consoleに登録する
-8. サイトマップを送信する
-9. AnalyticsとAdSenseを設定する
+1. Obtain a domain
+2. Create a Hosted Zone in Route 53
+3. Issue an SSL/TLS certificate in ACM
+4. Configure the custom domain and certificate in CloudFront
+5. Point an A record or Alias record in Route 53 to CloudFront
+6. Verify that the site is accessible over HTTPS
+7. Register with Search Console
+8. Submit the sitemap
+9. Configure Analytics and AdSense
 ```
 
 ---
 
-## 7.5 Phase 3の注意点
+## 7.5 Phase 3 Considerations
 
-| 注意点 | 内容 |
+| Consideration | Details |
 |---|---|
-| ドメイン費用 | 独自ドメインはAWS無料枠とは別に費用が発生する可能性がある |
-| Route 53費用 | Hosted Zoneには月額費用が発生する可能性があるため、完全ゼロ円にはならない可能性がある |
-| AdSense審査 | 記事数、独自性、運営者情報、プライバシーポリシーが必要 |
-| 証明書リージョン | CloudFront用ACM証明書はus-east-1で管理する点に注意する |
+| Domain cost | A custom domain may incur costs separate from the AWS Free Tier |
+| Route 53 cost | A Hosted Zone may incur a monthly charge, so costs may not be completely zero |
+| AdSense review | Requires article quantity, originality, site operator information, and a privacy policy |
+| Certificate Region | Note that ACM certificates for CloudFront are managed in us-east-1 |
 
 ---
 
-## 8. Phase 4：学習アプリ化構成
+## 8. Phase 4: Learning Application Architecture
 
-## 8.1 構成概要
+## 8.1 Architecture Overview
 
-Phase 4では、単なる情報サイトから学習管理アプリへ拡張する。
+In Phase 4, extend the information site into a learning-management application.
 
-追加する機能は以下である。
+Add the following features.
 
-- ユーザー登録
-- ログイン
-- 学習履歴保存
-- 正答率表示
-- 復習問題
-- 弱点分析
-- 毎日1問通知
-- 有料機能の土台
+- User registration
+- Login
+- Saved learning history
+- Accuracy rate display
+- Review questions
+- Weakness analysis
+- Daily question notifications
+- Foundation for paid features
 
 ---
 
-## 8.2 構成図
+## 8.2 Architecture Diagram
 
 ```mermaid
 flowchart TD
-    User[ユーザー]
+    User[User]
     CF[CloudFront]
     S3[(S3 Frontend)]
     Cognito[Amazon Cognito]
@@ -394,107 +394,107 @@ flowchart TD
 
     User -->|HTTPS| CF
     CF --> S3
-    User -->|ログイン/登録| Cognito
-    User -->|認証付きAPI| APIGW
+    User -->|Login/registration| Cognito
+    User -->|Authenticated API| APIGW
     APIGW --> Lambda
-    Lambda -->|ユーザー別学習履歴| DDB
+    Lambda -->|Per-user learning history| DDB
     Lambda --> CW
-    EventBridge -->|毎日1問トリガー| Lambda
-    Lambda -->|メール通知| SES
-    SES -->|毎日1問配信| User
+    EventBridge -->|Daily question trigger| Lambda
+    Lambda -->|Email notifications| SES
+    SES -->|Daily question delivery| User
 ```
 
 ---
 
-## 8.3 認証・認可フロー
+## 8.3 Authentication and Authorization Flow
 
 ```mermaid
 sequenceDiagram
-    participant U as ユーザー
+    participant U as User
     participant FE as Frontend
     participant C as Cognito
     participant API as API Gateway
     participant L as Lambda
     participant DB as DynamoDB
 
-    U->>FE: ログイン情報入力
-    FE->>C: 認証リクエスト
-    C-->>FE: JWTトークン返却
-    FE->>API: JWT付きAPIリクエスト
-    API->>API: JWT検証
-    API->>L: Lambda呼び出し
-    L->>DB: ユーザー学習履歴取得/保存
-    DB-->>L: データ返却
-    L-->>API: レスポンス
-    API-->>FE: 学習データ返却
-    FE-->>U: マイページ表示
+    U->>FE: Enter login information
+    FE->>C: Authentication request
+    C-->>FE: Return JWT token
+    FE->>API: API request with JWT
+    API->>API: Validate JWT
+    API->>L: Invoke Lambda
+    L->>DB: Retrieve/save user learning history
+    DB-->>L: Return data
+    L-->>API: Response
+    API-->>FE: Return learning data
+    FE-->>U: Display My page
 ```
 
 ---
 
-## 8.4 学習履歴データ保存フロー
+## 8.4 Learning-History Persistence Flow
 
 ```mermaid
 sequenceDiagram
-    participant U as ユーザー
+    participant U as User
     participant FE as Frontend
     participant API as API Gateway
     participant L as Lambda
     participant DB as DynamoDB
 
-    U->>FE: 模擬問題に回答
+    U->>FE: Answer a practice question
     FE->>API: POST /answers
-    API->>L: 回答データ送信
-    L->>DB: UserAnswersTableへ保存
-    L->>DB: UserProgressTableを更新
-    L-->>API: 保存結果返却
-    API-->>FE: 成功レスポンス
-    FE-->>U: 正答率・復習対象を更新表示
+    API->>L: Send answer data
+    L->>DB: Save to UserAnswersTable
+    L->>DB: Update UserProgressTable
+    L-->>API: Return save result
+    API-->>FE: Success response
+    FE-->>U: Update displayed accuracy and review items
 ```
 
 ---
 
-## 8.5 Phase 4追加サービス
+## 8.5 Additional Phase 4 Services
 
-| AWSサービス | 用途 | 選定理由 |
+| AWS service | Purpose | Reason for selection |
 |---|---|---|
-| Cognito | ユーザー認証 | ログイン、JWT認証、ユーザー管理をAWSマネージドで実装できる |
-| EventBridge | 定期実行 | 毎日1問通知、定期集計、メンテナンス処理に使える |
-| SES | メール送信 | 毎日1問配信、問い合わせ通知に利用できる |
-| DynamoDB | 学習履歴保存 | ユーザーごとの回答履歴・正答率保存に向いている |
+| Cognito | User authentication | AWS-managed implementation of login, JWT authentication, and user management |
+| EventBridge | Scheduled execution | Supports daily question notifications, periodic aggregation, and maintenance |
+| SES | Send email | Supports daily question delivery and contact notifications |
+| DynamoDB | Store learning history | Suitable for per-user answer history and accuracy rates |
 
 ---
 
-## 9. データストア設計概要
+## 9. Data Store Design Overview
 
-## 9.1 DynamoDBテーブル一覧
+## 9.1 DynamoDB Table List
 
-| テーブル名 | 用途 | Phase |
+| Table name | Purpose | Phase |
 |---|---|---|
-| TermsTable | AWS用語データ | Phase 2以降 |
-| QuestionsTable | 模擬問題データ | Phase 2以降 |
-| ContactsTable | 問い合わせデータ | Phase 2 |
-| UserAnswersTable | ユーザー回答履歴 | Phase 4 |
-| UserProgressTable | 学習進捗集計 | Phase 4 |
-| DailyQuestionTable | 毎日1問配信用データ | Phase 4 |
+| TermsTable | AWS terminology data | Phase 2 onward |
+| QuestionsTable | Practice-question data | Phase 2 onward |
+| ContactsTable | Contact data | Phase 2 |
+| UserAnswersTable | User answer history | Phase 4 |
+| UserProgressTable | Learning-progress aggregates | Phase 4 |
+| DailyQuestionTable | Daily question delivery data | Phase 4 |
 
 ---
 
 ## 9.2 ContactsTable
 
-| 属性 | 型 | 内容 |
+| Attribute | Type | Contents |
 |---|---|---|
-| contactId | String | 問い合わせID。UUID |
-| createdAt | String | 送信日時 |
-| name | String | 名前 |
-| email | String | メールアドレス |
-| subject | String | 件名 |
-| message | String | 本文 |
+| contactId | String | Contact ID. UUID |
+| createdAt | String | Submission timestamp |
+| name | String | Name |
+| email | String | Email address |
+| subject | String | Subject |
+| message | String | Message |
 | status | String | new / read / done |
 
-### パーティションキー案
+### Proposed Partition Key
 
-| キー | 値 |
+| Key | Value |
 |---|---|
 | Partition Key | contactId |
 
@@ -502,48 +502,48 @@ sequenceDiagram
 
 ## 9.3 QuestionsTable
 
-| 属性 | 型 | 内容 |
+| Attribute | Type | Contents |
 |---|---|---|
-| questionId | String | 問題ID。例：clf-001 |
+| questionId | String | Question ID. Example: clf-001 |
 | exam | String | CLF-C02 / SAA-C03 |
-| category | String | 出題カテゴリ |
+| category | String | Question category |
 | difficulty | String | easy / normal / hard |
-| question | String | 問題文 |
-| choices | List | 選択肢 |
-| answer | Number | 正解番号 |
-| explanation | String | 解説 |
-| relatedServices | List | 関連AWSサービス |
-| updatedAt | String | 更新日時 |
+| question | String | Question text |
+| choices | List | Choices |
+| answer | Number | Correct answer number |
+| explanation | String | Explanation |
+| relatedServices | List | Related AWS services |
+| updatedAt | String | Update timestamp |
 
-### パーティションキー案
+### Proposed Partition Key
 
-| キー | 値 |
+| Key | Value |
 |---|---|
 | Partition Key | questionId |
 
-### GSI案
+### Proposed GSIs
 
-| Index | Partition Key | 用途 |
+| Index | Partition Key | Purpose |
 |---|---|---|
-| ExamCategoryIndex | exam | 試験区分別に問題取得 |
-| CategoryIndex | category | カテゴリ別に問題取得 |
+| ExamCategoryIndex | exam | Retrieve questions by exam |
+| CategoryIndex | category | Retrieve questions by category |
 
 ---
 
 ## 9.4 UserAnswersTable
 
-| 属性 | 型 | 内容 |
+| Attribute | Type | Contents |
 |---|---|---|
-| userId | String | CognitoユーザーID |
-| answerId | String | 回答ID |
-| questionId | String | 問題ID |
-| selectedChoice | Number | 選択した回答 |
-| isCorrect | Boolean | 正誤 |
-| answeredAt | String | 回答日時 |
+| userId | String | Cognito user ID |
+| answerId | String | Answer ID |
+| questionId | String | Question ID |
+| selectedChoice | Number | Selected answer |
+| isCorrect | Boolean | Correctness |
+| answeredAt | String | Answer timestamp |
 
-### キー設計案
+### Proposed Key Design
 
-| キー | 値 |
+| Key | Value |
 |---|---|
 | Partition Key | userId |
 | Sort Key | answeredAt#questionId |
@@ -552,28 +552,28 @@ sequenceDiagram
 
 ## 9.5 UserProgressTable
 
-| 属性 | 型 | 内容 |
+| Attribute | Type | Contents |
 |---|---|---|
-| userId | String | CognitoユーザーID |
-| exam | String | 試験区分 |
-| totalAnswered | Number | 回答済み数 |
-| correctCount | Number | 正解数 |
-| accuracy | Number | 正答率 |
-| weakCategories | List | 苦手カテゴリ |
-| updatedAt | String | 更新日時 |
+| userId | String | Cognito user ID |
+| exam | String | Exam |
+| totalAnswered | Number | Number answered |
+| correctCount | Number | Number correct |
+| accuracy | Number | Accuracy rate |
+| weakCategories | List | Weak categories |
+| updatedAt | String | Update timestamp |
 
-### キー設計案
+### Proposed Key Design
 
-| キー | 値 |
+| Key | Value |
 |---|---|
 | Partition Key | userId |
 | Sort Key | exam |
 
 ---
 
-## 10. フロントエンド配置設計
+## 10. Frontend Deployment Design
 
-## 10.1 ビルド成果物配置
+## 10.1 Build Output Placement
 
 ```text
 frontend/
@@ -589,7 +589,7 @@ frontend/
 └── out/ or dist/
 ```
 
-ビルド後の静的ファイルをS3へアップロードする。
+Upload the built static files to S3.
 
 ```text
 S3 Bucket
@@ -605,82 +605,82 @@ S3 Bucket
 
 ---
 
-## 10.2 CloudFront配信設計
+## 10.2 CloudFront Delivery Design
 
-| 項目 | 設定方針 |
+| Item | Configuration policy |
 |---|---|
 | Origin | S3 Bucket |
 | Viewer Protocol Policy | Redirect HTTP to HTTPS |
-| Allowed HTTP Methods | GET, HEAD を基本とする |
-| Cache Policy | 静的ファイルはキャッシュ有効 |
+| Allowed HTTP Methods | GET, HEAD by default |
+| Cache Policy | Enable caching for static files |
 | Default Root Object | index.html |
-| Error Pages | 404ページ、SPAルーティング対応が必要な場合は設定 |
-| OAC | 有効化し、S3を直接公開しない |
+| Error Pages | Configure a 404 page and SPA routing support if needed |
+| OAC | Enable it; do not expose S3 directly |
 
 ---
 
-## 11. バックエンド設計概要
+## 11. Backend Design Overview
 
-## 11.1 Lambda設計方針
+## 11.1 Lambda Design Policy
 
-| 項目 | 方針 |
+| Item | Policy |
 |---|---|
-| 実装言語 | Python |
-| 実行単位 | 機能ごとにLambdaを分ける |
-| ログ | CloudWatch Logsへ出力 |
-| 権限 | 必要なDynamoDBテーブルへの最小権限のみ付与 |
-| 環境変数 | テーブル名、許可Originなどを設定 |
-| タイムアウト | 短めに設定し、無駄な実行時間を防ぐ |
+| Implementation language | Python |
+| Execution unit | Separate Lambda functions by feature |
+| Logs | Write to CloudWatch Logs |
+| Permissions | Grant only minimum necessary permissions for the required DynamoDB tables |
+| Environment variables | Configure table names, allowed Origins, etc. |
+| Timeout | Keep it short to prevent unnecessary execution time |
 
 ---
 
-## 11.2 Lambda関数一覧
+## 11.2 Lambda Function List
 
-| Lambda名 | 用途 | Phase |
+| Lambda name | Purpose | Phase |
 |---|---|---|
-| contact-submit-function | 問い合わせ保存 | Phase 2 |
-| get-terms-function | 用語一覧・詳細取得 | Phase 2以降 |
-| get-questions-function | 問題一覧・詳細取得 | Phase 2以降 |
-| submit-answer-function | 回答履歴保存 | Phase 4 |
-| get-progress-function | 学習進捗取得 | Phase 4 |
-| daily-question-function | 毎日1問配信 | Phase 4 |
+| contact-submit-function | Save contact submissions | Phase 2 |
+| get-terms-function | Retrieve terminology list/detail | Phase 2 onward |
+| get-questions-function | Retrieve question list/detail | Phase 2 onward |
+| submit-answer-function | Save answer history | Phase 4 |
+| get-progress-function | Retrieve learning progress | Phase 4 |
+| daily-question-function | Deliver a daily question | Phase 4 |
 
 ---
 
-## 11.3 API Gateway設計方針
+## 11.3 API Gateway Design Policy
 
-| 項目 | 方針 |
+| Item | Policy |
 |---|---|
-| API種別 | HTTP APIを基本とする |
-| CORS | フロントエンドドメインのみ許可 |
-| 認証 | MVPではなし。Phase 4でCognito JWT Authorizerを利用 |
-| レート制限 | 必要に応じて設定 |
-| ログ | 必要最小限で有効化 |
+| API type | HTTP API by default |
+| CORS | Allow only the frontend domain |
+| Authentication | None in the MVP. Use a Cognito JWT Authorizer in Phase 4 |
+| Rate limiting | Configure as needed |
+| Logs | Enable the minimum necessary logging |
 
 ---
 
-## 12. CI/CD構成
+## 12. CI/CD Architecture
 
-## 12.1 MVPのデプロイ方針
+## 12.1 MVP Deployment Policy
 
-MVPでは、最初は手動デプロイでもよい。
+Manual deployment is acceptable initially for the MVP.
 
 ```text
-1. ローカルでビルド
-2. S3へアップロード
-3. CloudFrontキャッシュ無効化
-4. 動作確認
+1. Build locally
+2. Upload to S3
+3. Invalidate the CloudFront cache
+4. Verify functionality
 ```
 
-ただし、ポートフォリオ価値を高めるため、早い段階でGitHub Actionsによる自動デプロイに移行する。
+However, move to automated GitHub Actions deployment early to increase portfolio value.
 
 ---
 
-## 12.2 自動デプロイ構成図
+## 12.2 Automated Deployment Diagram
 
 ```mermaid
 flowchart TD
-    Dev[開発者]
+    Dev[Developer]
     GitHub[GitHub Repository]
     Actions[GitHub Actions]
     S3[(S3 Bucket)]
@@ -690,252 +690,252 @@ flowchart TD
     Dev -->|push| GitHub
     GitHub -->|trigger| Actions
     Actions -->|Assume Role or Access Key| IAM
-    Actions -->|build成果物アップロード| S3
+    Actions -->|Upload build output| S3
     Actions -->|Invalidation| CF
 ```
 
 ---
 
-## 12.3 GitHub Actionsの処理
+## 12.3 GitHub Actions Processing
 
 ```text
-1. mainブランチへpush
-2. 依存関係インストール
+1. Push to the main branch
+2. Install dependencies
 3. Lint / Type Check
 4. Build
-5. S3へアップロード
-6. CloudFront Invalidation実行
+5. Upload to S3
+6. Run CloudFront Invalidation
 ```
 
 ---
 
-## 12.4 デプロイ権限
+## 12.4 Deployment Permissions
 
-GitHub Actionsには、以下の権限のみ付与する。
+Grant GitHub Actions only the following permissions.
 
-| 権限 | 用途 |
+| Permission | Purpose |
 |---|---|
-| s3:PutObject | ファイルアップロード |
-| s3:DeleteObject | 古いファイル削除 |
-| s3:ListBucket | バケット確認 |
-| cloudfront:CreateInvalidation | キャッシュ無効化 |
+| s3:PutObject | Upload files |
+| s3:DeleteObject | Delete old files |
+| s3:ListBucket | Inspect the bucket |
+| cloudfront:CreateInvalidation | Invalidate the cache |
 
-不要なAdministratorAccessは付与しない。
+Do not grant unnecessary AdministratorAccess.
 
 ---
 
-## 13. セキュリティ設計
+## 13. Security Design
 
-## 13.1 S3セキュリティ
+## 13.1 S3 Security
 
-| 項目 | 方針 |
+| Item | Policy |
 |---|---|
-| Public Access | ブロックする |
-| 配信経路 | CloudFront経由のみ |
-| OAC | 有効化する |
-| Bucket Policy | CloudFront Distributionからのアクセスのみ許可 |
-| バージョニング | 任意。誤削除対策として有効化検討 |
+| Public Access | Block |
+| Delivery path | CloudFront only |
+| OAC | Enable |
+| Bucket Policy | Allow access only from the CloudFront Distribution |
+| Versioning | Optional. Consider enabling to protect against accidental deletion |
 
 ---
 
-## 13.2 APIセキュリティ
+## 13.2 API Security
 
-| 項目 | 方針 |
+| Item | Policy |
 |---|---|
-| CORS | 許可Originを本番ドメインに限定 |
-| 入力チェック | Lambda側でも必ず実施 |
-| 文字数制限 | 問い合わせ本文などに上限を設ける |
-| レート制限 | スパム対策として検討 |
-| 認証 | MVPは不要。学習履歴保存時にCognito導入 |
+| CORS | Restrict allowed Origins to the production domain |
+| Input validation | Always perform it in Lambda too |
+| Character limits | Set upper limits for the contact message and similar fields |
+| Rate limiting | Consider for spam prevention |
+| Authentication | Not needed in the MVP. Introduce Cognito when saving learning history |
 
 ---
 
-## 13.3 IAM設計
+## 13.3 IAM Design
 
-| 対象 | 権限方針 |
+| Target | Permission policy |
 |---|---|
-| Lambda実行ロール | 対象DynamoDBテーブルへの最小限のRead/Write権限 |
-| GitHub Actions用ロール | S3デプロイとCloudFront Invalidationのみ |
-| 開発者IAMユーザー | MFA有効化、AdministratorAccessの常用を避ける |
-| CloudWatch Logs | Lambdaログ書き込みのみ許可 |
+| Lambda execution role | Minimum Read/Write permissions for the relevant DynamoDB tables |
+| GitHub Actions role | S3 deployment and CloudFront Invalidation only |
+| Developer IAM user | Enable MFA and avoid routine use of AdministratorAccess |
+| CloudWatch Logs | Permit only Lambda log writes |
 
 ---
 
-## 13.4 シークレット管理
+## 13.4 Secret Management
 
-| 情報 | 管理方法 |
+| Information | Management method |
 |---|---|
-| AWSアクセスキー | GitHub SecretsまたはOIDCで管理 |
-| APIキー | GitHubにコミットしない |
-| 環境変数 | Lambda環境変数に設定 |
-| 将来の外部APIキー | Secrets ManagerまたはSSM Parameter Storeを検討 |
+| AWS access keys | Manage with GitHub Secrets or OIDC |
+| API keys | Do not commit to GitHub |
+| Environment variables | Configure as Lambda environment variables |
+| Future external API keys | Consider Secrets Manager or SSM Parameter Store |
 
 ---
 
-## 14. 監視・ログ設計
+## 14. Monitoring and Logging Design
 
 ## 14.1 CloudWatch Logs
 
-| 対象 | ログ内容 |
+| Target | Log contents |
 |---|---|
-| contact-submit-function | 問い合わせ送信成功・失敗、バリデーションエラー |
-| get-questions-function | 問題取得リクエスト、取得失敗 |
-| submit-answer-function | 回答保存成功・失敗 |
-| daily-question-function | 配信成功・失敗 |
+| contact-submit-function | Contact submission success/failure and validation errors |
+| get-questions-function | Question retrieval requests and retrieval failures |
+| submit-answer-function | Answer persistence success/failure |
+| daily-question-function | Delivery success/failure |
 
 ---
 
 ## 14.2 CloudWatch Metrics
 
-確認対象：
+Metrics to inspect:
 
 - Lambda Errors
 - Lambda Duration
 - Lambda Invocations
 - API Gateway 4XX / 5XX
-- DynamoDB Read / Write 使用量
+- DynamoDB Read / Write usage
 - CloudFront Requests
 
 ---
 
-## 14.3 アラート方針
+## 14.3 Alert Policy
 
-MVPでは最低限、以下を設定する。
+At minimum, configure the following in the MVP.
 
-| アラート | 条件 |
+| Alert | Condition |
 |---|---|
-| 課金アラート | 月額利用料が設定金額を超えた場合 |
-| Lambdaエラー | 一定期間内にエラーが連続した場合 |
-| API 5XX | API Gatewayで5XXが増えた場合 |
+| Billing alert | Monthly charges exceed the configured amount |
+| Lambda errors | Consecutive errors occur within a given period |
+| API 5XX | API Gateway 5XX responses increase |
 
-最初はAWS Budgetsを必須とし、CloudWatch AlarmはPhase 2以降に追加する。
+Require AWS Budgets initially, and add CloudWatch Alarms from Phase 2 onward.
 
 ---
 
-## 15. コスト設計
+## 15. Cost Design
 
-## 15.1 コスト最小化方針
+## 15.1 Cost Minimization Policy
 
-| 方針 | 内容 |
+| Policy | Details |
 |---|---|
-| EC2を使わない | 常時起動コストを避ける |
-| RDSを使わない | 小規模MVPではDynamoDBを利用する |
-| NAT Gatewayを使わない | 固定費が発生しやすいため避ける |
-| ALBを使わない | サーバーレスAPIではAPI Gatewayを使う |
-| 静的配信中心 | S3 + CloudFrontで低コスト配信する |
-| ログ保存期間を制限 | CloudWatch Logsの肥大化を防ぐ |
-| 画像を圧縮 | S3保存量・転送量を抑える |
+| Do not use EC2 | Avoid always-on costs |
+| Do not use RDS | Use DynamoDB for the small-scale MVP |
+| Do not use NAT Gateway | Avoid its tendency to incur fixed costs |
+| Do not use ALB | Use API Gateway for serverless APIs |
+| Primarily static delivery | Deliver inexpensively with S3 + CloudFront |
+| Limit log retention | Prevent CloudWatch Logs from growing excessively |
+| Compress images | Reduce S3 storage and transfer volumes |
 
 ---
 
-## 15.2 課金リスクが高いサービスの扱い
+## 15.2 Treatment of Services with High Billing Risk
 
-| サービス | 方針 |
+| Service | Policy |
 |---|---|
-| NAT Gateway | 使用しない |
-| RDS | MVPでは使用しない |
-| EC2 | 常時起動しない |
-| ALB | MVPでは使用しない |
-| Elastic IP | 使用しない |
-| CloudWatch Logs | 保存期間を設定する |
-| Route 53 | 独自ドメイン利用時のみ使用する |
+| NAT Gateway | Do not use |
+| RDS | Do not use in the MVP |
+| EC2 | Do not keep always running |
+| ALB | Do not use in the MVP |
+| Elastic IP | Do not use |
+| CloudWatch Logs | Configure retention |
+| Route 53 | Use only with a custom domain |
 
 ---
 
-## 15.3 AWS Budgets設定方針
+## 15.3 AWS Budgets Configuration Policy
 
-| 項目 | 設定方針 |
+| Item | Configuration policy |
 |---|---|
-| 予算タイプ | Cost Budget |
-| 期間 | Monthly |
-| 通知 | メール通知 |
-| 閾値 | 低めに設定する |
-| 対象 | 全AWSサービス |
+| Budget type | Cost Budget |
+| Period | Monthly |
+| Notifications | Email notifications |
+| Threshold | Set low |
+| Scope | All AWS services |
 
 ---
 
-## 16. 可用性・耐障害性設計
+## 16. Availability and Fault-Tolerance Design
 
-## 16.1 静的サイト部分
+## 16.1 Static Site
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| S3 | 高耐久なオブジェクトストレージとして静的ファイルを保持 |
-| CloudFront | エッジキャッシュにより可用性と表示速度を向上 |
-| 静的HTML | API障害時でも記事・用語ページは閲覧可能にする |
+| S3 | Store static files in highly durable object storage |
+| CloudFront | Improve availability and rendering speed with edge caching |
+| Static HTML | Keep articles and terminology pages accessible during API failures |
 
 ---
 
-## 16.2 API部分
+## 16.2 API
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| Lambda | マネージド実行基盤によりサーバー管理不要 |
-| API Gateway | マネージドAPI入口として利用 |
-| DynamoDB | マネージドNoSQLとして利用 |
-| エラー処理 | APIエラー時はユーザーに分かりやすいメッセージを表示 |
+| Lambda | Managed execution platform eliminates server management |
+| API Gateway | Use as a managed API entry point |
+| DynamoDB | Use as managed NoSQL |
+| Error handling | Show users clear messages for API errors |
 
 ---
 
-## 16.3 MVPでの割り切り
+## 16.3 MVP Trade-offs
 
-MVPでは、厳密なマルチリージョン構成や高度なDR設計は行わない。
+Do not implement a rigorous multi-Region architecture or advanced DR design in the MVP.
 
-理由：
+Reasons:
 
-- 個人開発ポートフォリオとしては過剰設計になるため
-- コスト増加につながるため
-- まず公開と学習価値を優先するため
+- It would overengineer a solo-developed portfolio project
+- It would increase costs
+- Prioritize publishing and learning value first
 
-ただし、SAA学習用コンテンツとして、マルチAZ、マルチリージョン、DR構成は別途記事・構成図で解説する。
+However, explain Multi-AZ, multi-Region, and DR architectures separately in articles and diagrams as SAA learning content.
 
 ---
 
-## 17. バックアップ・復旧設計
+## 17. Backup and Recovery Design
 
 ## 17.1 S3
 
-| 項目 | 方針 |
+| Item | Policy |
 |---|---|
-| ソース管理 | 元データはGitHubで管理する |
-| 復旧方法 | GitHubから再ビルド・再デプロイする |
-| バージョニング | 任意。重要度が上がれば有効化 |
+| Source management | Manage source data in GitHub |
+| Recovery method | Rebuild and redeploy from GitHub |
+| Versioning | Optional. Enable if importance increases |
 
 ---
 
 ## 17.2 DynamoDB
 
-| 項目 | 方針 |
+| Item | Policy |
 |---|---|
-| 問い合わせデータ | 必要に応じてエクスポート |
-| 問題・用語データ | GitHubのJSON/Markdownを原本とする |
-| 学習履歴 | Phase 4以降、PITRの導入を検討 |
+| Contact data | Export as needed |
+| Question and terminology data | Treat JSON/Markdown in GitHub as the source of truth |
+| Learning history | Consider PITR from Phase 4 onward |
 
 ---
 
-## 18. 環境分離設計
+## 18. Environment Separation Design
 
-## 18.1 MVP方針
+## 18.1 MVP Policy
 
-MVPでは、コスト削減のため本番環境のみで開始する。
+Start the MVP with only a production environment to reduce costs.
 
-ただし、ディレクトリや設定値は将来の環境分離を想定して設計する。
+However, design directories and configuration values with future environment separation in mind.
 
 ---
 
-## 18.2 将来の環境構成
+## 18.2 Future Environments
 
-| 環境 | 用途 |
+| Environment | Purpose |
 |---|---|
-| local | ローカル開発 |
-| dev | 検証環境 |
-| prod | 本番環境 |
+| local | Local development |
+| dev | Testing environment |
+| prod | Production environment |
 
 ---
 
-## 18.3 命名例
+## 18.3 Naming Examples
 
-| リソース | dev | prod |
+| Resource | dev | prod |
 |---|---|---|
 | S3 Bucket | aws-cert-lab-dev | aws-cert-lab-prod |
 | Lambda | contact-submit-dev | contact-submit-prod |
@@ -944,50 +944,50 @@ MVPでは、コスト削減のため本番環境のみで開始する。
 
 ---
 
-## 19. IaC方針
+## 19. IaC Policy
 
-## 19.1 初期方針
+## 19.1 Initial Policy
 
-Phase 1では、AWSマネジメントコンソールで手動構築してもよい。
+Manual setup in the AWS Management Console is acceptable in Phase 1.
 
-理由：
+Reasons:
 
-- AWS初学者として各サービスの設定画面を理解するため
-- CLF学習と相性が良いため
-- まず公開まで到達することを優先するため
+- Understand each service's configuration screens as an AWS beginner
+- Align well with CLF study
+- Prioritize reaching publication first
 
 ---
 
-## 19.2 中期方針
+## 19.2 Medium-Term Policy
 
-Phase 2以降は、IaC化を検討する。
+Consider converting to IaC from Phase 2 onward.
 
-候補：
+Candidates:
 
-| ツール | 特徴 |
+| Tool | Characteristics |
 |---|---|
-| AWS SAM | Lambda/API Gateway/DynamoDBなどサーバーレス構成と相性が良い |
-| Terraform | AWS以外にも対応でき、ポートフォリオ価値が高い |
-| AWS CDK | TypeScript/PythonでAWSリソースを定義できる |
+| AWS SAM | Works well with serverless architectures such as Lambda/API Gateway/DynamoDB |
+| Terraform | Supports platforms beyond AWS and has strong portfolio value |
+| AWS CDK | Define AWS resources in TypeScript/Python |
 
 ---
 
-## 19.3 推奨方針
+## 19.3 Recommended Policy
 
-本プロダクトでは、まずAWS SAMを推奨する。
+AWS SAM is recommended initially for this product.
 
-理由：
+Reasons:
 
-- Lambda、API Gateway、DynamoDB構成と相性が良い
-- サーバーレス学習に直結する
-- SAAの学習内容と結びつけやすい
-- 個人開発の規模に合っている
+- Works well with Lambda, API Gateway, and DynamoDB architectures
+- Directly supports serverless learning
+- Easy to connect to SAA study material
+- Fits the scale of solo development
 
-将来的にTerraformへ移行、または別ブランチでTerraform版を作ると、さらにポートフォリオ価値が高まる。
+Migrating to Terraform later, or creating a Terraform version on a separate branch, would further increase portfolio value.
 
 ---
 
-## 20. 推奨ディレクトリ構成
+## 20. Recommended Directory Structure
 
 ```text
 aws-cert-roadmap-lab/
@@ -1032,97 +1032,97 @@ aws-cert-roadmap-lab/
 
 ---
 
-## 21. READMEに掲載するAWS構成説明
+## 21. AWS Architecture Description for the README
 
-GitHub READMEでは、以下のように説明する。
+Use the following explanation in the GitHub README.
 
 ```text
-本プロダクトは、AWS Cloud Practitioner / SAA学習者向けのWeb学習サイトです。
-インフラはAWSのサーバーレス構成を採用し、S3 + CloudFrontで静的サイトを配信し、API Gateway + Lambda + DynamoDBで問い合わせや問題データを処理します。
+This product is a web learning site for AWS Cloud Practitioner / SAA learners.
+Its infrastructure uses an AWS serverless architecture: S3 + CloudFront serves the static site, while API Gateway + Lambda + DynamoDB processes contact submissions and question data.
 
-常時起動サーバーを使わず、AWS無料枠と従量課金サービスを活用することで、小規模アクセス時の運用コストを最小化しています。
+By avoiding always-on servers and using the AWS Free Tier and pay-as-you-go services, the architecture minimizes operating costs at low traffic volumes.
 
-また、S3は直接公開せず、CloudFront Origin Access Controlを利用してCloudFront経由のみアクセス可能にしています。
+S3 is not exposed directly. CloudFront Origin Access Control restricts access to CloudFront only.
 ```
 
 ---
 
-## 22. 面接で説明するポイント
+## 22. Points to Explain in Interviews
 
-## 22.1 なぜS3 + CloudFrontを使うのか
+## 22.1 Why Use S3 + CloudFront?
 
-- 静的サイト公開に適している
-- EC2を使わずに低コストで公開できる
-- CloudFrontでHTTPS配信とキャッシュができる
-- S3を直接公開せず、安全に配信できる
+- Suitable for publishing static sites
+- Low-cost publishing without EC2
+- CloudFront provides HTTPS delivery and caching
+- Secure delivery without exposing S3 directly
 
-## 22.2 なぜLambda + API Gatewayを使うのか
+## 22.2 Why Use Lambda + API Gateway?
 
-- 問い合わせやデータ取得など、必要な時だけ処理すればよいため
-- 常時サーバーを起動する必要がない
-- 個人開発の規模に合っている
-- サーバーレス構成の実践経験を示せる
+- Contact submissions and data retrieval need processing only when requested
+- No need to keep a server running continuously
+- Fits the scale of solo development
+- Demonstrates practical serverless architecture experience
 
-## 22.3 なぜDynamoDBを使うのか
+## 22.3 Why Use DynamoDB?
 
-- 用語、問題、問い合わせ、学習履歴のような構造化データを保存できる
-- サーバーレスと相性が良い
-- 小規模アクセスでは低コストにしやすい
-- SAAで重要なNoSQL設計の説明材料になる
+- Stores structured data such as terminology, questions, contact submissions, and learning history
+- Works well with serverless architectures
+- Helps keep costs low at small traffic volumes
+- Provides material for explaining NoSQL design, an important SAA topic
 
-## 22.4 なぜRDSを使わないのか
+## 22.4 Why Not Use RDS?
 
-- MVPではリレーショナルDBが必須ではない
-- RDSは小規模個人開発では固定費になりやすい
-- 問題・用語・学習履歴はDynamoDBで十分扱える
-- コスト最適化を重視するため
+- A relational database is not essential for the MVP
+- RDS tends to create fixed costs for small solo-developed projects
+- DynamoDB adequately handles questions, terminology, and learning history
+- Cost optimization is a priority
 
-## 22.5 なぜNAT Gatewayを使わないのか
+## 22.5 Why Not Use NAT Gateway?
 
-- MVP構成ではVPC内のプライベートサブネットから外部通信する要件がない
-- NAT Gatewayは固定費が発生しやすい
-- Lambda、DynamoDB、API Gateway中心ならVPC構成を複雑にする必要がない
+- The MVP has no requirement for outbound communication from private subnets within a VPC
+- NAT Gateway tends to incur fixed costs
+- An architecture centered on Lambda, DynamoDB, and API Gateway does not require a complex VPC configuration
 
 ---
 
-## 23. 採用する構成と採用しない構成
+## 23. Selected and Rejected Architectures
 
-## 23.1 採用する構成
+## 23.1 Selected Architectures
 
-| 構成 | 理由 |
+| Architecture | Reason |
 |---|---|
-| S3 + CloudFront | 静的サイト公開に最適で低コスト |
-| API Gateway + Lambda | 軽量APIに適し、サーバーレスで運用できる |
-| Lambda + DynamoDB | 問い合わせ、問題、学習履歴の保存に適する |
-| Cognito | 将来のログイン機能に適する |
-| EventBridge | 将来の毎日1問配信に適する |
-| CloudWatch Logs | 運用監視・障害調査に必要 |
-| AWS Budgets | 課金事故防止に必須 |
+| S3 + CloudFront | Well suited to static site publishing and low cost |
+| API Gateway + Lambda | Suitable for lightweight APIs and serverless operation |
+| Lambda + DynamoDB | Suitable for storing contact submissions, questions, and learning history |
+| Cognito | Suitable for future login functionality |
+| EventBridge | Suitable for future daily question delivery |
+| CloudWatch Logs | Required for operational monitoring and incident investigation |
+| AWS Budgets | Essential for preventing unexpected charges |
 
 ---
 
-## 23.2 採用しない構成
+## 23.2 Rejected Architectures
 
-| 構成 | 採用しない理由 |
+| Architecture | Reason for rejection |
 |---|---|
-| EC2常時起動 | 固定費が発生しやすく、MVPには過剰 |
-| RDS | MVPでは不要。固定費リスクがある |
-| NAT Gateway | MVPでは不要。課金リスクが高い |
-| ALB | サーバーレスAPIではAPI Gatewayで十分 |
-| ECS/EKS | 個人開発MVPには過剰 |
-| マルチリージョン構成 | MVPではコスト・運用負荷が高い |
+| Always-on EC2 | Prone to fixed costs and excessive for the MVP |
+| RDS | Unnecessary in the MVP, with fixed-cost risk |
+| NAT Gateway | Unnecessary in the MVP, with high billing risk |
+| ALB | API Gateway is sufficient for a serverless API |
+| ECS/EKS | Excessive for a solo-developed MVP |
+| Multi-Region architecture | High cost and operational burden for the MVP |
 
 ---
 
-## 24. 最終推奨構成
+## 24. Final Recommended Architecture
 
-## 24.1 MVP推奨構成
+## 24.1 Recommended MVP Architecture
 
-MVPでは、以下の構成を推奨する。
+The following architecture is recommended for the MVP.
 
 ```mermaid
 flowchart TD
-    User[ユーザー]
+    User[User]
     CF[CloudFront]
     S3[(S3 Static Site)]
     APIGW[API Gateway]
@@ -1131,9 +1131,9 @@ flowchart TD
     CW[CloudWatch Logs]
     Budget[AWS Budgets]
 
-    User -->|Web閲覧| CF
+    User -->|Browse website| CF
     CF --> S3
-    User -->|問い合わせ送信| APIGW
+    User -->|Submit contact form| APIGW
     APIGW --> Lambda
     Lambda --> DDB
     Lambda --> CW
@@ -1146,25 +1146,25 @@ flowchart TD
 
 ---
 
-## 24.2 MVPでの役割分担
+## 24.2 MVP Responsibilities
 
-| 領域 | 担当サービス |
+| Area | Responsible service |
 |---|---|
-| Web配信 | S3 + CloudFront |
-| API入口 | API Gateway |
-| API処理 | Lambda |
-| 問い合わせ保存 | DynamoDB |
-| ログ | CloudWatch Logs |
-| 権限管理 | IAM |
-| 課金監視 | AWS Budgets |
+| Web delivery | S3 + CloudFront |
+| API entry point | API Gateway |
+| API processing | Lambda |
+| Contact persistence | DynamoDB |
+| Logs | CloudWatch Logs |
+| Permission management | IAM |
+| Billing monitoring | AWS Budgets |
 
 ---
 
-## 24.3 将来完成形
+## 24.3 Future Complete Architecture
 
 ```mermaid
 flowchart TD
-    User[ユーザー]
+    User[User]
     R53[Route 53]
     ACM[ACM]
     CF[CloudFront]
@@ -1179,11 +1179,11 @@ flowchart TD
     Budget[AWS Budgets]
     GitHub[GitHub Actions]
 
-    User -->|独自ドメインアクセス| R53
+    User -->|Custom-domain access| R53
     R53 --> CF
     ACM -.-> CF
     CF --> S3
-    User -->|認証| Cognito
+    User -->|Authentication| Cognito
     User -->|API| APIGW
     APIGW --> Lambda
     Lambda --> DDB
@@ -1199,108 +1199,108 @@ flowchart TD
 
 ---
 
-## 25. 実装順序
+## 25. Implementation Order
 
-## 25.1 AWS構築順序
+## 25.1 AWS Setup Order
 
 ```text
-1. AWS Budgets設定
-2. S3バケット作成
-3. 静的サイトビルド成果物をS3へ配置
-4. CloudFront Distribution作成
-5. OAC設定
-6. S3 Bucket Policy設定
-7. CloudFront経由で表示確認
-8. API Gateway作成
-9. Lambda作成
-10. DynamoDB ContactsTable作成
-11. 問い合わせAPI接続
-12. CloudWatch Logs確認
-13. GitHub Actionsデプロイ設定
-14. CloudFront Invalidation自動化
-15. 独自ドメイン導入
-16. Search Console / Analytics / AdSense準備
+1. Configure AWS Budgets
+2. Create the S3 bucket
+3. Place the static site build output in S3
+4. Create the CloudFront Distribution
+5. Configure OAC
+6. Configure the S3 Bucket Policy
+7. Verify display through CloudFront
+8. Create API Gateway
+9. Create Lambda
+10. Create DynamoDB ContactsTable
+11. Connect the contact API
+12. Inspect CloudWatch Logs
+13. Configure GitHub Actions deployment
+14. Automate CloudFront Invalidation
+15. Introduce a custom domain
+16. Prepare Search Console / Analytics / AdSense
 ```
 
 ---
 
-## 25.2 先に必ずやること
+## 25.2 Mandatory First Steps
 
-最初に必ず実施する作業は以下である。
+Always perform the following tasks first.
 
-| 項目 | 理由 |
+| Item | Reason |
 |---|---|
-| AWS Budgets設定 | 課金事故を防ぐため |
-| MFA設定 | AWSアカウント保護のため |
-| IAMユーザー/ロール整理 | rootユーザー常用を避けるため |
-| S3 Public Access Block確認 | 意図しない公開を防ぐため |
-| CloudWatch Logs保存期間設定 | ログ肥大化による課金を防ぐため |
+| Configure AWS Budgets | Prevent unexpected charges |
+| Configure MFA | Protect the AWS account |
+| Organize IAM users/roles | Avoid routinely using the root user |
+| Check S3 Public Access Block | Prevent unintended public access |
+| Configure CloudWatch Logs retention | Prevent charges caused by excessive log growth |
 
 ---
 
-## 26. 受け入れ基準
+## 26. Acceptance Criteria
 
-## 26.1 Phase 1受け入れ基準
+## 26.1 Phase 1 Acceptance Criteria
 
-| ID | 基準 |
+| ID | Criterion |
 |---|---|
-| AC-AWS-001 | S3に静的サイトファイルが配置されている |
-| AC-AWS-002 | CloudFront経由でサイトを閲覧できる |
-| AC-AWS-003 | S3バケットが直接公開されていない |
-| AC-AWS-004 | AWS Budgetsが設定されている |
-| AC-AWS-005 | GitHub READMEに構成図が掲載されている |
+| AC-AWS-001 | Static site files are stored in S3 |
+| AC-AWS-002 | The site is accessible through CloudFront |
+| AC-AWS-003 | The S3 bucket is not directly public |
+| AC-AWS-004 | AWS Budgets is configured |
+| AC-AWS-005 | An architecture diagram is published in the GitHub README |
 
 ---
 
-## 26.2 Phase 2受け入れ基準
+## 26.2 Phase 2 Acceptance Criteria
 
-| ID | 基準 |
+| ID | Criterion |
 |---|---|
-| AC-AWS-006 | API GatewayからLambdaを呼び出せる |
-| AC-AWS-007 | LambdaからDynamoDBへデータ保存できる |
-| AC-AWS-008 | 問い合わせフォームからデータ送信できる |
-| AC-AWS-009 | CloudWatch LogsでLambdaログを確認できる |
-| AC-AWS-010 | Lambda IAM Roleが最小権限で設定されている |
+| AC-AWS-006 | API Gateway can invoke Lambda |
+| AC-AWS-007 | Lambda can save data in DynamoDB |
+| AC-AWS-008 | Data can be submitted through the contact form |
+| AC-AWS-009 | Lambda logs can be inspected in CloudWatch Logs |
+| AC-AWS-010 | The Lambda IAM Role is configured with least privilege |
 
 ---
 
-## 26.3 Phase 3受け入れ基準
+## 26.3 Phase 3 Acceptance Criteria
 
-| ID | 基準 |
+| ID | Criterion |
 |---|---|
-| AC-AWS-011 | 独自ドメインでサイトにアクセスできる |
-| AC-AWS-012 | HTTPSで配信されている |
-| AC-AWS-013 | Search Consoleに登録されている |
-| AC-AWS-014 | サイトマップが送信されている |
+| AC-AWS-011 | The site is accessible through a custom domain |
+| AC-AWS-012 | Content is served over HTTPS |
+| AC-AWS-013 | Search Console registration is complete |
+| AC-AWS-014 | The sitemap has been submitted |
 
 ---
 
-## 26.4 Phase 4受け入れ基準
+## 26.4 Phase 4 Acceptance Criteria
 
-| ID | 基準 |
+| ID | Criterion |
 |---|---|
-| AC-AWS-015 | Cognitoでユーザー登録・ログインできる |
-| AC-AWS-016 | 認証付きAPIを呼び出せる |
-| AC-AWS-017 | 学習履歴をDynamoDBに保存できる |
-| AC-AWS-018 | マイページで正答率を表示できる |
-| AC-AWS-019 | EventBridgeで定期処理を実行できる |
+| AC-AWS-015 | Users can register and log in with Cognito |
+| AC-AWS-016 | Authenticated APIs can be called |
+| AC-AWS-017 | Learning history can be saved in DynamoDB |
+| AC-AWS-018 | My page can display accuracy rates |
+| AC-AWS-019 | EventBridge can run scheduled processing |
 
 ---
 
-## 27. 結論
+## 27. Conclusion
 
-本プロダクトのAWS構成は、S3 + CloudFrontによる静的サイト配信を土台とし、必要に応じてAPI Gateway + Lambda + DynamoDBを追加するサーバーレス構成とする。
+The product's AWS architecture is serverless, based on static site delivery with S3 + CloudFront and supplemented with API Gateway + Lambda + DynamoDB as needed.
 
-MVPでは、EC2、RDS、NAT Gateway、ALBなど固定費が発生しやすいサービスは使用しない。これにより、AWS無料枠を活用しながら、低コストで公開可能なポートフォリオを構築する。
+The MVP does not use services prone to fixed costs, such as EC2, RDS, NAT Gateway, or ALB. This enables a low-cost published portfolio while using the AWS Free Tier.
 
-最終的には、Cognitoによるログイン、DynamoDBによる学習履歴保存、EventBridgeによる毎日1問配信、SESによるメール通知、Route 53 + ACMによる独自ドメイン・HTTPS対応を追加し、学習メディアから学習アプリへ拡張する。
+Ultimately, add Cognito login, DynamoDB learning-history persistence, EventBridge daily question delivery, SES email notifications, and Route 53 + ACM custom-domain/HTTPS support to extend the learning content site into a learning application.
 
-この構成により、以下を同時に実現できる。
+This architecture enables the following simultaneously.
 
-- AWS資格学習の実践化
-- サーバーレス構成のポートフォリオ化
-- 低コスト運用
-- SEOメディア化
-- 将来的な広告収益化・教材販売・SaaS化
+- Put AWS certification learning into practice
+- Present a serverless architecture as a portfolio
+- Low-cost operation
+- Development into an SEO content site
+- Future advertising revenue, learning-material sales, and SaaS expansion
 
-AWS資格学習サイトとしてだけでなく、
+Not only as an AWS certification learning site,

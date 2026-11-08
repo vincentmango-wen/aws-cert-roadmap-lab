@@ -1,34 +1,34 @@
-AWS資格学習サイト Lambda実装設計書
+AWS Certification Study Site Lambda Implementation Design
 
-1. 文書情報
+1. Document Information
 
 |   |   |
 |---|---|
-|項目|内容|
-|文書名|AWS資格学習サイト Lambda実装設計書|
-|対象プロダクト|AWS資格ロードマップラボ|
-|対象フェーズ|MVP開発 〜 Phase 4 学習アプリ化|
-|目的|API Gateway + Lambda + DynamoDB によるバックエンド処理の実装方針を定義する|
-|主対象API|POST /contact|
-|実装言語|Python|
-|実行基盤|AWS Lambda|
-|連携サービス|Amazon API Gateway / Amazon DynamoDB / Amazon CloudWatch Logs / IAM|
+|Item|Description|
+|Document name|AWS Certification Study Site Lambda Implementation Design|
+|Target product|AWS Certification Roadmap Lab|
+|Target phases|MVP development through Phase 4 learning application|
+|Purpose|Define implementation guidelines for backend processing using API Gateway + Lambda + DynamoDB|
+|Primary API|POST /contact|
+|Implementation language|Python|
+|Runtime platform|AWS Lambda|
+|Integrated services|Amazon API Gateway / Amazon DynamoDB / Amazon CloudWatch Logs / IAM|
 
   
 
-2. 本設計書の目的
+2. Purpose of This Design
 
-本設計書では、AWS資格学習サイト「AWS資格ロードマップラボ」のバックエンド処理を担うAWS Lambdaの実装方針を定義する。
+This document defines implementation guidelines for AWS Lambda, which handles backend processing for the AWS certification study site, AWS Certification Roadmap Lab.
 
-MVPでは、動的処理を最小限に抑え、以下のLambdaのみを必須実装とする。
+The MVP minimizes dynamic processing and requires only the following Lambda function.
 
 contact-submit-function
 
-このLambdaは、問い合わせフォームから送信されたデータを受け取り、入力値検証を行ったうえで、DynamoDBの ContactsTableProd に保存する。
+This Lambda receives data submitted through the contact form, validates the input, and saves it to ContactsTableProd in DynamoDB.
 
   
 
-MVPでは、以下のLambdaは実装しない。
+The following Lambda functions are not implemented in the MVP.
 
 get-terms-function
 
@@ -40,58 +40,58 @@ get-progress-function
 
 daily-question-function
 
-これらはPhase 2以降またはPhase 4で実装する。
+These will be implemented in Phase 2 or later, or in Phase 4.
 
   
 
-3. Lambda実装の基本方針
+3. Basic Lambda Implementation Guidelines
 
-3.1 基本方針
+3.1 Basic Guidelines
 
 |   |   |
 |---|---|
-|方針|内容|
-|MVPは問い合わせLambdaのみ|最初は POST /contact のみ実装する|
-|Pythonで実装|学習経験と将来のAI機能拡張を考慮し、Pythonを採用する|
-|API Gateway HTTP API連携|Lambda Proxy Integrationを前提とする|
-|DynamoDB保存|問い合わせデータをContactsTableProdへ保存する|
-|入力値検証を必須化|フロントエンドだけでなくLambda側でも検証する|
-|個人情報をログに出さない|email全文、message全文はCloudWatch Logsに出力しない|
-|IAM最小権限|ContactsTableProdへのPutItemのみ許可する|
-|CORS対応|本番フロントエンドOriginのみ許可する|
-|コスト最小化|メモリ・タイムアウト・ログ量を小さくする|
-|将来拡張しやすい構成|共通レスポンス、バリデーション、DynamoDB処理を分離する|
+|Guideline|Description|
+|Only the contact Lambda in the MVP|Initially implement only POST /contact|
+|Implement in Python|Use Python considering learning experience and future AI feature extensions|
+|API Gateway HTTP API integration|Assume Lambda Proxy Integration|
+|DynamoDB storage|Save contact data to ContactsTableProd|
+|Mandatory input validation|Validate on Lambda as well as the frontend|
+|Do not log personal information|Do not output full email or message values to CloudWatch Logs|
+|Least-privilege IAM|Allow only PutItem on ContactsTableProd|
+|CORS support|Allow only the production frontend Origin|
+|Minimize cost|Keep memory, timeout, and log volume small|
+|Structure for future expansion|Separate common responses, validation, and DynamoDB operations|
 
   
 
-4. Lambda一覧
+4. Lambda Function List
 
-4.1 MVP対象Lambda
-
-|   |   |   |   |
-|---|---|---|---|
-|Lambda名|対応API|概要|必須|
-|contact-submit-function|POST /contact|問い合わせフォーム送信内容をDynamoDBに保存する|必須|
-
-4.2 将来拡張Lambda
+4.1 MVP Lambda Functions
 
 |   |   |   |   |
 |---|---|---|---|
-|Lambda名|対応API|概要|Phase|
-|get-terms-function|GET /terms, GET /terms/{termId}|AWS用語データ取得|Phase 2以降|
-|get-questions-function|GET /questions, GET /questions/{questionId}|模擬問題取得|Phase 2以降|
-|submit-answer-function|POST /answers|ユーザー回答履歴保存|Phase 4|
-|get-progress-function|GET /progress|学習進捗取得|Phase 4|
-|get-review-questions-function|GET /review-questions|復習問題取得|Phase 4|
-|get-me-function|GET /me|ログインユーザー情報取得|Phase 4|
-|update-me-function|PUT /me|ユーザー設定更新|Phase 4|
-|daily-question-function|GET /daily-question / EventBridge|今日の1問取得・通知|Phase 4|
+|Lambda name|API|Overview|Required|
+|contact-submit-function|POST /contact|Save contact form submissions to DynamoDB|Required|
+
+4.2 Future Lambda Extensions
+
+|   |   |   |   |
+|---|---|---|---|
+|Lambda name|API|Overview|Phase|
+|get-terms-function|GET /terms, GET /terms/{termId}|Retrieve AWS terminology data|Phase 2 or later|
+|get-questions-function|GET /questions, GET /questions/{questionId}|Retrieve practice questions|Phase 2 or later|
+|submit-answer-function|POST /answers|Save user answer history|Phase 4|
+|get-progress-function|GET /progress|Retrieve learning progress|Phase 4|
+|get-review-questions-function|GET /review-questions|Retrieve review questions|Phase 4|
+|get-me-function|GET /me|Retrieve signed-in user information|Phase 4|
+|update-me-function|PUT /me|Update user settings|Phase 4|
+|daily-question-function|GET /daily-question / EventBridge|Retrieve and notify users of the daily question|Phase 4|
 
   
 
-5. MVP Lambda構成
+5. MVP Lambda Architecture
 
-5.1 対象構成
+5.1 Target Architecture
 
 Frontend Contact Form
 
@@ -111,78 +111,78 @@ DynamoDB ContactsTableProd
 
 CloudWatch Logs
 
-5.2 処理概要
+5.2 Processing Overview
 
-1. ユーザーが問い合わせフォームを入力する
+1. The user fills in the contact form
 
-2. フロントエンドで入力値を検証する
+2. The frontend validates the input
 
-3. API GatewayのPOST /contactへ送信する
+3. Send to POST /contact on API Gateway
 
-4. API GatewayがLambdaを呼び出す
+4. API Gateway invokes Lambda
 
-5. LambdaがJSONをパースする
+5. Lambda parses the JSON
 
-6. honeypotを確認する
+6. Check the honeypot
 
-7. Lambda側で入力値を検証する
+7. Validate the input on Lambda
 
-8. 問題なければcontactIdとcreatedAtを生成する
+8. If valid, generate contactId and createdAt
 
-9. DynamoDB ContactsTableProdへ保存する
+9. Save to DynamoDB ContactsTableProd
 
-10. CloudWatch Logsへ最小限のログを出す
+10. Write minimal logs to CloudWatch Logs
 
-11. API Gateway経由でレスポンスを返す
+11. Return the response through API Gateway
 
-12. フロントエンドで完了メッセージを表示する
+12. Display a completion message on the frontend
 
   
 
-13. Lambdaランタイム設計
+13. Lambda Runtime Design
 
-6.1 ランタイム設定
+6.1 Runtime Settings
 
 |   |   |
 |---|---|
-|項目|値|
-|Runtime|Python 3.11以上|
-|Architecture|arm64 または x86_64|
+|Item|Value|
+|Runtime|Python 3.11 or later|
+|Architecture|arm64 or x86_64|
 |Memory|128MB〜256MB|
-|Timeout|3〜5秒|
-|Ephemeral storage|デフォルトで十分|
-|VPC|接続しない|
-|Provisioned Concurrency|使用しない|
-|Lambda Layers|MVPでは使用しない|
+|Timeout|3-5 seconds|
+|Ephemeral storage|The default is sufficient|
+|VPC|Do not connect|
+|Provisioned Concurrency|Do not use|
+|Lambda Layers|Do not use in the MVP|
 
-6.2 arm64 / x86_64 方針
+6.2 arm64 / x86_64 Guidelines
 
 |   |   |
 |---|---|
-|選択肢|方針|
-|arm64|コスト効率を重視する場合に候補|
-|x86_64|互換性重視ならこちらでもよい|
+|Option|Guideline|
+|arm64|A candidate when prioritizing cost efficiency|
+|x86_64|Also acceptable when prioritizing compatibility|
 
-MVPではどちらでもよいが、外部ネイティブライブラリを使わないため、arm64でも問題になりにくい。
+Either is acceptable for the MVP. Since no external native libraries are used, arm64 is unlikely to cause problems.
 
-6.3 VPC接続しない理由
+6.3 Why No VPC Connection Is Needed
 
-MVPのLambdaはDynamoDBへアクセスするだけであり、RDSやVPC内リソースにアクセスしない。
+The MVP Lambda only accesses DynamoDB, not RDS or resources inside a VPC.
 
-そのため、VPC接続は不要である。
+Therefore, a VPC connection is unnecessary.
 
-VPC接続しないメリット：
+Benefits of not connecting to a VPC:
 
-- NAT Gatewayが不要
-- 構成がシンプル
-- コールドスタートやネットワーク設定で詰まりにくい
-- 課金リスクを下げられる
+- No NAT Gateway required
+- Simple architecture
+- Less likely to get stuck on cold starts or network configuration
+- Reduced billing risk
 
   
 
-7. ディレクトリ構成
+7. Directory Structure
 
-7.1 推奨構成
+7.1 Recommended Structure
 
 backend/
 
@@ -222,9 +222,9 @@ backend/
 
 └── README.md
 
-7.2 MVPでは簡略化してもよい構成
+7.2 Acceptable Simplified MVP Structure
 
-最初は以下でもよい。
+The following is also acceptable initially.
 
 backend/
 
@@ -236,39 +236,39 @@ backend/
 
         └── requirements.txt
 
-ただし、実装が大きくなる前に以下へ分離する。
+However, separate the implementation into the following files before it grows larger.
 
 |   |   |
 |---|---|
-|ファイル|役割|
-|app.py|Lambda handler本体|
-|validators.py|入力値検証|
-|response.py|共通レスポンス生成|
-|dynamodb_client.py|DynamoDB保存処理|
-|schemas.py|型・定数・データ構造|
+|File|Role|
+|app.py|Main Lambda handler|
+|validators.py|Input validation|
+|response.py|Common response generation|
+|dynamodb_client.py|DynamoDB storage operations|
+|schemas.py|Types, constants, and data structures|
 
   
 
-8. contact-submit-function 設計
+8. contact-submit-function Design
 
-8.1 基本情報
+8.1 Basic Information
 
 |   |   |
 |---|---|
-|項目|内容|
-|Lambda名|contact-submit-prod|
-|論理名|contact-submit-function|
-|対応API|POST /contact|
-|Runtime|Python 3.11以上|
+|Item|Description|
+|Lambda name|contact-submit-prod|
+|Logical name|contact-submit-function|
+|API|POST /contact|
+|Runtime|Python 3.11 or later|
 |Handler|app.lambda_handler|
 |DynamoDB|ContactsTableProd|
 |CloudWatch Logs|/aws/lambda/contact-submit-prod|
 
-8.2 入力データ
+8.2 Input Data
 
-API Gateway HTTP APIからLambda Proxy形式でイベントを受け取る。
+Receive events from API Gateway HTTP API in Lambda Proxy format. Japanese strings in request, response, and code examples throughout this document are preserved localized payload specimens, not developer prose.
 
-想定リクエストBody
+Expected request Body (Japanese localized specimen)
 
 {
 
@@ -286,9 +286,9 @@ API Gateway HTTP APIからLambda Proxy形式でイベントを受け取る。
 
 }
 
-8.3 保存データ
+8.3 Stored Data
 
-DynamoDBには以下を保存する。
+Save the following to DynamoDB (Japanese localized specimen).
 
 {
 
@@ -312,9 +312,9 @@ DynamoDBには以下を保存する。
 
 }
 
-8.4 レスポンス
+8.4 Responses
 
-成功時
+Success (Japanese localized response specimen)
 
 HTTP 201
 
@@ -336,7 +336,7 @@ HTTP 201
 
 }
 
-バリデーションエラー
+Validation error (Japanese localized response specimen)
 
 HTTP 400
 
@@ -368,7 +368,7 @@ HTTP 400
 
 }
 
-サーバーエラー
+Server error (Japanese localized response specimen)
 
 HTTP 500
 
@@ -390,11 +390,11 @@ HTTP 500
 
   
 
-9. API Gatewayイベント設計
+9. API Gateway Event Design
 
-9.1 HTTP APIイベント想定
+9.1 Expected HTTP API Event
 
-API Gateway HTTP APIのLambda Proxy Integrationでは、概ね以下のようなイベントが渡される。
+API Gateway HTTP API Lambda Proxy Integration passes an event roughly like the following (Japanese localized payload specimen).
 
 {
 
@@ -434,54 +434,54 @@ API Gateway HTTP APIのLambda Proxy Integrationでは、概ね以下のような
 
 }
 
-9.2 取得する値
+9.2 Values to Retrieve
 
 |   |   |   |
 |---|---|---|
-|値|取得元|用途|
-|method|requestContext.http.method|OPTIONS判定、POST判定|
-|body|event.body|問い合わせ入力|
-|origin|headers.origin|CORS判定|
-|user-agent|headers.user-agent|任意保存|
-|requestId|requestContext.requestId|ログ追跡|
+|Value|Source|Purpose|
+|method|requestContext.http.method|Identify OPTIONS and POST|
+|body|event.body|Contact input|
+|origin|headers.origin|CORS evaluation|
+|user-agent|headers.user-agent|Optional storage|
+|requestId|requestContext.requestId|Log tracing|
 
-9.3 OPTIONS対応
+9.3 OPTIONS Support
 
-CORSプリフライトリクエストに対応する。
+Support CORS preflight requests.
 
-API Gateway側でCORSを処理する場合、Lambda側でOPTIONSを意識しなくてもよい。
+If API Gateway handles CORS, Lambda does not need to handle OPTIONS explicitly.
 
-ただし、動作確認しやすくするため、Lambda側にもOPTIONS処理を入れておいてよい。
+However, Lambda may also include OPTIONS handling to simplify verification.
 
-method == OPTIONS の場合は 200 を返す
+Return 200 when method == OPTIONS
 
   
 
-10. 環境変数設計
+10. Environment Variable Design
 
-10.1 必須環境変数
-
-|   |   |   |
-|---|---|---|
-|Key|例|内容|
-|CONTACTS_TABLE_NAME|ContactsTableProd|保存先DynamoDBテーブル名|
-|ALLOWED_ORIGINS|https://xxxxx.cloudfront.net,https://example.com|許可Origin一覧|
-|LOG_LEVEL|INFO|ログレベル|
-|ENV|prod|環境名|
-
-10.2 任意環境変数
+10.1 Required Environment Variables
 
 |   |   |   |
 |---|---|---|
-|Key|例|内容|
-|MAX_MESSAGE_LENGTH|2000|本文最大文字数|
-|MAX_NAME_LENGTH|100|名前最大文字数|
-|MAX_SUBJECT_LENGTH|150|件名最大文字数|
-|ENABLE_HONEYPOT|true|honeypot有効化|
+|Key|Example|Description|
+|CONTACTS_TABLE_NAME|ContactsTableProd|Destination DynamoDB table name|
+|ALLOWED_ORIGINS|https://xxxxx.cloudfront.net,https://example.com|List of allowed Origins|
+|LOG_LEVEL|INFO|Log level|
+|ENV|prod|Environment name|
 
-10.3 設定してはいけない値
+10.2 Optional Environment Variables
 
-Lambda環境変数に以下を直接入れない。
+|   |   |   |
+|---|---|---|
+|Key|Example|Description|
+|MAX_MESSAGE_LENGTH|2000|Maximum message length|
+|MAX_NAME_LENGTH|100|Maximum name length|
+|MAX_SUBJECT_LENGTH|150|Maximum subject length|
+|ENABLE_HONEYPOT|true|Enable the honeypot|
+
+10.3 Values That Must Not Be Set
+
+Do not put the following directly in Lambda environment variables.
 
 AWS_ACCESS_KEY_ID
 
@@ -489,101 +489,101 @@ AWS_SECRET_ACCESS_KEY
 
 GitHub Token
 
-外部API秘密キー
+External API secret keys
 
-JWT秘密鍵
+JWT private keys
 
-外部APIキーが必要になった場合は、Secrets ManagerまたはSSM Parameter Storeを検討する。
+If external API keys become necessary, consider Secrets Manager or SSM Parameter Store.
 
   
 
-11. CORS実装設計
+11. CORS Implementation Design
 
-11.1 基本方針
+11.1 Basic Guidelines
 
 |   |   |
 |---|---|
-|項目|方針|
-|本番Origin|CloudFront URLまたは独自ドメインのみ許可|
-|開発Origin|localhostは開発環境のみ許可|
+|Item|Guideline|
+|Production Origin|Allow only the CloudFront URL or custom domain|
+|Development Origin|Allow localhost only in the development environment|
 |Allow Methods|POST, OPTIONS|
 |Allow Headers|Content-Type, Authorization|
-|Credentials|MVPでは使用しない|
+|Credentials|Do not use in the MVP|
 
-11.2 ALLOWED_ORIGINS形式
+11.2 ALLOWED_ORIGINS Format
 
 https://xxxxxxxx.cloudfront.net,https://example.com,http://localhost:3000
 
-本番環境ではlocalhostを削除する。
+Remove localhost in production.
 
-11.3 Origin判定ロジック
+11.3 Origin Evaluation Logic
 
-1. event.headers.origin を取得
+1. Retrieve event.headers.origin
 
-2. ALLOWED_ORIGINSをカンマ区切りで配列化
+2. Split ALLOWED_ORIGINS by commas into an array
 
-3. originが許可リストに含まれる場合、そのoriginをAccess-Control-Allow-Originに設定
+3. If origin is in the allowlist, set that origin in Access-Control-Allow-Origin
 
-4. 含まれない場合、本番Originを返す、または403にする
+4. Otherwise, return the production Origin or return 403
 
-11.4 MVP方針
+11.4 MVP Guidelines
 
-最初はAPI GatewayのCORS設定で制御する。
+Initially control CORS through API Gateway settings.
 
-Lambda側では、レスポンスヘッダーに Access-Control-Allow-Origin を付与する。
+On Lambda, add Access-Control-Allow-Origin to the response headers.
 
   
 
-12. バリデーション設計
+12. Validation Design
 
-12.1 バリデーション方針
+12.1 Validation Guidelines
 
-入力値検証は以下の2段階で行う。
+Validate input in the following two stages.
 
-フロントエンド：ユーザー体験向上のための事前チェック
+Frontend: preliminary checks to improve the user experience
 
-Lambda：セキュリティ・データ保護のための必須チェック
+Lambda: mandatory checks for security and data protection
 
-フロントエンドのチェックは信用しない。
+Do not trust frontend checks.
 
-12.2 項目別ルール
+12.2 Rules by Field
 
 |   |   |   |
 |---|---|---|
-|項目|必須|ルール|
-|name|必須|1〜100文字|
-|email|必須|メール形式、255文字以内|
-|subject|必須|1〜150文字|
-|message|必須|1〜2,000文字|
-|sourcePage|任意|255文字以内|
-|honeypot|任意|空文字であること|
+|Field|Required|Rule|
+|name|Required|1-100 characters|
+|email|Required|Email format, at most 255 characters|
+|subject|Required|1-150 characters|
+|message|Required|1-2,000 characters|
+|sourcePage|Optional|At most 255 characters|
+|honeypot|Optional|Must be an empty string|
 
-12.3 メール形式チェック
+12.3 Email Format Check
 
-厳密すぎるメール正規表現は避ける。
+Avoid excessively strict email regular expressions.
 
-MVPでは以下程度でよい。
+The following level of checks is sufficient for the MVP.
 
-@ が含まれる
+Contains @
 
-@ の前後に文字がある
+Has characters before and after @
 
-ドメイン側に . が含まれる
+Contains . in the domain part
 
-255文字以内
+At most 255 characters
 
-12.4 禁止・制限する入力
+12.4 Prohibited or Restricted Input
 
 |   |   |
 |---|---|
-|入力|扱い|
-|空文字|必須項目ならエラー|
-|文字数超過|エラー|
-|scriptタグ|保存自体は可能。ただし表示時は必ずエスケープ|
-|HTMLタグ|保存自体は可能。ただしHTMLとして解釈しない|
-|honeypot入力あり|Bot扱い。保存しない|
+|Input|Handling|
+|Empty string|Error for required fields|
+|Length limit exceeded|Error|
+|script tags|May be stored, but must always be escaped when displayed|
+|HTML tags|May be stored, but must not be interpreted as HTML|
+|Nonempty honeypot|Treat as a bot; do not save|
 
-12.5 エラー詳細形式
+12.5 Error Detail Format (Japanese Localized Specimen)
 
 {
 
@@ -593,7 +593,7 @@ MVPでは以下程度でよい。
 
 }
 
-12.6 バリデーション関数イメージ
+12.6 Validation Function Example (Japanese Localized Response Specimens)
 
 import re
 
@@ -679,23 +679,23 @@ def validate_contact_input(data: dict) -> list[dict]:
 
   
 
-13. honeypot設計
+13. Honeypot Design
 
-13.1 目的
+13.1 Purpose
 
-Botによる自動投稿を低コストで防ぐ。
+Prevent automated bot submissions at low cost.
 
-reCAPTCHAはMVPでは使わない。
+Do not use reCAPTCHA in the MVP.
 
-理由：
+Reasons:
 
-- 実装が増える
-- 外部サービス依存が増える
-- 初期段階では過剰
+- More implementation work
+- More external service dependencies
+- Excessive for the initial stage
 
-13.2 フロントエンド側
+13.2 Frontend
 
-ユーザーには見えない入力欄を用意する。
+Provide an input field invisible to users.
 
 <input
 
@@ -711,51 +711,51 @@ reCAPTCHAはMVPでは使わない。
 
 />
 
-13.3 Lambda側
+13.3 Lambda
 
-honeypotに値が入っている場合：
+If the honeypot contains a value:
 
-- DynamoDBに保存しない
+- Do not save to DynamoDB
 
-- ログにはspam detected程度だけ出す
+- Log only a brief message such as spam detected
 
-- レスポンスは成功扱いにする
+- Treat the response as successful
 
-13.4 成功扱いにする理由
+13.4 Why Return Success
 
-Botにブロックされたことを悟られにくくするため。
+To make it harder for bots to recognize that they were blocked.
 
   
 
-14. DynamoDB保存設計
+14. DynamoDB Storage Design
 
-14.1 保存先テーブル
+14.1 Destination Table
 
 |   |   |
 |---|---|
-|項目|内容|
+|Item|Description|
 |Table name|ContactsTableProd|
 |Partition key|contactId|
-|Sort key|なし|
-|Billing mode|On-demand推奨|
+|Sort key|None|
+|Billing mode|On-demand recommended|
 
-14.2 PutItem項目
+14.2 PutItem Attributes
 
 |   |   |   |   |
 |---|---|---|---|
-|属性|型|必須|内容|
-|contactId|String|必須|contact- + UUID|
-|createdAt|String|必須|ISO 8601形式|
-|name|String|必須|名前|
-|email|String|必須|メールアドレス|
-|subject|String|必須|件名|
-|message|String|必須|本文|
-|sourcePage|String|任意|送信元ページ|
-|status|String|必須|new|
-|userAgent|String|任意|User-Agent|
-|requestId|String|任意|API Gateway requestId|
+|Attribute|Type|Required|Description|
+|contactId|String|Required|contact- + UUID|
+|createdAt|String|Required|ISO 8601 format|
+|name|String|Required|Name|
+|email|String|Required|Email address|
+|subject|String|Required|Subject|
+|message|String|Required|Message body|
+|sourcePage|String|Optional|Source page|
+|status|String|Required|new|
+|userAgent|String|Optional|User-Agent|
+|requestId|String|Optional|API Gateway requestId|
 
-14.3 contactId生成
+14.3 Generating contactId
 
 import uuid
 
@@ -763,9 +763,9 @@ import uuid
 
 contact_id = f"contact-{uuid.uuid4()}"
 
-14.4 createdAt生成
+14.4 Generating createdAt
 
-JSTで保存する。
+Store in JST.
 
 from datetime import datetime, timezone, timedelta
 
@@ -775,7 +775,7 @@ JST = timezone(timedelta(hours=9))
 
 created_at = datetime.now(JST).isoformat()
 
-14.5 DynamoDB保存関数イメージ
+14.5 DynamoDB Storage Function Example
 
 import boto3
 
@@ -795,22 +795,22 @@ def save_contact(table_name: str, item: dict) -> None:
 
     table.put_item(Item=item)
 
-14.6 注意点
+14.6 Notes
 
-- DynamoDBには空文字を保存できるケースとできないケースの扱いに注意する
-- 任意項目が空文字の場合は保存しない、または空文字許容の挙動を確認する
-- emailやmessageをログに出さない
-- 問い合わせ一覧取得APIはMVPでは作らない
+- Be aware of the cases where DynamoDB can and cannot store empty strings
+- Omit optional fields containing empty strings, or verify the behavior for allowing empty strings
+- Do not log email or message
+- Do not create a contact-list retrieval API in the MVP
 
   
 
-15. レスポンス設計
+15. Response Design
 
-15.1 共通レスポンス方針
+15.1 Common Response Guidelines
 
-すべてのレスポンスは以下の形式に統一する。
+Standardize all responses to the following format.
 
-成功
+Success
 
 {
 
@@ -824,7 +824,7 @@ def save_contact(table_name: str, item: dict) -> None:
 
 }
 
-エラー
+Error (Japanese localized response specimen)
 
 {
 
@@ -844,17 +844,17 @@ def save_contact(table_name: str, item: dict) -> None:
 
 }
 
-15.2 レスポンスヘッダー
+15.2 Response Headers
 
 |   |   |
 |---|---|
-|Header|値|
+|Header|Value|
 |Content-Type|application/json|
-|Access-Control-Allow-Origin|許可Origin|
+|Access-Control-Allow-Origin|Allowed Origin|
 |Access-Control-Allow-Headers|Content-Type,Authorization|
 |Access-Control-Allow-Methods|POST,OPTIONS|
 
-15.3 response.pyイメージ
+15.3 response.py Example
 
 import json
 
@@ -974,18 +974,18 @@ def error_response(event: dict, code: str, message: str, status_code=400, detail
 
   
 
-16. エラーハンドリング設計
+16. Error Handling Design
 
-16.1 エラー一覧
+16.1 Error List
 
 |   |   |   |
 |---|---|---|
-|エラーコード|HTTP|発生条件|
-|INVALID_JSON|400|bodyがJSONとして解析できない|
-|VALIDATION_ERROR|400|入力値エラー|
-|METHOD_NOT_ALLOWED|405|POST / OPTIONS以外|
-|DYNAMODB_ERROR|500|DynamoDB保存失敗|
-|INTERNAL_SERVER_ERROR|500|想定外エラー|
+|Error code|HTTP|Trigger|
+|INVALID_JSON|400|body cannot be parsed as JSON|
+|VALIDATION_ERROR|400|Invalid input|
+|METHOD_NOT_ALLOWED|405|Method other than POST / OPTIONS|
+|DYNAMODB_ERROR|500|Failed to save to DynamoDB|
+|INTERNAL_SERVER_ERROR|500|Unexpected error|
 
 16.2 INVALID_JSON
 
@@ -1039,7 +1039,7 @@ def error_response(event: dict, code: str, message: str, status_code=400, detail
 
 16.4 DYNAMODB_ERROR
 
-ユーザーには詳細を返さない。
+Do not return details to the user.
 
 {
 
@@ -1059,73 +1059,73 @@ def error_response(event: dict, code: str, message: str, status_code=400, detail
 
 }
 
-CloudWatch Logsには以下程度を出す。
+Write only something like the following to CloudWatch Logs.
 
 ERROR dynamodb put_item failed requestId=req-xxxx errorType=ClientError
 
-本文全文やemailは出さない。
+Do not output the full message body or email.
 
   
 
-17. ログ設計
+17. Logging Design
 
-17.1 ログ出力方針
+17.1 Logging Guidelines
 
 |   |   |
 |---|---|
-|項目|方針|
-|requestId|出力する|
-|contactId|出力してよい|
-|status|出力してよい|
-|validation error fields|出力してよい|
-|email全文|出力しない|
-|message全文|出力しない|
-|JWT|出力しない|
-|Authorization header|出力しない|
-|AWS認証情報|出力しない|
+|Item|Guideline|
+|requestId|Log|
+|contactId|May be logged|
+|status|May be logged|
+|validation error fields|May be logged|
+|Full email|Do not log|
+|Full message|Do not log|
+|JWT|Do not log|
+|Authorization header|Do not log|
+|AWS credentials|Do not log|
 
-17.2 正常ログ例
+17.2 Success Log Example
 
 INFO request started requestId=req-xxxx method=POST path=/contact
 
 INFO contact saved requestId=req-xxxx contactId=contact-xxxx
 
-17.3 バリデーションエラーログ例
+17.3 Validation Error Log Example
 
 WARN validation error requestId=req-xxxx fields=email,message
 
-17.4 スパム検知ログ例
+17.4 Spam Detection Log Example
 
 WARN honeypot detected requestId=req-xxxx
 
-17.5 異常ログ例
+17.5 Error Log Example
 
 ERROR dynamodb put_item failed requestId=req-xxxx errorType=ClientError
 
 ERROR unexpected error requestId=req-xxxx errorType=ValueError
 
-17.6 ログ保存期間
+17.6 Log Retention
 
 |   |   |
 |---|---|
-|Log Group|保存期間|
-|/aws/lambda/contact-submit-prod|14日〜30日|
+|Log Group|Retention period|
+|/aws/lambda/contact-submit-prod|14-30 days|
 
   
 
-18. IAM権限設計
+18. IAM Permission Design
 
-18.1 Lambda実行ロール
+18.1 Lambda Execution Role
 
 |   |   |
 |---|---|
-|項目|内容|
-|Role名|lambda-contact-submit-role-prod|
-|Trust policy|LambdaサービスからAssumeRole可能|
-|DynamoDB権限|ContactsTableProdへのPutItemのみ|
-|CloudWatch権限|Logs出力のみ|
+|Item|Description|
+|Role name|lambda-contact-submit-role-prod|
+|Trust policy|Allow AssumeRole from the Lambda service|
+|DynamoDB permissions|Only PutItem on ContactsTableProd|
+|CloudWatch permissions|Log output only|
 
-18.2 DynamoDB権限
+18.2 DynamoDB Permissions
 
 {
 
@@ -1141,7 +1141,7 @@ ERROR unexpected error requestId=req-xxxx errorType=ValueError
 
 }
 
-18.3 CloudWatch Logs権限
+18.3 CloudWatch Logs Permissions
 
 {
 
@@ -1161,76 +1161,76 @@ ERROR unexpected error requestId=req-xxxx errorType=ValueError
 
 }
 
-18.4 付与しない権限
+18.4 Permissions Not Granted
 
 |   |   |
 |---|---|
-|権限|理由|
-|dynamodb:Scan|問い合わせ保存には不要|
-|dynamodb:GetItem|MVPの問い合わせ保存には不要|
-|dynamodb:DeleteItem|不要|
-|dynamodb:*|権限過多|
-|s3:*|不要|
-|iam:*|危険|
-|AdministratorAccess|絶対に不要|
+|Permission|Reason|
+|dynamodb:Scan|Unnecessary for saving contacts|
+|dynamodb:GetItem|Unnecessary for saving contacts in the MVP|
+|dynamodb:DeleteItem|Unnecessary|
+|dynamodb:*|Excessive permissions|
+|s3:*|Unnecessary|
+|iam:*|Dangerous|
+|AdministratorAccess|Absolutely unnecessary|
 
   
 
-19. app.py 実装設計
+19. app.py Implementation Design
 
-19.1 処理フロー
+19.1 Processing Flow
 
 lambda_handler(event, context)
 
   ↓
 
-requestId取得または生成
+Retrieve or generate requestId
 
   ↓
 
-HTTPメソッド確認
+Check HTTP method
 
   ↓
 
-OPTIONSなら200返却
+Return 200 for OPTIONS
 
   ↓
 
-POST以外なら405返却
+Return 405 for methods other than POST
 
   ↓
 
-body JSONパース
+Parse body JSON
 
   ↓
 
-honeypot確認
+Check honeypot
 
   ↓
 
-入力値検証
+Validate input
 
   ↓
 
-contactId生成
+Generate contactId
 
   ↓
 
-createdAt生成
+Generate createdAt
 
   ↓
 
-DynamoDB item作成
+Build DynamoDB item
 
   ↓
 
-PutItem実行
+Execute PutItem
 
   ↓
 
-成功レスポンス返却
+Return success response
 
-19.2 実装コード案
+19.2 Proposed Implementation Code (Japanese Localized Response Specimens)
 
 import json
 
@@ -1740,73 +1740,73 @@ def lambda_handler(event, context):
 
     )
 
-19.3 実装上の注意点
+19.3 Implementation Notes
 
-上記コードはMVP実装の基準コードである。
+The code above is the baseline implementation for the MVP.
 
-本番導入前に以下を確認する。
+Check the following before production deployment.
 
 |   |   |
 |---|---|
-|項目|確認|
-|ALLOWED_ORIGINSが本番ドメインのみ|必須|
-|CONTACTS_TABLE_NAMEが正しい|必須|
-|emailやmessageがログ出力されない|必須|
-|DynamoDB PutItem権限のみ|必須|
-|Lambdaタイムアウトが短い|推奨|
-|CloudWatch Logs保存期間設定済み|必須|
+|Item|Check|
+|ALLOWED_ORIGINS contains only production domains|Required|
+|CONTACTS_TABLE_NAME is correct|Required|
+|email and message are not logged|Required|
+|Only DynamoDB PutItem permission is granted|Required|
+|Lambda timeout is short|Recommended|
+|CloudWatch Logs retention is configured|Required|
 
   
 
-20. requirements.txt 設計
+20. requirements.txt Design
 
 20.1 MVP
 
-Lambdaランタイムにはboto3が含まれることが多いため、MVPでは外部依存を最小にする。
+Since the Lambda runtime often includes boto3, minimize external dependencies in the MVP.
 
 # requirements.txt
 
-空でもよい。
+It may be empty.
 
-20.2 追加してもよい候補
+20.2 Optional Candidates
 
 |   |   |   |
 |---|---|---|
-|ライブラリ|用途|MVP必要性|
-|pydantic|入力スキーマ検証|不要。最初は標準ライブラリで十分|
-|aws-lambda-powertools|ログ・トレーシング・ユーティリティ|Phase 2以降で検討|
-|pytest|テスト|ローカル開発用には推奨|
-|moto|AWSモックテスト|Phase 2以降で検討|
+|Library|Purpose|MVP necessity|
+|pydantic|Input schema validation|Unnecessary; the standard library is sufficient initially|
+|aws-lambda-powertools|Logging, tracing, and utilities|Consider in Phase 2 or later|
+|pytest|Testing|Recommended for local development|
+|moto|Mock AWS testing|Consider in Phase 2 or later|
 
-20.3 方針
+20.3 Guidelines
 
-MVPでは依存ライブラリを増やしすぎない。
+Do not add too many dependencies in the MVP.
 
-理由：
+Reasons:
 
-- デプロイパッケージが大きくなる
-- 脆弱性管理が増える
-- 初学者には構成が複雑になる
-- 標準ライブラリで十分実装できる
+- Larger deployment packages
+- More vulnerability management
+- More complex setup for beginners
+- The standard library is sufficient for implementation
 
   
 
-21. ローカルテスト設計
+21. Local Test Design
 
-21.1 テスト方針
+21.1 Testing Guidelines
 
-MVPでは以下をテストする。
+Test the following in the MVP.
 
 |   |   |
 |---|---|
-|テスト種別|内容|
-|バリデーションテスト|入力値検証が正しく動くか|
-|JSONパーステスト|不正JSONで400になるか|
-|honeypotテスト|honeypot入力時に保存しないか|
-|レスポンステスト|成功・エラー形式が統一されているか|
-|DynamoDB保存テスト|実AWSまたはモックでPutItemできるか|
+|Test type|Description|
+|Validation test|Does input validation work correctly?|
+|JSON parsing test|Does invalid JSON return 400?|
+|Honeypot test|Is saving skipped when the honeypot is populated?|
+|Response test|Are success and error formats consistent?|
+|DynamoDB storage test|Does PutItem work with real AWS or mocks?|
 
-21.2 最小テストイベント
+21.2 Minimal Test Event (Japanese Localized Payload Specimen)
 
 events/contact_valid.json
 
@@ -1848,9 +1848,9 @@ events/contact_valid.json
 
 }
 
-21.3 異常系テストイベント
+21.3 Error-Case Test Events (Japanese Localized Payload Specimens)
 
-email不正
+Invalid email
 
 {
 
@@ -1880,7 +1880,7 @@ email不正
 
 }
 
-honeypotあり
+Populated honeypot
 
 {
 
@@ -1910,7 +1910,7 @@ honeypotあり
 
 }
 
-21.4 pytest例
+21.4 pytest Examples (Japanese Localized Test Specimens)
 
 from validators import validate_contact_input
 
@@ -1982,31 +1982,31 @@ def test_empty_message():
 
   
 
-22. AWSコンソールでのテスト手順
+22. AWS Console Testing Procedure
 
-22.1 Lambda単体テスト
+22.1 Lambda Unit Test
 
-1. Lambdaコンソールを開く
+1. Open the Lambda console
 
-2. contact-submit-prodを開く
+2. Open contact-submit-prod
 
-3. Testタブを開く
+3. Open the Test tab
 
-4. New eventを作成
+4. Create a New event
 
-5. API Gateway HTTP API形式のテストイベントを貼り付ける
+5. Paste a test event in API Gateway HTTP API format
 
-6. Testを実行
+6. Run Test
 
-7. レスポンスを確認
+7. Check the response
 
-8. CloudWatch Logsを確認
+8. Check CloudWatch Logs
 
-9. DynamoDBに保存されているか確認
+9. Verify that the data was saved to DynamoDB
 
-22.2 API Gateway経由テスト
+22.2 Testing Through API Gateway
 
-curlで確認する。
+Verify with curl (Japanese localized test payload specimen).
 
 curl -X POST "https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/contact" \
 
@@ -2030,39 +2030,39 @@ curl -X POST "https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/contact"
 
   }'
 
-22.3 期待結果
+22.3 Expected Results
 
 |   |   |
 |---|---|
-|確認対象|期待結果|
+|Check target|Expected result|
 |HTTP status|201|
 |success|true|
-|contactId|返却される|
-|DynamoDB|itemが保存される|
-|CloudWatch Logs|contact savedログが出る|
-|個人情報ログ|email全文・message全文が出ていない|
+|contactId|Returned|
+|DynamoDB|The item is saved|
+|CloudWatch Logs|A contact saved log is output|
+|Personal information in logs|No full email or message is output|
 
   
 
-23. デプロイ設計
+23. Deployment Design
 
-23.1 初期デプロイ方針
+23.1 Initial Deployment Guidelines
 
-MVPでは、最初はAWSコンソールから直接コードを貼り付けてもよい。
+For the MVP, initially pasting code directly into the AWS console is acceptable.
 
-ただし、最終的にはGitHub管理する。
+However, ultimately manage it in GitHub.
 
-23.2 推奨デプロイ段階
+23.2 Recommended Deployment Stages
 
 |   |   |
 |---|---|
-|段階|方法|
-|初回動作確認|AWSコンソールで直接作成|
-|MVP整理後|zipアップロード|
-|Phase 2以降|AWS SAM|
-|本格運用|GitHub Actions + SAM|
+|Stage|Method|
+|Initial verification|Create directly in the AWS console|
+|After organizing the MVP|zip upload|
+|Phase 2 or later|AWS SAM|
+|Full-scale operation|GitHub Actions + SAM|
 
-23.3 zipデプロイ手順
+23.3 zip Deployment Procedure
 
 cd backend/functions/contact_submit
 
@@ -2074,7 +2074,7 @@ aws lambda update-function-code \
 
   --zip-file fileb://contact_submit.zip
 
-23.4 SAM構成案
+23.4 Proposed SAM Configuration
 
 infra/sam-template.yaml
 
@@ -2174,69 +2174,69 @@ Resources:
 
             Method: POST
 
-23.5 SAMコマンド
+23.5 SAM Commands
 
 sam build
 
 sam deploy --guided
 
-23.6 注意点
+23.6 Notes
 
-最初からSAMにこだわりすぎると、資格学習・MVP公開が遅れる可能性がある。
+Focusing too heavily on SAM from the start may delay certification study and the MVP release.
 
-まずAWSコンソールで動かし、仕組みを理解してからIaC化してよい。
+It is acceptable to first get it working in the AWS console, understand the mechanism, and then convert it to IaC.
 
   
 
-24. Lambda設定チェックリスト
+24. Lambda Configuration Checklist
 
-24.1 基本設定
-
-|   |   |
-|---|---|
-|チェック|状態|
-|RuntimeがPython 3.11以上|未実施 / 実施済み|
-|Handlerがapp.lambda_handler|未実施 / 実施済み|
-|Memoryが128MB〜256MB|未実施 / 実施済み|
-|Timeoutが3〜5秒|未実施 / 実施済み|
-|VPC接続していない|未実施 / 実施済み|
-|Provisioned Concurrencyを使っていない|未実施 / 実施済み|
-
-24.2 環境変数
+24.1 Basic Settings
 
 |   |   |
 |---|---|
-|チェック|状態|
-|CONTACTS_TABLE_NAMEを設定した|未実施 / 実施済み|
-|ALLOWED_ORIGINSを設定した|未実施 / 実施済み|
-|LOG_LEVELを設定した|未実施 / 実施済み|
-|秘密情報を環境変数に入れていない|未実施 / 実施済み|
+|Check|Status|
+|Runtime is Python 3.11 or later|Not done / Done|
+|Handler is app.lambda_handler|Not done / Done|
+|Memory is 128MB-256MB|Not done / Done|
+|Timeout is 3-5 seconds|Not done / Done|
+|Not connected to a VPC|Not done / Done|
+|Provisioned Concurrency is not used|Not done / Done|
+
+24.2 Environment Variables
+
+|   |   |
+|---|---|
+|Check|Status|
+|CONTACTS_TABLE_NAME is configured|Not done / Done|
+|ALLOWED_ORIGINS is configured|Not done / Done|
+|LOG_LEVEL is configured|Not done / Done|
+|No secrets are stored in environment variables|Not done / Done|
 
 24.3 IAM
 
 |   |   |
 |---|---|
-|チェック|状態|
-|ContactsTableProdへのPutItemのみ許可|未実施 / 実施済み|
-|CloudWatch Logs出力権限がある|未実施 / 実施済み|
-|AdministratorAccessを付与していない|未実施 / 実施済み|
-|不要なDynamoDB権限がない|未実施 / 実施済み|
+|Check|Status|
+|Only PutItem on ContactsTableProd is allowed|Not done / Done|
+|CloudWatch Logs output permission is present|Not done / Done|
+|AdministratorAccess is not granted|Not done / Done|
+|No unnecessary DynamoDB permissions|Not done / Done|
 
-24.4 ログ
+24.4 Logs
 
 |   |   |
 |---|---|
-|チェック|状態|
-|CloudWatch Logs保存期間を設定した|未実施 / 実施済み|
-|email全文をログに出していない|未実施 / 実施済み|
-|message全文をログに出していない|未実施 / 実施済み|
-|requestIdをログに出している|未実施 / 実施済み|
+|Check|Status|
+|CloudWatch Logs retention is configured|Not done / Done|
+|Full email is not logged|Not done / Done|
+|Full message is not logged|Not done / Done|
+|requestId is logged|Not done / Done|
 
   
 
-25. フロントエンド連携設計
+25. Frontend Integration Design
 
-25.1 APIクライアント
+25.1 API Client
 
 frontend/
 
@@ -2246,7 +2246,7 @@ frontend/
 
         └── contact.ts
 
-25.2 contact.ts例
+25.2 contact.ts Example
 
 export type ContactInput = {
 
@@ -2348,35 +2348,35 @@ export async function submitContact(input: ContactInput): Promise<ContactRespons
 
 }
 
-25.3 フロントエンド側の注意点
+25.3 Frontend Notes
 
 |   |   |
 |---|---|
-|項目|方針|
-|NEXT_PUBLIC_API_BASE_URL|API Gateway URLを設定|
-|フロント側検証|必ず行う。ただしLambda側でも再検証|
-|送信中状態|二重送信防止のためボタンをdisabledにする|
-|エラー表示|Lambdaのdetailsをフォーム項目に表示|
-|honeypot|hidden入力として送る|
+|Item|Guideline|
+|NEXT_PUBLIC_API_BASE_URL|Set the API Gateway URL|
+|Frontend validation|Always validate, but also revalidate on Lambda|
+|Submitting state|Disable the button to prevent duplicate submissions|
+|Error display|Display Lambda details beside form fields|
+|honeypot|Send as a hidden input|
 
   
 
-26. 運用監視設計
+26. Operational Monitoring Design
 
-26.1 監視対象
+26.1 Monitoring Targets
 
 |   |   |
 |---|---|
-|対象|確認内容|
-|Lambda Invocations|実行回数が急増していないか|
-|Lambda Errors|エラーが発生していないか|
-|Lambda Duration|実行時間が長くなっていないか|
-|API Gateway 4XX|バリデーションエラー・不正アクセス増加|
-|API Gateway 5XX|Lambda・DynamoDB障害|
-|DynamoDB Item count|スパム投稿増加|
-|CloudWatch Logs|個人情報が出ていないか|
+|Target|What to check|
+|Lambda Invocations|Whether invocations are increasing sharply|
+|Lambda Errors|Whether errors are occurring|
+|Lambda Duration|Whether execution time is increasing|
+|API Gateway 4XX|Increases in validation errors or unauthorized access|
+|API Gateway 5XX|Lambda or DynamoDB failures|
+|DynamoDB Item count|Increased spam submissions|
+|CloudWatch Logs|Whether personal information is being output|
 
-26.2 CloudWatch Logs確認ポイント
+26.2 CloudWatch Logs Checkpoints
 
 INFO contact saved
 
@@ -2388,337 +2388,337 @@ ERROR dynamodb put_item failed
 
 ERROR unexpected error
 
-26.3 アラーム導入タイミング
+26.3 When to Introduce Alarms
 
-MVPではAWS Budgetsを最優先とする。
+Prioritize AWS Budgets in the MVP.
 
-Phase 2以降で以下のCloudWatch Alarmを検討する。
+Consider the following CloudWatch Alarms in Phase 2 or later.
 
 |   |   |
 |---|---|
-|アラーム|条件|
-|Lambda Errors|5分間で1件以上|
-|API Gateway 5XX|5分間で1件以上|
-|Lambda Invocations急増|通常の数倍|
-|DynamoDB ThrottledRequests|1件以上|
+|Alarm|Condition|
+|Lambda Errors|At least one in 5 minutes|
+|API Gateway 5XX|At least one in 5 minutes|
+|Spike in Lambda Invocations|Several times the normal volume|
+|DynamoDB ThrottledRequests|At least one|
 
   
 
-27. コスト設計
+27. Cost Design
 
-27.1 コスト最小化方針
-
-|   |   |
-|---|---|
-|項目|方針|
-|Lambdaメモリ|128MB〜256MBから開始|
-|タイムアウト|3〜5秒|
-|Provisioned Concurrency|使わない|
-|外部ライブラリ|最小化|
-|ログ|必要最小限|
-|DynamoDB|PutItemのみ、問い合わせ保存のみ|
-
-27.2 課金リスク
+27.1 Cost Minimization Guidelines
 
 |   |   |
 |---|---|
-|リスク|対策|
-|Botによる大量POST|honeypot、API Gateway制限、必要ならWAF/reCAPTCHA|
-|エラー無限出力|ログ量制限、保存期間設定|
-|Lambda長時間実行|Timeout短め|
-|DynamoDB書き込み増加|レート制限、スパム対策|
+|Item|Guideline|
+|Lambda memory|Start with 128MB-256MB|
+|Timeout|3-5 seconds|
+|Provisioned Concurrency|Do not use|
+|External libraries|Minimize|
+|Logs|Minimum necessary|
+|DynamoDB|Only PutItem, only contact storage|
+
+27.2 Billing Risks
+
+|   |   |
+|---|---|
+|Risk|Countermeasure|
+|Large volumes of bot POSTs|Honeypot, API Gateway limits, WAF/reCAPTCHA if necessary|
+|Endless error output|Limit log volume and configure retention|
+|Long Lambda executions|Short timeout|
+|Increased DynamoDB writes|Rate limiting and spam protection|
 
   
 
-28. セキュリティ設計
+28. Security Design
 
-28.1 必須対策
+28.1 Required Measures
 
 |   |   |
 |---|---|
-|対策|内容|
-|IAM最小権限|DynamoDB PutItemのみ|
-|入力値検証|Lambda側で必ず実施|
-|CORS制限|本番Originのみ|
-|ログ制限|個人情報を出力しない|
-|honeypot|Bot対策|
-|文字数制限|長文スパム対策|
-|秘密情報管理|Lambda環境変数に秘密情報を入れない|
+|Measure|Description|
+|Least-privilege IAM|DynamoDB PutItem only|
+|Input validation|Always perform on Lambda|
+|CORS restrictions|Production Origin only|
+|Log restrictions|Do not output personal information|
+|honeypot|Bot protection|
+|Character limits|Protection against long spam messages|
+|Secret management|Do not put secrets in Lambda environment variables|
 
-28.2 XSS対策
+28.2 XSS Protection
 
-問い合わせ本文はDynamoDBに保存されるが、MVPでは管理画面表示しない。
+Contact message bodies are saved to DynamoDB, but are not displayed in an admin interface in the MVP.
 
-将来管理画面を作る場合は、本文をHTMLとして表示せず、必ずエスケープする。
+If an admin interface is built later, always escape message bodies rather than displaying them as HTML.
 
-28.3 CORSの限界
+28.3 CORS Limitations
 
-CORSはブラウザからの制限であり、curlやBotからの直接アクセスを完全に防ぐものではない。
+CORS is a browser restriction and does not completely prevent direct access from curl or bots.
 
-そのため、以下も必要である。
+The following are therefore also necessary.
 
-- Lambda側バリデーション
+- Lambda-side validation
 - honeypot
-- 文字数制限
-- レート制限検討
-- Budgets監視
+- Character limits
+- Consider rate limiting
+- Budgets monitoring
 
   
 
-29. 将来拡張Lambda設計
+29. Future Lambda Extension Design
 
   
 
 29.1 get-questions-function
 
-概要
+Overview
 
-模擬問題をDynamoDBから取得するLambda。
+A Lambda that retrieves practice questions from DynamoDB.
 
-MVPでは不要。
+Not needed in the MVP.
 
-対応API
+Supported APIs
 
 GET /questions
 
 GET /questions/{questionId}
 
-方針
+Guidelines
 
 |   |   |
 |---|---|
-|項目|方針|
-|一覧API|正解情報を返さない|
-|詳細API|無料問題なら正解と解説を返してよい|
-|有料化後|回答後にのみ正解を返す設計へ変更|
+|Item|Guideline|
+|List API|Do not return correct-answer information|
+|Detail API|May return the correct answer and explanation for free questions|
+|After monetization|Change the design to return the correct answer only after submission|
 |DynamoDB|QuestionsTable|
 
   
 
 29.2 submit-answer-function
 
-概要
+Overview
 
-ログインユーザーの回答履歴を保存するLambda。
+A Lambda that saves answer history for signed-in users.
 
-Phase 4で実装する。
+Implement in Phase 4.
 
-対応API
+Supported API
 
 POST /answers
 
-認証
+Authentication
 
-Cognito JWT必須。
+Cognito JWT required.
 
-重要ルール
+Important Rule
 
-userIdはリクエストBodyから受け取らない。
+Do not accept userId from the request Body.
 
-JWTのsubを使う。
+Use the JWT sub.
 
-保存先
+Storage Destination
 
 |   |   |
 |---|---|
-|テーブル|用途|
-|UserAnswersTable|回答履歴保存|
-|UserProgressTable|正答率・苦手カテゴリ更新|
+|Table|Purpose|
+|UserAnswersTable|Save answer history|
+|UserProgressTable|Update accuracy and weak categories|
 
   
 
 29.3 get-progress-function
 
-概要
+Overview
 
-ユーザーの学習進捗を取得するLambda。
+A Lambda that retrieves a user's learning progress.
 
-対応API
+Supported API
 
 GET /progress
 
-認証
+Authentication
 
-Cognito JWT必須。
+Cognito JWT required.
 
-方針
+Guidelines
 
-- JWTのsubでUserProgressTableをQueryする
-- 他ユーザーのデータは取得できない
-- 学習履歴がない場合はゼロ値を返す
+- Query UserProgressTable using the JWT sub
+- Other users' data cannot be retrieved
+- Return zero values if there is no learning history
 
   
 
 29.4 daily-question-function
 
-概要
+Overview
 
-毎日1問を取得・通知するLambda。
+A Lambda that retrieves and notifies users of one question each day.
 
-呼び出し元
+Invocation Sources
 
 |   |   |
 |---|---|
-|呼び出し元|用途|
-|API Gateway|トップページに今日の1問を表示|
-|EventBridge|毎日1問通知|
+|Invocation source|Purpose|
+|API Gateway|Display the daily question on the home page|
+|EventBridge|Daily question notification|
 
-注意点
+Notes
 
-- SESを使う場合はメール送信数に注意
-- 通知停止機能を用意する
-- まずはWeb表示だけでもよい
+- Watch email sending volume when using SES
+- Provide an unsubscribe feature
+- Starting with web display only is acceptable
 
   
 
-30. 実装順序
+30. Implementation Order
 
-30.1 MVP実装順
+30.1 MVP Implementation Order
 
-1. ContactsTableProdを作成
+1. Create ContactsTableProd
 
-2. lambda-contact-submit-role-prodを作成
+2. Create lambda-contact-submit-role-prod
 
-3. contact-submit-prodを作成
+3. Create contact-submit-prod
 
-4. 環境変数を設定
+4. Configure environment variables
 
-5. app.pyを実装
+5. Implement app.py
 
-6. Lambda単体テスト
+6. Run Lambda unit tests
 
-7. API Gateway HTTP APIを作成
+7. Create an API Gateway HTTP API
 
-8. POST /contactとLambdaを接続
+8. Connect POST /contact to Lambda
 
-9. CORS設定
+9. Configure CORS
 
-10. curlでAPIテスト
+10. Test the API with curl
 
-11. DynamoDB保存確認
+11. Verify DynamoDB storage
 
-12. CloudWatch Logs確認
+12. Check CloudWatch Logs
 
-13. フロントエンド問い合わせフォームと接続
+13. Connect the frontend contact form
 
-14. CloudFront上の本番サイトから送信確認
+14. Verify submission from the production site on CloudFront
 
-15. CloudWatch Logs保存期間設定
+15. Configure CloudWatch Logs retention
 
-30.2 実装しないこと
+30.2 Features Not Implemented
 
-MVPでは以下を実装しない。
+Do not implement the following in the MVP.
 
-管理画面
+Admin interface
 
-問い合わせ一覧取得API
+Contact-list retrieval API
 
-メール通知
+Email notifications
 
-ログイン
+Login
 
-回答履歴保存
+Answer history storage
 
-AI自動返信
+AI automatic replies
 
 reCAPTCHA
 
 WAF
 
-理由：
+Reasons:
 
-- MVP公開を遅らせるため
-- コストが増えるため
-- 最初のポートフォリオには過剰なため
-
-  
-
-31. テストケース一覧
-
-31.1 正常系
-
-|   |   |   |
-|---|---|---|
-|ID|テスト内容|期待結果|
-|LT-001|正常な問い合わせを送信|201、DynamoDB保存|
-|LT-002|sourcePageなしで送信|201、DynamoDB保存|
-|LT-003|日本語本文を送信|201、文字化けなし|
-|LT-004|最大文字数以内で送信|201|
-
-31.2 異常系
-
-|   |   |   |
-|---|---|---|
-|ID|テスト内容|期待結果|
-|LT-101|bodyなし|400|
-|LT-102|JSON不正|400 INVALID_JSON|
-|LT-103|name空|400 VALIDATION_ERROR|
-|LT-104|email空|400 VALIDATION_ERROR|
-|LT-105|email形式不正|400 VALIDATION_ERROR|
-|LT-106|subject空|400 VALIDATION_ERROR|
-|LT-107|message空|400 VALIDATION_ERROR|
-|LT-108|message 2,000文字超過|400 VALIDATION_ERROR|
-|LT-109|POST以外|405 METHOD_NOT_ALLOWED|
-
-31.3 スパム対策
-
-|   |   |   |
-|---|---|---|
-|ID|テスト内容|期待結果|
-|LT-201|honeypotに値あり|201扱い、DynamoDB保存なし|
-|LT-202|scriptタグを本文に含む|保存は可。ただしログに本文全文を出さない|
-|LT-203|許可外Origin|CORSで制限|
-
-31.4 IAMテスト
-
-|   |   |   |
-|---|---|---|
-|ID|テスト内容|期待結果|
-|LT-301|ContactsTableProdへPutItem|成功|
-|LT-302|ContactsTableProdをScan|失敗することが望ましい|
-|LT-303|別テーブルへPutItem|失敗|
+- They delay the MVP release
+- They increase costs
+- They are excessive for an initial portfolio
 
   
 
-32. 受け入れ基準
+31. Test Case List
 
-32.1 Lambda実装設計書の受け入れ基準
+31.1 Success Cases
+
+|   |   |   |
+|---|---|---|
+|ID|Test|Expected result|
+|LT-001|Submit a valid contact|201, saved to DynamoDB|
+|LT-002|Submit without sourcePage|201, saved to DynamoDB|
+|LT-003|Submit a Japanese message body|201, no garbled characters|
+|LT-004|Submit within maximum character limits|201|
+
+31.2 Error Cases
+
+|   |   |   |
+|---|---|---|
+|ID|Test|Expected result|
+|LT-101|Missing body|400|
+|LT-102|Invalid JSON|400 INVALID_JSON|
+|LT-103|Empty name|400 VALIDATION_ERROR|
+|LT-104|Empty email|400 VALIDATION_ERROR|
+|LT-105|Invalid email format|400 VALIDATION_ERROR|
+|LT-106|Empty subject|400 VALIDATION_ERROR|
+|LT-107|Empty message|400 VALIDATION_ERROR|
+|LT-108|message exceeds 2,000 characters|400 VALIDATION_ERROR|
+|LT-109|Method other than POST|405 METHOD_NOT_ALLOWED|
+
+31.3 Spam Protection
+
+|   |   |   |
+|---|---|---|
+|ID|Test|Expected result|
+|LT-201|Populated honeypot|Treated as 201, not saved to DynamoDB|
+|LT-202|script tags in the message body|May be saved, but the full body is not logged|
+|LT-203|Disallowed Origin|Restricted by CORS|
+
+31.4 IAM Tests
+
+|   |   |   |
+|---|---|---|
+|ID|Test|Expected result|
+|LT-301|PutItem on ContactsTableProd|Success|
+|LT-302|Scan ContactsTableProd|Should preferably fail|
+|LT-303|PutItem on another table|Failure|
+
+  
+
+32. Acceptance Criteria
+
+32.1 Lambda Implementation Design Acceptance Criteria
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-LAMBDA-DOC-001|MVP対象Lambdaが明確である|
-|AC-LAMBDA-DOC-002|POST /contactの処理フローが定義されている|
-|AC-LAMBDA-DOC-003|入力値バリデーションが定義されている|
-|AC-LAMBDA-DOC-004|DynamoDB保存項目が定義されている|
-|AC-LAMBDA-DOC-005|共通レスポンス形式が定義されている|
-|AC-LAMBDA-DOC-006|エラーハンドリングが定義されている|
-|AC-LAMBDA-DOC-007|ログ出力方針が定義されている|
-|AC-LAMBDA-DOC-008|IAM最小権限が定義されている|
-|AC-LAMBDA-DOC-009|CORS方針が定義されている|
-|AC-LAMBDA-DOC-010|将来拡張Lambdaが分離されている|
+|ID|Criterion|
+|AC-LAMBDA-DOC-001|MVP Lambda scope is clear|
+|AC-LAMBDA-DOC-002|POST /contact processing flow is defined|
+|AC-LAMBDA-DOC-003|Input validation is defined|
+|AC-LAMBDA-DOC-004|DynamoDB storage attributes are defined|
+|AC-LAMBDA-DOC-005|Common response format is defined|
+|AC-LAMBDA-DOC-006|Error handling is defined|
+|AC-LAMBDA-DOC-007|Logging guidelines are defined|
+|AC-LAMBDA-DOC-008|Least-privilege IAM is defined|
+|AC-LAMBDA-DOC-009|CORS guidelines are defined|
+|AC-LAMBDA-DOC-010|Future Lambda extensions are separated|
 
-32.2 MVP実装完了基準
+32.2 MVP Implementation Completion Criteria
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-LAMBDA-MVP-001|contact-submit-prodが作成されている|
-|AC-LAMBDA-MVP-002|POST /contactからLambdaを呼び出せる|
-|AC-LAMBDA-MVP-003|正常な問い合わせがDynamoDBに保存される|
-|AC-LAMBDA-MVP-004|不正入力で400が返る|
-|AC-LAMBDA-MVP-005|honeypot入力時にDynamoDB保存されない|
-|AC-LAMBDA-MVP-006|CloudWatch Logsに個人情報が出力されない|
-|AC-LAMBDA-MVP-007|Lambda RoleがContactsTableProdへのPutItemのみ許可している|
-|AC-LAMBDA-MVP-008|CloudFront上の問い合わせフォームから送信できる|
-|AC-LAMBDA-MVP-009|CloudWatch Logs保存期間が14日〜30日に設定されている|
-|AC-LAMBDA-MVP-010|Lambda timeoutが3〜5秒に設定されている|
+|ID|Criterion|
+|AC-LAMBDA-MVP-001|contact-submit-prod has been created|
+|AC-LAMBDA-MVP-002|Lambda can be invoked through POST /contact|
+|AC-LAMBDA-MVP-003|Valid contacts are saved to DynamoDB|
+|AC-LAMBDA-MVP-004|Invalid input returns 400|
+|AC-LAMBDA-MVP-005|No DynamoDB save occurs when the honeypot is populated|
+|AC-LAMBDA-MVP-006|No personal information is output to CloudWatch Logs|
+|AC-LAMBDA-MVP-007|The Lambda Role allows only PutItem on ContactsTableProd|
+|AC-LAMBDA-MVP-008|Submission works from the contact form on CloudFront|
+|AC-LAMBDA-MVP-009|CloudWatch Logs retention is set to 14-30 days|
+|AC-LAMBDA-MVP-010|Lambda timeout is set to 3-5 seconds|
 
   
 
-33. READMEに書く説明
+33. README Description
 
-GitHub READMEには以下のように記載する。
+Include the following description in the GitHub README.
 
 ## Backend / Lambda
 
@@ -2744,94 +2744,94 @@ The MVP backend uses AWS Lambda for the contact form API.
 
 The Lambda function does not log personal information such as email addresses or message bodies.
 
-日本語では以下。
+English translation of the original Japanese version follows.
 
-## バックエンド / Lambda
-
-  
-
-MVPでは、問い合わせフォーム用APIとしてAWS Lambdaを利用しています。
+## Backend / Lambda
 
   
 
-- API Gatewayで `POST /contact` を公開
-
-- Lambda側で入力値検証を実施
-
-- honeypot項目で簡易スパム対策
-
-- 正常な問い合わせデータをDynamoDBに保存
-
-- CloudWatch Logsで実行ログを確認
-
-- IAM RoleはContactsTableへの `dynamodb:PutItem` のみに制限
+The MVP uses AWS Lambda as the API for the contact form.
 
   
 
-メールアドレスや問い合わせ本文全文などの個人情報はCloudWatch Logsに出力しない設計にしています。
+- Expose `POST /contact` through API Gateway
+
+- Validate input on Lambda
+
+- Use a honeypot field for basic spam protection
+
+- Save valid contact data to DynamoDB
+
+- Check execution logs in CloudWatch Logs
+
+- Restrict the IAM Role to `dynamodb:PutItem` on ContactsTable
 
   
 
-34. 面接で説明するポイント
-
-34.1 なぜLambdaを使うのか
-
-問い合わせ処理は常時起動サーバーを必要としないため、API Gateway + Lambdaのサーバーレス構成を採用しました。
-
-アクセスが少ない段階では低コストで、EC2のようなサーバー管理も不要です。
-
-34.2 なぜVPCに入れないのか
-
-MVPではDynamoDBに保存するだけで、RDSやVPC内リソースにアクセスする必要がありません。
-
-VPCに入れるとNAT Gatewayなどが必要になる可能性があり、コストと構成が複雑になるため、VPC外Lambdaにしています。
-
-34.3 どうやってセキュリティを確保しているか
-
-フロントエンドだけでなくLambda側でも入力値検証を行っています。
-
-IAM RoleはDynamoDBの対象テーブルへのPutItemのみに制限し、CloudWatch Logsにはメールアドレスや本文全文を出さないようにしています。
-
-34.4 どうやって課金事故を防ぐか
-
-Lambdaのタイムアウトを短くし、メモリも小さめから開始します。
-
-問い合わせフォームにはhoneypotと文字数制限を入れ、Botによる大量投稿を抑えます。
-
-また、AWS BudgetsとCloudWatch Logs保存期間設定で課金事故を防ぎます。
+The design does not output personal information, such as email addresses or full contact message bodies, to CloudWatch Logs.
 
   
 
-35. 結論
+34. Interview Talking Points
 
-MVPで実装するLambdaは、問い合わせフォーム用の contact-submit-function のみとする。
+34.1 Why Use Lambda?
 
-このLambdaは、API Gatewayの POST /contact から呼び出され、以下を行う。
+Contact processing does not require an always-running server, so I adopted a serverless architecture using API Gateway + Lambda.
 
-JSONパース
+It is inexpensive at low traffic volumes and does not require server management as EC2 does.
 
-honeypot確認
+34.2 Why Not Use a VPC?
 
-入力値検証
+The MVP only saves data to DynamoDB and does not need to access RDS or resources inside a VPC.
 
-contactId生成
+Putting Lambda in a VPC could require a NAT Gateway and increase cost and architectural complexity, so Lambda runs outside a VPC.
 
-createdAt生成
+34.3 How Is Security Ensured?
 
-DynamoDB ContactsTableProdへPutItem
+Input is validated on Lambda as well as on the frontend.
 
-CloudWatch Logsへ最小限ログ出力
+The IAM Role is restricted to PutItem on the target DynamoDB table, and email addresses and full message bodies are not output to CloudWatch Logs.
 
-共通レスポンス返却
+34.4 How Are Unexpected Charges Prevented?
 
-この実装により、以下を実現できる。
+I keep the Lambda timeout short and start with a small memory allocation.
 
-- AWSサーバーレス実装経験を示せる
-- API Gateway + Lambda + DynamoDBの基本構成を理解できる
-- 問い合わせフォームという実用機能を提供できる
-- EC2やRDSを使わず低コストにできる
-- IAM最小権限、CORS、入力値検証、ログ制御を説明できる
+The contact form uses a honeypot and character limits to reduce large volumes of bot submissions.
 
-最初に実装すべきバックエンドは、これだけで十分である。
+I also prevent unexpected charges with AWS Budgets and CloudWatch Logs retention settings.
 
-Phase 2以降で問題取得API、Phase 4以降で回答履歴・学習進捗APIを追加する。
+  
+
+35. Conclusion
+
+The only Lambda implemented in the MVP is contact-submit-function for the contact form.
+
+This Lambda is invoked through POST /contact on API Gateway and performs the following.
+
+Parse JSON
+
+Check honeypot
+
+Validate input
+
+Generate contactId
+
+Generate createdAt
+
+PutItem into DynamoDB ContactsTableProd
+
+Write minimal logs to CloudWatch Logs
+
+Return a common response
+
+This implementation makes it possible to:
+
+- Demonstrate AWS serverless implementation experience
+- Understand the basic API Gateway + Lambda + DynamoDB architecture
+- Provide a practical contact form feature
+- Keep costs low without EC2 or RDS
+- Explain least-privilege IAM, CORS, input validation, and logging controls
+
+This is sufficient for the first backend implementation.
+
+Add question retrieval APIs in Phase 2 or later, and answer history and learning progress APIs in Phase 4 or later.

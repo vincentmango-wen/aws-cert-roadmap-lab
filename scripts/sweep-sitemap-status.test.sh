@@ -15,9 +15,9 @@ bash "$REPOSITORY_ROOT/scripts/sweep-sitemap-status.sh" >/dev/null
 DOH_ARGUMENT_COUNT="$( (grep -o -- '--doh-url' "$CURL_LOG" || true) | wc -l | tr -d ' ')"
 DOH_URL_COUNT="$( (grep -oF -- "$DOH_URL" "$CURL_LOG" || true) | wc -l | tr -d ' ')"
 if [ "$DOH_ARGUMENT_COUNT" -ne 2 ] || [ "$DOH_URL_COUNT" -ne 2 ]; then
-  printf 'FAIL: --doh-url が全curl呼び出しへ渡されていません\n' >&2
+  printf 'FAIL: --doh-url was not passed to every curl invocation\n' >&2
   sed -n '1,20p' "$CURL_LOG" >&2
   exit 1
 fi
 
-printf 'PASS: CURL_DOH_URL が全curl呼び出しへ渡されました\n'
+printf 'PASS: CURL_DOH_URL was passed to every curl invocation\n'

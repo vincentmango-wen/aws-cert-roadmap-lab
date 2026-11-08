@@ -251,7 +251,7 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
         </Section>
 
         <section className="grid gap-6 lg:grid-cols-2">
-          {/* 関連比較記事: 実在する slug のみ表示。1件もなければ EmptyMessage */}
+          {/* Related comparisons: show only existing slugs, or EmptyMessage if none exist. */}
           <Section title={labels.comparisonArticlesTitle}>
             {(() => {
               const existingSlugs =
@@ -276,7 +276,7 @@ export function TermDetailContent({ locale, term }: TermDetailContentProps) {
             })()}
           </Section>
 
-          {/* 関連構成図: 実在する slug のみ表示。1件もなければ EmptyMessage */}
+          {/* Related architectures: show only existing slugs, or EmptyMessage if none exist. */}
           <Section title={labels.architectureArticlesTitle}>
             {(() => {
               const existingSlugs =

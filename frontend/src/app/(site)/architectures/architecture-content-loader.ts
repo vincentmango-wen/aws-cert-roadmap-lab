@@ -1,12 +1,7 @@
 /**
- * architecture-content-loader.ts
- *
- * locale 別 MDX 本文ローダー (server-only).
- * frontend/contents/architectures/{ja,en,zh}/<slug>.mdx を読み込み、frontmatter があれば
- * 剥がして本文だけ返す。本フェーズ (P5-042) では新規 en/zh MDX は frontmatter なしを正とするが、
- * 既存 ja MDX には frontmatter が残っているため、両対応する。
- *
- * NOTE: Node-only API (fs/path) を使うため、server component 経由でのみ呼ぶ。
+ * Server-only localized MDX body loader. Read frontend/contents/architectures/{ja,en,zh}/<slug>.mdx and
+ * strip any frontmatter. New en/zh MDX in P5-042 has no frontmatter, while existing Japanese files may
+ * retain it; support both. Call only from server components because fs/path are Node-only APIs.
  */
 import fs from "fs";
 import path from "path";
@@ -67,9 +62,9 @@ function removeLeadingH1(content: string, title: string): string {
 
   const h1Text = h1Match[1].trim();
 
-  // ページ上では meta.title が H1 として描画されるため、本文先頭の同タイトル H1 を除く。
-  // LONG タイトル vs SHORT body H1 の二重描画を防ぐため、title が h1Text で始まる
-  // 短縮一致パターンも strip 対象に含める (comparison-content-loader と同型).
+  // The page renders meta.title as H1, so remove a matching leading H1 from the body.
+  // Also strip an abbreviated body H1 when title starts with h1Text, avoiding duplicate long/short headings.
+  // This matches the comparison-content-loader behavior.
   if (h1Text !== title && !title.startsWith(h1Text)) {
     return content;
   }
@@ -80,10 +75,9 @@ function removeLeadingH1(content: string, title: string): string {
 }
 
 /**
- * locale 別の MDX ファイルから本文 (frontmatter / leading H1 を除いた content) を返す。
- * ファイルが存在しなければ null を返す (Phase B 翻訳前の空状態でも build エラーにならないため)。
- *
- * title: 構成図記事のメタタイトル。本文先頭の H1 がこの title と一致する場合のみ strip する。
+ * Return the localized MDX body without frontmatter or a matching leading H1. Return null for missing
+ * files so builds work before Phase B translations exist. title is the architecture article's metadata
+ * title used to decide whether to strip the heading.
  */
 export function loadArchitectureContent(
   locale: ArchitectureLocale,
@@ -113,7 +107,7 @@ export function loadArchitectureContent(
 }
 
 /**
- * locale 別の MDX ディレクトリに存在する slug 一覧を返す (.mdx 拡張子を除く).
+ * Return slugs in the localized MDX directory, without the .mdx extension.
  */
 export function listArchitectureContentSlugs(
   locale: ArchitectureLocale,

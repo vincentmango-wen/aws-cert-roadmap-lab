@@ -14,7 +14,7 @@ function request(host, uri, querystring = {}) {
   };
 }
 
-test('apexのトップページをwwwへ301リダイレクトする', () => {
+test('redirects the apex homepage to www with HTTP 301', () => {
   const response = handler({ request: request('aws-cert-roadmap-lab.com', '/') });
 
   assert.equal(response.statusCode, 301);
@@ -22,7 +22,7 @@ test('apexのトップページをwwwへ301リダイレクトする', () => {
   assert.equal(response.headers.location.value, 'https://www.aws-cert-roadmap-lab.com/');
 });
 
-test('apexのパスとquery stringをLocationへ保持する', () => {
+test('preserves the apex path and query string in Location', () => {
   const response = handler({
     request: request('AWS-CERT-ROADMAP-LAB.COM', '/blog/example', {
       ref: { value: 'search%20console' },
@@ -36,7 +36,7 @@ test('apexのパスとquery stringをLocationへ保持する', () => {
   );
 });
 
-test('percent encoding・plus・値なし・重複queryを再エンコードしない', () => {
+test('does not re-encode percent encoding, plus signs, valueless or duplicate query parameters', () => {
   const response = handler({
     request: request('aws-cert-roadmap-lab.com', '/blog/example', {
       flag: { value: '' },
@@ -52,21 +52,21 @@ test('percent encoding・plus・値なし・重複queryを再エンコードし�
   );
 });
 
-test('wwwのトップページをindex.htmlへ書き換える', () => {
+test('rewrites the www homepage to index.html', () => {
   const requestValue = request('www.aws-cert-roadmap-lab.com', '/');
   const result = handler({ request: requestValue });
 
   assert.equal(result.uri, '/index.html');
 });
 
-test('wwwの拡張子なしパスへhtml拡張子を付ける', () => {
+test('adds an html extension to extensionless www paths', () => {
   const requestValue = request('www.aws-cert-roadmap-lab.com', '/terms/cloudformation');
   const result = handler({ request: requestValue });
 
   assert.equal(result.uri, '/terms/cloudformation.html');
 });
 
-test('拡張子付き静的ファイルは変更しない', () => {
+test('preserves static files with extensions', () => {
   const requestValue = request('www.aws-cert-roadmap-lab.com', '/sitemap.xml');
   const result = handler({ request: requestValue });
 

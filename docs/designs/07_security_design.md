@@ -1,208 +1,208 @@
-AWS資格学習サイト セキュリティ設計書
+AWS Certification Study Site Security Design
 
-1. 文書情報
-
-|   |   |
-|---|---|
-|項目|内容|
-|文書名|AWS資格学習サイト セキュリティ設計書|
-|対象プロダクト|AWS資格ロードマップラボ|
-|対象フェーズ|MVP開発 〜 Phase 4 学習アプリ化|
-|目的|AWS上で安全にWebサイト・API・データを運用するためのセキュリティ方針を定義する|
-|想定技術|S3 / CloudFront / OAC / API Gateway / Lambda / DynamoDB / IAM / CloudWatch / AWS Budgets / GitHub Actions / Cognito|
-
-  
-
-2. 本設計書の目的
-
-本設計書では、AWS資格学習サイト「AWS資格ロードマップラボ」におけるセキュリティ要件、脅威、対策、AWSサービスごとの設定方針を定義する。
-
-本プロダクトは個人開発のポートフォリオであるが、以下の理由からセキュリティ設計を明確にする。
-
-1. AWS上に公開するWebサイトであるため
-2. 問い合わせフォームで個人情報を受け取るため
-3. 将来的にログイン機能・学習履歴機能を追加するため
-4. GitHub Actionsによる自動デプロイを行う可能性があるため
-5. 採用面接・ポートフォリオでAWS設計力を説明するため
-
-MVPでは、過剰なセキュリティ製品を導入せず、低コストで必要十分な対策を行う。
-
-  
-
-3. セキュリティ基本方針
-
-3.1 基本方針
+1. Document Information
 
 |   |   |
 |---|---|
-|方針|内容|
-|最小権限の原則|IAMユーザー、IAMロール、Lambda権限、GitHub Actions権限は必要最小限にする|
-|S3直接公開禁止|静的サイトはS3を直接公開せず、CloudFront経由で配信する|
-|HTTPS配信|CloudFront経由でHTTPS配信する|
-|秘密情報の非公開|AWSアクセスキー、APIキー、環境変数、認証情報をGitHubにコミットしない|
-|入力値検証|問い合わせフォームやAPI入力値はフロント・バックエンド両方で検証する|
-|個人情報の最小収集|問い合わせに必要な情報のみ取得する|
-|ログの最小化|CloudWatch Logsに個人情報や秘密情報を出力しない|
-|課金事故防止|セキュリティの一部としてAWS Budgetsを設定し、異常利用を検知する|
-|段階的強化|MVPでは基本対策、Phase 4でCognito・認証・ユーザー別アクセス制御を追加する|
+|Item|Description|
+|Document name|AWS Certification Study Site Security Design|
+|Target product|AWS Certification Roadmap Lab|
+|Target phases|MVP development through Phase 4: learning application|
+|Purpose|Define security policies for safely operating the website, APIs, and data on AWS|
+|Planned technologies|S3 / CloudFront / OAC / API Gateway / Lambda / DynamoDB / IAM / CloudWatch / AWS Budgets / GitHub Actions / Cognito|
 
   
 
-4. セキュリティ対象範囲
+2. Purpose of This Design Document
 
-4.1 MVP対象範囲
+This document defines security requirements, threats, countermeasures, and per-service AWS configuration policies for the AWS Certification Roadmap Lab certification study site.
 
-MVPで守る対象は以下である。
+Although this product is an individual portfolio project, its security design is explicitly documented for the following reasons.
 
-|   |   |
-|---|---|
-|対象|内容|
-|AWSアカウント|rootユーザー、IAMユーザー、MFA、請求保護|
-|S3|静的サイトファイル、画像、構成図|
-|CloudFront|Web配信、HTTPS、OAC|
-|API Gateway|問い合わせAPIの入口|
-|Lambda|問い合わせ保存処理|
-|DynamoDB|問い合わせデータ保存|
-|CloudWatch Logs|Lambdaログ|
-|GitHub|ソースコード、GitHub Actions、Secrets|
-|問い合わせフォーム|名前、メール、件名、本文|
+1. It is a publicly accessible website hosted on AWS.
+2. Its contact form receives personal information.
+3. Login and learning-history features will be added in the future.
+4. Automated deployment through GitHub Actions may be introduced.
+5. AWS design skills need to be explained in job interviews and the portfolio.
 
-4.2 将来対象範囲
-
-Phase 4以降で守る対象は以下である。
-
-|   |   |
-|---|---|
-|対象|内容|
-|Cognito|ユーザー登録、ログイン、JWT発行|
-|UserProfileTable|ユーザープロフィール|
-|UserAnswersTable|回答履歴|
-|UserProgressTable|学習進捗|
-|ReviewItemsTable|復習対象|
-|SES|メール通知|
-|EventBridge|毎日1問配信トリガー|
-|有料機能|将来の決済、教材販売、会員機能|
+The MVP implements sufficient essential protections at low cost without introducing excessive security products.
 
   
 
-5. 扱う情報の分類
+3. Fundamental Security Policy
 
-5.1 情報分類
+3.1 Basic Policy
+
+|   |   |
+|---|---|
+|Policy|Description|
+|Principle of least privilege|Minimize IAM user, IAM role, Lambda, and GitHub Actions permissions|
+|No direct public S3 access|Serve the static site through CloudFront rather than exposing S3 directly|
+|HTTPS delivery|Serve content over HTTPS through CloudFront|
+|Keep secrets private|Do not commit AWS access keys, API keys, environment variables, or credentials to GitHub|
+|Input validation|Validate contact-form and API inputs on both the frontend and backend|
+|Minimize personal-data collection|Collect only information necessary to handle inquiries|
+|Minimize logging|Do not output personal information or secrets to CloudWatch Logs|
+|Prevent unexpected charges|Configure AWS Budgets as a security measure to detect abnormal usage|
+|Progressive hardening|Apply basic safeguards in the MVP; add Cognito, authentication, and per-user access control in Phase 4|
+
+  
+
+4. Security Scope
+
+4.1 MVP Scope
+
+The following assets are protected in the MVP.
+
+|   |   |
+|---|---|
+|Target|Description|
+|AWS account|Root user, IAM users, MFA, and billing protection|
+|S3|Static-site files, images, and architecture diagrams|
+|CloudFront|Web delivery, HTTPS, and OAC|
+|API Gateway|Entry point for the contact API|
+|Lambda|Contact-submission storage processing|
+|DynamoDB|Contact-data storage|
+|CloudWatch Logs|Lambda logs|
+|GitHub|Source code, GitHub Actions, and Secrets|
+|Contact form|Name, email, subject, and message|
+
+4.2 Future Scope
+
+The following assets are protected from Phase 4 onward.
+
+|   |   |
+|---|---|
+|Target|Description|
+|Cognito|User registration, login, and JWT issuance|
+|UserProfileTable|User profiles|
+|UserAnswersTable|Answer history|
+|UserProgressTable|Learning progress|
+|ReviewItemsTable|Items requiring review|
+|SES|Email notifications|
+|EventBridge|Daily-question delivery trigger|
+|Paid features|Future payments, study-material sales, and membership features|
+
+  
+
+5. Information Classification
+
+5.1 Information Categories
 
 |   |   |   |   |
 |---|---|---|---|
-|情報種別|例|機密度|保護方針|
-|公開情報|AWS用語、記事、比較表、構成図|低|公開前提。改ざん防止を重視|
-|準公開情報|GitHub README、設計書|低〜中|秘密情報を含めない|
-|個人情報|問い合わせの名前、メールアドレス、本文|中|DynamoDBに保存し、公開しない|
-|認証情報|AWSアクセスキー、GitHub Secrets、JWT|高|GitHubにコミットしない。ログにも出さない|
-|学習履歴|回答履歴、正答率、苦手分野|中|ユーザー本人のみアクセス可能にする|
-|請求情報|AWS請求、Budgets通知|高|アカウント管理者のみ閲覧|
+|Information type|Examples|Sensitivity|Protection policy|
+|Public information|AWS terms, articles, comparison tables, architecture diagrams|Low|Intended for publication; prioritize tamper prevention|
+|Semi-public information|GitHub README, design documents|Low to medium|Exclude secrets|
+|Personal information|Contact name, email address, message|Medium|Store in DynamoDB; do not publish|
+|Credentials|AWS access keys, GitHub Secrets, JWTs|High|Do not commit to GitHub or write to logs|
+|Learning history|Answer history, accuracy, weak areas|Medium|Allow access only to the user concerned|
+|Billing information|AWS bills, Budgets notifications|High|Visible only to account administrators|
 
   
 
-6. 脅威モデル
+6. Threat Model
 
-6.1 想定する脅威
+6.1 Anticipated Threats
 
 |   |   |   |   |
 |---|---|---|---|
-|脅威ID|脅威|影響|MVP対策|
-|TH-001|S3バケットの意図しない公開|静的ファイル以外の情報漏えい|Public Access Block、OAC、Bucket Policy|
-|TH-002|AWSアクセスキーの漏えい|AWSリソース不正利用、課金事故|GitHub Secrets、MFA、最小権限|
-|TH-003|問い合わせフォームへのスパム投稿|DynamoDB書き込み増加、運用妨害|バリデーション、honeypot、文字数制限、レート制限検討|
-|TH-004|XSS|ユーザー環境で不正スクリプト実行|入力値無害化、Reactの自動エスケープ、HTML直接出力禁止|
-|TH-005|APIの不正利用|大量リクエスト、データ保存悪用|CORS制限、入力制限、API Gateway制限検討|
-|TH-006|IAM権限過多|侵害時の被害拡大|最小権限、AdministratorAccess常用禁止|
-|TH-007|CloudWatch Logsへの個人情報出力|ログ経由の情報漏えい|ログ最小化、本文・メール全文を出力しない|
-|TH-008|GitHubへの秘密情報コミット|認証情報漏えい|.gitignore、Secrets利用、コミット前確認|
-|TH-009|DynamoDBデータへの不正アクセス|個人情報漏えい|Lambda経由のみ、IAM制限|
-|TH-010|課金攻撃・大量アクセス|想定外コスト|AWS Budgets、レート制限、ログ監視|
-|TH-011|将来のユーザーIDなりすまし|他ユーザーの学習履歴閲覧|Cognito JWT、userIdをJWTから取得|
-|TH-012|CORS設定ミス|外部サイトからのAPI悪用|許可Originを本番ドメインに限定|
+|Threat ID|Threat|Impact|MVP countermeasures|
+|TH-001|Unintended S3 bucket exposure|Disclosure of information other than static files|Public Access Block, OAC, Bucket Policy|
+|TH-002|Leaked AWS access keys|Unauthorized AWS resource usage and unexpected charges|GitHub Secrets, MFA, least privilege|
+|TH-003|Contact-form spam|Increased DynamoDB writes and operational disruption|Validation, honeypot, character limits, consideration of rate limits|
+|TH-004|XSS|Execution of malicious scripts in users' environments|Input sanitization, React automatic escaping, prohibition of direct HTML output|
+|TH-005|API abuse|Excessive requests and misuse of data storage|CORS restrictions, input limits, consideration of API Gateway limits|
+|TH-006|Excessive IAM permissions|Greater damage after compromise|Least privilege; no routine use of AdministratorAccess|
+|TH-007|Personal information in CloudWatch Logs|Information leakage through logs|Minimize logs; do not log full message bodies or email addresses|
+|TH-008|Secrets committed to GitHub|Credential leakage|.gitignore, Secrets, pre-commit checks|
+|TH-009|Unauthorized access to DynamoDB data|Personal-information leakage|Lambda-only access, IAM restrictions|
+|TH-010|Cost-amplification attacks or high traffic|Unexpected costs|AWS Budgets, rate limits, log monitoring|
+|TH-011|Future user-ID impersonation|Access to another user's learning history|Cognito JWT; derive userId from JWT|
+|TH-012|CORS misconfiguration|API abuse from external sites|Restrict allowed origins to the production domain|
 
   
 
-7. AWSアカウントセキュリティ
+7. AWS Account Security
 
-7.1 rootユーザー管理
-
-|   |   |
-|---|---|
-|項目|方針|
-|rootユーザー利用|原則使用しない|
-|MFA|必ず有効化する|
-|アクセスキー|rootユーザーのアクセスキーは作成しない|
-|利用場面|請求、アカウント設定など必要時のみ|
-
-7.2 IAMユーザー方針
+7.1 Root User Management
 
 |   |   |
 |---|---|
-|項目|方針|
-|日常作業|管理用IAMユーザーまたはIAM Identity Centerを利用|
-|MFA|管理ユーザーにもMFAを設定|
-|権限|作業内容ごとに最小権限を付与|
-|アクセスキー|必要な場合のみ発行。使わないキーは削除|
-|ローテーション|長期利用するキーは定期的に更新|
+|Item|Policy|
+|Root user usage|Do not use as a rule|
+|MFA|Always enable|
+|Access keys|Do not create root-user access keys|
+|Usage scenarios|Only when necessary, such as billing or account settings|
+
+7.2 IAM User Policy
+
+|   |   |
+|---|---|
+|Item|Policy|
+|Routine work|Use an administrative IAM user or IAM Identity Center|
+|MFA|Enable MFA for administrative users as well|
+|Permissions|Grant the minimum required for each task|
+|Access keys|Issue only when necessary; delete unused keys|
+|Rotation|Regularly rotate keys used long term|
 
 7.3 AWS Budgets
 
-AWS Budgetsはセキュリティ対策の一部として必須設定する。
+AWS Budgets must be configured as part of the security measures.
 
-理由：
+Reasons:
 
-- アクセスキー漏えい時の不正利用に気づきやすい
-- API大量アクセスによる課金増加を検知できる
-- 学習中の設定ミスによる課金事故を防ぎやすい
+- Makes unauthorized usage following an access-key leak easier to detect
+- Detects increasing charges caused by excessive API requests
+- Helps prevent unexpected charges from configuration mistakes during learning
 
 |   |   |
 |---|---|
-|項目|方針|
-|予算タイプ|Cost Budget|
-|対象|全AWSサービス|
-|通知|メール通知|
-|閾値|低めに設定する|
-|優先度|MVP着手前に必須|
+|Item|Policy|
+|Budget type|Cost Budget|
+|Scope|All AWS services|
+|Notifications|Email notifications|
+|Threshold|Set relatively low|
+|Priority|Required before starting the MVP|
 
   
 
-8. IAM設計
+8. IAM Design
 
-8.1 IAM基本方針
+8.1 Fundamental IAM Policy
 
 |   |   |
 |---|---|
-|方針|内容|
-|最小権限|必要なActionとResourceのみ許可する|
-|権限分離|デプロイ用、Lambda実行用、管理用を分ける|
-|AdministratorAccess常用禁止|初期学習時以外は避ける|
-|明示的なResource指定|可能な限り * を避ける|
-|不要権限削除|使わなくなったロール・ポリシーは削除する|
+|Policy|Description|
+|Least privilege|Allow only necessary Actions and Resources|
+|Permission separation|Separate deployment, Lambda execution, and administration|
+|No routine AdministratorAccess|Avoid except during initial learning|
+|Explicit Resource specification|Avoid * wherever possible|
+|Remove unused permissions|Delete roles and policies no longer used|
 
-8.2 IAMロール一覧
+8.2 IAM Roles
 
 |   |   |   |   |
 |---|---|---|---|
-|ロール名|用途|利用者/サービス|Phase|
-|lambda-contact-submit-role|問い合わせLambda実行|Lambda|MVP / Phase 2|
-|github-actions-deploy-role|S3デプロイ・CloudFront Invalidation|GitHub Actions|Phase 1以降|
-|lambda-get-questions-role|問題取得Lambda実行|Lambda|Phase 2以降|
-|lambda-user-progress-role|学習履歴Lambda実行|Lambda|Phase 4|
-|eventbridge-daily-question-role|毎日1問配信Lambda実行|EventBridge / Lambda|Phase 4|
+|Role name|Purpose|User/service|Phase|
+|lambda-contact-submit-role|Execute contact Lambda|Lambda|MVP / Phase 2|
+|github-actions-deploy-role|S3 deployment and CloudFront Invalidation|GitHub Actions|Phase 1 onward|
+|lambda-get-questions-role|Execute question-retrieval Lambda|Lambda|Phase 2 onward|
+|lambda-user-progress-role|Execute learning-history Lambda|Lambda|Phase 4|
+|eventbridge-daily-question-role|Execute daily-question delivery Lambda|EventBridge / Lambda|Phase 4|
 
-8.3 Lambda問い合わせ用IAMポリシー
+8.3 IAM Policy for the Contact Lambda
 
-対象
+Target
 
 contact-submit-function
 
-許可する操作
+Allowed operations
 
-- ContactsTableへのPutItem
-- CloudWatch Logsへのログ出力
+- PutItem on ContactsTable
+- Write logs to CloudWatch Logs
 
-ポリシー例
+Example policy
 
 {
 
@@ -246,19 +246,19 @@ contact-submit-function
 
 }
 
-8.4 GitHub Actions用IAM権限
+8.4 IAM Permissions for GitHub Actions
 
-対象
+Target
 
-静的サイトのデプロイ。
+Static-site deployment.
 
-許可する操作
+Allowed operations
 
-- S3へのアップロード
-- S3内ファイル削除
-- CloudFrontキャッシュ無効化
+- Upload to S3
+- Delete files in S3
+- Invalidate the CloudFront cache
 
-ポリシー例
+Example policy
 
 {
 
@@ -314,59 +314,59 @@ contact-submit-function
 
 }
 
-8.5 避けるべき権限
+8.5 Permissions to Avoid
 
-MVPでは以下を安易に付与しない。
+Do not grant the following casually in the MVP.
 
 |   |   |
 |---|---|
-|権限|理由|
-|AdministratorAccess|権限過多で危険|
-|dynamodb:*|必要以上のDB操作を許可してしまう|
-|s3:*|対象外バケットまで操作可能になる可能性がある|
-|iam:*|権限昇格リスクがある|
-|cloudfront:*|必要以上のCloudFront操作が可能になる|
+|Permission|Reason|
+|AdministratorAccess|Dangerously excessive permissions|
+|dynamodb:*|Allows more database operations than necessary|
+|s3:*|May allow operations on unrelated buckets|
+|iam:*|Risk of privilege escalation|
+|cloudfront:*|Allows more CloudFront operations than necessary|
 
   
 
-9. S3セキュリティ設計
+9. S3 Security Design
 
-9.1 基本方針
+9.1 Basic Policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|Public Access|すべてブロックする|
-|直接公開|しない|
-|配信経路|CloudFront経由のみ|
-|OAC|利用する|
-|Bucket Policy|CloudFront Distributionからのアクセスのみ許可|
-|静的Webホスティング機能|原則使わない。CloudFront + S3 Originで配信する|
+|Item|Policy|
+|Public Access|Block all|
+|Direct public exposure|Do not expose|
+|Delivery path|CloudFront only|
+|OAC|Use|
+|Bucket Policy|Allow access only from the CloudFront Distribution|
+|Static website hosting feature|Generally do not use; deliver through CloudFront + S3 Origin|
 
 9.2 S3 Public Access Block
 
-以下をすべて有効化する。
+Enable all of the following.
 
 |   |   |
 |---|---|
-|設定|値|
+|Setting|Value|
 |Block public access to buckets and objects granted through new ACLs|ON|
 |Block public access to buckets and objects granted through any ACLs|ON|
 |Block public access to buckets and objects granted through new public bucket policies|ON|
 |Block public and cross-account access to buckets and objects through any public bucket policies|ON|
 
-9.3 CloudFront OAC利用方針
+9.3 CloudFront OAC Usage Policy
 
-OACを利用し、S3バケットにはCloudFrontからのみアクセスできるようにする。
+Use OAC to allow access to the S3 bucket only from CloudFront.
 
-目的：
+Objectives:
 
-- S3バケットの直接公開を避ける
-- CloudFront経由でHTTPS配信する
-- キャッシュ制御を一元化する
-- S3 URLの直接アクセスを防ぐ
+- Avoid direct public exposure of the S3 bucket
+- Deliver over HTTPS through CloudFront
+- Centralize cache control
+- Prevent direct access through S3 URLs
 
-9.4 Bucket Policy例
+9.4 Example Bucket Policy
 
 {
 
@@ -406,141 +406,141 @@ OACを利用し、S3バケットにはCloudFrontからのみアクセスでき�
 
 }
 
-9.5 S3に置いてよいもの・置いてはいけないもの
+9.5 Permitted and Prohibited S3 Content
 
 |   |   |
 |---|---|
-|置いてよいもの|置いてはいけないもの|
-|HTML|AWSアクセスキー|
-|CSS|APIキー|
-|JavaScript|.envファイル|
-|画像|個人情報CSV|
-|構成図画像|問い合わせデータのバックアップ|
-|OGP画像|JWT、認証情報|
+|Permitted|Prohibited|
+|HTML|AWS access keys|
+|CSS|API keys|
+|JavaScript|.env files|
+|Images|CSVs containing personal information|
+|Architecture diagram images|Contact-data backups|
+|OGP images|JWTs and credentials|
 
   
 
-10. CloudFrontセキュリティ設計
+10. CloudFront Security Design
 
-10.1 基本方針
+10.1 Basic Policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|HTTPS|必須|
-|HTTPアクセス|HTTPSへリダイレクト|
+|Item|Policy|
+|HTTPS|Required|
+|HTTP access|Redirect to HTTPS|
 |Origin|S3|
-|OAC|有効|
-|キャッシュ|静的ファイルはキャッシュ有効|
-|WAF|MVPでは任意。アクセス増加後に検討|
+|OAC|Enabled|
+|Caching|Enabled for static files|
+|WAF|Optional for MVP; consider after traffic increases|
 
 10.2 Viewer Protocol Policy
 
 Redirect HTTP to HTTPS
 
-HTTPでアクセスされた場合、HTTPSへリダイレクトする。
+Redirect HTTP requests to HTTPS.
 
-10.3 セキュリティヘッダー
+10.3 Security Headers
 
-CloudFront Response Headers Policy またはフロントエンド側で、以下のセキュリティヘッダー設定を検討する。
+Consider configuring the following security headers through a CloudFront Response Headers Policy or on the frontend.
 
 |   |   |   |
 |---|---|---|
-|ヘッダー|推奨値|目的|
-|Strict-Transport-Security|max-age=31536000; includeSubDomains|HTTPS強制|
-|X-Content-Type-Options|nosniff|MIME sniffing防止|
-|X-Frame-Options|DENY または SAMEORIGIN|Clickjacking対策|
-|Referrer-Policy|strict-origin-when-cross-origin|Referer制御|
-|Content-Security-Policy|後述|XSS被害軽減|
+|Header|Recommended value|Purpose|
+|Strict-Transport-Security|max-age=31536000; includeSubDomains|Enforce HTTPS|
+|X-Content-Type-Options|nosniff|Prevent MIME sniffing|
+|X-Frame-Options|DENY or SAMEORIGIN|Prevent clickjacking|
+|Referrer-Policy|strict-origin-when-cross-origin|Control Referer information|
+|Content-Security-Policy|See below|Mitigate XSS impact|
 
-10.4 Content Security Policy案
+10.4 Proposed Content Security Policy
 
-MVP初期では厳しすぎるCSPは開発の妨げになる可能性があるため、段階的に導入する。
+Introduce CSP gradually, since an overly strict policy can hinder early MVP development.
 
-初期案
+Initial proposal
 
 Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.execute-api.ap-northeast-1.amazonaws.com;
 
-注意点
+Notes
 
-- Google AnalyticsやAdSenseを導入する場合、script-srcやimg-srcの許可先追加が必要
-- CSP設定ミスで広告や解析タグが動かなくなる可能性がある
-- 最初はReport-Onlyで検証してもよい
+- Adding Google Analytics or AdSense requires additional allowed sources in script-src and img-src
+- CSP misconfiguration can prevent advertisements or analytics tags from working
+- Initial validation may use Report-Only mode
 
-10.5 WAF利用方針
+10.5 WAF Usage Policy
 
-AWS WAFは有効だが、MVPでは必須にしない。
+AWS WAF is effective but is not mandatory for the MVP.
 
-理由：
+Reasons:
 
-- 個人開発MVPではコスト増加につながる可能性がある
-- まずはCORS、入力制限、API Gateway側の制限で対応する
-- アクセス増加後、スパム・攻撃が増えた段階で導入を検討する
+- It may increase costs for an individual developer's MVP
+- Start with CORS, input limits, and API Gateway-side restrictions
+- Consider adoption when traffic grows and spam or attacks increase
 
-導入候補タイミング：
+Possible adoption points:
 
-- AdSense導入後にアクセスが増えた
-- 問い合わせフォームへのスパムが増えた
-- APIへの大量アクセスが発生した
-- 商用・有料機能を開始した
+- Traffic increases after introducing AdSense
+- Contact-form spam increases
+- The API receives excessive traffic
+- Commercial or paid features are launched
 
   
 
-11. API Gatewayセキュリティ設計
+11. API Gateway Security Design
 
-11.1 基本方針
+11.1 Basic Policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|API種別|HTTP API|
-|CORS|許可Originを限定|
-|認証|MVPでは不要。Phase 4でCognito JWT|
-|レート制限|問い合わせAPIで検討|
-|入力制限|Lambda側で必須|
-|エラー応答|内部情報を返さない|
+|Item|Policy|
+|API type|HTTP API|
+|CORS|Restrict allowed origins|
+|Authentication|Not required for MVP; Cognito JWT in Phase 4|
+|Rate limiting|Consider for the contact API|
+|Input limits|Required in Lambda|
+|Error responses|Do not return internal information|
 
-11.2 CORS方針
+11.2 CORS Policy
 
-本番環境では、許可Originを本番フロントエンドのドメインに限定する。
+In production, restrict allowed origins to the production frontend domain.
 
-許可する例
+Allowed examples
 
 https://example.com
 
 https://www.example.com
 
-開発時のみ許可
+Allowed only during development
 
 http://localhost:3000
 
-避ける設定
+Configuration to avoid
 
 Access-Control-Allow-Origin: *
 
-11.3 許可メソッド
+11.3 Allowed Methods
 
-MVPでは以下のみ。
-
-|   |   |
-|---|---|
-|メソッド|用途|
-|POST|問い合わせ送信|
-|OPTIONS|CORSプリフライト|
-
-将来は以下を追加。
+Only the following are used in the MVP.
 
 |   |   |
 |---|---|
-|メソッド|用途|
-|GET|用語・問題・進捗取得|
-|PUT|ユーザー設定更新|
+|Method|Purpose|
+|POST|Submit an inquiry|
+|OPTIONS|CORS preflight|
 
-11.4 APIエラー方針
+Add the following in the future.
 
-内部情報をそのまま返さない。
+|   |   |
+|---|---|
+|Method|Purpose|
+|GET|Retrieve terms, questions, and progress|
+|PUT|Update user settings|
 
-悪い例：
+11.4 API Error Policy
+
+Do not return internal information verbatim.
+
+Bad example:
 
 {
 
@@ -548,7 +548,7 @@ MVPでは以下のみ。
 
 }
 
-良い例：
+Good example (the Japanese message is a localized site-output example):
 
 {
 
@@ -564,76 +564,76 @@ MVPでは以下のみ。
 
 }
 
-11.5 API Gatewayログ
+11.5 API Gateway Logs
 
-MVPではログを増やしすぎない。
+Avoid excessive logging in the MVP.
 
-理由：
+Reasons:
 
-- CloudWatch Logs課金を抑えるため
-- 個人情報をログに出さないため
+- Keep CloudWatch Logs charges low
+- Avoid logging personal information
 
-必要な場合のみ、以下を記録する。
+Record the following only when needed.
 
-- ステータスコード
-- レイテンシ
-- リクエストID
-- エラー発生有無
+- Status code
+- Latency
+- Request ID
+- Whether an error occurred
 
   
 
-12. Lambdaセキュリティ設計
+12. Lambda Security Design
 
-12.1 基本方針
-
-|   |   |
-|---|---|
-|項目|方針|
-|実行ロール|機能ごとに分ける|
-|権限|必要なDynamoDB操作のみ|
-|環境変数|テーブル名、許可Originなどのみ|
-|入力値検証|Lambda側で必ず実施|
-|例外処理|内部エラーをそのまま返さない|
-|ログ|個人情報・秘密情報を出さない|
-|タイムアウト|短めに設定|
-
-12.2 問い合わせLambdaのバリデーション
+12.1 Basic Policy
 
 |   |   |
 |---|---|
-|項目|ルール|
-|name|必須、1〜100文字|
-|email|必須、メール形式、255文字以内|
-|subject|必須、1〜150文字|
-|message|必須、1〜2,000文字|
-|sourcePage|任意、255文字以内|
-|honeypot|空文字であること|
+|Item|Policy|
+|Execution roles|Separate by function|
+|Permissions|Only required DynamoDB operations|
+|Environment variables|Only table names, allowed origins, and similar configuration|
+|Input validation|Always perform in Lambda|
+|Exception handling|Do not return raw internal errors|
+|Logs|Do not output personal information or secrets|
+|Timeout|Keep short|
 
-12.3 HTML・スクリプト対策
-
-問い合わせ本文にHTMLやscriptが含まれても、以下の方針で扱う。
-
-- 管理画面を作るまでは画面表示しない
-- 将来表示する場合は必ずエスケープする
-- メール通知する場合もHTMLとして解釈しない
-- Reactで dangerouslySetInnerHTML を使わない
-
-12.4 Lambdaタイムアウト
+12.2 Contact Lambda Validation
 
 |   |   |
 |---|---|
-|Lambda|推奨タイムアウト|
-|contact-submit-function|3〜5秒|
-|get-terms-function|3秒|
-|get-questions-function|3秒|
-|submit-answer-function|5秒|
-|daily-question-function|10秒|
+|Field|Rule|
+|name|Required; 1–100 characters|
+|email|Required; email format; at most 255 characters|
+|subject|Required; 1–150 characters|
+|message|Required; 1–2,000 characters|
+|sourcePage|Optional; at most 255 characters|
+|honeypot|Must be an empty string|
 
-タイムアウトを長くしすぎると、バグや外部依存で無駄な実行時間が発生する可能性がある。
+12.3 HTML and Script Protection
 
-12.5 Lambdaログ方針
+Apply the following policies even when a contact message contains HTML or scripts.
 
-出してよいログ：
+- Do not display messages until an administration screen exists
+- Always escape messages if displayed in the future
+- Do not interpret them as HTML in email notifications either
+- Do not use React dangerouslySetInnerHTML
+
+12.4 Lambda Timeouts
+
+|   |   |
+|---|---|
+|Lambda|Recommended timeout|
+|contact-submit-function|3–5 seconds|
+|get-terms-function|3 seconds|
+|get-questions-function|3 seconds|
+|submit-answer-function|5 seconds|
+|daily-question-function|10 seconds|
+
+Excessively long timeouts can waste execution time because of bugs or external dependencies.
+
+12.5 Lambda Logging Policy
+
+Permitted logs:
 
 INFO request started requestId=req-xxxx
 
@@ -643,11 +643,11 @@ WARN validation error fields=email,message
 
 ERROR dynamodb error requestId=req-xxxx
 
-出してはいけないログ：
+Prohibited logs:
 
 email=taro@example.com
 
-message=問い合わせ本文全文
+message=full contact message body
 
 Authorization=Bearer xxxxx
 
@@ -655,59 +655,59 @@ AWS_SECRET_ACCESS_KEY=xxxxx
 
   
 
-13. DynamoDBセキュリティ設計
+13. DynamoDB Security Design
 
-13.1 基本方針
-
-|   |   |
-|---|---|
-|項目|方針|
-|直接公開|しない|
-|アクセス経路|Lambda経由のみ|
-|IAM権限|Lambdaごとに必要なテーブル操作のみ|
-|個人情報|問い合わせデータは公開しない|
-|バックアップ|必要に応じてPITRを検討|
-|暗号化|AWS管理の暗号化を利用|
-
-13.2 ContactsTable保護方針
-
-ContactsTableには個人情報が含まれる。
-
-保存される情報：
-
-- 名前
-- メールアドレス
-- 件名
-- 本文
-- 送信日時
-
-保護方針：
+13.1 Basic Policy
 
 |   |   |
 |---|---|
-|項目|内容|
-|公開APIから取得させない|POST保存のみ。GET一覧APIは作らない|
-|管理画面なし|MVPではAWSコンソールで確認する|
-|Lambda権限|PutItemのみから開始する|
-|ログ出力|本文・メール全文を出力しない|
-|保持期間|1年を目安に見直し|
+|Item|Policy|
+|Direct public exposure|Do not expose|
+|Access path|Lambda only|
+|IAM permissions|Only the table operations required by each Lambda|
+|Personal information|Do not publish contact data|
+|Backups|Consider PITR as needed|
+|Encryption|Use AWS-managed encryption|
 
-13.3 UserAnswersTable / UserProgressTable保護方針
+13.2 ContactsTable Protection Policy
 
-Phase 4以降の学習履歴データは、ユーザー本人のみアクセス可能にする。
+ContactsTable contains personal information.
 
-重要ルール：
+Stored information:
 
-- userIdはリクエストBodyから受け取らない
-- userIdはCognito JWTのsubから取得する
-- 他ユーザーのuserIdを指定して取得できないようにする
-- DynamoDB Query時は必ずJWT由来のuserIdを使う
+- Name
+- Email address
+- Subject
+- Message body
+- Submission timestamp
 
-13.4 DynamoDB権限分離
+Protection policy:
+
+|   |   |
+|---|---|
+|Item|Description|
+|No retrieval through public APIs|POST storage only; do not build a GET listing API|
+|No administration screen|Inspect through the AWS console in the MVP|
+|Lambda permissions|Start with PutItem only|
+|Logging|Do not output full message bodies or email addresses|
+|Retention|Review with approximately 1 year as a guideline|
+
+13.3 UserAnswersTable / UserProgressTable Protection Policy
+
+Learning-history data from Phase 4 onward must be accessible only to the user concerned.
+
+Important rules:
+
+- Do not accept userId from the request body
+- Obtain userId from the Cognito JWT sub
+- Prevent retrieval by specifying another user's userId
+- Always use the JWT-derived userId in DynamoDB Queries
+
+13.4 DynamoDB Permission Separation
 
 |   |   |   |
 |---|---|---|
-|Lambda|テーブル|許可Action|
+|Lambda|Table|Allowed Action|
 |contact-submit-function|ContactsTable|PutItem|
 |get-questions-function|QuestionsTable|GetItem, Query, Scan|
 |submit-answer-function|UserAnswersTable|PutItem|
@@ -717,90 +717,90 @@ Phase 4以降の学習履歴データは、ユーザー本人のみアクセス�
 
   
 
-14. 問い合わせフォームセキュリティ
+14. Contact Form Security
 
-14.1 想定リスク
+14.1 Anticipated Risks
 
 |   |   |
 |---|---|
-|リスク|内容|
-|スパム投稿|Botによる大量投稿|
-|XSS文字列投稿|scriptタグなどを本文に入れられる|
-|長文投稿|大量文字によるDB容量増加|
-|メールアドレス不正|返信不能な問い合わせ増加|
-|API直接呼び出し|フロントを通さずAPIを呼ばれる|
+|Risk|Description|
+|Spam submissions|Large numbers of bot submissions|
+|XSS strings|Script tags and similar content inserted into messages|
+|Long submissions|Increased database usage from excessive text|
+|Invalid email addresses|More inquiries that cannot be answered|
+|Direct API calls|API calls that bypass the frontend|
 
-14.2 対策
+14.2 Countermeasures
 
 |   |   |   |
 |---|---|---|
-|対策|内容|MVP|
-|フロント側バリデーション|入力ミスを事前検知|必須|
-|Lambda側バリデーション|API直接呼び出し対策|必須|
-|honeypot|Bot検知用隠し項目|推奨|
-|文字数制限|長文・大量投稿対策|必須|
-|CORS制限|ブラウザ経由の外部Origin制限|必須|
-|レート制限|大量投稿対策|検討|
-|reCAPTCHA|Bot対策|MVPでは不要、必要時検討|
+|Countermeasure|Description|MVP|
+|Frontend validation|Detect input mistakes in advance|Required|
+|Lambda validation|Protect against direct API calls|Required|
+|honeypot|Hidden field to detect bots|Recommended|
+|Character limits|Protect against long or excessive submissions|Required|
+|CORS restrictions|Restrict external origins through browsers|Required|
+|Rate limiting|Prevent excessive submissions|Under consideration|
+|reCAPTCHA|Bot protection|Not required for MVP; consider as needed|
 
-14.3 honeypot設計
+14.3 Honeypot Design
 
-フォームにユーザーから見えない入力項目を置く。
+Add an input field invisible to users.
 
 <input type="text" name="honeypot" style="display:none" tabIndex="-1" autoComplete="off" />
 
-通常ユーザーは入力しないが、Botが自動入力した場合はスパム扱いとする。
+Normal users leave it empty; treat automatic completion by a bot as spam.
 
-処理方針：
+Processing policy:
 
-- honeypotに値がある場合はDynamoDBに保存しない
-- ただし、Botに気づかれにくいよう成功レスポンスを返す
+- Do not save to DynamoDB if honeypot has a value
+- Still return a success response to make detection less obvious to bots
 
-14.4 問い合わせAPIの保存制限
+14.4 Contact API Storage Limits
 
 |   |   |
 |---|---|
-|項目|上限|
-|name|100文字|
-|email|255文字|
-|subject|150文字|
-|message|2,000文字|
-|sourcePage|255文字|
+|Field|Limit|
+|name|100 characters|
+|email|255 characters|
+|subject|150 characters|
+|message|2,000 characters|
+|sourcePage|255 characters|
 
   
 
-15. フロントエンドセキュリティ
+15. Frontend Security
 
-15.1 基本方針
+15.1 Basic Policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|XSS対策|Reactの通常エスケープを利用し、HTML直接挿入を避ける|
-|外部リンク|target="_blank" の場合は rel="noopener noreferrer" を付与|
-|フォーム|入力値を検証する|
-|環境変数|NEXT_PUBLIC_ に秘密情報を入れない|
-|依存パッケージ|不要なライブラリを増やさない|
+|Item|Policy|
+|XSS protection|Use normal React escaping and avoid direct HTML insertion|
+|External links|Add rel="noopener noreferrer" when using target="_blank"|
+|Forms|Validate input|
+|Environment variables|Do not place secrets in NEXT_PUBLIC_ variables|
+|Dependencies|Avoid adding unnecessary libraries|
 
-15.2 dangerouslySetInnerHTMLの扱い
+15.2 Handling dangerouslySetInnerHTML
 
-原則使用しない。
+Generally do not use it.
 
-MDXやMarkdownを表示する場合は、信頼できる自分のコンテンツのみを対象にする。
+When displaying MDX or Markdown, restrict it to your own trusted content.
 
-ユーザー入力をHTMLとして表示しない。
+Do not display user input as HTML.
 
-15.3 環境変数の注意点
+15.3 Environment Variable Precautions
 
-Next.jsの NEXT_PUBLIC_ が付く環境変数はブラウザに公開される。
+Next.js environment variables prefixed with NEXT_PUBLIC_ are exposed to the browser.
 
-置いてよいもの：
+Permitted values:
 
 NEXT_PUBLIC_API_BASE_URL
 
 NEXT_PUBLIC_SITE_URL
 
-置いてはいけないもの：
+Prohibited values:
 
 AWS_ACCESS_KEY_ID
 
@@ -814,21 +814,21 @@ JWT_SECRET
 
   
 
-16. GitHub・CI/CDセキュリティ
+16. GitHub and CI/CD Security
 
-16.1 GitHub管理方針
+16.1 GitHub Management Policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|Public Repository|公開してよいが秘密情報を含めない|
-|Secrets|GitHub Secretsで管理|
-|.env|コミット禁止|
-|.gitignore|必ず設定|
-|ブランチ保護|余裕があればmainブランチ保護を設定|
-|Dependabot|依存関係更新通知を有効化検討|
+|Item|Policy|
+|Public Repository|May be public, but must not contain secrets|
+|Secrets|Manage through GitHub Secrets|
+|.env|Never commit|
+|.gitignore|Always configure|
+|Branch protection|Protect the main branch when time permits|
+|Dependabot|Consider enabling dependency-update notifications|
 
-16.2 .gitignore例
+16.2 Example .gitignore
 
 .env
 
@@ -854,86 +854,86 @@ __pycache__/
 
 aws-credentials.json
 
-16.3 GitHub Secretsに入れるもの
+16.3 Values Stored in GitHub Secrets
 
 |   |   |
 |---|---|
-|Secret名|内容|
-|AWS_ROLE_ARN|GitHub Actions用IAMロールARN|
-|AWS_ACCESS_KEY_ID|OIDCを使わない場合のみ|
-|AWS_SECRET_ACCESS_KEY|OIDCを使わない場合のみ|
-|S3_BUCKET_NAME|デプロイ先S3バケット|
+|Secret name|Description|
+|AWS_ROLE_ARN|IAM role ARN for GitHub Actions|
+|AWS_ACCESS_KEY_ID|Only when not using OIDC|
+|AWS_SECRET_ACCESS_KEY|Only when not using OIDC|
+|S3_BUCKET_NAME|Deployment destination S3 bucket|
 |CLOUDFRONT_DISTRIBUTION_ID|CloudFront Distribution ID|
 
-16.4 推奨：GitHub OIDC
+16.4 Recommendation: GitHub OIDC
 
-長期アクセスキーをGitHub Secretsに保存するより、GitHub OIDCでAWSロールを引き受ける方が望ましい。
+Prefer assuming an AWS role through GitHub OIDC to storing long-lived access keys in GitHub Secrets.
 
-MVPではアクセスキー方式でもよいが、ポートフォリオ価値を高めるならOIDC化を目指す。
+Access keys are acceptable in the MVP, but aim for OIDC to strengthen the portfolio.
 
-16.5 GitHub Actions権限
+16.5 GitHub Actions Permissions
 
-GitHub Actionsにはデプロイに必要な権限のみ付与する。
+Grant GitHub Actions only the permissions necessary for deployment.
 
-許可する操作：
+Allowed operations:
 
-- S3へのPutObject
-- S3のDeleteObject
-- S3のListBucket
-- CloudFrontのCreateInvalidation
+- S3 PutObject
+- S3 DeleteObject
+- S3 ListBucket
+- CloudFront CreateInvalidation
 
-許可しない操作：
+Disallowed operations:
 
-- IAM操作
-- DynamoDB全操作
-- S3全バケット操作
+- IAM operations
+- All DynamoDB operations
+- Operations on all S3 buckets
 - AdministratorAccess
 
   
 
-17. Cognito認証設計 Phase 4
+17. Cognito Authentication Design: Phase 4
 
-17.1 基本方針
+17.1 Basic Policy
 
-Phase 4でログイン機能を追加する場合、Amazon Cognitoを利用する。
-
-|   |   |
-|---|---|
-|項目|方針|
-|認証方式|Cognito User Pool|
-|ログインID|メールアドレス|
-|パスワード|Cognitoポリシーに従う|
-|JWT|API Gatewayで検証|
-|ユーザーID|Cognito subを利用|
-
-17.2 パスワードポリシー案
+Use Amazon Cognito when adding login functionality in Phase 4.
 
 |   |   |
 |---|---|
-|項目|方針|
-|最小文字数|8文字以上|
-|英大文字|推奨|
-|英小文字|推奨|
-|数字|推奨|
-|記号|任意|
+|Item|Policy|
+|Authentication method|Cognito User Pool|
+|Login ID|Email address|
+|Password|Follow the Cognito policy|
+|JWT|Validate in API Gateway|
+|User ID|Use Cognito sub|
 
-17.3 JWT利用方針
+17.2 Proposed Password Policy
 
-認証付きAPIでは、AuthorizationヘッダーにJWTを付与する。
+|   |   |
+|---|---|
+|Item|Policy|
+|Minimum length|At least 8 characters|
+|Uppercase letters|Recommended|
+|Lowercase letters|Recommended|
+|Digits|Recommended|
+|Symbols|Optional|
+
+17.3 JWT Usage Policy
+
+Attach the JWT to the Authorization header for authenticated APIs.
 
 Authorization: Bearer <JWT_TOKEN>
 
-API GatewayのJWT Authorizerで検証する。
+Validate through the API Gateway JWT Authorizer.
 
-17.4 ユーザー別データアクセス制御
+17.4 Per-user Data Access Control
 
-重要ルール：
+Important rules:
 
-リクエストBodyのuserIdを信用しない。
+Do not trust userId in the request body.
 
-必ずJWTのsubをuserIdとして使う。
+Always use JWT sub as userId.
 
-悪い例：
+Bad example:
 
 {
 
@@ -943,173 +943,173 @@ API GatewayのJWT Authorizerで検証する。
 
 }
 
-良い方針：
+Recommended approach:
 
 userId = JWT claims sub
 
-17.5 認証が必要なAPI
+17.5 APIs Requiring Authentication
 
 |   |   |
 |---|---|
-|API|認証|
-|POST /answers|必須|
-|GET /progress|必須|
-|GET /review-questions|必須|
-|GET /me|必須|
-|PUT /me|必須|
+|API|Authentication|
+|POST /answers|Required|
+|GET /progress|Required|
+|GET /review-questions|Required|
+|GET /me|Required|
+|PUT /me|Required|
 
   
 
-18. SES・メール通知セキュリティ Phase 4
+18. SES and Email Notification Security: Phase 4
 
-18.1 利用目的
+18.1 Intended Uses
 
-将来的にAmazon SESを利用する可能性がある。
+Amazon SES may be used in the future.
 
-用途：
+Uses:
 
-- 問い合わせ通知
-- 毎日1問配信
-- 学習リマインド
+- Contact notifications
+- Daily-question delivery
+- Study reminders
 
-18.2 注意点
+18.2 Precautions
 
 |   |   |
 |---|---|
-|項目|方針|
-|送信先|ユーザーが許可したメールアドレスのみ|
-|オプトアウト|通知停止できるようにする|
-|本文|個人情報を過度に含めない|
-|なりすまし対策|独自ドメイン利用時はSPF/DKIM設定を検討|
-|送信制限|大量送信しない|
+|Item|Policy|
+|Recipients|Only email addresses authorized by users|
+|Opt-out|Allow users to stop notifications|
+|Message body|Do not include excessive personal information|
+|Anti-spoofing|Consider SPF/DKIM when using a custom domain|
+|Sending limits|Do not send in bulk|
 
   
 
-19. CloudWatch Logs設計
+19. CloudWatch Logs Design
 
-19.1 ログ出力方針
-
-|   |   |
-|---|---|
-|項目|方針|
-|requestId|出力する|
-|contactId|出力してよい|
-|処理結果|出力する|
-|エラー種別|出力する|
-|メールアドレス|出力しない|
-|問い合わせ本文|出力しない|
-|JWT|出力しない|
-|Authorizationヘッダー|出力しない|
-
-19.2 ログ保存期間
-
-MVPではCloudWatch Logsの保存期間を設定する。
+19.1 Logging Policy
 
 |   |   |
 |---|---|
-|ロググループ|保存期間|
-|/aws/lambda/contact-submit-function|14日〜30日|
-|/aws/lambda/get-questions-function|14日〜30日|
-|/aws/lambda/submit-answer-function|30日|
+|Item|Policy|
+|requestId|Log|
+|contactId|May be logged|
+|Processing result|Log|
+|Error type|Log|
+|Email address|Do not log|
+|Contact message body|Do not log|
+|JWT|Do not log|
+|Authorization header|Do not log|
 
-ログ保存期間を無期限にしない。
+19.2 Log Retention
 
-19.3 アラート方針
-
-MVPではAWS Budgetsを最優先とし、CloudWatch AlarmはPhase 2以降で導入する。
-
-候補アラート：
+Configure CloudWatch Logs retention in the MVP.
 
 |   |   |
 |---|---|
-|アラート|条件|
-|Lambda Errors|一定期間内にエラーが連続発生|
-|API Gateway 5XX|5XXが増加|
-|API Gateway 4XX|4XXが急増|
-|DynamoDB Throttling|スロットリング発生|
+|Log group|Retention period|
+|/aws/lambda/contact-submit-function|14–30 days|
+|/aws/lambda/get-questions-function|14–30 days|
+|/aws/lambda/submit-answer-function|30 days|
+
+Do not retain logs indefinitely.
+
+19.3 Alert Policy
+
+Prioritize AWS Budgets in the MVP; introduce CloudWatch Alarms from Phase 2 onward.
+
+Candidate alerts:
+
+|   |   |
+|---|---|
+|Alert|Condition|
+|Lambda Errors|Repeated errors within a specified period|
+|API Gateway 5XX|Increase in 5XX responses|
+|API Gateway 4XX|Sharp increase in 4XX responses|
+|DynamoDB Throttling|Throttling occurs|
 
   
 
-20. 個人情報保護設計
+20. Personal Information Protection Design
 
-20.1 取得する個人情報
+20.1 Personal Information Collected
 
-MVPで取得する可能性がある個人情報は以下である。
+The following personal information may be collected in the MVP.
 
 |   |   |   |
 |---|---|---|
-|項目|取得場所|目的|
-|名前|問い合わせフォーム|問い合わせ対応|
-|メールアドレス|問い合わせフォーム|返信対応|
-|問い合わせ本文|問い合わせフォーム|問い合わせ対応|
+|Item|Collection point|Purpose|
+|Name|Contact form|Handle inquiries|
+|Email address|Contact form|Send replies|
+|Contact message body|Contact form|Handle inquiries|
 
-Phase 4以降で追加される可能性がある情報：
+Information that may be added from Phase 4 onward:
 
 |   |   |
 |---|---|
-|項目|目的|
-|ログインメールアドレス|ユーザー認証|
-|学習履歴|学習進捗表示|
-|正答率|弱点分析|
-|通知設定|毎日1問配信|
+|Item|Purpose|
+|Login email address|User authentication|
+|Learning history|Display learning progress|
+|Accuracy|Analyze weak areas|
+|Notification preferences|Daily-question delivery|
 
-20.2 個人情報の利用目的
+20.2 Purposes of Personal Information Use
 
-- 問い合わせへの返信
-- 誤り報告への対応
-- サイト改善
-- 将来的な学習履歴表示
-- ユーザー本人への通知
+- Reply to inquiries
+- Respond to error reports
+- Improve the site
+- Display learning history in the future
+- Notify the user concerned
 
-20.3 個人情報の公開禁止
+20.3 Prohibition on Publishing Personal Information
 
-以下は公開ページに表示しない。
+Do not display the following on public pages.
 
-- 問い合わせデータ
-- メールアドレス
-- 学習履歴
-- 正答率
+- Contact data
+- Email address
+- Learning history
+- Accuracy
 - Cognito userId
 
-20.4 プライバシーポリシーとの整合
+20.4 Alignment with the Privacy Policy
 
-プライバシーポリシーには以下を記載する。
+Include the following in the privacy policy.
 
-- 取得する情報
-- 利用目的
-- Cookie利用
-- Google Analytics利用予定
-- Google AdSense利用予定
-- 第三者提供の有無
-- 問い合わせ先
-- 免責事項
+- Information collected
+- Purposes of use
+- Cookie usage
+- Planned Google Analytics usage
+- Planned Google AdSense usage
+- Whether information is provided to third parties
+- Contact details
+- Disclaimer
 
   
 
-21. AdSense・Analytics導入時のセキュリティ注意点
+21. Security Precautions for AdSense and Analytics
 
 21.1 Google Analytics
 
-導入時の注意点：
+Implementation precautions:
 
-- プライバシーポリシーにアクセス解析の利用を明記する
-- 個人を特定できる情報をAnalyticsへ送信しない
-- 問い合わせ本文やメールアドレスをイベントに含めない
+- Explicitly disclose web analytics usage in the privacy policy
+- Do not send personally identifiable information to Analytics
+- Do not include contact messages or email addresses in events
 
 21.2 Google AdSense
 
-導入時の注意点：
+Implementation precautions:
 
-- プライバシーポリシーに広告配信・Cookie利用を明記する
-- 広告コードを正しく設置する
-- 自分で広告をクリックしない
-- 不正クリックを誘導しない
+- Explicitly disclose advertising and cookie usage in the privacy policy
+- Install advertising code correctly
+- Do not click your own advertisements
+- Do not encourage fraudulent clicks
 
-21.3 CSPとの整合
+21.3 Alignment with CSP
 
-AdSenseやAnalyticsを導入すると、CSPの許可先追加が必要になる。
+Adding AdSense or Analytics requires additional allowed sources in CSP.
 
-導入前に以下を確認する。
+Check the following before implementation.
 
 - script-src
 - img-src
@@ -1118,39 +1118,39 @@ AdSenseやAnalyticsを導入すると、CSPの許可先追加が必要になる�
 
   
 
-22. 環境変数・秘密情報管理
+22. Environment Variable and Secret Management
 
-22.1 Lambda環境変数
+22.1 Lambda Environment Variables
 
-Lambdaに設定してよい値：
+Values permitted in Lambda:
 
 |   |   |   |
 |---|---|---|
-|環境変数|内容|秘密度|
-|CONTACTS_TABLE_NAME|DynamoDBテーブル名|低|
-|ALLOWED_ORIGIN|許可Origin|低|
-|LOG_LEVEL|ログレベル|低|
+|Environment variable|Description|Sensitivity|
+|CONTACTS_TABLE_NAME|DynamoDB table name|Low|
+|ALLOWED_ORIGIN|Allowed origin|Low|
+|LOG_LEVEL|Log level|Low|
 
-Lambdaに直接設定する場合に注意が必要な値：
+Values requiring care when configured directly in Lambda:
 
 |   |   |
 |---|---|
-|環境変数|方針|
-|外部APIキー|Secrets ManagerまたはSSM Parameter Storeを検討|
-|メール認証情報|可能ならSES/IAMロールで対応|
-|JWT秘密鍵|Cognitoを使うため自前管理しない|
+|Environment variable|Policy|
+|External API keys|Consider Secrets Manager or SSM Parameter Store|
+|Email credentials|Use SES/IAM roles if possible|
+|JWT private keys|Do not manage independently because Cognito is used|
 
-22.2 フロントエンド環境変数
+22.2 Frontend Environment Variables
 
-ブラウザに公開される値のみ設定する。
+Configure only values that can be exposed to the browser.
 
-設定してよい例：
+Permitted examples:
 
 NEXT_PUBLIC_API_BASE_URL
 
 NEXT_PUBLIC_SITE_URL
 
-設定してはいけない例：
+Prohibited examples:
 
 AWS_SECRET_ACCESS_KEY
 
@@ -1162,383 +1162,383 @@ DATABASE_PASSWORD
 
 JWT_SECRET
 
-22.3 Secrets Manager利用方針
+22.3 Secrets Manager Usage Policy
 
-MVPでは必須ではない。
+Not mandatory for the MVP.
 
-将来的に以下を扱う場合は利用を検討する。
+Consider using it when handling the following in the future.
 
-- 外部AI APIキー
-- Stripe秘密キー
-- 外部メールサービスキー
-- 管理者用トークン
-
-  
-
-23. 依存関係セキュリティ
-
-23.1 フロントエンド依存関係
-
-|   |   |
-|---|---|
-|項目|方針|
-|パッケージ追加|必要最小限にする|
-|不明なライブラリ|安易に使わない|
-|npm audit|定期確認|
-|Dependabot|有効化検討|
-|lockファイル|package-lock.json / pnpm-lock.yamlを管理|
-
-23.2 Python依存関係
-
-|   |   |
-|---|---|
-|項目|方針|
-|requirements.txt|明示的に管理|
-|不要ライブラリ|入れない|
-|boto3|Lambdaランタイムに含まれる場合は追加不要なケースあり|
-|バージョン固定|必要に応じて固定|
-
-23.3 依存関係の基本ルール
-
-- 使わないパッケージは削除する
-- star数だけで判断しない
-- 最近メンテナンスされているか確認する
-- セキュリティ警告が出たら確認する
+- External AI API keys
+- Stripe secret keys
+- External email-service keys
+- Administrator tokens
 
   
 
-24. セキュリティテスト設計
+23. Dependency Security
 
-24.1 MVPテスト対象
+23.1 Frontend Dependencies
 
 |   |   |
 |---|---|
-|対象|テスト内容|
-|S3|直接URLでアクセスできないこと|
-|CloudFront|HTTPSでアクセスできること|
-|API Gateway|CORSが制限されていること|
-|Lambda|不正入力でエラーを返すこと|
-|DynamoDB|問い合わせが保存されること|
-|GitHub|秘密情報がコミットされていないこと|
-|CloudWatch Logs|個人情報が出力されていないこと|
+|Item|Policy|
+|Adding packages|Keep to the necessary minimum|
+|Unknown libraries|Do not use casually|
+|npm audit|Check regularly|
+|Dependabot|Consider enabling|
+|Lock files|Manage package-lock.json / pnpm-lock.yaml|
 
-24.2 問い合わせフォームテスト
+23.2 Python Dependencies
+
+|   |   |
+|---|---|
+|Item|Policy|
+|requirements.txt|Manage explicitly|
+|Unnecessary libraries|Do not install|
+|boto3|May not need to be added if included in the Lambda runtime|
+|Version pinning|Pin as needed|
+
+23.3 Basic Dependency Rules
+
+- Remove unused packages
+- Do not judge solely by star counts
+- Check whether maintenance is recent
+- Investigate security warnings
+
+  
+
+24. Security Test Design
+
+24.1 MVP Test Scope
+
+|   |   |
+|---|---|
+|Target|Test|
+|S3|Direct URL access is not possible|
+|CloudFront|HTTPS access works|
+|API Gateway|CORS is restricted|
+|Lambda|Invalid input returns an error|
+|DynamoDB|Contact submissions are stored|
+|GitHub|No secrets are committed|
+|CloudWatch Logs|No personal information is logged|
+
+24.2 Contact Form Tests
 
 |   |   |   |
 |---|---|---|
-|ID|テスト|期待結果|
-|SEC-T-001|name空欄|400エラー|
-|SEC-T-002|email形式不正|400エラー|
-|SEC-T-003|message 2,000文字超過|400エラー|
-|SEC-T-004|scriptタグ入力|保存されても実行されない|
-|SEC-T-005|honeypot入力あり|保存せず成功扱い|
-|SEC-T-006|許可外Originから送信|CORSでブロック|
+|ID|Test|Expected result|
+|SEC-T-001|Empty name|400 error|
+|SEC-T-002|Invalid email format|400 error|
+|SEC-T-003|message exceeds 2,000 characters|400 error|
+|SEC-T-004|Input a script tag|Not executed even if stored|
+|SEC-T-005|honeypot contains input|Return success without saving|
+|SEC-T-006|Submit from an unauthorized origin|Blocked by CORS|
 
-24.3 IAMテスト
-
-|   |   |   |
-|---|---|---|
-|ID|テスト|期待結果|
-|IAM-T-001|LambdaがContactsTableにPutItemできる|成功|
-|IAM-T-002|LambdaがContactsTableをScanできない|失敗|
-|IAM-T-003|GitHub ActionsがS3へPutObjectできる|成功|
-|IAM-T-004|GitHub ActionsがIAM操作できない|失敗|
-
-24.4 S3 / CloudFrontテスト
+24.3 IAM Tests
 
 |   |   |   |
 |---|---|---|
-|ID|テスト|期待結果|
-|S3-T-001|S3オブジェクトURLへ直接アクセス|拒否|
-|S3-T-002|CloudFront URLへアクセス|表示成功|
-|CF-T-001|HTTPでアクセス|HTTPSへリダイレクト|
-|CF-T-002|セキュリティヘッダー確認|設定済みであること|
+|ID|Test|Expected result|
+|IAM-T-001|Lambda can PutItem to ContactsTable|Success|
+|IAM-T-002|Lambda cannot Scan ContactsTable|Failure|
+|IAM-T-003|GitHub Actions can PutObject to S3|Success|
+|IAM-T-004|GitHub Actions cannot perform IAM operations|Failure|
+
+24.4 S3 / CloudFront Tests
+
+|   |   |   |
+|---|---|---|
+|ID|Test|Expected result|
+|S3-T-001|Access an S3 object URL directly|Denied|
+|S3-T-002|Access the CloudFront URL|Displayed successfully|
+|CF-T-001|Access over HTTP|Redirected to HTTPS|
+|CF-T-002|Check security headers|Configured|
 
   
 
-25. インシデント対応方針
+25. Incident Response Policy
 
-25.1 想定インシデント
+25.1 Anticipated Incidents
 
 |   |   |
 |---|---|
-|インシデント|例|
-|AWSアクセスキー漏えい|GitHubに誤コミット|
-|課金急増|API大量アクセス、キー漏えい|
-|問い合わせスパム|Bot投稿増加|
-|個人情報漏えい|DynamoDBデータ誤公開|
-|サイト改ざん|デプロイ権限の悪用|
+|Incident|Example|
+|AWS access-key leak|Accidental GitHub commit|
+|Sudden cost increase|Excessive API traffic or key leakage|
+|Contact spam|Increasing bot submissions|
+|Personal-information leak|Accidental DynamoDB data exposure|
+|Website tampering|Misuse of deployment permissions|
 
-25.2 AWSアクセスキー漏えい時の対応
+25.2 Response to an AWS Access-key Leak
 
-1. 該当アクセスキーを即時無効化する
+1. Immediately disable the affected access key.
 
-2. GitHub履歴から削除が必要か確認する
+2. Check whether removal from GitHub history is necessary.
 
-3. AWS CloudTrailで不正操作の有無を確認する
+3. Check AWS CloudTrail for unauthorized operations.
 
-4. AWS請求ダッシュボードを確認する
+4. Review the AWS billing dashboard.
 
-5. 必要ならAWSサポートに相談する
+5. Contact AWS Support if necessary.
 
-6. 新しいキーを発行する場合は最小権限にする
+6. Apply least privilege when issuing a replacement key.
 
-7. GitHub Secretsを更新する
+7. Update GitHub Secrets.
 
-25.3 課金急増時の対応
+25.3 Response to a Sudden Cost Increase
 
-1. AWS Budgets通知を確認する
+1. Check AWS Budgets notifications.
 
-2. Cost Explorerで増加サービスを特定する
+2. Identify the service with rising costs in Cost Explorer.
 
-3. 該当リソースを停止または削除する
+3. Stop or delete the affected resources.
 
-4. CloudWatch LogsやAPI Gatewayメトリクスを確認する
+4. Check CloudWatch Logs and API Gateway metrics.
 
-5. 不正アクセスが疑われる場合はキーを無効化する
+5. Disable keys if unauthorized access is suspected.
 
-6. 再発防止としてレート制限や権限制限を強化する
+6. Strengthen rate limits and permission restrictions to prevent recurrence.
 
-25.4 問い合わせスパム増加時の対応
+25.4 Response to Increasing Contact Spam
 
-1. ContactsTableの投稿件数を確認する
+1. Check the submission count in ContactsTable.
 
-2. honeypotが機能しているか確認する
+2. Confirm that the honeypot works.
 
-3. API Gatewayのリクエスト数を確認する
+3. Check API Gateway request counts.
 
-4. レート制限を設定する
+4. Configure rate limiting.
 
-5. 必要に応じてreCAPTCHAやWAFを検討する
+5. Consider reCAPTCHA or WAF as necessary.
 
-6. 明らかなスパムデータを削除する
+6. Delete clearly identified spam data.
 
   
 
-7. MVPセキュリティチェックリスト
+7. MVP Security Checklist
 
-26.1 AWSアカウント
+26.1 AWS Account
 
 |   |   |
 |---|---|
-|チェック|状態|
-|rootユーザーにMFAを設定した|未実施 / 実施済み|
-|rootアクセスキーを作成していない|未実施 / 実施済み|
-|管理用IAMユーザーにMFAを設定した|未実施 / 実施済み|
-|AWS Budgetsを設定した|未実施 / 実施済み|
+|Check|Status|
+|Root-user MFA configured|Not done / Done|
+|No root access keys created|Not done / Done|
+|Administrative IAM-user MFA configured|Not done / Done|
+|AWS Budgets configured|Not done / Done|
 
 26.2 S3 / CloudFront
 
 |   |   |
 |---|---|
-|チェック|状態|
-|S3 Public Access Blockを有効化した|未実施 / 実施済み|
-|S3を直接公開していない|未実施 / 実施済み|
-|CloudFront OACを設定した|未実施 / 実施済み|
-|Bucket PolicyでCloudFrontのみ許可した|未実施 / 実施済み|
-|HTTPをHTTPSへリダイレクトした|未実施 / 実施済み|
+|Check|Status|
+|S3 Public Access Block enabled|Not done / Done|
+|S3 not exposed directly|Not done / Done|
+|CloudFront OAC configured|Not done / Done|
+|Bucket Policy allows only CloudFront|Not done / Done|
+|HTTP redirected to HTTPS|Not done / Done|
 
 26.3 API / Lambda / DynamoDB
 
 |   |   |
 |---|---|
-|チェック|状態|
-|CORSを本番ドメインに限定した|未実施 / 実施済み|
-|Lambdaで入力値検証を実装した|未実施 / 実施済み|
-|Lambda実行ロールを最小権限にした|未実施 / 実施済み|
-|ContactsTableへのPutItemのみ許可した|未実施 / 実施済み|
-|CloudWatch Logsに個人情報を出していない|未実施 / 実施済み|
-|CloudWatch Logs保存期間を設定した|未実施 / 実施済み|
+|Check|Status|
+|CORS restricted to production domain|Not done / Done|
+|Input validation implemented in Lambda|Not done / Done|
+|Lambda execution role follows least privilege|Not done / Done|
+|Only PutItem to ContactsTable allowed|Not done / Done|
+|No personal information in CloudWatch Logs|Not done / Done|
+|CloudWatch Logs retention configured|Not done / Done|
 
 26.4 GitHub
 
 |   |   |
 |---|---|
-|チェック|状態|
-|.envを.gitignoreに入れた|未実施 / 実施済み|
-|AWSアクセスキーをコミットしていない|未実施 / 実施済み|
-|GitHub Secretsを利用している|未実施 / 実施済み|
-|GitHub Actions権限を最小化した|未実施 / 実施済み|
-|不要なSecretsを削除した|未実施 / 実施済み|
+|Check|Status|
+|.env included in .gitignore|Not done / Done|
+|No AWS access keys committed|Not done / Done|
+|GitHub Secrets used|Not done / Done|
+|GitHub Actions permissions minimized|Not done / Done|
+|Unnecessary Secrets deleted|Not done / Done|
 
   
 
-27. Phase別セキュリティ実装方針
+27. Security Implementation by Phase
 
-27.1 Phase 1：静的サイト公開
+27.1 Phase 1: Publish the Static Site
 
-必須対応：
+Required measures:
 
 - root MFA
 - AWS Budgets
 - S3 Public Access Block
 - CloudFront OAC
-- HTTPS配信
-- GitHub秘密情報管理
+- HTTPS delivery
+- GitHub secret management
 
-27.2 Phase 2：サーバーレスAPI追加
+27.2 Phase 2: Add Serverless APIs
 
-必須対応：
+Required measures:
 
-- API Gateway CORS制限
-- Lambda入力値検証
-- DynamoDB最小権限
-- CloudWatch Logs保存期間設定
-- 問い合わせスパム対策
+- API Gateway CORS restrictions
+- Lambda input validation
+- DynamoDB least privilege
+- CloudWatch Logs retention configuration
+- Contact-spam protection
 
-27.3 Phase 3：収益化準備
+27.3 Phase 3: Prepare for Monetization
 
-必須対応：
+Required measures:
 
-- プライバシーポリシー整備
-- Cookie / Analytics / AdSense記載
-- セキュリティヘッダー設定
-- 独自ドメインHTTPS
-- 外部スクリプト利用時のCSP見直し
+- Establish a privacy policy
+- Document Cookie / Analytics / AdSense usage
+- Configure security headers
+- HTTPS for the custom domain
+- Review CSP when using external scripts
 
-27.4 Phase 4：学習アプリ化
+27.4 Phase 4: Develop into a Learning Application
 
-必須対応：
+Required measures:
 
-- Cognito認証
-- JWT検証
-- ユーザー別アクセス制御
-- userIdをJWTから取得
-- 学習履歴の本人限定アクセス
-- 通知停止機能
-- 退会・データ削除方針
+- Cognito authentication
+- JWT validation
+- Per-user access control
+- Derive userId from JWT
+- Restrict learning-history access to the user concerned
+- Notification opt-out functionality
+- Account closure and data deletion policy
 
   
 
-28. ポートフォリオで説明するポイント
+28. Points to Explain in the Portfolio
 
 28.1 S3 / CloudFront
 
-説明例：
+Example explanation:
 
-静的サイトはS3に配置していますが、S3バケットは直接公開していません。CloudFront Origin Access Controlを利用し、CloudFront経由でのみファイルを取得できる構成にしています。HTTPアクセスはHTTPSへリダイレクトし、静的コンテンツを安全に配信しています。
+The static site is stored in S3, but the S3 bucket is not directly public. CloudFront Origin Access Control ensures that files can be retrieved only through CloudFront. HTTP requests are redirected to HTTPS to deliver static content securely.
 
 28.2 IAM
 
-説明例：
+Example explanation:
 
-IAMは最小権限を意識し、Lambda実行ロールには対象DynamoDBテーブルへのPutItem権限のみを付与しています。GitHub Actions用ロールにもS3デプロイとCloudFrontキャッシュ無効化に必要な権限だけを付与する方針です。
+IAM follows least privilege: the Lambda execution role is granted only PutItem permission on the target DynamoDB table. The GitHub Actions role is also intended to receive only the permissions needed for S3 deployment and CloudFront cache invalidation.
 
-28.3 問い合わせAPI
+28.3 Contact API
 
-説明例：
+Example explanation:
 
-問い合わせフォームはAPI Gateway + Lambda + DynamoDBで実装します。フロントエンドだけでなくLambda側でも入力値検証を行い、honeypotや文字数制限でスパム対策を行います。CloudWatch Logsにはメールアドレスや本文全文を出力しない方針です。
+The contact form is implemented with API Gateway + Lambda + DynamoDB. Inputs are validated in Lambda as well as on the frontend, while a honeypot and character limits help prevent spam. Email addresses and complete message bodies are not written to CloudWatch Logs.
 
-28.4 将来のCognito
+28.4 Future Cognito Integration
 
-説明例：
+Example explanation:
 
-将来的にログイン機能を追加する場合はCognitoを利用し、API GatewayでJWTを検証します。学習履歴APIではリクエストBodyのuserIdを信用せず、JWTのsubをuserIdとして使い、本人のデータのみ取得・更新できる設計にします。
+If login is added in the future, Cognito will be used and JWTs validated in API Gateway. Learning-history APIs will not trust userId in the request body; they will use JWT sub as userId so users can retrieve and update only their own data.
 
   
 
-29. 採用するセキュリティ対策と採用しない対策
+29. Adopted and Deferred Security Measures
 
-29.1 MVPで採用する対策
+29.1 Measures Adopted in the MVP
 
 |   |   |
 |---|---|
-|対策|理由|
-|MFA|AWSアカウント保護に必須|
-|AWS Budgets|課金事故検知に必須|
-|S3 Public Access Block|意図しない公開を防ぐ|
-|CloudFront OAC|S3直接公開を避ける|
-|HTTPS|通信保護に必要|
-|IAM最小権限|被害範囲を抑える|
-|CORS制限|外部OriginからのAPI利用を制限|
-|Lambda入力値検証|API直接呼び出し対策|
-|CloudWatch Logs最小化|個人情報漏えい防止|
-|GitHub Secrets|認証情報管理|
+|Measure|Reason|
+|MFA|Essential for AWS account protection|
+|AWS Budgets|Essential for detecting unexpected charges|
+|S3 Public Access Block|Prevent unintended exposure|
+|CloudFront OAC|Avoid direct S3 exposure|
+|HTTPS|Required to protect communications|
+|IAM least privilege|Limit the impact of compromise|
+|CORS restrictions|Restrict API usage from external origins|
+|Lambda input validation|Protect against direct API calls|
+|CloudWatch Logs minimization|Prevent personal-information leakage|
+|GitHub Secrets|Credential management|
 
-29.2 MVPでは採用しない対策
+29.2 Measures Not Adopted in the MVP
 
 |   |   |   |
 |---|---|---|
-|対策|採用しない理由|将来導入タイミング|
-|AWS WAF|MVPではコスト・運用負荷が増える|アクセス増加後|
-|reCAPTCHA|初期フォームには過剰|スパム増加後|
-|Cognito|MVPではログイン不要|Phase 4|
-|Secrets Manager|MVPでは秘密情報が少ない|外部APIキー利用時|
-|GuardDuty|個人MVPではコスト優先|商用化・有料化後|
-|マルチアカウント構成|個人開発には過剰|本格運用後|
+|Measure|Reason for deferral|Future adoption point|
+|AWS WAF|Increases MVP costs and operational workload|After traffic increases|
+|reCAPTCHA|Excessive for the initial form|After spam increases|
+|Cognito|Login not needed in the MVP|Phase 4|
+|Secrets Manager|Few secrets in the MVP|When external API keys are used|
+|GuardDuty|Cost takes priority for an individual MVP|After commercialization or paid features|
+|Multi-account architecture|Excessive for individual development|After full-scale operations begin|
 
   
 
-30. 受け入れ基準
+30. Acceptance Criteria
 
-30.1 セキュリティ設計書の受け入れ基準
+30.1 Security Design Document Acceptance Criteria
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-SEC-DOC-001|AWSアカウント保護方針が定義されている|
-|AC-SEC-DOC-002|IAM最小権限方針が定義されている|
-|AC-SEC-DOC-003|S3 / CloudFront / OACの保護方針が定義されている|
-|AC-SEC-DOC-004|API Gateway / Lambdaの保護方針が定義されている|
-|AC-SEC-DOC-005|DynamoDBの保護方針が定義されている|
-|AC-SEC-DOC-006|問い合わせフォームのスパム・入力対策が定義されている|
-|AC-SEC-DOC-007|GitHub SecretsとCI/CDの方針が定義されている|
-|AC-SEC-DOC-008|CloudWatch Logsで出してよい情報・出してはいけない情報が定義されている|
-|AC-SEC-DOC-009|Phase 4のCognito認証方針が定義されている|
-|AC-SEC-DOC-010|MVPで採用しないセキュリティ対策と理由が定義されている|
+|ID|Criterion|
+|AC-SEC-DOC-001|AWS account protection policy is defined|
+|AC-SEC-DOC-002|IAM least-privilege policy is defined|
+|AC-SEC-DOC-003|S3 / CloudFront / OAC protection policy is defined|
+|AC-SEC-DOC-004|API Gateway / Lambda protection policy is defined|
+|AC-SEC-DOC-005|DynamoDB protection policy is defined|
+|AC-SEC-DOC-006|Contact-form spam and input protections are defined|
+|AC-SEC-DOC-007|GitHub Secrets and CI/CD policies are defined|
+|AC-SEC-DOC-008|Information permitted and prohibited in CloudWatch Logs is defined|
+|AC-SEC-DOC-009|Phase 4 Cognito authentication policy is defined|
+|AC-SEC-DOC-010|Security measures deferred from the MVP and reasons are defined|
 
-30.2 MVP実装時の受け入れ基準
+30.2 MVP Implementation Acceptance Criteria
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-SEC-MVP-001|rootユーザーにMFAが設定されている|
-|AC-SEC-MVP-002|AWS Budgetsが設定されている|
-|AC-SEC-MVP-003|S3 Public Access Blockが有効である|
-|AC-SEC-MVP-004|CloudFront OAC経由でS3配信している|
-|AC-SEC-MVP-005|S3オブジェクトURLへ直接アクセスできない|
-|AC-SEC-MVP-006|CloudFront経由でHTTPSアクセスできる|
-|AC-SEC-MVP-007|Lambda実行ロールが最小権限である|
-|AC-SEC-MVP-008|問い合わせAPIに入力値検証がある|
-|AC-SEC-MVP-009|CORSが本番ドメインに限定されている|
-|AC-SEC-MVP-010|CloudWatch Logsに個人情報が出力されていない|
-|AC-SEC-MVP-011|GitHubに.envやアクセスキーが含まれていない|
+|ID|Criterion|
+|AC-SEC-MVP-001|Root-user MFA is configured|
+|AC-SEC-MVP-002|AWS Budgets is configured|
+|AC-SEC-MVP-003|S3 Public Access Block is enabled|
+|AC-SEC-MVP-004|S3 content is served through CloudFront OAC|
+|AC-SEC-MVP-005|S3 object URLs cannot be accessed directly|
+|AC-SEC-MVP-006|HTTPS access works through CloudFront|
+|AC-SEC-MVP-007|Lambda execution role follows least privilege|
+|AC-SEC-MVP-008|Contact API has input validation|
+|AC-SEC-MVP-009|CORS is restricted to the production domain|
+|AC-SEC-MVP-010|CloudWatch Logs contains no personal information|
+|AC-SEC-MVP-011|GitHub contains no .env files or access keys|
 
   
 
-31. 今後作成する関連設計書
+31. Related Design Documents to Create Next
 
-本セキュリティ設計書の次に、以下を作成する。
+Create the following after this security design document.
 
-1. コスト管理設計書
-2. インフラ構築手順書
-3. Lambda実装設計書
-4. CI/CD設計書
-5. 運用監視設計書
-6. 開発タスク一覧
-7. GitHub README草案
+1. Cost management design
+2. Infrastructure setup guide
+3. Lambda implementation design
+4. CI/CD design
+5. Operations and monitoring design
+6. Development task list
+7. GitHub README draft
 
   
 
-8. 結論
+8. Conclusion
 
-本プロダクトでは、MVP段階から以下のセキュリティ対策を必須とする。
+This product requires the following security measures starting at the MVP stage.
 
-- AWSアカウントのMFA設定
-- AWS Budgetsによる課金監視
+- MFA configuration for the AWS account
+- Billing monitoring with AWS Budgets
 - S3 Public Access Block
-- CloudFront OACによるS3直接公開防止
-- HTTPS配信
-- IAM最小権限
-- API GatewayのCORS制限
-- Lambdaでの入力値検証
-- DynamoDBへの最小権限アクセス
-- CloudWatch Logsへの個人情報出力禁止
-- GitHub Secretsによる認証情報管理
+- Prevention of direct S3 exposure through CloudFront OAC
+- HTTPS delivery
+- IAM least privilege
+- API Gateway CORS restrictions
+- Input validation in Lambda
+- Least-privilege access to DynamoDB
+- No personal information in CloudWatch Logs
+- Credential management through GitHub Secrets
 
-MVPでは、WAF、Cognito、Secrets Manager、reCAPTCHAなどは必須にしない。理由は、個人開発の初期段階ではコスト・運用負荷が増え、公開までのスピードを落とすためである。
+WAF, Cognito, Secrets Manager, reCAPTCHA, and similar tools are not mandatory for the MVP because they increase costs and operational workload during early individual development and delay publication.
 
-ただし、アクセス増加、スパム増加、ログイン機能追加、有料化のタイミングで、段階的にセキュリティを強化する。
+However, security will be strengthened incrementally as traffic or spam increases, login is added, or paid features are introduced.
 
-この設計により、低コストな個人開発でありながら、AWSの基本的なセキュリティ原則を実践したポートフォリオとして説明できる状態を目指す。
+This design aims to make the low-cost individual project presentable as a portfolio that applies fundamental AWS security principles.

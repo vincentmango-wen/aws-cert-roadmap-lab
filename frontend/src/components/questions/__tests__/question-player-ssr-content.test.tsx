@@ -1,31 +1,21 @@
 /**
- * question-player-ssr-content.test.tsx
+ * ACR-010 / #320: verify that QuestionPlayer's initial rendered HTML, matching SSG output, always
+ * contains explanations. Previously explanation, choiceExplanations, practicalNote and officialDocs were
+ * behind the isSubmitted gate. Its initial false value omitted them from the HTML DOM, leaving them only
+ * inside the RSC script payload. That prevented rendered-DOM indexing and was a primary cause of
+ * thin-content classification.
  *
- * ACR-010 / #320。QuestionPlayer の「初期レンダー HTML」（= SSG で出力される静的 HTML と
- * 同じ状態）に、解説本文が常時含まれることを構造的に担保する invariant テスト。
+ * Use the existing react-dom/server renderToStaticMarkup dependency, without adding jsdom or
+ * @testing-library/react, to inspect the actual pre-answer HTML.
  *
- * 背景:
- *   改修前は explanation / choiceExplanations / practicalNote / officialDocs が
- *   `{isSubmitted ? ... : null}` ゲートの内側にあり、isSubmitted の初期値が false のため
- *   静的 HTML の DOM に一切出力されていなかった（RSC flight payload = <script> 内にのみ存在）。
- *   Google はレンダー後 DOM からテキストを抽出するため、これらは索引対象にならず
- *   thin content 判定の主因になっていた。
+ * Invariants:
+ * 1. Initial HTML includes the full explanation, A-D choice explanations, practicalNote, every
+ * officialDocs label accepted by filterValidOfficialDocs, and the correct choice ID/text.
+ * 2. The answer-result section (resultTitle, correctLabel, incorrectLabel, yourAnswerLabel) remains
+ * absent until submission.
+ * 3. The output contains details but not details open: static HTML starts collapsed, avoiding cloaking.
  *
- * 方針:
- *   jsdom / @testing-library/react は導入しない（新規依存を増やさない）。
- *   既存 dependency である react-dom/server の renderToStaticMarkup を使い、
- *   「回答前（isSubmitted === false）の初期 HTML」そのものを検査する。
- *
- * 検証 invariant:
- *  (1) 初期 HTML に explanation 全文 / choiceExplanations A-D 全値 / practicalNote 全文 /
- *      filterValidOfficialDocs を通した officialDocs[].label 全件 /
- *      「正解の choiceId + 正解選択肢テキスト」が含まれる
- *  (2) 初期 HTML に回答結果セクション（resultTitle / correctLabel / incorrectLabel /
- *      yourAnswerLabel）が含まれない — 回答結果は回答後のみ、を維持する
- *  (3) 出力に `<details` が含まれ、かつ `<details open` を含まない
- *      （静的 HTML は必ず閉じた状態で出力される = クローキングに該当しない）
- *
- * 対象: clf/saa × ja/en/zh の 6 ファイル（100 問 × 3 言語 = 300 レンダー）。
+ * Coverage: six clf/saa x ja/en/zh files, 100 questions x 3 locales = 300 renders.
  */
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -57,8 +47,8 @@ const ENTRIES: LocaleEntry[] = [
 ];
 
 /**
- * renderToStaticMarkup が施す HTML エスケープを復元する。
- * React が escape するのは & < > " ' の 5 文字のみ。
+ * Decode renderToStaticMarkup HTML escaping. React escapes only the five characters &, <, >, double
+ * quote and apostrophe.
  */
 function decodeHtml(html: string): string {
   return html
@@ -85,7 +75,9 @@ function renderInitialMarkup(
   );
 }
 
-/** 全 locale × 全 question の初期 HTML を 1 度だけ生成して使い回す。 */
+/**
+ * Generate initial HTML once for every locale/question pair and reuse it.
+ */
 const RENDERED: { locale: QuestionPlayerLocale; question: Question; html: string; text: string }[] =
   ENTRIES.flatMap(({ locale, questions }) =>
     questions.map((question) => {
@@ -94,8 +86,8 @@ const RENDERED: { locale: QuestionPlayerLocale; question: Question; html: string
     }),
   );
 
-describe("QuestionPlayer 初期レンダー HTML (SSG 出力相当)", () => {
-  it("invariant(1): 解説本文がすべて初期 HTML に含まれる", () => {
+describe("QuestionPlayer initial-render HTML (equivalent to SSG output)", () => {
+  it("invariant(1): initial HTML contains all explanation content", () => {
     const violations: string[] = [];
 
     for (const { locale, question, text } of RENDERED) {
@@ -147,14 +139,14 @@ describe("QuestionPlayer 初期レンダー HTML (SSG 出力相当)", () => {
     );
   });
 
-  it("invariant(2): 回答結果セクションの文言が初期 HTML に含まれない", () => {
+  it("invariant(2): initial HTML excludes answer-result section labels", () => {
     const violations: string[] = [];
 
     for (const { locale, question, html, text } of RENDERED) {
       const id = `${locale}/${question.questionId}`;
       const labels = questionPlayerLabelsByLocale[locale];
 
-      // resultTitle / yourAnswerLabel は問題本文に出現しない文言なので素の包含で判定する。
+      // Use plain containment for resultTitle/yourAnswerLabel because these labels do not occur in question bodies.
       for (const [field, value] of [
         ["resultTitle", labels.resultTitle],
         ["yourAnswerLabel", labels.yourAnswerLabel],
@@ -164,11 +156,11 @@ describe("QuestionPlayer 初期レンダー HTML (SSG 出力相当)", () => {
         }
       }
 
-      // correctLabel / incorrectLabel は素の包含では判定できない。
-      // questions-choice-integrity.test.ts の invariant(3) が保証しているとおり
-      // choiceExplanations は正解／誤答マーカー（ja「正解です。」 en "Correct."/"Incorrect."）で
-      // 始まる仕様であり、解説本文を常時出力する以上これらの語は必ず HTML に現れる。
-      // そこで「回答結果セクションが描画する要素そのもの」の不在を検査する。
+      // Plain containment is insufficient for correctLabel/incorrectLabel.
+      // As guaranteed by invariant (3) in questions-choice-integrity.test.ts,
+      // choiceExplanations begin with localized correct/incorrect markers (English: Correct./Incorrect.).
+      // These words necessarily appear in HTML because explanations are always rendered.
+      // Instead, assert the absence of the exact elements rendered by the answer-result section.
       for (const [field, value] of [
         ["correctLabel", labels.correctLabel],
         ["incorrectLabel", labels.incorrectLabel],
@@ -186,7 +178,7 @@ describe("QuestionPlayer 初期レンダー HTML (SSG 出力相当)", () => {
     ).toEqual([]);
   });
 
-  it("invariant(3): <details> が存在し open 属性が付いていない", () => {
+  it("invariant(3): details exists without the open attribute", () => {
     const violations: string[] = [];
 
     for (const { locale, question, html } of RENDERED) {
@@ -204,7 +196,7 @@ describe("QuestionPlayer 初期レンダー HTML (SSG 出力相当)", () => {
     expect(violations, `<details> の invariant 違反:\n${violations.join("\n")}`).toEqual([]);
   });
 
-  it("invariant(4): 承認済みの免責文が各言語で回答UIより前に表示される", () => {
+  it("invariant(4): approved localized disclaimers appear before the answer UI", () => {
     for (const { locale, text } of RENDERED) {
       const disclaimer = questionPlayerLabelsByLocale[locale].questionDisclaimer;
       const disclaimerIndex = text.indexOf(disclaimer);

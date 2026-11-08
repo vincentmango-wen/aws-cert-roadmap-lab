@@ -1,17 +1,7 @@
 /**
- * questions-officialdocs-allowlist.test.ts
- *
- * 全 questions の officialDocs URL が allowlist（isValidOfficialDocUrl）を通過し、
- * label が非空文字列であることを構造的に担保する。
- *
- * 対象ファイル (6 件):
- *   contents/questions/clf-c02.{ja,en,zh}.json
- *   contents/questions/saa-c03.{ja,en,zh}.json
- *
- * 検証 invariant:
- *  (1) 全 question の officialDocs[].url が isValidOfficialDocUrl() で true
- *      — 違反 URL があれば失敗 + 全件 list 表示
- *  (2) 全 officialDocs[].label が typeof 'string' && trim().length > 0
+ * Ensure every officialDocs URL passes isValidOfficialDocUrl and every label is a nonempty string.
+ * Covers six files: contents/questions/clf-c02.{ja,en,zh}.json and saa-c03.{ja,en,zh}.json. URL
+ * violations fail with a complete list; labels must be strings with trim().length > 0.
  */
 import { describe, expect, it } from "vitest";
 

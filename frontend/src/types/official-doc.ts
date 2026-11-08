@@ -1,8 +1,6 @@
 /**
- * 公式ドキュメントリンクの型定義（SSoT）。
- * Question / Term の両コンテンツ種別で共有する。
- *
- * @see frontend/src/lib/official-doc.ts - URL 検証ヘルパー
+ * Shared official-document link types for Question and Term content.
+ * @see frontend/src/lib/official-doc.ts - URL validation helpers.
  */
 export type OfficialDoc = {
   label: string;

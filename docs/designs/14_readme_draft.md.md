@@ -1,76 +1,76 @@
 AWS Cert Roadmap Lab
 
-AWS資格学習をしながら、AWSサーバーレス構成を実装で学ぶためのポートフォリオWebアプリです。
+A portfolio web application for learning AWS serverless architectures through implementation while studying for AWS certifications.
 
-Cloud Practitioner / Solutions Architect Associate の学習内容を、単なるメモではなく、実際にAWS上で動く学習サイトとして形にすることを目的にしています。
+The goal is to turn Cloud Practitioner / Solutions Architect Associate study material into a learning site that actually runs on AWS, rather than just a collection of notes.
 
-  
 
-概要
 
-AWS Cert Roadmap Lab は、AWS資格学習者向けの学習サイトです。
+Overview
 
-主な機能は以下です。
+AWS Cert Roadmap Lab is a learning site for people studying for AWS certifications.
 
-- AWS Cloud Practitioner / SAA向け学習ロードマップ
-- AWS主要サービスの用語集
-- CLF-C02模擬問題
-- AWSサービス比較記事
-- AWS構成図解説
-- AWS学習ブログ
-- 問い合わせフォーム
-- サーバーレス問い合わせAPI
+Its main features are as follows.
 
-MVPでは、学習コンテンツは静的ファイルとして管理し、問い合わせフォームのみ API Gateway + Lambda + DynamoDB で動的処理を行います。
+- Learning roadmaps for AWS Cloud Practitioner / SAA
+- A glossary of major AWS services
+- CLF-C02 practice questions
+- AWS service comparison articles
+- AWS architecture diagram explanations
+- An AWS learning blog
+- A contact form
+- A serverless contact API
 
-  
+In the MVP, learning content is managed as static files, and only the contact form uses dynamic processing with API Gateway + Lambda + DynamoDB.
 
-制作背景
 
-現在、AWS Cloud Practitioner の学習を進めており、その後 Solutions Architect Associate の受験を予定しています。
 
-ただ資格勉強だけで終わらせるのではなく、学んだ内容を実際のAWS構成として実装し、ポートフォリオとして説明できる形にしたいと考えました。
+Background
 
-このプロジェクトでは、以下を重視しています。
+I am currently studying for AWS Cloud Practitioner and plan to take Solutions Architect Associate afterward.
 
-- AWS資格の知識を実装に落とし込むこと
-- 低コストで運用できるAWS構成にすること
-- セキュリティ・IAM・監視・CI/CDまで含めて設計すること
-- 将来的にSEO・広告収益化できる学習メディアに拡張すること
+Rather than stopping at certification study, I wanted to implement what I learned as real AWS architectures and make it something I could explain as a portfolio project.
 
-  
+This project emphasizes the following.
 
-デモ
+- Translating AWS certification knowledge into implementation
+- Using an AWS architecture that is inexpensive to operate
+- Designing for security, IAM, monitoring, and CI/CD
+- Eventually expanding into a learning publication that supports SEO and advertising revenue
 
-現在準備中です。
+
+
+Demo
+
+Currently in preparation.
 
 Production URL: https://xxxxxxxx.cloudfront.net
 
-独自ドメインは、MVP公開後に導入を検討します。
+A custom domain will be considered after the MVP is published.
 
-  
 
-主要機能
 
-1. 学習ロードマップ
+Main Features
 
-AWS Cloud Practitioner から Solutions Architect Associate までの学習順序を整理します。
+1. Learning Roadmap
 
-対象内容：
+Organize the learning sequence from AWS Cloud Practitioner to Solutions Architect Associate.
 
-- AWS学習の全体像
-- Cloud Practitioner の試験範囲
-- SAAにつながる基礎知識
-- サービス別の学習優先度
-- 実装で理解するAWS構成
+Topics covered:
 
-  
+- An overview of learning AWS
+- The Cloud Practitioner exam scope
+- Foundational knowledge leading to SAA
+- Learning priorities by service
+- Understanding AWS architectures through implementation
 
-2. AWS用語集
 
-AWS主要サービスや重要概念を、初心者にも分かりやすく整理します。
 
-初期収録予定：
+2. AWS Glossary
+
+Organize major AWS services and important concepts in a beginner-friendly way.
+
+Planned initial entries:
 
 - IAM
 - S3
@@ -103,127 +103,127 @@ AWS主要サービスや重要概念を、初心者にも分かりやすく整�
 - CloudFormation
 - Cognito
 
-MVPでは30件以上の用語登録を目標にしています。
+The MVP targets at least 30 glossary entries.
 
-  
 
-3. CLF-C02模擬問題
 
-AWS Cloud Practitioner向けの模擬問題を提供します。
+3. CLF-C02 Practice Questions
 
-MVPでは30問以上を作成します。
+Provide practice questions for AWS Cloud Practitioner.
 
-問題カテゴリ：
+Create at least 30 questions for the MVP.
 
-|   |   |
-|---|---|
-|カテゴリ|内容|
-|Cloud Concepts|クラウドの基本概念|
-|Security and Compliance|セキュリティ・責任共有モデル|
-|Cloud Technology and Services|AWS主要サービス|
-|Billing, Pricing, and Support|請求・料金・サポート|
-
-各問題には以下を含めます。
-
-- 問題文
-- 4択選択肢
-- 正解
-- 解説
-- 関連AWSサービス
-- 関連用語
-
-  
-
-4. AWSサービス比較記事
-
-試験でも実務でも混同しやすいAWSサービスを比較します。
-
-初期記事例：
-
-- S3 / EBS / EFS の違い
-- EC2 / Lambda / ECS の違い
-- RDS / DynamoDB の違い
-- CloudWatch / CloudTrail / AWS Config の違い
-- SQS / SNS / EventBridge の違い
-
-  
-
-5. AWS構成図解説
-
-AWSサービスを単体で覚えるだけでなく、実際の構成として理解するための構成図解説を作成します。
-
-初期構成例：
-
-- S3 + CloudFront 静的サイト構成
-- API Gateway + Lambda + DynamoDB サーバーレスAPI構成
-- CloudFront OAC によるS3非公開配信
-- AWS Budgets + CloudWatch による低コスト運用監視
-- Cognito + API Gateway + Lambda による認証付きAPI構成
-
-  
-
-6. 問い合わせフォーム
-
-問い合わせフォームから送信された内容を、API Gateway + Lambda + DynamoDB で保存します。
-
-入力項目：
-
-- 名前
-- メールアドレス
-- 件名
-- 本文
-- honeypot項目
-
-スパム対策として、MVPでは honeypot と文字数制限を導入します。
-
-  
-
-技術スタック
-
-フロントエンド
+Question categories:
 
 |   |   |
 |---|---|
-|技術|用途|
-|Next.js|Webアプリケーションフレームワーク|
-|TypeScript|型安全な開発|
-|Tailwind CSS|UIスタイリング|
-|Markdown / MDX|学習コンテンツ管理|
-|JSON|用語・問題データ管理|
+|Category|Description|
+|Cloud Concepts|Basic cloud concepts|
+|Security and Compliance|Security and the shared responsibility model|
+|Cloud Technology and Services|Major AWS services|
+|Billing, Pricing, and Support|Billing, pricing, and support|
 
-  
+Each question includes the following.
+
+- Question text
+- Four answer choices
+- Correct answer
+- Explanation
+- Related AWS services
+- Related terms
+
+
+
+4. AWS Service Comparison Articles
+
+Compare AWS services that are easily confused both on exams and in practice.
+
+Examples of initial articles:
+
+- Differences between S3 / EBS / EFS
+- Differences between EC2 / Lambda / ECS
+- Differences between RDS / DynamoDB
+- Differences between CloudWatch / CloudTrail / AWS Config
+- Differences between SQS / SNS / EventBridge
+
+
+
+5. AWS Architecture Diagram Explanations
+
+Create architecture diagram explanations to help readers understand AWS services as real architectures rather than memorizing services individually.
+
+Examples of initial architectures:
+
+- S3 + CloudFront static site architecture
+- API Gateway + Lambda + DynamoDB serverless API architecture
+- Private S3 content delivery through CloudFront OAC
+- Low-cost operational monitoring with AWS Budgets + CloudWatch
+- Authenticated API architecture with Cognito + API Gateway + Lambda
+
+
+
+6. Contact Form
+
+Store contact form submissions using API Gateway + Lambda + DynamoDB.
+
+Input fields:
+
+- Name
+- Email address
+- Subject
+- Message body
+- Honeypot field
+
+The MVP introduces a honeypot and character limits for spam prevention.
+
+
+
+Technology Stack
+
+Frontend
+
+|   |   |
+|---|---|
+|Technology|Purpose|
+|Next.js|Web application framework|
+|TypeScript|Type-safe development|
+|Tailwind CSS|UI styling|
+|Markdown / MDX|Learning content management|
+|JSON|Glossary and question data management|
+
+
 
 AWS
 
 |   |   |
 |---|---|
-|サービス|用途|
-|Amazon S3|静的ファイル配置|
-|Amazon CloudFront|CDN配信・HTTPS配信|
-|CloudFront OAC|S3直接公開の防止|
-|Amazon API Gateway|問い合わせAPI公開|
-|AWS Lambda|問い合わせ保存処理|
-|Amazon DynamoDB|問い合わせデータ保存|
-|Amazon CloudWatch Logs|Lambdaログ確認|
-|AWS Budgets|課金監視|
-|IAM|最小権限管理|
+|Service|Purpose|
+|Amazon S3|Static file hosting|
+|Amazon CloudFront|CDN and HTTPS delivery|
+|CloudFront OAC|Preventing direct public access to S3|
+|Amazon API Gateway|Exposing the contact API|
+|AWS Lambda|Processing contact submissions for storage|
+|Amazon DynamoDB|Storing contact data|
+|Amazon CloudWatch Logs|Checking Lambda logs|
+|AWS Budgets|Cost monitoring|
+|IAM|Least-privilege management|
 
-  
+
 
 CI/CD
 
 |   |   |
 |---|---|
-|技術|用途|
+|Technology|Purpose|
 |GitHub Actions|CI/CD|
-|GitHub OIDC|AWS認証情報の安全な連携|
-|AWS CLI|S3デプロイ・CloudFront Invalidation|
+|GitHub OIDC|Secure integration of AWS authentication|
+|AWS CLI|S3 deployment and CloudFront Invalidation|
 
-  
 
-アーキテクチャ
 
-MVP構成
+Architecture
+
+MVP Architecture
 
 User
 
@@ -253,9 +253,9 @@ DynamoDB ContactsTable
 
 CloudWatch Logs
 
-  
 
-AWS構成図
+
+AWS Architecture Diagram
 
 flowchart TD
 
@@ -277,13 +277,13 @@ flowchart TD
 
     GH[GitHub Actions]
 
-  
+
 
     User -->|HTTPS| CF
 
     CF -->|OAC| S3
 
-  
+
 
     User -->|POST /contact| APIGW
 
@@ -293,84 +293,84 @@ flowchart TD
 
     Lambda --> CW
 
-  
+
 
     GH -->|Build & Deploy| S3
 
     GH -->|Invalidation| CF
 
-  
+
 
     Budget -->|Cost Alert| User
 
-  
 
-設計方針
 
-1. EC2ではなくS3 + CloudFrontを採用
+Design Principles
 
-本プロダクトは静的コンテンツが中心です。
+1. Use S3 + CloudFront Instead of EC2
 
-そのため、常時起動サーバーであるEC2ではなく、S3 + CloudFrontによる静的配信を採用しています。
+This product primarily consists of static content.
 
-理由：
+Therefore, it uses static delivery with S3 + CloudFront rather than an always-running EC2 server.
 
-- 固定費を抑えやすい
-- サーバー管理が不要
-- 静的サイトと相性が良い
-- CloudFrontで高速配信できる
-- AWS資格学習の内容と直結する
+Reasons:
 
-  
+- Easier to keep fixed costs low
+- No server management required
+- A good fit for static sites
+- Fast delivery through CloudFront
+- Directly connected to AWS certification study topics
 
-2. RDSではなくDynamoDBを採用
 
-MVPで保存するデータは、問い合わせフォームの送信内容のみです。
 
-複雑なリレーションは不要なため、RDSではなくDynamoDBを採用しています。
+2. Use DynamoDB Instead of RDS
 
-理由：
+The only data stored in the MVP is contact form submissions.
 
-- サーバーレス構成と相性が良い
-- 小規模な問い合わせ保存に適している
-- 管理負荷が低い
-- Lambdaから直接扱いやすい
-- RDSより固定費を抑えやすい
+Because complex relationships are unnecessary, DynamoDB is used instead of RDS.
 
-  
+Reasons:
 
-3. S3は直接公開しない
+- A good fit for a serverless architecture
+- Suitable for storing a small volume of contact submissions
+- Low administrative overhead
+- Easy to access directly from Lambda
+- Easier to keep fixed costs low than with RDS
 
-S3バケットは直接公開せず、CloudFront Origin Access Control を使ってCloudFront経由でのみアクセスできるようにしています。
 
-目的：
 
-- S3の意図しない公開を防ぐ
-- HTTPS配信をCloudFrontに集約する
-- キャッシュ制御をしやすくする
-- セキュリティ設計を明確にする
+3. Do Not Expose S3 Directly
 
-  
+The S3 bucket is not publicly exposed. CloudFront Origin Access Control allows access only through CloudFront.
 
-4. 動的APIは最小限にする
+Objectives:
 
-MVPでは、AWS用語・模擬問題・記事・構成図は静的ファイルとして管理します。
+- Prevent unintended public access to S3
+- Consolidate HTTPS delivery in CloudFront
+- Simplify cache control
+- Make the security design explicit
 
-問い合わせフォームのみAPI化します。
 
-理由：
 
-- SEOに強い静的ページを作れる
-- API呼び出しを減らせる
-- AWS利用料を抑えられる
-- 開発スコープを小さくできる
-- まず公開することを優先できる
+4. Keep Dynamic APIs to a Minimum
 
-  
+In the MVP, AWS terms, practice questions, articles, and architecture diagrams are managed as static files.
 
-5. 低コスト運用を重視
+Only the contact form uses an API.
 
-MVPでは以下のサービスを使いません。
+Reasons:
+
+- Enables SEO-friendly static pages
+- Reduces API calls
+- Keeps AWS usage costs low
+- Keeps the development scope small
+- Prioritizes getting the site published
+
+
+
+5. Prioritize Low-Cost Operation
+
+The MVP does not use the following services.
 
 - EC2
 - RDS
@@ -382,73 +382,73 @@ MVPでは以下のサービスを使いません。
 - SageMaker
 - WAF
 
-理由：
+Reasons:
 
-- 固定費を避けるため
-- 個人開発MVPには過剰なため
-- AWS無料枠・低コスト運用を重視するため
-- 課金事故リスクを下げるため
+- Avoid fixed costs
+- They are excessive for an individual MVP project
+- Prioritize the AWS Free Tier and low-cost operation
+- Reduce the risk of unexpected charges
 
-  
 
-セキュリティ設計
+
+Security Design
 
 S3 / CloudFront
 
-- S3 Public Access Blockを有効化
-- S3を直接公開しない
-- CloudFront OACを利用
-- Bucket PolicyでCloudFront Distributionからのみ許可
-- HTTPアクセスはHTTPSへリダイレクト
+- Enable S3 Public Access Block
+- Do not expose S3 directly
+- Use CloudFront OAC
+- Allow only the CloudFront Distribution through the Bucket Policy
+- Redirect HTTP access to HTTPS
 
-  
+
 
 IAM
 
-- Lambda実行ロールはDynamoDB PutItem のみに制限
-- GitHub Actions用ロールはS3デプロイとCloudFront Invalidationのみに制限
-- rootユーザーのアクセスキーは作成しない
-- 管理ユーザーにはMFAを設定
-- AdministratorAccessの常用を避ける
+- Restrict the Lambda execution role to DynamoDB PutItem only
+- Restrict the GitHub Actions role to S3 deployment and CloudFront Invalidation only
+- Do not create access keys for the root user
+- Configure MFA for administrative users
+- Avoid routine use of AdministratorAccess
 
-  
+
 
 Lambda / API
 
-- Lambda側で入力値検証を実施
-- honeypotで簡易スパム対策
-- CORSは本番Originに限定
-- CloudWatch Logsにメールアドレス全文・問い合わせ本文全文を出力しない
-- LambdaはVPCに接続しない
-- タイムアウトは短めに設定
+- Validate input in Lambda
+- Use a honeypot for basic spam prevention
+- Restrict CORS to the production Origin
+- Do not log full email addresses or full contact message bodies to CloudWatch Logs
+- Do not connect Lambda to a VPC
+- Set a short timeout
 
-  
+
 
 GitHub
 
-- .env はコミットしない
-- GitHub Secretsで必要情報を管理
-- AWS認証はOIDC方式を推奨
-- GitHub Actionsには最小権限のみ付与
+- Do not commit .env
+- Manage required information with GitHub Secrets
+- OIDC is recommended for AWS authentication
+- Grant GitHub Actions only the minimum required permissions
 
-  
 
-コスト最適化
 
-本プロジェクトでは、AWS利用料を抑えるために以下の設計を採用しています。
+Cost Optimization
+
+This project uses the following design to keep AWS usage costs low.
 
 |   |   |
 |---|---|
-|項目|方針|
-|Web配信|S3 + CloudFront|
+|Item|Policy|
+|Web delivery|S3 + CloudFront|
 |API|API Gateway HTTP API|
-|処理|Lambda|
+|Processing|Lambda|
 |DB|DynamoDB|
-|課金監視|AWS Budgets|
-|ログ|CloudWatch Logs保存期間を14〜30日に設定|
-|常時起動サーバー|使用しない|
+|Cost monitoring|AWS Budgets|
+|Logs|Set CloudWatch Logs retention to 14-30 days|
+|Always-running servers|Not used|
 
-MVPで避けるサービス：
+Services to avoid in the MVP:
 
 EC2
 
@@ -462,23 +462,23 @@ OpenSearch
 
 SageMaker
 
-  
+
 
 CI/CD
 
-GitHub Actionsを使って、フロントエンドのCI/CDを構築します。
+Build frontend CI/CD using GitHub Actions.
 
 CI
 
-Pull Request時に以下を実行します。
+Run the following on Pull Requests.
 
 - Lint
-- TypeScript型チェック
+- TypeScript type checking
 - Build
 
 CD
 
-main ブランチへmergeされると、以下を実行します。
+When changes are merged into the main branch, run the following.
 
 GitHub Actions
 
@@ -496,22 +496,22 @@ CloudFront Invalidation
 
   ↓
 
-本番反映
+Production update
 
-AWS認証
+AWS Authentication
 
-推奨構成では GitHub OIDC を利用し、長期AWSアクセスキーをGitHub Secretsに保存しない構成を目指します。
+The recommended configuration uses GitHub OIDC and aims to avoid storing long-lived AWS access keys in GitHub Secrets.
 
-GitHub Actions用IAM Roleには以下のみ許可します。
+Allow only the following permissions for the GitHub Actions IAM Role.
 
 - s3:ListBucket
 - s3:PutObject
 - s3:DeleteObject
 - cloudfront:CreateInvalidation
 
-  
 
-ディレクトリ構成
+
+Directory Structure
 
 aws-cert-roadmap-lab/
 
@@ -581,18 +581,18 @@ aws-cert-roadmap-lab/
 
 └── README.md
 
-  
 
-ローカル開発
 
-前提
+Local Development
+
+Prerequisites
 
 - Node.js LTS
-- npm または pnpm
-- Python 3.11以上
-- AWS CLI 任意
+- npm or pnpm
+- Python 3.11 or later
+- AWS CLI optional
 
-セットアップ
+Setup
 
 git clone https://github.com/<your-name>/aws-cert-roadmap-lab.git
 
@@ -600,7 +600,7 @@ cd aws-cert-roadmap-lab/frontend
 
 npm install
 
-開発サーバー起動
+Start the Development Server
 
 npm run dev
 
@@ -608,33 +608,33 @@ Lint
 
 npm run lint
 
-型チェック
+Type Checking
 
 npm run typecheck
 
-静的ビルド
+Static Build
 
 npm run build
 
-静的出力は以下に生成されます。
+Static output is generated in the following location.
 
 frontend/out/
 
-  
 
-環境変数
 
-フロントエンド
+Environment Variables
+
+Frontend
 
 NEXT_PUBLIC_API_BASE_URL=https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com
 
 NEXT_PUBLIC_SITE_URL=https://xxxxxxxx.cloudfront.net
 
-注意：NEXT_PUBLIC_ が付く環境変数はブラウザに公開されます。
+Note: Environment variables prefixed with NEXT_PUBLIC_ are exposed to the browser.
 
-  
 
-以下は絶対に入れません。
+
+Never include the following.
 
 AWS_SECRET_ACCESS_KEY
 
@@ -646,25 +646,25 @@ DATABASE_PASSWORD
 
 JWT_SECRET
 
-  
 
-API仕様
+
+API Specification
 
 POST /contact
 
-問い合わせフォームの内容を保存します。
+Store the contact form contents. The request and response below are preserved Japanese-localized API examples.
 
 Request
 
 {
 
-  "name": "山田太郎",
+  "name": "山田太郎",
 
   "email": "taro@example.com",
 
-  "subject": "S3の記事について",
+  "subject": "S3の記事について",
 
-  "message": "S3とEBSの違いについて質問があります。",
+  "message": "S3とEBSの違いについて質問があります。",
 
   "sourcePage": "/contact",
 
@@ -686,7 +686,7 @@ Response
 
   },
 
-  "message": "お問い合わせを受け付けました。",
+  "message": "お問い合わせを受け付けました。",
 
   "requestId": "req-xxxxxxxx"
 
@@ -696,241 +696,241 @@ Validation
 
 |   |   |
 |---|---|
-|項目|ルール|
-|name|必須、1〜100文字|
-|email|必須、メール形式、255文字以内|
-|subject|必須、1〜150文字|
-|message|必須、1〜2,000文字|
-|sourcePage|任意、255文字以内|
-|honeypot|空文字|
+|Field|Rule|
+|name|Required, 1-100 characters|
+|email|Required, email format, up to 255 characters|
+|subject|Required, 1-150 characters|
+|message|Required, 1-2,000 characters|
+|sourcePage|Optional, up to 255 characters|
+|honeypot|Empty string|
 
-  
 
-データ設計
+
+Data Design
 
 ContactsTable
 
 |   |   |   |
 |---|---|---|
-|属性|型|内容|
-|contactId|String|問い合わせID|
-|createdAt|String|作成日時|
-|name|String|名前|
-|email|String|メールアドレス|
-|subject|String|件名|
-|message|String|本文|
-|sourcePage|String|送信元ページ|
+|Attribute|Type|Description|
+|contactId|String|Contact ID|
+|createdAt|String|Creation date and time|
+|name|String|Name|
+|email|String|Email address|
+|subject|String|Subject|
+|message|String|Message body|
+|sourcePage|String|Submission source page|
 |status|String|new / in_progress / closed|
-|requestId|String|リクエストID|
+|requestId|String|Request ID|
 |userAgent|String|User-Agent|
 
-MVPでは問い合わせ一覧取得APIや管理画面は作成しません。
+The MVP does not include an API to retrieve a list of contact submissions or an administration screen.
 
-  
 
-運用監視
 
-MVPでは、監視を作り込みすぎず、以下を中心に運用します。
+Operational Monitoring
+
+Rather than overengineering monitoring, the MVP focuses on the following.
 
 - AWS Budgets
 - CloudWatch Logs
 - CloudWatch Metrics
 - Cost Explorer
-- GitHub Actionsログ
-- 手動死活確認
+- GitHub Actions logs
+- Manual availability checks
 
-確認項目：
+Items to check:
 
 |   |   |
 |---|---|
-|対象|確認内容|
-|CloudFront|サイト表示、4xx/5xx|
-|S3|ファイル存在、直接公開されていないか|
-|API Gateway|4xx/5xx、リクエスト数|
-|Lambda|Errors、Duration、Logs|
-|DynamoDB|問い合わせ保存、ItemCount|
-|CloudWatch Logs|個人情報が出力されていないか|
-|AWS Budgets|月額費用、予測超過|
-|GitHub Actions|CI/CD成功・失敗|
+|Target|Checks|
+|CloudFront|Site display, 4xx/5xx|
+|S3|File existence, whether direct public access is disabled|
+|API Gateway|4xx/5xx, request count|
+|Lambda|Errors, Duration, Logs|
+|DynamoDB|Contact submission storage, ItemCount|
+|CloudWatch Logs|Whether personal information is being logged|
+|AWS Budgets|Monthly costs, forecast overruns|
+|GitHub Actions|CI/CD success or failure|
 
-  
 
-MVPスコープ
 
-実装するもの
+MVP Scope
 
-- トップページ
-- 学習ロードマップ
-- AWS用語集
-- AWS用語詳細
-- CLF-C02模擬問題
-- 模擬問題回答UI
-- AWSサービス比較記事
-- AWS構成図解説
-- ブログ記事
-- 問い合わせフォーム
-- 問い合わせAPI
-- DynamoDB保存
-- S3 + CloudFront公開
+What Will Be Implemented
+
+- Home page
+- Learning roadmap
+- AWS glossary
+- AWS term details
+- CLF-C02 practice questions
+- Practice question answering UI
+- AWS service comparison articles
+- AWS architecture diagram explanations
+- Blog articles
+- Contact form
+- Contact API
+- DynamoDB storage
+- S3 + CloudFront publication
 - CloudFront OAC
 - AWS Budgets
 - CloudWatch Logs
 - GitHub Actions CI/CD
-- README整備
+- README documentation
 
-  
 
-MVPでは実装しないもの
 
-- ログイン機能
+What Will Not Be Implemented in the MVP
+
+- Login functionality
 - Cognito
-- ユーザー別学習履歴
-- 正答率保存
-- 復習問題機能
-- 毎日1問メール通知
+- Per-user learning history
+- Saving accuracy rates
+- Review questions
+- Daily question email notifications
 - SES
 - WAF
 - RDS
 - EC2
 - NAT Gateway
 - ALB
-- AI自動解説
-- 決済機能
-- 有料会員機能
+- AI-generated explanations
+- Payment functionality
+- Paid membership functionality
 
-  
 
-今後の拡張予定
 
-Phase 4：収益化準備
+Planned Future Extensions
 
-- 独自ドメイン導入
-- Google Search Console登録
-- Google Analytics導入
-- Google AdSense申請
-- AWS用語50件以上
-- CLF-C02問題50問以上
-- SAA-C03問題追加
-- 比較記事10本以上
-- 構成図解説10本以上
-- SEO内部リンク強化
+Phase 4: Monetization Preparation
 
-  
+- Introduce a custom domain
+- Register with Google Search Console
+- Introduce Google Analytics
+- Apply for Google AdSense
+- At least 50 AWS terms
+- At least 50 CLF-C02 questions
+- Add SAA-C03 questions
+- At least 10 comparison articles
+- At least 10 architecture diagram explanations
+- Strengthen internal links for SEO
 
-Phase 5：学習アプリ化
 
-- Cognitoログイン
-- マイページ
-- 回答履歴保存
-- 正答率表示
-- 苦手カテゴリ分析
-- 復習問題機能
-- 今日の1問
-- EventBridgeによる定期処理
-- SESによる通知
-- 有料教材・有料機能の検討
 
-  
+Phase 5: Evolve into a Learning App
 
-学習・実装で意識したAWS観点
+- Cognito login
+- My page
+- Save answer history
+- Display accuracy rates
+- Analyze weak categories
+- Review questions
+- Question of the day
+- Scheduled processing with EventBridge
+- Notifications with SES
+- Consider paid learning materials and features
 
-このプロジェクトでは、AWS資格で学ぶ内容を実装に落とし込んでいます。
+
+
+AWS Perspectives Emphasized in Study and Implementation
+
+This project translates AWS certification study topics into implementation.
 
 |   |   |
 |---|---|
-|AWS学習項目|実装での対応|
-|グローバルインフラ|CloudFrontによる配信|
-|ストレージ|S3による静的ファイル保存|
-|コンピューティング|Lambdaによるサーバーレス処理|
-|データベース|DynamoDBによる問い合わせ保存|
-|ネットワーク|CloudFront / API Gateway|
-|セキュリティ|IAM最小権限 / OAC / CORS|
-|監視|CloudWatch Logs / Metrics|
-|コスト管理|AWS Budgets / Cost Explorer|
-|自動化|GitHub Actions CI/CD|
+|AWS Study Topic|Implementation|
+|Global infrastructure|Delivery through CloudFront|
+|Storage|Static file storage with S3|
+|Computing|Serverless processing with Lambda|
+|Databases|Contact submission storage with DynamoDB|
+|Networking|CloudFront / API Gateway|
+|Security|IAM least privilege / OAC / CORS|
+|Monitoring|CloudWatch Logs / Metrics|
+|Cost management|AWS Budgets / Cost Explorer|
+|Automation|GitHub Actions CI/CD|
 
-  
 
-ポートフォリオとしてのアピールポイント
 
-1. AWS資格学習と実装を接続
+Portfolio Highlights
 
-資格勉強で学んだAWSサービスを、実際に動くWebアプリとして構成しました。
+1. Connecting AWS Certification Study with Implementation
 
-単なる学習メモではなく、AWS上に公開できる形にしています。
+I assembled the AWS services learned during certification study into a working web application.
 
-  
+Rather than just study notes, the result can be published on AWS.
 
-2. サーバーレス構成
 
-API Gateway + Lambda + DynamoDB を使い、常時起動サーバーなしで問い合わせAPIを実装しています。
 
-  
+2. Serverless Architecture
 
-3. セキュリティ設計
+The contact API uses API Gateway + Lambda + DynamoDB without an always-running server.
 
-S3を直接公開せず、CloudFront OACを利用しています。
 
-また、IAM権限を最小化し、LambdaにはDynamoDB PutItem のみを付与しています。
 
-  
+3. Security Design
 
-4. コスト最適化
+S3 is not directly exposed; CloudFront OAC is used instead.
 
-EC2、RDS、NAT Gateway、ALBを使わず、AWS BudgetsとCloudWatch Logs保存期間設定で課金事故を防ぐ設計にしています。
+IAM permissions are also minimized, granting Lambda only DynamoDB PutItem.
 
-  
+
+
+4. Cost Optimization
+
+The design avoids EC2, RDS, NAT Gateway, and ALB, and prevents unexpected charges through AWS Budgets and CloudWatch Logs retention settings.
+
+
 
 5. CI/CD
 
-GitHub Actionsで、Pull Request時の検証とmainブランチへの自動デプロイを実装します。
+Implement Pull Request validation and automatic deployment from the main branch using GitHub Actions.
 
-  
 
-6. 将来の収益化設計
 
-SEO記事、AWS用語集、模擬問題、構成図解説を増やし、AdSenseや有料教材への拡張を想定しています。
+6. Design for Future Monetization
 
-  
+The plan is to expand SEO articles, the AWS glossary, practice questions, and architecture diagram explanations, with future support for AdSense and paid learning materials.
 
-開発ロードマップ
+
+
+Development Roadmap
 
 |   |   |   |
 |---|---|---|
-|Phase|内容|状態|
-|Phase 0|開発準備・設計|Planned|
-|Phase 1|静的サイトMVP|Planned|
-|Phase 2|AWS公開・問い合わせAPI|Planned|
-|Phase 3|CI/CD・運用監視|Planned|
-|Phase 4|収益化準備|Future|
-|Phase 5|学習アプリ化|Future|
+|Phase|Description|Status|
+|Phase 0|Development preparation and design|Planned|
+|Phase 1|Static site MVP|Planned|
+|Phase 2|AWS publication and contact API|Planned|
+|Phase 3|CI/CD and operational monitoring|Planned|
+|Phase 4|Monetization preparation|Future|
+|Phase 5|Evolve into a learning app|Future|
 
-  
 
-ライセンス
 
-未定です。
+License
 
-個人ポートフォリオとして公開する場合は、以下のどちらかを検討します。
+Not yet decided.
+
+If published as a personal portfolio, consider either of the following.
 
 - MIT License
 - All Rights Reserved
 
-学習コンテンツを含むため、コンテンツの再利用範囲は慎重に決定します。
+Because the project includes learning content, the permitted scope of content reuse will be decided carefully.
 
-  
 
-作者
 
-Name: ふみくん
+Author
+
+Name: Fumikun
 
 Role: AWS / AI / Web Development Learner
 
-Goal: AIプロダクト開発・PMを目指すポートフォリオ制作
+Goal: Build a portfolio toward AI product development and PM roles
 
-  
 
-関連ドキュメント
+
+Related Documents
 
 docs/designs/
 
@@ -960,25 +960,25 @@ docs/designs/
 
 └── development-tasks.md
 
-  
 
-まとめ
 
-AWS Cert Roadmap Lab は、AWS資格学習を実装に変換するためのポートフォリオです。
+Summary
 
-MVPでは、静的学習サイトをS3 + CloudFrontで公開し、問い合わせフォームのみAPI Gateway + Lambda + DynamoDBで実装します。
+AWS Cert Roadmap Lab is a portfolio for turning AWS certification study into implementation.
 
-これにより、以下を実践します。
+In the MVP, the static learning site is published with S3 + CloudFront, and only the contact form is implemented with API Gateway + Lambda + DynamoDB.
 
-- AWSサーバーレス構成
+This provides hands-on practice with the following.
+
+- AWS serverless architecture
 - S3 + CloudFront + OAC
 - API Gateway + Lambda + DynamoDB
-- IAM最小権限
+- IAM least privilege
 - CloudWatch Logs
 - AWS Budgets
 - GitHub Actions CI/CD
-- コスト最適化
-- セキュリティ設計
-- 将来的なSEO・広告収益化
+- Cost optimization
+- Security design
+- Future SEO and advertising monetization
 
-資格勉強で終わらず、実際にAWS上で動くプロダクトとして公開することを目標にしています。
+The goal is to go beyond certification study and publish a product that actually runs on AWS.

@@ -1,122 +1,122 @@
-AWS資格学習サイト CI/CD設計書
+AWS Certification Study Site CI/CD Design
 
-1. 文書情報
-
-|   |   |
-|---|---|
-|項目|内容|
-|文書名|AWS資格学習サイト CI/CD設計書|
-|対象プロダクト|AWS資格ロードマップラボ|
-|対象フェーズ|MVP開発 〜 Phase 4 学習アプリ化|
-|目的|GitHub Actionsを用いて、フロントエンド・Lambda・インフラを安全かつ低コストにデプロイする方針を定義する|
-|対象リポジトリ|GitHub Repository|
-|CI/CD基盤|GitHub Actions|
-|デプロイ先|Amazon S3 / Amazon CloudFront / AWS Lambda / Amazon API Gateway / DynamoDB|
-
-  
-
-2. 本設計書の目的
-
-本設計書では、AWS資格学習サイト「AWS資格ロードマップラボ」のCI/CD設計を定義する。
-
-MVPでは、まず以下の自動化を対象とする。
-
-GitHub mainブランチへpush
-
-  ↓
-
-GitHub Actions起動
-
-  ↓
-
-フロントエンドのLint / Build
-
-  ↓
-
-Next.js静的ファイル生成
-
-  ↓
-
-S3へアップロード
-
-  ↓
-
-CloudFrontキャッシュ無効化
-
-  ↓
-
-本番サイトへ反映
-
-MVPで自動化する対象は、原則としてフロントエンド静的サイトのデプロイである。
-
-Lambda/API Gateway/DynamoDBなどのバックエンド・インフラ自動デプロイは、Phase 2以降で段階的に導入する。
-
-理由：
-
-- MVP初期は構成を単純にするため
-- 課金事故や誤削除を避けるため
-- AWSコンソール操作で各サービス理解を深めるため
-- まず公開実績を優先するため
-
-  
-
-3. CI/CD基本方針
-
-3.1 基本方針
+1. Document Information
 
 |   |   |
 |---|---|
-|方針|内容|
-|MVPはフロントエンド自動デプロイ中心|S3 + CloudFrontへの静的ファイル配信を自動化する|
-|mainブランチのみ本番デプロイ|featureブランチやPRでは本番反映しない|
-|PRでは検証のみ|lint、typecheck、buildのみ実行する|
-|AWS認証はOIDC推奨|長期アクセスキーをGitHub Secretsに置かない構成を目指す|
-|初期はアクセスキー方式も許容|学習初期は簡単な方式で動かしてもよいが、最終的にOIDC化する|
-|IAM最小権限|GitHub ActionsにはS3デプロイとCloudFront Invalidationのみ許可する|
-|Invalidation乱発禁止|CloudFrontキャッシュ無効化はmainデプロイ時のみ|
-|Lambda自動デプロイは後回し|MVP公開後、SAM化してから導入する|
-|インフラ削除系権限は付与しない|GitHub ActionsからIAM/RDS/EC2等を操作させない|
-|デプロイ結果をREADMEで説明可能にする|ポートフォリオとしてCI/CD構成を説明できる状態にする|
+|Item|Description|
+|Document name|AWS Certification Study Site CI/CD Design|
+|Target product|AWS Certification Roadmap Lab|
+|Target phases|MVP development through Phase 4 learning application|
+|Purpose|Define guidelines for safe, low-cost deployment of the frontend, Lambda, and infrastructure using GitHub Actions|
+|Target repository|GitHub Repository|
+|CI/CD platform|GitHub Actions|
+|Deployment targets|Amazon S3 / Amazon CloudFront / AWS Lambda / Amazon API Gateway / DynamoDB|
 
   
 
-4. CI/CD対象範囲
+2. Purpose of This Design
 
-4.1 MVP対象
+This document defines the CI/CD design for the AWS certification study site, AWS Certification Roadmap Lab.
 
-|   |   |   |
-|---|---|---|
-|対象|自動化|内容|
-|フロントエンドLint|対象|コード品質チェック|
-|TypeScript型チェック|対象|型エラー検出|
-|フロントエンドBuild|対象|Next.js静的ビルド|
-|S3デプロイ|対象|out/ をS3へsync|
-|CloudFront Invalidation|対象|デプロイ後にキャッシュ無効化|
-|Lambdaデプロイ|対象外|MVPでは手動または別途実施|
-|DynamoDB作成|対象外|MVPでは手動構築|
-|API Gateway作成|対象外|MVPでは手動構築|
-|CloudFront作成|対象外|MVPでは手動構築|
+The MVP initially automates the following.
 
-4.2 Phase 2以降の対象
+Push to the GitHub main branch
 
-|   |   |   |
-|---|---|---|
-|対象|自動化|内容|
-|Lambda zipデプロイ|Phase 2|Lambdaコード更新を自動化|
-|SAMデプロイ|Phase 2以降|API Gateway / Lambda / DynamoDBをIaC管理|
-|テスト自動実行|Phase 2|Lambdaユニットテスト|
-|dev/prod環境分離|Phase 3以降|検証環境と本番環境の分離|
-|Cognito関連|Phase 4|学習アプリ化時に検討|
+  ↓
+
+Start GitHub Actions
+
+  ↓
+
+Frontend Lint / Build
+
+  ↓
+
+Generate Next.js static files
+
+  ↓
+
+Upload to S3
+
+  ↓
+
+Invalidate the CloudFront cache
+
+  ↓
+
+Update the production site
+
+In principle, MVP automation covers deployment of the static frontend site.
+
+Automated deployment of backend and infrastructure components such as Lambda/API Gateway/DynamoDB will be introduced gradually in Phase 2 or later.
+
+Reasons:
+
+- Keep the initial MVP architecture simple
+- Avoid unexpected charges and accidental deletion
+- Deepen understanding of each service through AWS console operations
+- Prioritize an actual public release first
 
   
 
-5. 全体CI/CD構成
+3. Basic CI/CD Guidelines
 
-5.1 MVP構成図
+3.1 Basic Guidelines
+
+|   |   |
+|---|---|
+|Guideline|Description|
+|Focus on automated frontend deployment in the MVP|Automate static file delivery through S3 + CloudFront|
+|Deploy to production only from main|Do not deploy feature branches or PRs to production|
+|Validate only on PRs|Run only lint, typecheck, and build|
+|OIDC recommended for AWS authentication|Aim for a setup without long-term access keys in GitHub Secrets|
+|Access keys acceptable initially|A simple method is acceptable early in learning, but ultimately migrate to OIDC|
+|Least-privilege IAM|Allow GitHub Actions only S3 deployment and CloudFront Invalidation|
+|Avoid excessive invalidations|Invalidate the CloudFront cache only during main deployments|
+|Defer automated Lambda deployment|Introduce after the MVP release and migration to SAM|
+|Do not grant infrastructure deletion permissions|Do not allow GitHub Actions to operate IAM/RDS/EC2 and similar services|
+|Make deployment results explainable in the README|Be able to explain the CI/CD architecture as part of the portfolio|
+
+  
+
+4. CI/CD Scope
+
+4.1 MVP Scope
+
+|   |   |   |
+|---|---|---|
+|Target|Automation|Description|
+|Frontend Lint|Included|Code quality checks|
+|TypeScript type checking|Included|Detect type errors|
+|Frontend Build|Included|Next.js static build|
+|S3 deployment|Included|Sync out/ to S3|
+|CloudFront Invalidation|Included|Invalidate the cache after deployment|
+|Lambda deployment|Excluded|Manual or separate deployment in the MVP|
+|DynamoDB creation|Excluded|Manual setup in the MVP|
+|API Gateway creation|Excluded|Manual setup in the MVP|
+|CloudFront creation|Excluded|Manual setup in the MVP|
+
+4.2 Scope for Phase 2 and Later
+
+|   |   |   |
+|---|---|---|
+|Target|Automation|Description|
+|Lambda zip deployment|Phase 2|Automate Lambda code updates|
+|SAM deployment|Phase 2 or later|Manage API Gateway / Lambda / DynamoDB as IaC|
+|Automated tests|Phase 2|Lambda unit tests|
+|dev/prod separation|Phase 3 or later|Separate test and production environments|
+|Cognito-related resources|Phase 4|Consider when building the learning application|
+
+  
+
+5. Overall CI/CD Architecture
+
+5.1 MVP Architecture Diagram
 
 flowchart TD
 
-    Dev[開発者]
+    Dev[Developer]
 
     GH[GitHub Repository]
 
@@ -132,7 +132,7 @@ flowchart TD
 
     CF[CloudFront]
 
-    User[ユーザー]
+    User[User]
 
   
 
@@ -154,115 +154,115 @@ flowchart TD
 
     CF --> S3
 
-5.2 MVP処理フロー
+5.2 MVP Processing Flow
 
-1. 開発者がfeatureブランチで作業する
+1. The developer works on a feature branch
 
-2. GitHubへpushする
+2. Push to GitHub
 
-3. Pull Requestを作成する
+3. Create a Pull Request
 
-4. GitHub Actionsでlint/typecheck/buildを実行する
+4. Run lint/typecheck/build in GitHub Actions
 
-5. 問題なければmainへmergeする
+5. Merge into main if there are no problems
 
-6. mainへのpushをトリガーに本番デプロイWorkflowが起動する
+6. A push to main triggers the production deployment Workflow
 
-7. frontendをビルドする
+7. Build frontend
 
-8. out/配下をS3へsyncする
+8. Sync the contents of out/ to S3
 
-9. CloudFront Invalidationを実行する
+9. Run CloudFront Invalidation
 
-10. CloudFront経由で本番サイトを確認する
+10. Check the production site through CloudFront
 
   
 
-11. ブランチ戦略
+11. Branch Strategy
 
-6.1 MVPブランチ構成
+6.1 MVP Branch Structure
 
 |   |   |   |
 |---|---|---|
-|ブランチ|用途|デプロイ|
-|main|本番反映用|本番S3へデプロイ|
-|feature/*|機能開発|デプロイなし|
-|fix/*|不具合修正|デプロイなし|
-|docs/*|ドキュメント修正|デプロイなし。ただしmain merge後は反映|
+|Branch|Purpose|Deployment|
+|main|Production updates|Deploy to production S3|
+|feature/*|Feature development|No deployment|
+|fix/*|Bug fixes|No deployment|
+|docs/*|Documentation changes|No deployment, but reflected after merging into main|
 
-6.2 基本運用
+6.2 Basic Workflow
 
-featureブランチで作業
-
-  ↓
-
-Pull Request作成
+Work on a feature branch
 
   ↓
 
-CI実行
+Create a Pull Request
 
   ↓
 
-レビューまたは自己確認
+Run CI
 
   ↓
 
-mainへmerge
+Review or self-check
 
   ↓
 
-本番デプロイ
+Merge into main
 
-6.3 MVPでは採用しない複雑な戦略
+  ↓
 
-MVPでは以下は使わない。
+Deploy to production
+
+6.3 Complex Strategies Not Used in the MVP
+
+Do not use the following in the MVP.
 
 |   |   |
 |---|---|
-|戦略|採用しない理由|
-|Git Flow|個人開発には重い|
-|releaseブランチ|MVPでは不要|
-|hotfixブランチ厳格運用|小規模では過剰|
-|複数環境同時デプロイ|コスト・管理負荷が増える|
+|Strategy|Reason not adopted|
+|Git Flow|Too heavyweight for individual development|
+|release branch|Unnecessary in the MVP|
+|Strict hotfix branch workflow|Excessive for a small project|
+|Simultaneous deployment to multiple environments|Increases cost and management overhead|
 
   
 
-7. GitHub Actions Workflow一覧
+7. GitHub Actions Workflow List
 
 7.1 MVP Workflow
 
 |   |   |   |   |
 |---|---|---|---|
-|Workflow|ファイル|トリガー|目的|
+|Workflow|File|Trigger|Purpose|
 |CI|.github/workflows/ci.yml|pull_request / push|lint/typecheck/build|
-|Deploy Frontend|.github/workflows/deploy-frontend.yml|main push / manual|S3 + CloudFrontへデプロイ|
+|Deploy Frontend|.github/workflows/deploy-frontend.yml|main push / manual|Deploy to S3 + CloudFront|
 
-7.2 Phase 2以降のWorkflow
+7.2 Workflows for Phase 2 and Later
 
 |   |   |   |   |
 |---|---|---|---|
-|Workflow|ファイル|トリガー|目的|
-|Deploy Lambda|.github/workflows/deploy-lambda.yml|backend変更時|Lambda zipデプロイ|
-|Deploy SAM|.github/workflows/deploy-sam.yml|infra変更時|SAMデプロイ|
-|Security Check|.github/workflows/security.yml|pull_request|依存関係・秘密情報チェック|
-|Content Validate|.github/workflows/content-validate.yml|pull_request|JSON/MDXの形式チェック|
+|Workflow|File|Trigger|Purpose|
+|Deploy Lambda|.github/workflows/deploy-lambda.yml|backend changes|Lambda zip deployment|
+|Deploy SAM|.github/workflows/deploy-sam.yml|infra changes|SAM deployment|
+|Security Check|.github/workflows/security.yml|pull_request|Dependency and secret checks|
+|Content Validate|.github/workflows/content-validate.yml|pull_request|JSON/MDX format checks|
 
   
 
-8. CI設計
+8. CI Design
 
-8.1 CIの目的
+8.1 Purpose of CI
 
-Pull Requestやpush時に、最低限以下を検証する。
+At minimum, verify the following on Pull Requests and pushes.
 
-- 依存関係のインストールが成功する
-- ESLintが通る
-- TypeScript型チェックが通る
-- Next.js buildが成功する
-- 静的出力が生成される
+- Dependency installation succeeds
+- ESLint passes
+- TypeScript type checking passes
+- Next.js build succeeds
+- Static output is generated
 
-8.2 CIトリガー
+8.2 CI Triggers
 
 on:
 
@@ -284,13 +284,13 @@ on:
 
       - 'docs/**'
 
-8.3 CI処理内容
+8.3 CI Steps
 
 1. checkout
 
-2. Node.jsセットアップ
+2. Set up Node.js
 
-3. 依存関係インストール
+3. Install dependencies
 
 4. lint
 
@@ -298,7 +298,7 @@ on:
 
 6. build
 
-8.4 ci.yml例 npm版
+8.4 ci.yml Example: npm Version
 
 name: CI
 
@@ -386,7 +386,7 @@ jobs:
 
         run: npm run build
 
-8.5 ci.yml例 pnpm版
+8.5 ci.yml Example: pnpm Version
 
 name: CI
 
@@ -484,7 +484,7 @@ jobs:
 
         run: pnpm build
 
-8.6 package.json scripts例
+8.6 package.json scripts Example
 
 {
 
@@ -502,40 +502,40 @@ jobs:
 
 }
 
-8.7 CI完了条件
+8.7 CI Completion Criteria
 
 |   |   |
 |---|---|
-|ID|条件|
-|CI-001|Pull Request作成時にCIが実行される|
-|CI-002|lintが成功する|
-|CI-003|typecheckが成功する|
-|CI-004|buildが成功する|
-|CI-005|CI失敗時にmainへmergeしない|
+|ID|Condition|
+|CI-001|CI runs when a Pull Request is created|
+|CI-002|lint succeeds|
+|CI-003|typecheck succeeds|
+|CI-004|build succeeds|
+|CI-005|Do not merge into main if CI fails|
 
   
 
-9. CD設計：フロントエンドデプロイ
+9. CD Design: Frontend Deployment
 
-9.1 CDの目的
+9.1 Purpose of CD
 
-mainブランチへ反映されたコードを、自動でS3 + CloudFrontへデプロイする。
+Automatically deploy code merged into the main branch to S3 + CloudFront.
 
-9.2 CDトリガー
+9.2 CD Triggers
 
 |   |   |
 |---|---|
-|トリガー|内容|
-|push to main|自動デプロイ|
-|workflow_dispatch|手動デプロイ|
+|Trigger|Description|
+|push to main|Automatic deployment|
+|workflow_dispatch|Manual deployment|
 
-9.3 CD処理内容
+9.3 CD Steps
 
 1. checkout
 
-2. Node.jsセットアップ
+2. Set up Node.js
 
-3. 依存関係インストール
+3. Install dependencies
 
 4. lint
 
@@ -543,80 +543,80 @@ mainブランチへ反映されたコードを、自動でS3 + CloudFrontへデ�
 
 6. build
 
-7. AWS認証
+7. Authenticate with AWS
 
 8. S3 sync
 
 9. CloudFront Invalidation
 
-10. デプロイ結果表示
+10. Display deployment results
 
-9.4 AWSデプロイ方式
+9.4 AWS Deployment Methods
 
-MVPでは2種類の方式を定義する。
+Define two methods for the MVP.
 
 |   |   |   |
 |---|---|---|
-|方式|推奨度|内容|
-|OIDC方式|推奨|GitHub ActionsがAWS IAM Roleを一時認証でAssumeRoleする|
-|アクセスキー方式|初期のみ許容|AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEYをGitHub Secretsに保存する|
+|Method|Recommendation|Description|
+|OIDC|Recommended|GitHub Actions assumes an AWS IAM Role using temporary credentials|
+|Access keys|Acceptable only initially|Store AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY in GitHub Secrets|
 
   
 
-10. AWS認証方式：OIDC推奨
+10. AWS Authentication: OIDC Recommended
 
-10.1 OIDC方式の目的
+10.1 Purpose of OIDC
 
-GitHub ActionsからAWSへアクセスする際に、長期アクセスキーをGitHub Secretsに保存しない。
+Avoid storing long-term access keys in GitHub Secrets when accessing AWS from GitHub Actions.
 
-OIDC方式では、GitHub Actionsが一時的なトークンを使ってAWS IAM Roleを引き受ける。
+With OIDC, GitHub Actions assumes an AWS IAM Role using a temporary token.
 
-10.2 OIDC方式のメリット
-
-|   |   |
-|---|---|
-|メリット|内容|
-|長期アクセスキー不要|GitHubにAWS_SECRET_ACCESS_KEYを保存しない|
-|漏えいリスク低下|一時認証情報を利用する|
-|権限管理しやすい|IAM Roleに最小権限を付与できる|
-|ポートフォリオ評価が高い|セキュリティ意識を説明しやすい|
-
-10.3 OIDC構成要素
+10.2 OIDC Benefits
 
 |   |   |
 |---|---|
-|要素|内容|
-|GitHub OIDC Provider|AWS IAMにGitHubを信頼するIDプロバイダーとして登録|
-|IAM Role|GitHub ActionsがAssumeRoleするロール|
-|Trust Policy|特定リポジトリ・ブランチからのみAssumeRole許可|
-|Workflow permissions|id-token: write を付与|
-|aws-actions/configure-aws-credentials|OIDCでAWS認証するAction|
+|Benefit|Description|
+|No long-term access keys|Do not store AWS_SECRET_ACCESS_KEY in GitHub|
+|Lower exposure risk|Use temporary credentials|
+|Easier permission management|Grant least privilege to the IAM Role|
+|Stronger portfolio evaluation|Easier to demonstrate security awareness|
 
-10.4 IAM OIDC Provider作成手順概要
+10.3 OIDC Components
 
-1. IAMコンソールを開く
+|   |   |
+|---|---|
+|Component|Description|
+|GitHub OIDC Provider|Register GitHub as a trusted identity provider in AWS IAM|
+|IAM Role|Role assumed by GitHub Actions|
+|Trust Policy|Allow AssumeRole only from a specific repository and branch|
+|Workflow permissions|Grant id-token: write|
+|aws-actions/configure-aws-credentials|Action for AWS authentication through OIDC|
 
-2. Identity providersを選択
+10.4 IAM OIDC Provider Creation Overview
 
-3. Add providerを選択
+1. Open the IAM console
 
-4. OpenID Connectを選択
+2. Select Identity providers
 
-5. Provider URLに https://token.actions.githubusercontent.com を入力
+3. Select Add provider
 
-6. Audienceに sts.amazonaws.com を入力
+4. Select OpenID Connect
 
-7. 作成する
+5. Enter https://token.actions.githubusercontent.com as the Provider URL
 
-10.5 GitHub Actions用IAM Role作成
+6. Enter sts.amazonaws.com as the Audience
 
-Role名例：
+7. Create the provider
+
+10.5 Create an IAM Role for GitHub Actions
+
+Example Role name:
 
 github-actions-deploy-role-prod
 
-10.6 Trust Policy例
+10.6 Trust Policy Example
 
-<account-id>、<github-owner>、<repo-name> を置換する。
+Replace <account-id>, <github-owner>, and <repo-name>.
 
 {
 
@@ -658,33 +658,33 @@ github-actions-deploy-role-prod
 
 }
 
-10.7 補足：environmentを使う場合
+10.7 Note: Using an environment
 
-GitHub Environmentsを使う場合、OIDCのsub条件が変わる場合がある。
+When using GitHub Environments, the OIDC sub condition may change.
 
-最初はmainブランチ条件で始める。
+Start with a main branch condition.
 
-将来的にproduction environmentを使う場合は、Trust Policyを見直す。
+Review the Trust Policy if a production environment is introduced later.
 
   
 
-11. GitHub Actions用IAM権限
+11. IAM Permissions for GitHub Actions
 
-11.1 必要権限
+11.1 Required Permissions
 
-フロントエンドデプロイに必要な権限のみ付与する。
+Grant only the permissions needed for frontend deployment.
 
 |   |   |
 |---|---|
-|権限|用途|
-|s3:ListBucket|S3 sync時に差分確認|
-|s3:PutObject|ファイルアップロード|
-|s3:DeleteObject|--delete 使用時に不要ファイル削除|
-|cloudfront:CreateInvalidation|CloudFrontキャッシュ無効化|
+|Permission|Purpose|
+|s3:ListBucket|Check differences during S3 sync|
+|s3:PutObject|Upload files|
+|s3:DeleteObject|Delete unnecessary files when using --delete|
+|cloudfront:CreateInvalidation|Invalidate the CloudFront cache|
 
-11.2 IAM Policy例
+11.2 IAM Policy Example
 
-<bucket-name>、<account-id>、<distribution-id> を置換する。
+Replace <bucket-name>, <account-id>, and <distribution-id>.
 
 {
 
@@ -746,76 +746,76 @@ GitHub Environmentsを使う場合、OIDCのsub条件が変わる場合がある
 
 }
 
-11.3 付与しない権限
+11.3 Permissions Not Granted
 
 |   |   |
 |---|---|
-|権限|理由|
-|AdministratorAccess|権限過多|
-|iam:*|権限昇格リスク|
-|s3:*|対象外バケット操作リスク|
-|cloudfront:*|Distribution変更・削除などが可能になり危険|
-|dynamodb:*|フロントデプロイには不要|
-|lambda:*|フロントデプロイには不要|
-|apigateway:*|フロントデプロイには不要|
-|ec2:*|不要|
-|rds:*|不要|
+|Permission|Reason|
+|AdministratorAccess|Excessive permissions|
+|iam:*|Privilege escalation risk|
+|s3:*|Risk of operating on unrelated buckets|
+|cloudfront:*|Dangerous because it permits Distribution changes and deletion|
+|dynamodb:*|Unnecessary for frontend deployment|
+|lambda:*|Unnecessary for frontend deployment|
+|apigateway:*|Unnecessary for frontend deployment|
+|ec2:*|Unnecessary|
+|rds:*|Unnecessary|
 
   
 
-12. GitHub Secrets / Variables設計
+12. GitHub Secrets / Variables Design
 
-12.1 OIDC方式で必要なSecrets / Variables
+12.1 Secrets / Variables Required for OIDC
 
-OIDC方式では、AWSアクセスキーは不要。
+AWS access keys are unnecessary with OIDC.
 
 |   |   |   |
 |---|---|---|
-|種別|名前|内容|
-|Secret or Variable|AWS_ROLE_ARN|AssumeRoleするIAM Role ARN|
+|Type|Name|Description|
+|Secret or Variable|AWS_ROLE_ARN|ARN of the IAM Role to assume|
 |Variable|AWS_REGION|ap-northeast-1|
-|Secret or Variable|S3_BUCKET_NAME|デプロイ先S3バケット名|
+|Secret or Variable|S3_BUCKET_NAME|Destination S3 bucket name|
 |Secret or Variable|CLOUDFRONT_DISTRIBUTION_ID|CloudFront Distribution ID|
 |Variable|NEXT_PUBLIC_API_BASE_URL|API Gateway URL|
-|Variable|NEXT_PUBLIC_SITE_URL|サイトURL|
+|Variable|NEXT_PUBLIC_SITE_URL|Site URL|
 
-12.2 アクセスキー方式で必要なSecrets
+12.2 Secrets Required for Access-Key Authentication
 
-初期のみ許容。
+Acceptable only initially.
 
 |   |   |
 |---|---|
-|Secret名|内容|
-|AWS_ACCESS_KEY_ID|デプロイ用IAMユーザーのアクセスキー|
-|AWS_SECRET_ACCESS_KEY|デプロイ用IAMユーザーのシークレット|
+|Secret name|Description|
+|AWS_ACCESS_KEY_ID|Access key for the deployment IAM user|
+|AWS_SECRET_ACCESS_KEY|Secret for the deployment IAM user|
 |AWS_REGION|ap-northeast-1|
-|S3_BUCKET_NAME|デプロイ先S3バケット名|
+|S3_BUCKET_NAME|Destination S3 bucket name|
 |CLOUDFRONT_DISTRIBUTION_ID|CloudFront Distribution ID|
 
-12.3 Secretsに入れてはいけないもの
+12.3 Values Not to Store in Secrets
 
 |   |   |
 |---|---|
-|値|理由|
-|rootユーザーのアクセスキー|作成自体しない|
-|個人メールパスワード|不要|
-|DynamoDBデータ|秘密情報ではなくデータ本体|
-|JWT|実行時に発行されるもの|
-|問い合わせデータ|GitHubに保存しない|
+|Value|Reason|
+|Root user access keys|Do not create them at all|
+|Personal email password|Unnecessary|
+|DynamoDB data|Actual data, not secrets|
+|JWT|Issued at runtime|
+|Contact data|Do not store in GitHub|
 
-12.4 VariablesとSecretsの使い分け
+12.4 Choosing Variables or Secrets
 
 |   |   |   |
 |---|---|---|
-|種別|例|方針|
-|Secret|AWS_SECRET_ACCESS_KEY|秘密情報|
-|Secret|AWS_ROLE_ARN|秘密でなくても隠したい値|
-|Variable|AWS_REGION|公開されても問題ない値|
-|Variable|NEXT_PUBLIC_SITE_URL|公開前提の値|
+|Type|Example|Guideline|
+|Secret|AWS_SECRET_ACCESS_KEY|Secret information|
+|Secret|AWS_ROLE_ARN|Values to hide even if not secret|
+|Variable|AWS_REGION|Values safe to disclose|
+|Variable|NEXT_PUBLIC_SITE_URL|Values intended to be public|
 
   
 
-13. Deploy Frontend Workflow：OIDC版
+13. Deploy Frontend Workflow: OIDC Version
 
 13.1 deploy-frontend.yml
 
@@ -947,38 +947,38 @@ jobs:
 
             --paths "/*"
 
-13.2 重要ポイント
+13.2 Key Points
 
 |   |   |
 |---|---|
-|項目|内容|
-|permissions.id-token|OIDC利用に必要|
-|role-to-assume|AWS側のIAM Role ARN|
-|paths|frontend変更時のみデプロイ|
-|aws s3 sync --delete|S3とoutを同期し、不要ファイルを削除|
-|create-invalidation|CloudFrontキャッシュを無効化|
+|Item|Description|
+|permissions.id-token|Required for OIDC|
+|role-to-assume|AWS IAM Role ARN|
+|paths|Deploy only when frontend changes|
+|aws s3 sync --delete|Synchronize S3 and out, deleting unnecessary files|
+|create-invalidation|Invalidate the CloudFront cache|
 
-13.3 OIDC版の受け入れ条件
+13.3 OIDC Version Acceptance Criteria
 
 |   |   |
 |---|---|
-|ID|条件|
-|CD-OIDC-001|GitHub SecretsにAWS_SECRET_ACCESS_KEYがない|
-|CD-OIDC-002|id-token: write が設定されている|
-|CD-OIDC-003|IAM RoleをAssumeRoleできる|
-|CD-OIDC-004|mainブランチからのみデプロイできる|
-|CD-OIDC-005|S3へsyncできる|
-|CD-OIDC-006|CloudFront Invalidationできる|
+|ID|Condition|
+|CD-OIDC-001|AWS_SECRET_ACCESS_KEY is absent from GitHub Secrets|
+|CD-OIDC-002|id-token: write is configured|
+|CD-OIDC-003|The IAM Role can be assumed|
+|CD-OIDC-004|Deployment is possible only from the main branch|
+|CD-OIDC-005|S3 sync succeeds|
+|CD-OIDC-006|CloudFront Invalidation succeeds|
 
   
 
-14. Deploy Frontend Workflow：アクセスキー版
+14. Deploy Frontend Workflow: Access-Key Version
 
-14.1 位置づけ
+14.1 Positioning
 
-アクセスキー版は初期学習・動作確認用として許容する。
+The access-key version is acceptable for initial learning and verification.
 
-ただし、最終的にはOIDC方式へ移行する。
+However, ultimately migrate to OIDC.
 
 14.2 deploy-frontend.yml
 
@@ -1110,28 +1110,28 @@ jobs:
 
             --paths "/*"
 
-14.3 アクセスキー方式の注意点
+14.3 Access-Key Authentication Notes
 
 |   |   |
 |---|---|
-|注意点|内容|
-|長期キー漏えいリスク|GitHub Secretsに保存しても漏えいリスクはゼロではない|
-|rootキー禁止|rootユーザーのアクセスキーは絶対に使わない|
-|最小権限|デプロイ用IAMユーザーにはS3/CloudFront最小権限のみ|
-|定期削除|OIDC移行後はアクセスキーを削除する|
-|ローテーション|長期利用するなら定期的に更新する|
+|Caution|Description|
+|Long-term key exposure risk|Storing keys in GitHub Secrets does not eliminate exposure risk|
+|Root keys prohibited|Never use root user access keys|
+|Least privilege|Grant the deployment IAM user only minimal S3/CloudFront permissions|
+|Key removal|Delete access keys after migrating to OIDC|
+|Rotation|Rotate regularly if using them long-term|
 
   
 
-15. CloudFront Invalidation設計
+15. CloudFront Invalidation Design
 
-15.1 目的
+15.1 Purpose
 
-S3へアップロードした最新ファイルをCloudFront経由で反映する。
+Serve the latest files uploaded to S3 through CloudFront.
 
-15.2 初期方針
+15.2 Initial Guidelines
 
-MVPでは以下でよい。
+The following is sufficient for the MVP.
 
 aws cloudfront create-invalidation \
 
@@ -1139,23 +1139,23 @@ aws cloudfront create-invalidation \
 
   --paths "/*"
 
-15.3 コスト・運用上の注意
+15.3 Cost and Operational Notes
 
-/* のInvalidationは便利だが、頻繁に実行しすぎない。
+Invalidating /* is convenient, but do not run it too frequently.
 
-MVPではデプロイ頻度が少ないため許容する。
+It is acceptable in the MVP because deployments are infrequent.
 
-本格運用では以下を検討する。
+Consider the following for full-scale operation.
 
 |   |   |
 |---|---|
-|改善案|内容|
-|hash付きファイル名|JS/CSS/assetsはファイル名変更でキャッシュ更新|
-|HTMLのみ無効化|/index.html、主要HTMLのみInvalidation|
-|デプロイ頻度制御|main merge時のみ実行|
-|手動実行|workflow_dispatchのみで実行する選択肢|
+|Improvement|Description|
+|Hashed filenames|Refresh JS/CSS/assets caches by changing filenames|
+|Invalidate HTML only|Invalidate only /index.html and major HTML files|
+|Control deployment frequency|Run only when merging into main|
+|Manual execution|An option is to run only through workflow_dispatch|
 
-15.4 将来のInvalidation最適化例
+15.4 Future Invalidation Optimization Example
 
 aws cloudfront create-invalidation \
 
@@ -1165,9 +1165,9 @@ aws cloudfront create-invalidation \
 
   
 
-16. S3 sync設計
+16. S3 sync Design
 
-16.1 基本コマンド
+16.1 Basic Command
 
 aws s3 sync ./out s3://<bucket-name> --delete
 
@@ -1175,25 +1175,25 @@ aws s3 sync ./out s3://<bucket-name> --delete
 
 --delete
 
-の意味
+Meaning
 
-ローカルの out/ に存在しないファイルをS3側から削除する。
+Delete files from S3 that do not exist in the local out/ directory.
 
-メリット：
+Benefits:
 
-- 古いページが残らない
-- 削除済み記事がS3に残らない
-- 本番とビルド成果物の整合性が保てる
+- Old pages do not remain
+- Deleted articles do not remain in S3
+- Production stays consistent with build artifacts
 
-注意点：
+Cautions:
 
-- 出力ディレクトリを間違えるとS3側を意図せず削除する危険がある
-- 必ず working-directory: frontend と ./out を確認する
-- デプロイ先バケット名を間違えない
+- An incorrect output directory risks unintended deletion of S3 files
+- Always verify working-directory: frontend and ./out
+- Do not use the wrong destination bucket name
 
-16.3 キャッシュ制御の将来案
+16.3 Future Cache-Control Proposal
 
-HTMLと静的アセットでCache-Controlを分けると、CloudFront運用が安定する。
+Using different Cache-Control settings for HTML and static assets makes CloudFront operation more stable.
 
 HTML
 
@@ -1213,13 +1213,13 @@ aws s3 sync ./out s3://$S3_BUCKET_NAME \
 
   --cache-control "public,max-age=31536000,immutable"
 
-MVPでは複雑にしすぎず、まず通常のsyncでよい。
+Avoid excessive complexity in the MVP; ordinary sync is sufficient initially.
 
   
 
-17. Next.js静的出力設計
+17. Next.js Static Output Design
 
-17.1 next.config設定
+17.1 next.config Settings
 
 const nextConfig = {
 
@@ -1237,18 +1237,18 @@ const nextConfig = {
 
 export default nextConfig;
 
-17.2 注意点
+17.2 Notes
 
 |   |   |
 |---|---|
-|項目|注意|
-|API Routes|静的exportでは使わない|
-|Server Actions|静的サイトでは使わない|
-|dynamic rendering|静的生成できる設計にする|
-|next/image|静的exportでは unoptimized: true を設定|
-|問い合わせAPI|Next.js API Routesではなく、API Gateway + Lambdaを使う|
+|Item|Caution|
+|API Routes|Do not use with static export|
+|Server Actions|Do not use on the static site|
+|dynamic rendering|Design for static generation|
+|next/image|Set unoptimized: true for static export|
+|Contact API|Use API Gateway + Lambda, not Next.js API Routes|
 
-17.3 build成果物
+17.3 Build Artifacts
 
 frontend/out/
 
@@ -1264,51 +1264,51 @@ frontend/out/
 
 └── images/
 
-17.4 CIで確認すべきこと
+17.4 Checks to Perform in CI
 
 |   |   |
 |---|---|
-|項目|確認|
-|out/ が生成される|必須|
-|index.htmlがある|必須|
-|主要ページのHTMLがある|必須|
-|画像が含まれている|必須|
+|Item|Check|
+|out/ is generated|Required|
+|index.html exists|Required|
+|HTML exists for major pages|Required|
+|Images are included|Required|
 
   
 
-18. 環境変数設計
+18. Environment Variable Design
 
-18.1 フロントエンド環境変数
+18.1 Frontend Environment Variables
 
 |   |   |   |
 |---|---|---|
-|変数|内容|公開可否|
-|NEXT_PUBLIC_API_BASE_URL|API Gateway URL|公開可|
-|NEXT_PUBLIC_SITE_URL|CloudFront URLまたは独自ドメイン|公開可|
+|Variable|Description|Public?|
+|NEXT_PUBLIC_API_BASE_URL|API Gateway URL|May be public|
+|NEXT_PUBLIC_SITE_URL|CloudFront URL or custom domain|May be public|
 
-18.2 GitHub Variables例
+18.2 GitHub Variables Examples
 
 |   |   |
 |---|---|
-|Variable|例|
+|Variable|Example|
 |AWS_REGION|ap-northeast-1|
 |NEXT_PUBLIC_API_BASE_URL|https://xxxxx.execute-api.ap-northeast-1.amazonaws.com|
 |NEXT_PUBLIC_SITE_URL|https://xxxxx.cloudfront.net|
 
-18.3 GitHub Secrets例
+18.3 GitHub Secrets Examples
 
 |   |   |
 |---|---|
-|Secret|例|
+|Secret|Example|
 |AWS_ROLE_ARN|arn:aws:iam:::role/github-actions-deploy-role-prod|
 |S3_BUCKET_NAME|aws-cert-roadmap-lab-prod-vincent-2026|
 |CLOUDFRONT_DISTRIBUTION_ID|EXXXXXXXXXXXXX|
 
-18.4 注意点
+18.4 Notes
 
-NEXT_PUBLIC_ が付く変数はブラウザに公開される。
+Variables prefixed with NEXT_PUBLIC_ are exposed to the browser.
 
-以下は絶対に入れない。
+Never put the following in them.
 
 AWS_SECRET_ACCESS_KEY
 
@@ -1320,13 +1320,13 @@ JWT_SECRET
 
   
 
-19. パスフィルタ設計
+19. Path Filter Design
 
-19.1 目的
+19.1 Purpose
 
-不要なWorkflow実行を減らし、CI/CD時間と無駄なデプロイを抑える。
+Reduce unnecessary Workflow runs, CI/CD time, and redundant deployments.
 
-19.2 フロントエンドデプロイ対象
+19.2 Frontend Deployment Paths
 
 paths:
 
@@ -1334,13 +1334,13 @@ paths:
 
   - '.github/workflows/deploy-frontend.yml'
 
-19.3 ドキュメントのみ変更時の扱い
+19.3 Handling Documentation-Only Changes
 
-設計書だけを変更した場合、本番サイトに反映する必要がなければデプロイしない。
+When only design documents change, do not deploy unless the production site needs updating.
 
-ただし、設計書をサイト内コンテンツとして公開する場合は、frontend/contents/** に含まれるためデプロイ対象になる。
+However, design documents published as site content are included under frontend/contents/** and therefore trigger deployment.
 
-19.4 将来のbackendパス
+19.4 Future backend Paths
 
 paths:
 
@@ -1354,28 +1354,28 @@ paths:
 
 20. Lambda CI/CD Phase 2
 
-20.1 MVPで後回しにする理由
+20.1 Why Defer This in the MVP
 
-MVPではLambda自動デプロイを必須にしない。
+Automated Lambda deployment is not mandatory in the MVP.
 
-理由：
+Reasons:
 
-- 最初はAWSコンソールで動作理解した方が学習になる
-- Lambdaコード変更頻度が低い
-- SAM化前に自動化すると構成が中途半端になる
-- 誤って本番APIを壊すリスクを避ける
+- Initially, learning how it works through the AWS console is more educational
+- Lambda code changes are infrequent
+- Automating before adopting SAM leaves an incomplete setup
+- Avoid accidentally breaking the production API
 
-20.2 Phase 2での選択肢
+20.2 Phase 2 Options
 
 |   |   |   |
 |---|---|---|
-|方式|内容|推奨度|
-|zipデプロイ|Lambdaコードをzip化してupdate-function-code|中|
-|SAMデプロイ|template.yamlでAPI/Lambda/DynamoDBを管理|高|
-|CDK|TypeScript/PythonでIaC管理|中|
-|Terraform|汎用IaCとして管理|中〜高|
+|Method|Description|Recommendation|
+|zip deployment|Zip Lambda code and use update-function-code|Medium|
+|SAM deployment|Manage API/Lambda/DynamoDB in template.yaml|High|
+|CDK|Manage IaC in TypeScript/Python|Medium|
+|Terraform|Manage using general-purpose IaC|Medium to high|
 
-20.3 zipデプロイWorkflow例
+20.3 zip Deployment Workflow Example
 
 name: Deploy Lambda Contact
 
@@ -1455,9 +1455,9 @@ jobs:
 
             --zip-file fileb://backend/functions/contact_submit/contact_submit.zip
 
-20.4 zipデプロイ追加権限
+20.4 Additional zip Deployment Permissions
 
-Lambdaデプロイを自動化する場合、GitHub Actions Roleに以下が必要になる。
+Automating Lambda deployment requires the following permissions on the GitHub Actions Role.
 
 {
 
@@ -1473,39 +1473,39 @@ Lambdaデプロイを自動化する場合、GitHub Actions Roleに以下が必�
 
 }
 
-20.5 注意点
+20.5 Notes
 
-フロントエンドデプロイRoleとLambdaデプロイRoleは分けてもよい。
+The frontend deployment Role and Lambda deployment Role may be separate.
 
-セキュリティを重視するなら以下に分離する。
+For stronger security, separate them as follows.
 
 |   |   |
 |---|---|
-|Role|用途|
-|github-actions-frontend-deploy-role|S3 + CloudFrontのみ|
-|github-actions-backend-deploy-role|Lambda更新のみ|
-|github-actions-infra-deploy-role|SAM/CloudFormationのみ|
+|Role|Purpose|
+|github-actions-frontend-deploy-role|S3 + CloudFront only|
+|github-actions-backend-deploy-role|Lambda updates only|
+|github-actions-infra-deploy-role|SAM/CloudFormation only|
 
   
 
-21. SAM CI/CD Phase 2以降
+21. SAM CI/CD in Phase 2 and Later
 
-21.1 SAM化の目的
+21.1 Purpose of Adopting SAM
 
-API Gateway、Lambda、DynamoDBなどのバックエンドリソースをコードで管理する。
+Manage backend resources such as API Gateway, Lambda, and DynamoDB as code.
 
-21.2 対象
+21.2 Scope
 
 |   |   |
 |---|---|
-|リソース|SAM管理|
-|Lambda contact-submit-prod|対象|
-|API Gateway POST /contact|対象|
-|DynamoDB ContactsTableProd|対象|
-|Lambda IAM Role|対象|
-|CloudWatch Logs Retention|対象化検討|
+|Resource|SAM management|
+|Lambda contact-submit-prod|Included|
+|API Gateway POST /contact|Included|
+|DynamoDB ContactsTableProd|Included|
+|Lambda IAM Role|Included|
+|CloudWatch Logs Retention|Consider including|
 
-21.3 deploy-sam.yml例
+21.3 deploy-sam.yml Example
 
 name: Deploy SAM Backend
 
@@ -1609,36 +1609,36 @@ jobs:
 
             --region ${{ vars.AWS_REGION }}
 
-21.4 SAMデプロイの注意点
+21.4 SAM Deployment Notes
 
 |   |   |
 |---|---|
-|注意点|内容|
-|CAPABILITY_IAM|IAM Roleを作成・変更するため必要|
-|Stack削除注意|誤って削除するとAPI/DynamoDBが消える可能性|
-|DynamoDB削除保護|本格運用前にDeletionPolicy検討|
-|dev/prod分離|Phase 3以降で検討|
+|Caution|Description|
+|CAPABILITY_IAM|Required to create or change IAM Roles|
+|Be careful deleting Stacks|Accidental deletion may remove the API/DynamoDB|
+|DynamoDB deletion protection|Consider DeletionPolicy before full-scale operation|
+|dev/prod separation|Consider in Phase 3 or later|
 
   
 
-22. セキュリティ設計
+22. Security Design
 
-22.1 GitHub Actionsセキュリティ方針
+22.1 GitHub Actions Security Guidelines
 
 |   |   |
 |---|---|
-|項目|方針|
-|OIDC|推奨|
-|Secrets最小化|AWS_SECRET_ACCESS_KEYを可能なら使わない|
-|権限最小化|Workflow permissionsを必要最小限にする|
-|main限定|本番デプロイはmainのみ|
-|Role trust制限|特定repo・branchのみAssumeRole可能|
-|IAM分離|frontend/backend/infraでRole分離を検討|
-|ログ注意|Secretsをechoしない|
+|Item|Guideline|
+|OIDC|Recommended|
+|Minimize Secrets|Avoid AWS_SECRET_ACCESS_KEY if possible|
+|Minimize permissions|Keep Workflow permissions to the minimum necessary|
+|main only|Deploy to production only from main|
+|Restrict Role trust|Allow AssumeRole only from a specific repo and branch|
+|Separate IAM|Consider separate Roles for frontend/backend/infra|
+|Logging caution|Do not echo Secrets|
 
 22.2 Workflow permissions
 
-OIDCデプロイでは以下を設定する。
+Configure the following for OIDC deployment.
 
 permissions:
 
@@ -1646,89 +1646,89 @@ permissions:
 
   contents: read
 
-PRのCIでは基本的に以下でよい。
+The following is generally sufficient for PR CI.
 
 permissions:
 
   contents: read
 
-22.3 Pull Request from forkの扱い
+22.3 Handling Pull Requests from Forks
 
-個人開発ではfork PRは基本想定しない。
+Fork PRs are generally not expected in individual development.
 
-将来OSS化する場合、外部PRにSecretsを渡さないよう注意する。
+If the project becomes open source, take care not to pass Secrets to external PRs.
 
-22.4 Secrets出力禁止
+22.4 Do Not Output Secrets
 
-悪い例：
+Bad example:
 
 - run: echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-このような処理は絶対に行わない。
+Never perform an operation like this.
 
   
 
-23. コスト設計
+23. Cost Design
 
-23.1 CI/CDで発生し得るコスト
-
-|   |   |
-|---|---|
-|処理|AWSコスト要素|
-|S3 sync|PUT / DELETE / LISTリクエスト|
-|CloudFront Invalidation|無効化リクエスト|
-|Lambda update|基本的には小さいがデプロイ回数に注意|
-|SAM deploy|CloudFormation操作、リソース作成変更|
-|GitHub Actions実行|GitHub側の実行時間枠に注意|
-
-23.2 コスト削減ルール
+23.1 Potential CI/CD Costs
 
 |   |   |
 |---|---|
-|ルール|内容|
-|mainのみデプロイ|feature pushでS3デプロイしない|
-|pathsで制御|frontend変更時のみfrontend deploy|
-|Invalidation乱発禁止|main merge時のみ|
-|不要Workflow停止|使わないWorkflowはdisabledまたは削除|
-|dev環境常設しない|Phase 3までは本番のみでもよい|
+|Operation|AWS cost factor|
+|S3 sync|PUT / DELETE / LIST requests|
+|CloudFront Invalidation|Invalidation requests|
+|Lambda update|Usually small, but watch deployment frequency|
+|SAM deploy|CloudFormation operations and resource creation/changes|
+|GitHub Actions execution|Watch GitHub execution-time allowances|
 
-23.3 デプロイ頻度目安
+23.2 Cost Reduction Rules
 
 |   |   |
 |---|---|
-|フェーズ|デプロイ頻度|
-|MVP開発中|1日数回まで|
-|公開後|必要時のみ|
-|記事更新期|記事公開時のみ|
-|AdSense後|慎重に更新|
+|Rule|Description|
+|Deploy only from main|Do not deploy to S3 on feature pushes|
+|Control with paths|Deploy frontend only when frontend changes|
+|Avoid excessive invalidations|Only when merging into main|
+|Stop unused Workflows|Disable or delete unused Workflows|
+|No permanent dev environment|Production only is acceptable until Phase 3|
+
+23.3 Deployment Frequency Guidelines
+
+|   |   |
+|---|---|
+|Phase|Deployment frequency|
+|During MVP development|Up to a few times per day|
+|After release|Only when needed|
+|Article update period|Only when publishing articles|
+|After AdSense|Update carefully|
 
   
 
-24. 失敗時のロールバック設計
+24. Rollback Design for Failures
 
-24.1 MVPロールバック方針
+24.1 MVP Rollback Guidelines
 
-MVPでは、ロールバックはGit revertで対応する。
+Use Git revert for rollback in the MVP.
 
-1. 問題のあるcommitを特定
+1. Identify the problematic commit
 
-2. git revertで戻す
+2. Revert with git revert
 
-3. mainへpush
+3. Push to main
 
-4. GitHub Actionsで再デプロイ
+4. Redeploy through GitHub Actions
 
-5. CloudFront反映確認
+5. Verify the update on CloudFront
 
-24.2 S3バージョニングを使う場合
+24.2 Using S3 Versioning
 
-S3 Versioningを有効にしている場合、過去バージョンへ戻せる。
+If S3 Versioning is enabled, previous versions can be restored.
 
-ただし、MVPではコスト・管理を考慮して必須にしない。
+However, it is not mandatory for the MVP because of cost and management considerations.
 
-24.3 手動ロールバック
+24.3 Manual Rollback
 
-ローカルで以前のcommitをcheckoutして再ビルド・再デプロイする。
+Check out an earlier commit locally, rebuild, and redeploy.
 
 git checkout <previous-commit>
 
@@ -1742,49 +1742,49 @@ aws s3 sync ./out s3://<bucket-name> --delete
 
 aws cloudfront create-invalidation --distribution-id <distribution-id> --paths "/*"
 
-24.4 ロールバック判断基準
+24.4 Rollback Decision Criteria
 
 |   |   |
 |---|---|
-|状況|対応|
-|トップページが表示されない|即ロールバック|
-|問い合わせフォームが動かない|原因確認後、必要ならロールバック|
-|CSS崩れ|影響範囲次第|
-|記事誤字|修正commitで対応|
-|API URL設定ミス|環境変数修正後再デプロイ|
+|Situation|Response|
+|Home page does not display|Roll back immediately|
+|Contact form does not work|Investigate the cause, then roll back if necessary|
+|Broken CSS|Depends on the scope of impact|
+|Article typo|Address with a correction commit|
+|Incorrect API URL setting|Correct environment variables and redeploy|
 
   
 
-25. デプロイ後確認
+25. Post-Deployment Verification
 
-25.1 自動デプロイ後の確認項目
+25.1 Checks After Automated Deployment
 
 |   |   |
 |---|---|
-|確認項目|期待結果|
-|GitHub Actionsが成功|green check|
-|S3に新しいファイルがある|更新済み|
-|CloudFront Invalidationが作成された|Completedになる|
-|トップページが表示される|成功|
-|/termsが表示される|成功|
-|/questionsが表示される|成功|
-|/contactが表示される|成功|
-|問い合わせ送信ができる|成功|
-|404ページが動く|成功|
+|Check|Expected result|
+|GitHub Actions succeeds|green check|
+|New files exist in S3|Updated|
+|CloudFront Invalidation was created|Becomes Completed|
+|Home page displays|Success|
+|/terms displays|Success|
+|/questions displays|Success|
+|/contact displays|Success|
+|Contact submission works|Success|
+|404 page works|Success|
 
-25.2 curl確認例
+25.2 curl Verification Example
 
 curl -I https://xxxxxxxx.cloudfront.net
 
-期待例：
+Expected example:
 
 HTTP/2 200
 
-25.3 CloudFront反映待ち
+25.3 Waiting for CloudFront Updates
 
-Invalidationは即時ではなく、完了まで時間がかかる場合がある。
+Invalidation is not instantaneous and may take time to complete.
 
-GitHub Actions上で完了を待つ必要がある場合は、以下を追加できる。
+If GitHub Actions needs to wait for completion, the following can be added.
 
 aws cloudfront wait invalidation-completed \
 
@@ -1792,204 +1792,204 @@ aws cloudfront wait invalidation-completed \
 
   --id <invalidation-id>
 
-MVPでは必須ではない。
+Not mandatory in the MVP.
 
   
 
-26. デプロイログ設計
+26. Deployment Logging Design
 
-26.1 GitHub Actionsで確認するログ
+26.1 Logs to Check in GitHub Actions
 
 |   |   |
 |---|---|
-|ステップ|確認内容|
-|Install dependencies|依存関係エラーがないか|
-|Lint|ESLintエラーがないか|
-|Type check|TypeScriptエラーがないか|
-|Build|Next.js buildが成功するか|
-|Configure AWS credentials|AWS認証に成功するか|
-|Deploy to S3|syncに成功するか|
-|Invalidate CloudFront|Invalidationに成功するか|
+|Step|What to check|
+|Install dependencies|No dependency errors|
+|Lint|No ESLint errors|
+|Type check|No TypeScript errors|
+|Build|Next.js build succeeds|
+|Configure AWS credentials|AWS authentication succeeds|
+|Deploy to S3|sync succeeds|
+|Invalidate CloudFront|Invalidation succeeds|
 
-26.2 ログに出してはいけない値
+26.2 Values That Must Not Be Logged
 
 - AWS_SECRET_ACCESS_KEY
 - AWS_ACCESS_KEY_ID
-- AWS_ROLE_ARNを不用意にechoしない
-- APIキー
-- .env内容
-- Cognitoトークン
+- Do not carelessly echo AWS_ROLE_ARN
+- API keys
+- .env contents
+- Cognito tokens
 
   
 
-27. CI/CDチェックリスト
+27. CI/CD Checklist
 
-27.1 初期設定チェック
-
-|   |   |
-|---|---|
-|チェック|状態|
-|GitHubリポジトリを作成した|未実施 / 実施済み|
-|frontendディレクトリがある|未実施 / 実施済み|
-|package.json scriptsがある|未実施 / 実施済み|
-|next.configで静的export設定済み|未実施 / 実施済み|
-|S3バケット名を控えた|未実施 / 実施済み|
-|CloudFront Distribution IDを控えた|未実施 / 実施済み|
-
-27.2 OIDCチェック
+27.1 Initial Setup Checks
 
 |   |   |
 |---|---|
-|チェック|状態|
-|AWS IAM OIDC Providerを作成した|未実施 / 実施済み|
-|GitHub Actions用IAM Roleを作成した|未実施 / 実施済み|
-|Trust Policyでrepo/mainに限定した|未実施 / 実施済み|
-|IAM PolicyがS3/CloudFront最小権限|未実施 / 実施済み|
-|Workflowにid-token: writeを設定した|未実施 / 実施済み|
-|GitHub SecretsにAWS_ROLE_ARNを設定した|未実施 / 実施済み|
+|Check|Status|
+|GitHub repository created|Not done / Done|
+|frontend directory exists|Not done / Done|
+|package.json scripts exist|Not done / Done|
+|Static export configured in next.config|Not done / Done|
+|S3 bucket name recorded|Not done / Done|
+|CloudFront Distribution ID recorded|Not done / Done|
 
-27.3 Workflowチェック
-
-|   |   |
-|---|---|
-|チェック|状態|
-|ci.ymlを作成した|未実施 / 実施済み|
-|deploy-frontend.ymlを作成した|未実施 / 実施済み|
-|PR時にCIが動く|未実施 / 実施済み|
-|main push時にCDが動く|未実施 / 実施済み|
-|S3 syncが成功する|未実施 / 実施済み|
-|CloudFront Invalidationが成功する|未実施 / 実施済み|
-
-27.4 セキュリティチェック
+27.2 OIDC Checks
 
 |   |   |
 |---|---|
-|チェック|状態|
-|rootアクセスキーを使っていない|未実施 / 実施済み|
-|AdministratorAccessを使っていない|未実施 / 実施済み|
-|AWS_SECRET_ACCESS_KEYをログ出力していない|未実施 / 実施済み|
-|GitHub Secretsに不要な値がない|未実施 / 実施済み|
-|.envをコミットしていない|未実施 / 実施済み|
+|Check|Status|
+|AWS IAM OIDC Provider created|Not done / Done|
+|IAM Role for GitHub Actions created|Not done / Done|
+|Trust Policy restricted to repo/main|Not done / Done|
+|IAM Policy has minimal S3/CloudFront permissions|Not done / Done|
+|id-token: write configured in Workflow|Not done / Done|
+|AWS_ROLE_ARN configured in GitHub Secrets|Not done / Done|
+
+27.3 Workflow Checks
+
+|   |   |
+|---|---|
+|Check|Status|
+|ci.yml created|Not done / Done|
+|deploy-frontend.yml created|Not done / Done|
+|CI runs on PRs|Not done / Done|
+|CD runs on main pushes|Not done / Done|
+|S3 sync succeeds|Not done / Done|
+|CloudFront Invalidation succeeds|Not done / Done|
+
+27.4 Security Checks
+
+|   |   |
+|---|---|
+|Check|Status|
+|Root access keys are not used|Not done / Done|
+|AdministratorAccess is not used|Not done / Done|
+|AWS_SECRET_ACCESS_KEY is not logged|Not done / Done|
+|GitHub Secrets contains no unnecessary values|Not done / Done|
+|.env is not committed|Not done / Done|
 
   
 
-28. トラブルシューティング
+28. Troubleshooting
 
-28.1 OIDC AssumeRoleに失敗する
-
-|   |   |
-|---|---|
-|原因|対応|
-|id-token: write がない|workflow permissionsを追加|
-|Trust Policyのrepo名違い|<github-owner>/<repo-name> を確認|
-|branch条件違い|refs/heads/main を確認|
-|OIDC Provider未作成|IAM Identity providerを確認|
-|audience違い|sts.amazonaws.com を確認|
-
-28.2 S3 syncに失敗する
+28.1 OIDC AssumeRole Fails
 
 |   |   |
 |---|---|
-|原因|対応|
-|S3_BUCKET_NAME違い|GitHub Secretsを確認|
-|s3:PutObject不足|IAM Policyを確認|
-|s3:ListBucket不足|IAM Policyを確認|
-|outディレクトリがない|build設定を確認|
-|working-directory違い|workflowを確認|
+|Cause|Response|
+|Missing id-token: write|Add workflow permissions|
+|Wrong repo name in Trust Policy|Check <github-owner>/<repo-name>|
+|Wrong branch condition|Check refs/heads/main|
+|OIDC Provider not created|Check the IAM Identity provider|
+|Wrong audience|Check sts.amazonaws.com|
 
-28.3 CloudFront Invalidationに失敗する
-
-|   |   |
-|---|---|
-|原因|対応|
-|Distribution ID違い|Secretsを確認|
-|cloudfront:CreateInvalidation不足|IAM Policyを確認|
-|Distributionが無効|CloudFront状態を確認|
-|paths指定ミス|--paths "/*" を確認|
-
-28.4 buildに失敗する
+28.2 S3 sync Fails
 
 |   |   |
 |---|---|
-|原因|対応|
-|依存関係不足|lockファイル確認|
-|TypeScriptエラー|npm run typecheck をローカル実行|
-|環境変数不足|GitHub Variablesを確認|
-|静的export非対応コード|Next.jsの動的機能利用を確認|
+|Cause|Response|
+|Wrong S3_BUCKET_NAME|Check GitHub Secrets|
+|Missing s3:PutObject|Check the IAM Policy|
+|Missing s3:ListBucket|Check the IAM Policy|
+|Missing out directory|Check build settings|
+|Wrong working-directory|Check the workflow|
 
-28.5 デプロイ成功したが画面が古い
+28.3 CloudFront Invalidation Fails
 
 |   |   |
 |---|---|
-|原因|対応|
-|CloudFrontキャッシュ|Invalidation確認|
-|ブラウザキャッシュ|hard reload|
-|S3に古いファイル|sync結果確認|
-|別Distributionを見ている|URL確認|
+|Cause|Response|
+|Wrong Distribution ID|Check Secrets|
+|Missing cloudfront:CreateInvalidation|Check the IAM Policy|
+|Distribution disabled|Check CloudFront status|
+|Incorrect paths argument|Check --paths "/*"|
+
+28.4 Build Fails
+
+|   |   |
+|---|---|
+|Cause|Response|
+|Missing dependencies|Check the lock file|
+|TypeScript errors|Run npm run typecheck locally|
+|Missing environment variables|Check GitHub Variables|
+|Code incompatible with static export|Check use of Next.js dynamic features|
+
+28.5 Deployment Succeeds but the Page Is Old
+
+|   |   |
+|---|---|
+|Cause|Response|
+|CloudFront cache|Check Invalidation|
+|Browser cache|hard reload|
+|Old files in S3|Check sync results|
+|Viewing another Distribution|Check the URL|
 
   
 
-29. Phase別CI/CD実装順序
+29. CI/CD Implementation Order by Phase
 
-29.1 Phase 1：静的サイト公開
+29.1 Phase 1: Publish the Static Site
 
-1. 手動でS3/CloudFrontへデプロイ
+1. Deploy manually to S3/CloudFront
 
-2. ci.ymlを追加
+2. Add ci.yml
 
-3. deploy-frontend.ymlを追加
+3. Add deploy-frontend.yml
 
-4. アクセスキー方式またはOIDCでAWS認証
+4. Authenticate with AWS using access keys or OIDC
 
-5. main pushでS3 sync + CloudFront Invalidation
+5. S3 sync + CloudFront Invalidation on main pushes
 
-6. OIDC方式へ移行
+6. Migrate to OIDC
 
-29.2 Phase 2：問い合わせAPI追加
+29.2 Phase 2: Add the Contact API
 
-1. LambdaコードをGitHub管理
+1. Manage Lambda code in GitHub
 
-2. LambdaユニットテストをCIへ追加
+2. Add Lambda unit tests to CI
 
-3. 必要ならzipデプロイWorkflow追加
+3. Add a zip deployment Workflow if necessary
 
-4. SAMテンプレート作成
+4. Create a SAM template
 
-5. SAM build/deployを手動実行
+5. Run SAM build/deploy manually
 
-6. SAM deployをGitHub Actions化
+6. Move SAM deploy to GitHub Actions
 
-29.3 Phase 3：収益化準備
+29.3 Phase 3: Prepare for Monetization
 
-1. 独自ドメイン導入
+1. Introduce a custom domain
 
-2. NEXT_PUBLIC_SITE_URLを独自ドメインへ変更
+2. Change NEXT_PUBLIC_SITE_URL to the custom domain
 
-3. Search Console / Analytics用の環境変数追加
+3. Add environment variables for Search Console / Analytics
 
-4. sitemap生成確認をCIに追加
+4. Add sitemap generation verification to CI
 
-5. AdSenseタグ導入時にCSP確認
+5. Check CSP when introducing AdSense tags
 
-29.4 Phase 4：学習アプリ化
+29.4 Phase 4: Build the Learning Application
 
-1. Cognito設定をIaC化検討
+1. Consider managing Cognito settings as IaC
 
-2. 認証付きAPIのテスト追加
+2. Add tests for authenticated APIs
 
-3. backend deploy workflow分離
+3. Separate backend deploy workflows
 
-4. dev/prod環境分離
+4. Separate dev/prod environments
 
-5. DBマイグレーション・データ保護方針追加
+5. Add DB migration and data protection guidelines
 
   
 
-6. MVPで実装するCI/CD最小セット
+6. Minimum CI/CD Set for the MVP
 
-30.1 最小セット
+30.1 Minimum Set
 
-MVPでは以下だけでよい。
+The following alone is sufficient for the MVP.
 
 ci.yml
 
@@ -2011,36 +2011,36 @@ deploy-frontend.yml
 
   - cloudfront create-invalidation
 
-30.2 MVPでやらないこと
+30.2 What Not to Do in the MVP
 
-SAM自動デプロイ
+Automated SAM deployment
 
-Terraform自動デプロイ
+Automated Terraform deployment
 
-Cognito自動構築
+Automated Cognito provisioning
 
-複数環境デプロイ
+Multi-environment deployment
 
-自動E2Eテスト
+Automated E2E testing
 
-WAF設定自動化
+Automated WAF configuration
 
-CloudFront作成自動化
+Automated CloudFront creation
 
-S3バケット作成自動化
+Automated S3 bucket creation
 
-理由：
+Reasons:
 
-- MVP公開が遅れる
-- IAM権限が広がる
-- 課金事故リスクが上がる
-- 学習初期には運用が複雑すぎる
+- Delays the MVP release
+- Expands IAM permissions
+- Increases the risk of unexpected charges
+- Makes operations too complex for the initial learning stage
 
   
 
-31. GitHub READMEに記載する内容
+31. Content for the GitHub README
 
-31.1 英語版例
+31.1 English Version Example
 
 ## CI/CD
 
@@ -2094,13 +2094,13 @@ The deployment role only has the minimum permissions required for:
 
 - `cloudfront:CreateInvalidation`
 
-31.2 日本語版例
+31.2 Original Japanese Version Example, Translated into English
 
 ## CI/CD
 
   
 
-本プロジェクトでは、GitHub Actionsを使ってCI/CDを構成しています。
+This project uses GitHub Actions for CI/CD.
 
   
 
@@ -2108,13 +2108,13 @@ The deployment role only has the minimum permissions required for:
 
   
 
-Pull Request作成時に以下を実行します。
+The following runs when a Pull Request is created.
 
   
 
 - Lint
 
-- TypeScript型チェック
+- TypeScript type checking
 
 - Next.js build
 
@@ -2124,19 +2124,19 @@ Pull Request作成時に以下を実行します。
 
   
 
-`main` ブランチへmergeされると、GitHub Actionsが静的フロントエンドをビルドし、Amazon S3へデプロイした後、CloudFront Invalidationを実行します。
+When changes are merged into the `main` branch, GitHub Actions builds the static frontend, deploys it to Amazon S3, and then runs CloudFront Invalidation.
 
   
 
-### AWS認証
+### AWS Authentication
 
   
 
-推奨構成ではGitHub OIDCを利用し、長期AWSアクセスキーをGitHub Secretsに保存せず、IAM Roleを一時的にAssumeRoleします。
+The recommended configuration uses GitHub OIDC to temporarily assume an IAM Role without storing long-term AWS access keys in GitHub Secrets.
 
   
 
-デプロイRoleには、以下の最小権限のみ付与しています。
+The deployment Role is granted only the following minimum permissions.
 
   
 
@@ -2150,108 +2150,108 @@ Pull Request作成時に以下を実行します。
 
   
 
-32. 面接で説明するポイント
+32. Interview Talking Points
 
-32.1 なぜGitHub Actionsを使うのか
+32.1 Why Use GitHub Actions?
 
-GitHubでソースコードを管理しているため、Pull Request時の検証とmainブランチへの反映後の自動デプロイを一元管理できるからです。
+Because source code is managed in GitHub, validation on Pull Requests and automated deployment after updates to main can be managed in one place.
 
-個人開発でもCI/CDを導入することで、手動デプロイミスを減らし、ポートフォリオとして運用設計を示せます。
+Introducing CI/CD even for an individual project reduces manual deployment mistakes and demonstrates operational design in the portfolio.
 
-32.2 なぜmainブランチだけ本番デプロイするのか
+32.2 Why Deploy to Production Only from main?
 
-featureブランチの作業中コードを誤って本番反映しないためです。
+To avoid accidentally publishing work-in-progress code from feature branches to production.
 
-PRではlint、typecheck、buildまで行い、mainへmergeされた安定版のみS3とCloudFrontへデプロイする設計にしています。
+PRs run lint, typecheck, and build, while only the stable version merged into main is deployed to S3 and CloudFront.
 
-32.3 なぜOIDCを使うのか
+32.3 Why Use OIDC?
 
-GitHub Secretsに長期AWSアクセスキーを保存しないためです。
+To avoid storing long-term AWS access keys in GitHub Secrets.
 
-OIDCを使うことで、GitHub Actions実行時だけAWS IAM Roleを一時的に引き受けられるため、認証情報漏えいリスクを下げられます。
+OIDC allows GitHub Actions to assume an AWS IAM Role temporarily only during execution, reducing credential exposure risk.
 
-32.4 なぜGitHub Actionsに最小権限しか付けないのか
+32.4 Why Grant GitHub Actions Only Minimal Permissions?
 
-デプロイに必要なのはS3へのファイル同期とCloudFrontのInvalidationだけです。
+Deployment only requires file synchronization to S3 and CloudFront Invalidation.
 
-そのため、IAMやDynamoDB、Lambda、EC2などを操作する権限は付与していません。
+Therefore, permissions to operate IAM, DynamoDB, Lambda, EC2, and similar services are not granted.
 
-仮にWorkflowが悪用されても、影響範囲を限定できます。
+Even if the Workflow is abused, the scope of impact is limited.
 
-32.5 なぜLambdaの自動デプロイをMVPでやらないのか
+32.5 Why Not Automate Lambda Deployment in the MVP?
 
-MVPではまず静的サイト公開を安定させることを優先しています。
+The MVP prioritizes stabilizing publication of the static site first.
 
-Lambdaは問い合わせAPIのみで変更頻度が低いため、最初は手動またはzip更新で十分です。
+Lambda is used only for the contact API and changes infrequently, so manual deployment or zip updates are sufficient initially.
 
-Phase 2以降でSAM化してから自動デプロイする方が安全で管理しやすいと判断しています。
+Automating deployment after adopting SAM in Phase 2 or later is considered safer and easier to manage.
 
   
 
-33. 受け入れ基準
+33. Acceptance Criteria
 
-33.1 CI/CD設計書の受け入れ基準
+33.1 CI/CD Design Acceptance Criteria
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-CICD-DOC-001|MVP対象のCI/CD範囲が定義されている|
-|AC-CICD-DOC-002|CIとCDが分離されている|
-|AC-CICD-DOC-003|mainブランチのみ本番デプロイする方針が定義されている|
-|AC-CICD-DOC-004|GitHub OIDC方式が定義されている|
-|AC-CICD-DOC-005|アクセスキー方式の注意点が定義されている|
-|AC-CICD-DOC-006|GitHub Actions用IAM最小権限が定義されている|
-|AC-CICD-DOC-007|S3 syncとCloudFront Invalidationが定義されている|
-|AC-CICD-DOC-008|Lambda/SAM自動デプロイがPhase 2以降として分離されている|
-|AC-CICD-DOC-009|ロールバック方針が定義されている|
-|AC-CICD-DOC-010|トラブルシューティングが定義されている|
+|ID|Criterion|
+|AC-CICD-DOC-001|MVP CI/CD scope is defined|
+|AC-CICD-DOC-002|CI and CD are separated|
+|AC-CICD-DOC-003|The policy to deploy to production only from main is defined|
+|AC-CICD-DOC-004|The GitHub OIDC method is defined|
+|AC-CICD-DOC-005|Access-key authentication cautions are defined|
+|AC-CICD-DOC-006|Least-privilege IAM for GitHub Actions is defined|
+|AC-CICD-DOC-007|S3 sync and CloudFront Invalidation are defined|
+|AC-CICD-DOC-008|Automated Lambda/SAM deployment is separated into Phase 2 or later|
+|AC-CICD-DOC-009|Rollback guidelines are defined|
+|AC-CICD-DOC-010|Troubleshooting is defined|
 
-33.2 MVP実装完了基準
+33.2 MVP Implementation Completion Criteria
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-CICD-MVP-001|ci.ymlが作成されている|
-|AC-CICD-MVP-002|Pull Request時にlint/typecheck/buildが実行される|
-|AC-CICD-MVP-003|deploy-frontend.ymlが作成されている|
-|AC-CICD-MVP-004|main pushでS3へデプロイされる|
-|AC-CICD-MVP-005|CloudFront Invalidationが実行される|
-|AC-CICD-MVP-006|GitHub Actions RoleがS3/CloudFront最小権限である|
-|AC-CICD-MVP-007|rootアクセスキーを使っていない|
-|AC-CICD-MVP-008|GitHub Actionsログに秘密情報が出力されない|
-|AC-CICD-MVP-009|デプロイ後にCloudFront URLで最新サイトが確認できる|
-|AC-CICD-MVP-010|失敗時にGit revertでロールバックできる|
+|ID|Criterion|
+|AC-CICD-MVP-001|ci.yml has been created|
+|AC-CICD-MVP-002|lint/typecheck/build run on Pull Requests|
+|AC-CICD-MVP-003|deploy-frontend.yml has been created|
+|AC-CICD-MVP-004|Pushes to main deploy to S3|
+|AC-CICD-MVP-005|CloudFront Invalidation runs|
+|AC-CICD-MVP-006|The GitHub Actions Role has minimal S3/CloudFront permissions|
+|AC-CICD-MVP-007|Root access keys are not used|
+|AC-CICD-MVP-008|No secrets are output to GitHub Actions logs|
+|AC-CICD-MVP-009|The latest site can be verified at the CloudFront URL after deployment|
+|AC-CICD-MVP-010|Git revert can roll back a failed deployment|
 
   
 
-34. 今後作成する関連設計書
+34. Related Design Documents to Create Next
 
-本CI/CD設計書の次に、以下を作成する。
+Create the following after this CI/CD design document.
 
-1. 運用監視設計書
-2. 開発タスク一覧
-3. GitHub README草案
-4. MVP実装スケジュール
-5. 初期コンテンツ作成テンプレート
-6. テスト設計書
-
-  
-
-7. 結論
-
-本プロダクトのCI/CDでは、MVP段階でフロントエンド静的サイトの自動デプロイを最優先とする。
-
-MVPで実装するCI/CDは以下で十分である。
-
-Pull Request時：lint / typecheck / build
-
-main push時：build → S3 sync → CloudFront Invalidation
-
-AWS認証は、最終的にはGitHub OIDCを利用し、長期アクセスキーをGitHub Secretsに保存しない構成を推奨する。
+1. Operational monitoring design
+2. Development task list
+3. GitHub README draft
+4. MVP implementation schedule
+5. Initial content creation template
+6. Test design
 
   
 
-GitHub Actionsに付与する権限は、S3へのデプロイとCloudFront Invalidationに限定する。
+7. Conclusion
+
+This product's CI/CD prioritizes automated deployment of the static frontend site during the MVP stage.
+
+The following CI/CD implementation is sufficient for the MVP.
+
+On Pull Requests: lint / typecheck / build
+
+On main pushes: build → S3 sync → CloudFront Invalidation
+
+For AWS authentication, ultimately use GitHub OIDC with a configuration that does not store long-term access keys in GitHub Secrets.
+
+  
+
+Restrict GitHub Actions permissions to S3 deployment and CloudFront Invalidation.
 
 s3:ListBucket
 
@@ -2261,17 +2261,17 @@ s3:DeleteObject
 
 cloudfront:CreateInvalidation
 
-MVPでは、Lambda、API Gateway、DynamoDB、CloudFront、S3バケットそのものの作成は自動化しない。
+In the MVP, do not automate creation of Lambda, API Gateway, DynamoDB, CloudFront, or the S3 bucket itself.
 
-理由は、初期段階でIaCを広げすぎると権限・コスト・運用が複雑になり、公開までのスピードが落ちるためである。
+Expanding IaC too far initially complicates permissions, costs, and operations, slowing the path to release.
 
-Phase 2以降で、Lambda zipデプロイまたはAWS SAMによるバックエンド自動デプロイを追加する。
+Add automated backend deployment using Lambda zip deployment or AWS SAM in Phase 2 or later.
 
-このCI/CD設計により、以下を実現できる。
+This CI/CD design makes it possible to:
 
-- 手動デプロイミスを減らせる
-- PR時に品質チェックできる
-- main反映後に自動公開できる
-- AWS認証情報の漏えいリスクを下げられる
-- IAM最小権限を実践できる
-- 面接でCI/CD・セキュリティ・運用設計を説明できる
+- Reduce manual deployment mistakes
+- Check quality on PRs
+- Publish automatically after updates to main
+- Reduce AWS credential exposure risk
+- Practice least-privilege IAM
+- Explain CI/CD, security, and operational design in interviews

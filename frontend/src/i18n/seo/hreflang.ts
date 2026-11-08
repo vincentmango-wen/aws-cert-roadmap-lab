@@ -73,33 +73,22 @@ export function createLocalizedPathname(locale: Locale, pathname: string): Local
 }
 
 /**
- * x-default 用の URL。
- *
- * 封印中（`LOCALIZED_ROUTES_PUBLISHED === false`）は `createHreflangAlternates()` が
- * 空を返すため未使用だが、解封時に x-default を再投入するために export を残している。
+ * URL for x-default. Unused while sealed because createHreflangAlternates() returns an empty object;
+ * retain the export to restore x-default on publication.
  */
 export function createXDefaultUrl(): string {
   return createAbsoluteUrl(X_DEFAULT_PATHNAME);
 }
 
 /**
- * 任意の path に対して ja / en / zh-Hant / x-default の hreflang URL を生成する。
+ * Generate ja/en/zh-Hant/x-default hreflang URLs for any path. The path-agnostic design supports terms,
+ * comparisons, blog, architectures and question paths (/questions, /questions/clf, /questions/saa,
+ * /questions/<questionId>) without extra code. For /questions/clf-001, ja and x-default point to that
+ * path while en/zh-Hant use /en and /zh prefixes.
  *
- * path-agnostic 設計のため、terms / comparisons / blog / architectures に加えて
- * questions 系 path (`/questions`, `/questions/clf`, `/questions/saa`,
- * `/questions/<questionId>`) も追加コード不要でそのまま利用できる。
- *
- * 例:
- *   createHreflangAlternates("/questions/clf-001")
- *     → { ja: "https://.../questions/clf-001",
- *         en: "https://.../en/questions/clf-001",
- *         "zh-Hant": "https://.../zh/questions/clf-001",
- *         "x-default": "https://.../questions/clf-001" }
- *
- * ACR-012（#322）の封印中は **空オブジェクトを返す**。
- * hreflang アノテーションは 2 言語以上のクラスタでのみ意味を持ち、ja 単独で
- * `{ ja: url, "x-default": url }` を出すのは canonical と重複する無意味なシグナルで、
- * Search Console に警告が出るため。解封時に自動で 4 件へ戻る。
+ * Return an empty object while sealed (ACR-012 / #322). Hreflang is meaningful for multilingual
+ * clusters; a Japanese-only ja/x-default pair duplicates canonical signals and triggers Search Console
+ * warnings. All four entries return automatically on publication.
  */
 export function createHreflangAlternates(pathname: string): Partial<HreflangAlternates> {
   if (!LOCALIZED_ROUTES_PUBLISHED) {

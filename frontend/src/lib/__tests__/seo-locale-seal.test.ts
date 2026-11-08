@@ -1,13 +1,7 @@
 /**
- * seo-locale-seal.test.ts
- *
- * ACR-012 (#322) invariant 第 2 層。
- *
- * `createPageMetadata` / `createLocaleAwareRobots` が
- * - 封印中の en/zh path に `{index:false, follow:false}` を返すこと
- * - ja path を巻き添えにしないこと（特に `/entertainment` 前方一致誤爆）
- * - 封印中は hreflang alternates を一切生やさないこと
- * を検証する。
+ * ACR-012 (#322), invariant layer 2. Verify createPageMetadata/createLocaleAwareRobots returns
+ * index:false, follow:false for sealed en/zh paths, leaves Japanese paths untouched (especially
+ * /entertainment prefix collisions), and produces no hreflang alternates while sealed.
  */
 import { describe, expect, it } from "vitest";
 

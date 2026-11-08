@@ -1,9 +1,6 @@
 /**
- * release-gate.test.ts
- *
- * ACR-012 (#322) 封印フラグの単体テスト。
- * 封印時 / 解封時の assert を `describe.skipIf` / `describe.runIf` で同居させ、
- * 「解封 = LOCALIZED_ROUTES_PUBLISHED を 1 行変えるだけ」を成立させる。
+ * ACR-012 (#322) release-flag unit tests. Keep sealed/published assertions together using
+ * describe.skipIf / describe.runIf so publication requires changing only LOCALIZED_ROUTES_PUBLISHED.
  */
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -24,7 +21,9 @@ const releaseGateSource = readFileSync(
   "utf8",
 );
 
-/** `scripts/verify-locale-seal.mjs` の readReleaseGateFlag() と同一の正規表現。 */
+/**
+ * Same regular expression as readReleaseGateFlag() in scripts/verify-locale-seal.mjs.
+ */
 const FLAG_DECLARATION = /LOCALIZED_ROUTES_PUBLISHED\s*:\s*boolean\s*=\s*(true|false)/;
 
 describe("release gate constant", () => {
@@ -42,9 +41,9 @@ describe("release gate constant", () => {
   });
 
   /**
-   * 第 3 層（`scripts/verify-locale-seal.mjs`）はフラグを TypeScript として import できないため、
-   * ソースを正規表現で読み取っている。宣言の書き方が変わるとビルド時検査が
-   * 例外で落ちる（= デプロイが止まる）ので、その契約をここで固定する。
+   * Layer 3 (scripts/verify-locale-seal.mjs) cannot import the TypeScript flag, so it reads the source
+   * with a regular expression. Changing the declaration syntax would throw during build validation and
+   * block deployment; preserve that contract here.
    */
   it("keeps the source declaration readable by the build-time checker", () => {
     const match = releaseGateSource.match(FLAG_DECLARATION);
@@ -57,7 +56,7 @@ describe("release gate constant", () => {
   });
 
   it("keeps the unsealing preconditions documented", () => {
-    // 解封手順が消えると「フラグを true にするだけ」で既知欠陥ごと公開されてしまう。
+    // Without documented preconditions, simply setting the flag to true could publish known defects.
     for (const marker of ["#319", "#305", "#334", "createLocaleAwareRobots", "x-default"]) {
       expect(releaseGateSource, `解封前提条件から ${marker} が消えています`).toContain(marker);
     }
@@ -99,7 +98,7 @@ describe.skipIf(LOCALIZED_ROUTES_PUBLISHED)("sealed mode (ja only)", () => {
   });
 
   it("does not misfire on ja pathnames that merely start with the en/zh letters", () => {
-    // `startsWith("/en")` 前方一致誤爆のトラップ専用。
+    // Trap for incorrect startsWith("/en") prefix matching.
     expect(isSealedPathname("/entertainment")).toBe(false);
     expect(isSealedPathname("/environment")).toBe(false);
     expect(isSealedPathname("/energy")).toBe(false);

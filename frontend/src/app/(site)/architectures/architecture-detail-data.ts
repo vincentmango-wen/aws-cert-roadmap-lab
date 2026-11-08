@@ -1,12 +1,8 @@
 /**
- * architecture-detail-data.ts
- *
- * locale 別の構成図記事メタ + ヘルパー集約 (SSoT).
- * comparisons の comparison-detail-data.ts と命名・配置を 1:1 で揃え、3 言語ページが
- * 同じ shape で薄いラッパーを書ける形にする。
- *
- * メタデータは frontend/contents/architectures/architectures.{ja,en,zh}.json を読み込む。
- * 本文は architecture-content-loader.ts 経由で MDX から取得する。
+ * Localized architecture metadata and helpers (single source of truth). Match comparison-detail-data.ts
+ * naming and placement so all three locale pages use thin wrappers of the same shape. Read metadata from
+ * frontend/contents/architectures/architectures.{ja,en,zh}.json and MDX bodies through
+ * architecture-content-loader.ts.
  */
 import architecturesEnData from "../../../../contents/architectures/architectures.en.json";
 import architecturesJaData from "../../../../contents/architectures/architectures.ja.json";
@@ -152,11 +148,9 @@ export const levelLabelsByLocale: Record<
 };
 
 /**
- * 構成図記事の category 表示ラベル (locale 別).
- *
- * key は architectures.{ja,en,zh}.json 内の category 値 (英語固定 9 軸) を網羅する。
- * anchor id (#static-hosting 等) は category.toLowerCase().replace(/\s+/g, "-") で
- * 生成し、URL 安定性のため locale 間で共通の英語 key を利用する.
+ * Localized architecture category labels. Keys cover the nine fixed English category values in
+ * architectures.{ja,en,zh}.json. Generate anchors such as #static-hosting using
+ * category.toLowerCase().replace(/\s+/g, "-"); shared English keys keep URLs stable across locales.
  */
 export const architectureCategoryLabelsByLocale: Record<
   ArchitectureLocale,
@@ -198,9 +192,8 @@ export const architectureCategoryLabelsByLocale: Record<
 };
 
 /**
- * 与えられた category が ArchitectureCategory に含まれるかを判定するヘルパー.
- * 含まれれば locale 別ラベルを返し、そうでなければ category 値そのものを返す
- * (フォールバック / 将来の category 追加時の防御).
+ * Return the localized label for a known ArchitectureCategory; otherwise preserve the category value as
+ * a defensive fallback for future categories.
  */
 export function formatArchitectureCategoryLabel(
   locale: ArchitectureLocale,
@@ -226,17 +219,14 @@ export function getArchitectures(
 }
 
 /**
- * Phase A scaffold モード:
- * en/zh JSON が空配列のとき、ja JSON にフォールバックする。
- * これにより `output: "export"` の Next.js build が壊れず、Phase B で en/zh が
- * 揃った段階で自動的に当該 locale 配列を返すように切り替わる。
+ * Phase A scaffold mode: fall back to Japanese JSON when en/zh arrays are empty, keeping Next.js output:
+ * export builds working. Automatically use the localized array once Phase B translations exist. This
+ * temporary fallback satisfies design principle 0-2 #3 (preserve Japanese pages) and Step 10 (passing
+ * builds). architectures-locale-parity.test.ts switches between scaffold/full modes based on whether
+ * en/zh arrays are empty.
  *
- * 設計指針 0-2 #3 (既存日本語ページを壊さない) と Step 10 (build pass) を両立する
- * ための一時 fallback. parity test は en/zh が空配列か否かで scaffold/本実装モードを
- * 自動で切り替える (architectures-locale-parity.test.ts).
- *
- * TODO(CR1-L2): Phase B 完了後は dead path。en/zh JSON が 0 件のとき発火する
- * scaffold 救済だが、現状 3 言語とも 10 件揃っており到達不能。次フェーズで撤去候補。
+ * TODO(CR1-L2): This became a dead path after Phase B. It only rescues empty en/zh arrays, but all three
+ * locales now have 10 articles. Consider removing it next phase.
  */
 function getArchitecturesWithFallback(
   locale: ArchitectureLocale,
@@ -272,8 +262,8 @@ export function getArchitectureMetaBySlug(
 }
 
 /**
- * locale 別の構成図記事 (メタ + 本文 MDX) を取得する。
- * 本文 MDX が存在しなければ空文字を入れる (build を落とさないフォールバック)。
+ * Get a localized architecture article (metadata and MDX body). Use an empty body if MDX is missing so
+ * the build does not fail.
  */
 export function getArchitectureBySlug(
   locale: ArchitectureLocale,
@@ -337,12 +327,10 @@ export function createArchitectureDetailMetadataInput(
 }
 
 /**
- * locale 別の SVG パスを返す。
- * meta.diagramPath (ja の無印パス / 例 /images/architectures/foo.svg) を基準に
- * en → foo.en.svg / zh → foo.zh.svg へ拡張子直前にサフィックスを挿入する。
- * diagramPath 未設定なら undefined (SVG セクション非表示).
- *
- * 設計書 §6-3 / SSoT はこの関数 1 箇所に集約する.
+ * Return a localized SVG path. Starting from meta.diagramPath (the unsuffixed Japanese path, e.g.
+ * /images/architectures/foo.svg), insert .en or .zh before the extension. Return undefined when
+ * diagramPath is absent, hiding the SVG section. This function is the single source of truth for design
+ * section 6-3.
  */
 const DIAGRAM_SUFFIX_BY_LOCALE: Record<ArchitectureLocale, string> = {
   ja: "",

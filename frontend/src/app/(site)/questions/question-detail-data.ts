@@ -19,15 +19,14 @@ export type QuestionStaticParams = {
 };
 
 /**
- * QuestionPlayer UI 文言の型。client component 側 SSoT として
- * components/questions/question-player-labels.ts に切り出し済 (P5 R1 Minor-1/Minor-2)。
- * 後方互換性のためここで re-export する。
+ * QuestionPlayer UI-label type. Moved to components/questions/question-player-labels.ts as the
+ * client-safe source of truth (P5 R1 Minor-1/Minor-2). Re-exported here for backward compatibility.
  */
 export type QuestionPlayerLabels = QuestionPlayerLabelsSource;
 
 /**
- * QuestionPlayer UI 文言辞書 (SSoT は components/questions/question-player-labels.ts)。
- * 後方互換性のためここで re-export する。
+ * QuestionPlayer UI dictionary. The source of truth is components/questions/question-player-labels.ts;
+ * re-export here for backward compatibility.
  */
 export const questionPlayerLabelsByLocale = questionPlayerLabelsByLocaleSource;
 

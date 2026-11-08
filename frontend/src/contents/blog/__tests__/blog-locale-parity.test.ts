@@ -1,25 +1,20 @@
 /**
- * blog-locale-parity.test.ts
+ * Scaffold-aware invariant tests for design P5-050 section 6. Keep
+ * frontend/contents/blog/{ja,en,zh}/<slug>.mdx synchronized with the src/contents/blog/blogPosts.ts
+ * registry, detecting missing translations, slug drift, metadata inconsistency and missing MDX.
  *
- * 設計書 P5-050 §6 の invariant test (scaffold 対応).
+ * Invariants:
+ * R. Registry slugs equal Japanese MDX slugs (always checked; 25 posts).
+ * 1. All three locale slug sets match when en/zh are nonempty.
+ * 2. postId matches across locales per slug.
+ * 3. Shared publishedAt/updatedAt/published metadata matches; localized display fields are excluded (see
+ * assertions below).
+ * 4. Every localized MDX file exists.
+ * 5. Required frontmatter fields are present and nonempty.
+ * 6. Leading H1 equals the frontmatter title or is its prefix.
  *
- * `frontend/contents/blog/{ja,en,zh}/<slug>.mdx` と `src/contents/blog/blogPosts.ts`
- * registry が、翻訳追加忘れ・slug ズレ・メタデータ不整合・MDX 消失なしに 3 言語
- * 完全並列で維持されていることを構造的に担保する。
- *
- * 検証 invariant:
- *  (R) registry の slug 集合 = ja MDX の slug 集合 (常時発火 / 25 件)
- *  (1) ja/en/zh MDX の slug 集合が完全一致 (en/zh が空でないときのみ)
- *  (2) 同 slug で postId が ja/en/zh 一致
- *  (3) 同 slug で publishedAt/updatedAt/category/published が ja/en/zh 一致
- *      (title / description / tags / targetKeywords は翻訳対象のため除外)
- *  (4) 全 slug について {ja,en,zh}/<slug>.mdx が fs.existsSync = true
- *  (5) 各 MDX の frontmatter に必須フィールドが存在 (非空)
- *  (6) MDX 先頭 H1 が frontmatter title と一致 or title.startsWith(h1Text)
- *
- * scaffold モード (en/zh いずれかが空配列) は将来 locale 追加直後の中間状態
- * (翻訳追加前) を build 落ちさせない安全弁として残置. (R) と ja 単独 invariant は
- * scaffold モードでも常時発火させる.
+ * Scaffold mode (empty en or zh arrays) avoids failing builds before translations for a newly added
+ * locale exist. R and Japanese-only invariants still always run.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -250,8 +245,8 @@ describe("blog locale parity", () => {
   it.skipIf(isScaffoldMode)(
     "(3) shared metadata fields (publishedAt/updatedAt/published) are identical across ja/en/zh per slug",
     () => {
-      // category は ja="AWSサービス解説" / en="AWS Services" / zh="AWS 服務解說" のように
-      // locale 別に翻訳されるため、title/description/tags と同様に除外する。
+      // Category labels are translated per locale (for example, AWS Services in English),
+      // so exclude them just like title, description and tags.
       const SHARED_FIELDS: Array<keyof ParsedFrontmatter> = [
         "publishedAt",
         "updatedAt",

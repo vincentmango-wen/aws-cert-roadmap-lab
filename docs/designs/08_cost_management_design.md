@@ -1,664 +1,664 @@
-AWS資格学習サイト コスト管理設計書
+AWS Certification Study Site Cost Management Design
 
-1. 文書情報
-
-|   |   |
-|---|---|
-|項目|内容|
-|文書名|AWS資格学習サイト コスト管理設計書|
-|対象プロダクト|AWS資格ロードマップラボ|
-|対象フェーズ|MVP開発 〜 Phase 4 学習アプリ化|
-|目的|AWS利用コストを最小化し、課金事故を防ぎながらポートフォリオとして運用するための設計を定義する|
-|想定技術|S3 / CloudFront / API Gateway / Lambda / DynamoDB / CloudWatch / IAM / AWS Budgets / Route 53 / ACM / Cognito / EventBridge / SES|
-|作成日|2026-05-30|
-
-  
-
-2. 本設計書の目的
-
-本設計書では、AWS資格学習サイト「AWS資格ロードマップラボ」をAWS上で低コストに運用するための方針、課金ポイント、利用サービス、禁止サービス、監視ルール、運用チェックリストを定義する。
-
-本プロダクトの前提は以下である。
-
-- 個人開発のポートフォリオである
-- AWS Cloud Practitioner / SAA の学習内容を活かす
-- 初期コストは可能な限りゼロに抑える
-- AWS無料枠を活用する
-- 広告収益化前は固定費を極力発生させない
-- 課金事故を防ぐため、AWS Budgetsを必須設定する
-
-重要なのは、完全な永続ゼロ円を保証することではない。
-
-本設計の目的は、以下である。
-
-1. 初期MVPを無料枠・低コスト構成で公開する
-2. 固定費が発生しやすいAWSサービスを避ける
-3. 課金リスクのある設定を事前に把握する
-4. AWS Budgetsと運用ルールで課金事故を防ぐ
-5. アクセス増加後は広告収益でAWS利用料を相殺する
-6. 面接で「コスト最適化を考えて設計した」と説明できる状態にする
-
-  
-
-7. コスト管理の基本方針
-
-3.1 基本方針
+1. Document Information
 
 |   |   |
 |---|---|
-|方針|内容|
-|固定費を避ける|EC2常時起動、RDS、NAT Gateway、ALBなどをMVPでは使わない|
-|サーバーレス優先|Lambda、API Gateway、DynamoDB、S3、CloudFrontを中心に構成する|
-|静的配信優先|用語集、記事、問題、構成図は静的ファイルとして配信する|
-|APIは最小限|MVPでは問い合わせAPIのみ必須とする|
-|ログを貯めすぎない|CloudWatch Logsの保存期間を短く設定する|
-|画像を軽量化する|S3保存量・CloudFront転送量を抑える|
-|課金アラート必須|AWS Budgetsを最初に設定する|
-|料金確認を習慣化|AWS Billing / Cost Explorerを定期確認する|
-|不要リソース即削除|検証後に使わないリソースは削除する|
-|独自ドメインは任意|Route 53やドメイン費用が発生するため、初期は任意とする|
+|Item|Description|
+|Document name|AWS Certification Study Site Cost Management Design|
+|Target product|AWS Certification Roadmap Lab|
+|Target phases|MVP development through Phase 4: learning application|
+|Purpose|Define a design for operating a portfolio while minimizing AWS costs and preventing unexpected charges|
+|Planned technologies|S3 / CloudFront / API Gateway / Lambda / DynamoDB / CloudWatch / IAM / AWS Budgets / Route 53 / ACM / Cognito / EventBridge / SES|
+|Created|2026-05-30|
 
   
 
-4. コスト目標
+2. Purpose of This Design Document
 
-4.1 MVPの目標
+This document defines policies, billing factors, services to use and avoid, monitoring rules, and operational checklists for operating the AWS Certification Roadmap Lab certification study site on AWS at low cost.
 
-MVP段階の目標は以下である。
+The product assumes the following.
+
+- It is an individual portfolio project
+- It applies learning from AWS Cloud Practitioner / SAA
+- Initial costs should be kept as close to zero as possible
+- It uses the AWS Free Tier
+- Fixed costs should be minimized before advertising monetization
+- AWS Budgets must be configured to prevent unexpected charges
+
+The objective is not to guarantee that costs remain completely zero forever.
+
+This design has the following objectives.
+
+1. Publish the initial MVP using the Free Tier and a low-cost architecture.
+2. Avoid AWS services likely to incur fixed costs.
+3. Identify settings with billing risks in advance.
+4. Prevent unexpected charges with AWS Budgets and operational rules.
+5. Offset AWS charges with advertising revenue after traffic increases.
+6. Be able to explain in interviews that cost optimization informed the design.
+
+  
+
+7. Fundamental Cost Management Policy
+
+3.1 Basic Policy
 
 |   |   |
 |---|---|
-|項目|目標|
-|月額AWS利用料|0円〜数十円程度を目標|
-|固定費|原則なし|
-|サーバー常時稼働|なし|
-|データベース固定費|なし|
-|問い合わせAPI|低頻度利用を前提に無料枠内を目指す|
-|CloudWatch Logs|保存期間を設定し、肥大化させない|
-|独自ドメイン|MVPでは任意|
+|Policy|Description|
+|Avoid fixed costs|Do not use always-running EC2, RDS, NAT Gateway, or ALB in the MVP|
+|Serverless first|Build primarily with Lambda, API Gateway, DynamoDB, S3, and CloudFront|
+|Static delivery first|Deliver glossaries, articles, questions, and architecture diagrams as static files|
+|Minimal APIs|Only the contact API is mandatory for the MVP|
+|Avoid accumulating logs|Set short CloudWatch Logs retention|
+|Optimize images|Reduce S3 storage and CloudFront transfer volume|
+|Mandatory billing alerts|Configure AWS Budgets first|
+|Make cost reviews routine|Regularly check AWS Billing / Cost Explorer|
+|Delete unused resources promptly|Delete resources no longer needed after testing|
+|Optional custom domain|Optional initially because Route 53 and domains incur charges|
 
-4.2 Phase別コスト目標
+  
+
+4. Cost Targets
+
+4.1 MVP Targets
+
+The MVP-stage targets are as follows.
+
+|   |   |
+|---|---|
+|Item|Target|
+|Monthly AWS charges|Aim for JPY 0 to several tens of yen|
+|Fixed costs|None as a rule|
+|Always-running servers|None|
+|Fixed database costs|None|
+|Contact API|Aim to remain within the Free Tier, assuming infrequent use|
+|CloudWatch Logs|Set retention to prevent excessive accumulation|
+|Custom domain|Optional for MVP|
+
+4.2 Cost Targets by Phase
 
 |   |   |   |
 |---|---|---|
-|Phase|構成|コスト目標|
-|Phase 1|S3 + CloudFront静的サイト|ほぼゼロに近づける|
-|Phase 2|API Gateway + Lambda + DynamoDB追加|低頻度なら無料枠内を目指す|
-|Phase 3|独自ドメイン・AdSense準備|ドメイン・Route 53費用は許容判断が必要|
-|Phase 4|Cognito・学習履歴・通知|利用者数に応じて従量課金。無料枠超過を監視|
+|Phase|Architecture|Cost target|
+|Phase 1|S3 + CloudFront static site|Approach zero|
+|Phase 2|Add API Gateway + Lambda + DynamoDB|Aim for Free Tier coverage with infrequent use|
+|Phase 3|Custom domain and AdSense preparation|Decide whether domain and Route 53 costs are acceptable|
+|Phase 4|Cognito, learning history, notifications|Usage-based billing by user count; monitor Free Tier overruns|
 
   
 
-5. 利用予定AWSサービスと課金ポイント
+5. Planned AWS Services and Billing Factors
 
-5.1 MVP利用サービス
+5.1 MVP Services
 
 |   |   |   |   |
 |---|---|---|---|
-|サービス|用途|課金ポイント|MVP利用方針|
-|S3|静的ファイル保存|保存容量、リクエスト、データ転送、管理機能|必須。軽量ファイルのみ配置|
-|CloudFront|CDN配信|データ転送、リクエスト、キャッシュ無効化など|必須。静的配信用|
-|API Gateway|問い合わせAPI|APIリクエスト数、データ転送|Phase 2で必須。HTTP API優先|
-|Lambda|問い合わせ処理|リクエスト数、実行時間、メモリ|Phase 2で必須。短時間実行|
-|DynamoDB|問い合わせ保存|読み書き、保存容量、バックアップ等|Phase 2で必須。小規模利用|
-|CloudWatch Logs|Lambdaログ|ログ取り込み、保存、分析|必須。保存期間を短く設定|
-|IAM|権限管理|通常は追加料金なし|必須。最小権限|
-|AWS Budgets|課金監視|予算監視は無料枠あり。アクション付きは注意|必須。最初に設定|
+|Service|Purpose|Billing factors|MVP usage policy|
+|S3|Static-file storage|Storage capacity, requests, data transfer, management features|Required; store lightweight files only|
+|CloudFront|CDN delivery|Data transfer, requests, cache invalidations, etc.|Required for static delivery|
+|API Gateway|Contact API|API request count and data transfer|Required in Phase 2; prefer HTTP API|
+|Lambda|Contact processing|Requests, execution duration, memory|Required in Phase 2; short executions|
+|DynamoDB|Contact storage|Reads, writes, storage, backups, etc.|Required in Phase 2; small-scale usage|
+|CloudWatch Logs|Lambda logs|Log ingestion, storage, analysis|Required; short retention|
+|IAM|Permission management|Normally no additional charge|Required; least privilege|
+|AWS Budgets|Billing monitoring|Budget monitoring has a free allowance; take care with actions|Required; configure first|
 
-5.2 Phase 3以降の候補サービス
+5.2 Candidate Services from Phase 3 Onward
 
 |   |   |   |   |
 |---|---|---|---|
-|サービス|用途|課金ポイント|利用方針|
-|Route 53|独自ドメインDNS|Hosted Zone、クエリ等|AdSense申請前後で検討|
-|ACM|SSL/TLS証明書|CloudFront用のパブリック証明書は基本無料|独自ドメイン利用時に使用|
-|Cognito|認証|MAU、機能利用に応じた課金|Phase 4で検討|
-|EventBridge|定期実行|イベント数|毎日1問配信で利用検討|
-|SES|メール送信|送信数、データ量|通知機能で利用検討|
-|WAF|Web防御|Web ACL、ルール、リクエスト数|MVPでは使わない|
-|Secrets Manager|秘密情報管理|シークレット数、APIコール|外部APIキー導入時に検討|
+|Service|Purpose|Billing factors|Usage policy|
+|Route 53|Custom-domain DNS|Hosted Zones, queries, etc.|Consider around AdSense application time|
+|ACM|SSL/TLS certificates|Public certificates for CloudFront are generally free|Use with a custom domain|
+|Cognito|Authentication|MAUs and feature usage|Consider in Phase 4|
+|EventBridge|Scheduled execution|Event count|Consider for daily-question delivery|
+|SES|Email delivery|Message count and data volume|Consider for notifications|
+|WAF|Web protection|Web ACLs, rules, requests|Do not use in MVP|
+|Secrets Manager|Secret management|Secret count and API calls|Consider when adding external API keys|
 
   
 
-6. 使わないAWSサービス
+6. AWS Services Not Used
 
-6.1 MVPでは原則使用禁止のサービス
-
-|   |   |   |
-|---|---|---|
-|サービス|使用しない理由|代替案|
-|EC2常時起動|稼働時間に応じて課金され、停止忘れリスクがある|S3 + CloudFront / Lambda|
-|RDS|固定費になりやすく、MVPでは過剰|DynamoDB / JSON|
-|NAT Gateway|小規模でも固定費が発生しやすい|VPC外Lambda / VPC不要構成|
-|ALB|常時利用料金が発生しやすい|API Gateway / CloudFront|
-|ECS / EKS|個人MVPには運用・コストが重い|Lambda|
-|OpenSearch|検索用途としては高コストになりやすい|フロント側JSON検索|
-|ElastiCache|MVPには不要|静的キャッシュ / CloudFront|
-|Redshift|分析基盤として過剰|不要|
-|SageMaker|AI機能には強いがコストが大きい|初期はAI機能なし|
-|WAF|有効だがMVPではコスト増|アクセス増加後に検討|
-
-6.2 特に危険な課金ポイント
+6.1 Services Generally Prohibited in the MVP
 
 |   |   |   |
 |---|---|---|
-|項目|危険な理由|対策|
-|NAT Gateway|作成しただけで固定費が発生しやすい|使わない|
-|RDS|停止忘れ、ストレージ、バックアップで課金|使わない|
-|EC2|停止忘れ、EBS、Elastic IPで課金|使わない|
-|ALB|常時課金されやすい|API Gatewayを使う|
-|CloudWatch Logs|無期限保存で蓄積課金|保存期間を設定|
-|S3大容量ファイル|画像・動画放置で保存・転送コスト増|圧縮・削除|
-|CloudFront大量転送|バズ・Botで転送量増加|Budgets監視、必要ならWAF検討|
-|DynamoDB Scan多用|データ増加時に読み取りコスト増|Query設計、静的管理優先|
+|Service|Reason not to use|Alternative|
+|Always-running EC2|Charges by runtime; risk of forgetting to stop instances|S3 + CloudFront / Lambda|
+|RDS|Likely fixed costs; excessive for MVP|DynamoDB / JSON|
+|NAT Gateway|Likely fixed costs even at small scale|Lambda outside a VPC / architecture without a VPC|
+|ALB|Likely ongoing charges|API Gateway / CloudFront|
+|ECS / EKS|Heavy operational and financial burden for an individual MVP|Lambda|
+|OpenSearch|Likely expensive for search|Frontend JSON search|
+|ElastiCache|Not needed for MVP|Static caching / CloudFront|
+|Redshift|Excessive analytics infrastructure|Not needed|
+|SageMaker|Powerful AI capabilities but costly|No AI features initially|
+|WAF|Effective but adds MVP costs|Consider after traffic increases|
+
+6.2 Particularly Risky Billing Factors
+
+|   |   |   |
+|---|---|---|
+|Item|Risk|Countermeasure|
+|NAT Gateway|Simply creating one can incur fixed costs|Do not use|
+|RDS|Charges from forgotten running instances, storage, and backups|Do not use|
+|EC2|Charges from forgotten running instances, EBS, and Elastic IP|Do not use|
+|ALB|Likely ongoing charges|Use API Gateway|
+|CloudWatch Logs|Accumulating charges from indefinite retention|Set retention|
+|Large S3 files|Abandoned images/videos increase storage and transfer costs|Compress and delete|
+|High CloudFront transfer volume|Viral traffic or bots increase transfers|Monitor with Budgets; consider WAF if needed|
+|Frequent DynamoDB Scans|Read costs rise as data grows|Design Queries; prioritize static management|
 
   
 
-7. サービス別コスト設計
+7. Per-service Cost Design
 
   
 
 7.1 Amazon S3
 
-7.1.1 利用目的
+7.1.1 Purpose
 
-S3は以下に利用する。
+Use S3 for the following.
 
 - HTML
 - CSS
 - JavaScript
-- 画像
-- OGP画像
-- AWS構成図画像
-- 静的JSON
+- Images
+- OGP images
+- AWS architecture diagram images
+- Static JSON
 
-7.1.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|ストレージ容量|保存しているファイル量|
-|リクエスト|GET、PUT、LISTなどの操作|
-|データ転送|インターネットへのデータ転送等|
-|管理機能|分析、レプリケーション、ライフサイクル等|
-
-7.1.3 コスト削減方針
+7.1.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|画像圧縮|PNG/JPG/WebPを適切に圧縮する|
-|動画を置かない|S3に動画教材を置かない|
-|不要ファイル削除|古いビルド成果物を残しすぎない|
-|JSONを軽量化|問題データ・用語データを必要以上に巨大化させない|
-|バージョニング注意|有効化する場合は古い世代が増えないよう管理する|
-|ログ保存注意|S3アクセスログを安易に有効化しない|
+|Billing factor|Description|
+|Storage capacity|Volume of stored files|
+|Requests|GET, PUT, LIST, and other operations|
+|Data transfer|Transfers to the internet, etc.|
+|Management features|Analytics, replication, lifecycle, etc.|
 
-7.1.4 MVPルール
+7.1.3 Cost Reduction Policy
 
 |   |   |
 |---|---|
-|ルール|内容|
-|S3容量|100MB以内を初期目標にする|
-|画像|1枚あたり300KB以下を目標|
-|OGP画像|必要最小限から開始|
-|動画|配置禁止|
-|バックアップ|原本はGitHubで管理し、S3にバックアップを置かない|
+|Policy|Description|
+|Image compression|Appropriately compress PNG/JPG/WebP|
+|No videos|Do not store video learning materials in S3|
+|Delete unused files|Avoid retaining excessive old build artifacts|
+|Lightweight JSON|Do not let question and term datasets become unnecessarily large|
+|Versioning precautions|Manage old versions to prevent accumulation if enabled|
+|Log-storage precautions|Do not enable S3 access logs casually|
+
+7.1.4 MVP Rules
+
+|   |   |
+|---|---|
+|Rule|Description|
+|S3 capacity|Initial target: within 100MB|
+|Images|Target: at most 300KB per image|
+|OGP images|Start with the minimum necessary|
+|Videos|Prohibited|
+|Backups|Manage originals in GitHub; do not store backups in S3|
 
   
 
 7.2 Amazon CloudFront
 
-7.2.1 利用目的
+7.2.1 Purpose
 
-CloudFrontは以下に利用する。
+Use CloudFront for the following.
 
-- 静的サイトの高速配信
-- HTTPS配信
-- S3直接公開の防止
-- キャッシュによるS3リクエスト削減
+- Fast static-site delivery
+- HTTPS delivery
+- Prevent direct S3 exposure
+- Reduce S3 requests through caching
 
-7.2.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|データ転送量|CloudFrontからユーザーへの転送量|
-|リクエスト数|HTTP/HTTPSリクエスト数|
-|キャッシュ無効化|無料枠を超えるInvalidationに注意|
-|CloudFront Functions / Lambda@Edge|利用する場合は別途課金|
-|ログ|標準ログ・リアルタイムログ利用時に注意|
-
-7.2.3 コスト削減方針
+7.2.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|キャッシュ活用|静的ファイルは長めにキャッシュする|
-|Invalidation最小化|毎回 /* を無効化しない|
-|画像軽量化|転送量を減らす|
-|不要なEdge機能を使わない|CloudFront Functions / Lambda@EdgeはMVPでは使わない|
-|ログを安易に有効化しない|必要になるまでCloudFrontログは無効でもよい|
+|Billing factor|Description|
+|Data transfer volume|Transfer from CloudFront to users|
+|Request count|HTTP/HTTPS requests|
+|Cache invalidation|Watch for invalidations exceeding the free allowance|
+|CloudFront Functions / Lambda@Edge|Additional charges when used|
+|Logs|Take care when using standard or real-time logs|
 
-7.2.4 MVPルール
+7.2.3 Cost Reduction Policy
 
 |   |   |
 |---|---|
-|ルール|内容|
-|Invalidation|デプロイ時のみ実行|
-|無効化パス|可能なら変更ファイルのみ。難しければ初期は /* でも頻度を抑える|
-|Edge処理|使わない|
-|WAF|使わない|
+|Policy|Description|
+|Use caching|Cache static files for longer periods|
+|Minimize invalidations|Do not invalidate /* every time|
+|Optimize images|Reduce transfer volume|
+|Avoid unnecessary edge features|Do not use CloudFront Functions / Lambda@Edge in MVP|
+|Do not enable logs casually|CloudFront logs may remain disabled until needed|
+
+7.2.4 MVP Rules
+
+|   |   |
+|---|---|
+|Rule|Description|
+|Invalidation|Only during deployment|
+|Invalidation paths|Changed files only if possible; otherwise /* is acceptable initially, with low frequency|
+|Edge processing|Do not use|
+|WAF|Do not use|
 
   
 
 7.3 API Gateway
 
-7.3.1 利用目的
+7.3.1 Purpose
 
-API Gatewayは以下に利用する。
+Use API Gateway for the following.
 
-- 問い合わせAPIの公開
-- 将来の問題取得API
-- 将来の学習履歴API
+- Expose the contact API
+- Future question-retrieval API
+- Future learning-history API
 
-7.3.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|APIコール数|リクエスト数に応じて課金|
-|データ転送|レスポンスデータ量|
-|キャッシュ|REST APIキャッシュ利用時は注意|
-|WebSocket|使用する場合はメッセージ数・接続時間|
-
-7.3.3 コスト削減方針
+7.3.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|HTTP API優先|REST APIよりシンプル・低コストにしやすい|
-|API数最小化|MVPではPOST /contactのみ|
-|静的データはAPI化しない|用語・記事・問題はまずJSON/MDXで配信|
-|レスポンス軽量化|不要なデータを返さない|
-|キャッシュ機能を使わない|MVPではAPI Gatewayキャッシュ不要|
+|Billing factor|Description|
+|API calls|Charges based on request count|
+|Data transfer|Response data volume|
+|Caching|Take care with REST API caching|
+|WebSocket|Message count and connection duration if used|
 
-7.3.4 MVPルール
+7.3.3 Cost Reduction Policy
 
 |   |   |
 |---|---|
-|ルール|内容|
-|必須API|POST /contactのみ|
-|認証|MVPではなし|
-|CORS|本番ドメインに限定|
-|レート制限|スパム増加時に設定検討|
+|Policy|Description|
+|Prefer HTTP API|Easier to keep simple and low-cost than REST API|
+|Minimize API count|Only POST /contact for MVP|
+|Do not expose static data through APIs|Initially deliver terms, articles, and questions through JSON/MDX|
+|Lightweight responses|Do not return unnecessary data|
+|No caching feature|API Gateway caching is unnecessary in MVP|
+
+7.3.4 MVP Rules
+
+|   |   |
+|---|---|
+|Rule|Description|
+|Required APIs|Only POST /contact|
+|Authentication|None in MVP|
+|CORS|Restrict to production domain|
+|Rate limiting|Consider when spam increases|
 
   
 
 7.4 AWS Lambda
 
-7.4.1 利用目的
+7.4.1 Purpose
 
-Lambdaは以下に利用する。
+Use Lambda for the following.
 
-- 問い合わせ保存処理
-- 将来の問題取得処理
-- 将来の回答履歴保存
-- 将来の毎日1問配信
+- Save contact submissions
+- Future question retrieval
+- Future answer-history storage
+- Future daily-question delivery
 
-7.4.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|リクエスト数|Lambda呼び出し回数|
-|実行時間|ミリ秒単位の実行時間|
-|メモリサイズ|割り当てメモリが大きいほどコスト増|
-|レスポンスストリーミング|利用時はデータ量に注意|
-|Provisioned Concurrency|MVPでは使わない|
-
-7.4.3 コスト削減方針
+7.4.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|短時間実行|問い合わせ保存は数秒以内にする|
-|メモリ最小から開始|128MB〜256MB程度から開始|
-|タイムアウト短め|3〜5秒を基本にする|
-|Provisioned Concurrency禁止|MVPでは使わない|
-|外部API呼び出しを避ける|問い合わせ保存だけなら不要|
-|無限リトライ防止|エラー時の再試行設計に注意|
+|Billing factor|Description|
+|Request count|Lambda invocation count|
+|Execution duration|Runtime in milliseconds|
+|Memory size|More allocated memory increases cost|
+|Response streaming|Watch data volume when used|
+|Provisioned Concurrency|Do not use in MVP|
 
-7.4.4 MVPルール
+7.4.3 Cost Reduction Policy
 
 |   |   |
 |---|---|
-|ルール|内容|
-|Lambda数|まず1つ。contact-submit-functionのみ|
-|メモリ|128MB〜256MB|
-|タイムアウト|3〜5秒|
-|VPC接続|しない|
-|Provisioned Concurrency|使用禁止|
-|Lambda Layers|不要なら使わない|
+|Policy|Description|
+|Short execution|Save contact submissions within a few seconds|
+|Start with minimal memory|Start around 128MB–256MB|
+|Short timeouts|Generally 3–5 seconds|
+|Prohibit Provisioned Concurrency|Do not use in MVP|
+|Avoid external API calls|Unnecessary for contact storage alone|
+|Prevent infinite retries|Design error retries carefully|
+
+7.4.4 MVP Rules
+
+|   |   |
+|---|---|
+|Rule|Description|
+|Lambda count|Start with one: contact-submit-function only|
+|Memory|128MB–256MB|
+|Timeout|3–5 seconds|
+|VPC connection|None|
+|Provisioned Concurrency|Prohibited|
+|Lambda Layers|Do not use unless needed|
 
   
 
 7.5 DynamoDB
 
-7.5.1 利用目的
+7.5.1 Purpose
 
-DynamoDBは以下に利用する。
+Use DynamoDB for the following.
 
-- 問い合わせデータ保存
-- 将来の問題データ保存
-- 将来のユーザー回答履歴保存
-- 将来の学習進捗保存
+- Contact-data storage
+- Future question-data storage
+- Future user answer-history storage
+- Future learning-progress storage
 
-7.5.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|読み取り|Read Request / RCU|
-|書き込み|Write Request / WCU|
-|ストレージ|保存データ容量|
-|バックアップ|オンデマンドバックアップ、PITR|
-|Streams|DynamoDB Streams利用時|
-|Global Tables|マルチリージョン複製|
-
-7.5.3 コスト削減方針
+7.5.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|MVPはContactsTableのみ|テーブル数を最小化する|
-|On-Demandまたは無料枠を意識|小規模・アクセス不明ならOn-Demandが管理しやすい|
-|大量Scanを避ける|データ増加後はQuery/GSI設計する|
-|バックアップ慎重|MVPではPITRを必須にしない|
-|Streams無効|MVPでは使わない|
-|Global Tables禁止|MVPでは使わない|
+|Billing factor|Description|
+|Reads|Read Request / RCU|
+|Writes|Write Request / WCU|
+|Storage|Stored data volume|
+|Backups|On-demand backups and PITR|
+|Streams|When using DynamoDB Streams|
+|Global Tables|Multi-region replication|
 
-7.5.4 MVPルール
+7.5.3 Cost Reduction Policy
 
 |   |   |
 |---|---|
-|ルール|内容|
-|テーブル|ContactsTableのみから開始|
-|保存対象|問い合わせデータのみ|
-|読み取りAPI|MVPでは作らない|
-|PITR|MVPでは任意。コスト優先なら無効|
-|Streams|無効|
-|Global Tables|使用禁止|
+|Policy|Description|
+|ContactsTable only for MVP|Minimize table count|
+|Consider On-Demand or Free Tier usage|On-Demand is easier to manage for small-scale or unknown traffic|
+|Avoid large Scans|Design Queries/GSIs after data grows|
+|Use backups cautiously|PITR is not mandatory for MVP|
+|Disable Streams|Do not use in MVP|
+|Prohibit Global Tables|Do not use in MVP|
+
+7.5.4 MVP Rules
+
+|   |   |
+|---|---|
+|Rule|Description|
+|Tables|Start with ContactsTable only|
+|Stored data|Contact data only|
+|Read API|Do not build in MVP|
+|PITR|Optional in MVP; disable if cost is the priority|
+|Streams|Disabled|
+|Global Tables|Prohibited|
 
   
 
 7.6 CloudWatch Logs
 
-7.6.1 利用目的
+7.6.1 Purpose
 
-CloudWatch Logsは以下に利用する。
+Use CloudWatch Logs for the following.
 
-- Lambda実行ログ確認
-- 問い合わせAPIのエラー調査
-- 将来のAPI監視
+- Inspect Lambda execution logs
+- Investigate contact API errors
+- Future API monitoring
 
-7.6.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|ログ取り込み|Lambda等から出力されるログ量|
-|ログ保存|保存期間と保存量|
-|Logs Insights|クエリ分析実行量|
-|Live Tail|利用時間|
-|メトリクス・アラーム|カスタムメトリクスやアラーム数|
-
-7.6.3 コスト削減方針
+7.6.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|ログ保存期間設定|無期限保存にしない|
-|ログ量削減|本文全文や巨大JSONを出さない|
-|DEBUG常用禁止|本番はINFOまたはWARN中心|
-|Logs Insights乱用禁止|必要時のみ利用|
-|個人情報出力禁止|セキュリティ上も重要|
+|Billing factor|Description|
+|Log ingestion|Log volume emitted by Lambda and other services|
+|Log storage|Retention period and stored volume|
+|Logs Insights|Query analysis volume|
+|Live Tail|Usage duration|
+|Metrics and alarms|Number of custom metrics and alarms|
 
-7.6.4 MVPルール
+7.6.3 Cost Reduction Policy
 
 |   |   |
 |---|---|
-|ルール|内容|
-|保存期間|14日〜30日|
-|ログレベル|INFO以上|
-|出力禁止|メールアドレス全文、問い合わせ本文全文、JWT、APIキー|
-|Logs Insights|エラー調査時のみ|
+|Policy|Description|
+|Set log retention|Do not retain indefinitely|
+|Reduce log volume|Do not output full message bodies or huge JSON objects|
+|No routine DEBUG logging|Primarily INFO or WARN in production|
+|Do not overuse Logs Insights|Use only when necessary|
+|Prohibit personal-information logging|Also important for security|
+
+7.6.4 MVP Rules
+
+|   |   |
+|---|---|
+|Rule|Description|
+|Retention|14–30 days|
+|Log level|INFO or higher|
+|Prohibited output|Full email addresses, full contact messages, JWTs, API keys|
+|Logs Insights|Only during error investigations|
 
   
 
 7.7 Route 53
 
-7.7.1 利用目的
+7.7.1 Purpose
 
-Route 53は独自ドメイン利用時に利用する。
+Use Route 53 when using a custom domain.
 
-用途：
+Uses:
 
-- 独自ドメインDNS管理
-- CloudFrontへのAliasレコード設定
-- ACM証明書検証
+- Custom-domain DNS management
+- Configure Alias records to CloudFront
+- ACM certificate validation
 
-7.7.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|Hosted Zone|ホストゾーンごとの月額費用|
-|DNSクエリ|DNS問い合わせ数|
-|ドメイン登録|ドメイン取得・更新費用|
-
-7.7.3 利用方針
-
-MVPでは必須にしない。
-
-理由：
-
-- CloudFrontデフォルトドメインでも動作確認できる
-- 独自ドメインは固定費になり得る
-- AdSense申請や本格公開のタイミングで導入すればよい
-
-7.7.4 導入タイミング
+7.7.2 Billing Factors
 
 |   |   |
 |---|---|
-|タイミング|判断|
-|MVP開発中|不要|
-|ポートフォリオ公開|あると望ましいが必須ではない|
-|AdSense申請|独自ドメイン推奨|
-|本格運用|導入推奨|
+|Billing factor|Description|
+|Hosted Zone|Monthly charge per hosted zone|
+|DNS queries|Number of DNS requests|
+|Domain registration|Domain purchase and renewal charges|
+
+7.7.3 Usage Policy
+
+Not mandatory for MVP.
+
+Reasons:
+
+- Functionality can be verified with the default CloudFront domain
+- A custom domain can incur fixed costs
+- It can be introduced when applying for AdSense or launching fully
+
+7.7.4 Adoption Timing
+
+|   |   |
+|---|---|
+|Timing|Decision|
+|During MVP development|Unnecessary|
+|Portfolio publication|Desirable but not mandatory|
+|AdSense application|Custom domain recommended|
+|Full-scale operations|Recommended|
 
   
 
 7.8 ACM
 
-7.8.1 利用目的
+7.8.1 Purpose
 
-ACMは独自ドメインのHTTPS証明書に利用する。
+Use ACM for HTTPS certificates on the custom domain.
 
-7.8.2 コスト方針
+7.8.2 Cost Policy
 
-CloudFrontに設定するパブリック証明書用途では、基本的に追加費用を抑えられる。
+Additional costs can generally be minimized when using public certificates configured for CloudFront.
 
-ただし、CloudFront用証明書は原則としてus-east-1で発行する点に注意する。
+Note that CloudFront certificates should generally be issued in us-east-1.
 
-7.8.3 MVPルール
+7.8.3 MVP Rules
 
 |   |   |
 |---|---|
-|ルール|内容|
-|CloudFrontデフォルトドメイン|ACM不要|
-|独自ドメイン利用時|ACMを利用|
-|証明書リージョン|us-east-1|
+|Rule|Description|
+|Default CloudFront domain|ACM unnecessary|
+|Custom domain|Use ACM|
+|Certificate region|us-east-1|
 
   
 
 7.9 Cognito Phase 4
 
-7.9.1 利用目的
+7.9.1 Purpose
 
-Cognitoは将来のログイン・学習履歴機能で利用する。
+Use Cognito for future login and learning-history features.
 
-用途：
+Uses:
 
-- ユーザー登録
-- ログイン
-- JWT発行
-- 認証付きAPI保護
+- User registration
+- Login
+- JWT issuance
+- Protect authenticated APIs
 
-7.9.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|MAU|月間アクティブユーザー数|
-|高度なセキュリティ機能|有効化時に追加コストの可能性|
-|SMS|電話番号認証を使う場合に課金リスク|
-
-7.9.3 コスト削減方針
+7.9.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|MVPでは使わない|ログイン不要のため|
-|メール認証中心|SMS認証は使わない|
-|高度な機能は後回し|必要になるまで有効化しない|
+|Billing factor|Description|
+|MAU|Monthly active users|
+|Advanced security features|Possible extra costs when enabled|
+|SMS|Billing risk when using phone-number verification|
+
+7.9.3 Cost Reduction Policy
+
+|   |   |
+|---|---|
+|Policy|Description|
+|Do not use in MVP|Login is unnecessary|
+|Primarily email authentication|Do not use SMS authentication|
+|Defer advanced features|Do not enable until needed|
 
   
 
 7.10 EventBridge Phase 4
 
-7.10.1 利用目的
+7.10.1 Purpose
 
-EventBridgeは将来の定期処理に利用する。
+Use EventBridge for future scheduled processing.
 
-用途：
+Uses:
 
-- 毎日1問配信
-- 定期集計
-- メンテナンス処理
+- Daily-question delivery
+- Scheduled aggregation
+- Maintenance processing
 
-7.10.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|イベント数|発生・処理イベント数|
-|Scheduler|スケジュール実行数|
-
-7.10.3 コスト削減方針
+7.10.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|低頻度実行|1日1回程度から開始|
-|無駄なスケジュール禁止|不要なルールを残さない|
-|Lambda連携を短時間処理|実行時間を短くする|
+|Billing factor|Description|
+|Event count|Events generated and processed|
+|Scheduler|Scheduled execution count|
+
+7.10.3 Cost Reduction Policy
+
+|   |   |
+|---|---|
+|Policy|Description|
+|Infrequent execution|Start around once per day|
+|No unnecessary schedules|Do not leave unused rules|
+|Keep Lambda integrations short|Minimize execution duration|
 
   
 
 7.11 SES Phase 4
 
-7.11.1 利用目的
+7.11.1 Purpose
 
-SESは将来のメール通知に利用する。
+Use SES for future email notifications.
 
-用途：
+Uses:
 
-- 問い合わせ通知
-- 毎日1問配信
-- 学習リマインド
+- Contact notifications
+- Daily-question delivery
+- Study reminders
 
-7.11.2 課金ポイント
-
-|   |   |
-|---|---|
-|課金要素|内容|
-|メール送信数|送信通数|
-|データ量|添付や本文量|
-|受信メール|受信機能利用時|
-
-7.11.3 コスト削減方針
+7.11.2 Billing Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|MVPでは使わない|問い合わせ保存だけなら不要|
-|添付ファイル禁止|データ量を増やさない|
-|配信頻度を抑える|毎日1回程度|
-|通知停止機能|不要な送信を避ける|
+|Billing factor|Description|
+|Email count|Messages sent|
+|Data volume|Attachments and message-body volume|
+|Incoming email|When using receiving features|
+
+7.11.3 Cost Reduction Policy
+
+|   |   |
+|---|---|
+|Policy|Description|
+|Do not use in MVP|Unnecessary for contact storage alone|
+|No attachments|Avoid increasing data volume|
+|Limit delivery frequency|Around once daily|
+|Notification opt-out|Avoid unnecessary sending|
 
   
 
-8. Phase別コスト設計
+8. Cost Design by Phase
 
-8.1 Phase 1：静的サイト公開
+8.1 Phase 1: Publish the Static Site
 
-利用サービス
+Services used
 
 - S3
 - CloudFront
 - IAM
 - AWS Budgets
 
-コスト方針
+Cost policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|コンテンツ|静的ファイル中心|
-|画像|圧縮して配置|
-|API|なし|
-|DB|なし|
-|ログ|最小限|
-|固定費|なしを目指す|
+|Item|Policy|
+|Content|Primarily static files|
+|Images|Compress before deployment|
+|API|None|
+|DB|None|
+|Logs|Minimal|
+|Fixed costs|Aim for none|
 
-目標
+Goal
 
-まずAWS上に公開URLを作る。
+First establish a public URL on AWS.
 
-ただし、EC2・RDS・ALB・NAT Gatewayは使わない。
+However, do not use EC2, RDS, ALB, or NAT Gateway.
 
   
 
-8.2 Phase 2：問い合わせAPI追加
+8.2 Phase 2: Add the Contact API
 
-利用サービス
+Services used
 
 - API Gateway
 - Lambda
 - DynamoDB
 - CloudWatch Logs
 
-コスト方針
+Cost policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|API数|POST /contactのみ|
-|Lambda|128MB〜256MB、3〜5秒|
-|DynamoDB|ContactsTableのみ|
-|CloudWatch Logs|14日〜30日保存|
-|レート制限|スパム増加時に検討|
+|Item|Policy|
+|API count|Only POST /contact|
+|Lambda|128MB–256MB, 3–5 seconds|
+|DynamoDB|ContactsTable only|
+|CloudWatch Logs|Retain for 14–30 days|
+|Rate limiting|Consider when spam increases|
 
-目標
+Goal
 
-サーバーレスAPI実装経験を示しつつ、動的処理を最小限に抑える。
+Demonstrate serverless API implementation experience while minimizing dynamic processing.
 
   
 
-8.3 Phase 3：収益化準備
+8.3 Phase 3: Prepare for Monetization
 
-利用サービス
+Services used
 
 - Route 53
 - ACM
@@ -667,25 +667,25 @@ SESは将来のメール通知に利用する。
 - Google Analytics
 - Google AdSense
 
-コスト方針
+Cost policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|独自ドメイン|AdSense申請前後に導入判断|
-|Route 53|Hosted Zone費用を許容するか判断|
-|Analytics|無料ツール中心|
-|AdSense|広告収益でAWS費用相殺を目指す|
+|Item|Policy|
+|Custom domain|Decide around AdSense application time|
+|Route 53|Decide whether Hosted Zone charges are acceptable|
+|Analytics|Primarily free tools|
+|AdSense|Aim to offset AWS costs with advertising revenue|
 
-目標
+Goal
 
-月額固定費が発生しても、広告収益化の準備として妥当か判断する。
+Decide whether monthly fixed costs are justified as preparation for advertising monetization.
 
   
 
-8.4 Phase 4：学習アプリ化
+8.4 Phase 4: Develop into a Learning Application
 
-利用サービス
+Services used
 
 - Cognito
 - API Gateway
@@ -695,561 +695,561 @@ SESは将来のメール通知に利用する。
 - SES
 - CloudWatch
 
-コスト方針
+Cost policy
 
 |   |   |
 |---|---|
-|項目|方針|
-|ログイン|Cognitoで実装|
-|学習履歴|DynamoDBに保存|
-|通知|最初は任意。メール大量送信しない|
-|AI解説|APIコストが発生するため後回し|
-|有料機能|収益見込みが出てから実装|
+|Item|Policy|
+|Login|Implement with Cognito|
+|Learning history|Store in DynamoDB|
+|Notifications|Optional initially; do not send bulk emails|
+|AI explanations|Defer because API costs are incurred|
+|Paid features|Implement after revenue prospects emerge|
 
-目標
+Goal
 
-無料メディアから学習アプリへ拡張するが、利用者数に応じて段階的に投資する。
+Expand from free media into a learning application, investing gradually according to user count.
 
   
 
-9. AWS Budgets設計
+9. AWS Budgets Design
 
-9.1 Budgets設定方針
+9.1 Budgets Configuration Policy
 
-AWS Budgetsは本プロジェクトで最初に設定する。
+Configure AWS Budgets first in this project.
 
-理由：
+Reasons:
 
-- 課金事故を早期に検知する
-- AWSアクセスキー漏えい時の異常利用に気づく
-- 学習中の設定ミスを検知する
-- 無料枠超過を意識できる
+- Detect unexpected charges early
+- Notice abnormal usage following AWS access-key leakage
+- Detect configuration mistakes during learning
+- Maintain awareness of Free Tier overruns
 
-9.2 予算設定案
+9.2 Proposed Budgets
 
 |   |   |   |
 |---|---|---|
-|予算名|金額|用途|
-|aws-cert-lab-monthly-budget|1 USD|MVP初期の異常検知|
-|aws-cert-lab-warning-budget|5 USD|本格公開後の警告|
-|aws-cert-lab-growth-budget|10 USD|アクセス増加後の上限管理|
+|Budget name|Amount|Purpose|
+|aws-cert-lab-monthly-budget|1 USD|Detect anomalies in the initial MVP|
+|aws-cert-lab-warning-budget|5 USD|Warnings after full launch|
+|aws-cert-lab-growth-budget|10 USD|Manage limits after traffic increases|
 
-最初は1 USD程度の低いアラートを設定する。
+Start with a low alert threshold of around 1 USD.
 
-ただし、独自ドメインやRoute 53を使う場合は、固定費を考慮して予算額を調整する。
+Adjust the budget to account for fixed costs if using a custom domain or Route 53.
 
-9.3 通知閾値
-
-|   |   |
-|---|---|
-|閾値|通知内容|
-|50%|早期注意|
-|80%|警告|
-|100%|超過通知|
-|Forecasted 100%|予測超過通知|
-
-9.4 通知先
+9.3 Notification Thresholds
 
 |   |   |
 |---|---|
-|通知先|用途|
-|メール|必須|
-|SNS|将来検討|
-|Slack|将来検討|
+|Threshold|Notification|
+|50%|Early caution|
+|80%|Warning|
+|100%|Overrun notification|
+|Forecasted 100%|Forecasted overrun notification|
 
-9.5 Budgets Actionsについて
+9.4 Notification Destinations
 
-Budgets Actionsは、予算超過時にIAMやEC2/RDSなどへ制御アクションをかけられる機能である。
+|   |   |
+|---|---|
+|Destination|Purpose|
+|Email|Required|
+|SNS|Consider in future|
+|Slack|Consider in future|
 
-MVPでは必須ではない。
+9.5 About Budgets Actions
 
-理由：
+Budgets Actions can apply control actions to IAM, EC2/RDS, and other resources when a budget is exceeded.
 
-- 本プロジェクトではEC2/RDSを使わないため
-- まずは通知で十分
-- アクション付きBudgetは設定数や利用方法により課金に注意が必要
+Not mandatory for MVP.
 
-MVP方針：
+Reasons:
 
-Budget通知は必須。
+- This project does not use EC2/RDS
+- Notifications are sufficient initially
+- Budgets with actions require attention to charges depending on configuration count and usage
 
-Budget Actionsは使わない。
+MVP policy:
+
+Budget notifications are mandatory.
+
+Do not use Budget Actions.
 
   
 
-10. CloudWatch Logsコスト管理
+10. CloudWatch Logs Cost Management
 
-10.1 保存期間
+10.1 Retention
 
 |   |   |   |
 |---|---|---|
-|ロググループ|保存期間|理由|
-|/aws/lambda/contact-submit-function|14日〜30日|問い合わせ障害調査には十分|
-|/aws/lambda/get-questions-function|14日〜30日|将来API用|
-|/aws/lambda/submit-answer-function|30日|学習履歴API用|
-|/aws/lambda/daily-question-function|14日〜30日|通知確認用|
+|Log group|Retention|Reason|
+|/aws/lambda/contact-submit-function|14–30 days|Sufficient for investigating contact failures|
+|/aws/lambda/get-questions-function|14–30 days|Future API|
+|/aws/lambda/submit-answer-function|30 days|Learning-history API|
+|/aws/lambda/daily-question-function|14–30 days|Verify notifications|
 
-10.2 ログ出力量ルール
+10.2 Log Output Rules
 
 |   |   |
 |---|---|
-|出力してよい|出力しない|
-|requestId|メールアドレス全文|
-|statusCode|問い合わせ本文全文|
+|Permitted output|Prohibited output|
+|requestId|Full email address|
+|statusCode|Full contact message body|
 |contactId|JWT|
-|errorCode|Authorizationヘッダー|
-|validation error fields|AWSアクセスキー|
+|errorCode|Authorization header|
+|validation error fields|AWS access keys|
 
-10.3 ログコスト削減ルール
+10.3 Log Cost Reduction Rules
 
-- 本番でDEBUGログを常用しない
-- リクエストBody全文を出さない
-- 例外スタックは必要最小限にする
-- CloudWatch Logs Insightsを無駄に実行しない
-- ログ保存期間を必ず設定する
-
-  
-
-11. データ転送量管理
-
-11.1 データ転送が増える原因
-
-|   |   |
-|---|---|
-|原因|対策|
-|大きな画像|WebP化・圧縮|
-|不要なJavaScript|バンドルサイズ削減|
-|OGP画像大量配置|共通OGPを使う|
-|動画配信|S3/CloudFrontに置かない|
-|Botアクセス|必要に応じてWAF・robots.txt|
-|バズ|Budgetsで監視|
-
-11.2 画像最適化ルール
-
-|   |   |
-|---|---|
-|種類|目標サイズ|
-|記事内画像|300KB以下|
-|構成図画像|500KB以下|
-|OGP画像|300KB以下|
-|ロゴ|100KB以下|
-
-11.3 フロントエンド最適化
-
-|   |   |
-|---|---|
-|項目|方針|
-|不要ライブラリ|追加しない|
-|コード分割|Next.jsの標準機能を活用|
-|Markdown|静的生成|
-|画像|lazy loading|
-|API呼び出し|必要最小限|
+- Do not routinely use DEBUG logs in production
+- Do not output complete request bodies
+- Minimize exception stacks to what is necessary
+- Do not run CloudWatch Logs Insights unnecessarily
+- Always configure log retention
 
   
 
-12. CI/CDコスト管理
+11. Data Transfer Management
+
+11.1 Causes of Increased Data Transfer
+
+|   |   |
+|---|---|
+|Cause|Countermeasure|
+|Large images|Convert to WebP and compress|
+|Unnecessary JavaScript|Reduce bundle size|
+|Large numbers of OGP images|Use shared OGP images|
+|Video delivery|Do not host on S3/CloudFront|
+|Bot access|Use WAF or robots.txt as needed|
+|Viral traffic|Monitor with Budgets|
+
+11.2 Image Optimization Rules
+
+|   |   |
+|---|---|
+|Type|Target size|
+|Article images|At most 300KB|
+|Architecture diagram images|At most 500KB|
+|OGP images|At most 300KB|
+|Logo|At most 100KB|
+
+11.3 Frontend Optimization
+
+|   |   |
+|---|---|
+|Item|Policy|
+|Unnecessary libraries|Do not add|
+|Code splitting|Use standard Next.js features|
+|Markdown|Static generation|
+|Images|lazy loading|
+|API calls|Minimum necessary|
+
+  
+
+12. CI/CD Cost Management
 
 12.1 GitHub Actions
 
-GitHub ActionsはAWS外のコストだが、無料枠や利用量制限に注意する。
+GitHub Actions costs are outside AWS, but pay attention to its free allowance and usage limits.
 
-12.2 AWS側のコストポイント
-
-|   |   |
-|---|---|
-|処理|AWSコスト要素|
-|S3アップロード|PUTリクエスト|
-|古いファイル削除|DELETEリクエスト|
-|CloudFront Invalidation|無効化パス数|
-|デプロイ失敗による再実行|PUT/Invalidation回数増加|
-
-12.3 コスト削減方針
+12.2 AWS-side Cost Factors
 
 |   |   |
 |---|---|
-|方針|内容|
-|mainブランチのみ本番デプロイ|無駄なデプロイを減らす|
-|Pull Requestではビルド確認のみ|S3デプロイしない|
-|Invalidation頻度を抑える|必要時のみ|
-|キャッシュパスを工夫する|assetsはファイル名にhashを含める|
+|Process|AWS cost factor|
+|S3 uploads|PUT requests|
+|Old-file deletion|DELETE requests|
+|CloudFront Invalidation|Number of invalidation paths|
+|Reruns after deployment failure|More PUTs/invalidations|
 
-12.4 デプロイルール
+12.3 Cost Reduction Policy
 
-feature branch push → lint / build のみ
+|   |   |
+|---|---|
+|Policy|Description|
+|Production deployment only from main|Reduce unnecessary deployments|
+|Build checks only for pull requests|Do not deploy to S3|
+|Limit invalidation frequency|Only when necessary|
+|Optimize cache paths|Include hashes in asset filenames|
+
+12.4 Deployment Rules
+
+feature branch push → lint / build only
 
 main branch merge → S3 deploy + CloudFront invalidation
 
   
 
-13. 独自ドメイン費用判断
+13. Evaluating Custom-domain Costs
 
-13.1 独自ドメインのメリット
-
-|   |   |
-|---|---|
-|メリット|内容|
-|信頼性|ポートフォリオとして見栄えが良い|
-|SEO|長期運用しやすい|
-|AdSense|審査・運用上有利になりやすい|
-|ブランディング|学習メディアとして育てやすい|
-
-13.2 独自ドメインのデメリット
+13.1 Advantages of a Custom Domain
 
 |   |   |
 |---|---|
-|デメリット|内容|
-|ドメイン費用|年間費用が発生する|
-|Route 53費用|Hosted Zone等の費用が発生する可能性|
-|管理負荷|DNS、証明書、更新管理が必要|
+|Advantage|Description|
+|Credibility|Improves portfolio presentation|
+|SEO|Supports long-term operations|
+|AdSense|Can benefit review and operations|
+|Branding|Easier to develop as a learning publication|
 
-13.3 判断基準
+13.2 Disadvantages of a Custom Domain
 
 |   |   |
 |---|---|
-|状況|判断|
-|MVP開発中|CloudFrontデフォルトドメインでよい|
-|GitHubポートフォリオ掲載|独自ドメインがあると望ましい|
-|AdSense申請|独自ドメイン導入を推奨|
-|収益化を本気で狙う|独自ドメイン導入|
+|Disadvantage|Description|
+|Domain cost|Annual fees|
+|Route 53 cost|Possible Hosted Zone and other charges|
+|Management workload|DNS, certificates, and renewals require management|
 
-13.4 推奨判断
+13.3 Decision Criteria
 
-MVP公開までは独自ドメインなし。
+|   |   |
+|---|---|
+|Situation|Decision|
+|During MVP development|Default CloudFront domain is sufficient|
+|Listed in GitHub portfolio|Custom domain is desirable|
+|AdSense application|Custom domain recommended|
+|Serious monetization plans|Introduce a custom domain|
 
-記事が10〜20本になり、AdSense申請を検討する段階で独自ドメインを導入する。
+13.4 Recommended Decision
+
+No custom domain until the MVP is published.
+
+Add a custom domain when there are 10–20 articles and an AdSense application is being considered.
 
   
 
-14. 広告収益化とAWS費用の関係
+14. Advertising Monetization and AWS Costs
 
-14.1 収益化前
+14.1 Before Monetization
 
-収益化前は、AWS費用を最小にする。
-
-|   |   |
-|---|---|
-|方針|内容|
-|固定費なし|EC2/RDS/ALB/NAT Gatewayなし|
-|静的配信中心|S3 + CloudFront|
-|API最小|問い合わせのみ|
-|独自ドメイン任意|必要になるまで待つ|
-
-14.2 収益化後
-
-AdSenseやnote有料記事による収益が発生したら、以下を許容する。
+Minimize AWS costs before monetization.
 
 |   |   |
 |---|---|
-|投資対象|判断基準|
-|独自ドメイン|収益化・SEO目的で許容|
-|Route 53|独自ドメイン運用のため許容|
-|Cognito|学習履歴機能で価値が出るなら許容|
-|SES|ユーザー継続率向上に必要なら許容|
-|WAF|アクセス増加・攻撃対策が必要なら許容|
+|Policy|Description|
+|No fixed costs|No EC2/RDS/ALB/NAT Gateway|
+|Primarily static delivery|S3 + CloudFront|
+|Minimal APIs|Contact only|
+|Optional custom domain|Wait until needed|
 
-14.3 損益分岐の考え方
+14.2 After Monetization
 
-月額AWS費用が発生する場合、以下で判断する。
-
-月間広告収益 + 有料記事収益 >= AWS月額費用
-
-初期目標：
+Once AdSense or paid note articles generate revenue, allow the following investments.
 
 |   |   |
 |---|---|
-|指標|目標|
-|月間AWS費用|0〜数百円以内|
-|月間PV|1,000PV以上|
-|AdSense|申請・審査通過|
-|note導線|設置済み|
+|Investment|Decision criterion|
+|Custom domain|Acceptable for monetization and SEO|
+|Route 53|Acceptable for custom-domain operation|
+|Cognito|Acceptable if learning history adds value|
+|SES|Acceptable if needed to improve user retention|
+|WAF|Acceptable if traffic growth or attacks require it|
+
+14.3 Break-even Approach
+
+Evaluate monthly AWS costs as follows.
+
+Monthly advertising revenue + paid-article revenue >= monthly AWS costs
+
+Initial targets:
+
+|   |   |
+|---|---|
+|Metric|Target|
+|Monthly AWS costs|JPY 0 to within several hundred yen|
+|Monthly page views|At least 1,000PV|
+|AdSense|Apply and pass review|
+|note links|Installed|
 
   
 
-15. コスト監視運用
+15. Cost Monitoring Operations
 
-15.1 毎日確認する項目
+15.1 Daily Checks
 
-開発初期は、AWS請求額を毎日確認する。
-
-|   |   |
-|---|---|
-|項目|確認内容|
-|Billing Dashboard|当月コスト|
-|Budgets通知|予算超過・予測超過|
-|Cost Explorer|急増サービス|
-|CloudWatch Logs|ログ量急増|
-|API Gateway|リクエスト急増|
-|Lambda|エラー・実行回数急増|
-
-15.2 週次確認項目
+Check AWS charges daily during early development.
 
 |   |   |
 |---|---|
-|項目|確認内容|
-|S3容量|不要ファイルが増えていないか|
-|CloudFront転送量|急増していないか|
-|DynamoDB項目数|スパム投稿が増えていないか|
-|CloudWatch Logs保存量|保存期間が効いているか|
-|不要リソース|作成したまま放置していないか|
+|Item|What to check|
+|Billing Dashboard|Current-month costs|
+|Budgets notifications|Budget and forecasted overruns|
+|Cost Explorer|Services with sharply rising costs|
+|CloudWatch Logs|Sudden log-volume increases|
+|API Gateway|Sudden request increases|
+|Lambda|Sudden increases in errors or invocations|
 
-15.3 月次確認項目
+15.2 Weekly Checks
 
 |   |   |
 |---|---|
-|項目|確認内容|
-|月額AWS費用|予算内か|
-|サービス別費用|想定外のサービス課金がないか|
-|無料枠利用状況|超過傾向がないか|
-|AdSense収益|AWS費用を相殺できるか|
-|改善対象|高いサービスを見直す|
+|Item|What to check|
+|S3 capacity|Whether unused files are accumulating|
+|CloudFront transfers|Whether volume has increased sharply|
+|DynamoDB item count|Whether spam is increasing|
+|CloudWatch Logs storage|Whether retention is working|
+|Unused resources|Whether created resources were abandoned|
+
+15.3 Monthly Checks
+
+|   |   |
+|---|---|
+|Item|What to check|
+|Monthly AWS costs|Whether within budget|
+|Per-service costs|Whether unexpected services incur charges|
+|Free Tier usage|Whether usage is trending toward an overrun|
+|AdSense revenue|Whether it can offset AWS costs|
+|Optimization targets|Review expensive services|
 
   
 
-16. 課金事故対応フロー
+16. Unexpected-charge Response Flow
 
-16.1 Budgets通知を受けた場合
+16.1 When a Budgets Notification Arrives
 
-1. AWS Billing Dashboardを開く
+1. Open the AWS Billing Dashboard.
 
-2. Cost Explorerで増加サービスを確認する
+2. Check the service with rising costs in Cost Explorer.
 
-3. 対象リージョンを確認する
+3. Check the affected region.
 
-4. 対象リソースを特定する
+4. Identify the affected resources.
 
-5. 不要であれば停止・削除する
+5. Stop or delete them if unnecessary.
 
-6. CloudWatch LogsやAPI Gatewayメトリクスを確認する
+6. Check CloudWatch Logs and API Gateway metrics.
 
-7. AWSアクセスキー漏えいの可能性を確認する
+7. Check for possible AWS access-key leakage.
 
-8. 再発防止策を設計書に反映する
+8. Reflect recurrence-prevention measures in the design document.
 
-16.2 想定外サービスに課金が出た場合
+16.2 When an Unexpected Service Incurs Charges
 
-1. サービス名を確認する
+1. Check the service name.
 
-2. 自分で作成した覚えがあるか確認する
+2. Check whether you remember creating it.
 
-3. リージョンを全て確認する
+3. Check all regions.
 
-4. 不要リソースを削除する
+4. Delete unnecessary resources.
 
-5. IAMアクセスキーを確認する
+5. Check IAM access keys.
 
-6. CloudTrailで操作履歴を確認する
+6. Check operation history in CloudTrail.
 
-7. 必要ならアクセスキーを無効化する
+7. Disable access keys if necessary.
 
-16.3 アクセスキー漏えいが疑われる場合
+16.3 When Access-key Leakage Is Suspected
 
-1. 該当アクセスキーを即時無効化する
+1. Immediately disable the affected access key.
 
-2. IAMユーザーの権限を確認する
+2. Check IAM-user permissions.
 
-3. CloudTrailで不審な操作を確認する
+3. Check CloudTrail for suspicious operations.
 
-4. Cost Explorerで急増サービスを確認する
+4. Check Cost Explorer for services with sharply rising costs.
 
-5. 不審なリソースを削除する
+5. Delete suspicious resources.
 
-6. GitHub履歴にキーが残っていないか確認する
+6. Check whether keys remain in GitHub history.
 
-7. GitHub Secretsを更新する
+7. Update GitHub Secrets.
 
-16.4 スパム投稿でDynamoDB書き込みが増えた場合
+16.4 When Spam Increases DynamoDB Writes
 
-1. API Gatewayリクエスト数を確認する
+1. Check API Gateway request counts.
 
-2. ContactsTableの件数を確認する
+2. Check the ContactsTable item count.
 
-3. honeypotが効いているか確認する
+3. Confirm that the honeypot works.
 
-4. API Gatewayのレート制限を検討する
+4. Consider API Gateway rate limiting.
 
-5. 必要ならreCAPTCHAを検討する
+5. Consider reCAPTCHA if necessary.
 
-6. 明らかなスパムデータを削除する
+6. Delete clearly identified spam data.
 
   
 
-7. リージョン管理
+7. Region Management
 
-17.1 基本リージョン
+17.1 Primary Region
 
-本プロダクトの基本リージョンは以下とする。
+The primary region for this product is as follows.
 
-ap-northeast-1 / 東京リージョン
+ap-northeast-1 / Tokyo Region
 
-理由：
+Reasons:
 
-- 日本向けサイトである
-- 開発者が日本で利用する
-- レイテンシが低い
-- AWS学習上も東京リージョンに統一すると管理しやすい
+- The site targets Japan
+- The developer uses it in Japan
+- Low latency
+- Standardizing on Tokyo makes AWS learning resources easier to manage
 
-17.2 例外
+17.2 Exception
 
-CloudFront用のACM証明書は、原則として以下で管理する。
+Generally manage ACM certificates for CloudFront in the following region.
 
-us-east-1 / バージニア北部
+us-east-1 / Northern Virginia
 
-17.3 リージョン事故防止ルール
+17.3 Rules for Preventing Region Mistakes
 
 |   |   |
 |---|---|
-|ルール|内容|
-|作成前にリージョン確認|コンソール右上のリージョンを確認する|
-|使わないリージョン確認|月1回、全リージョンのリソースを確認|
-|ACM例外を理解|CloudFront証明書はus-east-1|
-|不要リソース削除|別リージョンに作った検証リソースを残さない|
+|Rule|Description|
+|Check region before creation|Check the region in the upper-right corner of the console|
+|Check unused regions|Review resources in all regions once monthly|
+|Understand the ACM exception|CloudFront certificates use us-east-1|
+|Delete unused resources|Do not leave test resources created in other regions|
 
   
 
-18. 環境別コスト方針
+18. Cost Policy by Environment
 
-18.1 MVP環境
+18.1 MVP Environment
 
-MVPでは本番環境のみでもよい。
+A production-only environment is acceptable for the MVP.
 
-理由：
+Reasons:
 
-- 個人開発でコストを抑えるため
-- 環境を増やすとS3、API、DynamoDB、ログが増えるため
-- まず公開まで到達することを優先するため
+- Keep costs down for individual development
+- More environments mean more S3, API, DynamoDB, and log resources
+- Prioritize reaching publication first
 
-18.2 将来の環境分離
+18.2 Future Environment Separation
 
-将来的に以下を分ける。
+Separate the following environments in the future.
 
 |   |   |   |
 |---|---|---|
-|環境|用途|コスト方針|
-|local|ローカル開発|無料|
-|dev|AWS検証環境|必要時だけ作成|
-|prod|本番環境|常時運用|
+|Environment|Purpose|Cost policy|
+|local|Local development|Free|
+|dev|AWS test environment|Create only when needed|
+|prod|Production environment|Continuously operated|
 
-18.3 dev環境のルール
+18.3 Dev Environment Rules
 
 |   |   |
 |---|---|
-|ルール|内容|
-|常設しない|必要時だけ作成|
-|データ最小|テストデータのみ|
-|ログ短期保存|7日程度|
-|検証後削除|使わないリソースは削除|
+|Rule|Description|
+|Not permanent|Create only when needed|
+|Minimal data|Test data only|
+|Short log retention|Around 7 days|
+|Delete after testing|Delete unused resources|
 
   
 
-19. IaCとコスト管理
+19. IaC and Cost Management
 
-19.1 IaCのメリット
-
-|   |   |
-|---|---|
-|メリット|内容|
-|リソース把握|何を作ったかコードで分かる|
-|削除しやすい|スタック単位で削除できる|
-|再現性|同じ構成を再作成できる|
-|課金事故防止|不要リソースを把握しやすい|
-
-19.2 推奨ツール
+19.1 Benefits of IaC
 
 |   |   |
 |---|---|
-|ツール|方針|
-|AWS SAM|Lambda/API Gateway/DynamoDB中心なら推奨|
-|Terraform|将来的なポートフォリオ価値が高い|
-|AWS CDK|TypeScript/Pythonで管理したい場合に有効|
+|Advantage|Description|
+|Resource visibility|Code shows what was created|
+|Easy deletion|Delete by stack|
+|Reproducibility|Recreate the same architecture|
+|Prevent unexpected charges|Identify unused resources easily|
 
-19.3 MVP方針
+19.2 Recommended Tools
 
-最初はAWSコンソールで手動構築して学習効果を得る。
+|   |   |
+|---|---|
+|Tool|Policy|
+|AWS SAM|Recommended for Lambda/API Gateway/DynamoDB-focused architectures|
+|Terraform|High future portfolio value|
+|AWS CDK|Useful when managing with TypeScript/Python|
 
-Phase 2以降でAWS SAMによるIaC化を検討する。
+19.3 MVP Policy
 
-19.4 削除ルール
+Initially build manually through the AWS console for learning benefits.
 
-IaC化後は、検証環境を以下のように削除できる状態にする。
+Consider IaC through AWS SAM from Phase 2 onward.
+
+19.4 Deletion Rules
+
+After adopting IaC, make test environments deletable as follows.
 
 sam delete
 
-またはTerraformの場合：
+Or with Terraform:
 
 terraform destroy
 
   
 
-20. コスト最適化の設計判断
+20. Cost Optimization Design Decisions
 
-20.1 なぜEC2ではなくS3 + CloudFrontか
-
-|   |   |   |
-|---|---|---|
-|観点|EC2|S3 + CloudFront|
-|固定費|発生しやすい|低い|
-|運用|OS管理が必要|マネージド|
-|静的サイト|過剰|適している|
-|ポートフォリオ説明|サーバー構築寄り|クラウド設計寄り|
-
-結論：
-
-本プロダクトは静的コンテンツが中心のため、EC2ではなくS3 + CloudFrontを採用する。
-
-20.2 なぜRDSではなくDynamoDBか
+20.1 Why S3 + CloudFront Instead of EC2?
 
 |   |   |   |
 |---|---|---|
-|観点|RDS|DynamoDB|
-|固定費|発生しやすい|サーバーレス的に使いやすい|
-|MVPデータ|過剰|問い合わせ保存に十分|
-|運用|DB管理が必要|マネージド|
-|スケール|設計が必要|自動スケールしやすい|
+|Aspect|EC2|S3 + CloudFront|
+|Fixed costs|Likely|Low|
+|Operations|OS management required|Managed|
+|Static site|Excessive|Suitable|
+|Portfolio explanation|Server-building focus|Cloud-design focus|
 
-結論：
+Conclusion:
 
-MVPでは問い合わせ保存だけなので、RDSではなくDynamoDBを採用する。
+Because this product primarily consists of static content, use S3 + CloudFront rather than EC2.
 
-20.3 なぜNAT Gatewayを使わないか
-
-本プロダクトでは、LambdaをVPC内に配置する必要がない。
-
-そのため、NAT Gatewayは不要である。
-
-結論：
-
-VPC内プライベートサブネットから外部通信する要件がないため、NAT Gatewayは使わない。
-
-20.4 なぜ問題データを最初からDB化しないか
+20.2 Why DynamoDB Instead of RDS?
 
 |   |   |   |
 |---|---|---|
-|観点|JSON/MDX|DynamoDB|
-|コスト|低い|API/DBアクセスが発生|
-|SEO|静的生成しやすい|SSR/API設計が必要|
-|開発速度|速い|実装が増える|
-|管理|GitHub差分管理可能|管理画面が必要になりやすい|
+|Aspect|RDS|DynamoDB|
+|Fixed costs|Likely|Easy to use in a serverless manner|
+|MVP data|Excessive|Sufficient for contact storage|
+|Operations|Database management required|Managed|
+|Scaling|Design required|Easy to scale automatically|
 
-結論：
+Conclusion:
 
-MVPでは問題・用語・記事はJSON/MDXで管理し、問い合わせのみDynamoDBに保存する。
+Since the MVP only stores contact submissions, use DynamoDB rather than RDS.
+
+20.3 Why Not Use NAT Gateway?
+
+This product does not require Lambda inside a VPC.
+
+Therefore, NAT Gateway is unnecessary.
+
+Conclusion:
+
+There is no requirement for outbound communication from private VPC subnets, so NAT Gateway is not used.
+
+20.4 Why Not Put Question Data in a Database Initially?
+
+|   |   |   |
+|---|---|---|
+|Aspect|JSON/MDX|DynamoDB|
+|Cost|Low|API/database access occurs|
+|SEO|Easy static generation|SSR/API design required|
+|Development speed|Fast|More implementation work|
+|Management|Changes tracked in GitHub|Often needs an administration screen|
+
+Conclusion:
+
+In the MVP, manage questions, terms, and articles in JSON/MDX, and store only contact submissions in DynamoDB.
 
   
 
-21. MVP構成の想定コストリスク
+21. Anticipated Cost Risks in the MVP Architecture
 
-21.1 通常アクセス時
+21.1 Normal Traffic
 
-想定：
+Assumptions:
 
-- 個人ポートフォリオとして月数百〜数千PV
-- 問い合わせは月数件〜数十件
-- 画像・記事中心の静的サイト
+- Several hundred to several thousand monthly page views for an individual portfolio
+- Several to several dozen inquiries per month
+- Static site centered on images and articles
 
-この場合、主なコストは以下に限定される。
+In this case, the main costs are limited to the following.
 
 |   |   |
 |---|---|
-|サービス|リスク|
-|S3|画像やファイルを置きすぎた場合|
-|CloudFront|アクセス急増・画像|
+|Service|Risk|
+|S3|Too many images or files stored|
+|CloudFront|Traffic spikes and images|

@@ -1,12 +1,8 @@
 /**
- * sitemap-locale-seal.test.ts
- *
- * ACR-012 (#322) invariant 第 1 層。
- *
- * 封印モード（`LOCALIZED_ROUTES_PUBLISHED === false`）では
- * sitemap から en/zh の `<loc>` と `<xhtml:link>` が完全に消えること、
- * かつ ja の URL が空洞化していないこと（2026-06-28 の「ほぼ全 URL が 404」型の
- * 事故を防ぐ下限ガード）を検証する。
+ * ACR-012 (#322), invariant layer 1. In sealed mode (LOCALIZED_ROUTES_PUBLISHED === false), verify that
+ * all en/zh loc and xhtml:link entries disappear from the sitemap while enough Japanese URLs remain. The
+ * minimum-count guard prevents a repeat of the 2026-06-28 incident where almost all listed URLs returned
+ * 404.
  */
 import { describe, expect, it } from "vitest";
 
@@ -74,8 +70,8 @@ describe.runIf(LOCALIZED_ROUTES_PUBLISHED)("sitemap without locale seal", () => 
 
     expect([...alternateKeySets]).toContain("en,ja,x-default,zh-Hant");
 
-    // ja 単独クラスタは `availableLocales: ["ja"]` を明示した route（/terms-of-service）だけ。
-    // それ以外の組み合わせ（en 単独 / zh 単独など）が出たら生成ロジックの破損。
+    // Only routes explicitly declaring availableLocales: ["ja"] (/terms-of-service) form Japanese-only clusters.
+    // Other single-locale combinations (en-only or zh-only) indicate broken generation logic.
     expect([...alternateKeySets].sort()).toEqual([
       "en,ja,x-default,zh-Hant",
       "ja,x-default",

@@ -1,5 +1,7 @@
 # Japanese Blog Indexing Content Quality Implementation Plan
 
+Language note: The Japanese MDX link labels, article-quality regex, and exact historical test batch names/selectors below are intentional localized content or verification specimens. They remain in Japanese so the examples and commands match the material being tested. Developer instructions are in English.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Improve 13 thin Japanese blog articles, remove their Japanese `noIndex` controls, keep `/en` and `/zh` sealed, and verify sitemap/metadata consistency before release.
@@ -423,7 +425,7 @@ pnpm exec vitest run src/contents/blog/__tests__/blog-locale-parity.test.ts
 git diff --check
 ```
 
-Expected: the AWSサービス基礎 batch passes. The registry test is not selected by the `-t` filter and remains coordinator-owned.
+Expected: the AWS service fundamentals batch passes. The registry test is not selected by the `-t` filter and remains coordinator-owned.
 
 - [ ] **Step 9: Commit worker changes**
 

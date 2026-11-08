@@ -1,211 +1,211 @@
-# AWS Cert Roadmap Lab 多言語対応方針設計書
+# AWS Cert Roadmap Lab Multilingual Support Policy Design
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 文書名 | 多言語対応方針設計書 |
-| 対象プロダクト | AWS Cert Roadmap Lab |
-| 対象フェーズ | Phase 5：グローバルSEO・ローカライゼーション |
-| 対象タスク | P5-001 多言語対応方針確定 |
-| 作成目的 | 英語・中国語対応の対象言語、URL、翻訳範囲、将来拡張方針を定義する |
-| 実装前提 | Next.js / TypeScript / Static Export / S3 + CloudFront |
-| 作成日 | 2026-06-10 |
+| Document name | Multilingual Support Policy Design |
+| Target product | AWS Cert Roadmap Lab |
+| Target phase | Phase 5: Global SEO and Localization |
+| Target task | P5-001 Finalize multilingual support policy |
+| Purpose | Define supported languages, URLs, translation scope, and future expansion policy for English and Chinese support |
+| Implementation assumptions | Next.js / TypeScript / Static Export / S3 + CloudFront |
+| Created | 2026-06-10 |
 
 ---
 
-## 2. 本設計書の目的
+## 2. Purpose of This Design
 
-本設計書は、AWS Cert Roadmap Lab を日本語だけの学習サイトから、英語・中国語にも対応したグローバルSEO向け学習サイトへ拡張するための方針を定義する。
+This document defines the policy for expanding AWS Cert Roadmap Lab from a Japanese-only learning site into a learning site supporting English and Chinese for global SEO.
 
-Phase 5の目的は、単なる翻訳ではない。
+The purpose of Phase 5 is not simply translation.
 
-目的は以下である。
+The objectives are as follows.
 
-1. 英語圏・中国語圏からの検索流入を検証する
-2. AWS資格学習サイトとして海外SEOの土台を作る
-3. 日本語・英語・中国語の3言語で主要コンテンツを提供する
-4. S3 + CloudFront の静的配信構成を維持し、低コスト運用を継続する
-5. 将来の学習アプリ化・有料化前に、海外流入の可能性を検証する
+1. Validate search traffic from English- and Chinese-speaking audiences.
+2. Establish a foundation for international SEO as an AWS certification learning site.
+3. Provide major content in three languages: Japanese, English, and Chinese.
+4. Retain static delivery through S3 + CloudFront and continue low-cost operations.
+5. Validate the potential for international traffic before turning the site into a learning app or introducing paid offerings.
 
 ---
 
-## 3. 対象言語
+## 3. Supported Languages
 
-### 3.1 初期対応言語
+### 3.1 Initially Supported Languages
 
-| locale | 表示言語 | URL Prefix | HTML lang | OGP locale | 対応方針 |
+| locale | Display language | URL Prefix | HTML lang | OGP locale | Support policy |
 |---|---|---|---|---|---|
-| ja | 日本語 | なし | ja | ja_JP | 既存URLを維持する |
-| en | 英語 | /en | en | en_US | 英語圏SEO向けに追加する |
-| zh | 繁体字中国語 | /zh | zh-Hant | zh_TW | 台湾・繁体字中国語圏向けに追加する |
+| ja | Japanese | None | ja | ja_JP | Retain existing URLs |
+| en | English | /en | en | en_US | Add for English-language SEO |
+| zh | Traditional Chinese | /zh | zh-Hant | zh_TW | Add for Taiwan and Traditional Chinese-speaking audiences |
 
-### 3.2 日本語URLの扱い
+### 3.2 Handling Japanese URLs
 
-日本語ページは既存URLを維持する。
+Retain existing URLs for Japanese pages.
 
-例：
+Example:
 
-| コンテンツ | 日本語URL |
+| Content | Japanese URL |
 |---|---|
-| トップ | / |
-| 用語集 | /terms |
-| 用語詳細 | /terms/s3 |
-| 比較一覧 | /comparisons |
-| 比較詳細 | /comparisons/s3-vs-ebs-vs-efs |
-| 構成図一覧 | /architectures |
-| 構成図詳細 | /architectures/static-site-s3-cloudfront |
-| ブログ一覧 | /blog |
-| ブログ詳細 | /blog/aws-free-tier-portfolio |
+| Home | / |
+| Glossary | /terms |
+| Term detail | /terms/s3 |
+| Comparison index | /comparisons |
+| Comparison detail | /comparisons/s3-vs-ebs-vs-efs |
+| Architecture diagram index | /architectures |
+| Architecture diagram detail | /architectures/static-site-s3-cloudfront |
+| Blog index | /blog |
+| Blog detail | /blog/aws-free-tier-portfolio |
 | About | /about |
 | Privacy | /privacy |
 | Disclaimer | /disclaimer |
 | Contact | /contact |
 
-理由：
+Reasons:
 
-- 既存インデックスを維持するため
-- Search Console上の既存評価を壊さないため
-- 既存内部リンクを最小修正で維持するため
-- 日本語ユーザーにとってURLが短いまま使えるため
+- Preserve existing indexing.
+- Avoid disrupting existing standing in Search Console.
+- Preserve existing internal links with minimal changes.
+- Keep URLs short for Japanese users.
 
-### 3.3 英語URLの扱い
+### 3.3 Handling English URLs
 
-英語ページは `/en` 配下に配置する。
+Place English pages under `/en`.
 
-例：
+Example:
 
-| コンテンツ | 英語URL |
+| Content | English URL |
 |---|---|
-| トップ | /en |
-| 用語集 | /en/terms |
-| 用語詳細 | /en/terms/s3 |
-| 比較一覧 | /en/comparisons |
-| 比較詳細 | /en/comparisons/s3-vs-ebs-vs-efs |
-| 構成図一覧 | /en/architectures |
-| 構成図詳細 | /en/architectures/static-site-s3-cloudfront |
-| ブログ一覧 | /en/blog |
-| ブログ詳細 | /en/blog/aws-free-tier-portfolio |
+| Home | /en |
+| Glossary | /en/terms |
+| Term detail | /en/terms/s3 |
+| Comparison index | /en/comparisons |
+| Comparison detail | /en/comparisons/s3-vs-ebs-vs-efs |
+| Architecture diagram index | /en/architectures |
+| Architecture diagram detail | /en/architectures/static-site-s3-cloudfront |
+| Blog index | /en/blog |
+| Blog detail | /en/blog/aws-free-tier-portfolio |
 | About | /en/about |
 | Privacy | /en/privacy |
 | Disclaimer | /en/disclaimer |
 | Contact | /en/contact |
 
-### 3.4 中国語URLの扱い
+### 3.4 Handling Chinese URLs
 
-中国語ページは `/zh` 配下に配置する。
+Place Chinese pages under `/zh`.
 
-初期は繁体字寄りの表現で開始する。
+Initially use wording oriented toward Traditional Chinese.
 
-例：
+Example:
 
-| コンテンツ | 中国語URL |
+| Content | Chinese URL |
 |---|---|
-| トップ | /zh |
-| 用語集 | /zh/terms |
-| 用語詳細 | /zh/terms/s3 |
-| 比較一覧 | /zh/comparisons |
-| 比較詳細 | /zh/comparisons/s3-vs-ebs-vs-efs |
-| 構成図一覧 | /zh/architectures |
-| 構成図詳細 | /zh/architectures/static-site-s3-cloudfront |
-| ブログ一覧 | /zh/blog |
-| ブログ詳細 | /zh/blog/aws-free-tier-portfolio |
+| Home | /zh |
+| Glossary | /zh/terms |
+| Term detail | /zh/terms/s3 |
+| Comparison index | /zh/comparisons |
+| Comparison detail | /zh/comparisons/s3-vs-ebs-vs-efs |
+| Architecture diagram index | /zh/architectures |
+| Architecture diagram detail | /zh/architectures/static-site-s3-cloudfront |
+| Blog index | /zh/blog |
+| Blog detail | /zh/blog/aws-free-tier-portfolio |
 | About | /zh/about |
 | Privacy | /zh/privacy |
 | Disclaimer | /zh/disclaimer |
 | Contact | /zh/contact |
 
-### 3.5 将来の中国語拡張
+### 3.5 Future Chinese Expansion
 
-将来、簡体字中国語を追加する場合は `/zh-cn` を使う。
+Use `/zh-cn` if Simplified Chinese is added in the future.
 
-| locale | 表示言語 | URL Prefix | HTML lang | 用途 |
+| locale | Display language | URL Prefix | HTML lang | Purpose |
 |---|---|---|---|---|
-| zh | 繁体字中国語 | /zh | zh-Hant | 台湾・香港向け |
-| zh-cn | 簡体字中国語 | /zh-cn | zh-Hans | 中国本土・簡体字圏向け |
+| zh | Traditional Chinese | /zh | zh-Hant | For Taiwan and Hong Kong |
+| zh-cn | Simplified Chinese | /zh-cn | zh-Hans | For mainland China and Simplified Chinese-speaking audiences |
 
-初期段階では `/zh-cn` は実装しない。
+Do not implement `/zh-cn` in the initial stage.
 
-理由：
+Reasons:
 
-- 初期翻訳コストを抑えるため
-- 中国本土向けSEOは検索エンジン事情が異なるため
-- まず台湾・繁体字中国語圏の反応を検証するため
+- Keep initial translation costs down.
+- Mainland China has a different search engine environment for SEO.
+- First validate the response from Taiwan and Traditional Chinese-speaking audiences.
 
 ---
 
-## 4. 多言語対応の基本方針
+## 4. Basic Multilingual Support Policy
 
-### 4.1 方針一覧
+### 4.1 Policy List
 
-| 方針 | 内容 |
+| Policy | Description |
 |---|---|
-| 日本語を基準言語にする | 既存の日本語コンテンツを原本とする |
-| URL Prefix方式を採用する | 英語は /en、中国語は /zh とする |
-| IP自動リダイレクトはしない | Googlebot、AdSense審査、ユーザー確認で挙動が読みにくくなるため |
-| 同一コンテンツIDを維持する | s3、lambda、rds-vs-dynamodb などのslugは言語間で共通にする |
-| 静的生成を維持する | S3 + CloudFrontで低コスト配信する |
-| UI文言とコンテンツ本文を分ける | Header、Footer、CTAは辞書管理、記事本文はJSON / MDXで管理する |
-| 翻訳APIの本番連携はしない | API費用、品質管理、誤訳リスクを避ける |
-| AWS正式名称は翻訳しない | Amazon S3、AWS Lambdaなどは公式名称を維持する |
+| Use Japanese as the reference language | Treat existing Japanese content as the source |
+| Adopt URL prefixes | Use /en for English and /zh for Chinese |
+| Do not automatically redirect by IP | This makes behavior unpredictable for Googlebot, AdSense review, and user verification |
+| Retain the same content IDs | Share slugs such as s3, lambda, and rds-vs-dynamodb across languages |
+| Retain static generation | Deliver content inexpensively with S3 + CloudFront |
+| Separate UI text from content bodies | Manage Header, Footer, and CTA in dictionaries and article bodies in JSON / MDX |
+| Do not integrate a translation API in production | Avoid API costs, quality management, and mistranslation risks |
+| Do not translate official AWS names | Retain official names such as Amazon S3 and AWS Lambda |
 
-### 4.2 自動リダイレクト方針
+### 4.2 Automatic Redirect Policy
 
-IPアドレス、ブラウザ言語、国判定による自動リダイレクトは行わない。
+Do not automatically redirect based on IP address, browser language, or country detection.
 
-許可する挙動：
+Allowed behavior:
 
-- ユーザーが言語切替UIで明示的に移動する
-- `/en` にアクセスしたユーザーには英語ページを表示する
-- `/zh` にアクセスしたユーザーには中国語ページを表示する
-- `/` にアクセスしたユーザーには日本語ページを表示する
+- Users explicitly navigate using the language switcher UI.
+- Users accessing `/en` see English pages.
+- Users accessing `/zh` see Chinese pages.
+- Users accessing `/` see Japanese pages.
 
-禁止する挙動：
+Prohibited behavior:
 
-- 日本国外IPを強制的に `/en` へ飛ばす
-- 中国語ブラウザを強制的に `/zh` へ飛ばす
-- Googlebotにユーザーと違うURLを返す
-- Cookie未設定ユーザーを勝手に別言語へ移動させる
+- Forcing IP addresses outside Japan to `/en`.
+- Forcing Chinese-language browsers to `/zh`.
+- Returning a different URL to Googlebot than to users.
+- Moving users without a cookie to another language without their choice.
 
-理由：
+Reasons:
 
-- SEO評価を安定させるため
-- ユーザーが表示言語を自分で選べるようにするため
-- Search ConsoleでURL検証しやすくするため
-- AdSense審査時の表示差分を避けるため
+- Stabilize SEO performance.
+- Allow users to choose their display language.
+- Make URL verification in Search Console easier.
+- Avoid display differences during AdSense review.
 
 ---
 
-## 5. 翻訳対象範囲
+## 5. Translation Scope
 
-### 5.1 Phase 5で翻訳する範囲
+### 5.1 Scope to Translate in Phase 5
 
-| 区分 | 対象 | 優先度 |
+| Category | Scope | Priority |
 |---|---|---|
-| 共通UI | Header、Footer、CTA、検索、フィルター | Must |
-| 共通ページ | トップ、About、Privacy、Disclaimer | Must |
-| 用語集 | 主要AWS用語30件 | Must |
-| 比較記事 | 主要比較3本 | Should |
-| 構成図記事 | 主要構成図3本 | Should |
-| ブログ | 優先ブログ3本 | Should |
-| Contact | 問い合わせ導線 | Should |
-| 404 | 404表示 | Should |
-| 模擬問題 | CLF問題30問 | Could |
+| Shared UI | Header, Footer, CTA, search, filters | Must |
+| Shared pages | Home, About, Privacy, Disclaimer | Must |
+| Glossary | 30 major AWS terms | Must |
+| Comparison articles | 3 major comparisons | Should |
+| Architecture diagram articles | 3 major architecture diagrams | Should |
+| Blog | 3 priority blog posts | Should |
+| Contact | Contact navigation | Should |
+| 404 | 404 display | Should |
+| Practice questions | 30 CLF questions | Could |
 
-### 5.2 最初に翻訳する共通ページ
+### 5.2 Shared Pages to Translate First
 
-| ページ | 英語URL | 中国語URL | 優先度 |
+| Page | English URL | Chinese URL | Priority |
 |---|---|---|---|
-| トップ | /en | /zh | Must |
+| Home | /en | /zh | Must |
 | About | /en/about | /zh/about | Must |
 | Privacy | /en/privacy | /zh/privacy | Must |
 | Disclaimer | /en/disclaimer | /zh/disclaimer | Must |
 | Contact | /en/contact | /zh/contact | Should |
 | 404 | /en/404 | /zh/404 | Should |
 
-### 5.3 最初に翻訳するAWS用語
+### 5.3 AWS Terms to Translate First
 
-以下30件を最初の翻訳対象とする。
+Translate the following 30 terms first.
 
 ```text
 IAM
@@ -240,62 +240,62 @@ CloudFormation
 Cognito
 ```
 
-### 5.4 最初に翻訳する比較記事
+### 5.4 Comparison Articles to Translate First
 
-| slug | 日本語テーマ | 優先度 |
+| slug | Japanese-language topic (English translation) | Priority |
 |---|---|---|
-| s3-vs-ebs-vs-efs | S3 / EBS / EFS の違い | Should |
-| rds-vs-dynamodb | RDS / DynamoDB の違い | Should |
-| iam-user-role-policy | IAM User / Role / Policy の違い | Should |
+| s3-vs-ebs-vs-efs | Differences between S3 / EBS / EFS | Should |
+| rds-vs-dynamodb | Differences between RDS / DynamoDB | Should |
+| iam-user-role-policy | Differences between IAM User / Role / Policy | Should |
 
-### 5.5 最初に翻訳する構成図記事
+### 5.5 Architecture Diagram Articles to Translate First
 
-| slug | 日本語テーマ | 優先度 |
+| slug | Japanese-language topic (English translation) | Priority |
 |---|---|---|
-| static-site-s3-cloudfront | S3 + CloudFront 静的サイト構成 | Should |
-| serverless-api-basic | API Gateway + Lambda + DynamoDB 構成 | Should |
-| three-tier-vpc | 3層Webアプリ構成 | Should |
+| static-site-s3-cloudfront | S3 + CloudFront static site architecture | Should |
+| serverless-api-basic | API Gateway + Lambda + DynamoDB architecture | Should |
+| three-tier-vpc | Three-tier web app architecture | Should |
 
-### 5.6 最初に翻訳するブログ記事
+### 5.6 Blog Articles to Translate First
 
-| slug | 日本語テーマ | 優先度 |
+| slug | Japanese-language topic (English translation) | Priority |
 |---|---|---|
-| aws-cloud-practitioner-roadmap | AWS Cloud Practitionerとは？ | Should |
-| aws-free-tier-portfolio | AWS無料枠でポートフォリオを作る方法 | Should |
-| s3-cloudfront-static-site | S3 + CloudFrontで静的サイトを公開する方法 | Should |
+| aws-cloud-practitioner-roadmap | What is AWS Cloud Practitioner? | Should |
+| aws-free-tier-portfolio | How to build a portfolio using the AWS Free Tier | Should |
+| s3-cloudfront-static-site | How to publish a static site with S3 + CloudFront | Should |
 
-### 5.7 Phase 5後半に回す範囲
+### 5.7 Scope Deferred to the Latter Half of Phase 5
 
-| 対象 | 理由 |
+| Scope | Reason |
 |---|---|
-| CLF問題30問の英語化 | 翻訳量が多く、品質確認に時間がかかるため |
-| CLF問題30問の中国語化 | 試験用語の誤訳が起きやすいため |
-| SAA問題の多言語化 | まず用語・比較・構成図のSEO検証を優先するため |
-| PDF教材 | 流入検証前に教材化しても需要を判断できないため |
-| 有料導線 | 海外流入と滞在を確認してから設計するため |
+| Translate 30 CLF questions into English | Large translation volume and time-consuming quality checks |
+| Translate 30 CLF questions into Chinese | Exam terminology is prone to mistranslation |
+| Multilingual SAA questions | Prioritize SEO validation for terms, comparisons, and architecture diagrams first |
+| PDF learning materials | Demand cannot be judged by creating materials before validating traffic |
+| Paid conversion paths | Design after confirming international traffic and engagement |
 
 ---
 
-## 6. 翻訳しない範囲
+## 6. Scope Not to Translate
 
-### 6.1 Phase 5では実装しない機能
+### 6.1 Features Not Implemented in Phase 5
 
-| 対象 | 理由 |
+| Scope | Reason |
 |---|---|
-| Cognitoログイン | ローカライゼーション検証には不要 |
-| 学習履歴保存 | ユーザー登録が必要になり、実装範囲が重くなる |
-| Stripe決済 | 流入検証前に課金導線を作っても判断材料が少ない |
-| 有料会員機能 | まず無料コンテンツで流入を検証する |
-| 翻訳API本番連携 | API費用、品質管理コスト、誤訳リスクが増える |
-| IPベース自動リダイレクト | SEOとAdSense審査で挙動が読みにくくなる |
-| DynamoDBへのコンテンツ移行 | 静的JSON / MDXの方がSEO、速度、コストで有利 |
-| WAF導入 | 現段階では固定費・運用負荷が増える |
+| Cognito login | Unnecessary for localization validation |
+| Saving learning history | Requires user registration and substantially expands implementation scope |
+| Stripe payments | There is little evidence for decisions if payment paths are built before validating traffic |
+| Paid membership features | First validate traffic with free content |
+| Production translation API integration | Increases API costs, quality management costs, and mistranslation risks |
+| IP-based automatic redirects | Makes behavior unpredictable for SEO and AdSense review |
+| Migrating content to DynamoDB | Static JSON / MDX is preferable for SEO, speed, and cost |
+| Introducing WAF | Increases fixed costs and operational load at the current stage |
 
-### 6.2 AWS公式名称の扱い
+### 6.2 Handling Official AWS Names
 
-AWSサービス名は翻訳しない。
+Do not translate AWS service names.
 
-例：
+Examples (Chinese naming specimens):
 
 | NG | OK |
 |---|---|
@@ -304,9 +304,9 @@ AWSサービス名は翻訳しない。
 | 雲端前端 | Amazon CloudFront |
 | 動態資料庫 | Amazon DynamoDB |
 
-中国語ページでは、必要な場合のみ説明文で補足する。
+On Chinese pages, add explanatory text only when needed.
 
-例：
+Example (Chinese user-facing text):
 
 ```text
 Amazon S3 是 AWS 的物件儲存服務。
@@ -314,28 +314,28 @@ Amazon S3 是 AWS 的物件儲存服務。
 
 ---
 
-## 7. SEO方針
+## 7. SEO Policy
 
-### 7.1 canonical方針
+### 7.1 canonical Policy
 
-各ページは自分自身をcanonicalにする。
+Each page uses itself as its canonical.
 
-| ページ | canonical |
+| Page | canonical |
 |---|---|
 | /terms/s3 | https://www.aws-cert-roadmap-lab.com/terms/s3 |
 | /en/terms/s3 | https://www.aws-cert-roadmap-lab.com/en/terms/s3 |
 | /zh/terms/s3 | https://www.aws-cert-roadmap-lab.com/zh/terms/s3 |
 
-理由：
+Reasons:
 
-- 日本語、英語、中国語は別ページとして評価させるため
-- 英語ページのcanonicalを日本語ページに向けると、英語ページが評価されにくくなるため
+- Japanese, English, and Chinese should be evaluated as separate pages.
+- Pointing an English page's canonical to a Japanese page makes the English page less likely to receive credit.
 
-### 7.2 hreflang方針
+### 7.2 hreflang Policy
 
-同一コンテンツIDを持つページには、以下のhreflangを出力する。
+Emit the following hreflang entries for pages sharing the same content ID.
 
-例：S3用語詳細
+Example: S3 term detail
 
 ```text
 ja: /terms/s3
@@ -344,7 +344,7 @@ zh-Hant: /zh/terms/s3
 x-default: /terms/s3
 ```
 
-出力例：
+Output example:
 
 ```html
 <link rel="alternate" hreflang="ja" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
@@ -353,58 +353,58 @@ x-default: /terms/s3
 <link rel="alternate" hreflang="x-default" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
 ```
 
-### 7.3 sitemap方針
+### 7.3 Sitemap Policy
 
-`sitemap.xml` には日本語・英語・中国語URLを含める。
+Include Japanese, English, and Chinese URLs in `sitemap.xml`.
 
-含める対象：
+Include:
 
-- 日本語URL
-- 英語URL
-- 中国語URL
-- 用語詳細URL
-- 比較詳細URL
-- 構成図詳細URL
-- ブログ詳細URL
-- 共通ページURL
+- Japanese URLs
+- English URLs
+- Chinese URLs
+- Term detail URLs
+- Comparison detail URLs
+- Architecture diagram detail URLs
+- Blog detail URLs
+- Shared page URLs
 
-Phase 5完了時には、`out/en` と `out/zh` が生成され、sitemapに多言語URLが含まれる状態を目指す。
+At Phase 5 completion, aim to have `out/en` and `out/zh` generated and multilingual URLs included in the sitemap.
 
-### 7.4 metadata方針
+### 7.4 Metadata Policy
 
-言語別に以下を出し分ける。
+Vary the following by language.
 
-| 項目 | ja | en | zh |
+| Item | ja | en | zh |
 |---|---|---|---|
-| title | 日本語 | 英語 | 繁体字中国語 |
-| description | 日本語 | 英語 | 繁体字中国語 |
-| keywords | 日本語中心 | 英語SEOキーワード | 繁体字中国語SEOキーワード |
+| title | Japanese | English | Traditional Chinese |
+| description | Japanese | English | Traditional Chinese |
+| keywords | Primarily Japanese | English SEO keywords | Traditional Chinese SEO keywords |
 | openGraph.locale | ja_JP | en_US | zh_TW |
 | html lang | ja | en | zh-Hant |
 
-### 7.5 OGP方針
+### 7.5 OGP Policy
 
-初期は既存OGP画像を共通利用する。
+Initially share the existing OGP images.
 
-ただし、以下ページは将来言語別OGP画像を作る。
+However, create language-specific OGP images for the following pages in the future.
 
-| ページ | OGP方針 |
+| Page | OGP policy |
 |---|---|
-| トップ | 言語別OGP画像を作る |
-| 用語集一覧 | 言語別OGP画像を作る |
-| 比較一覧 | 言語別OGP画像を作る |
-| 構成図一覧 | 言語別OGP画像を作る |
-| 優先ブログ記事 | 言語別OGP画像を作る |
+| Home | Create language-specific OGP images |
+| Glossary index | Create language-specific OGP images |
+| Comparison index | Create language-specific OGP images |
+| Architecture diagram index | Create language-specific OGP images |
+| Priority blog articles | Create language-specific OGP images |
 
 ---
 
-## 8. コンテンツ管理方針
+## 8. Content Management Policy
 
-### 8.1 UI文言
+### 8.1 UI Text
 
-UI文言は `src/i18n` 配下の辞書で管理する。
+Manage UI text in dictionaries under `src/i18n`.
 
-想定構成：
+Planned structure:
 
 ```text
 frontend/src/i18n/
@@ -416,23 +416,23 @@ frontend/src/i18n/
 └── routes.ts
 ```
 
-対象：
+Scope:
 
 - Header
 - Footer
 - CTA
-- 検索フォーム
-- カテゴリフィルター
-- パンくず
-- ボタン
-- エラーメッセージ
-- 404文言
+- Search form
+- Category filters
+- Breadcrumbs
+- Buttons
+- Error messages
+- 404 text
 
-### 8.2 AWS用語データ
+### 8.2 AWS Term Data
 
-AWS用語はJSONを言語別に分ける。
+Separate AWS term JSON by language.
 
-想定構成：
+Planned structure:
 
 ```text
 frontend/contents/terms/
@@ -441,9 +441,9 @@ frontend/contents/terms/
 └── terms.zh.json
 ```
 
-slugは言語間で共通にする。
+Share slugs across languages.
 
-例：
+Example:
 
 ```text
 s3
@@ -452,11 +452,11 @@ cloudfront
 rds-vs-dynamodb
 ```
 
-### 8.3 MDXコンテンツ
+### 8.3 MDX Content
 
-比較、構成図、ブログは言語別ディレクトリで管理する。
+Manage comparisons, architecture diagrams, and blog content in language-specific directories.
 
-想定構成：
+Planned structure:
 
 ```text
 frontend/contents/comparisons/
@@ -475,13 +475,13 @@ frontend/contents/blog/
 └── zh/
 ```
 
-### 8.4 画像・SVG
+### 8.4 Images and SVG
 
-画像とSVGは初期は共通利用する。
+Initially share images and SVGs.
 
-ただし、SVG内に日本語文言が入っている場合は、言語別SVGを作る。
+However, create language-specific SVGs when an SVG contains Japanese text.
 
-想定構成：
+Planned structure:
 
 ```text
 frontend/public/images/architectures/
@@ -492,72 +492,72 @@ frontend/public/images/architectures/
 
 ---
 
-## 9. ルーティング方針
+## 9. Routing Policy
 
-### 9.1 基本ルール
+### 9.1 Basic Rules
 
-| 言語 | URL Prefix | 例 |
+| Language | URL Prefix | Example |
 |---|---|---|
-| ja | なし | /terms/s3 |
+| ja | None | /terms/s3 |
 | en | /en | /en/terms/s3 |
 | zh | /zh | /zh/terms/s3 |
 
-### 9.2 slug方針
+### 9.2 Slug Policy
 
-slugは英数字のまま共通化する。
+Keep shared slugs alphanumeric.
 
-例：
+Example:
 
-| コンテンツ | ja | en | zh |
+| Content | ja | en | zh |
 |---|---|---|---|
-| S3用語 | /terms/s3 | /en/terms/s3 | /zh/terms/s3 |
-| Lambda用語 | /terms/lambda | /en/terms/lambda | /zh/terms/lambda |
-| S3/EBS/EFS比較 | /comparisons/s3-vs-ebs-vs-efs | /en/comparisons/s3-vs-ebs-vs-efs | /zh/comparisons/s3-vs-ebs-vs-efs |
+| S3 term | /terms/s3 | /en/terms/s3 | /zh/terms/s3 |
+| Lambda term | /terms/lambda | /en/terms/lambda | /zh/terms/lambda |
+| S3/EBS/EFS comparison | /comparisons/s3-vs-ebs-vs-efs | /en/comparisons/s3-vs-ebs-vs-efs | /zh/comparisons/s3-vs-ebs-vs-efs |
 
-理由：
+Reasons:
 
-- 言語切替が実装しやすい
-- sitemap生成が単純になる
-- Search ConsoleでURL対応を確認しやすい
-- AWS公式サービス名と相性が良い
+- Makes language switching easy to implement.
+- Simplifies sitemap generation.
+- Makes URL mappings easy to verify in Search Console.
+- Works well with official AWS service names.
 
 ---
 
-## 10. 品質管理方針
+## 10. Quality Management Policy
 
-### 10.1 翻訳品質
+### 10.1 Translation Quality
 
-翻訳時は以下を守る。
+Follow these rules when translating.
 
-1. AWSサービス正式名称は翻訳しない
-2. AWS認定試験名は公式英語名を維持する
-3. exam dump、本番問題、合格保証を連想させる表現を使わない
-4. 中国語は初期は繁体字で統一する
-5. 日本語原文と意味が変わる意訳をしない
-6. 技術用語は表記ルール表に従う
+1. Do not translate official AWS service names.
+2. Retain official English names for AWS certification exams.
+3. Do not use wording suggesting exam dumps, actual exam questions, or guaranteed passes.
+4. Initially standardize Chinese on Traditional Chinese.
+5. Do not paraphrase in ways that change the meaning of the Japanese source.
+6. Follow the terminology notation rules table.
 
-### 10.2 禁止表現
+### 10.2 Prohibited Expressions
 
-以下の表現は使わない。
+Do not use the following expressions.
 
-| 表現 | 理由 |
+| Expression | Reason |
 |---|---|
-| exam dump | 試験規約違反を連想させる |
-| real exam questions | 本番問題流用を連想させる |
-| guaranteed pass | 合格保証はできない |
-| official AWS exam questions | AWS公式問題と誤認される |
-| leaked questions | 不正入手を連想させる |
-| 100% pass | 合格保証に該当する |
+| exam dump | Suggests a violation of exam rules |
+| real exam questions | Suggests reuse of actual exam questions |
+| guaranteed pass | Passing cannot be guaranteed |
+| official AWS exam questions | Could be mistaken for official AWS questions |
+| leaked questions | Suggests illicit acquisition |
+| 100% pass | Constitutes a passing guarantee |
 
-### 10.3 免責文
+### 10.3 Disclaimer
 
-問題・記事・構成図ページには、以下の方針を維持する。
+Maintain the following policy on question, article, and architecture diagram pages.
 
 ```text
 This site is an independent learning project and is not affiliated with Amazon Web Services.
 ```
 
-中国語では以下を基準にする。
+Use the following as the standard Chinese user-facing text.
 
 ```text
 本站是獨立學習專案，與 Amazon Web Services 無關。
@@ -565,62 +565,62 @@ This site is an independent learning project and is not affiliated with Amazon W
 
 ---
 
-## 11. 将来拡張方針
+## 11. Future Expansion Policy
 
-### 11.1 Phase 6で検討するもの
+### 11.1 Items to Consider in Phase 6
 
-| 対象 | 方針 |
+| Scope | Policy |
 |---|---|
-| Cognito | 学習履歴・マイページ導入時に検討する |
-| 学習履歴 | 多言語流入を確認してから設計する |
-| 有料教材 | 海外流入・滞在・クリックを確認してから設計する |
-| PDF教材 | 英語・中国語の需要が見えてから作成する |
-| `/zh-cn` | 簡体字需要が見えてから追加する |
-| SES通知 | ユーザー登録後に検討する |
-| WAF | Botや攻撃が増えた場合に導入を検討する |
+| Cognito | Consider when introducing learning history and a personal account page |
+| Learning history | Design after confirming multilingual traffic |
+| Paid learning materials | Design after confirming international traffic, engagement, and clicks |
+| PDF learning materials | Create after demand in English and Chinese becomes clear |
+| `/zh-cn` | Add after demand for Simplified Chinese becomes clear |
+| SES notifications | Consider after user registration |
+| WAF | Consider introducing it if bots or attacks increase |
 
-### 11.2 判断基準
+### 11.2 Decision Criteria
 
-以下の条件を満たしたら、Phase 6へ進む。
+Proceed to Phase 6 when the following conditions are met.
 
-| 項目 | 判断基準 |
+| Item | Criterion |
 |---|---|
-| Search Console | `/en` `/zh` のURLがインデックス対象になる |
-| GA | 英語圏・中国語圏からの流入が確認できる |
-| 滞在 | 用語・比較・構成図ページで閲覧が発生している |
-| 問い合わせ | 海外ユーザーからの問い合わせまたはクリックがある |
-| コンテンツ品質 | 翻訳の表記揺れが管理できている |
+| Search Console | `/en` and `/zh` URLs become eligible for indexing |
+| GA | Traffic from English- and Chinese-speaking audiences can be confirmed |
+| Engagement | Terms, comparisons, and architecture diagram pages receive views |
+| Inquiries | There are inquiries or clicks from international users |
+| Content quality | Inconsistencies in translated terminology are under control |
 
 ---
 
-## 12. 完了条件
+## 12. Completion Criteria
 
-P5-001は以下を満たしたら完了とする。
+P5-001 is complete when the following requirements are met.
 
-| 条件 | 判定 |
+| Criterion | Requirement |
 |---|---|
-| 対象言語が定義されている | 必須 |
-| URL Prefix方針が定義されている | 必須 |
-| 日本語URL維持方針が定義されている | 必須 |
-| 英語URL方針が定義されている | 必須 |
-| 中国語URL方針が定義されている | 必須 |
-| 翻訳対象範囲が定義されている | 必須 |
-| 翻訳しない範囲が定義されている | 必須 |
-| SEO方針が定義されている | 必須 |
-| コンテンツ管理方針が定義されている | 必須 |
-| 将来拡張方針が定義されている | 必須 |
+| Supported languages are defined | Required |
+| URL Prefix policy is defined | Required |
+| Policy for retaining Japanese URLs is defined | Required |
+| English URL policy is defined | Required |
+| Chinese URL policy is defined | Required |
+| Translation scope is defined | Required |
+| Scope not to translate is defined | Required |
+| SEO policy is defined | Required |
+| Content management policy is defined | Required |
+| Future expansion policy is defined | Required |
 
 ---
 
-## 13. 次タスクへの接続
+## 13. Connection to Subsequent Tasks
 
-P5-001完了後は、以下の順で進める。
+After P5-001 is complete, proceed in the following order.
 
-1. P5-002 多言語URL設計
-2. P5-003 i18nディレクトリ設計
-3. P5-004 locale定義実装
-4. P5-005 UI辞書ファイル作成
-5. P5-006 言語切替UI実装
-6. P5-007 多言語ルーティング基盤作成
+1. P5-002 Multilingual URL design
+2. P5-003 i18n directory design
+3. P5-004 Locale definition implementation
+4. P5-005 UI dictionary file creation
+5. P5-006 Language switcher UI implementation
+6. P5-007 Multilingual routing foundation creation
 
-P5-002では、本設計書のURL方針をもとに、Next.js App Router上の具体的なディレクトリ構成を決める。
+In P5-002, determine the specific Next.js App Router directory structure based on the URL policy in this document.

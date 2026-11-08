@@ -1,11 +1,7 @@
 /**
- * blog-content-loader.ts
- *
- * locale 別 MDX 本文ローダー (server-only).
- * frontend/contents/blog/{ja,en,zh}/<slug>.mdx を読み込み、frontmatter を抽出した
- * 上で {frontmatter, content} を返す。
- *
- * NOTE: Node-only API (fs/path) を使うため、server component 経由でのみ呼ぶ。
+ * Server-only localized MDX loader. Read frontend/contents/blog/{ja,en,zh}/<slug>.mdx, extract
+ * frontmatter and return {frontmatter, content}. Call only from server components because fs/path are
+ * Node-only APIs.
  */
 import fs from "fs";
 import path from "path";
@@ -201,9 +197,9 @@ export function removeLeadingH1(content: string, title: string): string {
 
   const h1Text = h1Match[1].trim();
 
-  // ページ上では meta.title が H1 として描画されるため、本文先頭の同タイトル H1 を除く。
-  // LONG タイトル vs SHORT body H1 の二重描画を防ぐため、title が h1Text で始まる
-  // 短縮一致パターンも strip 対象に含める (architecture-content-loader と同型).
+  // The page renders meta.title as H1, so remove a matching leading H1 from the body.
+  // Also strip an abbreviated body H1 when title starts with h1Text, avoiding duplicate long/short headings.
+  // This matches the architecture-content-loader behavior.
   if (h1Text !== title && !title.startsWith(h1Text)) {
     return content;
   }
@@ -214,8 +210,8 @@ export function removeLeadingH1(content: string, title: string): string {
 }
 
 /**
- * locale 別の MDX ファイルを読み込み、frontmatter / 本文 (leading H1 を除いた content) を返す。
- * ファイルが存在しなければ null を返す (Phase 2 翻訳前の空状態でも build エラーにならないため)。
+ * Read localized MDX and return frontmatter plus body content without the leading H1. Return null for
+ * missing files so builds work before Phase 2 translations exist.
  */
 export function loadBlogContent(
   locale: Locale,
@@ -275,7 +271,7 @@ export function loadBlogContent(
 }
 
 /**
- * locale 別の MDX ディレクトリに存在する slug 一覧を返す (.mdx 拡張子を除く).
+ * Return slugs in the localized MDX directory, without the .mdx extension.
  */
 export function listBlogContentSlugs(locale: Locale): string[] {
   const dir = getBlogLocaleDirectory(locale);

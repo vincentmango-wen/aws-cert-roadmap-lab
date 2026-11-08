@@ -33,11 +33,9 @@ export type TermLevelKey = "beginner" | "intermediate" | "advanced";
 export type QuestionDifficultyKey = "easy" | "normal" | "hard";
 
 /**
- * 模擬問題のカテゴリキー。
- *
- * 値は AWS 公式試験ガイドのドメイン名に対応する識別子であり、
- * `types/question.ts` の `QuestionCategory` と同一集合であることが
- * `lib/questions.ts` の `QUESTION_CATEGORY_LABELS` の型注釈で担保される。
+ * Practice-question category keys identify domain names from official AWS exam guides. The
+ * QUESTION_CATEGORY_LABELS type annotation in lib/questions.ts ensures this set matches QuestionCategory
+ * in types/question.ts.
  */
 export type QuestionCategoryKey =
   | "Cloud Concepts"
@@ -76,7 +74,7 @@ export type QuestionsDictionary = {
   noPreviousQuestion: string;
   noNextQuestion: string;
   examDumpDisclaimer: string;
-  // 一覧ページ（フィルタ / カード / 空状態）で使う文言
+  // Labels for list-page filters, cards and empty states.
   difficultyLabel: string;
   categoryLabels: Record<QuestionCategoryKey, string>;
   allCategoriesLabel: string;

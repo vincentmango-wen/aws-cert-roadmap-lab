@@ -1,26 +1,26 @@
-# Phase 5 canonical / hreflang 設計書
+# Phase 5 canonical / hreflang Design
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 文書名 | Phase 5 canonical / hreflang 設計書 |
-| 対象プロダクト | AWS資格ロードマップラボ |
-| 対象タスク | P5-009 |
-| 対象フェーズ | Phase 5 グローバルSEO・ローカライゼーション |
-| 目的 | 日本語・英語・中国語ページに対して、canonical と hreflang を正しく出す仕様を定義する |
-| 対象技術 | Next.js App Router / Metadata API / Static Export |
-| 作成日 | 2026-06-12 |
+| Document name | Phase 5 canonical / hreflang Design |
+| Target product | AWS Certification Roadmap Lab |
+| Target task | P5-009 |
+| Target phase | Phase 5 Global SEO and Localization |
+| Purpose | Define specifications for correctly emitting canonical and hreflang for Japanese, English, and Chinese pages |
+| Target technologies | Next.js App Router / Metadata API / Static Export |
+| Created | 2026-06-12 |
 
 ---
 
-## 2. 背景
+## 2. Background
 
-Phase 5 では、日本語ページを既存URLのまま維持し、英語ページを `/en`、中国語ページを `/zh` 配下に追加する。
+In Phase 5, retain Japanese pages at their existing URLs and add English pages under `/en` and Chinese pages under `/zh`.
 
-多言語ページを追加すると、同じテーマのページが複数URLで存在する。
+Adding multilingual pages creates multiple URLs for pages on the same topic.
 
-例：
+Example:
 
 ```text
 /terms/s3
@@ -28,9 +28,9 @@ Phase 5 では、日本語ページを既存URLのまま維持し、英語ペー
 /zh/terms/s3
 ```
 
-検索エンジンに対して、これらが重複ページではなく「言語違いの代替ページ」であることを伝える必要がある。
+Search engines must be informed that these are alternative language versions, rather than duplicate pages.
 
-そのため、各ページで以下を出力する。
+Therefore, each page emits the following.
 
 - canonical
 - hreflang
@@ -38,57 +38,57 @@ Phase 5 では、日本語ページを既存URLのまま維持し、英語ペー
 
 ---
 
-## 3. 対象言語
+## 3. Supported Languages
 
-| 内部locale | URL prefix | HTML lang | hreflang | 表示言語 | 備考 |
+| Internal locale | URL prefix | HTML lang | hreflang | Display language | Notes |
 |---|---|---|---|---|---|
-| ja | なし | ja | ja | 日本語 | 既存URLを維持 |
-| en | /en | en | en | English | 英語圏向け |
-| zh | /zh | zh | zh-Hant | 繁體中文寄り | 将来 `/zh-cn` を追加可能 |
+| ja | None | ja | ja | Japanese | Retain existing URLs |
+| en | /en | en | en | English | For English-speaking audiences |
+| zh | /zh | zh | zh-Hant | Primarily Traditional Chinese | `/zh-cn` can be added in the future |
 
-### 3.1 中国語の扱い
+### 3.1 Handling Chinese
 
-URLは既存WBSどおり `/zh` とする。
+Use `/zh` as the URL, as specified in the existing WBS.
 
-ただし、コンテンツは繁体字寄りで開始するため、hreflang は `zh-Hant` を基本とする。
+However, because the initial content is primarily Traditional Chinese, use `zh-Hant` as the default hreflang.
 
-将来、簡体字中国語を追加する場合は以下に分ける。
+If Simplified Chinese is added in the future, separate the variants as follows.
 
-| 用途 | URL | hreflang |
+| Purpose | URL | hreflang |
 |---|---|---|
-| 繁体字中国語 | /zh | zh-Hant |
-| 簡体字中国語 | /zh-cn | zh-Hans |
+| Traditional Chinese | /zh | zh-Hant |
+| Simplified Chinese | /zh-cn | zh-Hans |
 
 ---
 
-## 4. URL設計
+## 4. URL Design
 
-### 4.1 基本ルール
+### 4.1 Basic Rules
 
-| ページ種別 | 日本語 | 英語 | 中国語 |
+| Page type | Japanese | English | Chinese |
 |---|---|---|---|
-| トップ | / | /en | /zh |
-| 用語集一覧 | /terms | /en/terms | /zh/terms |
-| 用語詳細 | /terms/s3 | /en/terms/s3 | /zh/terms/s3 |
-| 比較一覧 | /comparisons | /en/comparisons | /zh/comparisons |
-| 比較詳細 | /comparisons/s3-vs-ebs-vs-efs | /en/comparisons/s3-vs-ebs-vs-efs | /zh/comparisons/s3-vs-ebs-vs-efs |
-| 構成図一覧 | /architectures | /en/architectures | /zh/architectures |
-| 構成図詳細 | /architectures/static-site-s3-cloudfront | /en/architectures/static-site-s3-cloudfront | /zh/architectures/static-site-s3-cloudfront |
-| ブログ一覧 | /blog | /en/blog | /zh/blog |
-| ブログ詳細 | /blog/aws-cloud-practitioner-roadmap | /en/blog/aws-cloud-practitioner-roadmap | /zh/blog/aws-cloud-practitioner-roadmap |
-| ロードマップ | /roadmap | /en/roadmap | /zh/roadmap |
+| Home | / | /en | /zh |
+| Glossary index | /terms | /en/terms | /zh/terms |
+| Term detail | /terms/s3 | /en/terms/s3 | /zh/terms/s3 |
+| Comparison index | /comparisons | /en/comparisons | /zh/comparisons |
+| Comparison detail | /comparisons/s3-vs-ebs-vs-efs | /en/comparisons/s3-vs-ebs-vs-efs | /zh/comparisons/s3-vs-ebs-vs-efs |
+| Architecture diagram index | /architectures | /en/architectures | /zh/architectures |
+| Architecture diagram detail | /architectures/static-site-s3-cloudfront | /en/architectures/static-site-s3-cloudfront | /zh/architectures/static-site-s3-cloudfront |
+| Blog index | /blog | /en/blog | /zh/blog |
+| Blog detail | /blog/aws-cloud-practitioner-roadmap | /en/blog/aws-cloud-practitioner-roadmap | /zh/blog/aws-cloud-practitioner-roadmap |
+| Roadmap | /roadmap | /en/roadmap | /zh/roadmap |
 | About | /about | /en/about | /zh/about |
 | Privacy | /privacy | /en/privacy | /zh/privacy |
 | Disclaimer | /disclaimer | /en/disclaimer | /zh/disclaimer |
 | Contact | /contact | /en/contact | /zh/contact |
 
-### 4.2 URL末尾スラッシュ方針
+### 4.2 URL Trailing Slash Policy
 
-canonical URLでは末尾スラッシュを付けない。
+Do not append a trailing slash to canonical URLs.
 
-例外はトップページ `/` のみ。
+The only exception is the home page `/`.
 
-| 入力 | canonical |
+| Input | canonical |
 |---|---|
 | /terms/ | /terms |
 | /en/terms/ | /en/terms |
@@ -97,35 +97,35 @@ canonical URLでは末尾スラッシュを付けない。
 
 ---
 
-## 5. canonical 設計
+## 5. canonical Design
 
-### 5.1 基本方針
+### 5.1 Basic Policy
 
-canonical は、現在表示している言語ページ自身を指す。
+The canonical points to the currently displayed language page itself.
 
-言語違いページを日本語へ canonical 集約しない。
+Do not consolidate other language pages into Japanese through canonical links.
 
-理由：
+Reasons:
 
-- 英語ページは英語検索で評価させたい
-- 中国語ページは中国語検索で評価させたい
-- 言語違いページは重複ではなく代替ページとして扱うべきだから
+- English pages should rank in English searches.
+- Chinese pages should rank in Chinese searches.
+- Different language pages should be treated as alternatives rather than duplicates.
 
-### 5.2 canonical 例
+### 5.2 canonical Examples
 
-#### 日本語ページ
+#### Japanese Page
 
 ```html
 <link rel="canonical" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
 ```
 
-#### 英語ページ
+#### English Page
 
 ```html
 <link rel="canonical" href="https://www.aws-cert-roadmap-lab.com/en/terms/s3" />
 ```
 
-#### 中国語ページ
+#### Chinese Page
 
 ```html
 <link rel="canonical" href="https://www.aws-cert-roadmap-lab.com/zh/terms/s3" />
@@ -133,13 +133,13 @@ canonical は、現在表示している言語ページ自身を指す。
 
 ---
 
-## 6. hreflang 設計
+## 6. hreflang Design
 
-### 6.1 基本方針
+### 6.1 Basic Policy
 
-同一コンテンツIDを持つページでは、全言語URLを hreflang に出す。
+For pages sharing the same content ID, emit the URLs for all languages in hreflang.
 
-例：
+Example:
 
 ```html
 <link rel="alternate" hreflang="ja" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
@@ -148,35 +148,35 @@ canonical は、現在表示している言語ページ自身を指す。
 <link rel="alternate" hreflang="x-default" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
 ```
 
-### 6.2 hreflang 出力対象
+### 6.2 Pages That Emit hreflang
 
-| ページ | hreflang対象 |
+| Page | Emit hreflang |
 |---|---|
-| トップページ | 対象 |
-| 用語集一覧 | 対象 |
-| 用語詳細 | 対象 |
-| 比較一覧 | 対象 |
-| 比較詳細 | 対象 |
-| 構成図一覧 | 対象 |
-| 構成図詳細 | 対象 |
-| ブログ一覧 | 対象 |
-| ブログ詳細 | 対象 |
-| ロードマップ | 対象 |
-| About | 対象 |
-| Privacy | 対象 |
-| Disclaimer | 対象 |
-| Contact | 対象 |
-| 404 | 対象外 |
-| robots.txt | 対象外 |
-| sitemap.xml | 対象外 |
+| Home page | Yes |
+| Glossary index | Yes |
+| Term detail | Yes |
+| Comparison index | Yes |
+| Comparison detail | Yes |
+| Architecture diagram index | Yes |
+| Architecture diagram detail | Yes |
+| Blog index | Yes |
+| Blog detail | Yes |
+| Roadmap | Yes |
+| About | Yes |
+| Privacy | Yes |
+| Disclaimer | Yes |
+| Contact | Yes |
+| 404 | No |
+| robots.txt | No |
+| sitemap.xml | No |
 
-### 6.3 翻訳未作成ページの扱い
+### 6.3 Handling Pages Not Yet Translated
 
-翻訳ページが未作成の場合、その言語の hreflang は出力しない。
+If a translated page has not yet been created, do not emit hreflang for that language.
 
-例：
+Example:
 
-日本語と英語だけ存在し、中国語が未作成の場合：
+If only Japanese and English exist and Chinese has not yet been created:
 
 ```html
 <link rel="alternate" hreflang="ja" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
@@ -184,56 +184,56 @@ canonical は、現在表示している言語ページ自身を指す。
 <link rel="alternate" hreflang="x-default" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
 ```
 
-存在しない `/zh/...` を hreflang に出してはいけない。
+Do not emit a nonexistent `/zh/...` URL in hreflang.
 
-理由：
+Reasons:
 
-- Search Consoleで代替ページエラーが出る
-- ユーザーが404へ誘導される
-- SEO品質が落ちる
+- Search Console reports alternate-page errors.
+- Users are directed to 404 pages.
+- SEO quality deteriorates.
 
 ---
 
-## 7. x-default 設計
+## 7. x-default Design
 
-### 7.1 基本方針
+### 7.1 Basic Policy
 
-x-default は日本語URLを指す。
+x-default points to the Japanese URL.
 
-理由：
+Reasons:
 
-- 既存の主コンテンツが日本語である
-- 日本語URLを既存維持する方針である
-- IPベース自動リダイレクトは導入しない
-- `/` を言語選択ページにしない
+- The existing primary content is Japanese.
+- The policy is to retain existing Japanese URLs.
+- IP-based automatic redirects will not be introduced.
+- `/` will not be used as a language selection page.
 
-### 7.2 x-default 例
+### 7.2 x-default Example
 
 ```html
 <link rel="alternate" hreflang="x-default" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
 ```
 
-### 7.3 将来変更条件
+### 7.3 Conditions for Future Changes
 
-以下の条件を満たした場合、x-default を専用の言語選択ページに変更してよい。
+When the following conditions are met, x-default may be changed to a dedicated language selection page.
 
-- `/language` または `/intl` のような言語選択ページを作成する
-- 日本語・英語・中国語の主要ページがすべて揃っている
-- Search Console上で多言語インデックスが安定している
+- Create a language selection page such as `/language` or `/intl`.
+- All main pages are available in Japanese, English, and Chinese.
+- Multilingual indexing is stable in Search Console.
 
 ---
 
-## 8. Next.js Metadata 実装方針
+## 8. Next.js Metadata Implementation Policy
 
-### 8.1 P5-010で作成する想定関数
+### 8.1 Function Planned for P5-010
 
-P5-010では、以下の helper を作る。
+Create the following helper in P5-010.
 
 ```ts
 createLocalizedPageMetadata(input)
 ```
 
-この helper は以下を返す。
+This helper returns the following.
 
 ```ts
 {
@@ -249,7 +249,7 @@ createLocalizedPageMetadata(input)
 }
 ```
 
-### 8.2 入力項目案
+### 8.2 Proposed Input Fields
 
 ```ts
 type Locale = "ja" | "en" | "zh";
@@ -267,17 +267,17 @@ type LocalizedMetadataInput = {
 };
 ```
 
-### 8.3 availableLocales の考え方
+### 8.3 Approach to availableLocales
 
-`availableLocales` は、そのページが実際に存在する言語だけを渡す。
+Pass only the languages in which the page actually exists to `availableLocales`.
 
-例：
+Example:
 
 ```ts
 availableLocales: ["ja", "en", "zh"]
 ```
 
-翻訳未作成ページでは以下にする。
+For a page not yet translated, use the following.
 
 ```ts
 availableLocales: ["ja", "en"]
@@ -285,29 +285,29 @@ availableLocales: ["ja", "en"]
 
 ---
 
-## 9. URL生成ルール
+## 9. URL Generation Rules
 
-### 9.1 locale別URL生成
+### 9.1 URL Generation by Locale
 
-| locale | 入力path | 出力path |
+| locale | Input path | Output path |
 |---|---|---|
 | ja | /terms/s3 | /terms/s3 |
 | en | /terms/s3 | /en/terms/s3 |
 | zh | /terms/s3 | /zh/terms/s3 |
 
-### 9.2 トップページ例外
+### 9.2 Home Page Exception
 
-| locale | 入力path | 出力path |
+| locale | Input path | Output path |
 |---|---|---|
 | ja | / | / |
 | en | / | /en |
 | zh | / | /zh |
 
-### 9.3 二重prefix防止
+### 9.3 Preventing Duplicate Prefixes
 
-以下の入力を受け取った場合も、二重prefixにしない。
+Do not duplicate prefixes, even when receiving the following inputs.
 
-| locale | 入力path | 出力path |
+| locale | Input path | Output path |
 |---|---|---|
 | en | /en/terms/s3 | /en/terms/s3 |
 | zh | /zh/terms/s3 | /zh/terms/s3 |
@@ -316,9 +316,9 @@ availableLocales: ["ja", "en"]
 
 ---
 
-## 10. OGP locale 方針
+## 10. OGP Locale Policy
 
-### 10.1 locale変換
+### 10.1 Locale Mapping
 
 | locale | Open Graph locale |
 |---|---|
@@ -328,9 +328,9 @@ availableLocales: ["ja", "en"]
 
 ### 10.2 alternateLocale
 
-OGPには他言語を `alternateLocale` として出す。
+Emit the other languages as `alternateLocale` in OGP.
 
-例：
+Example:
 
 ```ts
 openGraph: {
@@ -341,67 +341,67 @@ openGraph: {
 
 ---
 
-## 11. sitemap連携方針
+## 11. Sitemap Integration Policy
 
-P5-011では、sitemapにも多言語URLを含める。
+In P5-011, include multilingual URLs in the sitemap as well.
 
-最低限、以下を満たす。
+Meet at least the following requirements.
 
-- 日本語URLが含まれる
-- 英語URLが含まれる
-- 中国語URLが含まれる
-- canonicalと同じURL形式にする
-- 存在しない翻訳ページは含めない
-- `lastModified` を出せる場合は出す
-
----
-
-## 12. 実装対象外
-
-P5-009では以下を実装しない。
-
-- metadata helper のコード実装
-- sitemap生成コードの修正
-- OGP画像作成
-- 翻訳コンテンツ追加
-- 言語切替UIの修正
-- IPベース自動リダイレクト
-- CloudFront Function によるリダイレクト
+- Include Japanese URLs.
+- Include English URLs.
+- Include Chinese URLs.
+- Use the same URL format as canonical.
+- Do not include nonexistent translated pages.
+- Emit `lastModified` when available.
 
 ---
 
-## 13. 受け入れ条件
+## 12. Out of Implementation Scope
 
-| ID | 条件 |
+Do not implement the following in P5-009.
+
+- Coding the metadata helper
+- Modifying sitemap generation code
+- Creating OGP images
+- Adding translated content
+- Modifying the language switcher UI
+- IP-based automatic redirects
+- Redirects using a CloudFront Function
+
+---
+
+## 13. Acceptance Criteria
+
+| ID | Criterion |
 |---|---|
-| AC-P5-009-001 | 日本語・英語・中国語のURLルールが定義されている |
-| AC-P5-009-002 | canonical は現在表示中の言語URLを指す方針になっている |
-| AC-P5-009-003 | hreflang は実在する翻訳ページだけを出す方針になっている |
-| AC-P5-009-004 | x-default は日本語URLを指す方針になっている |
-| AC-P5-009-005 | トップページ `/` `/en` `/zh` の扱いが定義されている |
-| AC-P5-009-006 | P5-010 の metadata helper 実装方針につながる入力項目が定義されている |
-| AC-P5-009-007 | P5-011 の多言語sitemap方針につながるURLルールが定義されている |
+| AC-P5-009-001 | URL rules for Japanese, English, and Chinese are defined |
+| AC-P5-009-002 | The policy specifies that canonical points to the URL of the currently displayed language |
+| AC-P5-009-003 | The policy specifies that hreflang emits only translated pages that exist |
+| AC-P5-009-004 | The policy specifies that x-default points to the Japanese URL |
+| AC-P5-009-005 | Handling of the home pages `/`, `/en`, and `/zh` is defined |
+| AC-P5-009-006 | Input fields supporting the P5-010 metadata helper implementation policy are defined |
+| AC-P5-009-007 | URL rules supporting the P5-011 multilingual sitemap policy are defined |
 
 ---
 
-## 14. 後続タスクへの引き継ぎ
+## 14. Handoff to Subsequent Tasks
 
-| タスク | 引き継ぎ内容 |
+| Task | Handoff details |
 |---|---|
-| P5-010 | `createLocalizedPageMetadata` を実装する |
-| P5-011 | sitemapに日本語・英語・中国語URLを含める |
-| P5-012 | `x-default` を metadata helper に含める |
-| P5-013 | locale別OGP方針を決める |
-| P5-016以降 | 各ページのmetadata生成時にlocaleとavailableLocalesを渡す |
+| P5-010 | Implement `createLocalizedPageMetadata` |
+| P5-011 | Include Japanese, English, and Chinese URLs in the sitemap |
+| P5-012 | Include `x-default` in the metadata helper |
+| P5-013 | Decide the OGP policy for each locale |
+| P5-016 onward | Pass locale and availableLocales when generating metadata for each page |
 
 ---
 
-## 15. 実装時の注意点
+## 15. Implementation Notes
 
-- canonical に存在しないURLを指定しない
-- hreflang に存在しない翻訳ページを指定しない
-- 英語ページを日本語ページへ canonical 集約しない
-- 中国語ページを日本語ページへ canonical 集約しない
-- `/en/en/...` や `/zh/zh/...` のような二重prefixを作らない
-- IPベースの自動リダイレクトは行わない
-- Search Console確認前に大量ページを一気に増やしすぎない
+- Do not specify nonexistent URLs in canonical.
+- Do not specify nonexistent translated pages in hreflang.
+- Do not consolidate English pages into Japanese pages through canonical links.
+- Do not consolidate Chinese pages into Japanese pages through canonical links.
+- Do not create duplicate prefixes such as `/en/en/...` or `/zh/zh/...`.
+- Do not perform IP-based automatic redirects.
+- Do not add too many pages at once before checking Search Console.

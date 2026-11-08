@@ -1,17 +1,12 @@
 /**
- * sitemap.test.ts
+ * CR1-H2 regression guard: P5-034 (comparisons) and P5-042 (architectures) moved MDX into locale
+ * subdirectories. The old nonrecursive readMdxContentMetas returned empty arrays, dropping all detail
+ * URLs from sitemap.xml. Verify complete detail-URL coverage after switching to the JSON source of
+ * truth.
  *
- * CR1-H2 regression guard:
- * - P5-034 (comparisons) と P5-042 (architectures) で MDX を locale サブディレクトリ
- *   配下に移したため、旧 readMdxContentMetas (非再帰 readdirSync) は空配列を返し、
- *   詳細記事 URL が sitemap.xml から全件消えていた。
- * - 本テストは JSON SSoT 起点に切り替えた後の sitemap output に、詳細 URL が
- *   漏れなく含まれることを構造的に検証する。
- *
- * ACR-012 (#322):
- * - ja の assert は常時実行。
- * - en/zh の assert は封印中に必ず落ちるため `describe.runIf(LOCALIZED_ROUTES_PUBLISHED)`
- *   に括り出して skip する。**削除してはいけない** — これが解封時の regression ガード。
+ * ACR-012 (#322): Japanese assertions always run. Put en/zh assertions under
+ * describe.runIf(LOCALIZED_ROUTES_PUBLISHED), since they would fail while sealed. Do not delete them:
+ * they protect publication against regressions.
  */
 import { describe, expect, it } from "vitest";
 

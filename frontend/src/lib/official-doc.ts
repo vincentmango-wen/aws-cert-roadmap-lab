@@ -1,12 +1,8 @@
 /**
- * officialDocs の URL 検証ヘルパー（SSoT）。
- *
- * JSON 由来の url: string が `<a href={...}>` に流れる前に scheme / allowlist を検証する。
- * QuestionPlayer.tsx / terms/[termId]/page.tsx の両箇所から共有して参照する。
- *
- * allowlist 設計方針:
- *   - https: スキームのみ許可（javascript: / data: / vbscript: 等を禁止）
- *   - AWS 公式ドメイン 2 種のみ許可（Step3 バッチで追加が必要なら本ファイルのみ更新する）
+ * Shared officialDocs URL validation. Check the scheme and allowlist before JSON url strings reach
+ * anchor href attributes. Used by QuestionPlayer.tsx and terms/[termId]/page.tsx. Allow only HTTPS
+ * (reject javascript, data, vbscript, etc.) and the two official AWS domains. Update this source when
+ * the Step3 batch needs additional domains; keep any documented script copies synchronized.
  */
 import type { OfficialDoc } from "@/types/official-doc";
 
@@ -16,8 +12,8 @@ const ALLOWED_PREFIXES = [
 ] as const;
 
 /**
- * url が allowlist に含まれる場合 true を返す。
- * URL parse 失敗 / allowlist 外ドメイン / https: 以外のスキームはすべて false。
+ * Return true only for allowlisted URLs. Parse failures, unlisted domains and non-HTTPS schemes all
+ * return false.
  */
 export function isValidOfficialDocUrl(url: string): boolean {
   try {
@@ -30,8 +26,7 @@ export function isValidOfficialDocUrl(url: string): boolean {
 }
 
 /**
- * officialDocs 配列を受け取り、allowlist を通過した項目のみ返す。
- * undefined / 空配列の場合は空配列を返す。
+ * Return only allowlisted officialDocs entries. Undefined or empty input returns an empty array.
  */
 export function filterValidOfficialDocs(
   docs: OfficialDoc[] | undefined,

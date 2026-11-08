@@ -1,21 +1,15 @@
 /**
- * comparisons-locale-parity.test.ts
+ * Invariant tests for design section D-4 / architecture review Medium-2. Keep
+ * comparisons.{ja,en,zh}.json and localized MDX synchronized, detecting missing translations, slug
+ * drift, metadata inconsistency and missing MDX.
  *
- * 設計書 §D-4 / architecture review Medium-2 対応の invariant test。
- *
- * `contents/comparisons/comparisons.{ja,en,zh}.json` と各 locale 配下の MDX が、
- * 翻訳追加忘れ・slug ズレ・メタデータ不整合・MDX 消失なしに 3 言語完全並列で
- * 維持されていることを構造的に担保する。
- *
- * 検証 invariant（task spec § 3）:
- *  (1) ja/en/zh JSON の slug 集合が完全一致
- *  (2) 同 slug で comparisonId が ja/en/zh 一致
- *  (3) 同 slug で services/category/level/examScopes/tags/priority/published/
- *      publishedAt/updatedAt が ja/en/zh 一致
- *  (4) 全 slug について contents/comparisons/{ja,en,zh}/<slug>.mdx が
- *      fs.existsSync = true
- *  (5) ja JSON の title/description が ja MDX frontmatter と一致
- *      (Option A 採用ガード / fix1 と整合)
+ * Task-spec section 3 invariants:
+ * 1. Identical JSON slug sets across all locales.
+ * 2. Matching comparisonId per slug.
+ * 3. Matching services/category/level/examScopes/tags/priority/published/publishedAt/updatedAt.
+ * 4. Every contents/comparisons/{ja,en,zh}/<slug>.mdx file exists.
+ * 5. Japanese JSON title/description matches Japanese MDX frontmatter (Option A guard, consistent with
+ * fix1).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -32,9 +26,9 @@ const jaList = comparisonsJa as Comparison[];
 const enList = comparisonsEn as Comparison[];
 const zhList = comparisonsZh as Comparison[];
 
-// frontend ディレクトリ基準で MDX の絶対パスを解決する。
-// 本テストファイルは frontend/src/contents/comparisons/__tests__/ 配下にあるため、
-// __dirname から 4 つ上ると frontend ルートに到達する。
+// Resolve absolute MDX paths relative to the frontend directory.
+// This test lives in frontend/src/contents/comparisons/__tests__/;
+// four parent-directory steps from __dirname reach the frontend root.
 const FRONTEND_ROOT = path.resolve(__dirname, "../../../../");
 const mdxPathFor = (locale: "ja" | "en" | "zh", slug: string): string =>
   path.join(FRONTEND_ROOT, "contents", "comparisons", locale, `${slug}.mdx`);
@@ -73,7 +67,7 @@ describe("comparisons locale parity", () => {
   });
 
   it("(3) shared metadata fields are identical across ja/en/zh per slug", () => {
-    // locale 非依存メタ。title/description は翻訳対象のため対象外。
+    // Locale-independent metadata; exclude translated title and description.
     const SHARED_FIELDS = [
       "services",
       "category",
@@ -134,9 +128,9 @@ describe("comparisons locale parity", () => {
     }
   });
 
-  // (6) MDX 先頭 H1 が JSON title と一致 or title.startsWith(h1Text) であること。
-  // R2 fix: removeLeadingH1 のガード緩和 (LONG タイトル vs SHORT body H1 の二重描画防止) と
-  // 整合させ、loader が strip できない先頭 H1 を構造的に検出する。
+  // (6) Leading MDX H1 equals the JSON title or is a prefix of it.
+  // R2 fix: match the relaxed removeLeadingH1 guard for long titles and short body H1 headings,
+  // detecting leading headings that the loader cannot strip.
   it("(6) MDX leading H1 matches JSON title (or is a short prefix-aligned variant)", () => {
     const localeMaps: Array<["ja" | "en" | "zh", Map<string, Comparison>]> = [
       ["ja", jaMap],
@@ -156,7 +150,7 @@ describe("comparisons locale parity", () => {
 
         if (!firstContentLine) continue;
         const h1Match = firstContentLine.trim().match(/^#\s+(.+)$/);
-        if (!h1Match) continue; // 先頭 H1 が無ければ問題なし
+        if (!h1Match) continue; // No leading H1 is acceptable.
 
         const h1Text = h1Match[1].trim();
         const matchesExactly = h1Text === entry.title;
@@ -170,12 +164,12 @@ describe("comparisons locale parity", () => {
     }
   });
 
-  // (7) ACR-002 追加: examScopes / level / priority の値が型の union に含まれること。
-  // JSON は comparison-detail-data.ts で `as Comparison[]` として読み込まれるため、
-  // 値のタイポ (例: "SAA-CO3") は tsc では検出できない。invariant (3) は 3 言語一致しか
-  // 見ないので、3 ファイルへ同じタイポを書くと素通りし、examScopes は
-  // ComparisonDetailContent / ComparisonsListClient がチップとして**そのまま描画**する。
-  // (cmp-013 で examScopes を手で 3 ファイルに書く運用が続くため、値域を機械的に固定する)
+  // (7) ACR-002: examScopes, level and priority values must belong to their type unions.
+  // comparison-detail-data.ts loads JSON using an as Comparison[] assertion,
+  // so tsc cannot detect typos such as SAA-CO3. Invariant (3) only checks cross-locale equality;
+  // the same typo in all three files would pass, and examScopes values
+  // are rendered directly as chips by ComparisonDetailContent and ComparisonsListClient.
+  // Since cmp-013 still requires manually entering examScopes in three files, validate the allowed values automatically.
   it("(7) examScopes/level/priority values are within the declared unions", () => {
     const VALID_EXAM_SCOPES = new Set<string>(["CLF-C02", "SAA-C03", "AIF-C01"]);
     const VALID_LEVELS = new Set<string>([

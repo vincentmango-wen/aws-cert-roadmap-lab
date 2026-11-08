@@ -1,12 +1,8 @@
 /**
- * comparison-detail-data.ts
- *
- * locale 別の比較記事メタ + ヘルパー集約 (SSoT).
- * terms の term-detail-data.ts と命名・配置を 1:1 で揃え、3 言語ページが
- * 同じ shape で薄いラッパーを書ける形にする。
- *
- * メタデータは frontend/contents/comparisons/comparisons.{ja,en,zh}.json を読み込む。
- * 本文は comparison-content-loader.ts 経由で MDX から取得する。
+ * Localized comparison metadata and helpers (single source of truth). Match term-detail-data.ts naming
+ * and placement so all three locale pages use thin wrappers of the same shape. Read metadata from
+ * frontend/contents/comparisons/comparisons.{ja,en,zh}.json and MDX bodies through
+ * comparison-content-loader.ts.
  */
 import comparisonsEnData from "../../../../contents/comparisons/comparisons.en.json";
 import comparisonsJaData from "../../../../contents/comparisons/comparisons.ja.json";
@@ -165,16 +161,11 @@ export const priorityLabelsByLocale: Record<
 };
 
 /**
- * 比較記事の category 表示ラベル (locale 別).
- *
- * key は comparisons.{ja,en,zh}.json 内の category 値 (英語固定: Storage / Database /
- * Networking / Security / Monitoring / Integration / MachineLearning) を網羅する。
- * anchor id (#storage 等) は category.toLowerCase() で生成し、URL 安定性のため
- * locale 間で共通の英語 key を利用する (設計書 §4-4).
- *
- * MachineLearning は ACR-001 (Bedrock vs SageMaker) で追加。既存カテゴリ
- * (Storage/Database/Networking/Security/Monitoring/Integration) のいずれにも
- * 対応しない AI/ML 領域の比較コンテンツ用。
+ * Localized comparison category labels. Keys cover the fixed English categories Storage, Database,
+ * Networking, Security, Monitoring, Integration and MachineLearning in comparisons.{ja,en,zh}.json.
+ * Generate anchors such as #storage with category.toLowerCase(); shared English keys keep URLs stable
+ * across locales (design section 4-4). MachineLearning was added for ACR-001 (Bedrock vs SageMaker) to
+ * cover AI/ML comparisons outside the existing categories.
  */
 export type ComparisonCategory =
   | "Storage"
@@ -219,9 +210,8 @@ export const categoryLabelsByLocale: Record<
 };
 
 /**
- * 与えられた category が ComparisonCategory に含まれるかを判定するヘルパー.
- * 含まれれば locale 別ラベルを返し、そうでなければ category 値そのものを返す
- * (フォールバック / 将来の category 追加時の防御).
+ * Return the localized label for a known ComparisonCategory; otherwise preserve the category value as a
+ * defensive fallback for future categories.
  */
 export function formatCategoryLabel(
   locale: ComparisonLocale,
@@ -266,8 +256,8 @@ export function getComparisonMetaBySlug(
 }
 
 /**
- * locale 別の比較記事 (メタ + 本文 MDX) を取得する。
- * 本文 MDX が存在しなければ空文字を入れる (build を落とさないフォールバック)。
+ * Get a localized comparison article (metadata and MDX body). Use an empty body if MDX is missing so the
+ * build does not fail.
  */
 export function getComparisonBySlug(
   locale: ComparisonLocale,

@@ -1,31 +1,20 @@
 /**
- * questions-choice-integrity.test.ts
+ * Choice-integrity invariants added during independent ACR-003 engineering verification. Mutation tests
+ * exposed gaps that all 48 existing tests missed: a nonexistent correctChoiceId E (JSON type assertions
+ * bypass TS validation), a deleted choiceExplanations key, and a wrong correct-answer slot shared by all
+ * locales. Locale parity alone compares IDs, not whether their meaning still matches after translated
+ * choices are reordered.
  *
- * ACR-003 の eng-test 独立検証で、既存 3 本のテストが取りこぼしていた
- * 「選択肢そのものの整合性」を担保するために追加した invariant テスト。
+ * Invariants:
+ * 1. correctChoiceId belongs to A/B/C/D and exists in choices.
+ * 2. choiceExplanations contains all A-D keys with nonempty string values.
+ * 3. Exactly one explanation starts with its locale's correct-answer marker, and its slot matches
+ * correctChoiceId. Reordered translations break this relationship.
  *
- * 追加の動機（mutation 注入で実証した穴 / いずれも既存 48 tests は全 pass のまま素通りした）:
- *  - `correctChoiceId` を存在しない "E" に書き換えても検出されない
- *    （JSON は `as Question[]` キャストで読み込むため TS の型検査も効かない）
- *  - `choiceExplanations` のキーを 1 つ削除しても検出されない
- *  - 3 言語そろって `correctChoiceId` が別スロットへずれても検出されない
- *    （locale parity は「ID が 3 言語で一致するか」しか見ないため、
- *      翻訳時に選択肢が並べ替わり ID の指す中身が言語ごとに変わる事故を検出できない）
- *
- * 検証 invariant:
- *  (1) correctChoiceId が {A,B,C,D} のいずれかで、かつ choices に実在する
- *  (2) choiceExplanations が A-D の全キーを持ち、値が非空文字列
- *  (3) 正解マーカー（ja「正解です」/「正解。」, en "Correct.", zh「正解。」/「正確。」）が
- *      付く choiceExplanation が correctChoiceId のスロットと一致し、かつそこ 1 つだけである
- *      — choices が翻訳時に並べ替わると、この対応が崩れて検出できる
- *
- * 対象ファイル (6 件):
- *   contents/questions/clf-c02.{ja,en,zh}.json
- *   contents/questions/saa-c03.{ja,en,zh}.json
- *
- * 注: 「正解の A/B/C/D 分布の偏り」はここでは検証していない。
- *     既存 80 問が A に偏っており（CLF A 率 90% / SAA 30 問時点 77%）、
- *     分布テストを入れると既存データで即 fail するため。是正は ACR-004 のスコープ。
+ * Coverage: contents/questions/clf-c02.{ja,en,zh}.json and saa-c03.{ja,en,zh}.json.
+ * Answer-letter distribution is intentionally separate. At creation, the 80-question dataset was biased
+ * toward A (CLF 90%, SAA 77% at 30 questions); a distribution test would immediately fail. ACR-004 owns
+ * that correction.
  */
 import { describe, expect, it } from "vitest";
 
@@ -52,7 +41,10 @@ const FILES: FileEntry[] = [
 
 const CHOICE_IDS: ChoiceId[] = ["A", "B", "C", "D"];
 
-/** 各ロケールの「この選択肢が正解」を示す接頭辞。既存 1,200 スロット全件で成立する表記ゆれを網羅している。 */
+/**
+ * Localized prefixes identifying a correct choice. Covers spelling variants found across all 1,200
+ * existing slots.
+ */
 const CORRECT_MARKER: Record<Locale, RegExp> = {
   ja: /^正解(です|。)/,
   en: /^Correct[.。]/,

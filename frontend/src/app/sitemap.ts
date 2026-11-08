@@ -185,8 +185,8 @@ function getStaticRoutes(): SitemapRouteInput[] {
       changeFrequency: "yearly",
     },
     {
-      // 利用規約は ja のみ提供する。/en /zh の利用規約ページは存在しないため
-      // availableLocales を ja に絞り、sitemap に 404 URL を載せない（#305 の 200 ゲート対策）。
+      // Terms of service are Japanese-only; corresponding /en and /zh pages do not exist.
+      // Limit availableLocales to ja to avoid sitemap URLs returning 404 (#305's HTTP 200 gate).
       pathname: "/terms-of-service",
       priority: 0.3,
       changeFrequency: "yearly",
@@ -210,12 +210,10 @@ function getTermRoutes(): SitemapRouteInput[] {
 }
 
 /**
- * CLF (50問) + SAA (30問) を ja JSON SSoT から読み、3 言語 × 80 問 = 240 URL を
- * 生成するための入力を返す。
- *
- * en/zh の専用 JSON が未生成でも `createLocalizedSitemapItems` が自動で locale prefix
- * を付与した URL を出力するため、stub JSON を待たずに sitemap に並べられる
- * (P5-E6 / .en.json / .zh.json 空配列 stub 戦略と整合)。
+ * Read CLF and SAA questions from the Japanese JSON source of truth and return inputs for localized URL
+ * generation. The original design covered 50 CLF + 30 SAA questions (80 questions x 3 locales = 240
+ * URLs). createLocalizedSitemapItems adds locale prefixes even before dedicated en/zh JSON exists,
+ * consistent with P5-E6's empty-array .en.json/.zh.json scaffold strategy.
  */
 function getQuestionRoutes(): SitemapRouteInput[] {
   const clfQuestions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.ja.json");
@@ -235,15 +233,11 @@ function getQuestionRoutes(): SitemapRouteInput[] {
 }
 
 /**
- * locale 別 JSON SSoT を起点に detail URL を生成する。
- *
- * P5-034 (comparisons) / P5-042 (architectures) で MDX を locale サブディレクトリ
- * 配下に移したため、旧 `readMdxContentMetas` は contents/<directoryName> 直下を
- * 非再帰走査する設計上、空配列を返してしまい detail URL が sitemap から脱落する
- * regression が発生していた (CR1-H2 共造)。
- *
- * 本関数は ja JSON の slug 集合を「公開されている全 slug 集合」として扱い、
- * createLocalizedSitemapItems が 3 言語の URL を一度に生成する。
+ * Generate detail URLs from the localized JSON source of truth. P5-034 (comparisons) and P5-042
+ * (architectures) moved MDX into locale subdirectories; the old nonrecursive readMdxContentMetas scan of
+ * contents/<directoryName> returned empty arrays and dropped detail URLs from the sitemap (CR1-H2).
+ * Treat Japanese JSON slugs as the complete published set and let createLocalizedSitemapItems generate
+ * all three locales together.
  */
 function getLocalizedDetailRoutesFromJson(
   jaJsonRelativePath: string,
@@ -285,13 +279,10 @@ export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
 }
 
 /**
- * blog detail URL を ja MDX (`contents/blog/ja/<slug>.mdx`) の slug 集合から生成する。
- *
- * P5-050 で MDX を locale サブディレクトリ配下 (ja/en/zh) に移したため、旧
- * `getMdxRoutes("blog", "/blog", ...)` は `contents/blog/` 直下を非再帰走査し
- * 空配列を返すようになっていた。本関数は ja MDX を「公開されている全 slug」の
- * 真の集合として扱い、`createLocalizedSitemapItems` が 3 言語の URL を一度に
- * 生成する。
+ * Generate blog detail URLs from Japanese MDX slugs in contents/blog/ja/<slug>.mdx. After P5-050 moved
+ * MDX into ja/en/zh subdirectories, the old nonrecursive getMdxRoutes("blog", "/blog", ...) scan of
+ * contents/blog returned empty arrays. Japanese MDX defines the full published slug set;
+ * createLocalizedSitemapItems generates all three locales together.
  */
 export function getBlogSitemapRoutes(): SitemapRouteInput[] {
   return readMdxContentMetas(path.join("blog", "ja"))
@@ -315,11 +306,10 @@ function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
 }
 
 /**
- * sitemap 封印の第 2 層（保険フィルタ / ACR-012 / #322）。
- *
- * 第 1 層は `i18n/seo/sitemap.ts` の `resolveAvailableLocales()`。
- * sitemap は 2026-06-28 の落選（宣言 URL がほぼ全件 404）の直接原因なので、
- * 生成経路が増えても封印が漏れないよう出口でもう一度落とす。
+ * Sitemap sealing layer 2: defensive output filter (ACR-012 / #322). Layer 1 is
+ * resolveAvailableLocales() in i18n/seo/sitemap.ts. The sitemap directly caused the 2026-06-28 rejection
+ * when almost every declared URL returned 404. Filter again at the output boundary so additional
+ * generation paths cannot bypass sealing.
  */
 export function filterSealedLocaleUrls(items: SitemapItem[]): SitemapItem[] {
   const siteUrl = getSitemapSiteUrl();

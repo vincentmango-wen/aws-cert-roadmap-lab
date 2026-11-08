@@ -1,131 +1,131 @@
-AWS資格学習サイト データ設計書
+AWS Certification Learning Site: Data Design
 
-1. 文書情報
-
-|   |   |
-|---|---|
-|項目|内容|
-|文書名|AWS資格学習サイト データ設計書|
-|対象プロダクト|AWS資格ロードマップラボ|
-|対象フェーズ|MVP開発 〜 SAA対策機能拡張 〜 学習アプリ化|
-|目的|サイトで扱うデータの種類、保存場所、構造、DynamoDB設計、JSON/Markdown管理方針を定義する|
-|想定技術|Next.js / TypeScript / Markdown / JSON / AWS Lambda / API Gateway / DynamoDB|
-
-  
-
-2. 本設計書の目的
-
-本設計書では、AWS資格学習サイト「AWS資格ロードマップラボ」で扱うデータを定義する。
-
-本プロダクトでは、以下の種類のデータを扱う。
-
-- AWS用語データ
-- AWSサービス比較データ
-- 模擬問題データ
-- AWS構成図データ
-- ブログ記事データ
-- 問い合わせデータ
-- 運営者・ポリシー系静的データ
-- 将来のユーザーデータ
-- 将来の学習履歴データ
-- 将来の弱点分析データ
-
-MVPでは、コストを抑え、開発をシンプルにするため、基本的にMarkdown / MDX / JSONで管理する。
-
-Phase 2以降で、問い合わせデータや問題データの一部をDynamoDBに保存する。
-
-Phase 4以降で、Cognito認証を導入し、ユーザー別の学習履歴・正答率・復習対象をDynamoDBに保存する。
-
-  
-
-3. データ設計の基本方針
-
-3.1 基本方針
+1. Document Information
 
 |   |   |
 |---|---|
-|方針|内容|
-|MVPは静的データ中心|用語、比較、記事、構成図、問題はMarkdown/JSONで管理する|
-|動的データのみDynamoDB|問い合わせ、将来の回答履歴、学習進捗はDynamoDBに保存する|
-|原本はGitHub管理|用語・問題・記事・構成図の原本はGitHub上で管理する|
-|低コスト優先|MVPではDBアクセスを最小化し、S3 + CloudFrontで静的配信する|
-|拡張可能性確保|将来的にDynamoDB/API化できるよう、JSON構造を明確にする|
-|SEO重視|ブログ、比較、用語詳細はtitle、description、slugを必ず持つ|
-|学習アプリ化を想定|将来のユーザー別学習履歴・弱点分析に拡張できる設計にする|
+|Item|Description|
+|Document name|AWS Certification Learning Site: Data Design|
+|Target product|AWS Certification Roadmap Lab|
+|Target phases|MVP development → SAA preparation feature expansion → Learning application|
+|Purpose|Define the types, storage locations, structures, DynamoDB design, and JSON/Markdown management policies for site data|
+|Planned technologies|Next.js / TypeScript / Markdown / JSON / AWS Lambda / API Gateway / DynamoDB|
 
   
 
-4. データ分類
+2. Purpose of This Design Document
 
-4.1 データ一覧
+This document defines the data used by the AWS certification learning site, AWS Certification Roadmap Lab.
+
+The product handles the following types of data.
+
+- AWS glossary data
+- AWS service comparison data
+- Practice question data
+- AWS architecture diagram data
+- Blog post data
+- Contact inquiry data
+- Static operator and policy data
+- Future user data
+- Future learning history data
+- Future weak-area analysis data
+
+The MVP primarily uses Markdown / MDX / JSON to keep costs low and development simple.
+
+From Phase 2 onward, contact inquiries and some question data will be stored in DynamoDB.
+
+From Phase 4 onward, Cognito authentication will be introduced, and per-user learning history, accuracy, and review items will be stored in DynamoDB.
+
+  
+
+3. Basic Data Design Policies
+
+3.1 Basic Policies
+
+|   |   |
+|---|---|
+|Policy|Description|
+|Static data first for the MVP|Manage glossary entries, comparisons, articles, architecture diagrams, and questions in Markdown/JSON|
+|DynamoDB only for dynamic data|Store inquiries, future answer history, and learning progress in DynamoDB|
+|Source files managed in GitHub|Manage source glossary entries, questions, articles, and architecture diagrams in GitHub|
+|Prioritize low cost|Minimize database access in the MVP and serve static content through S3 + CloudFront|
+|Ensure extensibility|Define clear JSON structures to allow future migration to DynamoDB and APIs|
+|Prioritize SEO|Require title, description, and slug for blog posts, comparisons, and glossary detail pages|
+|Plan for a learning application|Design for future per-user learning history and weak-area analysis|
+
+  
+
+4. Data Classification
+
+4.1 Data Inventory
 
 |   |   |   |   |   |
 |---|---|---|---|---|
-|データ種別|内容|MVP保存場所|将来保存場所|更新頻度|
-|AWS用語データ|AWSサービスの概要・用途・試験ポイント|JSON / MDX|DynamoDB任意|中|
-|サービス比較データ|似たAWSサービスの比較記事|MDX|MDX中心|中|
-|模擬問題データ|CLF/SAA模擬問題|JSON|DynamoDB|高|
-|構成図データ|AWS構成図と設計解説|MDX + 画像|MDX中心|中|
-|ブログ記事データ|SEO記事|MDX|MDX中心|高|
-|問い合わせデータ|ユーザー問い合わせ|DynamoDB|DynamoDB|低〜中|
-|運営者情報|サイト運営者情報|静的ページ|静的ページ|低|
-|プライバシーポリシー|個人情報・Cookie・広告説明|静的ページ|静的ページ|低|
-|ユーザーデータ|ログインユーザー情報|対象外|Cognito + DynamoDB|中|
-|回答履歴データ|ユーザーの問題回答履歴|対象外|DynamoDB|高|
-|学習進捗データ|正答率・苦手カテゴリ|対象外|DynamoDB|高|
-|毎日1問データ|通知対象問題|対象外|DynamoDB|中|
+|Data type|Description|MVP storage|Future storage|Update frequency|
+|AWS glossary data|AWS service overviews, use cases, and exam points|JSON / MDX|DynamoDB optional|Medium|
+|Service comparison data|Articles comparing similar AWS services|MDX|Primarily MDX|Medium|
+|Practice question data|CLF/SAA practice questions|JSON|DynamoDB|High|
+|Architecture diagram data|AWS architecture diagrams and design explanations|MDX + images|Primarily MDX|Medium|
+|Blog post data|SEO articles|MDX|Primarily MDX|High|
+|Contact inquiry data|User inquiries|DynamoDB|DynamoDB|Low to medium|
+|Operator information|Site operator information|Static pages|Static pages|Low|
+|Privacy policy|Personal information, cookies, and advertising disclosures|Static pages|Static pages|Low|
+|User data|Signed-in user information|Out of scope|Cognito + DynamoDB|Medium|
+|Answer history data|Users' question-answer history|Out of scope|DynamoDB|High|
+|Learning progress data|Accuracy and weak categories|Out of scope|DynamoDB|High|
+|Daily question data|Questions selected for notifications|Out of scope|DynamoDB|Medium|
 
   
 
-5. MVPデータ管理方針
+5. MVP Data Management Policies
 
-5.1 MVPでの保存方針
+5.1 MVP Storage Policy
 
-MVPでは、以下のように管理する。
-
-|   |   |   |
-|---|---|---|
-|データ|保存形式|理由|
-|AWS用語|JSON|一覧・検索・詳細表示に使いやすい|
-|模擬問題|JSON|クライアント側で正誤判定しやすい|
-|サービス比較|MDX|表・文章・内部リンクを柔軟に書ける|
-|ブログ記事|MDX|SEO記事として管理しやすい|
-|構成図解説|MDX + 画像|図と文章を組み合わせやすい|
-|問い合わせ|DynamoDB|ユーザー入力の保存が必要なため|
-|運営者情報|静的ページ|更新頻度が低いため|
-|プライバシーポリシー|静的ページ|更新頻度が低いため|
-
-5.2 MVPでDynamoDBに保存するもの
-
-MVPでは、DynamoDB保存対象を最小限にする。
+Manage MVP data as follows.
 
 |   |   |   |
 |---|---|---|
-|データ|DynamoDB保存|理由|
-|問い合わせデータ|必須|ユーザー入力を保存する必要がある|
-|AWS用語データ|任意|MVPではJSON管理で十分|
-|模擬問題データ|任意|MVPではJSON管理で十分|
-|学習履歴|対象外|ログイン機能がないため|
-|ユーザー情報|対象外|Cognito導入前のため|
+|Data|Storage format|Reason|
+|AWS glossary|JSON|Easy to use for lists, search, and detail views|
+|Practice questions|JSON|Easy to check answers on the client|
+|Service comparisons|MDX|Supports flexible tables, prose, and internal links|
+|Blog posts|MDX|Easy to manage as SEO articles|
+|Architecture explanations|MDX + images|Easy to combine diagrams and text|
+|Contact inquiries|DynamoDB|User input must be stored|
+|Operator information|Static pages|Infrequently updated|
+|Privacy policy|Static pages|Infrequently updated|
 
-5.3 MVPでAPI化しないデータ
+5.2 Data Stored in DynamoDB for the MVP
 
-以下はMVPではAPI化しない。
+Keep DynamoDB storage to a minimum in the MVP.
+
+|   |   |   |
+|---|---|---|
+|Data|DynamoDB storage|Reason|
+|Contact inquiry data|Required|User input must be stored|
+|AWS glossary data|Optional|JSON management is sufficient for the MVP|
+|Practice question data|Optional|JSON management is sufficient for the MVP|
+|Learning history|Out of scope|No sign-in functionality|
+|User information|Out of scope|Cognito has not yet been introduced|
+
+5.3 Data Not Exposed through APIs in the MVP
+
+The following data will not use APIs in the MVP.
 
 |   |   |
 |---|---|
-|データ|理由|
-|ブログ記事|静的生成の方がSEO・速度・コスト面で有利|
-|サービス比較記事|静的ページで十分|
-|構成図解説|静的ページで十分|
-|プライバシーポリシー|静的ページで十分|
-|運営者情報|静的ページで十分|
+|Data|Reason|
+|Blog posts|Static generation offers advantages in SEO, speed, and cost|
+|Service comparison articles|Static pages are sufficient|
+|Architecture explanations|Static pages are sufficient|
+|Privacy policy|Static pages are sufficient|
+|Operator information|Static pages are sufficient|
 
   
 
-6. ディレクトリ構成
+6. Directory Structure
 
-6.1 推奨コンテンツディレクトリ
+6.1 Recommended Content Directory
 
 frontend/
 
@@ -187,7 +187,7 @@ frontend/
 
 │       └── ogp/
 
-6.2 バックエンドディレクトリ
+6.2 Backend Directory
 
 backend/
 
@@ -233,7 +233,7 @@ backend/
 
 │   └── dynamodb.py
 
-6.3 インフラディレクトリ
+6.3 Infrastructure Directory
 
 infra/
 
@@ -251,29 +251,29 @@ infra/
 
   
 
-7. AWS用語データ設計
+7. AWS Glossary Data Design
 
-7.1 データ概要
+7.1 Data Overview
 
-AWS用語データは、AWSサービスの概要、用途、資格試験で問われるポイント、類似サービスとの違いを管理する。
+AWS glossary data manages AWS service overviews, use cases, certification exam points, and differences from similar services.
 
-対象画面：
+Applicable screens:
 
-- AWS用語集一覧
-- AWS用語詳細
-- サービス比較詳細の関連リンク
-- 模擬問題解説の関連リンク
-- 構成図詳細の使用サービスリンク
+- AWS glossary list
+- AWS glossary details
+- Related links in service comparison details
+- Related links in practice question explanations
+- Links to services used in architecture details
 
-7.2 保存形式
+7.2 Storage Format
 
-MVPではJSONで管理する。
+Manage in JSON for the MVP.
 
 frontend/contents/terms/terms.json
 
-将来的に管理画面や検索APIを追加する場合、DynamoDBへ移行する。
+Migrate to DynamoDB if an administration interface or search API is added in the future.
 
-7.3 JSON構造
+7.3 JSON Structure (Japanese Localized Content Specimen)
 
 [
 
@@ -363,106 +363,106 @@ frontend/contents/terms/terms.json
 
 ]
 
-7.4 項目定義
+7.4 Field Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|項目|型|必須|内容|
-|termId|string|必須|用語ID。URLにも使用する|
-|name|string|必須|正式サービス名|
-|shortName|string|必須|略称|
-|category|string|必須|サービスカテゴリ|
-|level|string|必須|beginner / intermediate / advanced|
-|examScopes|string[]|必須|対象試験|
-|summary|string|必須|概要説明|
-|oneLine|string|必須|一言説明|
-|useCases|string[]|必須|主な用途|
-|examPoints|string[]|必須|CLF向け試験ポイント|
-|saaPoints|string[]|任意|SAA向け試験ポイント|
-|relatedServices|string[]|任意|関連サービスID|
-|comparisonSlugs|string[]|任意|関連比較記事|
-|architectureSlugs|string[]|任意|関連構成図|
-|tags|string[]|任意|タグ|
-|costNotes|string[]|任意|コスト注意点|
-|securityNotes|string[]|任意|セキュリティ注意点|
-|updatedAt|string|必須|更新日|
+|Field|Type|Required|Description|
+|termId|string|Required|Glossary entry ID; also used in the URL|
+|name|string|Required|Official service name|
+|shortName|string|Required|Abbreviated name|
+|category|string|Required|Service category|
+|level|string|Required|beginner / intermediate / advanced|
+|examScopes|string[]|Required|Target exams|
+|summary|string|Required|Overview|
+|oneLine|string|Required|One-line description|
+|useCases|string[]|Required|Main use cases|
+|examPoints|string[]|Required|CLF exam points|
+|saaPoints|string[]|Optional|SAA exam points|
+|relatedServices|string[]|Optional|Related service IDs|
+|comparisonSlugs|string[]|Optional|Related comparison articles|
+|architectureSlugs|string[]|Optional|Related architecture diagrams|
+|tags|string[]|Optional|Tags|
+|costNotes|string[]|Optional|Cost considerations|
+|securityNotes|string[]|Optional|Security considerations|
+|updatedAt|string|Required|Last updated date|
 
-7.5 カテゴリ定義
+7.5 Category Definitions
 
 |   |   |   |
 |---|---|---|
-|category|内容|例|
-|Compute|コンピューティング|EC2, Lambda, ECS|
-|Storage|ストレージ|S3, EBS, EFS|
-|Database|データベース|RDS, DynamoDB, Aurora|
-|Networking|ネットワーク|VPC, Route 53, CloudFront|
-|Security|セキュリティ|IAM, KMS, WAF|
-|Monitoring|監視・ログ|CloudWatch, CloudTrail, Config|
-|Integration|アプリ連携|SQS, SNS, EventBridge|
-|Analytics|分析|Athena, Glue, QuickSight|
-|Management|管理|Organizations, Budgets, Cost Explorer|
+|category|Description|Examples|
+|Compute|Computing|EC2, Lambda, ECS|
+|Storage|Storage|S3, EBS, EFS|
+|Database|Databases|RDS, DynamoDB, Aurora|
+|Networking|Networking|VPC, Route 53, CloudFront|
+|Security|Security|IAM, KMS, WAF|
+|Monitoring|Monitoring and logging|CloudWatch, CloudTrail, Config|
+|Integration|Application integration|SQS, SNS, EventBridge|
+|Analytics|Analytics|Athena, Glue, QuickSight|
+|Management|Management|Organizations, Budgets, Cost Explorer|
 
-7.6 初期登録対象
+7.6 Initial Entries
 
-MVPで最低限登録するAWS用語は以下とする。
+At minimum, include the following AWS glossary entries in the MVP.
 
 |   |   |
 |---|---|
-|優先度|サービス|
-|高|IAM|
-|高|S3|
-|高|EC2|
-|高|Lambda|
-|高|VPC|
-|高|RDS|
-|高|DynamoDB|
-|高|CloudFront|
-|高|Route 53|
-|高|CloudWatch|
-|高|CloudTrail|
-|高|API Gateway|
-|高|SQS|
-|高|SNS|
-|高|EventBridge|
-|中|EBS|
-|中|EFS|
-|中|ELB|
-|中|Auto Scaling|
-|中|ACM|
-|中|KMS|
-|中|WAF|
-|中|AWS Budgets|
-|中|Cost Explorer|
-|中|Organizations|
-|中|AWS Config|
-|中|Secrets Manager|
-|中|Systems Manager|
-|中|CloudFormation|
-|中|Cognito|
+|Priority|Service|
+|High|IAM|
+|High|S3|
+|High|EC2|
+|High|Lambda|
+|High|VPC|
+|High|RDS|
+|High|DynamoDB|
+|High|CloudFront|
+|High|Route 53|
+|High|CloudWatch|
+|High|CloudTrail|
+|High|API Gateway|
+|High|SQS|
+|High|SNS|
+|High|EventBridge|
+|Medium|EBS|
+|Medium|EFS|
+|Medium|ELB|
+|Medium|Auto Scaling|
+|Medium|ACM|
+|Medium|KMS|
+|Medium|WAF|
+|Medium|AWS Budgets|
+|Medium|Cost Explorer|
+|Medium|Organizations|
+|Medium|AWS Config|
+|Medium|Secrets Manager|
+|Medium|Systems Manager|
+|Medium|CloudFormation|
+|Medium|Cognito|
 
-  
 
-8. サービス比較データ設計
 
-8.1 データ概要
+8. Service Comparison Data Design
 
-サービス比較データは、試験で混同しやすいAWSサービスの違いを比較表と解説で管理する。
+8.1 Data Overview
 
-対象画面：
+Service comparison data manages comparison tables and explanations of differences between AWS services that are easily confused on exams.
 
-- サービス比較一覧
-- サービス比較詳細
-- AWS用語詳細の関連比較
-- ブログ記事内リンク
-- 模擬問題解説内リンク
+Applicable screens:
 
-8.2 保存形式
+- Service comparison list
+- Service comparison details
+- Related comparisons in AWS glossary details
+- Links within blog posts
+- Links within practice question explanations
 
-MVPではMDXで管理する。
+8.2 Storage Format
+
+Manage in MDX for the MVP.
 
 frontend/contents/comparisons/s3-vs-ebs-vs-efs.mdx
 
-8.3 Frontmatter構造
+8.3 Frontmatter Structure (Japanese Localized Content Specimen)
 
 ---
 
@@ -512,7 +512,7 @@ updatedAt: "2026-06-01"
 
 ---
 
-8.4 本文構成
+8.4 Body Structure (Japanese Localized Content Specimen)
 
 # S3・EBS・EFSの違い
 
@@ -566,66 +566,66 @@ updatedAt: "2026-06-01"
 
 ## 関連問題
 
-8.5 項目定義
+8.5 Field Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|項目|型|必須|内容|
-|comparisonId|string|必須|比較記事ID|
-|slug|string|必須|URLスラッグ|
-|title|string|必須|SEOタイトル|
-|description|string|必須|SEO説明文|
-|category|string|必須|カテゴリ|
-|level|string|必須|難易度|
-|examScopes|string[]|必須|対象試験|
-|services|string[]|必須|比較対象サービスID|
-|tags|string[]|任意|タグ|
-|priority|string|任意|high / medium / low|
-|published|boolean|必須|公開状態|
-|publishedAt|string|必須|公開日|
-|updatedAt|string|必須|更新日|
+|Field|Type|Required|Description|
+|comparisonId|string|Required|Comparison article ID|
+|slug|string|Required|URL slug|
+|title|string|Required|SEO title|
+|description|string|Required|SEO description|
+|category|string|Required|Category|
+|level|string|Required|Difficulty|
+|examScopes|string[]|Required|Target exams|
+|services|string[]|Required|IDs of services being compared|
+|tags|string[]|Optional|Tags|
+|priority|string|Optional|high / medium / low|
+|published|boolean|Required|Publication status|
+|publishedAt|string|Required|Publication date|
+|updatedAt|string|Required|Last updated date|
 
-8.6 初期作成対象
+8.6 Initial Articles
 
 |   |   |   |   |
 |---|---|---|---|
-|comparisonId|slug|title|優先度|
-|cmp-001|s3-vs-ebs-vs-efs|S3・EBS・EFSの違い|高|
-|cmp-002|rds-vs-dynamodb|RDS・DynamoDBの違い|高|
-|cmp-003|sns-vs-sqs-vs-eventbridge|SNS・SQS・EventBridgeの違い|高|
-|cmp-004|iam-user-vs-role-vs-policy|IAMユーザー・IAMロール・IAMポリシーの違い|高|
-|cmp-005|cloudwatch-vs-cloudtrail-vs-config|CloudWatch・CloudTrail・AWS Configの違い|高|
-|cmp-006|alb-vs-nlb-vs-cloudfront|ALB・NLB・CloudFrontの違い|中|
-|cmp-007|multi-az-vs-read-replica|Multi-AZ・Read Replicaの違い|中|
-|cmp-008|security-group-vs-nacl|Security Group・NACLの違い|中|
+|comparisonId|slug|title|Priority|
+|cmp-001|s3-vs-ebs-vs-efs|Differences between S3, EBS, and EFS|High|
+|cmp-002|rds-vs-dynamodb|Differences between RDS and DynamoDB|High|
+|cmp-003|sns-vs-sqs-vs-eventbridge|Differences between SNS, SQS, and EventBridge|High|
+|cmp-004|iam-user-vs-role-vs-policy|Differences between IAM users, IAM roles, and IAM policies|High|
+|cmp-005|cloudwatch-vs-cloudtrail-vs-config|Differences between CloudWatch, CloudTrail, and AWS Config|High|
+|cmp-006|alb-vs-nlb-vs-cloudfront|Differences between ALB, NLB, and CloudFront|Medium|
+|cmp-007|multi-az-vs-read-replica|Differences between Multi-AZ and Read Replica|Medium|
+|cmp-008|security-group-vs-nacl|Differences between Security Group and NACL|Medium|
 
   
 
-9. 模擬問題データ設計
+9. Practice Question Data Design
 
-9.1 データ概要
+9.1 Data Overview
 
-模擬問題データは、AWS Cloud Practitioner / SAA の資格対策用問題を管理する。
+Practice question data manages questions for AWS Cloud Practitioner / SAA certification preparation.
 
-MVPではCloud Practitioner向け30問を作成する。
+Create 30 Cloud Practitioner questions for the MVP.
 
-対象画面：
+Applicable screens:
 
-- 模擬問題トップ
-- CLF模擬問題一覧
-- 模擬問題詳細
-- 用語詳細の関連問題
-- 将来の学習履歴・弱点分析
+- Practice question landing page
+- CLF practice question list
+- Practice question details
+- Related questions in glossary details
+- Future learning history and weak-area analysis
 
-9.2 保存形式
+9.2 Storage Format
 
-MVPではJSONで管理する。
+Manage in JSON for the MVP.
 
 frontend/contents/questions/clf-c02.json
 
-Phase 2以降でDynamoDBに移行可能とする。
+Allow migration to DynamoDB from Phase 2 onward.
 
-9.3 JSON構造
+9.3 JSON Structure (Japanese Localized Content Specimen)
 
 [
 
@@ -713,100 +713,100 @@ Phase 2以降でDynamoDBに移行可能とする。
 
 ]
 
-9.4 項目定義
+9.4 Field Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|項目|型|必須|内容|
-|questionId|string|必須|問題ID。例：clf-001|
-|exam|string|必須|試験区分。CLF-C02 / SAA-C03|
-|category|string|必須|問題カテゴリ|
-|domain|string|必須|試験ドメイン|
-|difficulty|string|必須|easy / normal / hard|
-|question|string|必須|問題文|
-|choices|object[]|必須|選択肢|
-|correctChoiceId|string|必須|正解選択肢ID|
-|explanation|string|必須|全体解説|
-|choiceExplanations|object|任意|選択肢ごとの解説|
-|relatedServices|string[]|任意|関連AWSサービス|
-|relatedTerms|string[]|任意|関連用語|
-|relatedComparisons|string[]|任意|関連比較記事|
-|tags|string[]|任意|タグ|
-|published|boolean|必須|公開状態|
-|createdAt|string|必須|作成日|
-|updatedAt|string|必須|更新日|
+|Field|Type|Required|Description|
+|questionId|string|Required|Question ID; example: clf-001|
+|exam|string|Required|Exam type: CLF-C02 / SAA-C03|
+|category|string|Required|Question category|
+|domain|string|Required|Exam domain|
+|difficulty|string|Required|easy / normal / hard|
+|question|string|Required|Question text|
+|choices|object[]|Required|Answer choices|
+|correctChoiceId|string|Required|Correct choice ID|
+|explanation|string|Required|Overall explanation|
+|choiceExplanations|object|Optional|Explanation for each choice|
+|relatedServices|string[]|Optional|Related AWS services|
+|relatedTerms|string[]|Optional|Related glossary entries|
+|relatedComparisons|string[]|Optional|Related comparison articles|
+|tags|string[]|Optional|Tags|
+|published|boolean|Required|Publication status|
+|createdAt|string|Required|Creation date|
+|updatedAt|string|Required|Last updated date|
 
-9.5 CLF-C02カテゴリ定義
-
-|   |   |
-|---|---|
-|category|内容|
-|Cloud Concepts|クラウドの概念、利点、責任共有モデル|
-|Security and Compliance|セキュリティ、IAM、コンプライアンス|
-|Cloud Technology and Services|AWS主要サービス、デプロイ、運用|
-|Billing, Pricing, and Support|料金、請求、サポート、コスト管理|
-
-9.6 SAA-C03カテゴリ定義
-
-Phase 2以降で利用する。
+9.5 CLF-C02 Category Definitions
 
 |   |   |
 |---|---|
-|category|内容|
-|Secure Architectures|セキュアな設計|
-|Resilient Architectures|耐障害性・高可用性設計|
-|High-Performing Architectures|パフォーマンス設計|
-|Cost-Optimized Architectures|コスト最適化設計|
+|category|Description|
+|Cloud Concepts|Cloud concepts, benefits, and the shared responsibility model|
+|Security and Compliance|Security, IAM, and compliance|
+|Cloud Technology and Services|Core AWS services, deployment, and operations|
+|Billing, Pricing, and Support|Pricing, billing, support, and cost management|
 
-9.7 問題IDルール
+9.6 SAA-C03 Category Definitions
+
+Used from Phase 2 onward.
+
+|   |   |
+|---|---|
+|category|Description|
+|Secure Architectures|Secure design|
+|Resilient Architectures|Fault-tolerant and highly available design|
+|High-Performing Architectures|Performance-oriented design|
+|Cost-Optimized Architectures|Cost-optimized design|
+
+9.7 Question ID Rules
 
 |   |   |   |
 |---|---|---|
-|試験|ID形式|例|
-|Cloud Practitioner|clf-連番3桁|clf-001|
-|Solutions Architect Associate|saa-連番3桁|saa-001|
+|Exam|ID format|Example|
+|Cloud Practitioner|clf- followed by a three-digit sequence number|clf-001|
+|Solutions Architect Associate|saa- followed by a three-digit sequence number|saa-001|
 
-9.8 MVP初期問題数
+9.8 Initial MVP Question Counts
 
 |   |   |   |
 |---|---|---|
-|試験|問題数|優先度|
-|CLF-C02|30問|高|
-|SAA-C03|0問|Phase 2以降|
+|Exam|Question count|Priority|
+|CLF-C02|30 questions|High|
+|SAA-C03|0 questions|Phase 2 onward|
 
-9.9 Phase 2以降の目標問題数
+9.9 Target Question Counts from Phase 2 Onward
 
 |   |   |
 |---|---|
-|試験|目標問題数|
-|CLF-C02|100問|
-|SAA-C03|100問|
+|Exam|Target question count|
+|CLF-C02|100 questions|
+|SAA-C03|100 questions|
 
   
 
-10. 構成図データ設計
+10. Architecture Diagram Data Design
 
-10.1 データ概要
+10.1 Data Overview
 
-構成図データは、SAA対策およびポートフォリオ説明用のAWSアーキテクチャを管理する。
+Architecture diagram data manages AWS architectures for SAA preparation and portfolio explanations.
 
-対象画面：
+Applicable screens:
 
-- 構成図一覧
-- 構成図詳細
-- AWS用語詳細の関連構成図
-- ブログ記事内リンク
+- Architecture diagram list
+- Architecture diagram details
+- Related architecture diagrams in AWS glossary details
+- Links within blog posts
 - GitHub README
 
-10.2 保存形式
+10.2 Storage Format
 
-MVPではMDX + 画像で管理する。
+Manage in MDX + images for the MVP.
 
 frontend/contents/architectures/serverless-api-basic.mdx
 
 frontend/public/images/architectures/serverless-api-basic.png
 
-10.3 Frontmatter構造
+10.3 Frontmatter Structure (Japanese Localized Content Specimen)
 
 ---
 
@@ -862,7 +862,7 @@ updatedAt: "2026-06-01"
 
 ---
 
-10.4 本文構成
+10.4 Body Structure (Japanese Localized Content Specimen)
 
 # S3 + CloudFront 静的Webサイト構成
 
@@ -918,60 +918,60 @@ updatedAt: "2026-06-01"
 
 ## 関連用語
 
-10.5 項目定義
+10.5 Field Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|項目|型|必須|内容|
-|architectureId|string|必須|構成図ID|
-|slug|string|必須|URLスラッグ|
-|title|string|必須|タイトル|
-|description|string|必須|SEO説明文|
-|category|string|必須|構成カテゴリ|
-|level|string|必須|難易度|
-|examScopes|string[]|必須|対象試験|
-|services|string[]|必須|使用AWSサービスID|
-|tags|string[]|任意|タグ|
-|diagramPath|string|任意|構成図画像パス|
-|mermaid|boolean|任意|Mermaid図を含むか|
-|published|boolean|必須|公開状態|
-|publishedAt|string|必須|公開日|
-|updatedAt|string|必須|更新日|
+|Field|Type|Required|Description|
+|architectureId|string|Required|Architecture diagram ID|
+|slug|string|Required|URL slug|
+|title|string|Required|Title|
+|description|string|Required|SEO description|
+|category|string|Required|Architecture category|
+|level|string|Required|Difficulty|
+|examScopes|string[]|Required|Target exams|
+|services|string[]|Required|IDs of AWS services used|
+|tags|string[]|Optional|Tags|
+|diagramPath|string|Optional|Architecture diagram image path|
+|mermaid|boolean|Optional|Whether a Mermaid diagram is included|
+|published|boolean|Required|Publication status|
+|publishedAt|string|Required|Publication date|
+|updatedAt|string|Required|Last updated date|
 
-10.6 初期作成対象
+10.6 Initial Architectures
 
 |   |   |   |   |
 |---|---|---|---|
-|architectureId|slug|title|優先度|
-|arc-001|static-site-s3-cloudfront|S3 + CloudFront 静的Webサイト構成|高|
-|arc-002|serverless-api-basic|API Gateway + Lambda + DynamoDB サーバーレスAPI構成|高|
-|arc-003|three-tier-vpc|VPC内3層Webアプリ構成|中|
-|arc-004|high-availability-web-app|ALB + Auto Scaling + RDS Multi-AZ 高可用性構成|中|
-|arc-005|eventbridge-lambda-batch|EventBridge + Lambda バッチ処理構成|中|
+|architectureId|slug|title|Priority|
+|arc-001|static-site-s3-cloudfront|S3 + CloudFront static website architecture|High|
+|arc-002|serverless-api-basic|API Gateway + Lambda + DynamoDB serverless API architecture|High|
+|arc-003|three-tier-vpc|Three-tier web application architecture in a VPC|Medium|
+|arc-004|high-availability-web-app|ALB + Auto Scaling + RDS Multi-AZ high-availability architecture|Medium|
+|arc-005|eventbridge-lambda-batch|EventBridge + Lambda batch processing architecture|Medium|
 
   
 
-11. ブログ記事データ設計
+11. Blog Post Data Design
 
-11.1 データ概要
+11.1 Data Overview
 
-ブログ記事データは、SEO流入と広告収益化を目的とした記事を管理する。
+Blog post data manages articles aimed at attracting SEO traffic and generating advertising revenue.
 
-対象画面：
+Applicable screens:
 
-- ブログ一覧
-- ブログ詳細
-- トップページ最新記事
-- 関連記事表示
-- サイトマップ生成
+- Blog list
+- Blog details
+- Latest articles on the home page
+- Related article display
+- Sitemap generation
 
-11.2 保存形式
+11.2 Storage Format
 
-MDXで管理する。
+Manage in MDX.
 
 frontend/contents/blog/aws-free-tier-portfolio.mdx
 
-11.3 Frontmatter構造
+11.3 Frontmatter Structure (Japanese Localized Content Specimen)
 
 ---
 
@@ -1017,7 +1017,7 @@ updatedAt: "2026-06-01"
 
 ---
 
-11.4 本文構成
+11.4 Body Structure (Japanese Localized Content Specimen)
 
 # AWS無料枠でポートフォリオを作る方法
 
@@ -1049,108 +1049,108 @@ updatedAt: "2026-06-01"
 
 ## まとめ
 
-11.5 項目定義
+11.5 Field Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|項目|型|必須|内容|
-|postId|string|必須|記事ID|
-|slug|string|必須|URLスラッグ|
-|title|string|必須|SEOタイトル|
-|description|string|必須|SEO説明文|
-|category|string|必須|記事カテゴリ|
-|tags|string[]|任意|タグ|
-|targetKeywords|string[]|任意|狙うSEOキーワード|
-|author|string|必須|著者|
-|eyeCatch|string|任意|アイキャッチ画像|
-|published|boolean|必須|公開状態|
-|publishedAt|string|必須|公開日|
-|updatedAt|string|必須|更新日|
+|Field|Type|Required|Description|
+|postId|string|Required|Post ID|
+|slug|string|Required|URL slug|
+|title|string|Required|SEO title|
+|description|string|Required|SEO description|
+|category|string|Required|Article category|
+|tags|string[]|Optional|Tags|
+|targetKeywords|string[]|Optional|Target SEO keywords|
+|author|string|Required|Author|
+|eyeCatch|string|Optional|Featured image|
+|published|boolean|Required|Publication status|
+|publishedAt|string|Required|Publication date|
+|updatedAt|string|Required|Last updated date|
 
-11.6 初期記事対象
+11.6 Initial Articles
 
 |   |   |   |   |
 |---|---|---|---|
-|postId|slug|title|優先度|
-|blog-001|aws-cloud-practitioner-roadmap|AWS Cloud Practitionerの勉強方法|高|
-|blog-002|aws-free-tier-portfolio|AWS無料枠でポートフォリオを作る方法|高|
-|blog-003|s3-cloudfront-static-site|S3とCloudFrontで静的サイトを公開する方法|高|
-|blog-004|lambda-api-gateway-beginner|LambdaとAPI Gatewayを初心者向けに解説|中|
-|blog-005|dynamodb-vs-rds-beginner|DynamoDBとRDSの違い|中|
+|postId|slug|title|Priority|
+|blog-001|aws-cloud-practitioner-roadmap|How to study for AWS Cloud Practitioner|High|
+|blog-002|aws-free-tier-portfolio|How to build a portfolio with the AWS Free Tier|High|
+|blog-003|s3-cloudfront-static-site|How to publish a static site with S3 and CloudFront|High|
+|blog-004|lambda-api-gateway-beginner|A beginner's guide to Lambda and API Gateway|Medium|
+|blog-005|dynamodb-vs-rds-beginner|Differences between DynamoDB and RDS|Medium|
 
-11.7 AdSense申請前の記事目標
+11.7 Article Targets before Applying for AdSense
 
-AdSense申請前には、最低20本以上の記事を用意する。
+Prepare at least 20 articles before applying for AdSense.
 
 |   |   |
 |---|---|
-|カテゴリ|目標記事数|
-|CLF対策|5本|
-|SAA対策|5本|
-|AWSサービス解説|5本|
-|AWS無料枠・ポートフォリオ|3本|
-|サーバーレス実装|2本|
+|Category|Target article count|
+|CLF preparation|5 articles|
+|SAA preparation|5 articles|
+|AWS service explanations|5 articles|
+|AWS Free Tier and portfolios|3 articles|
+|Serverless implementation|2 articles|
 
   
 
-12. 問い合わせデータ設計
+12. Contact Inquiry Data Design
 
-12.1 データ概要
+12.1 Data Overview
 
-問い合わせデータは、ユーザーからの問い合わせ、誤り報告、仕事依頼、フィードバックを保存する。
+Contact inquiry data stores user inquiries, error reports, work requests, and feedback.
 
-対象画面：
+Applicable screen:
 
-- 問い合わせ画面
+- Contact page
 
-保存先：
+Storage destination:
 
 - DynamoDB ContactsTable
 
-12.2 DynamoDBテーブル設計
+12.2 DynamoDB Table Design
 
 |   |   |
 |---|---|
-|項目|内容|
-|テーブル名|ContactsTable|
-|用途|問い合わせデータ保存|
+|Item|Description|
+|Table name|ContactsTable|
+|Purpose|Store contact inquiry data|
 |Phase|Phase 2|
-|課金モード|On-Demand推奨|
+|Billing mode|On-Demand recommended|
 
-12.3 属性定義
+12.3 Attribute Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|属性名|型|必須|内容|
-|contactId|String|必須|問い合わせID。UUID|
-|createdAt|String|必須|送信日時。ISO 8601形式|
-|name|String|必須|名前|
-|email|String|必須|メールアドレス|
-|subject|String|必須|件名|
-|message|String|必須|本文|
-|status|String|必須|new / read / done / spam|
-|userAgent|String|任意|ブラウザ情報|
-|sourcePage|String|任意|送信元ページ|
+|Attribute name|Type|Required|Description|
+|contactId|String|Required|Contact inquiry ID; UUID|
+|createdAt|String|Required|Submission timestamp in ISO 8601 format|
+|name|String|Required|Name|
+|email|String|Required|Email address|
+|subject|String|Required|Subject|
+|message|String|Required|Message body|
+|status|String|Required|new / read / done / spam|
+|userAgent|String|Optional|Browser information|
+|sourcePage|String|Optional|Submission source page|
 
-12.4 キー設計
+12.4 Key Design
 
 |   |   |   |
 |---|---|---|
-|キー|属性|理由|
-|Partition Key|contactId|問い合わせ単位で一意に取得するため|
+|Key|Attribute|Reason|
+|Partition Key|contactId|Retrieve each inquiry uniquely|
 
-12.5 GSI案
+12.5 Proposed GSI
 
-問い合わせ管理画面を作るまではGSI不要。
+A GSI is unnecessary until a contact inquiry administration interface is built.
 
-将来、ステータス別・日付順で管理したい場合に追加する。
+Add one in the future if inquiries need to be managed by status and date.
 
 |   |   |   |   |
 |---|---|---|---|
-|Index名|Partition Key|Sort Key|用途|
-|StatusCreatedAtIndex|status|createdAt|未対応問い合わせ一覧|
+|Index name|Partition Key|Sort Key|Purpose|
+|StatusCreatedAtIndex|status|createdAt|List inquiries awaiting action|
 
-12.6 保存例
+12.6 Storage Example (Japanese Localized Content Specimen)
 
 {
 
@@ -1174,80 +1174,80 @@ AdSense申請前には、最低20本以上の記事を用意する。
 
 }
 
-12.7 バリデーションルール
+12.7 Validation Rules
 
 |   |   |
 |---|---|
-|項目|ルール|
-|name|必須、1〜100文字|
-|email|必須、メール形式、255文字以内|
-|subject|必須、1〜150文字|
-|message|必須、1〜2,000文字|
-|status|new / read / done / spam のいずれか|
+|Field|Rule|
+|name|Required; 1–100 characters|
+|email|Required; email format; at most 255 characters|
+|subject|Required; 1–150 characters|
+|message|Required; 1–2,000 characters|
+|status|One of new / read / done / spam|
 
-12.8 セキュリティ注意点
+12.8 Security Considerations
 
 |   |   |
 |---|---|
-|項目|内容|
-|HTML無害化|本文にHTMLやscriptが含まれても表示時に実行しない|
-|文字数制限|大量投稿によるコスト増加を防ぐ|
-|CORS制限|フロントエンドのドメインのみ許可|
-|スパム対策|honeypot項目やレート制限を検討する|
+|Item|Description|
+|HTML sanitization|Do not execute HTML or scripts in the message body when displaying it|
+|Character limits|Prevent cost increases from excessive submissions|
+|CORS restrictions|Allow only the frontend domain|
+|Spam prevention|Consider a honeypot field and rate limiting|
 
   
 
-13. ユーザーデータ設計
+13. User Data Design
 
-13.1 データ概要
+13.1 Data Overview
 
-ユーザーデータは、Phase 4以降のログイン機能で利用する。
+User data will be used by sign-in functionality from Phase 4 onward.
 
-MVPでは実装しない。
+Not implemented in the MVP.
 
-認証情報はAmazon Cognitoで管理し、アプリ独自のプロフィールや設定情報はDynamoDBに保存する。
+Manage authentication information in Amazon Cognito and store application-specific profiles and settings in DynamoDB.
 
-13.2 Cognito管理項目
+13.2 Fields Managed by Cognito
 
 |   |   |
 |---|---|
-|項目|内容|
-|sub|CognitoユーザーID|
-|email|メールアドレス|
-|email_verified|メール認証状態|
-|createdAt|ユーザー作成日時|
+|Field|Description|
+|sub|Cognito user ID|
+|email|Email address|
+|email_verified|Email verification status|
+|createdAt|User creation timestamp|
 
 13.3 UserProfileTable
 
 |   |   |
 |---|---|
-|項目|内容|
-|テーブル名|UserProfileTable|
-|用途|アプリ独自のユーザープロフィール保存|
+|Item|Description|
+|Table name|UserProfileTable|
+|Purpose|Store application-specific user profiles|
 |Phase|Phase 4|
 
-13.4 属性定義
+13.4 Attribute Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|属性名|型|必須|内容|
-|userId|String|必須|Cognito sub|
-|displayName|String|任意|表示名|
-|email|String|必須|メールアドレス|
-|targetExam|String|任意|CLF-C02 / SAA-C03|
-|learningGoal|String|任意|学習目標|
-|notificationEnabled|Boolean|任意|通知設定|
-|createdAt|String|必須|作成日時|
-|updatedAt|String|必須|更新日時|
+|Attribute name|Type|Required|Description|
+|userId|String|Required|Cognito sub|
+|displayName|String|Optional|Display name|
+|email|String|Required|Email address|
+|targetExam|String|Optional|CLF-C02 / SAA-C03|
+|learningGoal|String|Optional|Learning goal|
+|notificationEnabled|Boolean|Optional|Notification setting|
+|createdAt|String|Required|Creation timestamp|
+|updatedAt|String|Required|Last updated timestamp|
 
-13.5 キー設計
+13.5 Key Design
 
 |   |   |
 |---|---|
-|キー|属性|
+|Key|Attribute|
 |Partition Key|userId|
 
-13.6 保存例
+13.6 Storage Example (Japanese Localized Content Specimen)
 
 {
 
@@ -1271,65 +1271,65 @@ MVPでは実装しない。
 
   
 
-14. 回答履歴データ設計
+14. Answer History Data Design
 
-14.1 データ概要
+14.1 Data Overview
 
-回答履歴データは、ユーザーがどの問題にどう回答したかを保存する。
+Answer history data stores which questions users answered and how they answered them.
 
-Phase 4以降で利用する。
+Used from Phase 4 onward.
 
-対象画面：
+Applicable screens:
 
-- マイページ
-- 学習進捗
-- 復習問題
-- 弱点分析
+- My page
+- Learning progress
+- Review questions
+- Weak-area analysis
 
-14.2 DynamoDBテーブル設計
+14.2 DynamoDB Table Design
 
 |   |   |
 |---|---|
-|項目|内容|
-|テーブル名|UserAnswersTable|
-|用途|ユーザー別回答履歴保存|
+|Item|Description|
+|Table name|UserAnswersTable|
+|Purpose|Store per-user answer history|
 |Phase|Phase 4|
-|課金モード|On-Demand推奨|
+|Billing mode|On-Demand recommended|
 
-14.3 属性定義
+14.3 Attribute Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|属性名|型|必須|内容|
-|userId|String|必須|CognitoユーザーID|
-|answerId|String|必須|回答ID|
-|questionId|String|必須|問題ID|
-|exam|String|必須|試験区分|
-|category|String|必須|問題カテゴリ|
-|selectedChoiceId|String|必須|選択した選択肢|
-|correctChoiceId|String|必須|正解選択肢|
-|isCorrect|Boolean|必須|正誤|
-|answeredAt|String|必須|回答日時|
-|elapsedSeconds|Number|任意|回答にかかった秒数|
+|Attribute name|Type|Required|Description|
+|userId|String|Required|Cognito user ID|
+|answerId|String|Required|Answer ID|
+|questionId|String|Required|Question ID|
+|exam|String|Required|Exam type|
+|category|String|Required|Question category|
+|selectedChoiceId|String|Required|Selected choice|
+|correctChoiceId|String|Required|Correct choice|
+|isCorrect|Boolean|Required|Whether the answer is correct|
+|answeredAt|String|Required|Answer timestamp|
+|elapsedSeconds|Number|Optional|Seconds taken to answer|
 
-14.4 キー設計
+14.4 Key Design
 
 |   |   |   |
 |---|---|---|
-|キー|属性|理由|
-|Partition Key|userId|ユーザー別に回答履歴を取得するため|
-|Sort Key|answeredAt#questionId|日付順に履歴を取得するため|
+|Key|Attribute|Reason|
+|Partition Key|userId|Retrieve answer history by user|
+|Sort Key|answeredAt#questionId|Retrieve history in date order|
 
-14.5 GSI案
+14.5 Proposed GSIs
 
 |   |   |   |   |
 |---|---|---|---|
-|Index名|Partition Key|Sort Key|用途|
-|UserQuestionIndex|userId|questionId|特定問題の回答履歴確認|
-|UserExamIndex|userId|exam|試験別の回答履歴取得|
-|UserCategoryIndex|userId|category|カテゴリ別の回答履歴取得|
+|Index name|Partition Key|Sort Key|Purpose|
+|UserQuestionIndex|userId|questionId|Check answer history for a specific question|
+|UserExamIndex|userId|exam|Retrieve answer history by exam|
+|UserCategoryIndex|userId|category|Retrieve answer history by category|
 
-14.6 保存例
+14.6 Storage Example
 
 {
 
@@ -1357,49 +1357,49 @@ Phase 4以降で利用する。
 
   
 
-15. 学習進捗データ設計
+15. Learning Progress Data Design
 
-15.1 データ概要
+15.1 Data Overview
 
-学習進捗データは、ユーザーごとの正答率、回答数、苦手カテゴリ、復習対象を集計して保存する。
+Learning progress data aggregates and stores each user's accuracy, answer count, weak categories, and review items.
 
-回答履歴から都度集計することも可能だが、表示速度を考慮して集計テーブルを持つ。
+These can be aggregated from answer history on demand, but an aggregation table is maintained for display performance.
 
-15.2 DynamoDBテーブル設計
+15.2 DynamoDB Table Design
 
 |   |   |
 |---|---|
-|項目|内容|
-|テーブル名|UserProgressTable|
-|用途|ユーザー別学習進捗保存|
+|Item|Description|
+|Table name|UserProgressTable|
+|Purpose|Store per-user learning progress|
 |Phase|Phase 4|
 
-15.3 属性定義
+15.3 Attribute Definitions
 
 |   |   |   |   |
 |---|---|---|---|
-|属性名|型|必須|内容|
-|userId|String|必須|CognitoユーザーID|
-|exam|String|必須|試験区分|
-|totalAnswered|Number|必須|回答数|
-|correctCount|Number|必須|正解数|
-|incorrectCount|Number|必須|不正解数|
-|accuracy|Number|必須|正答率|
-|categoryStats|Map|任意|カテゴリ別成績|
-|weakCategories|List|任意|苦手カテゴリ|
-|reviewQuestionIds|List|任意|復習対象問題ID|
-|lastAnsweredAt|String|任意|最終回答日時|
-|updatedAt|String|必須|更新日時|
+|Attribute name|Type|Required|Description|
+|userId|String|Required|Cognito user ID|
+|exam|String|Required|Exam type|
+|totalAnswered|Number|Required|Number of answers|
+|correctCount|Number|Required|Number of correct answers|
+|incorrectCount|Number|Required|Number of incorrect answers|
+|accuracy|Number|Required|Accuracy|
+|categoryStats|Map|Optional|Results by category|
+|weakCategories|List|Optional|Weak categories|
+|reviewQuestionIds|List|Optional|Question IDs for review|
+|lastAnsweredAt|String|Optional|Most recent answer timestamp|
+|updatedAt|String|Required|Last updated timestamp|
 
-15.4 キー設計
+15.4 Key Design
 
 |   |   |   |
 |---|---|---|
-|キー|属性|理由|
-|Partition Key|userId|ユーザー別に取得するため|
-|Sort Key|exam|試験別に進捗を分けるため|
+|Key|Attribute|Reason|
+|Partition Key|userId|Retrieve by user|
+|Sort Key|exam|Separate progress by exam|
 
-15.5 保存例
+15.5 Storage Example
 
 {
 
@@ -1451,73 +1451,73 @@ Phase 4以降で利用する。
 
   
 
-16. 復習データ設計
+16. Review Data Design
 
-16.1 データ概要
+16.1 Data Overview
 
-復習データは、ユーザーが間違えた問題や、一定期間後に再確認すべき問題を管理する。
+Review data manages questions users answered incorrectly and questions that should be revisited after a specified interval.
 
-MVPでは不要。Phase 4以降で実装する。
+Not needed for the MVP. Implement from Phase 4 onward.
 
-16.2 管理方式
+16.2 Management Approach
 
-最初はUserProgressTableのreviewQuestionIdsで管理する。
+Initially, manage this data with reviewQuestionIds in UserProgressTable.
 
-将来的に復習スケジュールを細かく管理する場合は、ReviewItemsTableを追加する。
+Add ReviewItemsTable if more detailed review scheduling is needed in the future.
 
-16.3 ReviewItemsTable案
+16.3 Proposed ReviewItemsTable
 
 |   |   |   |   |
 |---|---|---|---|
-|属性名|型|必須|内容|
-|userId|String|必須|CognitoユーザーID|
-|reviewId|String|必須|復習ID|
-|questionId|String|必須|問題ID|
-|reason|String|必須|incorrect / bookmarked / scheduled|
-|nextReviewAt|String|任意|次回復習予定日|
-|reviewCount|Number|必須|復習回数|
-|lastReviewedAt|String|任意|最終復習日|
-|status|String|必須|active / done|
+|Attribute name|Type|Required|Description|
+|userId|String|Required|Cognito user ID|
+|reviewId|String|Required|Review ID|
+|questionId|String|Required|Question ID|
+|reason|String|Required|incorrect / bookmarked / scheduled|
+|nextReviewAt|String|Optional|Next scheduled review date|
+|reviewCount|Number|Required|Review count|
+|lastReviewedAt|String|Optional|Last review date|
+|status|String|Required|active / done|
 
-16.4 キー設計
+16.4 Key Design
 
 |   |   |
 |---|---|
-|キー|属性|
+|Key|Attribute|
 |Partition Key|userId|
 |Sort Key|nextReviewAt#questionId|
 
   
 
-17. 毎日1問データ設計
+17. Daily Question Data Design
 
-17.1 データ概要
+17.1 Data Overview
 
-毎日1問データは、EventBridge + Lambda + SES / Slack通知で配信する問題を管理する。
+Daily question data manages questions delivered through EventBridge + Lambda + SES / Slack notifications.
 
-Phase 4以降で実装する。
+Implement from Phase 4 onward.
 
 17.2 DailyQuestionTable
 
 |   |   |   |   |
 |---|---|---|---|
-|属性名|型|必須|内容|
-|date|String|必須|配信日。YYYY-MM-DD|
-|questionId|String|必須|配信する問題ID|
-|exam|String|必須|試験区分|
-|title|String|任意|通知タイトル|
-|message|String|任意|通知本文|
-|sent|Boolean|必須|送信済みか|
-|sentAt|String|任意|送信日時|
+|Attribute name|Type|Required|Description|
+|date|String|Required|Delivery date; YYYY-MM-DD|
+|questionId|String|Required|ID of the question to deliver|
+|exam|String|Required|Exam type|
+|title|String|Optional|Notification title|
+|message|String|Optional|Notification body|
+|sent|Boolean|Required|Whether the notification has been sent|
+|sentAt|String|Optional|Sent timestamp|
 
-17.3 キー設計
+17.3 Key Design
 
 |   |   |
 |---|---|
-|キー|属性|
+|Key|Attribute|
 |Partition Key|date|
 
-17.4 保存例
+17.4 Storage Example (Japanese Localized Content Specimen)
 
 {
 
@@ -1539,140 +1539,140 @@ Phase 4以降で実装する。
 
   
 
-18. DynamoDB全体設計
+18. Overall DynamoDB Design
 
-18.1 テーブル一覧
+18.1 Table Inventory
 
 |   |   |   |   |
 |---|---|---|---|
-|テーブル名|用途|Phase|MVP必須|
-|ContactsTable|問い合わせ保存|Phase 2|必須|
-|TermsTable|AWS用語保存|Phase 2以降|任意|
-|QuestionsTable|模擬問題保存|Phase 2以降|任意|
-|UserProfileTable|ユーザープロフィール|Phase 4|対象外|
-|UserAnswersTable|回答履歴|Phase 4|対象外|
-|UserProgressTable|学習進捗|Phase 4|対象外|
-|ReviewItemsTable|復習管理|Phase 4以降|対象外|
-|DailyQuestionTable|毎日1問配信|Phase 4以降|対象外|
+|Table name|Purpose|Phase|Required for MVP|
+|ContactsTable|Store contact inquiries|Phase 2|Required|
+|TermsTable|Store AWS glossary entries|Phase 2 onward|Optional|
+|QuestionsTable|Store practice questions|Phase 2 onward|Optional|
+|UserProfileTable|User profiles|Phase 4|Out of scope|
+|UserAnswersTable|Answer history|Phase 4|Out of scope|
+|UserProgressTable|Learning progress|Phase 4|Out of scope|
+|ReviewItemsTable|Review management|Phase 4 onward|Out of scope|
+|DailyQuestionTable|Daily question delivery|Phase 4 onward|Out of scope|
 
-18.2 課金モード
+18.2 Billing Mode
 
-個人開発MVPでは、DynamoDBはOn-Demandを推奨する。
+DynamoDB On-Demand is recommended for an individually developed MVP.
 
-理由：
+Reasons:
 
-- アクセス数が読めないため
-- 初期アクセスが少ない場合、無駄なキャパシティを確保しなくてよい
-- 管理が簡単
-- 個人開発ではスパイクにも対応しやすい
+- Traffic volume is unpredictable
+- No need to provision unused capacity when initial traffic is low
+- Simple to manage
+- Makes traffic spikes easier to handle for an individual developer
 
-18.3 命名方針
+18.3 Naming Policy
 
 |   |   |
 |---|---|
-|環境|テーブル名例|
+|Environment|Example table name|
 |dev|ContactsTableDev|
 |prod|ContactsTableProd|
 
-MVPでは本番環境のみでもよいが、将来的な環境分離を考え、命名には環境名を付けられるようにする。
+A production-only environment is acceptable for the MVP, but allow environment names in table names to support future environment separation.
 
   
 
-19. データ取得方針
+19. Data Retrieval Policies
 
-19.1 静的取得
+19.1 Static Retrieval
 
-以下はビルド時または静的ファイルとして取得する。
+Retrieve the following at build time or as static files.
 
 |   |   |
 |---|---|
-|データ|取得方法|
-|用語データ|JSON import|
-|問題データ|JSON import|
-|比較記事|MDX読み込み|
-|ブログ記事|MDX読み込み|
-|構成図記事|MDX読み込み|
-|運営者情報|静的ページ|
-|プライバシーポリシー|静的ページ|
+|Data|Retrieval method|
+|Glossary data|JSON import|
+|Question data|JSON import|
+|Comparison articles|Load MDX|
+|Blog posts|Load MDX|
+|Architecture articles|Load MDX|
+|Operator information|Static pages|
+|Privacy policy|Static pages|
 
-19.2 API取得
+19.2 API Retrieval
 
-以下はAPI経由で取得・保存する。
+Retrieve and store the following through APIs.
 
 |   |   |   |
 |---|---|---|
-|データ|API|Phase|
-|問い合わせ送信|POST /contact|Phase 2|
-|用語一覧|GET /terms|任意|
-|問題一覧|GET /questions/clf|任意|
-|回答履歴保存|POST /answers|Phase 4|
-|学習進捗取得|GET /progress|Phase 4|
+|Data|API|Phase|
+|Submit contact inquiry|POST /contact|Phase 2|
+|Glossary list|GET /terms|Optional|
+|Question list|GET /questions/clf|Optional|
+|Save answer history|POST /answers|Phase 4|
+|Retrieve learning progress|GET /progress|Phase 4|
 
-19.3 MVPでの推奨
+19.3 MVP Recommendation
 
-MVPでは、問い合わせ以外は静的データ管理を推奨する。
+For the MVP, manage all data except contact inquiries as static data.
 
-理由：
+Reasons:
 
-- 開発が速い
-- AWSコストが低い
-- SEOに強い
-- CloudFrontキャッシュを活用しやすい
-- データベース設計で詰まりにくい
-
-  
-
-20. データ更新フロー
-
-20.1 MVPのコンテンツ更新フロー
-
-1. ローカルでJSON / MDXを編集する
-
-2. GitHubにコミットする
-
-3. GitHub Actionsでビルドする
-
-4. S3へデプロイする
-
-5. CloudFrontキャッシュを無効化する
-
-6. 本番サイトで表示確認する
-
-20.2 問い合わせ保存フロー
-
-1. ユーザーが問い合わせフォームを入力する
-
-2. フロントエンドでバリデーションする
-
-3. API GatewayへPOSTする
-
-4. Lambdaで再度バリデーションする
-
-5. DynamoDB ContactsTableへ保存する
-
-6. 成功レスポンスを返す
-
-7. フロントエンドで完了メッセージを表示する
-
-20.3 Phase 4の回答履歴保存フロー
-
-1. ログインユーザーが問題に回答する
-
-2. フロントエンドが回答データをAPIへ送信する
-
-3. API GatewayがCognito JWTを検証する
-
-4. Lambdaが回答データをUserAnswersTableへ保存する
-
-5. LambdaがUserProgressTableを更新する
-
-6. フロントエンドが正答率や復習対象を表示する
+- Faster development
+- Lower AWS costs
+- Good for SEO
+- Easy to take advantage of CloudFront caching
+- Less likely to get stuck on database design
 
   
 
-7. TypeScript型定義
+20. Data Update Flows
 
-21.1 Term型
+20.1 MVP Content Update Flow
+
+1. Edit JSON / MDX locally
+
+2. Commit to GitHub
+
+3. Build with GitHub Actions
+
+4. Deploy to S3
+
+5. Invalidate the CloudFront cache
+
+6. Verify rendering on the production site
+
+20.2 Contact Inquiry Storage Flow
+
+1. The user fills in the contact form
+
+2. Validate on the frontend
+
+3. POST to API Gateway
+
+4. Validate again in Lambda
+
+5. Store in DynamoDB ContactsTable
+
+6. Return a success response
+
+7. Display a completion message on the frontend
+
+20.3 Phase 4 Answer History Storage Flow
+
+1. A signed-in user answers a question
+
+2. The frontend sends answer data to the API
+
+3. API Gateway validates the Cognito JWT
+
+4. Lambda saves the answer data in UserAnswersTable
+
+5. Lambda updates UserProgressTable
+
+6. The frontend displays accuracy and review items
+
+  
+
+7. TypeScript Type Definitions
+
+21.1 Term Type
 
 export type ExamScope = 'CLF-C02' | 'SAA-C03';
 
@@ -1744,7 +1744,7 @@ export type AwsTerm = {
 
 };
 
-21.2 Question型
+21.2 Question Type
 
 export type QuestionChoice = {
 
@@ -1794,7 +1794,7 @@ export type Question = {
 
 };
 
-21.3 ComparisonMeta型
+21.3 ComparisonMeta Type
 
 export type ComparisonMeta = {
 
@@ -1826,7 +1826,7 @@ export type ComparisonMeta = {
 
 };
 
-21.4 ArchitectureMeta型
+21.4 ArchitectureMeta Type
 
 export type ArchitectureMeta = {
 
@@ -1860,7 +1860,7 @@ export type ArchitectureMeta = {
 
 };
 
-21.5 BlogPostMeta型
+21.5 BlogPostMeta Type
 
 export type BlogPostMeta = {
 
@@ -1890,7 +1890,7 @@ export type BlogPostMeta = {
 
 };
 
-21.6 Contact型
+21.6 Contact Type
 
 export type ContactInput = {
 
@@ -1920,7 +1920,7 @@ export type ContactRecord = ContactInput & {
 
 };
 
-21.7 UserAnswer型
+21.7 UserAnswer Type
 
 export type UserAnswer = {
 
@@ -1946,7 +1946,7 @@ export type UserAnswer = {
 
 };
 
-21.8 UserProgress型
+21.8 UserProgress Type
 
 export type CategoryStat = {
 
@@ -1988,85 +1988,85 @@ export type UserProgress = {
 
   
 
-22. バリデーション設計
+22. Validation Design
 
-22.1 共通バリデーション方針
+22.1 Common Validation Policies
 
 |   |   |
 |---|---|
-|方針|内容|
-|フロント・バック両方で検証|フロントだけに依存しない|
-|文字数制限|コスト増加・スパム対策|
-|型チェック|TypeScriptとLambda側で実施|
-|必須チェック|required項目は必ず検証|
-|不正文字対策|HTML/scriptを無害化する|
+|Policy|Description|
+|Validate on both frontend and backend|Do not rely solely on frontend validation|
+|Character limits|Prevent cost increases and spam|
+|Type checking|Perform checks in TypeScript and Lambda|
+|Required field checks|Always validate required fields|
+|Unsafe character handling|Sanitize HTML/scripts|
 
-22.2 問い合わせバリデーション
+22.2 Contact Inquiry Validation
 
 |   |   |   |
 |---|---|---|
-|項目|ルール|エラーメッセージ例|
-|name|1〜100文字|名前を入力してください|
-|email|メール形式、255文字以内|正しいメールアドレスを入力してください|
-|subject|1〜150文字|件名を入力してください|
-|message|1〜2,000文字|本文を入力してください|
+|Field|Rule|Example error message (Japanese localized UI specimen)|
+|name|1–100 characters|名前を入力してください|
+|email|Email format; at most 255 characters|正しいメールアドレスを入力してください|
+|subject|1–150 characters|件名を入力してください|
+|message|1–2,000 characters|本文を入力してください|
 
-22.3 問題データバリデーション
-
-|   |   |
-|---|---|
-|項目|ルール|
-|questionId|重複不可|
-|choices|4件必須|
-|correctChoiceId|choices内に存在すること|
-|explanation|空文字不可|
-|exam|CLF-C02 / SAA-C03 のいずれか|
-|difficulty|easy / normal / hard のいずれか|
-
-22.4 用語データバリデーション
+22.3 Question Data Validation
 
 |   |   |
 |---|---|
-|項目|ルール|
-|termId|重複不可、英数字とハイフンのみ|
-|name|必須|
-|category|定義済みカテゴリのみ|
-|summary|必須|
-|examPoints|1件以上|
-|updatedAt|日付形式|
+|Field|Rule|
+|questionId|Must be unique|
+|choices|Exactly 4 required|
+|correctChoiceId|Must exist in choices|
+|explanation|Must not be empty|
+|exam|One of CLF-C02 / SAA-C03|
+|difficulty|One of easy / normal / hard|
+
+22.4 Glossary Data Validation
+
+|   |   |
+|---|---|
+|Field|Rule|
+|termId|Must be unique; alphanumeric characters and hyphens only|
+|name|Required|
+|category|Predefined categories only|
+|summary|Required|
+|examPoints|At least 1 entry|
+|updatedAt|Date format|
 
   
 
-23. データ移行方針
+23. Data Migration Policy
 
-23.1 JSONからDynamoDBへの移行
+23.1 Migration from JSON to DynamoDB
 
-Phase 2以降で、必要に応じてJSONデータをDynamoDBへ移行する。
+Migrate JSON data to DynamoDB as needed from Phase 2 onward.
 
-対象候補：
+Candidate data:
 
 - TermsTable
 - QuestionsTable
 
-23.2 移行手順
+23.2 Migration Procedure
 
-1. JSONデータを検証する
+1. Validate the JSON data
 
-2. DynamoDBテーブルを作成する
+2. Create DynamoDB tables
 
-3. 移行用Pythonスクリプトを作成する
+3. Create Python migration scripts
 
-4. JSONを読み込む
+4. Read the JSON
 
-5. PutItem / BatchWriteItemで登録する
+5. Insert records using PutItem / BatchWriteItem
 
-6. 登録件数を確認する
+6. Verify the number of inserted records
 
-7. API経由で取得確認する
+7. Verify retrieval through the API
 
-8. フロントエンドの取得元をJSONからAPIへ切り替える
+8. Switch the frontend data source from JSON to the API
 
-23.3 移行用スクリプト配置
+23.3 Migration Script Location
 
 scripts/
 
@@ -2076,26 +2076,26 @@ scripts/
 
 └── validate_contents.py
 
-23.4 移行時の注意点
+23.4 Migration Considerations
 
 |   |   |
 |---|---|
-|注意点|内容|
-|ID重複|termId、questionIdの重複を事前チェックする|
-|型不一致|DynamoDBに保存できる型に変換する|
-|大量書き込み|BatchWriteItemを使う場合はリトライ処理を入れる|
-|コスト|不要な移行テストを繰り返さない|
-|原本管理|移行後も原本をGitHubに残すか方針を決める|
+|Consideration|Description|
+|Duplicate IDs|Check for duplicate termId and questionId values in advance|
+|Type mismatches|Convert values to types supported by DynamoDB|
+|Bulk writes|Implement retries when using BatchWriteItem|
+|Cost|Avoid repeating unnecessary migration tests|
+|Source management|Decide whether to retain source files in GitHub after migration|
 
   
 
-24. データバックアップ方針
+24. Data Backup Policy
 
-24.1 静的コンテンツ
+24.1 Static Content
 
-静的コンテンツの原本はGitHubで管理する。
+Manage the source files for static content in GitHub.
 
-対象：
+Scope:
 
 - terms.json
 - questions JSON
@@ -2104,67 +2104,67 @@ scripts/
 - blog MDX
 - images
 
-復旧方法：
+Recovery method:
 
-GitHubから再ビルド → S3へ再デプロイ
+Rebuild from GitHub → Redeploy to S3
 
-24.2 DynamoDBデータ
+24.2 DynamoDB Data
 
-MVPでは問い合わせデータのみDynamoDBに保存する。
+Only contact inquiry data is stored in DynamoDB for the MVP.
 
 |   |   |
 |---|---|
-|データ|バックアップ方針|
-|ContactsTable|必要に応じてCSVエクスポート|
-|UserAnswersTable|Phase 4以降、PITR検討|
-|UserProgressTable|再集計可能だが、PITR検討|
+|Data|Backup policy|
+|ContactsTable|Export to CSV as needed|
+|UserAnswersTable|Consider PITR from Phase 4 onward|
+|UserProgressTable|Can be recalculated, but consider PITR|
 
-24.3 重要度分類
+24.3 Importance Classification
 
 |   |   |   |
 |---|---|---|
-|データ|重要度|理由|
-|ブログ・用語・問題原本|高|サイト価値の中心。GitHub管理|
-|問い合わせ|中|ユーザー連絡情報。漏えい対策も必要|
-|学習履歴|高|ユーザー体験に直結|
-|画像|中|再作成可能だが手間がかかる|
-|アクセス解析|低|Google側で管理|
+|Data|Importance|Reason|
+|Blog, glossary, and question source files|High|Core site value; managed in GitHub|
+|Contact inquiries|Medium|User contact information; also requires protection against leaks|
+|Learning history|High|Directly affects the user experience|
+|Images|Medium|Can be recreated, but requires effort|
+|Analytics|Low|Managed by Google|
 
   
 
-25. データセキュリティ設計
+25. Data Security Design
 
-25.1 個人情報の扱い
+25.1 Handling Personal Information
 
-個人情報に該当する可能性があるデータ：
+Data that may constitute personal information:
 
-- 問い合わせの名前
-- メールアドレス
-- 問い合わせ本文
-- 将来のユーザー登録メールアドレス
+- Name in a contact inquiry
+- Email address
+- Contact inquiry message body
+- Future user registration email address
 
-25.2 保護方針
+25.2 Protection Policies
 
 |   |   |
 |---|---|
-|方針|内容|
-|最小収集|必要な情報だけ取得する|
-|最小権限|Lambdaから対象テーブルへの必要最小限の権限のみ付与|
-|公開禁止|問い合わせデータはフロントエンドに公開しない|
-|ログ注意|個人情報をCloudWatch Logsに出しすぎない|
-|GitHub注意|問い合わせデータやメールアドレスをコミットしない|
+|Policy|Description|
+|Minimal collection|Collect only necessary information|
+|Least privilege|Grant Lambda only the minimum necessary permissions for the target table|
+|No public exposure|Do not expose contact inquiry data to the frontend|
+|Logging precautions|Avoid excessive personal information in CloudWatch Logs|
+|GitHub precautions|Do not commit contact inquiry data or email addresses|
 
-25.3 CloudWatch Logs注意点
+25.3 CloudWatch Logs Precautions
 
-Lambdaログに以下をそのまま出力しない。
+Do not log the following verbatim in Lambda logs.
 
-- メールアドレス
-- 問い合わせ本文全文
-- JWTトークン
-- APIキー
-- AWS認証情報
+- Email addresses
+- Full contact inquiry message bodies
+- JWT tokens
+- API keys
+- AWS credentials
 
-ログ出力例：
+Logging example:
 
 OK: contact submitted contactId=contact-xxxx
 
@@ -2172,125 +2172,125 @@ NG: validation error field=email
 
   
 
-26. データ保持期間
+26. Data Retention Periods
 
-26.1 MVP方針
-
-|   |   |
-|---|---|
-|データ|保持期間|
-|静的コンテンツ|削除しない限り保持|
-|問い合わせデータ|1年を目安に見直し|
-|CloudWatch Logs|14日〜30日を推奨|
-
-26.2 将来方針
+26.1 MVP Policy
 
 |   |   |
 |---|---|
-|データ|保持期間|
-|ユーザー情報|退会まで|
-|回答履歴|退会まで、または一定期間|
-|学習進捗|退会まで|
-|退会ユーザー情報|削除または匿名化|
+|Data|Retention period|
+|Static content|Retain until deleted|
+|Contact inquiry data|Review after approximately one year|
+|CloudWatch Logs|14–30 days recommended|
+
+26.2 Future Policy
+
+|   |   |
+|---|---|
+|Data|Retention period|
+|User information|Until account closure|
+|Answer history|Until account closure or for a defined period|
+|Learning progress|Until account closure|
+|Closed-account user information|Delete or anonymize|
 
   
 
-27. SEO用メタデータ設計
+27. SEO Metadata Design
 
-27.1 共通SEO項目
+27.1 Common SEO Fields
 
-以下のページにはSEOメタデータを設定する。
+Set SEO metadata for the following pages.
 
-- 用語詳細
-- 比較詳細
-- 構成図詳細
-- ブログ詳細
-- 学習ロードマップ
+- Glossary details
+- Comparison details
+- Architecture diagram details
+- Blog details
+- Learning roadmap
 
-27.2 SEOメタデータ項目
-
-|   |   |
-|---|---|
-|項目|内容|
-|title|検索結果に表示されるタイトル|
-|description|検索結果に表示される説明文|
-|canonical|正規URL|
-|ogTitle|SNSシェア用タイトル|
-|ogDescription|SNSシェア用説明|
-|ogImage|OGP画像|
-|updatedAt|更新日|
-
-27.3 OGP画像方針
+27.2 SEO Metadata Fields
 
 |   |   |
 |---|---|
-|ページ|OGP画像|
-|トップ|サイト共通OGP|
-|用語詳細|サービスカテゴリ別OGP|
-|比較詳細|比較記事共通OGP|
-|ブログ詳細|記事別OGP|
-|構成図詳細|構成図画像または専用OGP|
+|Field|Description|
+|title|Title displayed in search results|
+|description|Description displayed in search results|
+|canonical|Canonical URL|
+|ogTitle|Title for social media sharing|
+|ogDescription|Description for social media sharing|
+|ogImage|OGP image|
+|updatedAt|Last updated date|
+
+27.3 OGP Image Policy
+
+|   |   |
+|---|---|
+|Page|OGP image|
+|Home|Site-wide OGP image|
+|Glossary details|Service-category OGP image|
+|Comparison details|Shared comparison article OGP image|
+|Blog details|Article-specific OGP image|
+|Architecture diagram details|Architecture diagram image or dedicated OGP image|
 
   
 
-28. サイトマップ生成データ
+28. Sitemap Generation Data
 
-28.1 サイトマップ対象
-
-|   |   |
-|---|---|
-|対象|含めるか|
-|トップページ|含める|
-|用語詳細|含める|
-|比較詳細|含める|
-|模擬問題詳細|原則含める|
-|構成図詳細|含める|
-|ブログ詳細|含める|
-|問い合わせ|含めてもよい|
-|プライバシーポリシー|含めてもよい|
-|ログイン|含めない|
-|マイページ|含めない|
-
-28.2 サイトマップ生成に必要なデータ
+28.1 Sitemap Scope
 
 |   |   |
 |---|---|
-|項目|取得元|
+|Page|Include?|
+|Home page|Include|
+|Glossary details|Include|
+|Comparison details|Include|
+|Practice question details|Include by default|
+|Architecture diagram details|Include|
+|Blog details|Include|
+|Contact|May include|
+|Privacy policy|May include|
+|Sign-in|Exclude|
+|My page|Exclude|
+
+28.2 Data Required for Sitemap Generation
+
+|   |   |
+|---|---|
+|Field|Source|
 |URL|slug|
 |lastmod|updatedAt|
-|priority|ページ種別|
-|changefreq|ページ種別|
+|priority|Page type|
+|changefreq|Page type|
 
   
 
-29. データ命名規則
+29. Data Naming Conventions
 
-29.1 ID命名
-
-|   |   |   |
-|---|---|---|
-|データ|命名形式|例|
-|AWS用語|小文字サービス名|s3, lambda, cloudfront|
-|比較記事|cmp-連番3桁|cmp-001|
-|模擬問題|試験略称-連番3桁|clf-001, saa-001|
-|構成図|arc-連番3桁|arc-001|
-|ブログ|blog-連番3桁|blog-001|
-|問い合わせ|contact-ランダムID|contact-7f8b2c9a|
-|回答|ans-日付-連番|ans-20260801-001|
-
-29.2 slug命名
+29.1 ID Naming
 
 |   |   |   |
 |---|---|---|
-|データ|命名形式|例|
-|用語|termIdと同じ|s3|
-|比較|service-vs-service|s3-vs-ebs-vs-efs|
-|構成図|内容を英語で表現|serverless-api-basic|
-|ブログ|SEOキーワードを英語化|aws-free-tier-portfolio|
+|Data|Naming format|Example|
+|AWS glossary|Lowercase service name|s3, lambda, cloudfront|
+|Comparison articles|cmp- followed by a three-digit sequence number|cmp-001|
+|Practice questions|Exam abbreviation followed by a hyphen and three-digit sequence number|clf-001, saa-001|
+|Architecture diagrams|arc- followed by a three-digit sequence number|arc-001|
+|Blog posts|blog- followed by a three-digit sequence number|blog-001|
+|Contact inquiries|contact- followed by a random ID|contact-7f8b2c9a|
+|Answers|ans- followed by date and sequence number, separated by hyphens|ans-20260801-001|
 
-29.3 日付形式
+29.2 Slug Naming
 
-日付はISO 8601形式を基本とする。
+|   |   |   |
+|---|---|---|
+|Data|Naming format|Example|
+|Glossary entries|Same as termId|s3|
+|Comparisons|service-vs-service|s3-vs-ebs-vs-efs|
+|Architecture diagrams|Describe the content in English|serverless-api-basic|
+|Blog posts|Express SEO keywords in English|aws-free-tier-portfolio|
+
+29.3 Date Format
+
+Use ISO 8601 as the standard date format.
 
 2026-06-01
 
@@ -2298,130 +2298,130 @@ NG: validation error field=email
 
   
 
-30. MVP実装時の最小データセット
+30. Minimum Dataset for MVP Implementation
 
-30.1 最小公開に必要なデータ
-
-|   |   |
-|---|---|
-|データ|最小件数|
-|AWS用語|30件|
-|CLF模擬問題|30問|
-|サービス比較|5本|
-|構成図|5本|
-|ブログ記事|5本|
-|運営者情報|1ページ|
-|プライバシーポリシー|1ページ|
-|免責事項|1ページ|
-
-30.2 AdSense申請前の目標データ
+30.1 Data Required for a Minimal Launch
 
 |   |   |
 |---|---|
-|データ|目標件数|
-|AWS用語|50件以上|
-|CLF模擬問題|50問以上|
-|SAA模擬問題|30問以上|
-|サービス比較|10本以上|
-|構成図|10本以上|
-|ブログ記事|20本以上|
+|Data|Minimum count|
+|AWS glossary|30 entries|
+|CLF practice questions|30 questions|
+|Service comparisons|5 articles|
+|Architecture diagrams|5 entries|
+|Blog posts|5 articles|
+|Operator information|1 page|
+|Privacy policy|1 page|
+|Disclaimer|1 page|
 
-  
-
-31. データ設計上の重要な判断
-
-31.1 なぜMVPではMarkdown/JSON中心にするのか
-
-理由は以下である。
-
-- 開発が速い
-- コストが低い
-- GitHubで履歴管理しやすい
-- SEOと相性が良い
-- DB設計に時間を使いすぎずに公開できる
-- CloudFrontで高速配信しやすい
-
-31.2 なぜ問い合わせだけDynamoDBにするのか
-
-問い合わせはユーザー入力によって発生する動的データであり、静的ファイルでは保存できないため。
-
-また、Lambda + API Gateway + DynamoDB の実装経験をポートフォリオで示せるため、MVPでも導入価値が高い。
-
-31.3 なぜ問題データを最初からDynamoDBにしないのか
-
-MVP段階では、問題データは頻繁に管理画面から更新する必要がない。
-
-JSON管理の方が以下の点で有利である。
-
-- 編集しやすい
-- レビューしやすい
-- GitHubで差分管理できる
-- API実装なしで表示できる
-- コストがかからない
-
-ただし、将来的に以下を実装する場合はDynamoDB化する。
-
-- 管理画面から問題追加
-- ランダム出題API
-- ユーザー別出題最適化
-- 正答率に応じた問題推薦
-
-  
-
-32. 受け入れ基準
-
-32.1 MVPデータ設計の受け入れ基準
+30.2 Target Data before Applying for AdSense
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-DATA-001|AWS用語データのJSON構造が定義されている|
-|AC-DATA-002|模擬問題データのJSON構造が定義されている|
-|AC-DATA-003|比較記事のFrontmatter構造が定義されている|
-|AC-DATA-004|構成図記事のFrontmatter構造が定義されている|
-|AC-DATA-005|ブログ記事のFrontmatter構造が定義されている|
-|AC-DATA-006|問い合わせデータのDynamoDB設計が定義されている|
-|AC-DATA-007|MVPでDynamoDB化するデータとしないデータが明確である|
-|AC-DATA-008|TypeScript型定義が用意されている|
+|Data|Target count|
+|AWS glossary|At least 50 entries|
+|CLF practice questions|At least 50 questions|
+|SAA practice questions|At least 30 questions|
+|Service comparisons|At least 10 articles|
+|Architecture diagrams|At least 10 entries|
+|Blog posts|At least 20 articles|
 
-32.2 Phase 4データ設計の受け入れ基準
+  
+
+31. Key Data Design Decisions
+
+31.1 Why Focus on Markdown/JSON for the MVP?
+
+The reasons are as follows.
+
+- Faster development
+- Lower costs
+- Easy version history management in GitHub
+- Works well with SEO
+- Allows launch without spending excessive time on database design
+- Easy high-speed delivery through CloudFront
+
+31.2 Why Use DynamoDB Only for Contact Inquiries?
+
+Contact inquiries are dynamic data generated by user input and cannot be persisted through static files.
+
+They also demonstrate implementation experience with Lambda + API Gateway + DynamoDB in the portfolio, making this worthwhile even for the MVP.
+
+31.3 Why Not Store Questions in DynamoDB from the Start?
+
+At the MVP stage, question data does not need frequent updates through an administration interface.
+
+JSON management offers the following advantages.
+
+- Easy to edit
+- Easy to review
+- Changes can be tracked in GitHub
+- Can be displayed without implementing an API
+- No additional cost
+
+However, migrate to DynamoDB when implementing the following in the future.
+
+- Adding questions through an administration interface
+- A random-question API
+- Per-user question selection optimization
+- Question recommendations based on accuracy
+
+  
+
+32. Acceptance Criteria
+
+32.1 MVP Data Design Acceptance Criteria
 
 |   |   |
 |---|---|
-|ID|基準|
-|AC-DATA-009|ユーザーデータ設計が定義されている|
-|AC-DATA-010|回答履歴データ設計が定義されている|
-|AC-DATA-011|学習進捗データ設計が定義されている|
-|AC-DATA-012|復習データ設計が定義されている|
-|AC-DATA-013|毎日1問配信データ設計が定義されている|
+|ID|Criterion|
+|AC-DATA-001|The JSON structure for AWS glossary data is defined|
+|AC-DATA-002|The JSON structure for practice question data is defined|
+|AC-DATA-003|The frontmatter structure for comparison articles is defined|
+|AC-DATA-004|The frontmatter structure for architecture articles is defined|
+|AC-DATA-005|The frontmatter structure for blog posts is defined|
+|AC-DATA-006|The DynamoDB design for contact inquiry data is defined|
+|AC-DATA-007|It is clear which MVP data will and will not use DynamoDB|
+|AC-DATA-008|TypeScript type definitions are provided|
+
+32.2 Phase 4 Data Design Acceptance Criteria
+
+|   |   |
+|---|---|
+|ID|Criterion|
+|AC-DATA-009|The user data design is defined|
+|AC-DATA-010|The answer history data design is defined|
+|AC-DATA-011|The learning progress data design is defined|
+|AC-DATA-012|The review data design is defined|
+|AC-DATA-013|The daily question delivery data design is defined|
 
   
 
-33. 今後作成する関連設計書
+33. Related Design Documents to Create Next
 
-本データ設計書の次に、以下を作成する。
+Create the following after this data design document.
 
-1. API設計書
-2. セキュリティ設計書
-3. コスト管理設計書
-4. 開発タスク一覧
-5. GitHub README草案
-6. 初期データ作成テンプレート
+1. API design document
+2. Security design document
+3. Cost management design document
+4. Development task list
+5. GitHub README draft
+6. Initial data creation templates
 
   
 
-7. 結論
+7. Conclusion
 
-本プロダクトのデータ設計では、MVP段階ではMarkdown / MDX / JSONを中心に管理し、動的データである問い合わせのみDynamoDBに保存する。
+This product's data design primarily uses Markdown / MDX / JSON during the MVP stage, storing only dynamic contact inquiry data in DynamoDB.
 
-これにより、以下を実現する。
+This enables the following.
 
-- 開発スピードを上げる
-- AWS利用コストを抑える
-- SEOに強い静的ページを作る
-- GitHubでコンテンツを安全に管理する
-- Lambda + API Gateway + DynamoDBの実装経験も示す
+- Faster development
+- Lower AWS usage costs
+- SEO-friendly static pages
+- Safe content management in GitHub
+- Demonstration of Lambda + API Gateway + DynamoDB implementation experience
 
-将来的には、Cognitoによる認証を追加し、ユーザー別の回答履歴、学習進捗、復習問題、弱点分析をDynamoDBに保存することで、単なる学習メディアから学習アプリへ拡張する。
+In the future, add Cognito authentication and store per-user answer history, learning progress, review questions, and weak-area analysis in DynamoDB to evolve from a learning content site into a learning application.
 
-この設計により、AWS資格学習サイトとしての実用性、ポートフォリオとしての説明力、将来的な収益化・SaaS化の拡張性を両立できる。
+This design combines practical value as an AWS certification learning site, clear demonstration of skills as a portfolio, and extensibility for future monetization and SaaS development.

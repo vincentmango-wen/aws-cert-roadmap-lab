@@ -1,205 +1,205 @@
-# 日本語ブログ13記事の品質改善・インデックス再公開設計
+# Quality Improvement and Reindexing Design for 13 Japanese Blog Articles
 
-## 1. 背景
+## 1. Background
 
-2026-08-17更新のGoogle Search Consoleでは、`noindex タグによって除外されました`が14件あり、2026-08-09に開始した検証は13件失敗、1件保留となった。
+The Google Search Console report updated on 2026-08-17 showed 14 pages Excluded by noindex tag. Validation started on 2026-08-09 had failed for 13 pages, with one pending.
 
-最新`master`（`48d6e24`）を確認した結果、失敗した13件はGoogle側の反映遅延ではなく、各日本語MDXとブログregistryに`noIndex: true`が明示されている。これらは2026-06-21の変更で「薄い記事」として意図的に除外された記事である。保留中の1件は`clf-monitoring-cloudwatch-basics`で、現在は`noIndex`が解除されている。
+Inspection of the latest `master` (`48d6e24`) showed that the 13 failures were not caused by a Google propagation delay. Each Japanese MDX file and its blog registry entry explicitly had `noIndex: true`. These articles had intentionally been excluded as thin content in the 2026-06-21 change. The pending article was `clf-monitoring-cloudwatch-basics`, whose `noIndex` had already been removed.
 
-13記事は約2.8〜3.5KB、既存のindex対象記事は約6.3〜10.3KBであり、単純なタグ解除だけではコンテンツ品質の懸念が残る。このため、内容を強化してからindex対象へ戻す。
+The 13 articles were about 2.8–3.5 KB each, compared with about 6.3–10.3 KB for existing indexable articles. Simply removing the tag would leave content-quality concerns unresolved. Improve the content before returning these articles to the indexable set.
 
-## 2. 目的
+## 2. Goals
 
-- 対象13記事を、検索ユーザーに独立した価値を提供できる内容へ改善する。
-- 対象記事から`noIndex`を解除し、Googleがindex可能な静的HTMLを生成する。
-- 日本語ページだけを公開対象とし、封印中の`/en`・`/zh`は引き続き`noindex, nofollow`を維持する。
-- 4エージェントを独立worktreeで並列稼働させ、ファイル競合と品質のばらつきを制御する。
-- sitemap・canonical・robots・内部リンクの整合を自動検証し、同じ問題の再発を防止する。
+- Improve all 13 articles so each provides independent value to search users.
+- Remove their `noIndex` flags and generate static HTML that Google can index.
+- Release Japanese pages only, while keeping the gated `/en` and `/zh` versions at `noindex, nofollow`.
+- Run four agents in parallel in independent worktrees to control file conflicts and quality variation.
+- Automatically verify sitemap, canonical, robots, and internal-link consistency to prevent recurrence.
 
-## 3. 対象範囲
+## 3. Scope
 
-### 3.1 対象記事
+### 3.1 Target articles
 
-| バッチ | slug | 主題 |
+| Batch | Slug | Topic |
 |---|---|---|
-| AWSサービス基礎 | `cloudfront-beginner-cdn` | CloudFrontとCDN |
-| AWSサービス基礎 | `apigateway-beginner-http-api` | API Gateway HTTP API |
-| AWSサービス基礎 | `dynamodb-beginner-nosql` | DynamoDBとNoSQL |
-| AWSサービス基礎 | `lambda-beginner-serverless` | Lambdaとサーバーレス |
-| AWSサービス基礎 | `s3-beginner-object-storage` | S3とオブジェクトストレージ |
-| SAA設計 | `saa-decoupling-sqs-sns-eventbridge` | 疎結合とメッセージング |
-| SAA設計 | `saa-multi-az-high-availability` | Multi-AZと高可用性 |
-| SAA設計 | `saa-s3-cloudfront-oac-design` | S3・CloudFront OAC |
-| CLF基礎 | `clf-iam-basics` | IAMの基礎 |
-| CLF基礎 | `clf-aws-global-infrastructure` | Region・AZ・Edge Location |
-| 実装・ポートフォリオ | `serverless-contact-api-flow` | 問い合わせAPIの処理フロー |
-| 実装・ポートフォリオ | `lambda-cloudwatch-logs-check` | Lambdaログ調査 |
-| 実装・ポートフォリオ | `aws-portfolio-serverless-architecture` | ポートフォリオのサーバーレス構成 |
+| AWS service fundamentals | `cloudfront-beginner-cdn` | CloudFront and CDNs |
+| AWS service fundamentals | `apigateway-beginner-http-api` | API Gateway HTTP API |
+| AWS service fundamentals | `dynamodb-beginner-nosql` | DynamoDB and NoSQL |
+| AWS service fundamentals | `lambda-beginner-serverless` | Lambda and serverless computing |
+| AWS service fundamentals | `s3-beginner-object-storage` | S3 and object storage |
+| SAA design | `saa-decoupling-sqs-sns-eventbridge` | Decoupling and messaging |
+| SAA design | `saa-multi-az-high-availability` | Multi-AZ and high availability |
+| SAA design | `saa-s3-cloudfront-oac-design` | S3 and CloudFront OAC |
+| CLF fundamentals | `clf-iam-basics` | IAM fundamentals |
+| CLF fundamentals | `clf-aws-global-infrastructure` | Regions, AZs, and edge locations |
+| Implementation / portfolio | `serverless-contact-api-flow` | Contact API processing flow |
+| Implementation / portfolio | `lambda-cloudwatch-logs-check` | Investigating Lambda logs |
+| Implementation / portfolio | `aws-portfolio-serverless-architecture` | Serverless portfolio architecture |
 
-### 3.2 対象外
+### 3.2 Exclusions
 
-- `en`・`zh`記事本文の加筆と公開。
-- `LOCALIZED_ROUTES_PUBLISHED`の変更。
-- Search Consoleの404報告に含まれる不正URLの機能追加。
-- HTTP・apexからHTTPS・wwwへの正規リダイレクトの変更。
-- 対象外ブログ12記事の全面改稿。
-- Googleによるindex登録や検索順位そのものの保証。
+- Expanding or publishing `en` / `zh` article bodies
+- Changing `LOCALIZED_ROUTES_PUBLISHED`
+- Adding functionality for invalid URLs in Search Console's 404 report
+- Changing canonical redirects from HTTP / apex to HTTPS / www
+- Fully rewriting the other 12 blog articles
+- Guaranteeing Google indexing or search rankings
 
-## 4. 採用する並列構成
+## 4. Selected parallel structure
 
-4つのworkerエージェントと1つのcoordinatorで進める。workerはそれぞれ独立したGit worktreeとbranchを持ち、担当記事以外を変更しない。coordinatorは共有ファイル、テスト基盤、統合、最終検証を担当する。
+Use four workers and one coordinator. Each worker has its own Git worktree and branch and changes only its assigned articles. The coordinator owns shared files, test infrastructure, integration, and final verification.
 
-| 役割 | branch案 | 変更を許可するファイル |
+| Role | Proposed branch | Files allowed to change |
 |---|---|---|
-| Coordinator | `codex/index-ja-blog-content-quality` | 共有テスト、`blogPosts.ts`、必要な運用文書 |
-| Worker 1 | `codex/index-ja-blog-services` | AWSサービス基礎の日本語MDX 5件 |
-| Worker 2 | `codex/index-ja-blog-saa` | SAA設計の日本語MDX 3件 |
-| Worker 3 | `codex/index-ja-blog-clf` | CLF基礎の日本語MDX 2件 |
-| Worker 4 | `codex/index-ja-blog-implementation` | 実装・ポートフォリオの日本語MDX 3件 |
+| Coordinator | `codex/index-ja-blog-content-quality` | Shared tests, `blogPosts.ts`, and necessary operational documentation |
+| Worker 1 | `codex/index-ja-blog-services` | Five Japanese MDX files for AWS service fundamentals |
+| Worker 2 | `codex/index-ja-blog-saa` | Three Japanese MDX files for SAA design |
+| Worker 3 | `codex/index-ja-blog-clf` | Two Japanese MDX files for CLF fundamentals |
+| Worker 4 | `codex/index-ja-blog-implementation` | Three Japanese MDX files for implementation / portfolio |
 
-workerは次のファイルを変更しない。
+Workers must not change:
 
 - `frontend/src/contents/blog/blogPosts.ts`
-- sitemap・robots・SEO共通ロジック
-- 共通テストファイル
-- `package.json`、lockfile、ビルド設定
-- 他workerの担当MDX
+- Shared sitemap, robots, or SEO logic
+- Shared test files
+- `package.json`, lockfiles, or build configuration
+- MDX files assigned to other workers
 
-## 5. コンテンツ品質基準
+## 5. Content-quality standards
 
-単なる文字数増加ではなく、各記事が検索意図へ直接回答し、他記事の言い換えにならないことを重視する。全記事で以下を満たす。
+Prioritize answering the search intent directly and giving each article distinct value, rather than merely increasing word count or paraphrasing other articles. Every article must:
 
-1. 冒頭で対象読者、解決する疑問、記事を読むことで得られる判断材料を明示する。
-2. AWSサービスや設計概念の役割を、関連サービスとの境界を含めて説明する。
-3. 具体的な処理フロー、構成例、操作例、または判断例を最低1つ含める。
-4. Cloud PractitionerまたはSAAで混同しやすいポイントを具体的に説明する。
-5. コスト、セキュリティ、可用性、運用のうち関連する注意点を具体化する。
-6. よくある誤解または失敗例を最低1つ含める。
-7. AWS公式ドキュメントへの有効なHTTPSリンクを最低2件含める。
-8. 関連するサイト内ページへ、存在確認済みの内部リンクを設置する。
-9. 未確認の数値、料金、制限値を断定しない。変動する内容は公式資料を参照させる。
-10. 同じ定型文を13記事へ機械的に複製しない。
+1. Identify its audience, the question it answers, and the decisions it helps readers make at the beginning.
+2. Explain the role of the AWS service or design concept, including its boundaries with related services.
+3. Include at least one concrete processing flow, architecture example, operational example, or decision example.
+4. Explain specific points that are easy to confuse in Cloud Practitioner or SAA study.
+5. Make relevant cost, security, availability, and operational cautions concrete.
+6. Include at least one common misconception or failure example.
+7. Include at least two valid HTTPS links to official AWS documentation.
+8. Add links to relevant internal pages whose existence has been verified.
+9. Avoid asserting unverified figures, prices, or limits. Refer readers to official sources for changing information.
+10. Avoid mechanically copying the same boilerplate into all 13 articles.
 
-記事サイズは品質判定の主基準にしない。ただし、既存index記事との極端な差を検知する補助指標として本文量、見出し数、公式リンク数をレポートする。
+Article size is not the main quality criterion. Report body length, heading count, and official-link count only as supporting indicators for detecting extreme differences from existing indexed articles.
 
-## 6. インデックス制御
+## 6. Indexing controls
 
-### 6.1 日本語記事
+### 6.1 Japanese articles
 
-品質改善を完了した対象MDXから`noIndex: true`を削除する。`blog-content-loader.ts`はfrontmatterに指定がない場合を`false`として扱うため、生成metadataは`index: true, follow: true`になる。
+Remove `noIndex: true` from the target MDX files after completing the quality improvements. `blog-content-loader.ts` treats an omitted frontmatter flag as `false`, producing metadata with `index: true, follow: true`.
 
-coordinatorは`frontend/src/contents/blog/blogPosts.ts`に残る同一13記事の`noIndex: true`も削除し、registryと日本語MDXの意味を一致させる。
+The coordinator also removes `noIndex: true` for the same 13 articles from `frontend/src/contents/blog/blogPosts.ts`, keeping the registry and Japanese MDX semantics aligned.
 
-### 6.2 en・zh
+### 6.2 en / zh
 
-`LOCALIZED_ROUTES_PUBLISHED`は`false`のままとする。`createPageMetadata()`のlocale sealが`/en`・`/zh`へ`noindex, nofollow`を強制するため、日本語記事の解除が翻訳ページへ波及しないことを生成HTMLで検証する。
+Keep `LOCALIZED_ROUTES_PUBLISHED` set to `false`. The locale gate in `createPageMetadata()` forces `noindex, nofollow` for `/en` and `/zh`. Verify in generated HTML that enabling Japanese articles does not enable their translations.
 
-### 6.3 sitemapとcanonical
+### 6.3 Sitemap and canonical
 
-- `getBlogSitemapRoutes()`は`published: true`かつ`noIndex !== true`の日本語MDXを掲載する。
-- 解除した13記事が日本語sitemapへ追加されることを確認する。
-- 封印中の`en`・`zh` URLはsitemapへ追加しない。
-- canonicalは各日本語記事自身の`https://www.aws-cert-roadmap-lab.com/blog/<slug>`とする。
+- `getBlogSitemapRoutes()` includes Japanese MDX with `published: true` and `noIndex !== true`.
+- Verify that the 13 newly enabled articles are added to the Japanese sitemap.
+- Do not add gated `en` / `zh` URLs to the sitemap.
+- Each Japanese article's canonical is its own `https://www.aws-cert-roadmap-lab.com/blog/<slug>` URL.
 
-## 7. テスト戦略
+## 7. Test strategy
 
-### 7.1 REDテスト
+### 7.1 RED tests
 
-coordinatorがworker開始前に、4バッチを個別のテストケースとして定義する。各ケースは次を検証する。
+Before workers start, the coordinator defines a separate test case for each of the four batches. Each case verifies:
 
-- 対象日本語MDXに`noIndex: true`が存在しない。
-- 対象記事が公開済みとして読み込まれる。
-- 対象記事のmetadataが`index: true, follow: true`になる。
-- 対象記事がblog sitemap routeへ含まれる。
-- 最低限必要な構造とAWS公式リンクを持つ。
+- The target Japanese MDX does not contain `noIndex: true`.
+- The target articles load as published.
+- Their metadata is `index: true, follow: true`.
+- They are included in blog sitemap routes.
+- They have the minimum required structure and official AWS links.
 
-テストは開始時点で4ケースとも失敗する。各workerは自分のバッチ名に絞って実行し、担当ケースだけをGREENにする。他バッチの失敗は統合前の想定状態として扱う。
+All four cases fail initially. Each worker filters execution to its own batch name and makes only its assigned case GREEN. Failures in other batches are expected before integration.
 
-### 7.2 Worker検証
+### 7.2 Worker verification
 
-各workerは次を実行する。
+Each worker runs:
 
-- 担当バッチのindexing policyテスト
-- 既存のblog locale parityテスト
-- 変更ファイルのMarkdown・frontmatter確認
+- Its batch's indexing-policy test
+- Existing blog locale-parity tests
+- Markdown and frontmatter checks for changed files
 - `git diff --check`
 
-workerはフルbuildを同時実行しない。4つのNext.js buildを並列実行するとCPU・メモリ・I/O負荷が大きく、検証速度と安定性を下げるためである。
+Workers do not run full builds simultaneously. Four parallel Next.js builds impose heavy CPU, memory, and I/O loads, reducing verification speed and stability.
 
-### 7.3 統合検証
+### 7.3 Integration verification
 
-coordinatorは全commit統合後に次を実行する。
+After integrating all commits, the coordinator runs:
 
-1. 4バッチすべてのindexing policyテスト。
-2. 全Vitest。
-3. lintとtypecheck。
-4. `pnpm install --frozen-lockfile`。
-5. 本番build。
-6. 生成された13記事のrobots、canonical、内部リンク確認。
-7. 生成された`/en`・`/zh`代表記事の`noindex, nofollow`確認。
-8. sitemap掲載URLの200応答確認。
+1. Indexing-policy tests for all four batches
+2. The full Vitest suite
+3. Lint and typecheck
+4. `pnpm install --frozen-lockfile`
+5. The production build
+6. Robots, canonical, and internal-link checks on the 13 generated articles
+7. `noindex, nofollow` checks on representative generated `/en` and `/zh` articles
+8. HTTP 200 checks for sitemap URLs
 
-## 8. 競合管理
+## 8. Conflict management
 
-### 8.1 Git競合
+### 8.1 Git conflicts
 
-workerのファイル所有を排他的にするため、通常の内容競合は発生しない。共有ファイルはcoordinatorだけが変更する。worker成果はcommit SHA単位で、Worker 1から4の順に統合する。
+Exclusive file ownership should prevent ordinary content conflicts. Only the coordinator changes shared files. Integrate worker results by commit SHA, in Worker 1 through Worker 4 order.
 
-workerがスコープ外ファイルを変更した場合、そのcommitはそのまま統合せず、担当MDXだけを取り出して再commitする。
+If a worker changes out-of-scope files, do not integrate that commit unchanged. Extract and recommit only the assigned MDX changes.
 
-### 8.2 内容上の競合
+### 8.2 Content conflicts
 
-同じ概念の重複説明や用語揺れはGitでは検出できない。統合時に次を横断確認する。
+Git cannot detect duplicate explanations or inconsistent terminology. During integration, review:
 
-- IAM、CloudFront、Lambda、API Gatewayなどのサービス名表記。
-- CloudFront OAC記事とCloudFront入門記事の役割分担。
-- Lambda入門、Lambdaログ、問い合わせAPI、ポートフォリオ記事の重複。
-- SQS・SNS・EventBridgeの比較説明の整合。
-- 関連記事リンクの循環や404。
+- Service-name usage, including IAM, CloudFront, Lambda, and API Gateway
+- The division of scope between the CloudFront OAC and CloudFront introductory articles
+- Overlap between Lambda fundamentals, Lambda logs, the contact API, and portfolio articles
+- Consistency of SQS / SNS / EventBridge comparisons
+- Circular related-article navigation and 404 links
 
-### 8.3 実行環境の競合
+### 8.3 Execution-environment conflicts
 
-- worktreeごとに生成物を分離する。
-- package managerのstoreは共有可能だが、installやbuildはcoordinatorが統合後に行う。
-- Search Consoleの検証開始は公開確認後に1回だけ実施し、複数エージェントから操作しない。
+- Isolate generated output by worktree.
+- Package-manager stores may be shared, but the coordinator runs installs and builds after integration.
+- Start Search Console validation only once, after publication checks. Do not have multiple agents operate it.
 
-## 9. 統合と公開手順
+## 9. Integration and release sequence
 
-1. coordinatorがREDテストと品質チェック基盤をcommitする。
-2. 同じbase SHAから4つのworktreeを作成する。
-3. 4workerを同時起動する。
-4. workerごとに担当記事を改稿し、担当テストをGREENにしてcommitする。
-5. coordinatorが各diffを内容レビューし、順番に統合する。
-6. coordinatorがregistryの`noIndex`を削除し、共有テストと文書を整合させる。
-7. フルテスト、本番build、静的HTML検査を実行する。
-8. PRで13記事、robots、sitemap、locale sealの結果を提示する。
-9. merge・deploy後、公開URLを再検査する。
-10. Search Consoleで代表記事の「公開URLをテスト」がindex可能になった後、noindex分類の新しい検証を1回開始する。
+1. The coordinator commits RED tests and the quality-check infrastructure.
+2. Create four worktrees from the same base SHA.
+3. Start all four workers simultaneously.
+4. Each worker rewrites its assigned articles, makes its assigned tests GREEN, and commits.
+5. The coordinator reviews each diff's content and integrates them sequentially.
+6. The coordinator removes registry `noIndex` flags and aligns shared tests and documentation.
+7. Run the full test suite, production build, and static-HTML inspection.
+8. Present results for the 13 articles, robots, sitemap, and locale gating in the PR.
+9. Recheck public URLs after merge and deployment.
+10. After Search Console's Test live URL reports representative articles as indexable, start one new validation for the noindex category.
 
-## 10. エラー処理と中断条件
+## 10. Error handling and stop conditions
 
-- AWS公式リンクが404または非公式ドメインの場合は公開しない。
-- 担当記事が既存のindex記事と実質重複する場合は、無理に加筆せず統合・canonical・redirect案を再検討する。
-- `en`・`zh`の生成HTMLからindex可能なページが1件でも検出された場合はrelease blockerとする。
-- 対象日本語記事に`noindex`が1件でも残る場合はrelease blockerとする。
-- sitemapとmetadataの判定が不一致の場合は公開しない。
-- 本番buildまたは既存テストが失敗した場合は原因を特定するまでPRをmergeしない。
+- Do not publish if an official AWS link returns 404 or points to an unofficial domain.
+- If an assigned article substantially duplicates an existing indexed article, reconsider consolidation, canonical, or redirect options rather than forcing additional text.
+- Treat even one indexable generated `en` / `zh` page as a release blocker.
+- Treat any remaining `noindex` on a target Japanese article as a release blocker.
+- Do not publish if sitemap and metadata decisions disagree.
+- Do not merge the PR while the production build or existing tests fail until the cause is identified.
 
-## 11. ロールバック
+## 11. Rollback
 
-公開後に重大な内容誤り、重複、またはindex対象外に戻す必要が生じた場合は、該当記事だけに`noIndex: true`を戻し、sitemapから除外する。サイト全体や13記事すべてを一括で戻さず、問題のあるslugに限定する。
+If publication exposes a serious factual error, duplication, or another reason to exclude an article again, restore `noIndex: true` only for the affected article and remove it from the sitemap. Limit rollback to the problematic slug rather than reverting the entire site or all 13 articles.
 
-en・zhの封印に異常が出た場合は、記事単位の変更ではなくlocale sealを優先して復旧し、Search Console操作を停止する。
+If en / zh gating fails, prioritize restoring the locale gate rather than article-level changes, and stop Search Console operations.
 
-## 12. 完了条件
+## 12. Completion criteria
 
-- 13記事が品質基準を満たしている。
-- 13記事の日本語MDXとregistryから`noIndex: true`が除去されている。
-- 13記事の生成HTMLが`index, follow`を持つ。
-- 13記事のcanonicalがHTTPS・wwwの自己参照URLである。
-- 13記事が日本語sitemapに含まれ、200応答する。
-- `/en`・`/zh`の封印が維持されている。
-- 全テスト、lint、typecheck、本番buildが成功する。
-- worker間のファイル所有違反と未解決競合がない。
-- 公開後の代表URL検査でindex登録可能と判定される。
-- Search Consoleの新しい検証を、公開確認後に1回だけ開始できる状態になっている。
+- All 13 articles meet the quality standards.
+- `noIndex: true` has been removed from their Japanese MDX and registry entries.
+- Their generated HTML has `index, follow`.
+- Their canonicals are self-referencing HTTPS / www URLs.
+- They appear in the Japanese sitemap and return 200.
+- `/en` and `/zh` remain gated.
+- All tests, lint, typecheck, and the production build succeed.
+- There are no worker file-ownership violations or unresolved conflicts.
+- Post-publication inspection finds representative URLs indexable.
+- One new Search Console validation can be started after publication verification.

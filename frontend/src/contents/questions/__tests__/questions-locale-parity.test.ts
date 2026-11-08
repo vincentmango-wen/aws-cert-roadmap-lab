@@ -1,20 +1,12 @@
 /**
- * questions-locale-parity.test.ts
- *
- * P3b 完了後の invariant テスト。
- * `contents/questions/{exam}.{ja,en,zh}.json` が 3 言語完全並列で
- * 維持されていることを構造的に担保する。
- *
- * 検証 invariant (task spec T1):
- *  (1) clf-c02.{ja,en,zh}.json の questionId 集合が完全一致 (50 件 × 3 言語)
- *  (2) saa-c03.{ja,en,zh}.json の questionId 集合が完全一致 (50 件 × 3 言語)
- *  (3) 各 questionId について immutable フィールドが ja/en/zh で完全一致:
- *      exam, category, domain, difficulty, correctChoiceId, published,
- *      relatedServices, relatedTerms, relatedComparisons, tags
- *  (4) 各 questionId について choices 配列の長さ (4 件) +
- *      choiceId 集合 (A,B,C,D) が ja/en/zh で一致
- *  (5) practicalNote と officialDocs が ja/en/zh ともに存在
- *      (= 全 240 問が enrichment 持ち)
+ * Post-P3b invariants keeping contents/questions/{exam}.{ja,en,zh}.json synchronized across locales
+ * (task spec T1):
+ * 1. Identical CLF-C02 questionId sets (50 questions per locale).
+ * 2. Identical SAA-C03 questionId sets (50 questions per locale).
+ * 3. Matching immutable fields per questionId: exam, category, domain, difficulty, correctChoiceId,
+ * published, relatedServices, relatedTerms, relatedComparisons and tags.
+ * 4. Four choices with matching A/B/C/D ID sets in every locale.
+ * 5. practicalNote and officialDocs enrichment present in every locale.
  */
 
 import { describe, expect, it } from "vitest";
@@ -34,7 +26,9 @@ import type { Question } from "../../../types/question";
 const toMap = (list: Question[]): Map<string, Question> =>
   new Map(list.map((q) => [q.questionId, q]));
 
-/** 配列を要素順不問で比較するため sorted Set に変換 */
+/**
+ * Convert arrays to sorted sets for order-independent comparison.
+ */
 const sortedArr = (arr: string[] | undefined): string[] =>
   [...(arr ?? [])].sort();
 

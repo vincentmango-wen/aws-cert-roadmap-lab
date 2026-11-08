@@ -1,61 +1,61 @@
-# AWS資格学習サイト 画面一覧・画面遷移設計書
+# AWS Certification Learning Site: Screen Inventory and Navigation Design
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 文書名 | AWS資格学習サイト 画面一覧・画面遷移設計書 |
-| 対象プロダクト | AWS資格ロードマップラボ |
-| 対象フェーズ | MVP開発 〜 SAA対策機能拡張 〜 収益化準備 |
-| 目的 | Webサイトの画面構成、URL設計、画面間遷移、各画面の役割を明確化する |
-| 想定技術 | Next.js / TypeScript / Tailwind CSS / Markdown or MDX / AWS Serverless |
+| Document title | AWS Certification Learning Site: Screen Inventory and Navigation Design |
+| Product | AWS Certification Roadmap Lab |
+| Scope | MVP development through SAA preparation enhancements and monetization preparation |
+| Purpose | Define the website's screen structure, URL design, navigation between screens, and each screen's role |
+| Planned technologies | Next.js / TypeScript / Tailwind CSS / Markdown or MDX / AWS Serverless |
 
 ---
 
-## 2. 本設計書の目的
+## 2. Purpose of This Design
 
-本設計書では、AWS資格学習サイト「AWS資格ロードマップラボ」に必要な画面を定義し、各画面の目的、表示項目、ユーザー操作、画面遷移を整理する。
+This document defines the screens required for the AWS certification learning site, AWS Certification Roadmap Lab, and organizes each screen's purpose, displayed elements, user interactions, and navigation.
 
-本プロダクトは、以下の目的を持つ。
+The product has the following objectives.
 
-1. AWS資格学習者が用語・比較・問題・構成図を学べること
-2. 開発者本人のAWSポートフォリオとして見せられること
-3. SEO記事を蓄積し、将来的に広告収益化できること
-4. 初期MVPではシンプルに公開し、将来的にログイン・学習履歴へ拡張できること
+1. Enable AWS certification learners to study terminology, comparisons, practice questions, and architecture diagrams
+2. Serve as the developer's own AWS portfolio
+3. Build a collection of SEO articles and enable future advertising revenue
+4. Launch a simple initial MVP that can later expand to include login and learning history
 
-そのため、本設計では以下を重視する。
+Accordingly, this design emphasizes the following.
 
-- MVPで必要な画面を絞る
-- SEOに強いURL構成にする
-- 初学者が迷わない導線にする
-- 面接官がポートフォリオとして確認しやすい導線にする
-- 将来のログイン機能・学習履歴機能を追加しやすい構成にする
+- Limit screens to those required for the MVP
+- Use an SEO-friendly URL structure
+- Provide navigation that beginners can follow easily
+- Make the portfolio easy for interviewers to review
+- Make it easy to add login and learning-history features later
 
 ---
 
-## 3. 画面設計の基本方針
+## 3. Basic Screen Design Principles
 
-## 3.1 MVP方針
+## 3.1 MVP Policy
 
-MVPでは、以下の機能を中心に画面を構成する。
+The MVP screens focus on the following features.
 
-- トップページ
-- AWS用語集
-- AWSサービス比較
-- CLF模擬問題
-- SAA構成図
-- ブログ記事
-- 問い合わせ
-- 運営者情報
-- プライバシーポリシー
+- Home page
+- AWS glossary
+- AWS service comparisons
+- CLF practice questions
+- SAA architecture diagrams
+- Blog posts
+- Contact
+- About the operator
+- Privacy policy
 
-ログイン、マイページ、学習履歴、決済、AI解説機能はMVP対象外とする。
+Login, account dashboard, learning history, payments, and AI explanations are outside the MVP scope.
 
-## 3.2 URL設計方針
+## 3.2 URL Design Policy
 
-URLはSEOと可読性を重視し、英数字のスラッグで設計する。
+Use alphanumeric slugs, prioritizing SEO and readability.
 
-例：
+Examples:
 
 ```text
 /terms/s3
@@ -65,51 +65,51 @@ URLはSEOと可読性を重視し、英数字のスラッグで設計する。
 /blog/aws-free-tier-portfolio
 ```
 
-## 3.3 ナビゲーション方針
+## 3.3 Navigation Policy
 
-ユーザーが主要機能にすぐ移動できるよう、ヘッダーに以下の導線を配置する。
+Place the following links in the header so users can quickly access the main features.
 
-- ホーム
-- 用語集
-- 比較
-- 模擬問題
-- 構成図
-- ブログ
-- 問い合わせ
+- Home
+- Glossary
+- Comparisons
+- Practice questions
+- Architecture diagrams
+- Blog
+- Contact
 
-フッターには以下を配置する。
+Place the following in the footer.
 
-- 運営者情報
-- プライバシーポリシー
-- 問い合わせ
+- About the operator
+- Privacy policy
+- Contact
 - GitHub
-- note導線
+- Link to note
 
-## 3.4 レスポンシブ方針
+## 3.4 Responsive Design Policy
 
-PC、タブレット、スマートフォンで利用できることを前提とする。
+Support desktop, tablet, and smartphone use.
 
-- PC：2カラム構成を利用可能
-- タブレット：1〜2カラム
-- スマートフォン：1カラム、ハンバーガーメニュー
+- Desktop: a two-column layout may be used
+- Tablet: one or two columns
+- Smartphone: one column with a hamburger menu
 
-## 3.5 広告配置方針
+## 3.5 Advertising Placement Policy
 
-MVP時点では広告を必須実装しない。ただし、将来のAdSense導入を想定し、以下の場所に広告枠を置けるレイアウトにする。
+Advertising is not mandatory for the MVP. However, prepare layouts that can accommodate ads in the following locations for future AdSense integration.
 
-- 記事本文上部
-- 記事本文中部
-- 記事本文下部
-- サイドバー
-- 模擬問題の解説下
+- Above the article body
+- Within the article body
+- Below the article body
+- Sidebar
+- Below practice-question explanations
 
-初期段階では広告枠は空白または非表示とする。
+Initially, leave ad slots empty or hidden.
 
 ---
 
-## 4. サイト全体構造
+## 4. Overall Site Structure
 
-## 4.1 サイトマップ
+## 4.1 Sitemap
 
 ```text
 /
@@ -131,7 +131,7 @@ MVP時点では広告を必須実装しない。ただし、将来のAdSense導�
 ├── /disclaimer
 └── /github
 
-将来拡張：
+Future extensions:
 ├── /login
 ├── /signup
 ├── /mypage
@@ -140,47 +140,47 @@ MVP時点では広告を必須実装しない。ただし、将来のAdSense導�
 └── /pricing
 ```
 
-## 4.2 MVP対象画面
+## 4.2 MVP Screens
 
-| 画面ID | 画面名 | URL | MVP |
+| Screen ID | Screen name | URL | MVP |
 |---|---|---|---|
-| SCR-001 | トップページ | / | 対象 |
-| SCR-002 | AWS用語集一覧 | /terms | 対象 |
-| SCR-003 | AWS用語詳細 | /terms/[termId] | 対象 |
-| SCR-004 | サービス比較一覧 | /comparisons | 対象 |
-| SCR-005 | サービス比較詳細 | /comparisons/[comparisonSlug] | 対象 |
-| SCR-006 | 模擬問題トップ | /questions | 対象 |
-| SCR-007 | CLF模擬問題一覧 | /questions/clf | 対象 |
-| SCR-008 | 模擬問題詳細 | /questions/[questionId] | 対象 |
-| SCR-009 | 構成図一覧 | /architectures | 対象 |
-| SCR-010 | 構成図詳細 | /architectures/[architectureSlug] | 対象 |
-| SCR-011 | ブログ一覧 | /blog | 対象 |
-| SCR-012 | ブログ詳細 | /blog/[postSlug] | 対象 |
-| SCR-013 | 学習ロードマップ | /roadmap | 対象 |
-| SCR-014 | 問い合わせ | /contact | 対象 |
-| SCR-015 | 運営者情報 | /about | 対象 |
-| SCR-016 | プライバシーポリシー | /privacy | 対象 |
-| SCR-017 | 免責事項 | /disclaimer | 対象 |
-| SCR-018 | GitHub誘導ページ | /github | 任意 |
+| SCR-001 | Home page | / | Included |
+| SCR-002 | AWS glossary list | /terms | Included |
+| SCR-003 | AWS term detail | /terms/[termId] | Included |
+| SCR-004 | Service comparison list | /comparisons | Included |
+| SCR-005 | Service comparison detail | /comparisons/[comparisonSlug] | Included |
+| SCR-006 | Practice-question landing page | /questions | Included |
+| SCR-007 | CLF practice-question list | /questions/clf | Included |
+| SCR-008 | Practice-question detail | /questions/[questionId] | Included |
+| SCR-009 | Architecture diagram list | /architectures | Included |
+| SCR-010 | Architecture diagram detail | /architectures/[architectureSlug] | Included |
+| SCR-011 | Blog list | /blog | Included |
+| SCR-012 | Blog post detail | /blog/[postSlug] | Included |
+| SCR-013 | Learning roadmap | /roadmap | Included |
+| SCR-014 | Contact | /contact | Included |
+| SCR-015 | About the operator | /about | Included |
+| SCR-016 | Privacy policy | /privacy | Included |
+| SCR-017 | Disclaimer | /disclaimer | Included |
+| SCR-018 | GitHub introduction page | /github | Optional |
 
-## 4.3 将来拡張画面
+## 4.3 Future Extension Screens
 
-| 画面ID | 画面名 | URL | 実装フェーズ |
+| Screen ID | Screen name | URL | Implementation phase |
 |---|---|---|---|
-| SCR-101 | ログイン | /login | Phase 4 |
-| SCR-102 | 新規登録 | /signup | Phase 4 |
-| SCR-103 | マイページ | /mypage | Phase 4 |
-| SCR-104 | 学習進捗 | /mypage/progress | Phase 4 |
-| SCR-105 | 復習問題 | /mypage/review | Phase 4 |
-| SCR-106 | 弱点分析 | /mypage/weakness | Phase 4 |
-| SCR-107 | 料金ページ | /pricing | Phase 4以降 |
-| SCR-108 | 教材ダウンロード | /materials | Phase 4以降 |
+| SCR-101 | Login | /login | Phase 4 |
+| SCR-102 | Sign up | /signup | Phase 4 |
+| SCR-103 | Account dashboard | /mypage | Phase 4 |
+| SCR-104 | Learning progress | /mypage/progress | Phase 4 |
+| SCR-105 | Review questions | /mypage/review | Phase 4 |
+| SCR-106 | Weakness analysis | /mypage/weakness | Phase 4 |
+| SCR-107 | Pricing page | /pricing | Phase 4 or later |
+| SCR-108 | Learning material downloads | /materials | Phase 4 or later |
 
 ---
 
-## 5. 共通レイアウト設計
+## 5. Shared Layout Design
 
-## 5.1 全画面共通構成
+## 5.1 Structure Shared by All Screens
 
 ```text
 ┌──────────────────────────────┐
@@ -192,54 +192,54 @@ MVP時点では広告を必須実装しない。ただし、将来のAdSense導�
 └──────────────────────────────┘
 ```
 
-## 5.2 ヘッダー
+## 5.2 Header
 
-### 目的
+### Purpose
 
-主要画面への導線を提供する。
+Provide navigation to the main screens.
 
-### 表示項目
+### Displayed Elements
 
-| 項目 | 内容 | MVP |
+| Item | Description | MVP |
 |---|---|---|
-| ロゴ | AWS資格ロードマップラボ | 対象 |
-| ホームリンク | / | 対象 |
-| 用語集リンク | /terms | 対象 |
-| 比較リンク | /comparisons | 対象 |
-| 模擬問題リンク | /questions | 対象 |
-| 構成図リンク | /architectures | 対象 |
-| ブログリンク | /blog | 対象 |
-| ロードマップリンク | /roadmap | 対象 |
-| ログインボタン | /login | 将来 |
+| Logo | AWS Certification Roadmap Lab | Included |
+| Home link | / | Included |
+| Glossary link | /terms | Included |
+| Comparisons link | /comparisons | Included |
+| Practice questions link | /questions | Included |
+| Architecture diagrams link | /architectures | Included |
+| Blog link | /blog | Included |
+| Roadmap link | /roadmap | Included |
+| Login button | /login | Future |
 
-### スマートフォン表示
+### Smartphone Display
 
-- ハンバーガーメニューで表示
-- タップ時にメニュー展開
-- メニュー項目を縦並びで表示
+- Display a hamburger menu
+- Expand the menu when tapped
+- Display menu items vertically
 
-## 5.3 フッター
+## 5.3 Footer
 
-### 目的
+### Purpose
 
-信頼性、収益化準備、ポートフォリオ導線を補完する。
+Support credibility, monetization preparation, and navigation to the portfolio.
 
-### 表示項目
+### Displayed Elements
 
-| 項目 | URL | 目的 |
+| Item | URL | Purpose |
 |---|---|---|
-| 運営者情報 | /about | AdSense・信頼性対応 |
-| 問い合わせ | /contact | 問い合わせ・誤り報告 |
-| プライバシーポリシー | /privacy | AdSense・Cookie対応 |
-| 免責事項 | /disclaimer | 資格情報・学習情報の免責 |
-| GitHub | 外部リンク or /github | ポートフォリオ導線 |
-| note | 外部リンク | 有料記事導線 |
+| About the operator | /about | AdSense and credibility requirements |
+| Contact | /contact | Inquiries and error reports |
+| Privacy policy | /privacy | AdSense and cookie requirements |
+| Disclaimer | /disclaimer | Disclaimer for certification and learning information |
+| GitHub | External link or /github | Portfolio navigation |
+| note | External link | Link to paid articles |
 
-## 5.4 パンくずリスト
+## 5.4 Breadcrumbs
 
-SEOとユーザビリティ向上のため、詳細ページにはパンくずリストを表示する。
+Display breadcrumbs on detail pages to improve SEO and usability.
 
-例：
+Examples (Japanese localized website copy):
 
 ```text
 ホーム > 用語集 > Amazon S3
@@ -247,76 +247,76 @@ SEOとユーザビリティ向上のため、詳細ページにはパンくず�
 ホーム > 模擬問題 > CLF-001
 ```
 
-対象画面：
+Applicable screens:
 
-- 用語詳細
-- 比較詳細
-- 模擬問題詳細
-- 構成図詳細
-- ブログ詳細
+- Term detail
+- Comparison detail
+- Practice-question detail
+- Architecture diagram detail
+- Blog post detail
 
-## 5.5 CTA設計
+## 5.5 CTA Design
 
-各画面の下部に、次の学習行動へ進む導線を設置する。
+Place links to the next learning activity at the bottom of each screen.
 
-例：
+Examples:
 
-| 現在画面 | CTA |
+| Current screen | CTA |
 |---|---|
-| 用語詳細 | 関連する比較記事を見る |
-| 比較詳細 | 関連する模擬問題を解く |
-| 模擬問題詳細 | 次の問題へ進む |
-| 構成図詳細 | 関連サービスを用語集で確認する |
-| ブログ詳細 | AWS用語集を見る / 模擬問題を解く |
+| Term detail | View related comparison articles |
+| Comparison detail | Answer related practice questions |
+| Practice-question detail | Go to the next question |
+| Architecture diagram detail | Look up related services in the glossary |
+| Blog post detail | View the AWS glossary / Answer practice questions |
 
 ---
 
-## 6. 画面詳細設計
+## 6. Detailed Screen Design
 
 ---
 
-# SCR-001 トップページ
+# SCR-001 Home Page
 
-## 6.1 画面概要
+## 6.1 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-001 |
-| 画面名 | トップページ |
+| Screen ID | SCR-001 |
+| Screen name | Home page |
 | URL | / |
-| MVP | 対象 |
-| 主なユーザー | AWS初学者、資格学習者、採用担当者 |
+| MVP | Included |
+| Primary users | AWS beginners, certification learners, recruiters |
 
-## 6.1.1 目的
+## 6.1.1 Purpose
 
-サイトの目的を伝え、主要コンテンツへ誘導する。ポートフォリオ閲覧者に対しては、AWS上で構築された学習サイトであることを示す。
+Communicate the site's purpose and guide users to the main content. Show portfolio visitors that this learning site is built on AWS.
 
-## 6.1.2 表示項目
+## 6.1.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| メインキャッチ | AWS資格学習を、用語・比較・問題・構成図で理解する |
-| サブコピー | Cloud PractitionerからSAAまで、初学者向けにAWSを整理する学習サイト |
-| 主要CTA | 模擬問題を解く / 用語集を見る |
-| 学習カテゴリカード | 用語集、比較、模擬問題、構成図、ブログ |
-| CLF学習導線 | Cloud Practitioner向けコンテンツへのリンク |
-| SAA学習導線 | SAA構成図・設計パターンへのリンク |
-| 最新記事 | 最新ブログ記事3〜5件 |
-| 人気比較 | 主要な比較記事 |
-| ポートフォリオ説明 | 使用AWSサービスの簡易説明 |
+| Main headline | Understand AWS certification topics through terminology, comparisons, questions, and architecture diagrams |
+| Supporting copy | A learning site that organizes AWS concepts for beginners, from Cloud Practitioner to SAA |
+| Primary CTA | Answer practice questions / View the glossary |
+| Learning category cards | Glossary, comparisons, practice questions, architecture diagrams, blog |
+| CLF learning links | Links to Cloud Practitioner content |
+| SAA learning links | Links to SAA architecture diagrams and design patterns |
+| Latest articles | Three to five latest blog posts |
+| Popular comparisons | Key comparison articles |
+| Portfolio description | Brief description of the AWS services used |
 
-## 6.1.3 ユーザー操作
+## 6.1.3 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| 用語集を見る | /terms |
-| 模擬問題を解く | /questions |
-| サービス比較を見る | /comparisons |
-| 構成図を見る | /architectures |
-| ブログを見る | /blog |
-| GitHubを見る | /github or GitHub外部リンク |
+| View the glossary | /terms |
+| Answer practice questions | /questions |
+| View service comparisons | /comparisons |
+| View architecture diagrams | /architectures |
+| View the blog | /blog |
+| View GitHub | /github or external GitHub link |
 
-## 6.1.4 ワイヤーフレーム
+## 6.1.4 Wireframe (Japanese Localized Website Example)
 
 ```text
 ┌──────────────────────────────┐
@@ -339,52 +339,52 @@ SEOとユーザビリティ向上のため、詳細ページにはパンくず�
 └──────────────────────────────┘
 ```
 
-## 6.1.5 受け入れ条件
+## 6.1.5 Acceptance Criteria
 
-- サイトの目的がファーストビューで分かる
-- 用語集、模擬問題、比較、構成図へ1クリックで遷移できる
-- スマートフォンでもCTAが見やすい
-- ポートフォリオとしてAWS構成への導線がある
+- The site's purpose is clear above the fold
+- The glossary, practice questions, comparisons, and architecture diagrams are accessible in one click
+- CTAs are easy to see on smartphones
+- The portfolio provides a link to the AWS architecture
 
 ---
 
-# SCR-002 AWS用語集一覧
+# SCR-002 AWS Glossary List
 
-## 6.2 画面概要
+## 6.2 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-002 |
-| 画面名 | AWS用語集一覧 |
+| Screen ID | SCR-002 |
+| Screen name | AWS glossary list |
 | URL | /terms |
-| MVP | 対象 |
-| 主なユーザー | AWS初学者、CLF受験者 |
+| MVP | Included |
+| Primary users | AWS beginners and CLF candidates |
 
-## 6.2.1 目的
+## 6.2.1 Purpose
 
-AWSサービスを一覧で確認し、カテゴリ別に学習できるようにする。
+Allow users to browse AWS services and study them by category.
 
-## 6.2.2 表示項目
+## 6.2.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | AWS用語集 |
-| 説明文 | AWS主要サービスを初学者向けに整理 |
-| 検索フォーム | サービス名・キーワード検索 |
-| カテゴリフィルタ | Compute / Storage / Database / Network / Security等 |
-| 用語カード | サービス名、カテゴリ、短い説明、詳細リンク |
-| 学習優先度 | CLF必須 / SAA重要など |
+| Page title | AWS glossary |
+| Description | Major AWS services organized for beginners |
+| Search form | Search by service name or keyword |
+| Category filter | Compute / Storage / Database / Network / Security, etc. |
+| Term cards | Service name, category, brief description, and detail link |
+| Learning priority | Essential for CLF / Important for SAA, etc. |
 
-## 6.2.3 ユーザー操作
+## 6.2.3 User Interactions
 
-| 操作 | 動作 |
+| Action | Behavior |
 |---|---|
-| キーワード入力 | 用語一覧を絞り込み |
-| カテゴリ選択 | カテゴリ別に絞り込み |
-| 用語カードクリック | 用語詳細へ遷移 |
-| 比較リンククリック | 関連比較ページへ遷移 |
+| Enter a keyword | Filter the term list |
+| Select a category | Filter by category |
+| Click a term card | Navigate to term detail |
+| Click a comparison link | Navigate to a related comparison page |
 
-## 6.2.4 ワイヤーフレーム
+## 6.2.4 Wireframe (Japanese Localized Website Example)
 
 ```text
 ┌──────────────────────────────┐
@@ -403,57 +403,57 @@ AWSサービスを一覧で確認し、カテゴリ別に学習できるよう�
 └──────────────────────────────┘
 ```
 
-## 6.2.5 受け入れ条件
+## 6.2.5 Acceptance Criteria
 
-- AWS用語が30件以上表示される
-- カテゴリごとに絞り込みできる
-- 各用語詳細へ遷移できる
-- PC・スマホで一覧が崩れない
+- Display at least 30 AWS terms
+- Allow filtering by category
+- Allow navigation to each term's detail page
+- Keep the list layout intact on desktop and smartphones
 
 ---
 
-# SCR-003 AWS用語詳細
+# SCR-003 AWS Term Detail
 
-## 6.3 画面概要
+## 6.3 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-003 |
-| 画面名 | AWS用語詳細 |
+| Screen ID | SCR-003 |
+| Screen name | AWS term detail |
 | URL | /terms/[termId] |
-| MVP | 対象 |
-| 例 | /terms/s3 |
+| MVP | Included |
+| Example | /terms/s3 |
 
-## 6.3.1 目的
+## 6.3.1 Purpose
 
-AWSサービスの概要、用途、試験ポイント、関連サービスとの違いを理解できるようにする。
+Help users understand an AWS service's overview, uses, exam topics, and differences from related services.
 
-## 6.3.2 表示項目
+## 6.3.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| パンくず | ホーム > 用語集 > サービス名 |
-| サービス名 | Amazon S3 など |
-| カテゴリ | Storageなど |
-| 一言説明 | 初学者向けの短い説明 |
-| 概要 | サービスの基本説明 |
-| 主な用途 | 実務での利用例 |
-| CLF試験ポイント | Cloud Practitionerで問われる観点 |
-| SAA試験ポイント | SAAで問われる観点 |
-| 類似サービス | 比較対象サービス |
-| 注意点 | 課金・設計・セキュリティ注意点 |
-| 関連リンク | 比較記事、模擬問題、構成図 |
+| Breadcrumbs | Home > Glossary > Service name |
+| Service name | Amazon S3, etc. |
+| Category | Storage, etc. |
+| One-line description | A short explanation for beginners |
+| Overview | Basic service explanation |
+| Main uses | Practical usage examples |
+| CLF exam topics | Topics tested in Cloud Practitioner |
+| SAA exam topics | Topics tested in SAA |
+| Similar services | Services to compare |
+| Considerations | Billing, design, and security considerations |
+| Related links | Comparison articles, practice questions, and architecture diagrams |
 
-## 6.3.3 ユーザー操作
+## 6.3.3 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| 関連比較を見る | /comparisons/[comparisonSlug] |
-| 関連問題を解く | /questions/[questionId] |
-| 用語一覧に戻る | /terms |
-| 次の用語を見る | /terms/[nextTermId] |
+| View related comparisons | /comparisons/[comparisonSlug] |
+| Answer related questions | /questions/[questionId] |
+| Return to the term list | /terms |
+| View the next term | /terms/[nextTermId] |
 
-## 6.3.4 ワイヤーフレーム
+## 6.3.4 Wireframe (Japanese Localized Website Example)
 
 ```text
 ┌──────────────────────────────┐
@@ -476,106 +476,106 @@ AWSサービスの概要、用途、試験ポイント、関連サービスと�
 └──────────────────────────────┘
 ```
 
-## 6.3.5 受け入れ条件
+## 6.3.5 Acceptance Criteria
 
-- サービスの概要・用途・試験ポイントが表示される
-- 関連する比較記事や問題への導線がある
-- 初学者向けの説明になっている
-- SEO用のtitle・descriptionを設定できる
+- Display the service overview, uses, and exam topics
+- Provide links to related comparison articles and questions
+- Use beginner-friendly explanations
+- Allow SEO title and description configuration
 
 ---
 
-# SCR-004 サービス比較一覧
+# SCR-004 Service Comparison List
 
-## 6.4 画面概要
+## 6.4 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-004 |
-| 画面名 | サービス比較一覧 |
+| Screen ID | SCR-004 |
+| Screen name | Service comparison list |
 | URL | /comparisons |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.4.1 目的
+## 6.4.1 Purpose
 
-混同しやすいAWSサービスの比較記事を一覧表示する。
+List articles comparing AWS services that are easily confused.
 
-## 6.4.2 表示項目
+## 6.4.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | AWSサービス比較 |
-| 説明文 | 試験で混同しやすいサービスを比較 |
-| 比較カテゴリ | Storage / Database / Network / Security等 |
-| 比較記事カード | タイトル、対象サービス、概要、難易度 |
-| おすすめ比較 | 初学者が最初に読むべき比較 |
+| Page title | AWS service comparisons |
+| Description | Compare services that are easily confused on exams |
+| Comparison categories | Storage / Database / Network / Security, etc. |
+| Comparison article cards | Title, services compared, overview, and difficulty |
+| Recommended comparisons | Comparisons beginners should read first |
 
-## 6.4.3 初期表示対象
+## 6.4.3 Initial Content
 
-| 比較テーマ | URL |
+| Comparison topic | URL |
 |---|---|
-| S3 / EBS / EFS の違い | /comparisons/s3-vs-ebs-vs-efs |
-| RDS / DynamoDB の違い | /comparisons/rds-vs-dynamodb |
-| SNS / SQS / EventBridge の違い | /comparisons/sns-vs-sqs-vs-eventbridge |
-| IAMユーザー / IAMロール / IAMポリシー の違い | /comparisons/iam-user-vs-role-vs-policy |
-| CloudWatch / CloudTrail / AWS Config の違い | /comparisons/cloudwatch-vs-cloudtrail-vs-config |
+| Differences between S3 / EBS / EFS | /comparisons/s3-vs-ebs-vs-efs |
+| Differences between RDS / DynamoDB | /comparisons/rds-vs-dynamodb |
+| Differences between SNS / SQS / EventBridge | /comparisons/sns-vs-sqs-vs-eventbridge |
+| Differences between IAM users / IAM roles / IAM policies | /comparisons/iam-user-vs-role-vs-policy |
+| Differences between CloudWatch / CloudTrail / AWS Config | /comparisons/cloudwatch-vs-cloudtrail-vs-config |
 
-## 6.4.4 ユーザー操作
+## 6.4.4 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| 比較記事カードクリック | /comparisons/[comparisonSlug] |
-| 関連用語クリック | /terms/[termId] |
-| 模擬問題へ進む | /questions |
+| Click a comparison article card | /comparisons/[comparisonSlug] |
+| Click a related term | /terms/[termId] |
+| Go to practice questions | /questions |
 
-## 6.4.5 受け入れ条件
+## 6.4.5 Acceptance Criteria
 
-- 比較記事が5件以上表示される
-- 各記事に対象サービスと概要が表示される
-- 詳細ページへ遷移できる
+- Display at least five comparison articles
+- Display the services compared and an overview for each article
+- Allow navigation to detail pages
 
 ---
 
-# SCR-005 サービス比較詳細
+# SCR-005 Service Comparison Detail
 
-## 6.5 画面概要
+## 6.5 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-005 |
-| 画面名 | サービス比較詳細 |
+| Screen ID | SCR-005 |
+| Screen name | Service comparison detail |
 | URL | /comparisons/[comparisonSlug] |
-| MVP | 対象 |
-| 例 | /comparisons/s3-vs-ebs-vs-efs |
+| MVP | Included |
+| Example | /comparisons/s3-vs-ebs-vs-efs |
 
-## 6.5.1 目的
+## 6.5.1 Purpose
 
-似ているAWSサービスの違いを、比較表・試験ポイント・実務での使い分けで理解できるようにする。
+Help users understand differences between similar AWS services through comparison tables, exam topics, and practical service-selection guidance.
 
-## 6.5.2 表示項目
+## 6.5.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| パンくず | ホーム > 比較 > 比較タイトル |
-| タイトル | S3 / EBS / EFS の違い |
-| 結論 | 最初に使い分けの結論を表示 |
-| 比較表 | サービスごとの違いを表形式で表示 |
-| 試験ポイント | CLF/SAAで問われるポイント |
-| 実務での使い分け | どのケースで何を選ぶか |
-| よくある間違い | 初学者が混同しやすい点 |
-| 関連用語 | 各サービスの用語詳細リンク |
-| 関連問題 | 模擬問題へのリンク |
+| Breadcrumbs | Home > Comparisons > Comparison title |
+| Title | Differences between S3 / EBS / EFS |
+| Conclusion | Present service-selection conclusions first |
+| Comparison table | Show differences between services in a table |
+| Exam topics | Topics tested in CLF/SAA |
+| Practical service selection | Which service to choose for each case |
+| Common mistakes | Points beginners easily confuse |
+| Related terms | Links to each service's term detail |
+| Related questions | Links to practice questions |
 
-## 6.5.3 ユーザー操作
+## 6.5.3 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| 関連用語クリック | /terms/[termId] |
-| 関連問題を解く | /questions/[questionId] |
-| 比較一覧に戻る | /comparisons |
-| 次の比較を見る | /comparisons/[nextSlug] |
+| Click a related term | /terms/[termId] |
+| Answer related questions | /questions/[questionId] |
+| Return to the comparison list | /comparisons |
+| View the next comparison | /comparisons/[nextSlug] |
 
-## 6.5.4 ワイヤーフレーム
+## 6.5.4 Wireframe (Japanese Localized Website Example)
 
 ```text
 ┌──────────────────────────────┐
@@ -598,151 +598,151 @@ AWSサービスの概要、用途、試験ポイント、関連サービスと�
 └──────────────────────────────┘
 ```
 
-## 6.5.5 受け入れ条件
+## 6.5.5 Acceptance Criteria
 
-- 比較表が表示される
-- 結論が冒頭にある
-- 試験ポイントと実務での使い分けがある
-- 関連用語への内部リンクがある
+- Display a comparison table
+- Put the conclusion first
+- Include exam topics and practical service-selection guidance
+- Include internal links to related terms
 
 ---
 
-# SCR-006 模擬問題トップ
+# SCR-006 Practice-Question Landing Page
 
-## 6.6 画面概要
+## 6.6 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-006 |
-| 画面名 | 模擬問題トップ |
+| Screen ID | SCR-006 |
+| Screen name | Practice-question landing page |
 | URL | /questions |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.6.1 目的
+## 6.6.1 Purpose
 
-資格別・カテゴリ別に模擬問題へ誘導する。
+Guide users to practice questions by certification and category.
 
-## 6.6.2 表示項目
+## 6.6.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | AWS模擬問題 |
-| 説明文 | CLF/SAAの理解度を確認できる問題集 |
-| CLFカード | Cloud Practitioner問題への導線 |
-| SAAカード | 将来対応予定の表示 |
-| カテゴリ別リンク | Cloud Concepts / Security / Technology / Billing |
-| おすすめ問題 | 初心者向け問題 |
+| Page title | AWS practice questions |
+| Description | A question bank for checking understanding of CLF/SAA |
+| CLF card | Link to Cloud Practitioner questions |
+| SAA card | Indication that support is planned for the future |
+| Category links | Cloud Concepts / Security / Technology / Billing |
+| Recommended questions | Beginner-friendly questions |
 
-## 6.6.3 ユーザー操作
+## 6.6.3 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| CLF問題を解く | /questions/clf |
-| 問題カードクリック | /questions/[questionId] |
-| 関連用語を見る | /terms |
+| Answer CLF questions | /questions/clf |
+| Click a question card | /questions/[questionId] |
+| View related terms | /terms |
 
-## 6.6.4 受け入れ条件
+## 6.6.4 Acceptance Criteria
 
-- CLF問題一覧へ遷移できる
-- SAA問題は将来対応予定であることが分かる
-- 初心者が最初に解く問題への導線がある
+- Allow navigation to the CLF question list
+- Make clear that SAA questions are planned for the future
+- Provide links to questions beginners should attempt first
 
 ---
 
-# SCR-007 CLF模擬問題一覧
+# SCR-007 CLF Practice-Question List
 
-## 6.7 画面概要
+## 6.7 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-007 |
-| 画面名 | CLF模擬問題一覧 |
+| Screen ID | SCR-007 |
+| Screen name | CLF practice-question list |
 | URL | /questions/clf |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.7.1 目的
+## 6.7.1 Purpose
 
-Cloud Practitioner向け模擬問題を一覧表示し、カテゴリ別に解けるようにする。
+List Cloud Practitioner practice questions and allow users to answer them by category.
 
-## 6.7.2 表示項目
+## 6.7.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | AWS Cloud Practitioner 模擬問題 |
-| 問題数 | 全30問など |
-| カテゴリフィルタ | Cloud Concepts / Security / Technology / Billing |
-| 難易度フィルタ | easy / normal / hard |
-| 問題カード | 問題番号、カテゴリ、難易度、関連サービス |
-| ランダム出題ボタン | 任意機能 |
+| Page title | AWS Cloud Practitioner practice questions |
+| Question count | For example, 30 questions in total |
+| Category filter | Cloud Concepts / Security / Technology / Billing |
+| Difficulty filter | easy / normal / hard |
+| Question cards | Question number, category, difficulty, and related services |
+| Random question button | Optional feature |
 
-## 6.7.3 ユーザー操作
+## 6.7.3 User Interactions
 
-| 操作 | 遷移先・動作 |
+| Action | Destination or behavior |
 |---|---|
-| 問題カードクリック | /questions/[questionId] |
-| カテゴリ選択 | 問題一覧絞り込み |
-| 難易度選択 | 問題一覧絞り込み |
-| ランダム出題 | 任意の問題詳細へ遷移 |
+| Click a question card | /questions/[questionId] |
+| Select a category | Filter the question list |
+| Select a difficulty | Filter the question list |
+| Random question | Navigate to a randomly chosen question's detail page |
 
-## 6.7.4 受け入れ条件
+## 6.7.4 Acceptance Criteria
 
-- CLF問題が30問以上表示される
-- 各問題のカテゴリと難易度が分かる
-- 問題詳細へ遷移できる
+- Display at least 30 CLF questions
+- Show each question's category and difficulty
+- Allow navigation to question detail pages
 
 ---
 
-# SCR-008 模擬問題詳細
+# SCR-008 Practice-Question Detail
 
-## 6.8 画面概要
+## 6.8 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-008 |
-| 画面名 | 模擬問題詳細 |
+| Screen ID | SCR-008 |
+| Screen name | Practice-question detail |
 | URL | /questions/[questionId] |
-| MVP | 対象 |
-| 例 | /questions/clf-001 |
+| MVP | Included |
+| Example | /questions/clf-001 |
 
-## 6.8.1 目的
+## 6.8.1 Purpose
 
-ユーザーが問題を解き、正解・不正解と解説を確認できるようにする。
+Allow users to answer questions, see whether they are correct, and read explanations.
 
-## 6.8.2 表示項目
+## 6.8.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| パンくず | ホーム > 模擬問題 > CLF-001 |
-| 問題番号 | CLF-001 |
-| カテゴリ | Cloud Conceptsなど |
-| 難易度 | easy / normal / hard |
-| 問題文 | 問題本文 |
-| 選択肢 | 4択 |
-| 回答ボタン | 選択後に回答する |
-| 正誤表示 | 正解 / 不正解 |
-| 解説 | 正解理由・補足説明 |
-| 関連サービス | 用語詳細へのリンク |
-| 次の問題 | 次問へのリンク |
+| Breadcrumbs | Home > Practice questions > CLF-001 |
+| Question number | CLF-001 |
+| Category | Cloud Concepts, etc. |
+| Difficulty | easy / normal / hard |
+| Question text | Question body |
+| Choices | Four options |
+| Answer button | Submit an answer after selecting an option |
+| Result | Correct / Incorrect |
+| Explanation | Reason for the correct answer and additional explanation |
+| Related services | Links to term detail pages |
+| Next question | Link to the next question |
 
-## 6.8.3 ユーザー操作
+## 6.8.3 User Interactions
 
-| 操作 | 動作 |
+| Action | Behavior |
 |---|---|
-| 選択肢を選ぶ | 選択状態にする |
-| 回答する | 正誤判定と解説表示 |
-| 次の問題へ | 次の問題詳細へ遷移 |
-| 関連サービスを見る | /terms/[termId]へ遷移 |
-| 一覧に戻る | /questions/clfへ遷移 |
+| Select an option | Mark the option as selected |
+| Submit an answer | Evaluate correctness and display the explanation |
+| Go to the next question | Navigate to the next question detail |
+| View related services | Navigate to /terms/[termId] |
+| Return to the list | Navigate to /questions/clf |
 
-## 6.8.4 状態設計
+## 6.8.4 State Design
 
-| 状態 | 表示 |
+| State | Display |
 |---|---|
-| 未回答 | 問題文・選択肢・回答ボタンを表示 |
-| 回答済み・正解 | 正解メッセージ、解説、次の問題導線を表示 |
-| 回答済み・不正解 | 不正解メッセージ、正解、解説、関連用語導線を表示 |
+| Unanswered | Display the question text, options, and answer button |
+| Answered correctly | Display the correct-answer message, explanation, and next-question link |
+| Answered incorrectly | Display the incorrect-answer message, correct answer, explanation, and related-term links |
 
-## 6.8.5 ワイヤーフレーム
+## 6.8.5 Wireframe (Japanese Localized Website Example)
 
 ```text
 ┌──────────────────────────────┐
@@ -766,107 +766,107 @@ Cloud Practitioner向け模擬問題を一覧表示し、カテゴリ別に解�
 └──────────────────────────────┘
 ```
 
-## 6.8.6 受け入れ条件
+## 6.8.6 Acceptance Criteria
 
-- 選択肢を1つ選んで回答できる
-- 回答後に正解・不正解が表示される
-- 解説が表示される
-- 次の問題へ遷移できる
-- ログインなしで利用できる
+- Allow users to select one option and submit an answer
+- Display whether the answer is correct after submission
+- Display the explanation
+- Allow navigation to the next question
+- Allow use without login
 
 ---
 
-# SCR-009 構成図一覧
+# SCR-009 Architecture Diagram List
 
-## 6.9 画面概要
+## 6.9 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-009 |
-| 画面名 | 構成図一覧 |
+| Screen ID | SCR-009 |
+| Screen name | Architecture diagram list |
 | URL | /architectures |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.9.1 目的
+## 6.9.1 Purpose
 
-SAA対策として、代表的なAWS構成パターンを一覧で確認できるようにする。
+Allow users to browse typical AWS architecture patterns for SAA preparation.
 
-## 6.9.2 表示項目
+## 6.9.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | AWS構成図ギャラリー |
-| 説明文 | SAAで理解したいAWS構成パターン |
-| 構成図カード | タイトル、使用サービス、概要、難易度 |
-| カテゴリ | サーバーレス / 3層構成 / バッチ / 高可用性 |
-| 試験ポイントタグ | 可用性、耐障害性、コスト、セキュリティ |
+| Page title | AWS architecture diagram gallery |
+| Description | AWS architecture patterns to understand for SAA |
+| Architecture diagram cards | Title, services used, overview, and difficulty |
+| Categories | Serverless / Three-tier / Batch / High availability |
+| Exam topic tags | Availability, fault tolerance, cost, and security |
 
-## 6.9.3 初期表示対象
+## 6.9.3 Initial Content
 
-| 構成図 | URL |
+| Architecture diagram | URL |
 |---|---|
-| S3 + CloudFront 静的Webサイト構成 | /architectures/static-site-s3-cloudfront |
-| API Gateway + Lambda + DynamoDB サーバーレスAPI構成 | /architectures/serverless-api-basic |
-| VPC内3層Webアプリ構成 | /architectures/three-tier-vpc |
-| ALB + Auto Scaling + RDS Multi-AZ 高可用性構成 | /architectures/high-availability-web-app |
-| EventBridge + Lambda バッチ処理構成 | /architectures/eventbridge-lambda-batch |
+| S3 + CloudFront static website architecture | /architectures/static-site-s3-cloudfront |
+| API Gateway + Lambda + DynamoDB serverless API architecture | /architectures/serverless-api-basic |
+| Three-tier web application architecture within a VPC | /architectures/three-tier-vpc |
+| ALB + Auto Scaling + RDS Multi-AZ high-availability architecture | /architectures/high-availability-web-app |
+| EventBridge + Lambda batch-processing architecture | /architectures/eventbridge-lambda-batch |
 
-## 6.9.4 ユーザー操作
+## 6.9.4 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| 構成図カードクリック | /architectures/[architectureSlug] |
-| 関連サービスクリック | /terms/[termId] |
+| Click an architecture diagram card | /architectures/[architectureSlug] |
+| Click a related service | /terms/[termId] |
 
-## 6.9.5 受け入れ条件
+## 6.9.5 Acceptance Criteria
 
-- 構成図カードが5件以上表示される
-- 各カードに使用AWSサービスが表示される
-- 詳細画面へ遷移できる
+- Display at least five architecture diagram cards
+- Display the AWS services used on each card
+- Allow navigation to detail screens
 
 ---
 
-# SCR-010 構成図詳細
+# SCR-010 Architecture Diagram Detail
 
-## 6.10 画面概要
+## 6.10 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-010 |
-| 画面名 | 構成図詳細 |
+| Screen ID | SCR-010 |
+| Screen name | Architecture diagram detail |
 | URL | /architectures/[architectureSlug] |
-| MVP | 対象 |
-| 例 | /architectures/serverless-api-basic |
+| MVP | Included |
+| Example | /architectures/serverless-api-basic |
 
-## 6.10.1 目的
+## 6.10.1 Purpose
 
-AWS構成図を見ながら、各サービスの役割、設計意図、試験ポイントを理解できるようにする。
+Help users understand each service's role, design intent, and exam topics while viewing an AWS architecture diagram.
 
-## 6.10.2 表示項目
+## 6.10.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| パンくず | ホーム > 構成図 > 構成名 |
-| タイトル | サーバーレスAPI基本構成など |
-| 構成図画像 | AWS構成図 |
-| 概要 | 何を実現する構成か |
-| 使用サービス | S3、CloudFront、API Gateway、Lambda、DynamoDBなど |
-| 通信フロー | ユーザーアクセスからDB保存までの流れ |
-| 設計ポイント | 可用性、耐障害性、コスト、セキュリティ |
-| SAA試験ポイント | 問われやすい観点 |
-| コスト注意点 | 課金リスクや無料枠観点 |
-| 関連用語 | 用語詳細リンク |
-| 関連比較 | 比較記事リンク |
+| Breadcrumbs | Home > Architecture diagrams > Architecture name |
+| Title | Basic serverless API architecture, etc. |
+| Architecture image | AWS architecture diagram |
+| Overview | What the architecture accomplishes |
+| Services used | S3, CloudFront, API Gateway, Lambda, DynamoDB, etc. |
+| Communication flow | Flow from user access to database storage |
+| Design considerations | Availability, fault tolerance, cost, and security |
+| SAA exam topics | Frequently tested perspectives |
+| Cost considerations | Billing risks and Free Tier considerations |
+| Related terms | Links to term detail pages |
+| Related comparisons | Links to comparison articles |
 
-## 6.10.3 ユーザー操作
+## 6.10.3 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| 関連サービスクリック | /terms/[termId] |
-| 関連比較クリック | /comparisons/[comparisonSlug] |
-| 他の構成図を見る | /architectures |
+| Click a related service | /terms/[termId] |
+| Click a related comparison | /comparisons/[comparisonSlug] |
+| View other architecture diagrams | /architectures |
 
-## 6.10.4 ワイヤーフレーム
+## 6.10.4 Wireframe (Japanese Localized Website Example)
 
 ```text
 ┌──────────────────────────────┐
@@ -890,198 +890,198 @@ AWS構成図を見ながら、各サービスの役割、設計意図、試験�
 └──────────────────────────────┘
 ```
 
-## 6.10.5 受け入れ条件
+## 6.10.5 Acceptance Criteria
 
-- 構成図が表示される
-- 使用サービスと役割が説明されている
-- 設計ポイントが記載されている
-- SAA試験ポイントが記載されている
+- Display the architecture diagram
+- Explain the services used and their roles
+- Include design considerations
+- Include SAA exam topics
 
 ---
 
-# SCR-011 ブログ一覧
+# SCR-011 Blog List
 
-## 6.11 画面概要
+## 6.11 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-011 |
-| 画面名 | ブログ一覧 |
+| Screen ID | SCR-011 |
+| Screen name | Blog list |
 | URL | /blog |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.11.1 目的
+## 6.11.1 Purpose
 
-AWS学習記事・資格対策記事・無料枠ポートフォリオ記事を一覧表示する。
+List AWS learning articles, certification preparation articles, and Free Tier portfolio articles.
 
-## 6.11.2 表示項目
+## 6.11.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | AWS学習ブログ |
-| 説明文 | AWS資格・サーバーレス・無料枠ポートフォリオに関する記事 |
-| 記事カード | タイトル、概要、カテゴリ、公開日、更新日 |
-| カテゴリフィルタ | CLF / SAA / 無料枠 / サーバーレス / ポートフォリオ |
-| タグ | AWSサービス名など |
+| Page title | AWS learning blog |
+| Description | Articles about AWS certification, serverless architecture, and Free Tier portfolios |
+| Article cards | Title, summary, category, publication date, and update date |
+| Category filter | CLF / SAA / Free Tier / Serverless / Portfolio |
+| Tags | AWS service names, etc. |
 
-## 6.11.3 ユーザー操作
+## 6.11.3 User Interactions
 
-| 操作 | 遷移先・動作 |
+| Action | Destination or behavior |
 |---|---|
-| 記事カードクリック | /blog/[postSlug] |
-| カテゴリ選択 | 記事一覧絞り込み |
-| タグクリック | タグ別記事表示 |
+| Click an article card | /blog/[postSlug] |
+| Select a category | Filter the article list |
+| Click a tag | Display articles by tag |
 
-## 6.11.4 受け入れ条件
+## 6.11.4 Acceptance Criteria
 
-- 記事が5本以上表示される
-- 記事詳細へ遷移できる
-- カテゴリが表示される
+- Display at least five articles
+- Allow navigation to article detail pages
+- Display categories
 
 ---
 
-# SCR-012 ブログ詳細
+# SCR-012 Blog Post Detail
 
-## 6.12 画面概要
+## 6.12 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-012 |
-| 画面名 | ブログ詳細 |
+| Screen ID | SCR-012 |
+| Screen name | Blog post detail |
 | URL | /blog/[postSlug] |
-| MVP | 対象 |
-| 例 | /blog/aws-free-tier-portfolio |
+| MVP | Included |
+| Example | /blog/aws-free-tier-portfolio |
 
-## 6.12.1 目的
+## 6.12.1 Purpose
 
-SEO流入を狙うAWS学習記事を表示し、用語集・問題・比較・note有料記事へ誘導する。
+Display AWS learning articles targeting SEO traffic and guide users to the glossary, questions, comparisons, and paid note articles.
 
-## 6.12.2 表示項目
+## 6.12.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| パンくず | ホーム > ブログ > 記事タイトル |
-| タイトル | 記事タイトル |
-| 公開日・更新日 | 記事の日付 |
-| カテゴリ・タグ | CLF、SAA、S3、Lambdaなど |
-| アイキャッチ | 任意 |
-| 記事本文 | Markdown/MDX本文 |
-| 目次 | h2/h3から自動生成 |
-| 関連記事 | 同カテゴリ記事 |
-| 関連用語 | 用語集へのリンク |
-| CTA | 模擬問題、note有料記事、GitHubなど |
-| 広告枠 | 将来AdSense枠 |
+| Breadcrumbs | Home > Blog > Article title |
+| Title | Article title |
+| Publication and update dates | Article dates |
+| Categories and tags | CLF, SAA, S3, Lambda, etc. |
+| Featured image | Optional |
+| Article body | Markdown/MDX body |
+| Table of contents | Automatically generated from h2/h3 headings |
+| Related articles | Articles in the same category |
+| Related terms | Links to the glossary |
+| CTA | Practice questions, paid note articles, GitHub, etc. |
+| Ad slots | Future AdSense slots |
 
-## 6.12.3 ユーザー操作
+## 6.12.3 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| 関連用語クリック | /terms/[termId] |
-| 関連記事クリック | /blog/[postSlug] |
-| 模擬問題へ進む | /questions |
-| note記事を見る | note外部リンク |
+| Click a related term | /terms/[termId] |
+| Click a related article | /blog/[postSlug] |
+| Go to practice questions | /questions |
+| View a note article | External note link |
 
-## 6.12.4 受け入れ条件
+## 6.12.4 Acceptance Criteria
 
-- 記事本文が表示される
-- title / description を設定できる
-- 関連記事・関連用語への内部リンクがある
-- スマートフォンで読みやすい
+- Display the article body
+- Allow title / description configuration
+- Include internal links to related articles and terms
+- Ensure readability on smartphones
 
 ---
 
-# SCR-013 学習ロードマップ
+# SCR-013 Learning Roadmap
 
-## 6.13 画面概要
+## 6.13 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-013 |
-| 画面名 | 学習ロードマップ |
+| Screen ID | SCR-013 |
+| Screen name | Learning roadmap |
 | URL | /roadmap |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.13.1 目的
+## 6.13.1 Purpose
 
-AWS初学者が、Cloud PractitionerからSAAまでどの順番で学習すべきか理解できるようにする。
+Help AWS beginners understand the order in which to study, from Cloud Practitioner to SAA.
 
-## 6.13.2 表示項目
+## 6.13.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | AWS資格学習ロードマップ |
-| 対象者説明 | 初学者、CLF受験者、SAA受験者 |
-| Step 1 | クラウド基礎理解 |
-| Step 2 | IAM、S3、EC2、VPCなど主要サービス |
-| Step 3 | CLF模擬問題 |
-| Step 4 | SAA構成図理解 |
-| Step 5 | 実際にAWSでポートフォリオ作成 |
-| 関連リンク | 用語集、比較、模擬問題、構成図 |
+| Page title | AWS certification learning roadmap |
+| Target audience | Beginners, CLF candidates, and SAA candidates |
+| Step 1 | Understand cloud fundamentals |
+| Step 2 | Major services such as IAM, S3, EC2, and VPC |
+| Step 3 | CLF practice questions |
+| Step 4 | Understand SAA architecture diagrams |
+| Step 5 | Build an actual portfolio on AWS |
+| Related links | Glossary, comparisons, practice questions, and architecture diagrams |
 
-## 6.13.3 ユーザー操作
+## 6.13.3 User Interactions
 
-| 操作 | 遷移先 |
+| Action | Destination |
 |---|---|
-| Step内リンククリック | 関連ページへ遷移 |
-| 模擬問題を解く | /questions/clf |
-| 構成図を見る | /architectures |
+| Click a link within a step | Navigate to a related page |
+| Answer practice questions | /questions/clf |
+| View architecture diagrams | /architectures |
 
-## 6.13.4 受け入れ条件
+## 6.13.4 Acceptance Criteria
 
-- 初学者が学習順序を理解できる
-- 各ステップから関連ページへ遷移できる
-- CLFとSAAの違いが分かる
+- Beginners can understand the learning sequence
+- Each step links to related pages
+- Make the difference between CLF and SAA clear
 
 ---
 
-# SCR-014 問い合わせ
+# SCR-014 Contact
 
-## 6.14 画面概要
+## 6.14 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-014 |
-| 画面名 | 問い合わせ |
+| Screen ID | SCR-014 |
+| Screen name | Contact |
 | URL | /contact |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.14.1 目的
+## 6.14.1 Purpose
 
-ユーザーからの問い合わせ、誤り報告、仕事依頼、フィードバックを受け取る。
+Receive user inquiries, error reports, work requests, and feedback.
 
-## 6.14.2 表示項目
+## 6.14.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | お問い合わせ |
-| 説明文 | 誤り報告・問い合わせ・仕事相談を受け付ける旨 |
-| 名前入力 | 必須 |
-| メールアドレス入力 | 必須 |
-| 件名入力 | 必須 |
-| 本文入力 | 必須 |
-| 送信ボタン | 入力内容を送信 |
-| 完了メッセージ | 送信成功時に表示 |
-| エラーメッセージ | 入力不備や送信失敗時に表示 |
+| Page title | Contact us |
+| Description | Explain that error reports, inquiries, and work consultations are welcome |
+| Name input | Required |
+| Email address input | Required |
+| Subject input | Required |
+| Message body input | Required |
+| Submit button | Submit the entered information |
+| Completion message | Display on successful submission |
+| Error message | Display for invalid input or failed submission |
 
-## 6.14.3 入力チェック
+## 6.14.3 Input Validation
 
-| 項目 | 条件 |
+| Field | Condition |
 |---|---|
-| 名前 | 必須、100文字以内 |
-| メールアドレス | 必須、メール形式 |
-| 件名 | 必須、150文字以内 |
-| 本文 | 必須、2,000文字以内 |
+| Name | Required; up to 100 characters |
+| Email address | Required; email format |
+| Subject | Required; up to 150 characters |
+| Message body | Required; up to 2,000 characters |
 
-## 6.14.4 ユーザー操作
+## 6.14.4 User Interactions
 
-| 操作 | 動作 |
+| Action | Behavior |
 |---|---|
-| 入力 | フォームに値を入力 |
-| 送信 | 入力チェック後、API Gateway + Lambdaへ送信 |
-| 成功 | 完了メッセージを表示 |
-| 失敗 | エラーメッセージを表示 |
+| Enter data | Enter values in the form |
+| Submit | Validate input, then send to API Gateway + Lambda |
+| Success | Display a completion message |
+| Failure | Display an error message |
 
-## 6.14.5 ワイヤーフレーム
+## 6.14.5 Wireframe (Japanese Localized Website Example)
 
 ```text
 ┌──────────────────────────────┐
@@ -1102,648 +1102,648 @@ AWS初学者が、Cloud PractitionerからSAAまでどの順番で学習すべ�
 └──────────────────────────────┘
 ```
 
-## 6.14.6 受け入れ条件
+## 6.14.6 Acceptance Criteria
 
-- 必須項目の入力チェックが動作する
-- メール形式チェックが動作する
-- 正常送信時に完了メッセージが表示される
-- 問い合わせデータがDynamoDBに保存される
+- Required-field validation works
+- Email-format validation works
+- A completion message appears after successful submission
+- Contact data is stored in DynamoDB
 
 ---
 
-# SCR-015 運営者情報
+# SCR-015 About the Operator
 
-## 6.15 画面概要
+## 6.15 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-015 |
-| 画面名 | 運営者情報 |
+| Screen ID | SCR-015 |
+| Screen name | About the operator |
 | URL | /about |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.15.1 目的
+## 6.15.1 Purpose
 
-サイト運営者の情報、サイトの目的、ポートフォリオとしての背景を説明する。
+Explain the site operator's information, the site's purpose, and its background as a portfolio.
 
-## 6.15.2 表示項目
+## 6.15.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | 運営者情報 |
-| 運営者名 | ハンドルネームまたは名前 |
-| サイト目的 | AWS資格学習・ポートフォリオ・情報発信 |
-| 学習背景 | CLF/SAA学習中である旨 |
-| 使用技術 | AWS、Next.js、TypeScriptなど |
-| GitHubリンク | リポジトリへの導線 |
-| noteリンク | 記事媒体への導線 |
-| 問い合わせリンク | /contact |
+| Page title | About the operator |
+| Operator name | Handle or name |
+| Site purpose | AWS certification learning, portfolio, and information sharing |
+| Learning background | Explain that the operator is studying CLF/SAA |
+| Technologies used | AWS, Next.js, TypeScript, etc. |
+| GitHub link | Link to the repository |
+| note link | Link to the article platform |
+| Contact link | /contact |
 
-## 6.15.3 受け入れ条件
+## 6.15.3 Acceptance Criteria
 
-- サイト運営者と目的が分かる
-- GitHubへの導線がある
-- 問い合わせページへの導線がある
-- AdSense審査を意識した最低限の信頼情報がある
+- Make the site operator and purpose clear
+- Provide a link to GitHub
+- Provide a link to the contact page
+- Include basic credibility information with AdSense review in mind
 
 ---
 
-# SCR-016 プライバシーポリシー
+# SCR-016 Privacy Policy
 
-## 6.16 画面概要
+## 6.16 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-016 |
-| 画面名 | プライバシーポリシー |
+| Screen ID | SCR-016 |
+| Screen name | Privacy policy |
 | URL | /privacy |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.16.1 目的
+## 6.16.1 Purpose
 
-問い合わせフォーム、アクセス解析、広告掲載を想定し、個人情報・Cookie・広告に関する方針を掲載する。
+Publish policies on personal information, cookies, and advertising, anticipating contact forms, access analytics, and advertisements.
 
-## 6.16.2 表示項目
+## 6.16.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 個人情報の利用目的 | 問い合わせ対応など |
-| 収集する情報 | 名前、メールアドレス、問い合わせ本文 |
-| Cookie利用 | アクセス解析・広告配信予定 |
-| Google Analytics | 将来導入予定または導入時記載 |
-| Google AdSense | 将来導入予定または導入時記載 |
-| 第三者提供 | 原則しない |
-| 免責 | 外部リンク、情報正確性に関する注意 |
-| 改定 | ポリシー変更の可能性 |
+| Purposes of personal information use | Responding to inquiries, etc. |
+| Information collected | Name, email address, and inquiry body |
+| Cookie use | Analytics and ad delivery planned |
+| Google Analytics | Planned for future introduction, or documented when introduced |
+| Google AdSense | Planned for future introduction, or documented when introduced |
+| Third-party disclosure | Not provided in principle |
+| Disclaimer | Cautions about external links and information accuracy |
+| Revisions | Possibility of policy changes |
 
-## 6.16.3 受け入れ条件
+## 6.16.3 Acceptance Criteria
 
-- フッターから遷移できる
-- 問い合わせフォームと整合している
-- 広告・アクセス解析を想定した記述がある
+- Accessible from the footer
+- Consistent with the contact form
+- Include provisions anticipating advertising and analytics
 
 ---
 
-# SCR-017 免責事項
+# SCR-017 Disclaimer
 
-## 6.17 画面概要
+## 6.17 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-017 |
-| 画面名 | 免責事項 |
+| Screen ID | SCR-017 |
+| Screen name | Disclaimer |
 | URL | /disclaimer |
-| MVP | 対象 |
+| MVP | Included |
 
-## 6.17.1 目的
+## 6.17.1 Purpose
 
-AWS資格情報、学習情報、外部リンク、コンテンツの正確性に関する免責を掲載する。
+Publish disclaimers covering AWS certification information, learning information, external links, and content accuracy.
 
-## 6.17.2 表示項目
+## 6.17.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 情報の正確性 | 正確性に努めるが保証しない旨 |
-| 試験情報 | AWS公式情報を必ず確認すべき旨 |
-| 損害責任 | サイト利用による損害の責任を負わない旨 |
-| 外部リンク | 外部サイト内容に責任を負わない旨 |
-| コンテンツ更新 | 情報が古くなる可能性 |
+| Information accuracy | Explain that accuracy is pursued but not guaranteed |
+| Exam information | Explain that users must always check official AWS information |
+| Liability for damages | Explain that the operator is not liable for damages arising from site use |
+| External links | Explain that the operator is not responsible for external site content |
+| Content updates | Information may become outdated |
 
-## 6.17.3 受け入れ条件
+## 6.17.3 Acceptance Criteria
 
-- フッターから遷移できる
-- AWS公式情報の確認を促している
-- 学習情報の免責が明記されている
+- Accessible from the footer
+- Encourage users to check official AWS information
+- Clearly state the disclaimer for learning information
 
 ---
 
-# SCR-018 GitHub誘導ページ
+# SCR-018 GitHub Introduction Page
 
-## 6.18 画面概要
+## 6.18 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-018 |
-| 画面名 | GitHub誘導ページ |
+| Screen ID | SCR-018 |
+| Screen name | GitHub introduction page |
 | URL | /github |
-| MVP | 任意 |
+| MVP | Optional |
 
-## 6.18.1 目的
+## 6.18.1 Purpose
 
-ポートフォリオ閲覧者に、GitHubリポジトリ、README、AWS構成図、技術選定理由を見てもらう。
+Guide portfolio visitors to the GitHub repository, README, AWS architecture diagrams, and reasons for technology choices.
 
-## 6.18.2 表示項目
+## 6.18.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ページタイトル | GitHub・技術構成 |
-| リポジトリリンク | GitHub外部リンク |
-| 使用技術 | Next.js、AWS、DynamoDBなど |
-| AWS構成概要 | S3、CloudFront、Lambdaなど |
-| 開発背景 | 資格学習とポートフォリオ目的 |
-| READMEの見どころ | 構成図、コスト設計、セキュリティ設計 |
+| Page title | GitHub and technology architecture |
+| Repository link | External GitHub link |
+| Technologies used | Next.js, AWS, DynamoDB, etc. |
+| AWS architecture overview | S3, CloudFront, Lambda, etc. |
+| Development background | Certification learning and portfolio objectives |
+| README highlights | Architecture diagrams, cost design, and security design |
 
-## 6.18.3 受け入れ条件
+## 6.18.3 Acceptance Criteria
 
-- GitHubリポジトリへ遷移できる
-- 技術構成が簡単に分かる
-- 面接官が確認しやすい導線になっている
+- Allow navigation to the GitHub repository
+- Make the technology architecture easy to understand
+- Provide navigation that is easy for interviewers to review
 
 ---
 
-## 7. 将来拡張画面設計
+## 7. Future Extension Screen Design
 
 ---
 
-# SCR-101 ログイン
+# SCR-101 Login
 
-## 7.1 画面概要
+## 7.1 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-101 |
-| 画面名 | ログイン |
+| Screen ID | SCR-101 |
+| Screen name | Login |
 | URL | /login |
-| 実装フェーズ | Phase 4 |
+| Implementation phase | Phase 4 |
 
-## 7.1.1 目的
+## 7.1.1 Purpose
 
-Cognitoを使い、ユーザーがログインできるようにする。
+Allow users to log in using Cognito.
 
-## 7.1.2 表示項目
+## 7.1.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| メールアドレス | ログインID |
-| パスワード | パスワード |
-| ログインボタン | 認証実行 |
-| 新規登録リンク | /signup |
-| パスワード再設定リンク | 将来 |
+| Email address | Login ID |
+| Password | Password |
+| Login button | Perform authentication |
+| Sign-up link | /signup |
+| Password reset link | Future |
 
 ---
 
-# SCR-102 新規登録
+# SCR-102 Sign Up
 
-## 7.2 画面概要
+## 7.2 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-102 |
-| 画面名 | 新規登録 |
+| Screen ID | SCR-102 |
+| Screen name | Sign up |
 | URL | /signup |
-| 実装フェーズ | Phase 4 |
+| Implementation phase | Phase 4 |
 
-## 7.2.1 目的
+## 7.2.1 Purpose
 
-ユーザーが学習履歴を保存するためのアカウントを作成できるようにする。
+Allow users to create an account for saving their learning history.
 
-## 7.2.2 表示項目
+## 7.2.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 名前 | 任意または必須 |
-| メールアドレス | 必須 |
-| パスワード | 必須 |
-| 登録ボタン | Cognito登録 |
-| ログインリンク | /login |
+| Name | Optional or required |
+| Email address | Required |
+| Password | Required |
+| Sign-up button | Register with Cognito |
+| Login link | /login |
 
 ---
 
-# SCR-103 マイページ
+# SCR-103 Account Dashboard
 
-## 7.3 画面概要
+## 7.3 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-103 |
-| 画面名 | マイページ |
+| Screen ID | SCR-103 |
+| Screen name | Account dashboard |
 | URL | /mypage |
-| 実装フェーズ | Phase 4 |
+| Implementation phase | Phase 4 |
 
-## 7.3.1 目的
+## 7.3.1 Purpose
 
-ログインユーザーの学習状況、正答率、復習対象を表示する。
+Display the logged-in user's learning status, accuracy rate, and items to review.
 
-## 7.3.2 表示項目
+## 7.3.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| ユーザー名 | ログインユーザー名 |
-| 解答済み問題数 | これまで解いた問題数 |
-| 正答率 | 全体正答率 |
-| 苦手カテゴリ | 正答率が低いカテゴリ |
-| 復習問題 | 間違えた問題一覧 |
-| 学習進捗リンク | /mypage/progress |
+| User name | Logged-in user's name |
+| Questions answered | Number of questions answered so far |
+| Accuracy rate | Overall accuracy rate |
+| Weak categories | Categories with low accuracy rates |
+| Review questions | List of incorrectly answered questions |
+| Learning progress link | /mypage/progress |
 
 ---
 
-# SCR-104 学習進捗
+# SCR-104 Learning Progress
 
-## 7.4 画面概要
+## 7.4 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-104 |
-| 画面名 | 学習進捗 |
+| Screen ID | SCR-104 |
+| Screen name | Learning progress |
 | URL | /mypage/progress |
-| 実装フェーズ | Phase 4 |
+| Implementation phase | Phase 4 |
 
-## 7.4.1 目的
+## 7.4.1 Purpose
 
-カテゴリ別の学習進捗と正答率を可視化する。
+Visualize learning progress and accuracy rates by category.
 
-## 7.4.2 表示項目
+## 7.4.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 全体正答率 | すべての問題の正答率 |
-| カテゴリ別正答率 | Security、Billingなど |
-| 解答履歴 | 最近解いた問題 |
-| グラフ | 正答率推移 |
+| Overall accuracy rate | Accuracy across all questions |
+| Accuracy by category | Security, Billing, etc. |
+| Answer history | Recently answered questions |
+| Chart | Accuracy rate over time |
 
 ---
 
-# SCR-105 復習問題
+# SCR-105 Review Questions
 
-## 7.5 画面概要
+## 7.5 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-105 |
-| 画面名 | 復習問題 |
+| Screen ID | SCR-105 |
+| Screen name | Review questions |
 | URL | /mypage/review |
-| 実装フェーズ | Phase 4 |
+| Implementation phase | Phase 4 |
 
-## 7.5.1 目的
+## 7.5.1 Purpose
 
-過去に間違えた問題だけを復習できるようにする。
+Allow users to review only questions they previously answered incorrectly.
 
-## 7.5.2 表示項目
+## 7.5.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 復習対象一覧 | 間違えた問題 |
-| カテゴリ | 問題カテゴリ |
-| 最終回答日 | 最後に解いた日 |
-| 再挑戦ボタン | 問題詳細へ遷移 |
+| Review list | Incorrectly answered questions |
+| Category | Question category |
+| Last answer date | Date the question was last attempted |
+| Retry button | Navigate to question detail |
 
 ---
 
-# SCR-106 弱点分析
+# SCR-106 Weakness Analysis
 
-## 7.6 画面概要
+## 7.6 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-106 |
-| 画面名 | 弱点分析 |
+| Screen ID | SCR-106 |
+| Screen name | Weakness analysis |
 | URL | /mypage/weakness |
-| 実装フェーズ | Phase 4 |
+| Implementation phase | Phase 4 |
 
-## 7.6.1 目的
+## 7.6.1 Purpose
 
-カテゴリ別の正答率から、ユーザーの苦手分野を表示する。
+Display users' weak areas based on accuracy rates by category.
 
-## 7.6.2 表示項目
+## 7.6.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 苦手カテゴリ | 正答率が低いカテゴリ |
-| 推奨復習問題 | 苦手分野に関連する問題 |
-| 推奨用語 | 関連するAWS用語 |
-| 推奨比較記事 | 理解補助になる比較記事 |
+| Weak categories | Categories with low accuracy rates |
+| Recommended review questions | Questions related to weak areas |
+| Recommended terms | Related AWS terms |
+| Recommended comparison articles | Comparison articles that aid understanding |
 
 ---
 
-# SCR-107 料金ページ
+# SCR-107 Pricing Page
 
-## 7.7 画面概要
+## 7.7 Screen Overview
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 画面ID | SCR-107 |
-| 画面名 | 料金ページ |
+| Screen ID | SCR-107 |
+| Screen name | Pricing page |
 | URL | /pricing |
-| 実装フェーズ | Phase 4以降 |
+| Implementation phase | Phase 4 or later |
 
-## 7.7.1 目的
+## 7.7.1 Purpose
 
-将来的な有料機能、PDF教材、問題集販売の料金プランを表示する。
+Display pricing plans for future paid features, PDF learning materials, and question banks.
 
-## 7.7.2 表示項目
+## 7.7.2 Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 無料プラン | 用語集、一部問題、記事閲覧 |
-| 有料プラン | 全問題、学習履歴、弱点分析、PDF教材 |
-| PDF教材 | 単品販売 |
-| note有料記事 | 外部リンク |
+| Free plan | Glossary, selected questions, and article access |
+| Paid plan | All questions, learning history, weakness analysis, and PDF learning materials |
+| PDF learning materials | Individual purchases |
+| Paid note articles | External links |
 
 ---
 
-## 8. 画面遷移設計
+## 8. Screen Navigation Design
 
-## 8.1 基本遷移図
+## 8.1 Basic Navigation Diagram
 
 ```text
-[トップページ]
-  ├── [AWS用語集一覧]
-  │      └── [AWS用語詳細]
-  │              ├── [サービス比較詳細]
-  │              └── [模擬問題詳細]
+[Home page]
+  ├── [AWS glossary list]
+  │      └── [AWS term detail]
+  │              ├── [Service comparison detail]
+  │              └── [Practice-question detail]
   │
-  ├── [サービス比較一覧]
-  │      └── [サービス比較詳細]
-  │              ├── [AWS用語詳細]
-  │              └── [模擬問題詳細]
+  ├── [Service comparison list]
+  │      └── [Service comparison detail]
+  │              ├── [AWS term detail]
+  │              └── [Practice-question detail]
   │
-  ├── [模擬問題トップ]
-  │      └── [CLF模擬問題一覧]
-  │              └── [模擬問題詳細]
-  │                      ├── [次の模擬問題詳細]
-  │                      └── [AWS用語詳細]
+  ├── [Practice-question landing page]
+  │      └── [CLF practice-question list]
+  │              └── [Practice-question detail]
+  │                      ├── [Next practice-question detail]
+  │                      └── [AWS term detail]
   │
-  ├── [構成図一覧]
-  │      └── [構成図詳細]
-  │              ├── [AWS用語詳細]
-  │              └── [サービス比較詳細]
+  ├── [Architecture diagram list]
+  │      └── [Architecture diagram detail]
+  │              ├── [AWS term detail]
+  │              └── [Service comparison detail]
   │
-  ├── [ブログ一覧]
-  │      └── [ブログ詳細]
-  │              ├── [AWS用語詳細]
-  │              ├── [サービス比較詳細]
-  │              └── [模擬問題詳細]
+  ├── [Blog list]
+  │      └── [Blog post detail]
+  │              ├── [AWS term detail]
+  │              ├── [Service comparison detail]
+  │              └── [Practice-question detail]
   │
-  ├── [学習ロードマップ]
-  ├── [問い合わせ]
-  ├── [運営者情報]
-  ├── [プライバシーポリシー]
-  └── [免責事項]
+  ├── [Learning roadmap]
+  ├── [Contact]
+  ├── [About the operator]
+  ├── [Privacy policy]
+  └── [Disclaimer]
 ```
 
-## 8.2 主要ユーザーフロー
+## 8.2 Main User Flows
 
-## 8.2.1 AWS初学者の学習フロー
+## 8.2.1 Learning Flow for AWS Beginners
 
 ```text
-トップページ
+Home page
   ↓
-学習ロードマップ
+Learning roadmap
   ↓
-AWS用語集一覧
+AWS glossary list
   ↓
-AWS用語詳細
+AWS term detail
   ↓
-サービス比較詳細
+Service comparison detail
   ↓
-CLF模擬問題一覧
+CLF practice-question list
   ↓
-模擬問題詳細
+Practice-question detail
 ```
 
-### 目的
+### Purpose
 
-初学者が、いきなり問題を解くのではなく、用語理解から問題演習へ進める導線を作る。
+Create a path from understanding terminology to practicing questions, rather than asking beginners to start with questions immediately.
 
-## 8.2.2 CLF受験者の問題演習フロー
+## 8.2.2 Question Practice Flow for CLF Candidates
 
 ```text
-トップページ
+Home page
   ↓
-模擬問題トップ
+Practice-question landing page
   ↓
-CLF模擬問題一覧
+CLF practice-question list
   ↓
-模擬問題詳細
+Practice-question detail
   ↓
-回答する
+Submit an answer
   ↓
-解説を見る
+View the explanation
   ↓
-関連用語を見る
+View related terms
   ↓
-次の問題へ
+Go to the next question
 ```
 
-### 目的
+### Purpose
 
-問題演習を中心に使うユーザーが、解説から関連知識へ戻れるようにする。
+Allow users focused on question practice to return from explanations to related knowledge.
 
-## 8.2.3 SAA学習者の構成図学習フロー
+## 8.2.3 Architecture Diagram Learning Flow for SAA Learners
 
 ```text
-トップページ
+Home page
   ↓
-構成図一覧
+Architecture diagram list
   ↓
-構成図詳細
+Architecture diagram detail
   ↓
-使用サービス確認
+Review the services used
   ↓
-AWS用語詳細
+AWS term detail
   ↓
-関連比較記事
+Related comparison articles
 ```
 
-### 目的
+### Purpose
 
-SAAで重要な構成理解を、サービス単位の知識と比較理解につなげる。
+Connect architecture understanding, which is important for SAA, with service-level knowledge and comparisons.
 
-## 8.2.4 SEO流入ユーザーの回遊フロー
+## 8.2.4 Browsing Flow for Users Arriving Through SEO
 
 ```text
-Google検索
+Google search
   ↓
-ブログ詳細
+Blog post detail
   ↓
-関連用語
+Related terms
   ↓
-比較記事
+Comparison articles
   ↓
-模擬問題
+Practice questions
   ↓
-学習ロードマップ
+Learning roadmap
 ```
 
-### 目的
+### Purpose
 
-記事単体で終わらせず、用語集・比較・問題へ内部回遊させる。
+Encourage internal browsing to the glossary, comparisons, and questions rather than ending the visit after a single article.
 
-## 8.2.5 採用担当者・面接官の確認フロー
+## 8.2.5 Review Flow for Recruiters and Interviewers
 
 ```text
-ポートフォリオURL
+Portfolio URL
   ↓
-トップページ
+Home page
   ↓
-運営者情報
+About the operator
   ↓
-GitHub誘導ページ
+GitHub introduction page
   ↓
-README確認
+Review the README
   ↓
-構成図詳細
+Architecture diagram detail
   ↓
-問い合わせ
+Contact
 ```
 
-### 目的
+### Purpose
 
-技術選定、AWS構成、設計意図、開発背景が確認しやすい導線を作る。
+Make it easy to review technology choices, AWS architecture, design intent, and development background.
 
 ---
 
-## 9. ナビゲーション設計
+## 9. Navigation Design
 
-## 9.1 ヘッダーナビゲーション
+## 9.1 Header Navigation
 
-| 表示名 | URL | 優先度 |
+| Display name | URL | Priority |
 |---|---|---|
-| ホーム | / | 高 |
-| 用語集 | /terms | 高 |
-| 比較 | /comparisons | 高 |
-| 模擬問題 | /questions | 高 |
-| 構成図 | /architectures | 高 |
-| ブログ | /blog | 中 |
-| ロードマップ | /roadmap | 中 |
+| Home | / | High |
+| Glossary | /terms | High |
+| Comparisons | /comparisons | High |
+| Practice questions | /questions | High |
+| Architecture diagrams | /architectures | High |
+| Blog | /blog | Medium |
+| Roadmap | /roadmap | Medium |
 
-## 9.2 フッターナビゲーション
+## 9.2 Footer Navigation
 
-| 表示名 | URL | 目的 |
+| Display name | URL | Purpose |
 |---|---|---|
-| 運営者情報 | /about | 信頼性 |
-| 問い合わせ | /contact | 連絡・誤り報告 |
-| プライバシーポリシー | /privacy | 広告・個人情報対応 |
-| 免責事項 | /disclaimer | 試験情報・学習情報の免責 |
-| GitHub | /github or external | ポートフォリオ |
-| note | external | 収益導線 |
+| About the operator | /about | Credibility |
+| Contact | /contact | Inquiries and error reports |
+| Privacy policy | /privacy | Advertising and personal information requirements |
+| Disclaimer | /disclaimer | Disclaimer for exam and learning information |
+| GitHub | /github or external | Portfolio |
+| note | external | Revenue links |
 
-## 9.3 サイドバー設計
+## 9.3 Sidebar Design
 
-PC表示では、ブログ詳細・比較詳細・用語詳細にサイドバーを表示する。
+On desktop, display a sidebar on blog post, comparison, and term detail pages.
 
-### 表示項目
+### Displayed Elements
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 関連記事 | 同カテゴリの記事 |
-| 関連用語 | 関連AWSサービス |
-| 人気問題 | よく解かれる問題 |
-| 広告枠 | 将来AdSense枠 |
+| Related articles | Articles in the same category |
+| Related terms | Related AWS services |
+| Popular questions | Frequently attempted questions |
+| Ad slots | Future AdSense slots |
 
-スマートフォンではサイドバーは本文下に移動する。
+On smartphones, move the sidebar below the main content.
 
 ---
 
-## 10. URL設計
+## 10. URL Design
 
-## 10.1 URL一覧
+## 10.1 URL List
 
-| 画面 | URL例 |
+| Screen | Example URL |
 |---|---|
-| トップ | / |
-| 用語一覧 | /terms |
-| 用語詳細 | /terms/s3 |
-| 比較一覧 | /comparisons |
-| 比較詳細 | /comparisons/s3-vs-ebs-vs-efs |
-| 模擬問題トップ | /questions |
-| CLF問題一覧 | /questions/clf |
-| 問題詳細 | /questions/clf-001 |
-| 構成図一覧 | /architectures |
-| 構成図詳細 | /architectures/serverless-api-basic |
-| ブログ一覧 | /blog |
-| ブログ詳細 | /blog/aws-free-tier-portfolio |
-| ロードマップ | /roadmap |
-| 問い合わせ | /contact |
-| 運営者情報 | /about |
-| プライバシーポリシー | /privacy |
-| 免責事項 | /disclaimer |
+| Home | / |
+| Term list | /terms |
+| Term detail | /terms/s3 |
+| Comparison list | /comparisons |
+| Comparison detail | /comparisons/s3-vs-ebs-vs-efs |
+| Practice-question landing page | /questions |
+| CLF question list | /questions/clf |
+| Question detail | /questions/clf-001 |
+| Architecture diagram list | /architectures |
+| Architecture diagram detail | /architectures/serverless-api-basic |
+| Blog list | /blog |
+| Blog post detail | /blog/aws-free-tier-portfolio |
+| Roadmap | /roadmap |
+| Contact | /contact |
+| About the operator | /about |
+| Privacy policy | /privacy |
+| Disclaimer | /disclaimer |
 
-## 10.2 スラッグ命名ルール
+## 10.2 Slug Naming Rules
 
-| 種別 | ルール | 例 |
+| Type | Rule | Example |
 |---|---|---|
-| 用語 | 小文字のサービス略称 | s3, ec2, lambda |
-| 比較 | service-vs-service形式 | rds-vs-dynamodb |
-| 問題 | 試験区分-連番 | clf-001 |
-| 構成図 | 内容を英単語で表現 | serverless-api-basic |
-| ブログ | 記事タイトルを英語スラッグ化 | aws-free-tier-portfolio |
+| Term | Lowercase service abbreviation | s3, ec2, lambda |
+| Comparison | service-vs-service format | rds-vs-dynamodb |
+| Question | Exam type followed by sequential number | clf-001 |
+| Architecture diagram | Describe the content in English words | serverless-api-basic |
+| Blog | Convert the article title into an English slug | aws-free-tier-portfolio |
 
-## 10.3 SEO観点のURL方針
+## 10.3 SEO URL Policy
 
-- 日本語URLは使わない
-- URLは短く、意味が分かる英数字にする
-- アンダースコアではなくハイフンを使う
-- 日付をURLに入れない
-- 後から変更しにくいURLにしない
+- Do not use Japanese URLs
+- Keep URLs short and meaningful, using alphanumeric characters
+- Use hyphens rather than underscores
+- Do not include dates in URLs
+- Avoid URLs that are difficult to change later
 
 ---
 
-## 11. 状態遷移設計
+## 11. State Transition Design
 
-## 11.1 模擬問題詳細の状態遷移
+## 11.1 Practice-Question Detail State Transitions
 
 ```text
-[未回答]
-  ↓ 選択肢を選ぶ
-[選択済み]
-  ↓ 回答する
-[回答済み]
-  ├── 正解表示
-  └── 不正解表示
+[Unanswered]
+  ↓ Select an option
+[Selected]
+  ↓ Submit an answer
+[Answered]
+  ├── Display correct result
+  └── Display incorrect result
         ↓
-[解説表示]
+[Display explanation]
   ↓
-[次の問題へ]
+[Go to the next question]
 ```
 
-## 11.2 問い合わせフォームの状態遷移
+## 11.2 Contact Form State Transitions
 
 ```text
-[初期表示]
-  ↓ 入力
-[入力中]
-  ↓ 送信
-[バリデーション]
-  ├── エラーあり → [入力中へ戻る]
-  └── エラーなし → [送信中]
-                      ├── 成功 → [送信完了]
-                      └── 失敗 → [エラー表示]
+[Initial display]
+  ↓ Enter data
+[Editing]
+  ↓ Submit
+[Validation]
+  ├── Errors found → [Return to editing]
+  └── No errors → [Submitting]
+                      ├── Success → [Submission complete]
+                      └── Failure → [Display error]
 ```
 
-## 11.3 検索・フィルタ状態
+## 11.3 Search and Filter States
 
-対象画面：
+Applicable screens:
 
-- 用語集一覧
-- CLF模擬問題一覧
-- ブログ一覧
-- 比較一覧
-- 構成図一覧
+- Glossary list
+- CLF practice-question list
+- Blog list
+- Comparison list
+- Architecture diagram list
 
 ```text
-[一覧表示]
-  ↓ 検索キーワード入力
-[検索結果表示]
-  ↓ カテゴリ選択
-[絞り込み結果表示]
-  ↓ 条件リセット
-[一覧表示]
+[Display list]
+  ↓ Enter a search keyword
+[Display search results]
+  ↓ Select a category
+[Display filtered results]
+  ↓ Reset conditions
+[Display list]
 ```
 
 ---
 
-## 12. エラー画面設計
+## 12. Error Screen Design
 
-## 12.1 404ページ
+## 12.1 404 Page
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| URL | 存在しないURL |
-| 表示内容 | ページが見つかりません |
-| 導線 | トップページ、用語集、模擬問題、ブログ |
+| URL | Nonexistent URL |
+| Displayed content | Page not found |
+| Links | Home page, glossary, practice questions, and blog |
 
-### ワイヤーフレーム
+### Wireframe (Japanese Localized Website Example)
 
 ```text
 ページが見つかりません
@@ -1751,27 +1751,27 @@ URLが変更されたか、削除された可能性があります。
 [トップへ戻る] [用語集を見る] [模擬問題を解く]
 ```
 
-## 12.2 500エラー相当
+## 12.2 Equivalent of a 500 Error
 
-静的サイト中心のため発生頻度は低いが、APIエラー時には画面内でエラーメッセージを表示する。
+Although uncommon because the site is primarily static, display an inline error message when an API error occurs.
 
-対象：
+Applicable cases:
 
-- 問い合わせ送信失敗
-- 問題データ取得失敗
-- DynamoDB保存失敗
+- Contact submission failure
+- Question data retrieval failure
+- DynamoDB save failure
 
-表示例：
+Display example (Japanese localized website copy):
 
 ```text
 送信に失敗しました。時間をおいて再度お試しください。
 ```
 
-## 12.3 データなし表示
+## 12.3 No-Data Display
 
-検索結果が0件の場合。
+When there are zero search results.
 
-表示例：
+Display example (Japanese localized website copy):
 
 ```text
 該当するコンテンツが見つかりませんでした。
@@ -1780,235 +1780,235 @@ URLが変更されたか、削除された可能性があります。
 
 ---
 
-## 13. MVP画面優先度
+## 13. MVP Screen Priorities
 
-## 13.1 最優先画面
+## 13.1 Highest-Priority Screens
 
-| 優先度 | 画面 | 理由 |
+| Priority | Screen | Reason |
 |---|---|---|
-| 1 | トップページ | サイトの入口 |
-| 2 | AWS用語集一覧 | 学習サイトの中核 |
-| 3 | AWS用語詳細 | SEO・学習価値が高い |
-| 4 | 模擬問題一覧 | 資格対策の中心 |
-| 5 | 模擬問題詳細 | ユーザー価値が高い |
-| 6 | サービス比較一覧 | 試験対策・SEO価値が高い |
-| 7 | サービス比較詳細 | 初学者の理解を深める |
+| 1 | Home page | Site entry point |
+| 2 | AWS glossary list | Core of the learning site |
+| 3 | AWS term detail | High SEO and learning value |
+| 4 | Practice-question list | Core of certification preparation |
+| 5 | Practice-question detail | High user value |
+| 6 | Service comparison list | High exam-preparation and SEO value |
+| 7 | Service comparison detail | Deepens beginners' understanding |
 
-## 13.2 次点画面
+## 13.2 Next-Priority Screens
 
-| 優先度 | 画面 | 理由 |
+| Priority | Screen | Reason |
 |---|---|---|
-| 8 | 構成図一覧 | SAA対策・ポートフォリオ向き |
-| 9 | 構成図詳細 | AWS設計力を見せられる |
-| 10 | ブログ一覧 | SEO用 |
-| 11 | ブログ詳細 | 収益化用 |
-| 12 | 学習ロードマップ | 回遊性向上 |
+| 8 | Architecture diagram list | Suitable for SAA preparation and a portfolio |
+| 9 | Architecture diagram detail | Demonstrates AWS design skills |
+| 10 | Blog list | For SEO |
+| 11 | Blog post detail | For monetization |
+| 12 | Learning roadmap | Improves internal browsing |
 
-## 13.3 収益化・信頼性画面
+## 13.3 Monetization and Credibility Screens
 
-| 優先度 | 画面 | 理由 |
+| Priority | Screen | Reason |
 |---|---|---|
-| 13 | 問い合わせ | AdSense・信頼性・仕事導線 |
-| 14 | 運営者情報 | AdSense・ポートフォリオ |
-| 15 | プライバシーポリシー | AdSense・Cookie対応 |
-| 16 | 免責事項 | 資格情報の免責 |
+| 13 | Contact | AdSense, credibility, and work inquiries |
+| 14 | About the operator | AdSense and portfolio |
+| 15 | Privacy policy | AdSense and cookie requirements |
+| 16 | Disclaimer | Disclaimer for certification information |
 
 ---
 
-## 14. MVP実装順序
+## 14. MVP Implementation Order
 
-## 14.1 推奨実装順
+## 14.1 Recommended Implementation Order
 
 ```text
-1. 共通レイアウト
-2. トップページ
-3. 用語集一覧
-4. 用語詳細
-5. サービス比較一覧
-6. サービス比較詳細
-7. 模擬問題一覧
-8. 模擬問題詳細
-9. 構成図一覧
-10. 構成図詳細
-11. ブログ一覧
-12. ブログ詳細
-13. 学習ロードマップ
-14. 問い合わせ
-15. 運営者情報
-16. プライバシーポリシー
-17. 免責事項
-18. 404ページ
+1. Shared layout
+2. Home page
+3. Glossary list
+4. Term detail
+5. Service comparison list
+6. Service comparison detail
+7. Practice-question list
+8. Practice-question detail
+9. Architecture diagram list
+10. Architecture diagram detail
+11. Blog list
+12. Blog post detail
+13. Learning roadmap
+14. Contact
+15. About the operator
+16. Privacy policy
+17. Disclaimer
+18. 404 page
 ```
 
-## 14.2 最小公開版
+## 14.2 Minimum Launch Version
 
-最初の公開時点では、以下だけでも公開可能とする。
+The initial release may consist of only the following screens.
 
-| 画面 | 必須度 |
+| Screen | Requirement level |
 |---|---|
-| トップページ | 必須 |
-| 用語集一覧 | 必須 |
-| 用語詳細 | 必須 |
-| 模擬問題一覧 | 必須 |
-| 模擬問題詳細 | 必須 |
-| サービス比較一覧 | 必須 |
-| サービス比較詳細 | 必須 |
-| 運営者情報 | 推奨 |
-| プライバシーポリシー | 推奨 |
+| Home page | Required |
+| Glossary list | Required |
+| Term detail | Required |
+| Practice-question list | Required |
+| Practice-question detail | Required |
+| Service comparison list | Required |
+| Service comparison detail | Required |
+| About the operator | Recommended |
+| Privacy policy | Recommended |
 
-構成図、ブログ、問い合わせは次段階でもよい。ただし、ポートフォリオ価値とAdSense準備を考えるなら早めに追加する。
+Architecture diagrams, the blog, and contact may be added in the next stage. However, add them early when considering portfolio value and AdSense preparation.
 
 ---
 
-## 15. 画面別データ取得方針
+## 15. Data Retrieval Policy by Screen
 
-## 15.1 静的生成向きの画面
+## 15.1 Screens Suitable for Static Generation
 
-以下は静的生成でよい。
+The following may be statically generated.
 
-| 画面 | データ形式 |
+| Screen | Data format |
 |---|---|
-| トップページ | 静的 + 一部JSON |
-| 用語集一覧 | JSON / DynamoDBからビルド時取得 |
-| 用語詳細 | JSON / Markdown |
-| 比較一覧 | Markdownメタデータ |
-| 比較詳細 | Markdown / MDX |
-| 構成図一覧 | JSON / Markdown |
-| 構成図詳細 | Markdown / 画像 |
-| ブログ一覧 | Markdownメタデータ |
-| ブログ詳細 | Markdown / MDX |
-| ロードマップ | Markdown |
-| 運営者情報 | 静的 |
-| プライバシーポリシー | 静的 |
-| 免責事項 | 静的 |
+| Home page | Static + some JSON |
+| Glossary list | JSON / retrieved from DynamoDB at build time |
+| Term detail | JSON / Markdown |
+| Comparison list | Markdown metadata |
+| Comparison detail | Markdown / MDX |
+| Architecture diagram list | JSON / Markdown |
+| Architecture diagram detail | Markdown / images |
+| Blog list | Markdown metadata |
+| Blog post detail | Markdown / MDX |
+| Roadmap | Markdown |
+| About the operator | Static |
+| Privacy policy | Static |
+| Disclaimer | Static |
 
-## 15.2 動的処理が必要な画面
+## 15.2 Screens Requiring Dynamic Processing
 
-| 画面 | 動的処理 |
+| Screen | Dynamic processing |
 |---|---|
-| 模擬問題詳細 | クライアント側で正誤判定可能 |
-| 問い合わせ | API Gateway + Lambda + DynamoDB |
-| 将来のマイページ | Cognito + Lambda + DynamoDB |
+| Practice-question detail | Answers can be evaluated on the client |
+| Contact | API Gateway + Lambda + DynamoDB |
+| Future account dashboard | Cognito + Lambda + DynamoDB |
 
-## 15.3 MVPでの現実的な方針
+## 15.3 Practical MVP Policy
 
-MVPでは、用語・問題・記事データはJSON / Markdownで管理し、問い合わせのみLambda + DynamoDBを使う構成でもよい。
+The MVP may manage term, question, and article data in JSON / Markdown and use Lambda + DynamoDB only for contact inquiries.
 
-ただし、ポートフォリオとしてAWS利用を見せるため、Phase 2では以下を追加する。
+However, add the following in Phase 2 to demonstrate AWS usage in the portfolio.
 
-- 問題データをDynamoDBから取得
-- 問い合わせデータをDynamoDBに保存
-- Lambda/API Gatewayを利用
-- CloudWatch Logsで監視
+- Retrieve question data from DynamoDB
+- Store contact data in DynamoDB
+- Use Lambda/API Gateway
+- Monitor with CloudWatch Logs
 
 ---
 
-## 16. コンポーネント設計方針
+## 16. Component Design Policy
 
-## 16.1 共通コンポーネント
+## 16.1 Shared Components
 
-| コンポーネント | 用途 |
+| Component | Purpose |
 |---|---|
-| Header | 全画面共通ヘッダー |
-| Footer | 全画面共通フッター |
-| Breadcrumb | パンくずリスト |
-| Card | 用語・記事・問題カード |
-| Tag | カテゴリ・難易度表示 |
-| SearchBox | 検索フォーム |
-| CategoryFilter | カテゴリ絞り込み |
-| CTABox | 次の行動への導線 |
-| RelatedLinks | 関連記事・関連用語表示 |
-| AdPlaceholder | 将来広告枠 |
+| Header | Header shared by all screens |
+| Footer | Footer shared by all screens |
+| Breadcrumb | Breadcrumb navigation |
+| Card | Term, article, and question cards |
+| Tag | Category and difficulty display |
+| SearchBox | Search form |
+| CategoryFilter | Category filtering |
+| CTABox | Links to the next action |
+| RelatedLinks | Related articles and terms |
+| AdPlaceholder | Future ad slots |
 
-## 16.2 画面別コンポーネント
+## 16.2 Screen-Specific Components
 
-| コンポーネント | 用途 |
+| Component | Purpose |
 |---|---|
-| TermCard | 用語一覧カード |
-| ComparisonTable | サービス比較表 |
-| QuestionCard | 問題一覧カード |
-| QuestionPlayer | 問題回答UI |
-| ArchitectureCard | 構成図カード |
-| ArticleCard | ブログ記事カード |
-| ContactForm | 問い合わせフォーム |
-| RoadmapStep | 学習ロードマップのステップ表示 |
+| TermCard | Term list card |
+| ComparisonTable | Service comparison table |
+| QuestionCard | Question list card |
+| QuestionPlayer | Question-answering UI |
+| ArchitectureCard | Architecture diagram card |
+| ArticleCard | Blog post card |
+| ContactForm | Contact form |
+| RoadmapStep | Learning roadmap step display |
 
 ---
 
-## 17. アクセシビリティ要件
+## 17. Accessibility Requirements
 
-| ID | 要件 |
+| ID | Requirement |
 |---|---|
-| A11Y-001 | ボタン・リンクはキーボード操作できる |
-| A11Y-002 | 画像にはalt属性を設定する |
-| A11Y-003 | 構成図には補足テキストを付ける |
-| A11Y-004 | 色だけで正誤を判断させない |
-| A11Y-005 | フォームエラーはテキストで表示する |
-| A11Y-006 | 見出し階層を正しく設定する |
+| A11Y-001 | Buttons and links are keyboard-operable |
+| A11Y-002 | Images have alt attributes |
+| A11Y-003 | Architecture diagrams have supplementary text |
+| A11Y-004 | Do not rely on color alone to indicate correct or incorrect answers |
+| A11Y-005 | Display form errors as text |
+| A11Y-006 | Use a correct heading hierarchy |
 
 ---
 
-## 18. SEO要件
+## 18. SEO Requirements
 
-## 18.1 画面別SEO設定
+## 18.1 SEO Settings by Screen
 
-| 画面 | title例 | description方針 |
+| Screen | Example title (Japanese localized website copy) | Description policy |
 |---|---|---|
-| トップ | AWS資格ロードマップラボ | AWS資格学習サイトの概要を説明 |
-| 用語詳細 | Amazon S3とは？AWS初心者向けに解説 | サービス名、用途、試験ポイントを含める |
-| 比較詳細 | S3・EBS・EFSの違いを初心者向けに解説 | 比較対象サービス名を含める |
-| 問題詳細 | AWS CLF模擬問題 CLF-001 | 試験区分とカテゴリを含める |
-| 構成図詳細 | サーバーレスAPI構成をAWSで解説 | 使用サービス名を含める |
-| ブログ詳細 | 記事タイトル | 検索キーワードを含める |
+| Home | AWS資格ロードマップラボ | Describe the AWS certification learning site |
+| Term detail | Amazon S3とは？AWS初心者向けに解説 | Include the service name, uses, and exam topics |
+| Comparison detail | S3・EBS・EFSの違いを初心者向けに解説 | Include the names of the services being compared |
+| Question detail | AWS CLF模擬問題 CLF-001 | Include the exam type and category |
+| Architecture diagram detail | サーバーレスAPI構成をAWSで解説 | Include the names of the services used |
+| Blog post detail | Article title | Include search keywords |
 
-## 18.2 内部リンク方針
+## 18.2 Internal Linking Policy
 
-- 用語詳細から比較記事へリンクする
-- 比較記事から用語詳細へリンクする
-- 模擬問題の解説から関連用語へリンクする
-- ブログ記事から用語集・問題・比較へリンクする
-- 構成図詳細から使用サービスの用語詳細へリンクする
-
----
-
-## 19. 受け入れ基準
-
-## 19.1 画面一覧の受け入れ基準
-
-| ID | 基準 |
-|---|---|
-| AC-SCR-001 | MVP対象画面が一覧化されている |
-| AC-SCR-002 | 各画面にURLが定義されている |
-| AC-SCR-003 | 各画面の目的が明確である |
-| AC-SCR-004 | 各画面の主要表示項目が定義されている |
-| AC-SCR-005 | 各画面の主な遷移先が定義されている |
-| AC-SCR-006 | 将来拡張画面がMVPと分離されている |
-
-## 19.2 画面遷移の受け入れ基準
-
-| ID | 基準 |
-|---|---|
-| AC-TRN-001 | トップページから主要機能へ遷移できる |
-| AC-TRN-002 | 詳細ページから一覧ページへ戻れる |
-| AC-TRN-003 | 用語、比較、問題、構成図が相互にリンクされている |
-| AC-TRN-004 | SEO流入ユーザーが他コンテンツへ回遊できる |
-| AC-TRN-005 | 採用担当者がGitHub・構成図・問い合わせへ到達できる |
+- Link from term detail pages to comparison articles
+- Link from comparison articles to term detail pages
+- Link from practice-question explanations to related terms
+- Link from blog posts to the glossary, questions, and comparisons
+- Link from architecture diagram detail pages to term detail pages for the services used
 
 ---
 
-## 20. 結論
+## 19. Acceptance Criteria
 
-本画面一覧・画面遷移設計では、AWS資格学習サイトのMVPに必要な画面を、学習機能、SEO機能、ポートフォリオ機能、信頼性確保機能に分けて定義した。
+## 19.1 Screen Inventory Acceptance Criteria
 
-MVPでは、トップページ、用語集、サービス比較、模擬問題、構成図、ブログ、問い合わせ、運営者情報、プライバシーポリシーを中心に実装する。
+| ID | Criterion |
+|---|---|
+| AC-SCR-001 | MVP screens are listed |
+| AC-SCR-002 | Each screen has a defined URL |
+| AC-SCR-003 | Each screen has a clear purpose |
+| AC-SCR-004 | Each screen's main displayed elements are defined |
+| AC-SCR-005 | Each screen's main navigation destinations are defined |
+| AC-SCR-006 | Future extension screens are separated from the MVP |
 
-特に重要なのは、単独ページで終わらせず、以下のように内部回遊できる設計にすることである。
+## 19.2 Navigation Acceptance Criteria
+
+| ID | Criterion |
+|---|---|
+| AC-TRN-001 | Main features are accessible from the home page |
+| AC-TRN-002 | Users can return from detail pages to list pages |
+| AC-TRN-003 | Terms, comparisons, questions, and architecture diagrams are interlinked |
+| AC-TRN-004 | Users arriving through SEO can browse other content |
+| AC-TRN-005 | Recruiters can reach GitHub, architecture diagrams, and contact |
+
+---
+
+## 20. Conclusion
+
+This screen inventory and navigation design defines the screens required for the AWS certification learning site's MVP, grouped into learning, SEO, portfolio, and credibility features.
+
+The MVP focuses on the home page, glossary, service comparisons, practice questions, architecture diagrams, blog, contact, operator information, and privacy policy.
+
+It is particularly important to encourage internal browsing rather than isolated page visits, as shown below.
 
 ```text
-用語集 → 比較 → 模擬問題 → 解説 → 関連用語
-ブログ → 用語集 → 構成図 → 比較 → 問題
-構成図 → 使用サービス → 比較記事 → 模擬問題
+Glossary → Comparisons → Practice questions → Explanations → Related terms
+Blog → Glossary → Architecture diagrams → Comparisons → Questions
+Architecture diagrams → Services used → Comparison articles → Practice questions
 ```
 
-この導線により、ユーザーの学習効率を高めるだけでなく、SEO、広告収益化、ポートフォリオ評価にもつながるサイト構造となる。
+This navigation creates a site structure that improves learning efficiency while also supporting SEO, advertising monetization, and portfolio evaluation.
 

@@ -1,20 +1,8 @@
 /**
- * questions-practicalnote-schema.test.ts
- *
- * 全 questions の practicalNote が「段落数 >= 2 かつ 200 字以上」の
- * depth gating を満たすことを構造的に担保する。
- *
- * 対象ファイル (6 件):
- *   contents/questions/clf-c02.{ja,en,zh}.json
- *   contents/questions/saa-c03.{ja,en,zh}.json
- *
- * 検証 invariant:
- *  (1) 全 question の practicalNote が string かつ split('\n\n') で段落 >= 2、
- *      かつ文字数 >= 200
- *      — 違反があれば失敗 + 違反 questionId を全件 list 表示
- *  (2) practicalNote に試験名キーワード混入確認 (緩い / warn のみ)
- *      — ja: 'CLF-C02' または 'SAA-C03' のいずれかが含まれる問題を集計して
- *        console.warn で報告する (fail 化しない)
+ * Ensure practicalNote meets the depth gate: at least two paragraphs separated by double newlines and at
+ * least 200 characters. Covers all six CLF-C02/SAA-C03 ja/en/zh JSON files. Fail and list every
+ * violating questionId. Also count Japanese notes containing CLF-C02 or SAA-C03 and report via
+ * console.warn only; exam keywords do not cause failure.
  */
 import { describe, expect, it } from "vitest";
 
@@ -78,8 +66,8 @@ describe("questions practicalNote schema", () => {
   });
 
   it("(2) [warn-only] exam keyword presence in practicalNote (ja files)", () => {
-    // 緩い確認: ja の practicalNote に試験名キーワードが混入しているものを warn で報告。
-    // fail 化しない — content policy 上は exam キーワードを入れても入れなくても可。
+    // Advisory check: warn about Japanese practicalNote fields containing exam-name keywords.
+    // Do not fail: content policy permits notes with or without exam keywords.
     const jaFiles: FileEntry[] = FILES.filter((f) => f.name.endsWith(".ja"));
     const withKeyword: string[] = [];
 
@@ -99,7 +87,7 @@ describe("questions practicalNote schema", () => {
       );
     }
 
-    // warn のみ — 常に pass
+    // Warning only; always passes.
     expect(true).toBe(true);
   });
 });

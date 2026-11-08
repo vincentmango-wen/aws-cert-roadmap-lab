@@ -1,132 +1,133 @@
-# P5-042 構成図記事多言語化 — 設計書（Phase 5-G）
+# P5-042 Architecture Diagram Article Localization — Design Document (Phase 5-G)
 
-- 起票日: 2026-06-21
-- ブランチ: `feat/p5-042-phase5g-architectures-localization`（base = `dev`）
-- 想定 PR: 1 本（基盤 + 20 ローカライズ + SVG 多言語化 + parity test）
-- 先行参考実装: **P5-034 比較記事多言語化 PR #277（commit 32b5c6f）** — 同型 hybrid 構造（メタ JSON + 本文 MDX + locale 解決ヘルパー）
-- 先行設計書: `frontend/docs/p5-034-comparisons-localization-design.md`
-- 対象記事: **10 本**（slug 一覧は §7 Phase B 表）
+- Created: 2026-06-21
+- Branch: `feat/p5-042-phase5g-architectures-localization` (base = `dev`)
+- Expected PRs: 1 (foundation + 20 localizations + SVG localization + parity test)
+- Reference implementation: **P5-034 comparison article localization PR #277 (commit 32b5c6f)** — the same hybrid structure (metadata JSON + body MDX + locale resolution helpers)
+- Reference design: `frontend/docs/p5-034-comparisons-localization-design.md`
+- Target articles: **10** (slug list in the §7 Phase B table)
 
 ---
 
-## 0. 設計上のゴールと制約
+## 0. Design Goals and Constraints
 
-### 0-1. Issue 完了条件（必須）
+### 0-1. Issue completion criteria (required)
 
-1. 全 10 記事を ja / en / zh の 3 言語化する
-2. `/en/architectures/[slug]` と `/zh/architectures/[slug]` が **10 slug すべて**で表示される
-3. 日本語 URL（`/architectures/[slug]` / `/architectures`）は **既存のまま維持**
-4. `npm run typecheck` と `npm run build` が pass する
-5. **parity invariant test** を追加する（3 言語の slug / architectureId / 共通メタ / MDX / SVG 存在の構造担保）
-6. SVG 内の日本語テキストを en / zh 版で置換する（per-locale SVG ファイル + locale 切替）
-7. 10 本一覧ページ（`/en/architectures` / `/zh/architectures`）も併せて公開する
+1. Localize all 10 articles into ja / en / zh.
+2. `/en/architectures/[slug]` and `/zh/architectures/[slug]` render for **all 10 slugs**.
+3. Japanese URLs (`/architectures/[slug]` / `/architectures`) **remain unchanged**.
+4. `npm run typecheck` and `npm run build` pass.
+5. Add a **parity invariant test** (structural guarantees for matching slugs / architectureId / shared metadata / MDX / SVG existence across three languages).
+6. Replace Japanese text within SVGs in the en / zh versions (per-locale SVG files + locale switching).
+7. Publish the 10-article list pages (`/en/architectures` / `/zh/architectures`) as well.
 
-### 0-2. 設計指針（優先度順）
+### 0-2. Design principles (in priority order)
 
-1. **P5-034 比較記事多言語化と命名・配置・ヘルパー構造を 1:1 で揃える**（学習コスト削減 / レビュー観点の流用 / 既に dev に merge 済みの実証済みパターン）
-2. **後段 20 並列 agent が独立に翻訳できる粒度に分割する**（共有 JSON を取り合わない per-slug 単位ファイル構造）
-3. **既存日本語ページ・既存日本語 SVG を壊さない**（rename ではなく拡張 / 日本語は既存ファイル名のまま）
-4. **本文 SSoT を MDX に統一する**（現状の `architectures.ts` `sections[]` インライン本文 → MDX body に移行 / 既存だが wiring 切れの 10 本 MDX を活かす）
+1. **Align naming, placement, and helper structure one-to-one with P5-034 comparison article localization** (reduce learning overhead / reuse review criteria / a proven pattern already merged into dev).
+2. **Split work finely enough for 20 downstream parallel agents to translate independently** (per-slug files that avoid contention over shared JSON).
+3. **Do not break existing Japanese pages or Japanese SVGs** (extend rather than rename / keep existing Japanese filenames).
+4. **Unify the body SSoT in MDX** (migrate the current inline `sections[]` body in `architectures.ts` to MDX bodies / use the 10 existing MDX files whose wiring is disconnected).
 
-### 0-3. comparisons との構造差分（重要 — 設計判断の根拠）
+### 0-3. Structural differences from comparisons (important: rationale for design decisions)
 
-P5-034 をそのまま流用できない箇所を先に明示する。
+First identify where P5-034 cannot be reused unchanged.
 
-| 観点 | comparisons（P5-034）| architectures（本 P5-042）| 対応方針 |
+| Aspect | comparisons (P5-034) | architectures (this P5-042) | Approach |
 |---|---|---|---|
-| 既存本文 SSoT | MDX（`contents/comparisons/*.mdx`）が page から参照されていた | **`architectures.ts` の `sections[]` 配列がインライン本文 SSoT**。`contents/architectures/*.mdx` 10 本は存在するが **page から参照されていない（wiring 切れ）** | 本文 SSoT を MDX に統一。`architectures.ts` のリッチでない `sections[]` ではなく、**より詳細な既存 MDX 本文**を ja 本文の正本にする |
-| 図の描画 | mermaid をテキストで本文内描画 | **`diagramPath` で per-slug の SVG を `<img>` 描画**（`mermaid: true` フラグは立つが詳細ページは SVG 画像を表示）| SVG を per-locale ファイル化し `diagramPath` を locale 別に切替（§6）|
-| id フィールド | `comparisonId`（cmp-NNN）| `architectureId`（arc-NNN）| 命名だけ差し替え。構造は同一 |
-| category 数 | 6（Storage 等）| **9**（Static Hosting / Serverless / Three Tier / High Availability / Batch / Networking / Integration / Container / Monitoring）| `architectureCategoryLabelsByLocale` を 9 key で再定義（§5）|
-| 記事数 | 11 | **10** | parity test の件数のみ差分 |
+| Existing body SSoT | The page referenced MDX (`contents/comparisons/*.mdx`) | **The `sections[]` array in `architectures.ts` is the inline body SSoT**. Ten `contents/architectures/*.mdx` files exist but **are not referenced by the page (disconnected wiring)**. | Unify the body SSoT in MDX. Make the **more detailed existing MDX body** the authoritative ja body, rather than the less rich `sections[]` in `architectures.ts`. |
+| Diagram rendering | Mermaid rendered as text in the body | **A per-slug SVG is rendered with `<img>` via `diagramPath`** (`mermaid: true` is set, but the detail page displays an SVG image). | Create per-locale SVG files and switch `diagramPath` by locale (§6). |
+| ID field | `comparisonId` (cmp-NNN) | `architectureId` (arc-NNN) | Change only the naming; the structure is identical. |
+| Category count | 6 (Storage, etc.) | **9** (Static Hosting / Serverless / Three Tier / High Availability / Batch / Networking / Integration / Container / Monitoring) | Redefine `architectureCategoryLabelsByLocale` with nine keys (§5). |
+| Article count | 11 | **10** | Only the count in the parity test differs. |
 
 ---
 
-## 1. ファイル / ディレクトリ構造
+## 1. File / Directory Structure
 
-### 1-1. 結論: ハイブリッド設計（メタ JSON + 本文 MDX）
+### 1-1. Decision: hybrid design (metadata JSON + body MDX)
 
-P5-034 と同型。メタデータは locale 別 JSON 3 本に集約、本文は locale 別 MDX に切り出す。
+The same structure as P5-034. Consolidate metadata into three locale-specific JSON files and extract bodies into locale-specific MDX files.
 
-| 種別 | 配置 | 採用理由 |
+| Type | Location | Rationale |
 |---|---|---|
-| メタデータ（architectureId / slug / title / description / category / level / examScopes / services / tags / diagramPath / mermaid / published / publishedAt / updatedAt / locale）| `frontend/contents/architectures/architectures.{ja,en,zh}.json` | comparisons と並列の SSoT 化。20 並列 agent が触る範囲が 1 件のみで衝突しない |
-| 本文 MDX | `frontend/contents/architectures/{ja,en,zh}/<slug>.mdx` | 既存 MDX 構造を活用。MarkdownContent renderer を comparisons から共通利用。行単位 agent 編集で衝突しにくい |
+| Metadata (architectureId / slug / title / description / category / level / examScopes / services / tags / diagramPath / mermaid / published / publishedAt / updatedAt / locale) | `frontend/contents/architectures/architectures.{ja,en,zh}.json` | An SSoT parallel to comparisons. Each of the 20 parallel agents handles only one entry, avoiding conflicts. |
+| Body MDX | `frontend/contents/architectures/{ja,en,zh}/<slug>.mdx` | Use the existing MDX structure. Share the MarkdownContent renderer from comparisons. Line-level agent edits are less likely to conflict. |
 
-#### ディレクトリ構造（最終形）
+#### Directory structure (final)
 
 ```
 frontend/contents/architectures/
-├── architectures.ja.json               # メタデータ ja（10 件）
-├── architectures.en.json               # メタデータ en（10 件）
-├── architectures.zh.json               # メタデータ zh（10 件 / 繁体字）
-├── ja/                                 # 既存 MDX 10 本を git mv で移動（履歴保全）
+├── architectures.ja.json               # ja metadata (10 entries)
+├── architectures.en.json               # en metadata (10 entries)
+├── architectures.zh.json               # zh metadata (10 entries / Traditional Chinese)
+├── ja/                                 # Move 10 existing MDX files with git mv (preserve history)
 │   ├── static-site-s3-cloudfront.mdx
 │   ├── serverless-api-basic.mdx
-│   └── ...（10 件）
-├── en/                                 # 20 並列で agent が新規作成
+│   └── ... (10 files)
+├── en/                                 # Created by agents working in 20-way parallelism
 │   ├── static-site-s3-cloudfront.mdx
-│   └── ...（10 件）
-└── zh/                                 # 20 並列で agent が新規作成
+│   └── ... (10 files)
+└── zh/                                 # Created by agents working in 20-way parallelism
     ├── static-site-s3-cloudfront.mdx
-    └── ...（10 件）
+    └── ... (10 files)
 ```
 
-#### 旧パス（`frontend/contents/architectures/*.mdx`）の扱い
+#### Handling old paths (`frontend/contents/architectures/*.mdx`)
 
-`git mv frontend/contents/architectures/<slug>.mdx frontend/contents/architectures/ja/<slug>.mdx` で 10 本を ja 配下に移動し履歴保全。**本文は原則改変しない**（task の「やらないこと」遵守 / frontmatter も移動時点では維持）。loader 側で frontmatter を剥がして本文だけ読む。
+Move the 10 files under ja with `git mv frontend/contents/architectures/<slug>.mdx frontend/contents/architectures/ja/<slug>.mdx`, preserving history. **Do not modify bodies in principle** (honor the task's out-of-scope items / retain frontmatter at the time of the move). The loader strips frontmatter and reads only the body.
 
-**例外（CR1-M1 / 2026-06-21）**: 本文 SSoT を MDX 化したことで parity invariant (7) `h1 === title || title.startsWith(h1)` を満たす必要があり、ja MDX 2 本（`cloudwatch-monitoring-basic.mdx` / `private-subnet-vpc-endpoint.mdx`）の **先頭 H1 のみを JSON title に揃えた**。詳細・before/after は §10 を参照。
+**Exception (CR1-M1 / 2026-06-21)**: Moving the body SSoT to MDX requires satisfying parity invariant (7), `h1 === title || title.startsWith(h1)`, so **only the leading H1 in two ja MDX files** (`cloudwatch-monitoring-basic.mdx` / `private-subnet-vpc-endpoint.mdx`) **was aligned with the JSON title**. See §10 for details and before/after examples.
 
-### 1-2. メタデータ JSON のスキーマ
+### 1-2. Metadata JSON schema
 
-`architectures.{ja,en,zh}.json` は以下の配列。**architectureId / slug / category / level / examScopes / services / tags / mermaid / published / publishedAt / updatedAt は全 locale 共通**にし、`title / description / diagramPath` のみ locale 別にする。
+`architectures.{ja,en,zh}.json` contains the following array. **architectureId / slug / category / level / examScopes / services / tags / mermaid / published / publishedAt / updatedAt are shared across all locales**; only `title / description / diagramPath` are locale-specific.
 
 ```jsonc
+// Localized ja content specimens are intentionally retained in this schema example.
 [
   {
     "architectureId": "arc-001",
     "slug": "static-site-s3-cloudfront",
-    "title": "S3 + CloudFront 静的Webサイト構成",                 // ← locale 別
-    "description": "S3に配置した静的サイトを...",                  // ← locale 別
-    "category": "Static Hosting",                                // 共通
-    "level": "beginner",                                         // 共通
-    "examScopes": ["CLF-C02", "SAA-C03"],                        // 共通
-    "services": ["s3", "cloudfront", "iam", "acm", "route53"],   // 共通
-    "tags": ["静的サイト", "CDN", "HTTPS", "OAC", "低コスト"],     // ⚠ §6-3 参照（locale 別）
-    "diagramPath": "/images/architectures/static-site-s3-cloudfront.svg", // ← locale 別（§6）
-    "mermaid": true,                                             // 共通
-    "published": true,                                           // 共通
-    "publishedAt": "2026-06-01",                                 // 共通
-    "updatedAt": "2026-06-21",                                   // 共通
-    "locale": "ja"                                               // ← 判別用
+    "title": "S3 + CloudFront 静的Webサイト構成",                 // ← Locale-specific
+    "description": "S3に配置した静的サイトを...",                  // ← Locale-specific
+    "category": "Static Hosting",                                // Shared
+    "level": "beginner",                                         // Shared
+    "examScopes": ["CLF-C02", "SAA-C03"],                        // Shared
+    "services": ["s3", "cloudfront", "iam", "acm", "route53"],   // Shared
+    "tags": ["静的サイト", "CDN", "HTTPS", "OAC", "低コスト"],     // ⚠ See §6-3 (locale-specific)
+    "diagramPath": "/images/architectures/static-site-s3-cloudfront.svg", // ← Locale-specific (§6)
+    "mermaid": true,                                             // Shared
+    "published": true,                                           // Shared
+    "publishedAt": "2026-06-01",                                 // Shared
+    "updatedAt": "2026-06-21",                                   // Shared
+    "locale": "ja"                                               // ← Discriminator
   }
 ]
 ```
 
-> **`tags` の扱い（comparisons と差分）**: comparisons の tags は英語スラグ（`storage` 等）で locale 共通だったが、architectures の既存 tags は **日本語混在**（`静的サイト` / `CDN` / `低コスト`）。本フェーズでは tags も **title / description と同様 locale 別翻訳対象**とする（parity test の SHARED_FIELDS から tags は除外 / §8-4）。en / zh で自然な訳語に翻訳する。
+> **Handling `tags` (different from comparisons)**: Tags in comparisons were English slugs (`storage`, etc.) shared across locales, whereas existing architecture tags **include Japanese** (localized specimens: `静的サイト` / `CDN` / `低コスト`). In this phase, tags are also **translated per locale, like title / description** (exclude tags from the parity test's SHARED_FIELDS / §8-4). Translate naturally into en / zh.
 
-#### `published` の扱い
+#### Handling `published`
 
-10 本すべてを 1 PR で en / zh 公開する前提のため、`published: true` を 3 言語で揃える。将来翻訳が遅延する記事が出たら locale 別 published フィルタへ拡張（comparisons と同方針）。
+Since all 10 articles are to be published in en / zh in one PR, align `published: true` across all three languages. Extend to locale-specific published filtering if translations are delayed in the future (same policy as comparisons).
 
-#### 旧 `src/contents/architectures/architectures.ts` の扱い（compat 層）
+#### Handling the old `src/contents/architectures/architectures.ts` (compatibility layer)
 
-`termGuards.ts`（`import { publishedArchitectures }`）/ 既存 ja 一覧・詳細 page が `@/contents/architectures/architectures` を import しているため、**ここを壊さないのが最優先**。
+`termGuards.ts` (`import { publishedArchitectures }`) / existing ja list and detail pages import `@/contents/architectures/architectures`, so **preserving this contract is the top priority**.
 
-`architectures.ts` を **ja JSON を読み直して同じ `publishedArchitectures` / `architectures` を再 export する薄い compat 層**に書き換える。comparisons.ts と同型。
+Rewrite `architectures.ts` as **a thin compatibility layer loading ja JSON and re-exporting the same `publishedArchitectures` / `architectures`**. Use the same structure as comparisons.ts.
 
 ```ts
-// frontend/src/contents/architectures/architectures.ts (新 / compat 層)
+// frontend/src/contents/architectures/architectures.ts (new / compatibility layer)
 import architecturesJaData from "../../../contents/architectures/architectures.ja.json";
 import type { ArchitectureMeta } from "../../types/architecture";
 
 export const architectures: ArchitectureMeta[] = architecturesJaData as ArchitectureMeta[];
 export const publishedArchitectures = architectures.filter((a) => a.published);
 
-// 既存 export（型 / ラベル）の互換維持:
-// architectureLevelLabels / architectureCategoryLabels / awsServiceLabels は
-// 型・ラベル定義として src/types/architecture.ts へ移設し、ここから re-export する。
+// Preserve compatibility for existing exports (types / labels):
+// Move architectureLevelLabels / architectureCategoryLabels / awsServiceLabels
+// into src/types/architecture.ts as type/label definitions, and re-export them here.
 export type {
   ArchitectureMeta,
   ArchitectureLevel,
@@ -141,21 +142,21 @@ export {
 } from "../../types/architecture";
 ```
 
-> **`sections?` フィールドの扱い**: 本文 SSoT を MDX に移すため、JSON 側に `sections` は **入れない**（重複 SSoT を作らない）。型 `ArchitectureMeta.sections?` は optional のまま残す（compat / 既存 import 互換）が、JSON データには含めない。詳細 page は MDX 本文（`ArchitectureArticle.content`）を描画する形に移行する。
+> **Handling `sections?`**: Since the body SSoT moves to MDX, **do not include** `sections` in JSON (avoid duplicate SSoTs). Keep `ArchitectureMeta.sections?` optional (compatibility / existing imports), but omit it from JSON data. Migrate detail pages to render the MDX body (`ArchitectureArticle.content`).
 
 ---
 
-## 2. 型 / Architecture interface の拡張
+## 2. Type / Architecture Interface Extensions
 
-### 2-1. 型を `src/types/architecture.ts` に集約（新規）
+### 2-1. Consolidate types in `src/types/architecture.ts` (new)
 
-現状 `architectures.ts` がデータ + 型 + ラベルを兼ねている。compat 層化に伴い、型・ラベルを `src/types/architecture.ts` に切り出す（comparisons の `src/types/comparison.ts` と対称）。
+Currently `architectures.ts` contains data + types + labels. As it becomes a compatibility layer, extract types and labels into `src/types/architecture.ts` (symmetrical with comparisons' `src/types/comparison.ts`).
 
 ```ts
-// frontend/src/types/architecture.ts（新規 / 既存定義を移設）
+// frontend/src/types/architecture.ts (new / move existing definitions here)
 export type ArchitectureLevel = "beginner" | "intermediate" | "advanced";
 export type ExamScope = "CLF-C02" | "SAA-C03";
-export type ArchitectureLocale = "ja" | "en" | "zh";   // 新規
+export type ArchitectureLocale = "ja" | "en" | "zh";   // New
 
 export type ArchitectureCategory =
   | "Static Hosting"
@@ -185,50 +186,50 @@ export type ArchitectureMeta = {
   published: boolean;
   publishedAt: string;
   updatedAt: string;
-  sections?: ArchitectureSection[];      // optional 維持（JSON には含めない）
-  locale?: ArchitectureLocale;           // 新規（optional）
+  sections?: ArchitectureSection[];      // Keep optional (not included in JSON)
+  locale?: ArchitectureLocale;           // New (optional)
 };
 
-// 本文付き型（詳細 page で使用）
+// Type including the body (used by detail pages)
 export type ArchitectureArticle = ArchitectureMeta & { content: string };
 
-// 既存ラベル定義（ja 用 / compat）はここに移設し architectures.ts から re-export
-export const architectureLevelLabels: Record<ArchitectureLevel, string> = { /* 既存値 */ };
-export const architectureCategoryLabels: Record<ArchitectureCategory, string> = { /* 既存値 */ };
-export const awsServiceLabels: Record<string, string> = { /* 既存値 */ };
+// Move existing label definitions here (ja / compatibility) and re-export from architectures.ts.
+export const architectureLevelLabels: Record<ArchitectureLevel, string> = { /* Existing values */ };
+export const architectureCategoryLabels: Record<ArchitectureCategory, string> = { /* Existing values */ };
+export const awsServiceLabels: Record<string, string> = { /* Existing values */ };
 ```
 
-`locale` を optional にすることで、compat 層の配列（locale なしでも可 / JSON は locale あり）と JSON データを同一型で扱える。
+Making `locale` optional allows the compatibility layer's array (locale may be absent / JSON includes locale) and JSON data to use the same type.
 
 ---
 
-## 3. ルート設計
+## 3. Route Design
 
-### 3-1. 3 言語 × 2 階層 = 6 ルート
+### 3-1. 3 languages × 2 levels = 6 routes
 
-| URL | ファイル | generateStaticParams | 内容 |
+| URL | File | generateStaticParams | Content |
 |---|---|---|---|
-| `/architectures` | `app/(site)/architectures/page.tsx`（既存修正）| - | ja 一覧 |
-| `/architectures/[architectureSlug]` | `app/(site)/architectures/[architectureSlug]/page.tsx`（既存修正）| ja の slug 10 件 | ja 詳細 |
-| `/en/architectures` | `app/(site)/en/architectures/page.tsx`（新規）| - | en 一覧 |
-| `/en/architectures/[architectureSlug]` | `app/(site)/en/architectures/[architectureSlug]/page.tsx`（新規）| en の slug 10 件 | en 詳細 |
-| `/zh/architectures` | `app/(site)/zh/architectures/page.tsx`（新規）| - | zh 一覧 |
-| `/zh/architectures/[architectureSlug]` | `app/(site)/zh/architectures/[architectureSlug]/page.tsx`（新規）| zh の slug 10 件 | zh 詳細 |
+| `/architectures` | `app/(site)/architectures/page.tsx` (modify existing) | - | ja list |
+| `/architectures/[architectureSlug]` | `app/(site)/architectures/[architectureSlug]/page.tsx` (modify existing) | 10 ja slugs | ja detail |
+| `/en/architectures` | `app/(site)/en/architectures/page.tsx` (new) | - | en list |
+| `/en/architectures/[architectureSlug]` | `app/(site)/en/architectures/[architectureSlug]/page.tsx` (new) | 10 en slugs | en detail |
+| `/zh/architectures` | `app/(site)/zh/architectures/page.tsx` (new) | - | zh list |
+| `/zh/architectures/[architectureSlug]` | `app/(site)/zh/architectures/[architectureSlug]/page.tsx` (new) | 10 zh slugs | zh detail |
 
-全 route に `export const dynamic = "force-static"` / `export const dynamicParams = false` を付ける（comparisons と同一 / 全 slug がビルド成功する必要）。
+Add `export const dynamic = "force-static"` / `export const dynamicParams = false` to every route (same as comparisons / all slugs must build successfully).
 
-### 3-2. 詳細ページ — locale 引数で分岐する共通実装パターン
+### 3-2. Detail pages — shared implementation branching on a locale argument
 
-comparisons の `comparison-detail-data.ts` を 1:1 で踏襲し、3 言語の詳細ページは **薄いラッパー**にしてロジックを `architecture-detail-data.ts` に集約する。
+Follow comparisons' `comparison-detail-data.ts` one-to-one: make the three language detail pages **thin wrappers** and consolidate logic in `architecture-detail-data.ts`.
 
 ```ts
-// frontend/src/app/(site)/architectures/architecture-detail-data.ts（新規）
+// frontend/src/app/(site)/architectures/architecture-detail-data.ts (new)
 import type { ArchitectureArticle, ArchitectureLocale } from "@/types/architecture";
 
 export function getArchitectures(locale): ArchitectureMeta[];
 export function getPublishedArchitectures(locale): ArchitectureMeta[];
 export function getArchitectureMetaBySlug(locale, slug): ArchitectureMeta | null;
-export function getArchitectureBySlug(locale, slug): ArchitectureArticle | null;   // メタ + MDX 本文
+export function getArchitectureBySlug(locale, slug): ArchitectureArticle | null;   // Metadata + MDX body
 export function getArchitectureStaticParams(locale): { architectureSlug: string }[];
 export function createArchitecturePath(locale, slug): Pathname;
 export function createArchitectureDetailMetadataInput(locale, slug): PageMetadataInput;
@@ -236,13 +237,13 @@ export const architectureDetailLabelsByLocale: Record<ArchitectureLocale, Archit
 export const levelLabelsByLocale: Record<ArchitectureLocale, Record<ArchitectureLevel, string>>;
 export const architectureCategoryLabelsByLocale: Record<ArchitectureLocale, Record<ArchitectureCategory, string>>;
 export function formatArchitectureCategoryLabel(locale, category): string;
-export function resolveDiagramPath(locale, meta): string | undefined;   // §6 SVG locale 切替
+export function resolveDiagramPath(locale, meta): string | undefined;   // §6 SVG locale switching
 ```
 
-en / zh の薄いラッパー（comparisons の en page と同型）:
+en / zh thin wrappers (same pattern as the en comparisons page):
 
 ```ts
-// frontend/src/app/(site)/en/architectures/[architectureSlug]/page.tsx（新規）
+// frontend/src/app/(site)/en/architectures/[architectureSlug]/page.tsx (new)
 export function generateStaticParams() { return getArchitectureStaticParams("en"); }
 export async function generateMetadata({ params }) {
   const { architectureSlug } = await params;
@@ -256,10 +257,10 @@ export default async function EnglishArchitectureDetailPage({ params }) {
 }
 ```
 
-### 3-3. 一覧ページ — `architectures-page-data.ts` に集約
+### 3-3. List pages — consolidate in `architectures-page-data.ts`
 
 ```ts
-// frontend/src/app/(site)/architectures/architectures-page-data.ts（新規）
+// frontend/src/app/(site)/architectures/architectures-page-data.ts (new)
 export const architecturesPageMetadataByLocale: Record<ArchitectureLocale, PageMetadataInput>;
 export function getArchitecturesPageData(locale): {
   labels: ArchitecturesListLabels;
@@ -268,37 +269,37 @@ export function getArchitecturesPageData(locale): {
 };
 ```
 
-一覧 UI は既存 `architectures/page.tsx` から `ArchitecturesListClient.tsx`（locale 引数化）へ抽出。ja page は薄いラッパーに置換。
+Extract the list UI from the existing `architectures/page.tsx` into `ArchitecturesListClient.tsx` (parameterized by locale). Replace the ja page with a thin wrapper.
 
-### 3-4. 本文 renderer の扱い
+### 3-4. Handling the body renderer
 
-詳細 page は本文 MDX を描画する形に移行する。**comparisons が既に持つ `MarkdownContent`（`@/components/comparisons/MarkdownContent`）を再利用する**（renderInline / renderTable 含む / mermaid コードブロックは comparisons 同様にコードブロック描画）。
+Migrate the detail page to render the MDX body. **Reuse comparisons' existing `MarkdownContent` (`@/components/comparisons/MarkdownContent`)** (including renderInline / renderTable / render Mermaid code blocks as code blocks, as comparisons does).
 
-> **判断**: architectures 専用の renderer を新規作成しない（最小構成 / グローバル §2）。comparisons の MarkdownContent が markdown table / inline 記法を既にカバーしているため共通利用が妥当。将来 architectures 固有の描画要件が出たら分離を検討。
+> **Decision**: Do not create an architectures-specific renderer (minimal implementation / global §2). Sharing comparisons' MarkdownContent is appropriate because it already covers Markdown tables / inline syntax. Consider splitting it if architectures-specific rendering requirements arise in the future.
 
-### 3-5. 詳細ページ本体コンポーネント
+### 3-5. Detail-page body components
 
 ```
-frontend/src/components/architectures/ArchitectureDetailContent.tsx（新規 / locale 引数化）
-frontend/src/components/architectures/ArchitecturesListClient.tsx（新規 / locale 引数化）
+frontend/src/components/architectures/ArchitectureDetailContent.tsx (new / parameterized by locale)
+frontend/src/components/architectures/ArchitecturesListClient.tsx (new / parameterized by locale)
 ```
 
-既存 `architectures/[architectureSlug]/page.tsx` の JSX 構造（パンくず / header / 構成図 SVG / 使用 AWS サービス / 本文 / CTA）を `ArchitectureDetailContent` に移設し、以下を locale 化:
+Move the existing JSX structure in `architectures/[architectureSlug]/page.tsx` (breadcrumbs / header / architecture SVG / AWS services used / body / CTA) into `ArchitectureDetailContent`, localizing:
 
-- パンくず（ホーム / 構成図 / タイトル）→ `architectureDetailLabelsByLocale[locale]` + `createLocalizedPath(locale, ...)`
-- カテゴリ / レベルバッジ → `architectureCategoryLabelsByLocale` / `levelLabelsByLocale`
-- 構成図 SVG → `resolveDiagramPath(locale, meta)`（§6）+ alt 文言を locale 化
-- 「使用AWSサービス」見出し・説明・サービスチップ → labels 化 + `createTermDetailPath(locale, service)` で同言語遷移（§4）
-- 本文 → `architecture.content`（MDX）を `MarkdownContent` で描画。MDX が空（翻訳前）なら `sections` フォールバックは設けず空セクション（build を落とさない）
-- CTA「構成図一覧へ戻る」「他のAWS構成図も確認する」→ labels 化 + `createLocalizedPath(locale, "/architectures")`
+- Breadcrumbs (Home / Architectures / title) → `architectureDetailLabelsByLocale[locale]` + `createLocalizedPath(locale, ...)`
+- Category / level badges → `architectureCategoryLabelsByLocale` / `levelLabelsByLocale`
+- Architecture SVG → `resolveDiagramPath(locale, meta)` (§6) + localized alt text
+- "AWS services used" heading, description, and service chips → labels + same-language navigation through `createTermDetailPath(locale, service)` (§4)
+- Body → render `architecture.content` (MDX) with `MarkdownContent`. If MDX is empty (before translation), leave an empty section rather than adding a `sections` fallback (do not fail the build).
+- "Back to architecture list" / "Explore other AWS architectures" CTAs → labels + `createLocalizedPath(locale, "/architectures")`
 
 ---
 
-## 4. ロケール解決ヘルパー & 同言語遷移（内部リンク）
+## 4. Locale Resolution Helpers & Same-Language Navigation (Internal Links)
 
-### 4-1. comparisons と完全に揃える
+### 4-1. Match comparisons exactly
 
-| comparisons 関数 | architectures 対応 |
+| comparisons function | architectures equivalent |
 |---|---|
 | `getComparisons(locale)` | `getArchitectures(locale)` |
 | `getComparisonMetaBySlug(locale, slug)` | `getArchitectureMetaBySlug(locale, slug)` |
@@ -309,53 +310,53 @@ frontend/src/components/architectures/ArchitecturesListClient.tsx（新規 / loc
 | `comparisonDetailLabelsByLocale` | `architectureDetailLabelsByLocale` |
 | `formatCategoryLabel(locale, category)` | `formatArchitectureCategoryLabel(locale, category)` |
 
-`createLocalizedPath` / `Pathname` は既存 `@/i18n/locales` を再利用（comparisons と同じ）。
+Reuse `createLocalizedPath` / `Pathname` from the existing `@/i18n/locales` (as comparisons does).
 
-### 4-2. 同言語遷移の必須化
+### 4-2. Require same-language navigation
 
-詳細ページ内のリンクは **必ず `createLocalizedPath(locale, ...)` 経由**。hard-coded `/terms/${id}` / `/architectures/...` は禁止。
+Detail-page links **must use `createLocalizedPath(locale, ...)`**. Hard-coded `/terms/${id}` / `/architectures/...` paths are prohibited.
 
-| リンク種別 | 対応 |
+| Link type | Implementation |
 |---|---|
-| 使用AWSサービスチップ | `createLocalizedPath(locale, /terms/${service})`（terms ヘルパー流用 / 既存 `isExistingTerm` で公開判定）|
-| 「構成図一覧へ戻る」CTA | `createLocalizedPath(locale, "/architectures")` |
-| パンくず「ホーム」 | `createLocalizedPath(locale, "/")` |
-| パンくず「構成図」 | `createLocalizedPath(locale, "/architectures")` |
+| AWS service chips | `createLocalizedPath(locale, /terms/${service})` (reuse the terms helper / check publication with the existing `isExistingTerm`) |
+| "Back to architecture list" CTA | `createLocalizedPath(locale, "/architectures")` |
+| "Home" breadcrumb | `createLocalizedPath(locale, "/")` |
+| "Architectures" breadcrumb | `createLocalizedPath(locale, "/architectures")` |
 
-### 4-3. termGuards の locale 別 published 拡張
+### 4-3. Extend locale-specific publication support in termGuards
 
-`architectureSlugSetByLocale` を 3 言語とも `architectureSlugSet` に揃える（comparisons の P5-034 と同型の変更）:
+Align `architectureSlugSetByLocale` to `architectureSlugSet` for all three languages (same change as comparisons in P5-034):
 
 ```ts
-// frontend/src/lib/termGuards.ts 修正
+// Modify frontend/src/lib/termGuards.ts
 const architectureSlugSetByLocale: Record<Locale, Set<string>> = {
   ja: architectureSlugSet,
-  en: architectureSlugSet,   // ← 変更（旧: 空セット）
-  zh: architectureSlugSet,   // ← 変更（旧: 空セット）
+  en: architectureSlugSet,   // ← Changed (previously: empty set)
+  zh: architectureSlugSet,   // ← Changed (previously: empty set)
 };
 ```
 
-これにより terms / comparisons 側の「関連構成図」セクションから en / zh 詳細への同言語遷移が自動的に有効化される（追加実装不要 / termGuards コメントも併せて更新）。
+This automatically enables same-language navigation from the "Related architectures" sections in terms / comparisons to en / zh detail pages (no additional implementation required / update termGuards comments as well).
 
-### 4-4. 本文 MDX ローダー
+### 4-4. MDX body loader
 
-comparisons の `comparison-content-loader.ts` を 1:1 で複製した `architecture-content-loader.ts` を新規作成する。**ロジック差分なし**（frontmatter strip + leading H1 strip + slug バリデーション + ファイル不在時 null）。
+Create `architecture-content-loader.ts` as a one-to-one copy of comparisons' `comparison-content-loader.ts`. **No logic differences** (strip frontmatter + strip leading H1 + validate slugs + return null when a file is missing).
 
 ```ts
-// frontend/src/app/(site)/architectures/architecture-content-loader.ts（新規 / Node-only）
+// frontend/src/app/(site)/architectures/architecture-content-loader.ts (new / Node-only)
 export function loadArchitectureContent(locale, slug, title): string | null;
 export function listArchitectureContentSlugs(locale): string[];
 ```
 
-ディレクトリ探索は `contents/architectures/{ja,en,zh}/<slug>.mdx`（comparisons と同じ 2 候補パス探索）。
+Look up `contents/architectures/{ja,en,zh}/<slug>.mdx` (the same two candidate paths as comparisons).
 
 ---
 
-## 5. category ラベルの多言語化（9 軸）
+## 5. Category Label Localization (9 Categories)
 
-architectures は 9 category（comparisons は 6）。`architecture-detail-data.ts` に `architectureCategoryLabelsByLocale` を定義する。
+Architectures has nine categories (comparisons has six). Define `architectureCategoryLabelsByLocale` in `architecture-detail-data.ts`.
 
-| category（共通英語 key / 共通アンカー id）| ja（既存）| en | zh（繁体字 / 台湾標準）|
+| category (shared English key / shared anchor ID) | ja (existing localized labels) | en | zh (localized Traditional Chinese / Taiwan standard) |
 |---|---|---|---|
 | Static Hosting | 静的サイト | Static Hosting | 靜態網站託管 |
 | Serverless | サーバーレス | Serverless | 無伺服器 |
@@ -367,33 +368,33 @@ architectures は 9 category（comparisons は 6）。`architecture-detail-data.
 | Container | コンテナ | Container | 容器 |
 | Monitoring | 運用監視 | Monitoring | 維運監控 |
 
-> ja ラベルは既存 `architectureCategoryLabels` の値をそのまま使う（破壊しない）。category 値・アンカー id は **英語固定**で URL 安定性を保ち、表示ラベルのみ locale 切替（comparisons §4-4 の方針を踏襲）。zh 訳語は §7 Phase A の翻訳タスクで確定（台湾標準用語を採用 / 簡体字禁止）。
+> Use existing `architectureCategoryLabels` values unchanged for ja labels (do not break them). Keep category values and anchor IDs **fixed in English** for URL stability, switching only display labels by locale (follow comparisons §4-4). Finalize zh translations in the §7 Phase A translation task (Taiwan-standard terminology / no Simplified Chinese).
 
-`level` ラベルは comparisons の `levelLabelsByLocale` と同一（beginner/intermediate/advanced → ja: 初級/中級/上級, en: Beginner/Intermediate/Advanced, zh: 初級/中級/進階）を再定義（namespace 分離）。
+Redefine `level` labels identically to comparisons' `levelLabelsByLocale` in a separate namespace (localized specimens: beginner/intermediate/advanced → ja: 初級/中級/上級, en: Beginner/Intermediate/Advanced, zh: 初級/中級/進階).
 
 ---
 
-## 6. SVG localization（per-locale SVG ファイル + locale 切替）
+## 6. SVG Localization (Per-Locale SVG Files + Locale Switching)
 
-### 6-1. 結論: per-locale SVG ファイル方式
+### 6-1. Decision: per-locale SVG files
 
-現状 SVG（`/images/architectures/<slug>.svg`）には日本語テキストが直接埋め込まれている（例: `S3を直接公開せず、CloudFront OAC経由で...` / `ポイント：S3は非公開...`）。SVG はビルド時に `<img src={diagramPath}>` で描画されるため、locale 別の SVG ファイルを用意し `diagramPath` を切り替える。
+Existing SVGs (`/images/architectures/<slug>.svg`) directly embed Japanese text (localized specimens: `S3を直接公開せず、CloudFront OAC経由で...` / `ポイント：S3は非公開...`). Because SVGs are rendered at build time with `<img src={diagramPath}>`, provide locale-specific SVG files and switch `diagramPath`.
 
-### 6-2. ファイル命名規則
+### 6-2. File naming convention
 
-| locale | SVG パス | 扱い |
+| locale | SVG path | Handling |
 |---|---|---|
-| ja | `/images/architectures/<slug>.svg` | **既存ファイルをそのまま維持**（リネームしない / 履歴・既存リンク保全）|
-| en | `/images/architectures/<slug>.en.svg` | 新規作成（日本語テキストを英語に置換）|
-| zh | `/images/architectures/<slug>.zh.svg` | 新規作成（日本語テキストを繁体字に置換）|
+| ja | `/images/architectures/<slug>.svg` | **Keep existing files unchanged** (do not rename / preserve history and existing links). |
+| en | `/images/architectures/<slug>.en.svg` | Create new files (replace Japanese text with English). |
+| zh | `/images/architectures/<slug>.zh.svg` | Create new files (replace Japanese text with Traditional Chinese). |
 
-実体ファイル: `frontend/public/images/architectures/<slug>.en.svg` / `<slug>.zh.svg`（ja は既存）。
+Actual files: `frontend/public/images/architectures/<slug>.en.svg` / `<slug>.zh.svg` (ja already exists).
 
-> ja を `<slug>.ja.svg` にリネームしない理由: 既存日本語ページ・既存リンク・履歴を壊さない（指針 0-2 #3）。ja のみ無印、en/zh のみサフィックス付きの非対称命名を許容する。
+> Why not rename ja to `<slug>.ja.svg`: preserve existing Japanese pages, links, and history (principle 0-2 #3). Accept asymmetric naming with no suffix for ja and suffixes only for en/zh.
 
-### 6-3. diagramPath の locale 切替ロジック
+### 6-3. Locale switching logic for diagramPath
 
-JSON には ja の `diagramPath`（無印）をそのまま入れ、locale 別解決はヘルパーで行う。これにより JSON のメタ生成が単純化し、SVG ファイル命名規則の SSoT が `resolveDiagramPath` 1 箇所に集約される。
+Store the ja `diagramPath` (without a suffix) unchanged in JSON; resolve locales in a helper. This simplifies metadata JSON generation and consolidates the SVG naming convention's SSoT in one place, `resolveDiagramPath`.
 
 ```ts
 // architecture-detail-data.ts
@@ -404,10 +405,10 @@ const DIAGRAM_SUFFIX_BY_LOCALE: Record<ArchitectureLocale, string> = {
 };
 
 /**
- * locale 別の SVG パスを返す。
- * meta.diagramPath（ja の無印パス / 例 /images/architectures/foo.svg）を基準に
- * en → foo.en.svg / zh → foo.zh.svg へ拡張子直前にサフィックスを挿入する。
- * diagramPath 未設定なら undefined（SVG セクション非表示）。
+ * Return the locale-specific SVG path.
+ * Starting from meta.diagramPath (the unsuffixed ja path, e.g., /images/architectures/foo.svg),
+ * insert a suffix immediately before the extension: en → foo.en.svg / zh → foo.zh.svg.
+ * Return undefined if diagramPath is unset (hide the SVG section).
  */
 export function resolveDiagramPath(
   locale: ArchitectureLocale,
@@ -420,71 +421,71 @@ export function resolveDiagramPath(
 }
 ```
 
-> **代替案（不採用）**: JSON の `diagramPath` を locale 別フルパスで持つ案。SSoT が JSON 3 ファイルに分散しサフィックス命名のズレ事故を生むため、ヘルパー集約方式を採用。parity test では「3 言語で `diagramPath`（無印基準）が一致」を検証し、ファイル存在は実パスで検証する（§8-4）。
+> **Alternative (rejected)**: Store locale-specific full paths in JSON's `diagramPath`. This would distribute the SSoT across three JSON files and risk inconsistent suffix naming, so use the centralized helper. The parity test verifies that `diagramPath` (the unsuffixed base) matches across three languages, then checks file existence using the resolved paths (§8-4).
 
-### 6-4. SVG テキスト置換の規律（Phase B agent / SVG 担当）
+### 6-4. Rules for SVG text replacement (Phase B agents / SVG owners)
 
-- **構造（rect / path / circle / viewBox / 座標 / 色）は一切変更しない**。`<text>` 要素の **テキストノードのみ**を翻訳する
-- AWS サービス正式名（`Amazon S3` / `CloudFront` / `IAM` 等）は **翻訳せず原文維持**（en/zh とも英語表記）
-- 日本語の説明文（`S3を直接公開せず...` / `ポイント：...` / `Browser Access` 等の混在ラベル）を locale 訳語に置換
-- テキスト長が伸びて図からはみ出す場合は **font-size を下げる or 改行**で対応（座標・rect 幅は動かさない / はみ出しは reviewer が目視チェック）
-- `font-family` は既存（`Arial, sans-serif`）維持。繁体字が Arial で描画されない懸念があれば `font-family` に `"Noto Sans TC", sans-serif` 等のフォールバックを **末尾追加のみ**で対応（既存指定を消さない）
-- ja SVG は **触らない**（既存維持）
+- **Do not change structure (rect / path / circle / viewBox / coordinates / colors)**. Translate **only text nodes** inside `<text>` elements.
+- **Keep official AWS service names unchanged** (`Amazon S3` / `CloudFront` / `IAM`, etc.; English notation in both en/zh).
+- Replace Japanese descriptions and mixed-language labels with the locale's translations (localized specimens: `S3を直接公開せず...` / `ポイント：...`; mixed label example: `Browser Access`).
+- If longer text overflows the diagram, **reduce font-size or insert line breaks** (do not move coordinates or change rect widths / reviewers visually inspect overflow).
+- Keep the existing `font-family` (`Arial, sans-serif`). If there is a concern that Arial cannot render Traditional Chinese, **append only** a fallback such as `"Noto Sans TC", sans-serif` to `font-family` (do not remove existing declarations).
+- **Do not touch** ja SVGs (preserve existing files).
 
-> **納品形式の補足**: 本プロジェクトの SVG は HTML 埋込（`<img src>`）でブラウザレンダリングされるため、`.claude/rules/engineering-asset-delivery.md` の「PNG が正本」原則の例外（サイト内 UI として SVG 直接利用が許容されるケース）に該当する。PNG 変換は不要。
+> **Delivery format note**: This project's SVGs are embedded in HTML (`<img src>`) and rendered by the browser, so they are an exception to the "PNG is authoritative" principle in `.claude/rules/engineering-asset-delivery.md` (direct SVG use is allowed as website UI). PNG conversion is unnecessary.
 
 ---
 
-## 7. 実装順序
+## 7. Implementation Order
 
-### Phase A: 基盤（Foundation / シリアル / 単一 agent / P5-042 本体）
+### Phase A: Foundation (serial / single agent / main P5-042 work)
 
-20 並列 agent が触る前提を作る。エディタが着工前に完遂する。
+Establish the prerequisites for 20 parallel agents. The editor completes these before translation begins.
 
-1. **A-1**: `frontend/src/types/architecture.ts`（新規）— 型 + ラベルを `architectures.ts` から移設 + `ArchitectureLocale` / `ArchitectureArticle` 追加
-2. **A-2**: `git mv frontend/contents/architectures/*.mdx frontend/contents/architectures/ja/`（10 本 / 履歴保全 / 中身改変なし）
-3. **A-3**: `architectures.ja.json` を生成 — **本文ではなくメタのみ**を ja MDX frontmatter + 既存 `architectures.ts` から抽出（既存 `architectures.ts` の 10 件メタと一致確認 / `sections` は入れない / `tags` は ja のまま）
-4. **A-4**: `architectures.en.json` をプレースホルダ作成（`title`/`description`/`tags` を `[EN] ...` 等の仮値 / 残りは ja からコピー / `locale: "en"`）
-5. **A-5**: `architectures.zh.json` も同様にプレースホルダ作成（`[ZH] ...` / `locale: "zh"`）
-6. **A-6**: `frontend/contents/architectures/{en,zh}/.gitkeep` を置く（空ディレクトリ / MDX は Phase B）
-7. **A-7**: `frontend/src/contents/architectures/architectures.ts` を JSON 再 export 版（compat 層）に書き換え（`publishedArchitectures` / `architectures` / ラベル re-export 維持）
-8. **A-8**: `architecture-detail-data.ts`（新規）— locale 解決ヘルパー一式 + `architectureDetailLabelsByLocale` + `levelLabelsByLocale` + `architectureCategoryLabelsByLocale`（9 軸）+ `resolveDiagramPath`
-9. **A-9**: `architecture-content-loader.ts`（新規）— comparisons loader を 1:1 複製
-10. **A-10**: `architectures-page-data.ts`（新規）— 一覧ページデータ + `architecturesPageMetadataByLocale`
-11. **A-11**: `frontend/src/components/architectures/ArchitectureDetailContent.tsx`（新規）— 既存詳細 page から JSX 移設 + locale 引数化 + SVG locale 切替 + 本文を `MarkdownContent` 描画
-12. **A-12**: `frontend/src/components/architectures/ArchitecturesListClient.tsx`（新規）— 一覧 UI を locale 引数化
-13. **A-13**: 既存 `architectures/page.tsx` を `ArchitecturesListClient` 呼び出しの薄い ja ラッパーに置換
-14. **A-14**: 既存 `architectures/[architectureSlug]/page.tsx` を `ArchitectureDetailContent` 呼び出しの薄い ja ラッパーに置換
-15. **A-15**: `en/architectures/page.tsx` + `en/architectures/[architectureSlug]/page.tsx`（新規）
-16. **A-16**: `zh/architectures/page.tsx` + `zh/architectures/[architectureSlug]/page.tsx`（新規）
-17. **A-17**: `frontend/src/lib/termGuards.ts` の `architectureSlugSetByLocale` を 3 言語とも `architectureSlugSet` に揃える + コメント更新
-18. **A-18**: SVG プレースホルダ — `en`/`zh` SVG を **ja SVG のコピー**で 20 本作成（`<slug>.en.svg` / `<slug>.zh.svg`）。テキストは ja のまま（Phase B で翻訳置換）。これにより A-19 のビルドで `<img>` 404 が起きない
-19. **A-19**: `npm run typecheck && npm run build` 全 pass を確認。**プレースホルダ翻訳のまま**で 6 ルート全表示・全 SVG 描画できる状態に到達
+1. **A-1**: `frontend/src/types/architecture.ts` (new) — move types + labels from `architectures.ts` + add `ArchitectureLocale` / `ArchitectureArticle`.
+2. **A-2**: `git mv frontend/contents/architectures/*.mdx frontend/contents/architectures/ja/` (10 files / preserve history / no content changes).
+3. **A-3**: Generate `architectures.ja.json` — extract **metadata only, not bodies**, from ja MDX frontmatter + existing `architectures.ts` (verify it matches the existing 10 metadata entries in `architectures.ts` / omit `sections` / keep `tags` in ja).
+4. **A-4**: Create placeholders in `architectures.en.json` (`title`/`description`/`tags` use temporary values such as `[EN] ...` / copy the rest from ja / `locale: "en"`).
+5. **A-5**: Create placeholders in `architectures.zh.json` in the same way (`[ZH] ...` / `locale: "zh"`).
+6. **A-6**: Add `frontend/contents/architectures/{en,zh}/.gitkeep` (empty directories / MDX comes in Phase B).
+7. **A-7**: Rewrite `frontend/src/contents/architectures/architectures.ts` as a JSON re-export (compatibility layer), preserving `publishedArchitectures` / `architectures` / label re-exports.
+8. **A-8**: `architecture-detail-data.ts` (new) — full set of locale resolution helpers + `architectureDetailLabelsByLocale` + `levelLabelsByLocale` + `architectureCategoryLabelsByLocale` (nine categories) + `resolveDiagramPath`.
+9. **A-9**: `architecture-content-loader.ts` (new) — copy the comparisons loader one-to-one.
+10. **A-10**: `architectures-page-data.ts` (new) — list-page data + `architecturesPageMetadataByLocale`.
+11. **A-11**: `frontend/src/components/architectures/ArchitectureDetailContent.tsx` (new) — move JSX from the existing detail page + parameterize by locale + SVG locale switching + render the body with `MarkdownContent`.
+12. **A-12**: `frontend/src/components/architectures/ArchitecturesListClient.tsx` (new) — parameterize the list UI by locale.
+13. **A-13**: Replace existing `architectures/page.tsx` with a thin ja wrapper calling `ArchitecturesListClient`.
+14. **A-14**: Replace existing `architectures/[architectureSlug]/page.tsx` with a thin ja wrapper calling `ArchitectureDetailContent`.
+15. **A-15**: `en/architectures/page.tsx` + `en/architectures/[architectureSlug]/page.tsx` (new).
+16. **A-16**: `zh/architectures/page.tsx` + `zh/architectures/[architectureSlug]/page.tsx` (new).
+17. **A-17**: Align `architectureSlugSetByLocale` in `frontend/src/lib/termGuards.ts` to `architectureSlugSet` for all three languages + update comments.
+18. **A-18**: SVG placeholders — create 20 `en`/`zh` SVGs **as copies of ja SVGs** (`<slug>.en.svg` / `<slug>.zh.svg`). Keep text in ja (replace with translations in Phase B). This prevents `<img>` 404s in the A-19 build.
+19. **A-19**: Confirm `npm run typecheck && npm run build` both pass. Reach a state where all six routes render and every SVG displays **with placeholder translations still in place**.
 
-Phase A 完了時点でローカライズ前のフレーム完成。画面に `[EN]` / `[ZH]` が出ても OK。
+At the end of Phase A, the pre-localization framework is complete. It is acceptable for `[EN]` / `[ZH]` to appear on screen.
 
-### Phase B: 並列ローカライズ（Localize × 20 + SVG / 各 agent 独立）
+### Phase B: Parallel localization (Localize × 20 + SVG / independent agents)
 
-割り当て単位 = **1 slug × 1 locale**。各 agent の担当範囲:
+Assignment unit = **1 slug × 1 locale**. Each agent owns:
 
-1. `frontend/contents/architectures/{en|zh}/<slug>.mdx` の新規作成（本文 MDX 翻訳 / frontmatter なし）
-2. `frontend/contents/architectures/<slug>.{en|zh}.meta.json`（1 件単位の小ファイル / §並列安全性）に `title` / `description` / `tags` を出力
-3. `frontend/public/images/architectures/<slug>.{en|zh}.svg` のテキスト翻訳置換（A-18 のコピーを上書き / §6-4 規律遵守）
+1. Create `frontend/contents/architectures/{en|zh}/<slug>.mdx` (translate the MDX body / no frontmatter).
+2. Output `title` / `description` / `tags` to `frontend/contents/architectures/<slug>.{en|zh}.meta.json` (a small single-entry file / see parallel safety).
+3. Replace text with translations in `frontend/public/images/architectures/<slug>.{en|zh}.svg` (overwrite the A-18 copy / follow §6-4).
 
-#### agent 並列時の race 防止策（重要）
+#### Preventing races between parallel agents (important)
 
-JSON への直接追記を **禁止**する。agent は `architectures.{en|zh}.json` を **絶対に開かない/書かない**。代わりに **1 slug 1 locale 単位の小ファイル** `<slug>.en.meta.json` / `<slug>.zh.meta.json`（`title`/`description`/`tags` のみの schema-typed object）を出力する。
+Direct additions to JSON are **prohibited**. Agents **must never open/write** `architectures.{en|zh}.json`. Instead, output **a small file per slug and locale**, `<slug>.en.meta.json` / `<slug>.zh.meta.json` (a schema-typed object containing only `title`/`description`/`tags`).
 
 ```jsonc
-// 例: frontend/contents/architectures/static-site-s3-cloudfront.en.meta.json
+// Example: frontend/contents/architectures/static-site-s3-cloudfront.en.meta.json
 { "title": "...", "description": "...", "tags": ["...", "..."] }
 ```
 
-Phase B 末に **エディタが直列で** 20 件の meta.json を読み、`architectures.{en,zh}.json` の対応エントリ（slug 一致）に `title`/`description`/`tags` をマージして集約する（agent 並列 → エディタ直列マージ）。マージ後 meta.json は削除（または `.gitignore`）。
+At the end of Phase B, **the editor serially** reads the 20 meta.json files and merges `title`/`description`/`tags` into the corresponding entries (matched by slug) in `architectures.{en,zh}.json` (parallel agents → serial editor merge). Delete meta.json files after merging (or add them to `.gitignore`).
 
-これにより 20 agent が共有 JSON を 1 度も同時編集せず、JSON ファイルを取り合わない構造を実現する（指針 0-2 #2）。
+This ensures none of the 20 agents ever edit shared JSON concurrently, preventing contention over JSON files (principle 0-2 #2).
 
-#### 20 並列の slug 一覧（10 slug × 2 locale）
+#### Slug list for 20 parallel assignments (10 slugs × 2 locales)
 
 | # | slug | en agent | zh agent |
 |---|---|---|---|
@@ -499,132 +500,132 @@ Phase B 末に **エディタが直列で** 20 件の meta.json を読み、`arc
 | 9 | ecs-fargate-web-app | en | zh |
 | 10 | cloudwatch-monitoring-basic | en | zh |
 
-各 agent の成果物 = MDX 1 本 + meta.json 1 件 + SVG 1 本（= 3 ファイル / 衝突なし）。
+Each agent's deliverables = one MDX + one meta.json + one SVG (= three files / no conflicts).
 
-### Phase C: 内部リンク多言語化検証
+### Phase C: Validate localized internal links
 
-1. **C-1**: A-17 の `termGuards.ts` 修正が効いていることを ja/en/zh の terms「関連構成図」セクションで確認
-2. **C-2**: 詳細ページ内の全リンクが `createLocalizedPath` 経由（hard-coded `/terms/${...}` / `/architectures/...` が無いか grep）
-3. **C-3**: パンくず / CTA リンクが同言語で動くか確認
+1. **C-1**: Verify that the A-17 `termGuards.ts` change works in the "Related architectures" sections of ja/en/zh terms.
+2. **C-2**: All detail-page links use `createLocalizedPath` (grep for hard-coded `/terms/${...}` / `/architectures/...`).
+3. **C-3**: Verify breadcrumbs / CTA links work within the same language.
 
-### Phase D: テスト
+### Phase D: Tests
 
-1. **D-1**: `npm run typecheck` pass
-2. **D-2**: `npm run build` pass
-3. **D-3**: dev server で `/architectures/static-site-s3-cloudfront` / `/en/architectures/...` / `/zh/architectures/...` の 3 ルート + SVG 描画を目視（任意 1 slug）
-4. **D-4**: parity invariant test を追加（§8-4）
+1. **D-1**: `npm run typecheck` passes.
+2. **D-2**: `npm run build` passes.
+3. **D-3**: Visually inspect the three routes `/architectures/static-site-s3-cloudfront` / `/en/architectures/...` / `/zh/architectures/...` + SVG rendering on the dev server (any one slug).
+4. **D-4**: Add a parity invariant test (§8-4).
 
 ---
 
-## 8. テスト戦略
+## 8. Test Strategy
 
-### 8-1. 必須
+### 8-1. Required
 
 - `npm run typecheck`
-- `npm run build`（`dynamicParams = false` のため全 slug がビルド成功する必要）
+- `npm run build` (all slugs must build successfully because `dynamicParams = false`)
 
-### 8-2. parity invariant test（追加 / comparisons-locale-parity.test.ts を踏襲）
+### 8-2. Parity invariant test (new / follow comparisons-locale-parity.test.ts)
 
-配置: `frontend/src/contents/architectures/__tests__/architectures-locale-parity.test.ts`
+Location: `frontend/src/contents/architectures/__tests__/architectures-locale-parity.test.ts`
 
-検証する不変条件（invariant）:
+Invariants to verify:
 
-1. **(1) slug 集合一致**: ja/en/zh JSON の slug 集合が完全一致（10 件）
-2. **(2) architectureId 一致**: 同 slug で `architectureId` が ja/en/zh 一致
-3. **(3) 共通メタ一致**: 同 slug で `services` / `category` / `level` / `examScopes` / `mermaid` / `published` / `publishedAt` / `updatedAt` が ja/en/zh 一致（**`tags` は locale 別翻訳のため SHARED_FIELDS から除外** / §1-2）
-4. **(4) MDX 存在**: 全 slug について `contents/architectures/{ja,en,zh}/<slug>.mdx` が `fs.existsSync = true`
-5. **(5) SVG 存在**: 全 slug について `public/images/architectures/<slug>.svg`（ja）/ `<slug>.en.svg` / `<slug>.zh.svg` が `fs.existsSync = true`（SVG 多言語化の翻訳忘れ・命名ミスを構造検出）
-6. **(6) diagramPath 整合**: 3 言語 JSON の `diagramPath`（無印 ja 基準）が一致し、`resolveDiagramPath(locale, meta)` が `(5)` で存在確認したファイルパスと一致する
-7. **(7) MDX 先頭 H1 整合**: comparisons (6) と同型 — 先頭 H1 が JSON title と一致 or `title.startsWith(h1Text)`（loader の `removeLeadingH1` が strip できる形であること）
+1. **(1) Matching slug sets**: The slug sets in ja/en/zh JSON match exactly (10 entries).
+2. **(2) Matching architectureId**: For a given slug, `architectureId` matches across ja/en/zh.
+3. **(3) Matching shared metadata**: For a given slug, `services` / `category` / `level` / `examScopes` / `mermaid` / `published` / `publishedAt` / `updatedAt` match across ja/en/zh (**exclude `tags` from SHARED_FIELDS because they are translated per locale** / §1-2).
+4. **(4) MDX existence**: For every slug, `fs.existsSync = true` for `contents/architectures/{ja,en,zh}/<slug>.mdx`.
+5. **(5) SVG existence**: For every slug, `fs.existsSync = true` for `public/images/architectures/<slug>.svg` (ja) / `<slug>.en.svg` / `<slug>.zh.svg` (structurally detect missing SVG translations and naming errors).
+6. **(6) diagramPath consistency**: `diagramPath` (based on the unsuffixed ja path) matches across all three JSON languages, and `resolveDiagramPath(locale, meta)` matches the file path checked for existence in `(5)`.
+7. **(7) Leading MDX H1 consistency**: Same as comparisons (6) — the leading H1 matches the JSON title or `title.startsWith(h1Text)` (the format must allow the loader's `removeLeadingH1` to strip it).
 
-> **(3) tags 除外の根拠**: comparisons では tags が英語スラグ共通だったため SHARED_FIELDS に含めたが、architectures の tags は日本語混在で locale 別翻訳対象（§1-2）。tags を SHARED_FIELDS に入れると 3 言語一致を強制し翻訳を妨げるため除外する。tags の件数一致（`tags.length` が 3 言語で同数）は別 it として軽く検証してもよい（任意）。
+> **Why (3) excludes tags**: In comparisons, tags were shared English slugs and therefore included in SHARED_FIELDS, whereas architecture tags include Japanese and are translated by locale (§1-2). Including tags in SHARED_FIELDS would require all three languages to match and prevent translation, so exclude them. Optionally add a lightweight separate it to check matching tag counts (`tags.length` is identical across three languages).
 
-### 8-3. 追加推奨
+### 8-3. Recommended additions
 
-- `architecture-content-loader` が frontmatter なし MDX を正しく読めることの unit test 1 件（comparisons と同型）
-- `createArchitecturePath(locale, slug)` / `resolveDiagramPath(locale, meta)` のスナップショット test
+- One unit test confirming `architecture-content-loader` correctly reads MDX without frontmatter (same pattern as comparisons).
+- Snapshot tests for `createArchitecturePath(locale, slug)` / `resolveDiagramPath(locale, meta)`.
 
-### 8-4. 手動確認
+### 8-4. Manual checks
 
-- 一覧 3 言語 / 詳細 3 言語 × 任意 1 slug = 6 ページ目視 + SVG が locale 別に切り替わること
-- en→ja / zh→ja の URL 直叩きで slug 同一なら同じ記事に飛ぶ（言語切替 UI 連動は別 issue）
+- Visually inspect lists in three languages / details in three languages × any one slug = six pages + verify SVGs switch by locale.
+- Enter en→ja / zh→ja URLs directly and verify the same slug leads to the same article (language-switch UI integration is a separate issue).
 
 ---
 
-## 9. 並列安全性の設計理由（Phase 4 並列翻訳が JSON を取り合わない根拠）
+## 9. Rationale for Parallel Safety (Why Phase 4 Parallel Translation Avoids JSON Contention)
 
-| 仕組み | 効果 |
+| Mechanism | Effect |
 |---|---|
-| agent は共有 JSON（`architectures.{en,zh}.json`）を **一切開かない/書かない** | 20 agent が同一ファイルへ同時 write する race が構造的に発生しない |
-| agent の JSON 成果物は **1 slug 1 locale 単位の `<slug>.{en,zh}.meta.json` 小ファイル**（schema-typed: `title`/`description`/`tags` のみ）| 各 agent の出力先ファイルが一意（ファイル名衝突なし）。schema を固定することでマージ側が機械的に集約できる |
-| MDX も `{en,zh}/<slug>.mdx` で **1 agent 1 ファイル** | MDX 本文も衝突なし |
-| SVG も `<slug>.{en,zh}.svg` で **1 agent 1 ファイル** | SVG 翻訳も衝突なし |
-| 共有 JSON への集約は **Phase B 末にエディタが直列**で実行 | 20 個の meta.json → 2 個の言語別 JSON へのマージが単一プロセスで順次行われ、最後に parity test で取りこぼし検出 |
+| Agents **never open/write** shared JSON (`architectures.{en,zh}.json`). | The structure prevents races from 20 agents writing the same file concurrently. |
+| Each agent's JSON deliverable is **a small `<slug>.{en,zh}.meta.json` file per slug and locale** (schema-typed: only `title`/`description`/`tags`). | Each agent has a unique output file (no filename collisions). A fixed schema allows the merge step to consolidate files mechanically. |
+| MDX uses `{en,zh}/<slug>.mdx`, **one file per agent**. | No conflicts in MDX bodies either. |
+| SVG uses `<slug>.{en,zh}.svg`, **one file per agent**. | No conflicts in SVG translations either. |
+| Shared JSON is consolidated **serially by the editor at the end of Phase B**. | A single process sequentially merges 20 meta.json files into two language-specific JSON files, then runs parity tests to detect omissions. |
 
-= **各 agent の書き込み先は MDX 1 + meta.json 1 + SVG 1 の計 3 ファイルで全て一意**。共有 JSON は読みも書きもしない。これが「Phase 4 並列翻訳が JSON ファイルを取り合わない」設計の核心。
+= **Each agent writes exactly three unique files: one MDX + one meta.json + one SVG**. Agents neither read nor write shared JSON. This is the core of the design that prevents Phase 4 parallel translation from contending over JSON files.
 
 ---
 
-## 10. 守るべき固定事項（再掲）
+## 10. Fixed Requirements (Recap)
 
-- 既存日本語 URL `/architectures/[slug]` / `/architectures` を維持
-- 既存日本語 SVG（`<slug>.svg`）をリネーム・改変しない
-- 既存 `contents/architectures/<slug>.mdx` の **本文は改変しない**（git mv で `ja/` 配下に移動 / task「やらないこと」）
-  - **例外（CR1-M1 で記録 / 2026-06-21）**: 本文 SSoT を MDX 化したことで loader `removeLeadingH1` の strip 条件 (`h1 === title` または `title.startsWith(h1)`) を満たす必要があり、parity invariant (7) を満たすため **ja MDX 2 本の先頭 H1 のみを JSON title に揃えた**。本文側 H1 は loader が描画前に strip するため、ページ表示への影響はなし。改変対象は以下:
+- Preserve existing Japanese URLs `/architectures/[slug]` / `/architectures`.
+- Do not rename or modify existing Japanese SVGs (`<slug>.svg`).
+- **Do not modify bodies** in existing `contents/architectures/<slug>.mdx` files (move under `ja/` with git mv / task out-of-scope item).
+  - **Exception (recorded in CR1-M1 / 2026-06-21)**: Moving the body SSoT to MDX required satisfying the loader `removeLeadingH1` stripping condition (`h1 === title` or `title.startsWith(h1)`), so **only the leading H1 of two ja MDX files was aligned with the JSON title** to satisfy parity invariant (7). The loader strips the body's H1 before rendering, so page display is unaffected. Modified localized specimens:
     - `contents/architectures/ja/cloudwatch-monitoring-basic.mdx`:
       - before: `# CloudWatchで見るサーバーレス運用監視構成`
-      - after: `# CloudWatch サーバーレス運用監視構成`（JSON title と一致）
+      - after: `# CloudWatch サーバーレス運用監視構成` (matches JSON title)
     - `contents/architectures/ja/private-subnet-vpc-endpoint.mdx`:
       - before: `# VPC EndpointでAWSサービスへプライベート接続する構成`
-      - after: `# VPC Endpoint プライベート接続構成`（JSON title と一致）
-  - 上記 2 本以外の ja MDX 本文（H1 以外を含む）は **無改変**
-  - 今後 ja MDX の H1 整合のために改変が必要になった場合は、本セクションに **before/after を明示記録** すること（黙って改変しない）
-- comparisons（P5-034）と命名・配置・ヘルパーを 1:1 で揃える
-- 共有 JSON への並列書き込みを発生させない（per-slug meta.json でマージ）
-- mermaid 描画の wiring 設計には踏み込まない（task「やらないこと」/ 本フェーズは SVG 画像描画のみ）
-- スロップ表現禁止リスト（comparisons §6-5 を踏襲 / ja/en/zh 各言語）を reviewer がチェック
+      - after: `# VPC Endpoint プライベート接続構成` (matches JSON title)
+  - ja MDX bodies outside these two changes (including content other than H1) are **unchanged**.
+  - If future changes are needed for ja MDX H1 consistency, **explicitly record before/after values** in this section (do not make silent changes).
+- Align naming, placement, and helpers one-to-one with comparisons (P5-034).
+- Prevent parallel writes to shared JSON (merge per-slug meta.json files).
+- Do not address the wiring design for Mermaid rendering (task out-of-scope item / this phase renders SVG images only).
+- Reviewers check the prohibited generic AI phrasing list (follow comparisons §6-5 / each of ja/en/zh).
 
 ---
 
-## 11. 残課題（open questions）
+## 11. Open Questions
 
-1. **既存 `architectures.ts` の `sections[]` 本文 vs 既存 MDX 本文**: ja 本文の正本を MDX 側に統一する（MDX の方が詳細）。`sections[]` は compat 型として残すのみで、JSON にも詳細 page にも載せない。Phase A-3 で「メタは JSON、本文は MDX」を確実に分離する
-2. **繁体字フォント**: SVG の `font-family: Arial` で繁体字が tofu 化する場合の Noto Sans TC フォールバック追加可否（§6-4 / 実機確認で判断）
-3. **言語切替 UI（hreflang / footer 言語スイッチャ）への architectures 追加**: terms / comparisons の対応有無に合わせる（別 issue の可能性 / 本フェーズ scope 外）
-4. **terms.{en,zh}.json に未登録の AWS サービス**が architectures の services / 本文に混入していないか（agent 翻訳開始前に grep で網羅確認 / 用語 SSoT 参照）
-5. **将来追加される構成図記事**を 3 言語同時公開とするか ja 先行 + 遅延翻訳を許すか（後者なら `published` を locale 別管理へ拡張）
+1. **Existing `architectures.ts` `sections[]` bodies vs. existing MDX bodies**: Unify the authoritative ja body in MDX (MDX is more detailed). Keep `sections[]` only as a compatibility type; include it in neither JSON nor detail pages. In Phase A-3, clearly separate metadata in JSON from bodies in MDX.
+2. **Traditional Chinese fonts**: Whether to allow adding a Noto Sans TC fallback if SVG `font-family: Arial` produces missing-glyph boxes (§6-4 / decide based on actual browser/device inspection).
+3. **Add architectures to language-switch UI (hreflang / footer language switcher)**: Follow whether terms / comparisons support it (possibly a separate issue / outside this phase's scope).
+4. Check for **AWS services absent from terms.{en,zh}.json** in architecture services / bodies (exhaustively grep before agents start translating / refer to the terminology SSoT).
+5. Decide whether **future architecture diagram articles** must be published in all three languages at once or may be published in ja first with delayed translations (the latter requires extending `published` to locale-specific management).
 
 ---
 
-## 12. PSP 計測フィールド（チケット完了時に追記）
+## 12. PSP Measurement Fields (Fill in on Ticket Completion)
 
 ```yaml
 psp:
   actual-duration: TBD             # h
   bug-count: TBD
   code-volume:
-    files-changed: TBD             # 想定 ~50 (基盤 ~15 + 20 mdx + 20 svg + meta json 3 + test 1 + 型 1)
+    files-changed: TBD             # Expected ~50 (foundation ~15 + 20 mdx + 20 svg + 3 metadata JSON + 1 test + 1 type file)
     lines-added: TBD
     lines-deleted: TBD
-task-category: design + impl + content   # 混合のため複数係数併用検討
+task-category: design + impl + content   # Consider combining multiple coefficients for this mixed category.
 estimate-vs-actual:
   estimated: TBD
   actual: TBD
   deviation-pct: TBD
 ```
 
-## 13. 採番・関連
+## 13. Numbering and Related Work
 
-- 本設計書: P5-042（Phase 5-G 基盤）
-- 先行: P5-034 比較記事多言語化 PR #277（commit 32b5c6f / dev merge 済み）
-- 先行設計書: `frontend/docs/p5-034-comparisons-localization-design.md`
-- 用語ルール: `frontend/docs/p5-032-aws-terminology-rules.md`
-- 関連ファイル（基盤）:
-  - `frontend/src/types/architecture.ts`（新規）
-  - `frontend/src/contents/architectures/architectures.ts`（compat 層化）
-  - `frontend/src/app/(site)/architectures/architecture-detail-data.ts`（新規）
-  - `frontend/src/app/(site)/architectures/architecture-content-loader.ts`（新規）
-  - `frontend/src/app/(site)/architectures/architectures-page-data.ts`（新規）
-  - `frontend/src/components/architectures/ArchitectureDetailContent.tsx`（新規）
-  - `frontend/src/components/architectures/ArchitecturesListClient.tsx`（新規）
-  - `frontend/src/lib/termGuards.ts`（locale 別 set 拡張）
+- This design document: P5-042 (Phase 5-G foundation)
+- Predecessor: P5-034 comparison article localization PR #277 (commit 32b5c6f / merged into dev)
+- Reference design: `frontend/docs/p5-034-comparisons-localization-design.md`
+- Terminology rules: `frontend/docs/p5-032-aws-terminology-rules.md`
+- Related files (foundation):
+  - `frontend/src/types/architecture.ts` (new)
+  - `frontend/src/contents/architectures/architectures.ts` (convert to compatibility layer)
+  - `frontend/src/app/(site)/architectures/architecture-detail-data.ts` (new)
+  - `frontend/src/app/(site)/architectures/architecture-content-loader.ts` (new)
+  - `frontend/src/app/(site)/architectures/architectures-page-data.ts` (new)
+  - `frontend/src/components/architectures/ArchitectureDetailContent.tsx` (new)
+  - `frontend/src/components/architectures/ArchitecturesListClient.tsx` (new)
+  - `frontend/src/lib/termGuards.ts` (extend locale-specific sets)

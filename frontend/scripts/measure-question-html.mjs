@@ -1,21 +1,18 @@
 /**
- * 模擬問題詳細ページ (out/questions/{clf,saa}-NNN.html) について
- * 「クローラーが見える可視テキスト」を計測し、thin content の再発を検知する。
+ * Measure crawler-visible text in practice-question detail pages (out/questions/{clf,saa}-NNN.html) to
+ * detect thin-content regressions.
  *
- * 背景: 2026-08-02 の AdSense 落選理由「有用性の低いコンテンツ」。
- * 解説 (explanation / choiceExplanations / practicalNote / officialDocs) が
- * `isSubmitted` ゲートに隠れて静的 HTML の DOM に出力されていなかったことが主因。
- * 一度直しても再びゲートの内側へ戻れば無言で thin content に戻るため、
- * ビルド成果物そのものを検査するゲートとして本スクリプトを置く。
+ * Background: the 2026-08-02 AdSense rejection cited low-value content. Explanations (explanation /
+ * choiceExplanations / practicalNote / officialDocs) were hidden behind the isSubmitted gate and absent
+ * from the static HTML DOM. Inspect the build artifacts so moving them behind that gate cannot silently
+ * reintroduce the defect.
  *
- * 使い方:
- *   node scripts/measure-question-html.mjs            # 検査モード (違反があれば exit 1)
- *   node scripts/measure-question-html.mjs --report   # 実測値の人間可読レポート (常に exit 0)
- *
- * 実行前に `npm run build` が必要 (out/ を読む)。
- *
- * 注意: 可視テキストの絶対値は空白正規化の方法で数十字ぶれる。
- * 他所で計測した絶対値と突き合わせず、必ず本スクリプトで before/after を測ること。
+ * Usage:
+ *   node scripts/measure-question-html.mjs           # Check mode: exit 1 on violations.
+ *   node scripts/measure-question-html.mjs --report  # Human-readable measurements: always exit 0.
+ * Run npm run build first; this script reads out/.
+ * Whitespace normalization can shift absolute text counts by dozens of characters. Use this script for
+ * both before/after measurements rather than comparing counts from other tools.
  */
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -25,20 +22,24 @@ const OUT_DIR = path.resolve(process.cwd(), "out");
 const CONTENTS_DIR = path.resolve(process.cwd(), "contents/questions");
 const REPORT_MODE = process.argv.includes("--report");
 
-/** ja の設問 SSoT。検査モードの verbatim 包含チェックに使う。 */
+/**
+ * Japanese question source of truth, used for verbatim inclusion checks in check mode.
+ */
 const JA_QUESTION_SOURCES = ["clf-c02.ja.json", "saa-c03.ja.json"];
 
-/** 完了条件 B: ja 全ページの可視テキスト下限。 */
+/**
+ * Acceptance criterion B: minimum visible text on every Japanese page.
+ */
 const MIN_VISIBLE_CHARS = 1500;
-/** 完了条件 B: ja 全ページの boilerplate 比率上限 (未満であること)。 */
+/**
+ * Acceptance criterion B: exclusive upper bound on boilerplate ratio for every Japanese page.
+ */
 const MAX_BOILERPLATE_RATIO = 0.4;
 
 /**
- * officialDocs の allowlist。
- *
- * SSoT は `src/lib/official-doc.ts` の `ALLOWED_PREFIXES`。
- * TypeScript を .mjs から import できないためロジックのみ複製している。
- * allowlist を増やす場合は両方を更新すること。
+ * officialDocs allowlist. The source of truth is ALLOWED_PREFIXES in src/lib/official-doc.ts. Only the
+ * logic is duplicated because .mjs cannot import TypeScript here. Update both copies when expanding the
+ * allowlist.
  */
 const ALLOWED_OFFICIAL_DOC_PREFIXES = [
   "https://aws.amazon.com/",
@@ -75,11 +76,9 @@ function toPosixPath(filePath) {
 }
 
 /**
- * HTML から head/script/style/noscript/svg/コメントを除去し、
- * タグ除去 → エンティティ復元 → 空白正規化して可視テキストを返す。
- *
- * `<script>` を除去するのは、RSC flight payload (self.__next_f.push) の
- * 文字列リテラルを「クローラーに見えているテキスト」と数えないため。
+ * Remove head/script/style/noscript/svg and comments from HTML, then strip tags, decode entities and
+ * normalize whitespace to obtain visible text. Removing scripts prevents RSC flight payload
+ * (self.__next_f.push) string literals from being counted as crawler-visible text.
  */
 function extractVisibleText(html) {
   let text = html;
@@ -108,12 +107,16 @@ function decodeHtmlEntities(value) {
     .replace(/&amp;/g, "&");
 }
 
-/** JSON 側の改行・連続空白と HTML 側のインデントを同じ土俵に載せる。 */
+/**
+ * Normalize JSON newlines/repeated spaces and HTML indentation consistently.
+ */
 function normalizeWhitespace(value) {
   return value.replace(/\s+/g, " ").trim();
 }
 
-/** 同一グループ内の全文字列に共通する接頭辞長 + 接尾辞長を boilerplate とみなす。 */
+/**
+ * Treat the common prefix length plus common suffix length of all strings in a group as boilerplate.
+ */
 function commonPrefixLength(strings) {
   if (strings.length < 2) return 0;
   const limit = Math.min(...strings.map((s) => s.length));
@@ -159,7 +162,9 @@ async function collectHtmlFiles(directoryPath) {
   return files;
 }
 
-/** `questions/clf-001.html` 形式 (= 詳細ページ) だけを拾い、locale を判定する。 */
+/**
+ * Select only detail pages such as questions/clf-001.html and determine their locale.
+ */
 function toQuestionPage(filePath) {
   const relativePath = toPosixPath(path.relative(OUT_DIR, filePath));
   const match = relativePath.match(
@@ -190,7 +195,9 @@ async function loadJaQuestions() {
   return byId;
 }
 
-/** 静的 HTML に verbatim で載っていなければならないフィールドを列挙する。 */
+/**
+ * List fields that must appear verbatim in static HTML.
+ */
 function expectedVerbatimFields(question) {
   const fields = [];
 
@@ -227,7 +234,9 @@ function expectedVerbatimFields(question) {
   return fields;
 }
 
-/** locale ごとに boilerplate を算出し、ページ行に merge する。 */
+/**
+ * Calculate boilerplate per locale and merge it into the page rows.
+ */
 function buildGroups(pages) {
   const groups = new Map();
 
@@ -363,9 +372,9 @@ function checkDetails(pages, jaPages, violations) {
   }
 
   for (const page of pages) {
-    // `open` は属性としてのみ検出する。`\bopen\b` だと Tailwind の `group-open:` バリアント
-    // （class="group-open:rotate-180" 等）にも一致して偽陽性で CI を落とすため、
-    // 直前の空白と直後の属性境界を必須にしている。
+    // Detect open only as an attribute. A word-boundary match also catches Tailwind group-open: variants
+    // such as class="group-open:rotate-180", causing false-positive CI failures.
+    // Require preceding whitespace and a following attribute boundary.
     if (!/<details\b[^>]*?\sopen(?=[\s>=/])/i.test(page.html)) continue;
     violations.push(
       `${page.file}: <details open> must not be emitted (explanation must ship collapsed)`,

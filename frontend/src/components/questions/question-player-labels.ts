@@ -1,11 +1,8 @@
 /**
- * QuestionPlayer (use client) が消費する UI label 辞書 SSoT。
- *
- * これまで `app/(site)/questions/question-detail-data.ts` (server module / 大規模 JSON import を伴う)
- * に同居していた `questionPlayerLabelsByLocale` を、client component が安全に import できるよう
- * 巨大 JSON import を含まない独立ファイルに切り出した（P5 R1 Minor-1 / Minor-2 共対応）。
- *
- * question-detail-data.ts からは re-export するため後方互換性あり。
+ * Client-safe source of truth for QuestionPlayer UI labels. questionPlayerLabelsByLocale previously
+ * lived in app/(site)/questions/question-detail-data.ts, a server module importing large JSON datasets.
+ * Extracting it into this independent file keeps those imports out of client components (P5 R1
+ * Minor-1/Minor-2). question-detail-data.ts re-exports it for backward compatibility.
  */
 
 export type QuestionPlayerLocale = "ja" | "en" | "zh";
@@ -32,9 +29,13 @@ export type QuestionPlayerLabels = {
   yourAnswerLabel: string;
   unselectedLabel: string;
   correctAnswerLabel: string;
-  /** 解説セクション（常時 DOM 出力・`<details>` で初期折りたたみ）の `<h2>`。 */
+  /**
+   * H2 for the explanation section, always present in the DOM and initially collapsed in details.
+   */
   explanationSectionTitle: string;
-  /** 解説セクションの `<summary>` 文言。開くと正解が表示されることを必ず明示する。 */
+  /**
+   * Summary label for explanations. Explicitly warn that opening the section reveals the correct answer.
+   */
   explanationSummaryLabel: string;
   explanationTitle: string;
   choiceExplanationsTitle: string;

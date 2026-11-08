@@ -1,69 +1,69 @@
-# ACR-005 / ACR-006 / ACR-007 / ACR-009 並列実装フロー設計
+# ACR-005 / ACR-006 / ACR-007 / ACR-009 Parallel Implementation Workflow Design
 
-## 背景
+## Background
 
-現在オープンな「コードで完結する」ACRチケット4件（#314 ACR-005 / #315 ACR-006 / #316 ACR-007 / #319 ACR-009）をまとめて完了させる。ふみさんからの依頼は「workflowで同時並列実装するとコンフリクトが起きるか、起きないように最も効率的なフローで4チケットを完了まで進めてほしい」というもの。実コード調査により、コンフリクトの有無・対処方針・実行環境上の制約が判明したため、それを設計として固定する。
+Complete the four currently open ACR tickets that can be resolved entirely in code: #314 ACR-005 / #315 ACR-006 / #316 ACR-007 / #319 ACR-009. Fumi requested a workflow that determines whether simultaneous implementation would cause conflicts and completes all four tickets using the most efficient conflict-free approach. Investigation of the actual code identified potential conflicts, the mitigation approach, and execution-environment constraints. This document records those findings as the design.
 
-## 対象チケットと実コード調査結果
+## Tickets and code investigation findings
 
-| チケット | Issue | 対象ファイル | 備考 |
+| Ticket | Issue | Target files | Notes |
 |---|---|---|---|
-| ACR-005 | #314 | `.github/workflows/ci.yml` | CIに test ステップが無い。参照先の未マージブランチ `chore/aws-cert-vitest-and-invariant-tests` は現行 master と342ファイル差分の化石ブランチで再利用不可 → 破棄する |
-| ACR-006 | #315 | `frontend/src/components/questions/QuestionListClient.tsx`（122行目付近） | 「問題を見る→」の折り返し崩れをレイアウトCSSのみで解消。Issue本文が警告する「locale未対応のハードコード日本語」は既に #317(ACR-008) で解消済み（`labels = getDictionary(locale).questions` 実装済み）と確認した。純粋なレイアウト修正のみで完結する |
-| ACR-007 | #316 | 同上（ページャー新設） | ACR-006 と同一ファイル。Issue本文に「#315 → 本Issueの順に直列で進めること」と明記済み |
-| ACR-009 | #319 | `frontend/src/components/layout/Footer.tsx` | 現在 props無しの Server Component。`Header.tsx` は `usePathname()` + `getLocaleFromPathname()` で locale を自己検出しており、`SiteLayout.tsx` はどのページからも locale を渡していない。Footer も同じ自己検出パターンに寄せれば他ファイルに波及しない |
+| ACR-005 | #314 | `.github/workflows/ci.yml` | CI has no test step. The referenced unmerged branch `chore/aws-cert-vitest-and-invariant-tests` is obsolete, differing from current master in 342 files, and cannot be reused. Discard it. |
+| ACR-006 | #315 | `frontend/src/components/questions/QuestionListClient.tsx` (around line 122) | Fix wrapping of the Japanese “問題を見る→” (“View question →”) link using layout CSS only. The hard-coded Japanese text without locale support warned about in the Issue was already resolved in #317 (ACR-008), as confirmed by the existing `labels = getDictionary(locale).questions`. Only a layout fix remains. |
+| ACR-007 | #316 | Same file (new pagination) | Shares the file with ACR-006. Its Issue explicitly requires sequential execution: #315, then this Issue. |
+| ACR-009 | #319 | `frontend/src/components/layout/Footer.tsx` | Currently a Server Component without props. `Header.tsx` detects locale itself using `usePathname()` + `getLocaleFromPathname()`, and no page passes locale to `SiteLayout.tsx`. Using the same self-detection pattern in Footer avoids changes to other files. |
 
-## コンフリクト分析
+## Conflict analysis
 
-- ACR-006 と ACR-007 は同一ファイル（`QuestionListClient.tsx`）を編集するため、真の並列実行は不可。**直列で処理する。**
-- ACR-005（CI yml）・ACR-009（Footer.tsx）・「ACR-006→007」の3系統は編集対象ファイルが完全に独立しており、並列実行してもファイル競合は起きない。
+- ACR-006 and ACR-007 edit the same file, `QuestionListClient.tsx`, so they cannot truly run in parallel. **Process them sequentially.**
+- ACR-005 (CI YAML), ACR-009 (Footer.tsx), and the ACR-006 → 007 sequence edit entirely independent files. These three tracks can run in parallel without file conflicts.
 
-## 実行環境の制約
+## Execution-environment constraints
 
-本セッションの primary working directory `/Volumes/DevShare/projects/aws-cert-roadmap-lab` は SMB共有マウントであり、過去に `frontend/node_modules` の pnpm シンボリックリンク構造が原因で `npm test` / `build` が `EACCES` で失敗した実績がある（memory: `smb-build-workaround`）。複数エージェントが同一SMBワークツリーを同時に編集・ビルドすると、ファイル競合が無くても `git add` の競合やビルド出力（`.next`/`out/`）の競合が起きうる。
+The primary working directory for this session, `/Volumes/DevShare/projects/aws-cert-roadmap-lab`, is an SMB share. Previous `npm test` / `build` runs failed with `EACCES` because of the pnpm symbolic-link structure in `frontend/node_modules` (historical reference: `smb-build-workaround`). Even without file conflicts, multiple agents editing and building the same SMB working tree could contend over `git add` or build output (`.next` / `out/`).
 
-→ **ローカルディスク上に新規clone + 系統ごとに git worktree を作成し、各系統を隔離する。** SMB側（primary working directory）はコード編集には使わず、全チケットmerge後に `origin/master` へ fast-forward するだけに留める。
+Therefore, **create a fresh clone on local disk and a separate Git worktree for each track.** Do not edit code in the SMB primary working directory. After all tickets are merged, only fast-forward it to `origin/master`.
 
-## 採用する設計（3トラック並列 + Track内直列）
+## Selected design: Three parallel tracks, with sequential work within a track
 
+```text
+Track 1 (independent): ACR-005
+  Add a test step to CI YAML → push → deliberately fail CI to verify it on the real runner → fix it
+  → create PR → merge → close #314
+
+Track 2 (independent): ACR-009
+  Rewrite Footer.tsx to use the same locale self-detection pattern as Header.tsx
+  → create PR → merge → close #319
+
+Track 3 (sequential internally): ACR-006 → ACR-007
+  ACR-006: Fix QuestionListClient.tsx layout (1–2 lines)
+    → create PR → merge → close #315
+  → rebase onto master in the same worktree
+  → ACR-007: Implement pagination
+    → create PR → merge → close #316
 ```
-Track 1 (独立): ACR-005
-  CI yml に test ステップ追加 → push → 意図的に赤くして実機確認 → 直す
-  → PR作成 → merge → #314 close
 
-Track 2 (独立): ACR-009
-  Footer.tsx を Header.tsx と同じ locale自己検出パターンに書き換え
-  → PR作成 → merge → #319 close
+Run the three tracks in parallel, with Track 3 sequential internally. Start all branches from `master`. The Issues' “base branch: dev” text is outdated: investigation confirmed that `dev` has been fully incorporated into `master`, which is now the latest and only integration branch.
 
-Track 3 (内部直列): ACR-006 → ACR-007
-  ACR-006: QuestionListClient.tsx のレイアウト修正（1〜2行）
-    → PR作成 → merge → #315 close
-  → 同一worktreeで master を rebase
-  → ACR-007: ページャー本体を実装
-    → PR作成 → merge → #316 close
-```
+### Branch / PR policy
 
-3トラックは並列実行、Track 3 の内部は直列。全ブランチは `master` を起点とする（各Issue本文の「ベースブランチ: dev」は古い情報 — 調査の結果 `dev` は `master` に完全吸収済みで現在は `master` が最新かつ唯一の統合ブランチと確認済み）。
+- Follow the existing one-Issue-per-PR convention. ACR-006 and ACR-007 share a file, but remain separate because 006 is small and the Issues have different numbers.
+- Branch names: `fix/acr-005-ci-test-step` / `fix/acr-009-footer-i18n` / `fix/acr-006-question-card-stacked-layout` / `feat/acr-007-question-list-pagination`
+- The historical workflow for each ticket is implementation → push → create PR with Issue-closing reference → squash merge → delete remote branch, without separate confirmation at each step, following the existing `/pr-merge` flow. This describes the original plan, not authorization to execute those actions during a later documentation-only task.
 
-### ブランチ / PR 方針
+### Decisions requiring judgment
 
-- 1 Issue = 1 PR の既存慣習に従う（ACR-006とACR-007は同一ファイルだが、006が軽微でIssueも別番号のため分割する）
-- ブランチ名: `fix/acr-005-ci-test-step` / `fix/acr-009-footer-i18n` / `fix/acr-006-question-card-stacked-layout` / `feat/acr-007-question-list-pagination`
-- 各チケットについて、実装完了 → push → PR作成（Issue close） → squash merge → リモートブランチ削除、までを都度の確認なしに通しで実行する（既存の `/pr-merge` フローに準拠）
+- **ACR-006**: Left-align the link when it moves below the body, matching the rest of the card.
+- **ACR-009**: Preserve the site name “AWS資格ロードマップラボ” and tagline in their original language as branding. Localize only footer section headings.
+- **ACR-005**: Discard the unmerged branch `chore/aws-cert-vitest-and-invariant-tests`; investigation confirmed it contains no reusable changes.
 
-### 判断が必要な点への対応方針
+## Completion criteria
 
-- **ACR-006**: リンクが本文下に来た際の寄せ方は左寄せとする（カード全体が左揃いのため）
-- **ACR-009**: サイト名「AWS資格ロードマップラボ」・タグラインはブランド名として原語のまま維持し、フッターのセクション見出しのみ多言語化する
-- **ACR-005**: 未マージブランチ `chore/aws-cert-vitest-and-invariant-tests` は破棄する（再利用可能な差分なしと確認済み）
+Follow the acceptance criteria in GitHub Issues #314 / #315 / #316 / #319 exactly. This document does not change them. The work is complete when all four tickets satisfy their Issue acceptance criteria, their PRs are merged, and their Issues are closed.
 
-## 完了条件
+As the final step, fast-forward the SMB primary working directory to `origin/master` and update outdated statements in the historical `working-clone-location` / `smb-build-workaround` records, such as the SMB copy being stale or `rebalance-question-answers.mjs` being lost, which were already resolved or disproved during that session.
 
-各チケットの完了条件は GitHub Issue本文の受け入れ条件（#314 / #315 / #316 / #319）にそのまま従う。本設計ドキュメントはそれらを変更しない。全4チケットについて、Issue記載の受け入れ条件を満たし、PRがmergeされ、Issueがcloseされた時点で完了とする。
+## Out of scope
 
-最終ステップとして、SMB側の primary working directory を `origin/master` へ fast-forward し、`working-clone-location` / `smb-build-workaround` メモリの陳腐化した記述（「SMB側がstale」「rebalance-question-answers.mjsが失われた」等、本セッション内で既に解消・反証済みの内容）を更新する。
-
-## スコープ外
-
-- ACR-009 Issue本文が提案する「`getDictionary` を使っていない他コンポーネントの機械的棚卸し」は本設計の対象外とする（別チケット候補として扱う）
-- `infra/cloudfront/url-rewrite.js` 等、本セッション冒頭で発見したSMB側の未コミット孤立ファイル（#304関連）の扱いは本設計の対象外
+- The mechanical inventory of other components not using `getDictionary`, suggested in ACR-009, is outside this design and is a candidate for a separate ticket.
+- Handling the uncommitted isolated SMB files discovered at the beginning of that session, such as `infra/cloudfront/url-rewrite.js` related to #304, is outside this design.

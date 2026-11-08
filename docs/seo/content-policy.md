@@ -1,59 +1,59 @@
-# AWS Cert Roadmap Lab コンテンツポリシー
+# AWS Cert Roadmap Lab Content Policy
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 文書名 | AWS Cert Roadmap Lab コンテンツポリシー |
-| 対象プロジェクト | AWS Cert Roadmap Lab |
-| 対象フェーズ | Phase 5：グローバルSEO・ローカライゼーション |
-| 対象言語 | 日本語、英語、繁体字中国語 |
-| 目的 | AWS認定試験の信頼性を損なう表現、不正学習を示唆する表現、誤認を招く表現を禁止する |
-| 作成日 | 2026-06-10 |
+| Document name | AWS Cert Roadmap Lab Content Policy |
+| Target project | AWS Cert Roadmap Lab |
+| Target phase | Phase 5：Global SEO and Localization |
+| Target languages | Japanese, English, Traditional Chinese |
+| Purpose | Prohibit expressions that undermine AWS certification exam integrity, suggest improper study practices, or mislead readers |
+| Created | 2026-06-10 |
 
 ---
 
-## 2. この文書の目的
+## 2. Purpose of This Document
 
-この文書は、AWS Cert Roadmap Labで公開する以下のコンテンツに対して、使用禁止表現と推奨表現を定義する。
+This document defines prohibited and recommended expressions for the following content published on AWS Cert Roadmap Lab. Localized expression specimens and user-facing disclaimers retain their original language throughout this document.
 
-- AWS用語集
-- AWSサービス比較記事
-- AWS構成図解説
-- CLF-C02模擬問題
-- SAA-C03学習コンテンツ
-- ブログ記事
-- ページタイトル
+- AWS glossary
+- AWS service comparison articles
+- AWS architecture diagram explanations
+- CLF-C02 practice questions
+- SAA-C03 learning content
+- Blog articles
+- Page titles
 - meta description
-- OGPタイトル
-- OGP説明文
-- 多言語ページ
+- OGP titles
+- OGP descriptions
+- Multilingual pages
 - README
-- GitHub上の説明文
+- Descriptions on GitHub
 
-本サイトはAWS公式サイトではない。
+This site is not an official AWS site.
 
-本サイトは、AWS Cloud Practitioner / AWS Solutions Architect Associate の学習を支援する非公式の学習サイトであり、実試験問題、流出問題、試験ダンプ、合格保証を提供しない。
+This is an unofficial learning site supporting study for AWS Cloud Practitioner / AWS Solutions Architect Associate. It does not provide actual exam questions, leaked questions, exam dumps, or passing guarantees.
 
 ---
 
-## 3. 基本方針
+## 3. Basic Policy
 
-| 方針 | 内容 |
+| Policy | Description |
 |---|---|
-| 非公式であることを明示する | AWS公式教材、公式問題、公式模擬試験と誤認される表現を使わない |
-| 実試験問題を扱わない | 本番試験問題、流出問題、記憶再現問題、試験ダンプを掲載しない |
-| 合格保証しない | 特定コンテンツの利用で合格できると断定しない |
-| 学習支援に限定する | 用語理解、設計理解、模擬練習、比較学習を目的とする |
-| SEOより信頼性を優先する | 検索流入が見込めても不正・誤認を招くキーワードは狙わない |
-| AWS正式名称を尊重する | AWSサービス名、試験名、資格名は正式名称を基準に表記する |
-| 多言語でも同じ基準を守る | 日本語、英語、繁体字中国語で禁止表現の基準を統一する |
+| Explicitly state that the site is unofficial | Do not use wording that could be mistaken for official AWS materials, questions, or practice exams |
+| Do not handle actual exam questions | Do not publish actual exam questions, leaked questions, questions reconstructed from memory, or exam dumps |
+| Do not guarantee passing | Do not assert that using specific content ensures passing |
+| Limit the purpose to learning support | Aim to support terminology, design understanding, practice, and comparative learning |
+| Prioritize trustworthiness over SEO | Do not target keywords suggesting misconduct or causing confusion, even if they could attract search traffic |
+| Respect official AWS names | Base AWS service, exam, and certification names on their official forms |
+| Apply the same standards across languages | Use consistent prohibited-expression standards in Japanese, English, and Traditional Chinese |
 
 ---
 
-## 4. サイト共通の免責文
+## 4. Site-Wide Disclaimer
 
-### 4.1 日本語
+### 4.1 Japanese (Original User-Facing Text)
 
 本サイトはAWS公式サイトではありません。掲載している模擬問題・解説・学習記事は、AWS公式試験問題や流出問題ではなく、学習目的で独自に作成した非公式コンテンツです。試験の合格を保証するものではありません。
 
@@ -61,69 +61,69 @@
 
 This site is not affiliated with or endorsed by AWS. The practice questions, explanations, and learning articles are independently created for study purposes and are not actual AWS exam questions, leaked questions, or exam dumps. This site does not guarantee that users will pass any AWS Certification exam.
 
-### 4.3 繁體中文
+### 4.3 Traditional Chinese (Original User-Facing Text)
 
 本網站並非 AWS 官方網站。本站提供的練習題、解說與學習文章，皆為學習目的而獨立製作的非官方內容，並非 AWS 官方考題、外流考題或考題庫。本網站不保證使用者能通過任何 AWS 認證考試。
 
 ---
 
-## 5. 禁止表現リスト：日本語
+## 5. Prohibited Expressions: Japanese Specimens
 
-### 5.1 試験ダンプ・流出問題を示唆する表現
+### 5.1 Expressions Suggesting Exam Dumps or Leaked Questions
 
-以下の表現は禁止する。
+The following expressions are prohibited.
 
-| 禁止表現 | 禁止理由 |
+| Prohibited expression | Reason |
 |---|---|
-| AWS本番問題 | 実試験問題の掲載を示唆するため |
-| AWS実試験問題 | 実試験問題の掲載を示唆するため |
-| AWS流出問題 | 不正取得コンテンツを示唆するため |
-| AWS過去問 | AWS認定試験では公式な過去問公開を前提にできないため |
-| 本試験そのまま | 実試験再現を示唆するため |
-| 実際に出た問題 | 実試験内容の開示を示唆するため |
-| 的中問題 | 本番試験の予測・再現を示唆するため |
-| 出題予想100% | 合格保証や本番再現を連想させるため |
-| 試験ダンプ | exam dumpを示すため |
-| ブレインダンプ | brain dumpを示すため |
-| カンニング用問題集 | 不正行為を示すため |
-| 暗記だけで受かる | 不健全な試験対策を示すため |
-| 丸暗記で合格 | 不健全な試験対策を示すため |
+| AWS本番問題 | Suggests publication of actual exam questions |
+| AWS実試験問題 | Suggests publication of actual exam questions |
+| AWS流出問題 | Suggests illicitly obtained content |
+| AWS過去問 | Official publication of past AWS certification exam questions cannot be assumed |
+| 本試験そのまま | Suggests reproduction of an actual exam |
+| 実際に出た問題 | Suggests disclosure of actual exam content |
+| 的中問題 | Suggests prediction or reproduction of an actual exam |
+| 出題予想100% | Suggests a passing guarantee or reproduction of an actual exam |
+| 試験ダンプ | Refers to exam dumps |
+| ブレインダンプ | Refers to brain dumps |
+| カンニング用問題集 | Indicates cheating |
+| 暗記だけで受かる | Indicates inappropriate exam preparation |
+| 丸暗記で合格 | Indicates inappropriate exam preparation |
 
-### 5.2 合格保証を示す表現
+### 5.2 Expressions Indicating a Passing Guarantee
 
-以下の表現は禁止する。
+The following expressions are prohibited.
 
-| 禁止表現 | 禁止理由 |
+| Prohibited expression | Reason |
 |---|---|
-| 必ず合格 | 合格保証になるため |
-| 100%合格 | 合格保証になるため |
-| 合格保証 | 合格保証になるため |
-| これだけで合格 | 学習成果を過度に保証するため |
-| 1日で合格 | 誇大表現になりやすいため |
-| 最短合格確定 | 合格保証になるため |
-| 不合格にならない | 合格保証になるため |
-| 合格率100% | 根拠を示せないため |
-| 誰でも合格 | 誇大表現になるため |
-| 絶対に受かる | 合格保証になるため |
+| 必ず合格 | Constitutes a passing guarantee |
+| 100%合格 | Constitutes a passing guarantee |
+| 合格保証 | Constitutes a passing guarantee |
+| これだけで合格 | Overpromises learning outcomes |
+| 1日で合格 | Prone to exaggeration |
+| 最短合格確定 | Constitutes a passing guarantee |
+| 不合格にならない | Constitutes a passing guarantee |
+| 合格率100% | Cannot be substantiated |
+| 誰でも合格 | Constitutes exaggeration |
+| 絶対に受かる | Constitutes a passing guarantee |
 
-### 5.3 AWS公式と誤認される表現
+### 5.3 Expressions Mistaken for Official AWS Content
 
-以下の表現は禁止する。
+The following expressions are prohibited.
 
-| 禁止表現 | 禁止理由 |
+| Prohibited expression | Reason |
 |---|---|
-| AWS公式問題 | AWS公式コンテンツと誤認されるため |
-| AWS公式模擬試験 | AWS公式コンテンツと誤認されるため |
-| AWS認定公式対策 | AWS公式コンテンツと誤認されるため |
-| AWS公認問題集 | AWSから承認を受けたように見えるため |
-| AWS監修 | AWSによる監修を受けたように見えるため |
-| AWS認定講座 | 公式認定トレーニングと誤認される可能性があるため |
-| AWSが推奨 | AWSの推薦を受けたように見えるため |
-| 公式完全対応 | 公式保証を連想させるため |
+| AWS公式問題 | Could be mistaken for official AWS content |
+| AWS公式模擬試験 | Could be mistaken for official AWS content |
+| AWS認定公式対策 | Could be mistaken for official AWS content |
+| AWS公認問題集 | Appears to have AWS approval |
+| AWS監修 | Appears to have been supervised by AWS |
+| AWS認定講座 | Could be mistaken for officially certified training |
+| AWSが推奨 | Appears to have an AWS recommendation |
+| 公式完全対応 | Suggests an official guarantee |
 
 ---
 
-## 6. 禁止表現リスト：English
+## 6. Prohibited Expressions: English
 
 ### 6.1 Exam dumps and leaked exam content
 
@@ -181,76 +181,76 @@ Do not use the following expressions.
 
 ---
 
-## 7. 禁止表現リスト：繁體中文
+## 7. Prohibited Expressions: Traditional Chinese Specimens
 
-### 7.1 題庫、外流題、真題を示唆する表現
+### 7.1 Expressions Suggesting Question Dumps, Leaks, or Actual Questions
 
-以下表現は禁止する。
+The following expressions are prohibited.
 
-| 禁止表現 | 禁止理由 |
+| Prohibited expression | Reason |
 |---|---|
-| AWS 題庫 | 實際考題或不當題庫を示唆するため |
-| AWS 考古題 | AWS認定試験の過去問公開と誤認される可能性があるため |
-| AWS 真題 | 實際考題を示唆するため |
-| AWS 原題 | 實際考題を示唆するため |
-| AWS 外流題 | 不正取得コンテンツを示唆するため |
-| AWS 洩題 | 不正取得コンテンツを示唆するため |
-| AWS 考試原題 | 實際考題を示唆するため |
-| CLF-C02 真題 | 實際考題を示唆するため |
-| SAA-C03 真題 | 實際考題を示唆するため |
-| 考試題庫下載 | 不正取得コンテンツを示唆するため |
-| 背題就會過 | 不健全な試験対策を示すため |
-| 最新外流題 | 不正取得コンテンツを示唆するため |
-| 命中考題 | 本番試験の予測・再現を示唆するため |
+| AWS 題庫 | Suggests actual exam questions or improper question banks |
+| AWS 考古題 | Could be mistaken for publication of past AWS certification exam questions |
+| AWS 真題 | Suggests actual exam questions |
+| AWS 原題 | Suggests actual exam questions |
+| AWS 外流題 | Suggests illicitly obtained content |
+| AWS 洩題 | Suggests illicitly obtained content |
+| AWS 考試原題 | Suggests actual exam questions |
+| CLF-C02 真題 | Suggests actual exam questions |
+| SAA-C03 真題 | Suggests actual exam questions |
+| 考試題庫下載 | Suggests illicitly obtained content |
+| 背題就會過 | Indicates inappropriate exam preparation |
+| 最新外流題 | Suggests illicitly obtained content |
+| 命中考題 | Suggests prediction or reproduction of an actual exam |
 
-### 7.2 合格保証を示す表現
+### 7.2 Expressions Indicating a Passing Guarantee
 
-以下表現は禁止する。
+The following expressions are prohibited.
 
-| 禁止表現 | 禁止理由 |
+| Prohibited expression | Reason |
 |---|---|
-| 保證通過 | 合格保証になるため |
-| 100% 通過 | 合格保証になるため |
-| 必過 | 合格保証になるため |
-| 一定合格 | 合格保証になるため |
-| 不會失敗 | 合格保証になるため |
-| 一天通過 | 誇大表現になりやすいため |
-| 不讀也會過 | 誤解を招くため |
-| 只看這個就會過 | 学習成果を過度に保証するため |
-| 合格保證 | 合格保証になるため |
+| 保證通過 | Constitutes a passing guarantee |
+| 100% 通過 | Constitutes a passing guarantee |
+| 必過 | Constitutes a passing guarantee |
+| 一定合格 | Constitutes a passing guarantee |
+| 不會失敗 | Constitutes a passing guarantee |
+| 一天通過 | Prone to exaggeration |
+| 不讀也會過 | Misleading |
+| 只看這個就會過 | Overpromises learning outcomes |
+| 合格保證 | Constitutes a passing guarantee |
 
-### 7.3 AWS公式と誤認される表現
+### 7.3 Expressions Mistaken for Official AWS Content
 
-以下表現は禁止する。
+The following expressions are prohibited.
 
-| 禁止表現 | 禁止理由 |
+| Prohibited expression | Reason |
 |---|---|
-| AWS 官方考題 | AWS公式問題と誤認されるため |
-| AWS 官方題庫 | AWS公式問題集と誤認されるため |
-| AWS 官方模擬考 | AWS公式模擬試験と誤認されるため |
-| AWS 認可題目 | AWS承認済みと誤認されるため |
-| AWS 推薦教材 | AWS推薦と誤認されるため |
-| AWS 官方認證課程 | AWS公式トレーニングと誤認されるため |
-| AWS 監修 | AWS監修と誤認されるため |
+| AWS 官方考題 | Could be mistaken for official AWS questions |
+| AWS 官方題庫 | Could be mistaken for an official AWS question collection |
+| AWS 官方模擬考 | Could be mistaken for an official AWS practice exam |
+| AWS 認可題目 | Could be mistaken for AWS-approved content |
+| AWS 推薦教材 | Could be mistaken for an AWS recommendation |
+| AWS 官方認證課程 | Could be mistaken for official AWS training |
+| AWS 監修 | Could be mistaken for AWS supervision |
 
 ---
 
-## 8. 使用可能な推奨表現
+## 8. Permitted Recommended Expressions
 
-### 8.1 日本語
+### 8.1 Japanese Specimens
 
-| 推奨表現 | 使用場面 |
+| Recommended expression | Usage |
 |---|---|
-| AWS Cloud Practitioner向けの独自模擬問題 | 問題ページ、記事タイトル |
-| CLF-C02の学習に役立つ練習問題 | 問題ページ、meta description |
-| AWS公式試験問題ではない学習用問題 | 免責文、問題ページ |
-| 初学者向けAWS用語解説 | 用語集 |
-| AWSサービス比較 | 比較記事 |
-| SAA対策の構成図解説 | 構成図記事 |
-| 試験範囲の理解を助ける解説 | ブログ記事 |
-| 非公式の学習サイト | README、about、disclaimer |
-| 独自作成の練習問題 | 問題ページ |
-| 合格を保証するものではありません | 免責文 |
+| AWS Cloud Practitioner向けの独自模擬問題 | Question pages, article titles |
+| CLF-C02の学習に役立つ練習問題 | Question pages, meta description |
+| AWS公式試験問題ではない学習用問題 | Disclaimer, question pages |
+| 初学者向けAWS用語解説 | Glossary |
+| AWSサービス比較 | Comparison articles |
+| SAA対策の構成図解説 | Architecture diagram articles |
+| 試験範囲の理解を助ける解説 | Blog articles |
+| 非公式の学習サイト | README, about, disclaimer |
+| 独自作成の練習問題 | Question pages |
+| 合格を保証するものではありません | Disclaimer |
 
 ### 8.2 English
 
@@ -267,76 +267,76 @@ Do not use the following expressions.
 | no pass guarantee | Disclaimer |
 | created for educational purposes | Disclaimer |
 
-### 8.3 繁體中文
+### 8.3 Traditional Chinese Specimens
 
-| 推奨表現 | 使用場面 |
+| Recommended expression | Usage |
 |---|---|
-| AWS Cloud Practitioner 學習用練習題 | 問題ページ |
-| CLF-C02 非官方練習題 | 問題ページ |
-| AWS 初學者用語解說 | 用語集 |
-| AWS 服務比較指南 | 比較記事 |
-| SAA 架構圖解說 | 構成図記事 |
-| 非官方 AWS 認證學習網站 | README、about、disclaimer |
-| 本站題目為獨立製作 | 免責文 |
-| 並非實際 AWS 考題 | 免責文 |
-| 不保證通過考試 | 免責文 |
+| AWS Cloud Practitioner 學習用練習題 | Question pages |
+| CLF-C02 非官方練習題 | Question pages |
+| AWS 初學者用語解說 | Glossary |
+| AWS 服務比較指南 | Comparison articles |
+| SAA 架構圖解說 | Architecture diagram articles |
+| 非官方 AWS 認證學習網站 | README, about, disclaimer |
+| 本站題目為獨立製作 | Disclaimer |
+| 並非實際 AWS 考題 | Disclaimer |
+| 不保證通過考試 | Disclaimer |
 
 ---
 
-## 9. ページ種別ごとの表現ルール
+## 9. Expression Rules by Page Type
 
-### 9.1 模擬問題ページ
+### 9.1 Practice Question Pages
 
-模擬問題ページでは、以下の表現を使う。
+Use the following Japanese user-facing text on practice question pages.
 
 ```text
 この問題は学習目的で独自に作成した非公式の練習問題です。AWS公式試験問題、実試験問題、試験ダンプではありません。
 ```
-英語ページでは、以下の表現を使う。
+Use the following text on English pages.
 ```
 These questions are independently created for study purposes. They are not official AWS exam questions, actual exam questions, leaked questions, or exam dumps.
 ```
-繁体字中国語ページでは、以下の表現を使う。
+Use the following user-facing text on Traditional Chinese pages.
 ```
 這些題目為學習目的而獨立製作，並非 AWS 官方考題、實際考題、外流題或考題庫。
 ```
-## 9.2 ブログ記事
+## 9.2 Blog Articles
 
-ブログ記事では、以下を守る。
+Follow these rules for blog articles.
 
-- 実試験問題を再現したと読める表現を使わない
-- 「試験に出た」と断定しない
-- 「頻出」と書く場合は、AWS公式の試験ガイドやサービス特性から説明する
-- 「合格できる」と断定しない
-- 自分の学習経験、AWS公式ドキュメント、一般的な設計原則に基づいて説明する
+- Do not use wording that suggests actual exam questions were reproduced.
+- Do not assert that something appeared on the exam.
+- If describing something as frequently tested, explain it based on official AWS exam guides or service characteristics.
+- Do not assert that users will pass.
+- Explain based on personal learning experience, official AWS documentation, and general design principles.
 
-## 9.3 用語集
+## 9.3 Glossary
 
-用語集では、以下を守る。
+Follow these rules for the glossary.
 
-- AWSサービス名は正式名称を優先する
-- 略称だけでなく正式名称も併記する
-- 試験ポイントは「問われやすい観点」「理解しておきたい観点」と表現する
-- 実試験での出題を断定しない
-## 9.4 比較記事
+- Prefer official AWS service names.
+- Include official names alongside abbreviations.
+- Describe exam points as perspectives likely to be tested or perspectives worth understanding.
+- Do not assert that something appears on actual exams.
+## 9.4 Comparison Articles
 
-比較記事では、以下を守る。
+Follow these rules for comparison articles.
 
--「この比較だけ覚えれば合格」と書かない
--「実務での使い分け」と「試験学習上の整理」を分けて説明する
-- 試験対策と実務設計の両方に役立つ比較として書く
-## 9.5 構成図記事
+- Do not write that memorizing only this comparison ensures passing.
+- Separately explain practical selection criteria and organization for exam study.
+- Write comparisons useful for both exam preparation and practical design.
+## 9.5 Architecture Diagram Articles
 
-構成図記事では、以下を守る。
+Follow these rules for architecture diagram articles.
 
-- 「この構成が唯一の正解」と書かない
-- 要件によって設計が変わることを明記する
-- Cloud Practitioner向けの理解ポイントとSAA向けの設計ポイントを分けて説明する
-## 10. SEOで狙わないキーワード
+- Do not claim that this architecture is the only correct answer.
+- Explicitly state that designs vary with requirements.
+- Separately explain Cloud Practitioner understanding points and SAA design points.
+## 10. Keywords Not to Target for SEO
 
-以下のキーワードは、検索需要があっても狙わない。
+Do not target the following keywords, even if search demand exists.
 
-### 10.1 日本語
+### 10.1 Japanese Keyword Specimens
 - AWS 本番問題
 - AWS 実試験問題
 - AWS 流出問題
@@ -359,7 +359,7 @@ These questions are independently created for study purposes. They are not offic
 - AWS pass guarantee
 - guaranteed AWS certification pass
 - AWS actual exam questions
-### 10.3 繁體中文
+### 10.3 Traditional Chinese Keyword Specimens
 - AWS 題庫
 - AWS 真題
 - AWS 考古題
@@ -370,8 +370,8 @@ These questions are independently created for study purposes. They are not offic
 - AWS 必過
 - AWS 保證通過
 - AWS 考試原題
-## 11. SEOで狙うキーワードの方向性
-### 11.1 日本語
+## 11. Direction for Target SEO Keywords
+### 11.1 Japanese Keyword Specimens
 - AWS Cloud Practitioner 初心者
 - AWS CLF-C02 勉強方法
 - AWS 用語集 初心者
@@ -394,7 +394,7 @@ These questions are independently created for study purposes. They are not offic
 - AWS certification roadmap
 - AWS Solutions Architect Associate architecture 
 - patterns
-### 11.3 繁體中文
+### 11.3 Traditional Chinese Keyword Specimens
 - AWS Cloud Practitioner 初學者
 - CLF-C02 學習指南
 - AWS 服務比較
@@ -405,53 +405,53 @@ These questions are independently created for study purposes. They are not offic
 - AWS 認證學習路線
 - AWS 免費方案 作品集
 - SAA 架構模式
-### 12. レビュー基準
+### 12. Review Criteria
 
-新しい記事、問題、metadata、OGP、翻訳文を追加する前に、以下を確認する。
+Check the following before adding new articles, questions, metadata, OGP, or translations.
 
-| チェック項目          | 判定基準                                               |
+| Check | Criterion |
 | --------------- | -------------------------------------------------- |
-| AWS公式誤認がない      | AWS公式、AWS公認、AWS監修などの表現がない                          |
-| 実試験問題を示唆していない   | 本番問題、実試験問題、real exam questionsなどの表現がない             |
-| exam dump系表現がない | dump、brain dump、題庫、真題、外流題などの表現がない                  |
-| 合格保証がない         | 必ず合格、guaranteed pass、必過などの表現がない                    |
-| 非公式であることを明示している | 問題ページ、about、disclaimerで非公式と分かる                     |
-| 学習目的であることが分かる   | practice、study、learning、練習、學習などの表現を使っている           |
-| AWS正式名称が正しい     | Amazon S3、Amazon CloudFront、AWS Lambdaなどの表記を確認している |
-| 多言語で同じ基準を満たしている | 日本語、英語、繁体字中国語で禁止表現を避けている                           |
+| No mistaken official AWS affiliation | No expressions such as AWS公式, AWS公認, or AWS監修 |
+| Does not suggest actual exam questions | No expressions such as 本番問題, 実試験問題, or real exam questions |
+| No exam dump expressions | No expressions such as dump, brain dump, 題庫, 真題, or 外流題 |
+| No passing guarantees | No expressions such as 必ず合格, guaranteed pass, or 必過 |
+| Unofficial status is explicit | Question pages, about, and disclaimer clearly indicate unofficial status |
+| Learning purpose is clear | Uses expressions such as practice, study, learning, 練習, or 學習 |
+| Official AWS names are correct | Names such as Amazon S3, Amazon CloudFront, and AWS Lambda have been verified |
+| Same standards across languages | Prohibited expressions are avoided in Japanese, English, and Traditional Chinese |
 
-13. コミット前チェックコマンド
+13. Pre-Commit Check Commands
 
-以下のコマンドで禁止表現が含まれていないか確認する。
+Use the following commands to check for prohibited expressions.
 ```bash
 grep -RniE "exam dump|brain dump|real AWS exam 
 questions|actual AWS exam questions|leaked AWS exam|guaranteed pass|100% pass|合格保証|必ず合格|100%合格|本番問題|実試験問題|流出問題|試験ダンプ|ブレインダンプ|題庫|真題|外流題|洩題|保證通過|必過" frontend docs README.md
 ```
-意図的にこのポリシーファイル内で禁止表現を列挙しているため、
-`docs/seo/content-policy.md` だけは検索結果に出ても問題ない。
+Because this policy file intentionally lists prohibited expressions,
+search matches in `docs/seo/content-policy.md` alone are acceptable.
 
-実運用で確認する場合は、以下のようにこのファイルを除外する。
+For operational checks, exclude this file as follows.
 ```bash
 grep -RniE "exam dump|brain dump|real AWS exam questions|actual AWS exam questions|leaked AWS exam|guaranteed pass|100% pass|合格保証|必ず合格|100%合格|本番問題|実試験問題|流出問題|試験ダンプ|ブレインダンプ|題庫|真題|外流題|洩題|保證通過|必過" frontend docs README.md \ --exclude="content-policy.md"
 ```
-14. 違反を見つけた場合の修正方針
-| 違反内容         | 修正方針                                        |
+14. Remediation Policy When Violations Are Found
+| Violation | Remediation |
 | ------------ | ------------------------------------------- |
-| exam dump系表現 | practice questions、練習問題、學習用練習題に置換する         |
-| 本番問題系表現      | 独自模擬問題、independently created questionsに置換する |
-| 合格保証系表現      | 学習に役立つ、理解を助ける、study-focusedに置換する            |
-| AWS公式誤認      | 非公式、unofficial、非官方を明記する                     |
-| 誇大表現         | 具体的な学習対象、対象読者、前提条件に書き換える                    |
+| Exam dump expressions | Replace with practice questions, 練習問題, or 學習用練習題 |
+| Actual exam question expressions | Replace with 独自模擬問題 or independently created questions |
+| Passing guarantee expressions | Replace with 学習に役立つ, 理解を助ける, or study-focused |
+| Misleading official AWS affiliation | Explicitly state 非公式, unofficial, or 非官方 |
+| Exaggerated expressions | Rewrite to specify the learning topic, target readers, and prerequisites |
 
-## 15. 完了条件
+## 15. Completion Criteria
 
-この文書の完了条件は以下である。
+The completion criteria for this document are as follows.
 
-- `exam dump` に関する禁止表現が定義されている
-- 本番問題、実試験問題、流出問題に関する禁止表現が定義されている
-- 合格保証に関する禁止表現が定義されている
-- AWS公式と誤認される表現が定義されている
-- 日本語、英語、繁体字中国語の禁止表現が定義されている
-- 推奨表現が定義されている
-- 問題ページ向けの非公式・独自問題・試験ダンプではない旨の文言が定義されている
-- コミット前に検索できるgrepコマンドが定義されている
+- Prohibited expressions related to `exam dump` are defined.
+- Prohibited expressions related to actual and leaked exam questions are defined.
+- Prohibited expressions related to passing guarantees are defined.
+- Expressions that could be mistaken for official AWS content are defined.
+- Prohibited expressions in Japanese, English, and Traditional Chinese are defined.
+- Recommended expressions are defined.
+- Wording for question pages states that questions are unofficial, independently created, and not exam dumps.
+- grep commands for pre-commit searches are defined.
