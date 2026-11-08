@@ -1,0 +1,11 @@
+{
+  "id": "aidd-lightweight-ci-2026-11-08",
+  "goal": "Add an isolated dependency-free CI for existing AIDD fixtures and basic configuration validation",
+  "base": "237f99b08723ff70c7bf426668246092c9a5ba71",
+  "allowed": [".github/workflows/aidd-ci.yml", "docs/aidd/ci.md", "docs/aidd/tasks/lightweight-ci.json", "docs/superpowers/plans/2026-11-08-aidd-ci.md"],
+  "maxRepairs": 3,
+  "humanAcceptance": ["Review trigger coverage and Linux Actions results after separate publishing authorization"],
+  "prohibited": ["Changing existing Harness semantics or product code", "Changing existing CI/deployment workflows", "Rewriting the prior pilot's 3/3 ledger", "Push, PR, workflow dispatch or deployment without this task's publishing authorization"],
+  "repairLedger": "tmp/aidd-ci-evidence/repairs.json",
+  "note": "Independent CI task; the original docs/aidd/task.json remains unchanged. Existing Harness defects require scope review, not silent reassignment to this budget."
+}
