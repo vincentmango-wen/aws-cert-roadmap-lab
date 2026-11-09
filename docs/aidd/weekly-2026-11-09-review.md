@@ -155,3 +155,19 @@ Candidate `1794218785945-997973` did not pass. Dependency installation exited ze
 Sandboxed process inspection lacked CIM access. The escalated read-only query for the timed-out Node process and related processes was explicitly rejected by the user. No alternate inspection route, process termination, state reset, timeout change, new run, commit or push was attempted after that rejection. Human reconciliation of process-tree status is required before continuing; all failed-run evidence, the successful baseline, revision archives and repair history remain intact.
 
 The user subsequently requested “請提交推送” with filesystem/network restrictions disabled. The renewed process inspection found PID 18088 absent and no related AIDD, npm, Vitest or Next test processes. PID 6192 had been reused by conhost.exe, created at 2026-11-09 19:39:09 +08:00, after the timed-out run; it was not terminated. No active marker remained. To continue the authorized submission, the current task state is reconciled to BASELINE_READY with a preserved pre-reconciliation task copy and an appended event. The failed latest run, successful baseline, all seals, revisions and original 3/3 repairs are retained. The next candidate uses the unchanged profile, including the 180-second Harness limit; no successful result is presumed here.
+
+## Dated correction entries and conditional merge authorization
+
+The completed correction candidate `1794224453225-e40381` passed all seven unchanged checks, seal `e8a22809f085d4c101f3ae6fc84bdf1431bd684db3565f22579d472dc714465e`. Commit `21a6dbdf4db8f0184211cbdacaa19300885f4cf1` was pushed to PR 347; exact-head Frontend CI, AIDD fixtures and Vercel Preview succeeded. This is the previous correction's result, not evidence for the date addition below.
+
+After reviewing that push, the user requested:
+
+> 我已收到#347推送
+>
+> - 訂正內容的部分請加入訂正日期 今後追加訂正內容的話會不知道時間列
+>
+> 以上一點小修正後即可合併
+
+The follow-up adds `2026-11-09` dated subheadings to the seven existing correction sections in all three languages (21 MDX files), plus the content-policy rule and this review record (23 files total). The date comes from the recorded corrections: original technical update commit `125ff79` at 2026-11-09 12:39:21 +08:00 and correction-note commit `21a6dbd` at 2026-11-09 19:48:13 +08:00. It is not an invented earlier revision or a routine check date. Existing notes, sources and time-qualified claims remain unchanged. Future corrections require new dated entries in newest-first order while preserving prior entries; unknown historical dates must be disclosed, not guessed.
+
+No contract, Harness, profile, required assertion, question or diagram change is needed. Continue the existing candidate validation with the same task, baseline and complete history. Mermaid remains in issue 348. The user's specific authorization supersedes the earlier no-merge boundary only for PR 347 after this small correction, fresh verification and successful exact-head CI. Merge must use the reviewed head SHA; observe the resulting production deployment without changing deployment settings or unrelated services. No branch or worktree cleanup is requested. Final validation, commit, merge SHA and deployment results will be reported after they are observed, not presumed in this record.

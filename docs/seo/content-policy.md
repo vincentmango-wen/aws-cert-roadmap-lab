@@ -460,6 +460,8 @@ The completion criteria for this document are as follows.
 
 Published learning content must explain substantive corrections in a concise reader-facing correction note: what changed, the affected claim or scope, and links to supporting primary sources. An updated date alone is insufficient. Japanese, English, and Traditional Chinese notes must communicate equivalent corrections and source coverage.
 
+Give each correction entry its actual recorded correction date in YYYY-MM-DD format, with the same date and equivalent scope in all three languages. Use a dated subheading under Corrections (訂正内容 / 更正說明). Add future corrections as new dated entries, newest first, while retaining earlier dated entries and their sources. Do not overwrite earlier entries or backdate a new correction. Verify dates against available commits or review records; if a historical date cannot be established, explicitly mark it unknown instead of inventing one. A routine source-check date or the page's updated date does not replace the correction date.
+
 Keep translation revisions, workflow status, and routine verification dates in internal review records. Retain reader-relevant dates when they qualify time-sensitive facts or unresolved source discrepancies.
 
 Record only corrections supported by the current diff and available evidence. Do not invent historical entries or imply that earlier versions were verified. Typographical and formatting-only changes do not require a correction note.

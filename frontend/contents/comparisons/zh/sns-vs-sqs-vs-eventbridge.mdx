@@ -178,6 +178,8 @@ SNS Standard 不保證順序。需要保序的扇出時，搭配 SNS FIFO 主題
 
 ## 更正說明
 
+### 2026-11-09
+
 - 更正將 SQS 一概描述為依序處理的文字：Standard 可能重複或亂序，FIFO 的順序範圍是訊息群組；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
 - 補充 SNS FIFO 搭配 SQS FIFO 的保序條件，並區分 EventBridge default／Classic 匯流排與新版 Custom Event Bus 的 FIFO 訂閱，避免將不保序的描述套用到所有類型。
 

@@ -178,6 +178,8 @@ SNS Standard does not guarantee order. For ordered fan-out, use an SNS FIFO topi
 
 ## Corrections
 
+### 2026-11-09
+
 - Corrected wording that implied SQS always processes messages in order: Standard can duplicate or reorder messages, while FIFO ordering is scoped to a message group. Added that deduplication does not guarantee exactly-once business side effects and consumers still need idempotency.
 - Added the ordering conditions for SNS FIFO with SQS FIFO and distinguished EventBridge default/Classic buses from FIFO subscriptions on the newer Custom Event Bus, avoiding a blanket no-ordering claim.
 

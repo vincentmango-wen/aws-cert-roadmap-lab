@@ -126,6 +126,8 @@ SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序�
 
 ## 更正說明
 
+### 2026-11-09
+
 - 更正將 SQS 一概描述為依序處理的文字：Standard 可能重複或亂序，FIFO 的順序範圍是訊息群組；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
 
 依據：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

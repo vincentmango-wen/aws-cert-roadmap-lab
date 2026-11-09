@@ -126,6 +126,8 @@ SQS Standard provides at-least-once delivery with best-effort ordering; duplicat
 
 ## Corrections
 
+### 2026-11-09
+
 - Corrected wording that implied SQS always processes messages in order: Standard can duplicate or reorder messages, while FIFO ordering is scoped to a message group. Added that deduplication does not guarantee exactly-once business side effects and consumers still need idempotency.
 
 References：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

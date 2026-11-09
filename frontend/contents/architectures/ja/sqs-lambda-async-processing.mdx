@@ -153,6 +153,8 @@ SQS Standardは少なくとも1回の配信とベストエフォートの順序�
 
 ## 訂正内容
 
+### 2026-11-09
+
 - SQS が常に順番どおりに処理するかのような説明を訂正しました。Standard では重複や順序の入れ替わりがあり、FIFO の順序保証はメッセージグループ単位です。重複排除は業務上の副作用が一度だけ起きる保証ではなく、コンシューマーにも冪等性が必要であることを追記しました。
 
 参照資料：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
