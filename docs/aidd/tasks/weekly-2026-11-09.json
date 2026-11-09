@@ -7,7 +7,9 @@
     "docs/aidd/",
     "docs/superpowers/plans/2026-11-09-weekly-content.md",
     "frontend/public/images/architectures/",
-    "tools/aidd/"
+    "tools/aidd/",
+    "docs/seo/content-policy.md",
+    "docs/README.md"
   ],
   "maxRepairs": 3,
   "allowedOperations": [
@@ -46,19 +48,19 @@
         "id": "lambda-sqs-safe-retries-idempotency",
         "kind": "article",
         "sourceLocale": "zh",
-        "sourceRevision": 1,
+        "sourceRevision": 2,
         "locales": {
           "zh": {
             "path": "frontend/contents/blog/zh/lambda-sqs-safe-retries-idempotency.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           },
           "ja": {
             "path": "frontend/contents/blog/ja/lambda-sqs-safe-retries-idempotency.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           },
           "en": {
             "path": "frontend/contents/blog/en/lambda-sqs-safe-retries-idempotency.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           }
         }
       },
@@ -66,19 +68,19 @@
         "id": "step-functions-human-approval",
         "kind": "article",
         "sourceLocale": "zh",
-        "sourceRevision": 1,
+        "sourceRevision": 2,
         "locales": {
           "zh": {
             "path": "frontend/contents/architectures/zh/step-functions-human-approval.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           },
           "ja": {
             "path": "frontend/contents/architectures/ja/step-functions-human-approval.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           },
           "en": {
             "path": "frontend/contents/architectures/en/step-functions-human-approval.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           }
         }
       },
@@ -86,19 +88,19 @@
         "id": "step-functions-standard-vs-express",
         "kind": "article",
         "sourceLocale": "zh",
-        "sourceRevision": 1,
+        "sourceRevision": 2,
         "locales": {
           "zh": {
             "path": "frontend/contents/comparisons/zh/step-functions-standard-vs-express.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           },
           "ja": {
             "path": "frontend/contents/comparisons/ja/step-functions-standard-vs-express.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           },
           "en": {
             "path": "frontend/contents/comparisons/en/step-functions-standard-vs-express.mdx",
-            "sourceRevision": 1
+            "sourceRevision": 2
           }
         }
       },

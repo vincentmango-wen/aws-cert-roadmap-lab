@@ -100,8 +100,6 @@ Lambdaには月間 100万リクエストと 400,000 GB秒の無料利用枠が�
 
 2026-11-09確認時点のFAQでは、General Q6がクレジット期限を6か月、Free Plan Q8がアップグレード後の期限をアカウント作成から12か月と説明しており、記述が一致しません。一方を全アカウントに適用せず、Settings PortalまたはBillingのCreditsページで自分の期限を確認し、この構成を作成する前に対象サービスを確認してください。AWS Budgetsの通知は費用の監視に役立ちますが、予算到達時に全リソースが停止する保証ではありません。
 
-公式資料確認：2026-11-09 — [AWS: free](https://aws.amazon.com/free/free-tier-faqs/) / [AWS: billing](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html) / [AWS: legacy](https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html).
-
 AWSには無料利用枠があります。ただし、無料枠は永続的にすべて無料という意味ではありません。期間、使用量、対象サービスに条件があります。枠の内容や適用条件は改定されるため、学習中に見た記事の数値をそのまま信じるのは危険です。
 
 個人開発では、無料枠に頼り切るよりも、AWS Budgets を設定して想定外の課金に気づける状態を作ることが重要です。
@@ -146,3 +144,9 @@ AWS Budgets は予算アラート、Cost Explorer はサービス別の費用分
 
 - [AWS無料枠でポートフォリオを作る方法](/blog/aws-free-tier-portfolio)
 - [AWS Budgetsで個人開発の課金事故を防ぐ](/blog/aws-budgets-cost-guardrail)
+
+## 訂正内容
+
+- アカウント作成日に応じた無料利用枠の資格、Free／Paid プラン、クレジットと使用量の制限を追記し、料金が発生する条件の適用範囲を明確にしました。公式 FAQ のクレジット有効期限の説明には矛盾が残るため、確認時点とアカウントごとの期限の確認方法を残し、一つの期限をすべてのアカウントに当てはめていません。
+
+参照資料：[AWS Free Tier FAQ](https://aws.amazon.com/free/free-tier-faqs/) / [AWS Free Tier documentation](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html) / [AWS legacy Free Tier](https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html).

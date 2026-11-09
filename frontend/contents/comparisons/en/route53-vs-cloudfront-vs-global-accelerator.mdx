@@ -136,8 +136,6 @@ The three services share the property of not being tied to a region, but Route 5
 
 CloudFront normally uses a DNS name; dedicated Anycast Static IPs are optional. They require approval from CloudFront support engineering and the Use all edge locations price class. As checked on 2026-11-09, AWS-provided IPv4 addresses cost USD 0.005 per IP-hour, in addition to normal CloudFront usage charges. Check the official prerequisites and pricing before enabling them.
 
-Official sources checked: 2026-11-09 — [AWS: cf](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [AWS: cfprice](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).
-
 ### Mistake 3: Remembering Global Accelerator as a CDN
 
 Global Accelerator does not cache content. It is a service that places packets on the shortest path, and the correct answer for cache delivery is CloudFront.
@@ -168,3 +166,9 @@ Three axes make the decision easier.
 - Static IPs and TCP/UDP path optimization: Global Accelerator
 
 Instead of being pulled in by the word *global*, separate by "which protocols and static IP options are required?", "is content cached?", and "is DNS resolved?" to avoid mixing up the three services.
+
+## Corrections
+
+- Corrected the claim that CloudFront has no static IP option and added the application, configuration and pricing conditions for optional Anycast Static IPs. Static IP availability alone is not a sufficient selection criterion.
+
+References：[CloudFront Anycast Static IPs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).

@@ -47,8 +47,6 @@ Check the account creation date and plan before estimating a free deployment. Ac
 
 The FAQ checked on 2026-11-09 gives conflicting credit-expiry descriptions: General Q6 says six months, while Free Plan Q8 says twelve months after account creation following an upgrade. Do not assume either duration applies to every account. Confirm your own expiry in Settings Portal or the Billing Credits page, and verify eligible services before launching this architecture. AWS Budgets notifications help monitor costs; they are not a guarantee that all resources stop at the budget threshold.
 
-Official sources checked: 2026-11-09 — [AWS: free](https://aws.amazon.com/free/free-tier-faqs/) / [AWS: billing](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html) / [AWS: legacy](https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html).
-
 When beginners build a portfolio, the main thing to avoid is an architecture that generates fixed monthly costs.
 
 For example, leaving an EC2 instance running or keeping an RDS instance up can produce charges even for learning purposes.
@@ -174,3 +172,9 @@ Add dynamic processing in small steps, such as a contact form.
 By combining API Gateway, Lambda, and DynamoDB, you can also learn how serverless APIs work.
 
 With this setup, you can turn the knowledge you learn for the Cloud Practitioner exam into a working implementation, while also building the design skills that lead toward SAA.
+
+## Corrections
+
+- Added account-creation-date eligibility, Free/Paid plans, and credit and usage limits, and clarified when charges can apply. The official FAQ still gives conflicting credit-expiry information, so the dated observation and account-specific expiry checks remain instead of applying one expiry period to every account.
+
+References：[AWS Free Tier FAQ](https://aws.amazon.com/free/free-tier-faqs/) / [AWS Free Tier documentation](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html) / [AWS legacy Free Tier](https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html).

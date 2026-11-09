@@ -124,4 +124,8 @@ For SAA, when you see conditions like "defer processing," "absorb sudden increas
 
 SQS Standard provides at-least-once delivery with best-effort ordering; duplicates and out-of-order messages are possible. SQS FIFO preserves order within each MessageGroupId and deduplicates sends within its deduplication window. This does not make application side effects exactly once: consumers must remain idempotent when processing is retried.
 
-Official sources checked: 2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
+## Corrections
+
+- Corrected wording that implied SQS always processes messages in order: Standard can duplicate or reorder messages, while FIFO ordering is scoped to a message group. Added that deduplication does not guarantee exactly-once business side effects and consumers still need idempotency.
+
+References：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

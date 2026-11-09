@@ -151,4 +151,8 @@ SAAでは「処理を後回しにしたい」「急なリクエスト増加を�
 
 SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
 
-公式資料確認：2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
+## 訂正内容
+
+- SQS が常に順番どおりに処理するかのような説明を訂正しました。Standard では重複や順序の入れ替わりがあり、FIFO の順序保証はメッセージグループ単位です。重複排除は業務上の副作用が一度だけ起きる保証ではなく、コンシューマーにも冪等性が必要であることを追記しました。
+
+参照資料：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

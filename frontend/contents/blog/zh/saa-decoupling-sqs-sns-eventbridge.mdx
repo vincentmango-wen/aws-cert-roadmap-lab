@@ -76,4 +76,9 @@ SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序�
 
 SNS Standard 不保證順序。需要保序的扇出時，搭配 SNS FIFO 主題與 SQS FIFO 訂閱，並對齊 MessageGroupId；SQS Standard 訂閱不提供端到端保序。本篇使用規則與目標的範例適用於不保證順序的 EventBridge default/Classic 匯流排。2026-09-24 推出的新版 Custom Event Bus 支援 FIFO 訂閱，其順序範圍為發佈帳戶內的事件群組，並非整條匯流排的全域順序。
 
-官方資料查核：2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [AWS: sns](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [AWS: classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [AWS: eb](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).
+## 更正說明
+
+- 釐清 SQS Standard 與 FIFO 的順序範圍：Standard 可能重複或亂序，FIFO 依訊息群組保序；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
+- 補充 SNS FIFO 搭配 SQS FIFO 的保序條件，並區分 EventBridge default／Classic 匯流排與新版 Custom Event Bus 的 FIFO 訂閱，避免將不保序的描述套用到所有類型。
+
+依據：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [SNS FIFO ordering](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [EventBridge default / Classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [EventBridge Custom bus ordering](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

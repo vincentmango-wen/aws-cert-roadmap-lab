@@ -136,8 +136,6 @@ HTTP/HTTPS 內容傳遞與快取選 CloudFront，TCP/UDP 網路加速選 Global 
 
 CloudFront 通常以 DNS 名稱使用；專用 Anycast Static IPs 是選用功能，須經 CloudFront 支援工程團隊核准，並選擇使用所有邊緣節點的價格級別。2026-11-09 查核時，AWS 提供的 IPv4 位址為每個 IP 每小時 0.005 美元，另有一般 CloudFront 用量費用。啟用前請確認官方申請條件與價格。
 
-官方資料查核：2026-11-09 — [AWS: cf](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [AWS: cfprice](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).
-
 ### 錯誤 3:把 Global Accelerator 當成 CDN 來記
 
 Global Accelerator 不快取內容。它是把封包放到最短路徑上的服務，如果目的是快取傳遞，就應該選 CloudFront。
@@ -168,3 +166,9 @@ Route 53、CloudFront、Global Accelerator 都顯示為「Global」，容易混�
 - 靜態 IP 與 TCP/UDP 的路徑最佳化:Global Accelerator
 
 不要被「全球」這個字眼牽著走，而是用「需要哪些通訊協定與靜態 IP 選項」「有沒有快取」「有沒有解析 DNS」切分，就可以避免 3 個服務之間的混淆。
+
+## 更正說明
+
+- 更正「CloudFront 沒有靜態 IP」的描述，補充選用 Anycast Static IPs 的申請、設定與費用條件；選型不能只依有無靜態 IP 判斷。
+
+依據：[CloudFront Anycast Static IPs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).

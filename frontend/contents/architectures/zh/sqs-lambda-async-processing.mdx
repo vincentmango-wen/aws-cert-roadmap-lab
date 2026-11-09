@@ -124,4 +124,8 @@ SQS + Lambda 是以無伺服器方式實作非同步處理的代表性架構。
 
 SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序。SQS FIFO 在各個 MessageGroupId 內維持順序，並在去重期間內排除重複傳送；這不等於業務副作用一定只執行一次，消費端仍須具備冪等性以因應重試。
 
-官方資料查核：2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
+## 更正說明
+
+- 更正將 SQS 一概描述為依序處理的文字：Standard 可能重複或亂序，FIFO 的順序範圍是訊息群組；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
+
+依據：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

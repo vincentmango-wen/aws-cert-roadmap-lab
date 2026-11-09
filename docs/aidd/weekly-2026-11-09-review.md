@@ -112,3 +112,46 @@ This committed review is prepared before the final candidate run so that the rep
 GitHub Chrome inspection: no repository webhooks, no classic protection rules, no rulesets. Installed Apps include Vercel and Render; app installation alone does not establish a deployed service. Vercel project environment settings explicitly track master for Production and all unassigned branches for Preview. The checked repository AWS deployment workflow triggers only on master push (or manual dispatch), not this codex branch. No merge, auto-merge or production deployment is authorized.
 
 Remaining delivery checks: complete candidate profile and source/evidence seal verification; final branch/base and integration review; commit and safe push/draft PR; CI conclusion for that exact SHA. The sealed evidence bundle remains local and must not be committed. Human acceptance remains separate from automated checks.
+
+## PR 347 review correction cycle, authorized 2026-11-09
+
+The user approved the reviewed 34-file text/policy correction and necessary reviewed rebaseline, with commit and push to the same draft PR. This is a post-submission PR correction cycle. The original sealed 3/3 repair history and the fourth/fifth one-time exceptions above remain unchanged. No CLI reset, new task ID, extra automatic repair allowance, merge, auto-merge or production deployment is authorized.
+
+The user's clarification is retained verbatim:
+
+> 我同意
+>
+> 另外3次上限修復僅為PR提交
+> 提交後可以做為另一個迴圈至該PR修正提出為止
+>
+> 還有我的回饋請幫我整理後在同一個PR上面做comment以作為紀錄
+
+This does not establish three new attempts per cycle or unlimited resets. Material scope additions still require a concrete decision. The coordinating chat owns the feedback comment; this execution will not duplicate it.
+
+Scope: nine new article locale files lose internal translation/revision prose and redundant routine verification dates while retaining applicability, fictional-design caveats and pricing/quota conditions. Seven existing articles in three locales (21 files) gain correction notes tied to the actual pre-PR diff and the same official sources. Dated pricing and unresolved Free Tier source observations remain. No historical correction entries are fabricated. The policy and its docs index add two files; this task contract and this review add two, for 34 files total. Article source revisions advance to 2 with matching locales; question revisions remain unchanged.
+
+The reviewed contract adds only docs/seo/content-policy.md and docs/README.md to its allowed paths. The same task, bundle, engine, profile, assertions, inherited skips and repair records are retained. Full baseline and candidate verification are required after the reviewed rebaseline. This record is prepared before those runs; final seals and exact-SHA CI results will be reported separately.
+
+Architecture rendering is tracked separately in [issue 348](https://github.com/vincentmango-wen/aws-cert-roadmap-lab/issues/348). The shared renderer treats Mermaid as code and splits blocks at blank lines; 30 existing locale files contain Mermaid. This was confirmed from source and local exported HTML, not from attachment pixels. The screenshot was available only as Library OCR/description; the remote Preview redirected to Vercel login. No Mermaid, renderer or SVG change belongs to this correction. Render hosting is excluded by the user's explicit instruction.
+
+Independent text review identified that the Japanese decoupling article already avoided the blanket ordering claim before this PR. Its correction note now uses truthful clarification/addition wording in all three locales. Follow-up review found no remaining blocking text issue; all 30 article URL sets are preserved.
+
+Reviewed revision-2 was created without resetting history. Initial baseline attempt `1794205610516-b320a9` stopped before executing checks: the baseline phase requires the original 50 question IDs, whereas the submitted PR contains the 60-ID candidate. This failure is retained. The authorized necessary rebaseline therefore stages the original base-commit question files temporarily, runs the full baseline, restores the exact backed-up 60-question bytes, checks SHA-256, then runs the full candidate. No Harness or final question-file change is made. The backups and restoration manifest remain in ignored task artifacts; errors use a finally restoration path. If interrupted externally, restoration must be checked before any subsequent operation.
+
+Feedback was recorded by the coordinating chat in [the PR review comment](https://github.com/vincentmango-wen/aws-cert-roadmap-lab/pull/347#issuecomment-6733711086); this execution does not duplicate that comment. A direct local build initially failed to fetch the existing Fredoka font under restricted network access; this is not recorded as a passing build.
+
+The network-authorized direct build subsequently passed. Full staged baseline `1794209437169-6edfc1` then reached BASELINE_READY with all seven checks exiting zero. The finally restoration returned all three 60-question files to their original SHA-256 values: zh `41f9cae770e26f653ed32e46e289258cb1c1546ef848613210f511126caa5bd5`, ja `3c95fcae84924641e5eead18aa201513accfd5b54bc128ff6d2e57a8869fb9b3`, en `b00ce51762d2c01f57ab2f0bb08775ea9ed0dcb701388986947c85c7fc0e5943`. The final candidate must validate the restored 60-question state separately.
+
+This correction cycle's browser attempt to the local exported site on 127.0.0.1:3110 timed out. The previous delivery's visual evidence remains historical, not proof of this changed text. Current exported HTML and three-language text checks are separate from screenshot acceptance; desktop/mobile visual confirmation remains pending unless subsequently reported with fresh evidence.
+
+### Resumed verification checkpoint
+
+After reconnection, all 34 modified files were retained, no active verification marker existed, and each restored question file still contained 60 questions with its recorded SHA-256. The baseline was not repeated.
+
+The local static preview service was restarted and its actual exported `.html` paths were opened successfully. In-app browser checks covered all 30 changed article pages at desktop 1440x900 and mobile 390x844 viewport settings: all 21 existing pages displayed their localized correction heading, all nine new pages omitted the removed editorial prose, and none showed document-wide horizontal overflow. Screenshots were inspected for API Gateway correction notes in all three languages at both sizes, plus mobile examples of the cleaned zh Blog scope, ja architecture fictional-design caveat and en comparison pricing/quota reminder. The temporary viewport override was reset. These are local exported-page checks; they do not claim remote Preview or production acceptance.
+
+Candidate `1794218785945-997973` did not pass. Dependency installation exited zero; Harness exceeded its unchanged 180000 ms limit after reporting tests 1 through 19 as passed. The run records 180565 ms, `timedOut: true`, child PID 18088, and STOP_UNCONFIRMED; seal `9f6d1aab89561c6430363fd44f3a62add500d1312a1231b808e254008c6e3bff`. Remaining candidate checks were not executed. The earlier successful baseline is not a substitute for this candidate.
+
+Sandboxed process inspection lacked CIM access. The escalated read-only query for the timed-out Node process and related processes was explicitly rejected by the user. No alternate inspection route, process termination, state reset, timeout change, new run, commit or push was attempted after that rejection. Human reconciliation of process-tree status is required before continuing; all failed-run evidence, the successful baseline, revision archives and repair history remain intact.
+
+The user subsequently requested “請提交推送” with filesystem/network restrictions disabled. The renewed process inspection found PID 18088 absent and no related AIDD, npm, Vitest or Next test processes. PID 6192 had been reused by conhost.exe, created at 2026-11-09 19:39:09 +08:00, after the timed-out run; it was not terminated. No active marker remained. To continue the authorized submission, the current task state is reconciled to BASELINE_READY with a preserved pre-reconciliation task copy and an appended event. The failed latest run, successful baseline, all seals, revisions and original 3/3 repairs are retained. The next candidate uses the unchanged profile, including the 180-second Harness limit; no successful result is presumed here.

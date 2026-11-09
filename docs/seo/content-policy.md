@@ -392,7 +392,7 @@ Do not target the following keywords, even if search demand exists.
 - AWS serverless portfolio project
 - S3 CloudFront static website
 - AWS certification roadmap
-- AWS Solutions Architect Associate architecture 
+- AWS Solutions Architect Associate architecture
 - patterns
 ### 11.3 Traditional Chinese Keyword Specimens
 - AWS Cloud Practitioner 初學者
@@ -424,7 +424,7 @@ Check the following before adding new articles, questions, metadata, OGP, or tra
 
 Use the following commands to check for prohibited expressions.
 ```bash
-grep -RniE "exam dump|brain dump|real AWS exam 
+grep -RniE "exam dump|brain dump|real AWS exam
 questions|actual AWS exam questions|leaked AWS exam|guaranteed pass|100% pass|合格保証|必ず合格|100%合格|本番問題|実試験問題|流出問題|試験ダンプ|ブレインダンプ|題庫|真題|外流題|洩題|保證通過|必過" frontend docs README.md
 ```
 Because this policy file intentionally lists prohibited expressions,
@@ -455,3 +455,11 @@ The completion criteria for this document are as follows.
 - Recommended expressions are defined.
 - Wording for question pages states that questions are unofficial, independently created, and not exam dumps.
 - grep commands for pre-commit searches are defined.
+
+## 16. Reader-facing corrections and editorial provenance
+
+Published learning content must explain substantive corrections in a concise reader-facing correction note: what changed, the affected claim or scope, and links to supporting primary sources. An updated date alone is insufficient. Japanese, English, and Traditional Chinese notes must communicate equivalent corrections and source coverage.
+
+Keep translation revisions, workflow status, and routine verification dates in internal review records. Retain reader-relevant dates when they qualify time-sensitive facts or unresolved source discrepancies.
+
+Record only corrections supported by the current diff and available evidence. Do not invent historical entries or imply that earlier versions were verified. Typographical and formatting-only changes do not require a correction note.

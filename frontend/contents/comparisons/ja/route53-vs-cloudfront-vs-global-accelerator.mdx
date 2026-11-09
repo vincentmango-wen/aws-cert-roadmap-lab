@@ -163,8 +163,6 @@ HTTP/HTTPSのコンテンツ配信・キャッシュはCloudFront、TCP/UDPの�
 
 CloudFrontは通常DNS名で利用し、専用のAnycast Static IPsは追加機能です。CloudFrontサポートエンジニアリングの承認と、すべてのエッジロケーションを使う料金クラスが必要です。2026-11-09確認時点では、AWS提供IPv4アドレスは1 IP・1時間あたり0.005米ドルで、通常のCloudFront利用料金も別途発生します。有効化前に公式の前提条件と料金を確認してください。
 
-公式資料確認：2026-11-09 — [AWS: cf](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [AWS: cfprice](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).
-
 ### 間違い3：Global AcceleratorをCDNとして覚える
 
 Global Acceleratorはコンテンツをキャッシュしません。パケットを最短経路に乗せるサービスであり、キャッシュ配信が目的ならCloudFrontです。
@@ -195,3 +193,9 @@ Route 53、CloudFront、Global Acceleratorは、どれも「グローバル」�
 - 静的IP・TCP/UDPの経路最適化：Global Accelerator
 
 「グローバル」という単語に引っ張られず、「必要なプロトコルと静的IPの選択肢は何か」「キャッシュするか」「DNSを解決するか」で切り分けると、3サービスの取り違えを防げます。
+
+## 訂正内容
+
+- 「CloudFront には静的 IP がない」という説明を訂正し、オプションの Anycast Static IPs の申請、設定、料金条件を追記しました。静的 IP の有無だけではサービスを選べません。
+
+参照資料：[CloudFront Anycast Static IPs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).

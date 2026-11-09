@@ -4,6 +4,8 @@ This directory contains the design documents for AWS Cert Roadmap Lab.
 
 Use these documents as the basis for implementation work.
 
+For learning-content changes, follow the [reader-facing correction and editorial provenance policy](seo/content-policy.md#16-reader-facing-corrections-and-editorial-provenance).
+
 ---
 
 ## Purpose
