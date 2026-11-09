@@ -15,7 +15,7 @@ Amazon SNS、Amazon SQS、Amazon EventBridge 都是 AWS 用來串接系統的服
 遇到選擇時，可以這樣判斷:
 
 - 想把通知派送到多個目的地: SNS
-- 想讓工作排隊、依序處理: SQS
+- 想讓工作排隊、非同步處理: SQS
 - 想依事件條件分流處理: EventBridge
 - 想定時執行: EventBridge
 
@@ -30,7 +30,7 @@ Amazon SNS、Amazon SQS、Amazon EventBridge 都是 AWS 用來串接系統的服
 | 訊息保留 | 以通知為主 | 保留在佇列中 | 以事件路由為主 |
 | 派送方式 | 推送 (Push) | 拉取 (Pull) | 規則導向 |
 | 代表用途 | 電子郵件通知、觸發多個 Lambda | 非同步工作、待處理佇列 | 排程執行、事件驅動整合 |
-| 順序控制 | 可使用 FIFO 主題 | 可使用 FIFO 佇列 | 不以順序保證為設計目的 |
+| 順序控制 | Standard 不保證；FIFO + SQS FIFO 依訊息群組保序 | Standard 盡力維持；FIFO 依 MessageGroupId 保序 | default/Classic 不保證；新版 Custom bus 的 FIFO 訂閱依事件群組保序 |
 | 在本專案的用途 | 未來通知功能的候選 | 未來非同步處理的候選 | 未來每日一題派送的候選 |
 
 ## 給初學者的說明
@@ -47,7 +47,7 @@ SNS 是將訊息派送到多個目的地的通知服務。
 
 SQS 是暫存訊息的佇列。
 
-處理端會從佇列取出訊息，並依序進行處理。
+處理端會從佇列取出訊息進行處理；順序保證取決於佇列類型。
 
 「現在還無法立刻處理，想之後再安全地處理」的工作就適合放進 SQS。
 
@@ -171,3 +171,16 @@ SNS、SQS、EventBridge 是系統整合中常出現的重要服務。
 SNS 負責通知，SQS 負責佇列，EventBridge 負責事件路由。
 
 只要能清楚區分這三者，就會更容易理解 AWS 上的無伺服器架構。
+
+SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序。SQS FIFO 在各個 MessageGroupId 內維持順序，並在去重期間內排除重複傳送；這不等於業務副作用一定只執行一次，消費端仍須具備冪等性以因應重試。
+
+SNS Standard 不保證順序。需要保序的扇出時，搭配 SNS FIFO 主題與 SQS FIFO 訂閱，並對齊 MessageGroupId；SQS Standard 訂閱不提供端到端保序。本篇使用規則與目標的範例適用於不保證順序的 EventBridge default/Classic 匯流排。2026-09-24 推出的新版 Custom Event Bus 支援 FIFO 訂閱，其順序範圍為發佈帳戶內的事件群組，並非整條匯流排的全域順序。
+
+## 更正說明
+
+### 2026-11-09
+
+- 更正將 SQS 一概描述為依序處理的文字：Standard 可能重複或亂序，FIFO 的順序範圍是訊息群組；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
+- 補充 SNS FIFO 搭配 SQS FIFO 的保序條件，並區分 EventBridge default／Classic 匯流排與新版 Custom Event Bus 的 FIFO 訂閱，避免將不保序的描述套用到所有類型。
+
+依據：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [SNS FIFO ordering](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [EventBridge default / Classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [EventBridge Custom bus ordering](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

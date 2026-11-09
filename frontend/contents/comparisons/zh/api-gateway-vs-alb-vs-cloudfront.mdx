@@ -20,7 +20,7 @@ Amazon API Gateway、Application Load Balancer (ALB)、Amazon CloudFront 都可�
 | 主要用途 | 公開 REST API / HTTP API / WebSocket API | Web 應用的負載平衡 | 靜態與動態內容的高速傳遞 |
 | 常見後端 | AWS Lambda、HTTP 端點、AWS 服務 | Amazon EC2、Amazon ECS、AWS Lambda | Amazon S3、ALB、API Gateway、HTTP 來源 |
 | 認證與授權 | AWS IAM、Lambda Authorizer、Amazon Cognito 等 | OIDC 認證等 | 簽章 URL、AWS WAF 整合等 |
-| 快取 | 具備 API 快取功能 | 並非主要用途 | 擅長的領域 |
+| 快取 | REST API 支援內建快取；HTTP API 不支援 | 並非主要用途 | 擅長的領域 |
 | 與無伺服器的契合度 | 高 | 中 | 高 |
 | WebSocket | 支援 | 並非主要用途 | 並非主要用途 |
 | 考試關鍵字 | serverless API、REST、HTTP API、Lambda | load balancing、HTTP routing | CDN、edge、cache、static content |
@@ -191,3 +191,11 @@ API Gateway 是 API 的入口。
 - CloudFront:內容的高速傳遞。
 
 本專案同時採用 CloudFront 與 API Gateway，這項比較在說明作品集時也是重要的著力點。
+
+## 更正說明
+
+### 2026-11-09
+
+- 更正先前將 API Gateway 快取一概而論的描述：REST API 支援內建快取，HTTP API 不支援。
+
+依據：[API Gateway REST / HTTP APIs](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html).

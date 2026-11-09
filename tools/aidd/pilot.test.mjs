@@ -6,6 +6,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createTask, beginRepair, readStatus, verify, replay, parseVitest, manifest } from './pilot.mjs';
+import * as pilot from './pilot.mjs';
 
 function fixture(t, script = 'console.log("ok")') {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aidd-fixture-'));
@@ -185,6 +186,13 @@ test('protected verifier edits and out-of-scope changes block candidate', async 
   const f = fixture(t); createTask(f); await verify(f.bundle, 'baseline');
   fs.writeFileSync(path.join(f.root, 'check.mjs'), 'process.exit(0)');
   assert.equal((await verify(f.bundle, 'candidate')).state, 'NEEDS_DECISION');
+  const helper = fixture(t);
+  fs.mkdirSync(path.join(helper.root, '__tests__'));
+  fs.writeFileSync(path.join(helper.root, '__tests__', 'article-contract.ts'), 'original helper');
+  helper.contract.allowed.push('__tests__/');
+  createTask(helper); await verify(helper.bundle, 'baseline');
+  fs.writeFileSync(path.join(helper.root, '__tests__', 'article-contract.ts'), 'weakened helper');
+  assert.equal((await verify(helper.bundle, 'candidate')).state, 'NEEDS_DECISION');
 });
 
 test('source drift during verification blocks success, generated output does not', async t => {
@@ -273,4 +281,91 @@ test('Vitest identity parser blocks empty, missing, duplicate and unexpected ski
   assert.throws(() => parseVitest(dup, '/repo'), /duplicate/i);
   const skipped = parseVitest(report('pending'), '/repo');
   assert.deepEqual(parseVitest(report('pending'), '/repo', skipped), skipped);
+});
+
+test('reviewed rebaseline retains task identity, all repairs and original evidence', async t => {
+  const f = fixture(t); createTask(f);
+  const original = await verify(f.bundle, 'baseline');
+  for (let i = 0; i < 3; i++) beginRepair(f.bundle, { problem: 'fixture', hypothesis: 'bounded', expected: 'pass' });
+  fs.writeFileSync(path.join(f.root, 'new.txt'), 'reviewed addition');
+  const review = pilot.prepareRebaseline(f.bundle, f.contract, 'Reviewed fixture change');
+  const result = pilot.rebaseline(f.bundle, review);
+  assert.equal(result.state, 'CREATED');
+  assert.equal(result.repairs.length, 3);
+  assert.equal(result.revisions.length, 1);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(f.bundle, 'contract.json'))).id, 'fixture-task');
+  assert.ok(fs.existsSync(path.join(f.bundle, 'runs', original.run, 'seal.json')));
+  assert.equal((await verify(f.bundle, 'baseline')).state, 'BASELINE_READY');
+  assert.throws(() => beginRepair(f.bundle, { problem: 'fourth', hypothesis: 'retry', expected: 'pass' }), /REPAIR_LIMIT/);
+  fs.unlinkSync(path.join(f.bundle, 'runs', original.run, 'fixture.stdout.log'));
+  assert.equal(readStatus(f.bundle).state, 'EVIDENCE_INVALID');
+});
+
+test('rebaseline rejects stale reviews, omitted changes, changed identity and unsafe states', async t => {
+  const f = fixture(t); createTask(f); await verify(f.bundle, 'baseline');
+  fs.writeFileSync(path.join(f.root, 'new.txt'), 'one');
+  const review = pilot.prepareRebaseline(f.bundle, f.contract, 'review');
+  const originalTask = fs.readFileSync(path.join(f.bundle, 'task.json'), 'utf8');
+  for (const invalid of [{ ...f.contract, allowed: 'source.txt' }, { ...f.contract, humanAcceptance: 'review' }, { ...f.contract, allowed: [''] }]) {
+    assert.throws(() => pilot.prepareRebaseline(f.bundle, invalid, 'review'), /Contract/);
+    assert.equal(fs.readFileSync(path.join(f.bundle, 'task.json'), 'utf8'), originalTask);
+    assert.equal(fs.existsSync(path.join(f.bundle, 'active.json')), false);
+  }
+  for (const modified of [
+    { ...review, previousTaskHash: 'stale' }, { ...review, sourceHash: 'stale' },
+    { ...review, changes: [] }, { ...review, contract: { ...f.contract, id: 'reset' } },
+    { ...review, contract: { ...f.contract, maxRepairs: 4 } },
+  ]) assert.throws(() => pilot.rebaseline(f.bundle, modified));
+  fs.writeFileSync(path.join(f.root, 'new.txt'), 'two');
+  assert.throws(() => pilot.rebaseline(f.bundle, review), /review|source|change/i);
+  fs.writeFileSync(path.join(f.bundle, 'active.json'), '{}');
+  assert.throws(() => pilot.rebaseline(f.bundle, review), /INTERRUPTED/);
+  fs.unlinkSync(path.join(f.bundle, 'active.json'));
+  const taskFile = path.join(f.bundle, 'task.json');
+  const state = JSON.parse(fs.readFileSync(taskFile));
+  for (const altered of [{ ...state, state: 'STOP_UNCONFIRMED' }, { ...state, replayedFrom: {} }]) {
+    fs.writeFileSync(taskFile, JSON.stringify(altered));
+    assert.throws(() => pilot.prepareRebaseline(f.bundle, f.contract, 'review'), /STOP_UNCONFIRMED|verification-only/);
+  }
+});
+
+test('rebaseline interrupted configuration switch is reported with its active latch', async t => {
+  const f = fixture(t); createTask(f);
+  fs.writeFileSync(path.join(f.bundle, 'active.json'), JSON.stringify({ operation: 'rebaseline' }));
+  fs.writeFileSync(path.join(f.bundle, 'contract.json'), '{}');
+  const status = readStatus(f.bundle);
+  assert.equal(status.state, 'INTERRUPTED');
+  assert.match(status.reason, /drift/i);
+});
+
+test('rebaseline assertion retention rejects deletion, skip, merged and unknown renames', () => {
+  const previous = { old: 'passed', second: 'passed', existingSkip: 'pending' };
+  const actual = { renamed: 'passed', second: 'passed', existingSkip: 'pending', added: 'passed' };
+  assert.doesNotThrow(() => pilot.retainAssertions(actual, previous, { old: 'renamed' }));
+  for (const [next, replacements] of [
+    [{ ...actual, renamed: 'pending' }, { old: 'renamed' }],
+    [{ second: 'passed', existingSkip: 'pending' }, {}],
+    [{ ...actual, added: 'pending' }, { old: 'renamed' }],
+    [actual, { old: 'renamed', second: 'renamed' }],
+    [actual, { unknown: 'renamed' }], [actual, { old: '' }],
+  ]) assert.throws(() => pilot.retainAssertions(next, previous, replacements));
+});
+
+test('rebaseline integrates renamed assertions and cannot discard inherited requirements on another revision', async t => {
+  const f = fixture(t, `import fs from 'node:fs'; import path from 'node:path';
+    fs.writeFileSync(process.argv[2], JSON.stringify({success:true,testResults:[{name:path.resolve('example.test.ts'),assertionResults:JSON.parse(fs.readFileSync('new.txt'))}]}));`);
+  f.profile.checks[0].report = 'vitest'; f.profile.checks[0].args.push('{report}');
+  fs.writeFileSync(path.join(f.root, 'new.txt'), JSON.stringify([{fullName:'old',status:'passed'}]));
+  createTask(f); assert.equal((await verify(f.bundle,'baseline')).state,'BASELINE_READY');
+  const next = [{fullName:'renamed',status:'passed'},{fullName:'added',status:'passed'}];
+  fs.writeFileSync(path.join(f.root,'new.txt'),JSON.stringify(next));
+  const review = pilot.prepareRebaseline(f.bundle,f.contract,'Reviewed rename and new assertion');
+  review.assertionReplacements = {fixture:{'example.test.ts::old':'example.test.ts::renamed'}};
+  assert.equal(pilot.rebaseline(f.bundle,review).state,'CREATED');
+  assert.throws(()=>pilot.prepareRebaseline(f.bundle,f.contract,'Cannot reset pending baseline'),/successful baseline/);
+  assert.equal((await verify(f.bundle,'baseline')).state,'BASELINE_READY');
+  pilot.rebaseline(f.bundle,pilot.prepareRebaseline(f.bundle,f.contract,'Second reviewed revision'));
+  next[0].status='pending'; fs.writeFileSync(path.join(f.root,'new.txt'),JSON.stringify(next));
+  assert.equal((await verify(f.bundle,'baseline')).state,'VERIFICATION_BLOCKED');
+  assert.throws(()=>pilot.prepareRebaseline(f.bundle,f.contract,'Cannot reset failing requirements'),/successful baseline/);
 });

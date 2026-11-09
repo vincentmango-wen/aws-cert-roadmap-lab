@@ -1,0 +1,55 @@
+---
+comparisonId: "cmp-014"
+slug: "step-functions-standard-vs-express"
+title: "Step Functions Standard versus Express: semantics and cost"
+description: "Compare duration, retry and duplicate semantics, callbacks, history and billing dimensions through approval and high-volume short-workflow examples."
+---
+
+# Step Functions Standard versus Express: semantics and cost
+
+Scope: Standard, asynchronous Express and synchronous Express workflows. Recheck prices and quotas for the actual Region and account.
+
+## Eliminate types that cannot meet the requirements
+
+| Dimension | Standard | Express |
+|---|---|---|
+| Maximum execution duration | One year | Five minutes |
+| Workflow execution semantics | Exactly-once model; explicit Retry may repeat states | Asynchronous: at-least-once; synchronous: at-most-once |
+| Callback / job completion | .waitForTaskToken and .sync for supported integrations | Neither integration pattern |
+| History | Stored by Step Functions, generally retrievable up to 90 days after completion | Enable CloudWatch Logs; no equivalent built-in history |
+| Main billing dimensions | State transitions | Execution requests, duration and memory used |
+
+These semantics concern workflow execution, not cross-system transaction effects. Explicit retries, manual redrives and caller resubmissions still need appropriate idempotency. Synchronous Express's at-most-once model does not guarantee success; a disconnected caller may not know the outcome. [Workflow types](https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html)
+
+## Distinguish three kinds of retry
+
+ASL Retry repeats a Task for selected errors with configured backoff and attempt limits; Catch takes an alternative path. Retrying the API that starts a workflow is different from retrying one Task. Business compensation and manual redrive are different again: reconcile effects that have already happened. [Error handling](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
+
+Do not remove payment idempotency keys because Standard says exactly-once. Nor does synchronous Express justify unconditional client resubmission. A new execution started by the caller can repeat a business operation.
+
+## A 48-hour approval
+
+Choose Standard when an order can wait two days for a decision: it meets the duration requirement and supports callbacks. Express's five-minute maximum and lack of callback support are hard constraints; fewer states do not solve them. Store tokens in a controlled backend and return decisions through a validated broker instead of keeping Lambda running for two days. [Integration patterns](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+A short subworkflow may separately suit Express, but splitting it requires a fresh review of duplicate semantics, state transfer and error ownership. High volume alone does not justify converting the entire approval workflow.
+
+## Estimate high-volume short workflows
+
+This constructed arithmetic example is neither an AWS quotation nor a measured bill. Assume N=1,000,000 executions per month, six billed transitions per Standard execution, and an already-rounded Express duration of 0.2 seconds at 64 MB billed memory:
+
+- Standard: 6,000,000 transitions × the applicable per-transition rate.
+- Express: 1,000,000 requests × the request rate, plus 12,500 GB-seconds × the applicable duration rate.
+
+At the same memory level, increasing billed duration to 240 seconds produces 15,000,000 GB-seconds for Express. Standard with the same six transitions does not gain transitions merely because a wait is longer. Short, fast and frequent is a starting hypothesis for estimation, not proof that Express is cheaper.
+
+For a real comparison, include transitions after retries, the duration distribution, billed memory and rounding, regional prices and tiers, plus Lambda, data services and logging. The arithmetic above does not subtract free allowances. Measure representative inputs for both designs and apply current prices. [Step Functions pricing](https://aws.amazon.com/step-functions/pricing/)
+
+## History and synchronous responses
+
+Express CloudWatch Logs delivery is best-effort. Enabling logging does not create a complete audit ledger. Persist required business evidence separately or evaluate Standard; include log charges and retention policy. [Execution logging](https://docs.aws.amazon.com/step-functions/latest/dg/cw-logs.html)
+
+Synchronous Express uses StartSyncExecution. HTTP 200 does not establish workflow success: inspect status, error and cause. A client timeout also does not establish that the backend did nothing. [Synchronous execution API](https://docs.aws.amazon.com/step-functions/latest/apireference/API_StartSyncExecution.html)
+
+## Selection checklist
+
+For human approval, long workflows and built-in history, start with Standard. For idempotent event processing within five minutes, assess asynchronous Express. For an immediate response from a short workflow, assess synchronous Express and handle failed or uncertain outcomes. Finally check payload, history and account quotas. Use S3 references for large data; choosing Express does not remove the 256 KiB payload limit. [Quotas](https://docs.aws.amazon.com/step-functions/latest/dg/service-quotas.html)

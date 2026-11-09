@@ -3054,9 +3054,9 @@
       "Separate queue permissions for send and receive",
       "Do not place secrets directly inside messages"
     ],
-    "updatedAt": "2026-06-01",
+    "updatedAt": "2026-11-09",
     "locale": "en",
-    "practicalNote": "Amazon SQS is a fully managed message queue service from AWS. By separating the side that sends messages to the queue (the producer) from the side that receives them (the consumer), it asynchronizes processing and loosely couples the system as a whole. Senders can dispatch messages without being aware of consumer availability, and receivers can retrieve and process messages at their own pace, providing a buffer against sudden load spikes. SQS offers two queue types: Standard Queue and FIFO Queue. Standard provides at-least-once delivery without strict ordering, while FIFO provides exactly-once processing with ordering guarantees.\n\nIn practice, SQS is used for asynchronous order processing, distributing work to Lambda, buffering retries during failures, and passing jobs between ECS tasks. The visibility timeout is an important concept in SQS: it is the period during which a message becomes invisible to other consumers after one consumer has retrieved it but before processing has completed (and the message has been deleted). If processing does not complete within the timeout, the message becomes visible again and can be retrieved by another consumer. This guarantees at-least-once processing, but it requires consumers to ensure idempotency.\n\nPricing is based on the number of API requests, with data transfer volume billed separately. Configuring a dead-letter queue (DLQ) allows messages that fail processing beyond a specified number of attempts to be moved to a separate queue for later investigation. In CLF-C02, the basic concept of SQS as a means of loose coupling through message queues, the distinction between Standard and FIFO, and the visibility timeout are frequent topics.",
+    "practicalNote": "Amazon SQS is a fully managed message queue service from AWS. By separating the side that sends messages to the queue (the producer) from the side that receives them (the consumer), it asynchronizes processing and loosely couples the system as a whole. Senders can dispatch messages without being aware of consumer availability, and receivers can retrieve and process messages at their own pace, providing a buffer against sudden load spikes. SQS offers two queue types: Standard Queue and FIFO Queue. SQS Standard provides at-least-once delivery with best-effort ordering; duplicates and out-of-order messages are possible. SQS FIFO preserves order within each MessageGroupId and deduplicates sends within its deduplication window. This does not make application side effects exactly once: consumers must remain idempotent when processing is retried.\n\nIn practice, SQS is used for asynchronous order processing, distributing work to Lambda, buffering retries during failures, and passing jobs between ECS tasks. The visibility timeout is an important concept in SQS: it is the period during which a message becomes invisible to other consumers after one consumer has retrieved it but before processing has completed (and the message has been deleted). If processing does not complete within the timeout, the message becomes visible again and can be retrieved by another consumer. This guarantees at-least-once processing, but it requires consumers to ensure idempotency.\n\nPricing is based on the number of API requests, with data transfer volume billed separately. Configuring a dead-letter queue (DLQ) allows messages that fail processing beyond a specified number of attempts to be moved to a separate queue for later investigation. In CLF-C02, the basic concept of SQS as a means of loose coupling through message queues, the distinction between Standard and FIFO, and the visibility timeout are frequent topics.\n\nOfficial sources checked: 2026-11-09",
     "officialDocs": [
       {
         "label": "What is Amazon Simple Queue Service (AWS Official Documentation)",
@@ -3065,6 +3065,14 @@
       {
         "label": "Amazon SQS (AWS Official)",
         "url": "https://aws.amazon.com/jp/sqs/"
+      },
+      {
+        "label": "AWS official documentation (sqs; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      },
+      {
+        "label": "AWS official documentation (fifo; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html"
       }
     ]
   },
@@ -3241,9 +3249,9 @@
       "Review security warnings",
       "Do not ignore findings about public settings or excessive permissions"
     ],
-    "updatedAt": "2026-06-07",
+    "updatedAt": "2026-11-09",
     "locale": "en",
-    "practicalNote": "AWS Trusted Advisor is a service that inspects an AWS environment across five categories — cost optimization, security, fault tolerance, performance, and service quotas — and provides improvement recommendations aligned with best practices. The checks are automatically executed based on items predefined by AWS, and the results can be reviewed by category in the management console. Representative check items include enabling MFA on the IAM root user, S3 bucket public access, unused EC2 Elastic IPs, low-utilization EC2 instances, and service quota usage.\n\nThe number of available check items differs depending on the support plan. Basic Support and Developer Support provide selected items in the security and fault tolerance categories (MFA on root account, S3 bucket permissions, public EBS/RDS snapshots, security group port openings, and others) along with all items in the service quotas category. Business Support and above provide all categories and all check items (refer to the official documentation for the latest count), with additional capabilities such as automated retrieval through the API and weekly improvement reports. In exam contexts, the point that the scope of checks varies by support plan is repeatedly asked, so it helps to remember that Basic and Developer cover some security and fault tolerance checks plus all service quota checks, while Business and above cover all items.\n\nIn practice, typical use cases include leveraging the cost optimization category of Trusted Advisor to surface unused resources (EBS volumes attached to stopped EC2 instances, unused Elastic IPs, low-utilization RDS) and reduce costs, and using the security category to continuously monitor for misconfigurations in IAM, S3, and security groups. While its role partially overlaps with AWS Config Rules and AWS Security Hub, the distinct value of Trusted Advisor lies in providing evaluations specifically against AWS best practices.",
+    "practicalNote": "Trusted Advisor recommends improvements to an AWS environment, including cost, security, performance, and resilience. It does not automatically implement every recommendation. Coverage depends on the support plan, so check access before relying on a check in an operational process.\n\nAs checked on 2026-11-09, Basic Support provides all Service Limits checks and selected Security and Fault Tolerance checks. Basic does not provide automatic check updates. The current documentation lists Business Support+, Enterprise Support, and Unified Operations for the full set of checks and Trusted Advisor API access. Older descriptions grouping Basic/Developer and Business-or-higher are historical classifications, not a reliable current entitlement matrix.\n\nDeveloper, Business, and Enterprise On-Ramp are scheduled to end on 2027-01-01, except in AWS GovCloud (US), where they remain available. Existing customers should follow their account’s transition terms. Use recommendations to investigate unused resources and configuration risks, verify the impact, and then make an intentional change. Check counts and plan coverage can change; the official plan documentation is the source for operational decisions.",
     "officialDocs": [
       {
         "label": "AWS Trusted Advisor (AWS Official Documentation)",
@@ -3252,6 +3260,14 @@
       {
         "label": "AWS Trusted Advisor (AWS Official)",
         "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      },
+      {
+        "label": "AWS official documentation (ta; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
       }
     ]
   },

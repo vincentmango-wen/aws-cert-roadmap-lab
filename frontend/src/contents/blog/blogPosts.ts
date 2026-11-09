@@ -1,7 +1,7 @@
 import type { BlogPostMeta } from "../../types/blog";
 
 /**
- * Blog-post registry source of truth. Shared metadata for 25 posts includes postId, slug, publishedAt,
+ * Blog-post registry source of truth. Shared metadata for registered posts includes postId, slug, publishedAt,
  * updatedAt, published, author, category, tags, targetKeywords, title and description. This file defines
  * shared identity and publication fields. In P5-050, display fields initially retain Japanese defaults;
  * blog-content-loader.ts reads localized frontmatter from contents/blog/{en,zh}/<slug>.mdx in subsequent
@@ -44,7 +44,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-01",
-    updatedAt: "2026-06-01",
+    updatedAt: "2026-11-09",
   },
   {
     postId: "blog-003",
@@ -152,7 +152,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-11-09",
   },
   {
     postId: "blog-009",
@@ -278,7 +278,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-08-20",
+    updatedAt: "2026-11-09",
   },
   {
     postId: "blog-016",
@@ -460,4 +460,24 @@ export const blogPosts: BlogPostMeta[] = [
     publishedAt: "2026-06-07",
     updatedAt: "2026-08-20",
   },
+{
+  "postId": "blog-026",
+  "slug": "lambda-sqs-safe-retries-idempotency",
+  "title": "LambdaとSQS：安全な再試行と業務の冪等性",
+  "description": "注文イベントの重複を例に、業務の冪等性キー、条件付き書き込み、部分バッチ応答、追跡できるDLQ再送を設計します。",
+  "category": "SAA",
+  "tags": [
+    "Lambda",
+    "SQS",
+    "Idempotency"
+  ],
+  "targetKeywords": [
+    "Lambda SQS 冪等性",
+    "partial batch failure"
+  ],
+  "author": "AWS Cert Roadmap Lab",
+  "published": true,
+  "publishedAt": "2026-11-09",
+  "updatedAt": "2026-11-09"
+},
 ];

@@ -27,7 +27,7 @@
     "correctChoiceId": "D",
     "explanation": "The correct answer is \"You can scale resources up or down based on demand.\" A representative advantage of the AWS Cloud is the ability to add and remove resources based on demand,\nin other words scalability and elasticity.\n\nIn on-premises environments, the common approach was to provision servers in advance with enough capacity to handle peak\ntraffic. In that model, the excess servers sit idle during normal periods and become a fixed cost, and when traffic exceeds\nexpectations, processing capacity becomes insufficient. On AWS, mechanisms such as Auto Scaling and Elastic Load Balancing\nautomatically add EC2 instances as traffic grows and automatically remove them as traffic decreases. When this elasticity\nis combined with pay-as-you-go billing, an operating pattern of running small during normal periods and large only during\nbusy periods becomes possible.\n\nWhat is worth distinguishing here is that the advantage of the cloud is not low cost itself, but the flexibility to provision\nthe exact amount you need only when you need it. Elasticity has a larger effect on workloads whose demand is hard to predict\nor whose traffic has spikes. On CLF-C02, scalability, elasticity, agility, and pay-as-you-go pricing are repeatedly asked\nas advantages of the cloud. When choices use extreme phrasing such as purchasing physical servers, AWS taking full\nresponsibility, or everything being permanently free, those statements contradict the characteristics of the cloud and are\nusually wrong.",
     "choiceExplanations": {
-      "A": "Incorrect. AWS offers a Free Tier, but it applies to a limited amount of certain services and is often subject to\nconditions such as 12 months from the start of use. Not all services are free indefinitely. Unconditional statements such\nas permanently free or completely free are usually wrong.",
+      "A": "Incorrect. Free Tier eligibility depends on the account creation date, plan, service, usage limits, and credit expiry. Legacy 12-month offers are not a universal rule for newer accounts. Not all AWS services are free indefinitely.",
       "B": "Incorrect. AWS security is based on the Shared Responsibility Model, which divides responsibility between AWS and the\nuser. AWS is responsible for the security of the cloud itself (data centers, hardware, and so on), and the user is\nresponsible for what is in the cloud (OS updates, IAM permission settings, data encryption, and so on). Saying that AWS\ntakes on all responsibility is a typical mistake that tests understanding of the Shared Responsibility Model.",
       "C": "Incorrect. This is rather a description of on-premises environments where you own physical servers yourself.\nOn AWS, you do not need to purchase or install physical servers yourself. You can launch EC2 instances when needed\nand stop or terminate them when no longer needed. Being able to start with no upfront investment is an advantage\nof the cloud, and this option describes the opposite direction.",
       "D": "Correct. The ability to scale resources up or down based on demand (scalability and elasticity) is the most\nrepresentative advantage of the cloud. Because resources can be added or removed automatically in line with traffic peaks,\nyou can suppress both the wasted cost of excess resources and the opportunity loss from insufficient resources."
@@ -45,6 +45,18 @@
       {
         "label": "Shared Responsibility Model (AWS official)",
         "url": "https://aws.amazon.com/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "AWS official documentation (free; checked 2026-11-09)",
+        "url": "https://aws.amazon.com/free/free-tier-faqs/"
+      },
+      {
+        "label": "AWS official documentation (billing; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html"
+      },
+      {
+        "label": "AWS official documentation (legacy; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html"
       }
     ],
     "relatedServices": [
@@ -63,7 +75,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-18"
+    "updatedAt": "2026-11-09"
   },
   {
     "questionId": "clf-002",
@@ -1815,7 +1827,7 @@
       "C": "Incorrect. It is not a training material service.",
       "D": "Correct. Trusted Advisor is used for AWS environment improvement recommendations."
     },
-    "practicalNote": "AWS Trusted Advisor is a service that automatically inspects the resource configuration of an AWS account and presents recommendations across five categories: cost optimization, security, fault tolerance, performance, and service quotas. Typical check items include unused Elastic IP addresses, EC2 instances with low utilization, publicly accessible S3 buckets, the presence of MFA on the IAM users, and EBS snapshot generation management.\n\nThe set of available checks varies by support plan. Basic and Developer Support are limited to the core checks (some checks in the security and service quota categories), while paid Business Support and above unlock the full set of checks across all categories. The feature differences by support plan are frequently tested on CLF-C02.\n\nOn the exam, the question is typically phrased as \"Which service lets you check recommendations for improving cost, security, and fault tolerance in your AWS environment?\" Distractors include options such as \"image editing of S3 objects,\" \"automatic EC2 source code generation,\" and \"Lambda training material,\" all of which are completely unrelated to the role of Trusted Advisor. It is also worth noting that Trusted Advisor is a service that \"presents recommendations\" rather than one that automatically changes the configuration.",
+    "practicalNote": "Trusted Advisor recommends improvements to an AWS environment, including cost, security, performance, and resilience. It does not automatically implement every recommendation. Coverage depends on the support plan, so check access before relying on a check in an operational process.\n\nAs checked on 2026-11-09, Basic Support provides all Service Limits checks and selected Security and Fault Tolerance checks. Basic does not provide automatic check updates. The current documentation lists Business Support+, Enterprise Support, and Unified Operations for the full set of checks and Trusted Advisor API access. Older descriptions grouping Basic/Developer and Business-or-higher are historical classifications, not a reliable current entitlement matrix.\n\nDeveloper, Business, and Enterprise On-Ramp are scheduled to end on 2027-01-01, except in AWS GovCloud (US), where they remain available. Existing customers should follow their account’s transition terms. Use recommendations to investigate unused resources and configuration risks, verify the impact, and then make an intentional change. Check counts and plan coverage can change; the official plan documentation is the source for operational decisions.",
     "officialDocs": [
       {
         "label": "AWS Trusted Advisor (AWS official)",
@@ -1824,6 +1836,10 @@
       {
         "label": "Using AWS Trusted Advisor (AWS official documentation)",
         "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
       }
     ],
     "relatedServices": [
@@ -1842,7 +1858,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-11-09"
   },
   {
     "questionId": "clf-029",
@@ -1936,14 +1952,14 @@
       }
     ],
     "correctChoiceId": "B",
-    "explanation": "AWS offers support plans such as Basic, Developer, Business, and Enterprise tiers, tailored to the use case and the required level of support.",
+    "explanation": "AWS offers support plans according to the use case and required support level. Basic is included; check current plan documentation for paid options and legacy-plan transitions.",
     "choiceExplanations": {
       "A": "Incorrect. A support plan does not make AWS usage charges free.",
       "B": "Correct. You choose a plan based on the support content you need.",
       "C": "Incorrect. Whether a dedicated contact is assigned depends on the plan.",
       "D": "Incorrect. There are paid support plans."
     },
-    "practicalNote": "AWS Support offers multiple plans: Basic, Developer, Business, Enterprise On-Ramp, and Enterprise. Basic is the minimum plan included free with every account, and covers billing and account inquiries, access to AWS documentation, whitepapers, and community forums, the core checks in Trusted Advisor, and AWS Personal Health Dashboard. Developer and above are paid, and add capabilities such as the ability to open technical support cases, response time SLAs, the full set of Trusted Advisor checks, and third-party software support, expanding progressively with each plan. Enterprise On-Ramp and Enterprise add a Technical Account Manager (TAM) who provides periodic architecture reviews and operational guidance.\n\nOn the exam, the typical pattern places a neutral correct answer such as \"multiple plans are available based on the use case and the required level of support\" alongside extreme distractors such as \"a TAM always comes with every plan,\" \"support plans are completely free,\" or \"using a support plan makes AWS usage charges free.\" If you remember the two facts that Basic is included for free with every account and that technical support and TAM access depend on the plan, you can rule out the extreme distractors.\n\nThe general guideline for choosing a plan in practice is to consider Business or above if you run even a single production workload, Enterprise On-Ramp or Enterprise if you operate mission-critical production, and to stay on Basic or Developer for learning or test workloads. The price of a support plan is the sum of a fixed monthly amount and a percentage of AWS usage charges, so the price increases as your usage grows.",
+    "practicalNote": "Basic Support remains the included plan for account and billing help; it does not include technical support cases. Select paid support by the workload and required response coverage, and check current plan terms rather than assuming that every paid plan includes a TAM or all Trusted Advisor features.\n\nDeveloper, Business, and Enterprise On-Ramp are legacy plan names. AWS has announced their discontinuation on 2027-01-01, with an exception for AWS GovCloud (US), where they remain available. This is a future transition date, not a deadline in the week of 2026-11-09. Current documentation describes Business Support+, Enterprise Support, and Unified Operations. Existing legacy-plan customers should follow their migration notice and account-specific terms.\n\nFor the exam, distinguish the stable concept that Basic is included and support coverage depends on the plan from historical plan classifications in older questions. In production, check the currently offered plan, response targets, technical case access, and TAM coverage before choosing. Do not infer current entitlement from an old plan name or memorize a fixed count of Trusted Advisor checks.\n\nOfficial sources checked: 2026-11-09",
     "officialDocs": [
       {
         "label": "Compare AWS Support plans (AWS official)",
@@ -1952,6 +1968,10 @@
       {
         "label": "Using AWS Trusted Advisor (AWS official documentation)",
         "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
       }
     ],
     "relatedServices": [],
@@ -1968,7 +1988,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01"
+    "updatedAt": "2026-11-09"
   },
   {
     "questionId": "clf-031",
@@ -2746,7 +2766,7 @@
       "C": "Enterprise Support is a paid support plan intended for large organizations.",
       "D": "Developer Support is a paid support plan for developers."
     },
-    "practicalNote": "AWS Support has five plans: Basic, Developer, Business, Enterprise On-Ramp, and Enterprise. Among these, Basic Support is the free support plan included by default with every AWS account. The scope of Basic Support is limited to 24/7 customer service for account and billing inquiries, the core checks of AWS Trusted Advisor (6 items), AWS Personal Health Dashboard, service quota increase requests, and access to documentation, whitepapers, and support forums. It does not include responses to technical questions or an SLA for production workloads.\n\nOn the exam, Basic Support is the expected answer for the prompt asking which basic support plan is available to all AWS accounts. Common distractors include Developer Support (for individual developers and non-production workloads), Business Support (for production workloads), and Enterprise Support (for mission-critical workloads). The other three plans are all paid and therefore contradict the condition of being included with every account.\n\nIn practice, plans at Developer Support and above allow technical case opening. Features such as case response SLAs, the full set of Trusted Advisor checks (the 6 core checks plus over 100 additional checks), Infrastructure Event Management, and a dedicated AWS Technical Account Manager (TAM) are added in tiers according to the plan. CLF-C02 repeatedly asks about the differences in coverage among the five plans, especially the tiered structure of \"Basic cannot open technical cases,\" \"24/7 technical support starts at Business,\" and \"a TAM is included at Enterprise.\" The number of AWS Trusted Advisor checks (6 core for Basic and Developer, the full set for Business and above) is also a frequently tested point.",
+    "practicalNote": "Basic Support remains the included plan for account and billing help; it does not include technical support cases. Select paid support by the workload and required response coverage, and check current plan terms rather than assuming that every paid plan includes a TAM or all Trusted Advisor features.\n\nDeveloper, Business, and Enterprise On-Ramp are legacy plan names. AWS has announced their discontinuation on 2027-01-01, with an exception for AWS GovCloud (US), where they remain available. This is a future transition date, not a deadline in the week of 2026-11-09. Current documentation describes Business Support+, Enterprise Support, and Unified Operations. Existing legacy-plan customers should follow their migration notice and account-specific terms.\n\nFor the exam, distinguish the stable concept that Basic is included and support coverage depends on the plan from historical plan classifications in older questions. In production, check the currently offered plan, response targets, technical case access, and TAM coverage before choosing. Do not infer current entitlement from an old plan name or memorize a fixed count of Trusted Advisor checks.\n\nOfficial sources checked: 2026-11-09",
     "officialDocs": [
       {
         "label": "Compare AWS Support Plans (AWS official)",
@@ -2755,6 +2775,14 @@
       {
         "label": "AWS Support plans (AWS official documentation)",
         "url": "https://docs.aws.amazon.com/awssupport/latest/user/aws-support-plans.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
+      },
+      {
+        "label": "AWS official documentation (ta; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
       }
     ],
     "relatedServices": [],
@@ -2770,7 +2798,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-19"
+    "updatedAt": "2026-11-09"
   },
   {
     "questionId": "clf-044",

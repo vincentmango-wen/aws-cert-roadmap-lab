@@ -80,7 +80,7 @@
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "zh"
   },
   {
@@ -251,7 +251,7 @@
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-07",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "zh"
   },
   {
@@ -311,7 +311,7 @@
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-16",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "zh"
   },
   {
@@ -321,9 +321,21 @@
     "description": "整理 AWS 生成式 AI 與機器學習服務 Amazon Bedrock 與 Amazon SageMaker 的差異、考試重點以及實務上的使用區分。",
     "category": "MachineLearning",
     "level": "beginner",
-    "examScopes": ["AIF-C01"],
-    "services": ["bedrock", "sagemaker"],
-    "tags": ["ai", "machine-learning", "bedrock", "sagemaker", "comparison", "aif"],
+    "examScopes": [
+      "AIF-C01"
+    ],
+    "services": [
+      "bedrock",
+      "sagemaker"
+    ],
+    "tags": [
+      "ai",
+      "machine-learning",
+      "bedrock",
+      "sagemaker",
+      "comparison",
+      "aif"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-07-25",
@@ -337,13 +349,49 @@
     "description": "整理在私有子網路的通訊路徑設計中容易混淆的 NAT Gateway、NAT 執行個體、VPC 端點的差異，涵蓋目的、費用、可用性，以及 Gateway 型與 Interface 型的使用區分。",
     "category": "Networking",
     "level": "intermediate",
-    "examScopes": ["SAA-C03"],
-    "services": ["nat-gateway", "nat-instance", "vpc-endpoint"],
-    "tags": ["networking", "vpc", "comparison", "saa"],
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "nat-gateway",
+      "nat-instance",
+      "vpc-endpoint"
+    ],
+    "tags": [
+      "networking",
+      "vpc",
+      "comparison",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-07-31",
     "updatedAt": "2026-07-31",
+    "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-014",
+    "slug": "step-functions-standard-vs-express",
+    "title": "Step Functions Standard 與 Express：依語意與成本選型",
+    "description": "比較執行時間、重試與重複語意、callback、歷程及計價維度，使用人工核准與大量短流程做選型。",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "Step Functions"
+    ],
+    "tags": [
+      "step-functions",
+      "serverless",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-11-09",
+    "updatedAt": "2026-11-09",
     "locale": "zh"
   }
 ]

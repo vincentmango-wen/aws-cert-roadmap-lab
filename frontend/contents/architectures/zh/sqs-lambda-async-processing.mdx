@@ -2,7 +2,7 @@
 
 ## 概要
 
-此架構先將處理請求暫存於 Amazon SQS,再由 AWS Lambda 依序非同步處理。
+此架構先將處理請求暫存於 Amazon SQS,再由 AWS Lambda 非同步處理。
 
 若在收到使用者操作或外部系統請求時,就地完成繁重的處理,會造成回應變慢、處理失敗時使用者體驗變差等問題。
 
@@ -84,7 +84,7 @@ SQS 與 Lambda 皆為用量計費,可以建構不需要常時運作伺服器的�
 
 ### 效能
 
-即使大量處理請求湧入,也可先在 SQS 中暫存並依序處理。
+即使大量處理請求湧入,也可先在 SQS 中暫存，再依消費端的處理能力處理。
 
 控制 Lambda 的並行執行數,即可設計出不會讓後續 DynamoDB 或外部 API 過載的架構。
 
@@ -121,3 +121,13 @@ SQS 與 Lambda 皆為用量計費,可以建構不需要常時運作伺服器的�
 SQS + Lambda 是以無伺服器方式實作非同步處理的代表性架構。
 
 在 SAA 中,若出現「想將處理延後」「想吸收請求暴增」「想讓元件之間鬆耦合」等條件,就要考慮使用 SQS 的架構。
+
+SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序。SQS FIFO 在各個 MessageGroupId 內維持順序，並在去重期間內排除重複傳送；這不等於業務副作用一定只執行一次，消費端仍須具備冪等性以因應重試。
+
+## 更正說明
+
+### 2026-11-09
+
+- 更正將 SQS 一概描述為依序處理的文字：Standard 可能重複或亂序，FIFO 的順序範圍是訊息群組；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
+
+依據：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

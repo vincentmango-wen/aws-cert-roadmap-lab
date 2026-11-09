@@ -3371,5 +3371,577 @@
     "published": true,
     "createdAt": "2026-07-31",
     "updatedAt": "2026-07-31"
+  },
+  {
+    "questionId": "saa-051",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "A Step Functions Standard workflow in account A uses a callback task to wait for a human approval service in account B. Approvers must only decide requests they are authorized to handle, and task tokens must not appear in browser URLs or logs. Which design meets these requirements?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Have an IAM role in B call SendTaskSuccess directly, and email the full task token as an approval link."
+      },
+      {
+        "choiceId": "B",
+        "text": "Keep tokens in a backend in A, but let any signed-in B user submit a callback for any request identifier."
+      },
+      {
+        "choiceId": "C",
+        "text": "Keep tokens in a backend in A, verify the B approver and request authorization, then submit the callback using a role in A."
+      },
+      {
+        "choiceId": "D",
+        "text": "Have an IAM role in B call SendTaskSuccess directly, and store tokens in an encrypted database in B to prevent exposure."
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "A task token must be submitted by a principal in the same account as the workflow. A controlled backend in A handles token custody, request-level authorization, and the callback to meet both the account and confidentiality requirements.",
+    "choiceExplanations": {
+      "A": "Incorrect. A principal in B does not meet the same-account callback requirement, and placing the token in a link increases exposure risk.",
+      "B": "Incorrect. Authentication does not replace request-level authorization. Other signed-in users could approve requests they are not authorized to handle.",
+      "C": "Correct. The backend submits the token using a role in A after checking authorization for that request; the frontend only needs a request identifier without the token.",
+      "D": "Incorrect. Encrypted storage protects the token but does not allow a principal in B to bypass the same-account callback requirement."
+    },
+    "practicalNote": "Keep the request identifier shown to an approver separate from the Step Functions task token. On receiving a decision, the backend checks identity, request ownership or authorization, and current status before retrieving the protected token and submitting the callback. Record auditable approval and rejection events without logging raw tokens.\n\nCross-account approval does not require submitting the token as a B principal. A controlled backend in A, or an A role used under an appropriate trust policy, can submit it; this question selects the former. A token for an expired or completed request is not a new approval credential. Check state and handle duplicate submissions safely so that possession of a link alone does not authorize approval.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "iam"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-052",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "In the same account and Region, a Lambda event source mapping reads an SQS queue encrypted with a customer managed KMS key. The execution role already has the required receive, delete, and attribute-read permissions for that queue. The key policy enables delegation through IAM policies, and no other denial applies. The error identifies missing kms:Decrypt permission for the role. Which least-privilege fix is appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Add kms:Decrypt for that key to the execution role, retaining its existing SQS consumer permissions."
+      },
+      {
+        "choiceId": "B",
+        "text": "Add kms:Encrypt for that key to the execution role, retaining its existing SQS consumer permissions."
+      },
+      {
+        "choiceId": "C",
+        "text": "Add kms:GenerateDataKey for that key to the execution role, retaining its existing SQS consumer permissions."
+      },
+      {
+        "choiceId": "D",
+        "text": "Allow SQS to perform lambda:InvokeFunction in the function resource policy, leaving execution-role permissions unchanged."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "The execution role of a Lambda consumer of an encrypted SQS queue needs kms:Decrypt. The question rules out key-policy and other policy barriers, so the missing permission can be added for the specific key.",
+    "choiceExplanations": {
+      "A": "Correct. Decrypt on the specific key addresses the stated error without granting access to every key or key-management operations.",
+      "B": "Incorrect. Encrypt does not grant Decrypt and cannot enable the consumer to read encrypted messages.",
+      "C": "Incorrect. GenerateDataKey is not the missing Decrypt permission; adding only it leaves the decryption denial unresolved.",
+      "D": "Incorrect. Lambda polls SQS through the event source mapping. Allowing invocation of the function does not fix a KMS decryption denial."
+    },
+    "practicalNote": "Troubleshoot SQS access and KMS access separately. Permission to receive a message does not imply permission to use its encryption key. Identify the denied action, resource, and principal in the error before adding permissions; this produces a more testable and narrowly scoped fix than attaching an administrator policy.\n\nThe question explicitly says the key policy permits IAM delegation, separating this issue from a missing key-policy authorization. In production, also check key state, applicable policies, and message requirements during key rotation. Validate the fix with an actual encrypted message through receipt and deletion. Do not confuse consumer decryption permissions with a producer's need to generate data keys.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — kms",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-053",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "An IAM role obtains same-account SQS permissions only through identity policies; there are no resource-policy grants, SCPs, or other restrictions. Its identity policy allows ReceiveMessage and DeleteMessage, but explicitly denies DeleteMessage on the target queue. Its permissions boundary allows ReceiveMessage, DeleteMessage, and SendMessage. What are its effective permissions on that queue?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "All three actions; Allows in the identity policy and boundary are combined into effective permissions."
+      },
+      {
+        "choiceId": "B",
+        "text": "ReceiveMessage and DeleteMessage; the boundary Allow overrides the identity-policy Deny."
+      },
+      {
+        "choiceId": "C",
+        "text": "ReceiveMessage and SendMessage; the boundary supplies the SendMessage grant missing from the identity policy."
+      },
+      {
+        "choiceId": "D",
+        "text": "ReceiveMessage only; DeleteMessage is explicitly denied, and SendMessage lacks an identity-policy grant."
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "In this scenario, effective Allows are the intersection of the identity policy and boundary, with explicit Deny taking precedence. A boundary sets a ceiling and does not independently grant SendMessage.",
+    "choiceExplanations": {
+      "A": "Incorrect. These Allows are not a union, and explicit Deny still takes precedence.",
+      "B": "Incorrect. An Allow in a boundary cannot override an applicable explicit Deny.",
+      "C": "Incorrect. A boundary does not grant permissions. Listing SendMessage only there is insufficient.",
+      "D": "Correct. ReceiveMessage is allowed by both; the explicit DeleteMessage denial prevails; SendMessage lacks an identity-policy Allow."
+    },
+    "practicalNote": "Evaluate which policies apply to the principal, action, and resource, then look for explicit denials. A permissions boundary limits what identity policies can grant; it is not an additional independent source of permissions. Adding an action to a boundary therefore does not mean the role can call that action.\n\nThis question excludes direct resource-policy grants and other policy types so that intersection and explicit denial can be assessed in isolation. Preserve that assumption when diagnosing real access: not every resource-policy or role-session scenario reduces to the same formula. After changing permissions, verify both required operations and operations that must remain prohibited, rather than testing only the successful path.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — iam",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html"
+      },
+      {
+        "label": "AWS documentation — boundary",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html"
+      }
+    ],
+    "relatedServices": [
+      "iam",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "iam",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-054",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Lambda receives 10 messages in one batch from an SQS Standard queue. Nine succeed and one fails with a transient error. The failed message must remain available for retry without making this batch failure resend the other nine. Which configuration and code behavior are appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Increase the visibility timeout and continue throwing an exception whenever any message fails."
+      },
+      {
+        "choiceId": "B",
+        "text": "Enable ReportBatchItemFailures, catch errors per item, and list only failed IDs."
+      },
+      {
+        "choiceId": "C",
+        "text": "Enable ReportBatchItemFailures but continue throwing an exception whenever any message fails."
+      },
+      {
+        "choiceId": "D",
+        "text": "Disable ReportBatchItemFailures, catch per-message errors, and return an empty response indicating batch success."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Partial batch responses require both the mapping configuration and the corresponding function response. Returning only failed message IDs lets Lambda retain those messages for retry and delete messages successfully processed in this batch.",
+    "choiceExplanations": {
+      "A": "Incorrect. A longer visibility timeout only delays when messages become visible; a batch exception still retries successful messages.",
+      "B": "Correct. Catching per-message errors and returning batchItemFailures identifies the messages that actually need retrying.",
+      "C": "Incorrect. An exception makes the entire batch fail. Enabling the feature without the correct response is insufficient.",
+      "D": "Incorrect. Reporting complete success also treats the failed message as processed, removing its retry opportunity."
+    },
+    "practicalNote": "Partial batch responses distinguish successful and failed messages within a batch. After enabling ReportBatchItemFailures, return the correct response structure and use messageId as itemIdentifier. An application order ID is not a substitute, and the handler must not subsequently throw an exception for the entire batch.\n\nThis feature does not remove SQS at-least-once delivery, so business processing still needs idempotency. Test a deliberately failing item and observe retry identifiers, deletion counts, and the age of the oldest message. FIFO queues additionally require preserving order and handling unprocessed messages after the first failure according to the documentation; this question explicitly uses a Standard queue.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — batch",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-055",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "SQS Standard can redeliver a payment event for the same order. Lambda can also stop after the payment API succeeds but before recording completion. The payment provider supports safe retries with the same business idempotency key, retained for the entire retry window. Which design best avoids duplicate charges while allowing recovery after interruption?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Read DynamoDB for the order, charge if absent, and finally record completion with an ordinary PutItem."
+      },
+      {
+        "choiceId": "B",
+        "text": "Conditionally write processing state under the order key; use the same payment idempotency key and recover using state and provider results."
+      },
+      {
+        "choiceId": "C",
+        "text": "Conditionally write a permanent completion marker before payment; always skip subsequent events for that order without checking payment results."
+      },
+      {
+        "choiceId": "D",
+        "text": "Switch to FIFO with a deduplication ID; remove business processing state and the payment API idempotency key."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Conditional writes control competing workers for the same order, the provider key handles uncertainty about external payment results, and recoverable state avoids permanently stuck or missed payments after interruption.",
+    "choiceExplanations": {
+      "A": "Incorrect. Read-then-write has a race window, and stopping after a successful payment can still cause another charge on retry.",
+      "B": "Correct. Atomic conditional writes, recoverable state, and provider idempotency jointly address concurrency and interruption after payment.",
+      "C": "Incorrect. If execution stops after recording completion but before payment, later attempts skip the order permanently, leaving it unpaid.",
+      "D": "Incorrect. FIFO message deduplication does not replace business-level payment idempotency or close the interruption window after a payment."
+    },
+    "practicalNote": "Derive the key from a stable business operation, such as a particular payment for an order, rather than generating a random key for every Lambda invocation. A DynamoDB conditional write can prevent concurrent acquisition of the same work. However, a database write and an external payment API call are not one atomic transaction; a deduplication record alone does not establish exactly-once payment.\n\nDistinguish in-progress and complete states, provide a lease or recovery process for interrupted work, and use the same provider key to resolve or retry payments. Retention must cover possible redelivery and manual replay. If the provider lacks the required guarantees, reconciliation and compensation are also needed. The question explicitly supplies provider support and the retention window before selecting this combination.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — sqs",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html"
+      },
+      {
+        "label": "AWS documentation — idem",
+        "url": "https://docs.aws.amazon.com/powertools/python/latest/utilities/idempotency/"
+      },
+      {
+        "label": "AWS documentation — condition",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-056",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "An application process may wait up to 48 hours for human approval. It must continue immediately on approval and enter remediation on timeout. The team wants neither a continuously running Lambda function nor periodic polling of approval data while waiting. Which design is appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Use an Express workflow callback task with its task timeout set to 48 hours."
+      },
+      {
+        "choiceId": "B",
+        "text": "Use one ordinary Lambda invocation that keeps running until approval or the 48-hour deadline."
+      },
+      {
+        "choiceId": "C",
+        "text": "Use a Standard workflow callback task with a 48-hour timeout and handle the timeout error."
+      },
+      {
+        "choiceId": "D",
+        "text": "Use a Standard workflow Wait state for exactly 48 hours, then treat the request as approved."
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Standard workflows support long-running callback waits. The approval service returns the token to resume execution; a task timeout routes unapproved requests to explicit remediation.",
+    "choiceExplanations": {
+      "A": "Incorrect. Express runs for at most five minutes and does not support the waitForTaskToken integration pattern.",
+      "B": "Incorrect. One ordinary Lambda invocation cannot run for 48 hours and would violate the requirement to avoid continuous execution while waiting.",
+      "C": "Correct. The callback leaves the waiting state in the Standard workflow and uses the timeout to distinguish missing approval.",
+      "D": "Incorrect. A fixed Wait does not end early upon approval, and reaching a deadline is not equivalent to receiving approval."
+    },
+    "practicalNote": "Time spent waiting for a human is different from time spent doing business work. A workflow can retain the waiting state while an approval UI or backend submits a result when the event occurs. There is no need to keep a compute function running or repeatedly query a database to see whether someone has clicked a button. Define explicit timeout handling such as notification, rejection, or a new application.\n\nAllow enough overall workflow time for the requested wait and subsequent steps. If you also configure a heartbeat, ensure a system sends it on schedule or the task may expire before the person responds. Handle duplicate approvals, expired tokens, and late submissions safely so that closed requests cannot resume.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      },
+      {
+        "label": "AWS documentation — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-057",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "One SQS Standard event source mapping invokes Lambda in standard mode with batch size 1. Each invocation makes at most one simultaneous downstream request and waits for it to finish before returning. There are no other downstream callers. The downstream system supports at most 20 concurrent requests; function reserved concurrency is 50 and account capacity is sufficient. Which change most directly limits load at the mapping while retaining queue buffering?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Set mapping maximum concurrency to 20 and retain the other settings."
+      },
+      {
+        "choiceId": "B",
+        "text": "Set the mapping batch size to 20 and retain the default concurrency settings."
+      },
+      {
+        "choiceId": "C",
+        "text": "Set the mapping batching window to 20 seconds and retain the default concurrency settings."
+      },
+      {
+        "choiceId": "D",
+        "text": "Set the queue visibility timeout to 20 seconds and retain the default concurrency settings."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Maximum concurrency directly limits simultaneous function invocations from this mapping. Given at most one unfinished downstream request per invocation, 20 invocations mean at most 20 such requests.",
+    "choiceExplanations": {
+      "A": "Correct. A mapping limit of 20, with reserved concurrency 50 no lower than that limit, caps this source while the queue buffers excess work.",
+      "B": "Incorrect. Batch size controls records per invocation, not the number of simultaneous invocations.",
+      "C": "Incorrect. The batching window controls time spent collecting a batch, not concurrency.",
+      "D": "Incorrect. Visibility timeout controls how long a received message stays hidden, not concurrent downstream requests."
+    },
+    "practicalNote": "Translate function concurrency into actual downstream load. The question fixes batch size, concurrent requests per invocation, and when each request ends so that maximum concurrency directly yields a limit. If one invocation calls several APIs in parallel, or the downstream work continues after the invocation returns, this simple inference no longer holds.\n\nThe setting applies to an event source mapping and does not automatically limit other sources or applications. For multiple SQS mappings sharing a function, compare the sum of their maximum concurrency settings with reserved concurrency. Standard and provisioned modes use different controls. After reducing concurrency, monitor message age and backlog to confirm that throughput still meets processing deadlines.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — scale",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-scaling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-058",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "Three Lambda steps in a Step Functions workflow sequentially process the same 2 MiB JSON document. The data cannot be truncated or compressed below 256 KiB, and no step needs the full document inside state data. Which design is appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Base64-encode the entire JSON document and include it in every state input and output."
+      },
+      {
+        "choiceId": "B",
+        "text": "Increase each Lambda function's memory and continue passing the entire JSON document between states."
+      },
+      {
+        "choiceId": "C",
+        "text": "Switch the workflow to Express and continue passing the entire JSON document between states."
+      },
+      {
+        "choiceId": "D",
+        "text": "Store the document in S3; pass object references through states for Lambda to read and write."
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Keeping large data in S3 and passing a small reference avoids exceeding the state payload limit. Each step returns only required metadata and a reference to the next document.",
+    "choiceExplanations": {
+      "A": "Incorrect. Base64 generally increases size and does not shrink a 2 MiB document to fit the state payload limit.",
+      "B": "Incorrect. Lambda memory and the Step Functions state payload limit are separate constraints; increasing one does not change the other.",
+      "C": "Incorrect. Express does not allow this 2 MiB document to be passed directly as state payload.",
+      "D": "Correct. S3 holds the full contents while the workflow passes compact location information, allowing subsequent steps to retrieve the document."
+    },
+    "practicalNote": "Separate document storage from workflow control. The workflow needs to know where the document is, which business job it belongs to, and whether processing succeeded. Lambda steps that need the content retrieve it from S3. Keep their outputs small too: returning the complete document after reading it from S3 reintroduces the same payload problem.\n\nA reference should identify the intended version so a retry does not read changed content after the same key is overwritten. Plan object permissions, any decryption permissions, retention, and failure cleanup. Restrict processing functions to the required paths instead of allowing arbitrary buckets, and validate that an input reference belongs within the job's authorized scope.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — large",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/sfn-best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-059",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "A system runs ten million data-transformation workflows per month, each lasting about 3 seconds. All steps tolerate idempotent retries, and none uses .sync or callback integration. Load tests show both Step Functions types meet throughput and observability requirements. Using current rates in the same Region and measured usage, the team estimates total related monthly costs, including required logs, at $600 for Standard and $180 for asynchronous Express. With requirements unchanged, which choice best meets the cost objective?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Keep Standard because it is always cheaper than Express for every short workflow."
+      },
+      {
+        "choiceId": "B",
+        "text": "Choose asynchronous Express and remove idempotency because it guarantees every business action executes only once."
+      },
+      {
+        "choiceId": "C",
+        "text": "Choose asynchronous Express, retain idempotency, and keep validating costs against actual duration, memory, and logs."
+      },
+      {
+        "choiceId": "D",
+        "text": "Keep Standard because Express does not support any workload exceeding one million executions per month."
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "The scenario verifies functional and performance suitability and provides a lower comparable cost for Express. Asynchronous Express still requires idempotency; this estimate does not mean Express is cheaper for every workflow.",
+    "choiceExplanations": {
+      "A": "Incorrect. Standard charges for state transitions, while Express charges for executions, duration, and memory; short duration alone does not prove Standard is always cheaper.",
+      "B": "Incorrect. Asynchronous Express uses at-least-once execution, so removing idempotency introduces duplicate-processing risks.",
+      "C": "Correct. Functional suitability and comparable cost evidence support Express, while idempotency and monitoring preserve the assumptions.",
+      "D": "Incorrect. There is no universal one-million-per-month prohibition as described, and the scenario already confirms sufficient throughput."
+    },
+    "practicalNote": "Compare workflow costs using the same workload and scope. Besides state transitions or execution usage, include logs needed for querying, audit, and troubleshooting, plus related service costs. The figures in this question are scenario estimates, not fixed AWS prices. Recalculate if load or retention requirements change.\n\nA cheaper option must still meet functional requirements. Long waits, callbacks, and synchronous service integrations may rule out Express, and asynchronous execution requires handling repeated business effects. The question states these conditions explicitly so the estimate can guide selection. High volume or short duration alone is insufficient to determine the best option in every situation.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-060",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "A custom SQS consumer repeatedly calls ReceiveMessage with WaitTimeSeconds set to 0 when messages are sparse, producing many empty responses. It must reduce empty polling and retrieve messages promptly when they arrive; requests may wait up to 20 seconds. Which change is appropriate?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Keep WaitTimeSeconds at 0 and set visibility timeout to 20 seconds."
+      },
+      {
+        "choiceId": "B",
+        "text": "Set WaitTimeSeconds to 20 and make the HTTP response timeout longer than 20 seconds."
+      },
+      {
+        "choiceId": "C",
+        "text": "Keep WaitTimeSeconds at 0 and set message DelaySeconds to 20 seconds."
+      },
+      {
+        "choiceId": "D",
+        "text": "Set WaitTimeSeconds to 20 and make the HTTP response timeout 1 second."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Long polling can return available messages during the waiting period and reduce empty responses. The HTTP response timeout must exceed the polling wait so the client does not interrupt a normal request prematurely.",
+    "choiceExplanations": {
+      "A": "Incorrect. Visibility timeout hides a message after receipt; it does not extend the time ReceiveMessage waits for a message.",
+      "B": "Correct. A 20-second long poll fits the stated tolerance, and a longer HTTP timeout avoids prematurely ending normal polling.",
+      "C": "Incorrect. DelaySeconds postpones initial message visibility, which does not improve empty polling and delays processing.",
+      "D": "Incorrect. An HTTP timeout shorter than the polling wait can cause errors and extra retries during normal waiting."
+    },
+    "practicalNote": "A 20-second long poll is a maximum wait, not a mandatory 20-second delay for each message. A request can return sooner when a message becomes available. At low traffic, this avoids repeatedly checking a queue with many immediately returning empty requests. Observe empty receives and actual latency to confirm that the setting meets service objectives.\n\nPolling wait, HTTP timeout, visibility timeout, and message delay govern different stages and are not interchangeable. The HTTP layer must accommodate the wait, while visibility timeout should match processing and retry needs. This question concerns a custom consumer, not tuning Lambda-managed polling. When consuming several queues, also avoid blocking them behind a single worker waiting on an empty queue.",
+    "officialDocs": [
+      {
+        "label": "AWS documentation — poll",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html"
+      },
+      {
+        "label": "AWS documentation — pollsetup",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/best-practices-setting-up-long-polling.html"
+      }
+    ],
+    "relatedServices": [
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
   }
 ]

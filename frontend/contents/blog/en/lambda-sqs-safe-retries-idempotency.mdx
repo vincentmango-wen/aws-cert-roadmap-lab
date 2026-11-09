@@ -1,0 +1,71 @@
+---
+postId: "blog-026"
+slug: "lambda-sqs-safe-retries-idempotency"
+title: "Lambda and SQS: safe retries and business idempotency"
+description: "Design business idempotency keys, conditional writes, partial batch responses and traceable DLQ redrives using a duplicate order event."
+category: "SAA"
+tags:
+  - "Lambda"
+  - "SQS"
+  - "Idempotency"
+targetKeywords:
+  - "Lambda SQS idempotency"
+  - "partial batch failure"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-11-09"
+updatedAt: "2026-11-09"
+---
+
+# Lambda and SQS: safe retries and business idempotency
+
+Scope: a Lambda event source mapping consuming SQS, with a Standard queue in the main example and resources in the same Region.
+
+## An order arrives again
+
+A fictional store receives a payment event for order O-731. The payment provider charges the customer, but Lambda stops before saving the result. Charging again on redelivery risks a duplicate payment; discarding the event risks treating unfinished work as complete.
+
+SQS event source mappings deliver at least once and may process records repeatedly. Lambda deletes messages after successful batch processing; by default, a failed batch becomes visible again after its visibility timeout. This delivery model does not guarantee exactly-once business effects. [Lambda with SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
+
+## A business key and durable state
+
+Define the operation's identity first. Our example combines tenantId, orderId and operationVersion, rather than a transport messageId that may change when an event is republished. Payment and refund have separate operations. Compare a payload digest too, so one key cannot silently represent two amounts.
+
+| Durable record | Consumer response |
+|---|---|
+| Absent | Conditionally create IN_PROGRESS with owner, lease expiry and payload digest |
+| IN_PROGRESS, lease valid | Do not repeat the effect; retry later rather than acknowledge completion |
+| COMPLETE, matching digest | Return the saved result and treat this record as successful |
+| Expired lease or mismatched digest | Reconcile the provider's result or isolate the event; do not blindly charge again |
+
+A DynamoDB attribute_not_exists condition prevents competing workers from creating the same key. A read followed by an unconditional write does not. Subsequent updates should check ownership and version. [Conditional writes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html)
+
+This is an application design, not an exactly-once payment guarantee from a lock. The payment provider needs the same business idempotency key or a way to query an existing transaction. After a crash between payment and COMPLETE, retrieve or reconcile the existing result with that key. If the provider supports neither, retain an uncertain state for investigation. Lease expiry alone does not make another charge safe. Retention must cover the longest redrive and reconciliation window; asynchronous TTL deletion is not a punctual unlock mechanism.
+
+## Return individual batch failures
+
+For messages m1, m2 and m3, suppose only m2 is unfinished. Enable ReportBatchItemFailures on the mapping and return:
+
+```json
+{
+  "batchItemFailures": [
+    { "itemIdentifier": "m2" }
+  ]
+}
+```
+
+itemIdentifier is the SQS messageId identifying the record to retry; it serves a different purpose from the business key. Catch failures per record. Throwing from the outer handler still fails the whole batch. With FIFO, stop after the first failure and report both failed and unprocessed messages to preserve ordering. [Partial batch responses](https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html)
+
+## Bound the retry process
+
+AWS recommends a visibility timeout of at least six times the function timeout, adding the batch window when used. Validate the setting under load. The execution role needs ReceiveMessage, DeleteMessage and GetQueueAttributes on the source queue; KMS encryption also needs applicable Decrypt and key authorization. [Mapping configuration](https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html)
+
+Configure the source queue's redrive policy and DLQ for poison messages. Monitor message age, errors and DLQ growth. SQS is polled; Lambda asynchronous-invocation retry settings are not the source queue's retry policy.
+
+## A redrive runbook
+
+Fix the cause and validate one synthetic order first. Check that business keys and deduplication records still cover the intended window. Redrive small batches, limit downstream load and observe duplicate hits, successes and failures. Stop when throughput or error thresholds are exceeded. Record the operator, original business key and result without logging payment credentials.
+
+Exercise concurrent duplicates, a crash after payment, redelivery after COMPLETE, different amounts under one key, one failed record in a batch, and manual redrive outside retention. Judge the transaction records and individual outcomes rather than a green Lambda invocation alone.
+
+Further reading: [SQS DLQ redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html). This teaching design does not create AWS resources or claim a live payment test.

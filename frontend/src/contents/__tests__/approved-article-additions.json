@@ -1,0 +1,21 @@
+{
+  "taskId": "aws-weekly-2026-11-09",
+  "blog": [
+    {
+      "id": "blog-026",
+      "slug": "lambda-sqs-safe-retries-idempotency"
+    }
+  ],
+  "architectures": [
+    {
+      "id": "arc-011",
+      "slug": "step-functions-human-approval"
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "cmp-014",
+      "slug": "step-functions-standard-vs-express"
+    }
+  ]
+}

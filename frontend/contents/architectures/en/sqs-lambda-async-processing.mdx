@@ -2,7 +2,7 @@
 
 ## Overview
 
-This architecture queues processing requests in Amazon SQS first, then processes them asynchronously in order using AWS Lambda.
+This architecture queues processing requests in Amazon SQS first, then processes them asynchronously using AWS Lambda.
 
 If you complete heavy processing on the spot when receiving user actions or external system requests, responses become slow and the user experience degrades when processing fails.
 
@@ -84,7 +84,7 @@ However, if failed processing causes the same message to be retried many times, 
 
 ### Performance
 
-Even if a large volume of processing requests arrive, you can queue them in SQS and process them in order.
+Even if a large volume of processing requests arrive, you can queue them in SQS and process them at the consumer’s available capacity.
 
 By controlling Lambda concurrency, you can design the system so that downstream DynamoDB or external APIs are not overloaded.
 
@@ -121,3 +121,13 @@ By controlling Lambda concurrency, you can design the system so that downstream 
 SQS + Lambda is a representative pattern for implementing asynchronous processing in a serverless manner.
 
 For SAA, when you see conditions like "defer processing," "absorb sudden increases in requests," or "loosely couple components," consider an architecture that uses SQS.
+
+SQS Standard provides at-least-once delivery with best-effort ordering; duplicates and out-of-order messages are possible. SQS FIFO preserves order within each MessageGroupId and deduplicates sends within its deduplication window. This does not make application side effects exactly once: consumers must remain idempotent when processing is retried.
+
+## Corrections
+
+### 2026-11-09
+
+- Corrected wording that implied SQS always processes messages in order: Standard can duplicate or reorder messages, while FIFO ordering is scoped to a message group. Added that deduplication does not guarantee exactly-once business side effects and consumers still need idempotency.
+
+References：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

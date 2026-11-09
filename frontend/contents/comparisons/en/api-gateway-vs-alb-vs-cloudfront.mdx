@@ -20,7 +20,7 @@ In this project, CloudFront is used for static site delivery and API Gateway is 
 | Main use case | Publishing REST API / HTTP API / WebSocket API | Load balancing web applications | High-speed delivery of static and dynamic content |
 | Typical backends | AWS Lambda, HTTP endpoints, AWS services | Amazon EC2, Amazon ECS, AWS Lambda | Amazon S3, ALB, API Gateway, HTTP origins |
 | Authentication and authorization | AWS IAM, Lambda Authorizer, Amazon Cognito | OIDC authentication and similar | Signed URLs, AWS WAF integration |
-| Caching | Built-in API cache | Not the primary purpose | Core strength |
+| Caching | Built-in cache for REST APIs; not for HTTP APIs | Not the primary purpose | Core strength |
 | Fit with serverless | High | Medium | High |
 | WebSocket | Supported | Not the primary purpose | Not the primary purpose |
 | Exam keywords | serverless API, REST, HTTP API, Lambda | load balancing, HTTP routing | CDN, edge, cache, static content |
@@ -191,3 +191,11 @@ Separating API Gateway, ALB, and CloudFront by purpose makes them easier to reme
 - CloudFront: high-speed content delivery.
 
 This project uses both CloudFront and API Gateway, so this comparison also matters when explaining the portfolio.
+
+## Corrections
+
+### 2026-11-09
+
+- Corrected the blanket claim about API Gateway caching: REST APIs support built-in caching; HTTP APIs do not.
+
+References：[API Gateway REST / HTTP APIs](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html).

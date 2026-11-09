@@ -4,7 +4,7 @@
  * registry, detecting missing translations, slug drift, metadata inconsistency and missing MDX.
  *
  * Invariants:
- * R. Registry slugs equal Japanese MDX slugs (always checked; 25 posts).
+ * R. Registry slugs equal Japanese MDX slugs (always checked).
  * 1. All three locale slug sets match when en/zh are nonempty.
  * 2. postId matches across locales per slug.
  * 3. Shared publishedAt/updatedAt/published metadata matches; localized display fields are excluded (see
@@ -13,8 +13,7 @@
  * 5. Required frontmatter fields are present and nonempty.
  * 6. Leading H1 equals the frontmatter title or is its prefix.
  *
- * Scaffold mode (empty en or zh arrays) avoids failing builds before translations for a newly added
- * locale exist. R and Japanese-only invariants still always run.
+ * Required locales are never skipped; historical identity and approved growth are checked by article-inventory.test.ts.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -151,13 +150,12 @@ const zhSlugs = listSlugs("zh");
 
 const registrySlugs = blogPosts.map((post) => post.slug).sort();
 
-const isScaffoldMode = enSlugs.length === 0 || zhSlugs.length === 0;
 
 describe("blog locale parity", () => {
-  it("(R) registry slug set equals ja MDX slug set (25 entries)", () => {
+  it("(R) registry slug set equals ja MDX slug set without duplicates", () => {
     expect(new Set(registrySlugs)).toEqual(new Set(jaSlugs));
-    expect(registrySlugs.length).toBe(25);
-    expect(jaSlugs.length).toBe(25);
+    expect(registrySlugs.length).toBe(new Set(registrySlugs).size);
+    expect(jaSlugs.length).toBeGreaterThan(0);
   });
 
   it("(scaffold) every ja MDX file exists and parses with frontmatter", () => {
@@ -218,7 +216,7 @@ describe("blog locale parity", () => {
     }
   });
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(1) ja/en/zh MDX have the same slug set",
     () => {
       expect(new Set(enSlugs)).toEqual(new Set(jaSlugs));
@@ -226,7 +224,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(2) postId is identical across ja/en/zh per slug",
     () => {
       for (const slug of jaSlugs) {
@@ -242,7 +240,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(3) shared metadata fields (publishedAt/updatedAt/published) are identical across ja/en/zh per slug",
     () => {
       // Category labels are translated per locale (for example, AWS Services in English),
@@ -275,7 +273,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(4) every {ja,en,zh}/<slug>.mdx exists on disk",
     () => {
       for (const slug of jaSlugs) {
@@ -290,7 +288,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(5) every {ja,en,zh} MDX frontmatter has required non-empty fields",
     () => {
       const required: Array<keyof ParsedFrontmatter> = [
@@ -327,7 +325,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(6) MDX H1 matches frontmatter title in every locale",
     () => {
       for (const slug of jaSlugs) {

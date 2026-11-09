@@ -17,7 +17,7 @@ targetKeywords:
 author: "AWS Cert Roadmap Lab"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-20"
+updatedAt: "2026-11-09"
 ---
 
 # SQS・SNS・EventBridgeで疎結合設計を理解する
@@ -141,3 +141,16 @@ SAAの問題文で「疎結合」「受信側の障害を吸収」「急増し�
 
 - [SNS・SQS・EventBridgeの違い](/comparisons/sns-vs-sqs-vs-eventbridge)
 - [EventBridge + Lambda バッチ処理構成](/architectures/eventbridge-lambda-batch)
+
+SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
+
+SNS Standardは順序を保証しません。順序付きファンアウトではSNS FIFOトピックとSQS FIFO購読を組み合わせ、MessageGroupIdをそろえます。SQS Standard購読ではエンドツーエンドの順序は保証されません。本記事のルールとターゲットの例は順序保証のないEventBridge default/Classicバスを対象とします。2026-09-24公開の新しいCustom Event BusはFIFO購読を提供し、発行元アカウント内のイベントグループごとに順序を維持します。バス全体の順序保証ではありません。
+
+## 訂正内容
+
+### 2026-11-09
+
+- SQS Standard と FIFO の順序保証の範囲を明確にしました。Standard では重複や順序の入れ替わりがあり、FIFO はメッセージグループ単位で順序を保証します。重複排除は業務上の副作用が一度だけ起きる保証ではなく、コンシューマーにも冪等性が必要であることを補足しました。
+- SNS FIFO と SQS FIFO を組み合わせた場合の順序保証の条件を追記し、EventBridge の default／Classic バスと新しい Custom Event Bus の FIFO サブスクリプションを区別しました。順序を保証しないという説明をすべての種類に適用しないための補足です。
+
+参照資料：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [SNS FIFO ordering](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [EventBridge default / Classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [EventBridge Custom bus ordering](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

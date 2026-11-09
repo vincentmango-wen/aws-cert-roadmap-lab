@@ -99,7 +99,7 @@ function initializeTask({ root, bundle, profile, contract }, replayContentBaseli
   return readStatus(bundle);
 }
 
-function loadTask(bundle) {
+function loadTask(bundle, reviewingEngine = false) {
   const task = read(path.join(bundle, 'task.json'));
   const profile = read(path.join(bundle, 'profile.json'));
   const contract = read(path.join(bundle, 'contract.json'));
@@ -108,9 +108,107 @@ function loadTask(bundle) {
   if (contentBaseline && jsonHash(contentBaseline) !== task.contentBaselineHash) throw Error('Content baseline drift');
   if (jsonHash(profile) !== task.profileHash || jsonHash(contract) !== task.contractHash || jsonHash(initial) !== task.initialHash) throw Error('Contract/profile/baseline drift');
   for (const [name, digest] of Object.entries(task.engine)) {
-    if (hash(fs.readFileSync(path.join(bundle, 'engine', name))) !== digest || hash(fs.readFileSync(path.join(engineDir, name))) !== digest) throw Error('Verifier drift: review and re-establish baseline');
+    if (hash(fs.readFileSync(path.join(bundle, 'engine', name))) !== digest || (!reviewingEngine && hash(fs.readFileSync(path.join(engineDir, name))) !== digest)) throw Error('Verifier drift: review and re-establish baseline');
+  }
+  for (const revision of task.revisions || []) {
+    const archive = checkSeal(bundle, revision.run, revision.seal);
+    for (const prior of read(path.join(archive, 'prior-runs.json'))) checkSeal(bundle, prior.run, prior.seal);
   }
   return { task, profile, contract, initial, contentBaseline };
+}
+
+// A cooperative reviewed revision, not an approval authority or a repair reset.
+export function prepareRebaseline(bundle, nextContract, reason) {
+  bundle = path.resolve(bundle);
+  if (fs.existsSync(path.join(bundle, 'active.json'))) throw Error('INTERRUPTED: reconcile active operation first');
+  const { task, profile, contract, initial } = loadTask(bundle, true);
+  if (task.replayedFrom) throw Error('Replay bundles are verification-only');
+  if (task.state === 'STOP_UNCONFIRMED') throw Error('STOP_UNCONFIRMED: human reconciliation required');
+  if (!task.baseline) throw Error('A successful baseline is required before another reviewed revision');
+  checkSeal(bundle, task.baseline.run, task.baseline.seal);
+  if (task.latest) checkSeal(bundle, task.latest.run, task.latest.seal);
+  if (nextContract.id !== contract.id || nextContract.maxRepairs !== 3) throw Error('Task identity and repair limit must be retained');
+  const strings = values => Array.isArray(values) && values.length > 0 && values.every(value => typeof value === 'string' && value.trim());
+  if (typeof nextContract.goal !== 'string' || !nextContract.goal.trim() || !strings(nextContract.allowed) || !strings(nextContract.humanAcceptance) || typeof reason !== 'string' || !reason.trim()) throw Error('Contract and review reason required');
+  validateContentContract(nextContract, profile);
+  captureContentBaseline(task.root, nextContract, profile);
+  const current = manifest(task.root, profile);
+  if (current['tools/aidd/profile.json'] !== initial['tools/aidd/profile.json']) throw Error('Profile changes are outside rebaseline scope');
+  const changes = manifestDiff(initial, current).sort().map(file => ({ file, before: initial[file] ?? null, after: current[file] ?? null }));
+  return { taskId: contract.id, previousTaskHash: jsonHash(task), sourceHash: jsonHash(current), changes,
+    contract: nextContract, reason, assertionReplacements: {} };
+}
+
+export function retainAssertions(actual, previous, replacements = {}) {
+  const targets = new Set();
+  for (const [old, replacement] of Object.entries(replacements)) {
+    if (!Object.hasOwn(previous, old) || typeof replacement !== 'string' || !replacement.trim() || targets.has(replacement) ||
+        (replacement !== old && Object.hasOwn(previous, replacement))) throw Error('Invalid one-to-one assertion replacement');
+    targets.add(replacement);
+  }
+  const expected = Object.fromEntries(Object.entries(previous).map(([key, status]) => [replacements[key] || key, status]));
+  for (const [key, status] of Object.entries(expected)) {
+    if (!Object.hasOwn(actual, key) || (actual[key] !== 'passed' && actual[key] !== status)) throw Error('Required assertion missing or skipped: ' + key);
+  }
+  for (const [key, status] of Object.entries(actual)) {
+    if (status !== 'passed' && expected[key] !== status) throw Error('New assertion must pass: ' + key);
+  }
+}
+
+export function rebaseline(bundle, review) {
+  bundle = path.resolve(bundle);
+  const proposed = prepareRebaseline(bundle, review.contract, review.reason);
+  for (const field of ['taskId', 'previousTaskHash', 'sourceHash', 'changes', 'contract']) {
+    if (!same(proposed[field], review[field])) throw Error('Stale or incomplete review: ' + field);
+  }
+  const { task, profile } = loadTask(bundle, true);
+  const previousAssertions = read(path.join(bundle, 'runs', task.baseline.run, 'identities.json'));
+  const replacements = review.assertionReplacements || {};
+  for (const key of Object.keys(replacements)) if (!Object.hasOwn(previousAssertions, key)) throw Error('Unknown assertion check');
+  for (const [check, previous] of Object.entries(previousAssertions)) {
+    // Validate rename structure before writes; actual baseline results are checked later.
+    const renamed = Object.fromEntries(Object.entries(previous).map(([key, status]) => [replacements[check]?.[key] || key, status]));
+    retainAssertions(renamed, previous, replacements[check]);
+  }
+  const initial = manifest(task.root, profile);
+  if (jsonHash(initial) !== review.sourceHash) throw Error('Source changed after review');
+  const contentBaseline = captureContentBaseline(task.root, review.contract, profile);
+  const priorRuns = fs.readdirSync(path.join(bundle, 'runs'), { withFileTypes: true }).filter(e => e.isDirectory()).map(e => {
+    const digest = hash(fs.readFileSync(path.join(bundle, 'runs', e.name, 'seal.json')));
+    checkSeal(bundle, e.name, digest);
+    return { run: e.name, seal: digest };
+  });
+  const revision = `revision-${(task.revisions?.length || 0) + 1}`;
+  const archive = path.join(bundle, 'runs', revision);
+  if (fs.existsSync(archive)) throw Error('Revision already exists; reconcile interrupted operation');
+  if (jsonHash(manifest(task.root, profile)) !== review.sourceHash) throw Error('Source changed after review');
+  fs.writeFileSync(path.join(bundle, 'active.json'), JSON.stringify({ operation: 'rebaseline', revision, pid: process.pid }), { flag: 'wx' });
+  // An interruption after this point deliberately leaves the latch for reconciliation.
+  fs.mkdirSync(archive);
+  for (const name of ['task.json', 'profile.json', 'contract.json', 'initial-manifest.json', 'content-baseline.json']) {
+    if (fs.existsSync(path.join(bundle, name))) fs.copyFileSync(path.join(bundle, name), path.join(archive, name));
+  }
+  fs.cpSync(path.join(bundle, 'engine'), path.join(archive, 'engine'), { recursive: true });
+  write(path.join(archive, 'review.json'), review);
+  write(path.join(archive, 'prior-runs.json'), priorRuns);
+  const revisionSeal = seal(archive);
+  const engine = {};
+  for (const name of ['pilot.mjs', 'cli.mjs', 'content.mjs']) {
+    const raw = fs.readFileSync(path.join(engineDir, name));
+    fs.writeFileSync(path.join(bundle, 'engine', name), raw); engine[name] = hash(raw);
+  }
+  write(path.join(bundle, 'contract.json'), review.contract);
+  write(path.join(bundle, 'initial-manifest.json'), initial);
+  if (contentBaseline) write(path.join(bundle, 'content-baseline.json'), contentBaseline);
+  const next = { ...task, contractHash: jsonHash(review.contract), initialHash: jsonHash(initial),
+    contentBaselineHash: contentBaseline ? jsonHash(contentBaseline) : null, engine,
+    revisions: [...(task.revisions || []), { run: revision, seal: revisionSeal }],
+    retainedAssertions: previousAssertions, assertionReplacements: replacements,
+    baseline: null, latest: null, state: 'CREATED' };
+  write(path.join(bundle, 'task.json'), next);
+  event(bundle, 'reviewed-rebaseline', { revision, seal: revisionSeal, repairs: next.repairs.length });
+  fs.unlinkSync(path.join(bundle, 'active.json'));
+  return readStatus(bundle);
 }
 
 export function beginRepair(bundle, detail) {
@@ -241,6 +339,8 @@ export async function verify(bundle, phase) {
       if (check.report === 'vitest') {
         const prior = task.replayExpected?.[check.id] ?? (task.baseline ? read(path.join(bundle, 'runs', task.baseline.run, 'identities.json'))[check.id] : undefined);
         identities[check.id] = parseVitest(read(path.join(runDir, `${check.id}.json`)), task.root, prior);
+        if (phase === 'baseline' && task.retainedAssertions?.[check.id])
+          retainAssertions(identities[check.id], task.retainedAssertions[check.id], task.assertionReplacements?.[check.id]);
       }
     }
   } catch (error) { reason = error.message; if (state !== 'STOP_UNCONFIRMED') state = 'VERIFICATION_BLOCKED'; }
@@ -275,7 +375,7 @@ export function readStatus(bundle) {
       if (['BASELINE_READY', 'AUTO_VERIFIED_AWAITING_HUMAN'].includes(task.state) && !same(manifest(task.root, profile), read(path.join(dir, 'after.json')))) return { ...task, state: 'INPUT_DRIFT' };
     }
     return task;
-  } catch (error) { return { state: 'EVIDENCE_INVALID', reason: error.message }; }
+  } catch (error) { return { state: fs.existsSync(path.join(bundle, 'active.json')) ? 'INTERRUPTED' : 'EVIDENCE_INVALID', reason: error.message }; }
 }
 
 export async function replay(bundle, run, destination) {

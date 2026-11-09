@@ -1,0 +1,67 @@
+# Step Functions Standard：人工核准訂單流程
+
+適用範圍：允許等待最多 48 小時的訂單核准，使用 Standard workflow 的 callback pattern。這是虛構設計例，不含已部署資源。
+
+## 需求與服務分工
+
+訂單提交後先保留庫存，再交授權人員核准。核准才確認訂單；拒絕或超時要釋放保留量。保留庫存、確認訂單與補償都以 orderId＋操作版本做冪等，不能因重新執行多扣或多還庫存。
+
+Standard 支援長時間等待與 .waitForTaskToken；Express 不支援此 callback pattern。等待期間不需要讓 Lambda 持續運行 48 小時。[整合模式](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+圖中 A 是已驗證的訂單入口，B 保留庫存，C 等待核准，D 是受保護的核准入口與 broker，E 判定回覆。F 確認訂單；G、H 分別處理拒絕、逾時；I 是補償失敗後的人工處理。三語圖使用相同字母，箭頭旁的文字才是分支條件，不能只靠顏色判讀。
+
+## 正常、拒絕與逾時
+
+| 條件 | 動作 | 必須保留的證據 |
+|---|---|---|
+| 授權人員核准，仍在有效期限 | broker 回傳 approved=true；確認訂單 | 審批人、訂單版本、時間、確認結果 |
+| 授權人員拒絕 | 回傳 approved=false；釋放保留量 | 拒絕理由及補償結果 |
+| C 的 48 小時等待到期 | Catch States.Timeout；釋放保留量 | 等待到期事件及補償結果 |
+| 確認或補償結果不確定 | 對帳、有限重試；必要時轉 I | 原操作鍵、每次嘗試與人工處置 |
+
+業務拒絕不是系統錯誤：本例用 SendTaskSuccess 回傳布林決策，再由 Choice 分流。broker 的技術失敗可回報 SendTaskFailure，由另外的 Catch 處理，不應偽裝成使用者拒絕。[callback API](https://docs.aws.amazon.com/step-functions/latest/apireference/API_SendTaskSuccess.html)
+
+## 等待狀態的核心片段
+
+以下是 JSONPath ASL 片段，需補齊 Reserve、Decision、ReleaseReservation、HandleFailure 等狀態與真實 ARN，不能直接部署。輸入包含 orderId。dispatcher 只保存本次 token 並送出不含 token 的核准通知。
+
+```json
+{
+  "WaitForApproval": {
+    "Type": "Task",
+    "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+    "Parameters": {
+      "FunctionName": "REPLACE_APPROVAL_DISPATCHER_ARN",
+      "Payload": {
+        "orderId.$": "$.orderId",
+        "taskToken.$": "$$.Task.Token"
+      }
+    },
+    "TimeoutSeconds": 172800,
+    "ResultPath": "$.approval",
+    "Catch": [
+      { "ErrorEquals": ["States.Timeout"], "ResultPath": "$.error", "Next": "ReleaseReservation" },
+      { "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "HandleFailure" }
+    ],
+    "Next": "Decision"
+  }
+}
+```
+
+Decision 僅在 $.approval.approved 為 true 時前往 ConfirmOrder，其餘回覆走驗證／拒絕處理。整個 workflow 的期限應比核准等待更長，留時間補償。頂層 execution timeout 不會被上述 Task Catch 捕捉，需另以逾時事件、告警與對帳程序處理。[錯誤處理](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
+
+## callback 安全與 IAM 邊界
+
+核准連結只放不透明 request ID，使用者登入後由後端核對人員、租戶、訂單、版本及有效期限，再從受保護儲存取出 token。token 不放 URL、郵件或一般日誌；限制能查看 execution history 與 token 儲存的角色。用條件更新只接受第一個有效決策，重複點擊回傳已存在的結果。回呼逾時或 token 已關閉時，不自動改成新的核准成功。
+
+回傳 token 的 AWS principal 必須屬於 workflow 所在帳戶。跨帳戶審批系統可呼叫此帳戶的驗證 broker，或經受限制的信任關係擔任此帳戶角色；不能只替外部帳戶 principal 加一個 Allow 就直接使用 token。[同帳戶限制](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+workflow role 僅能呼叫指定 dispatcher／庫存函式；dispatcher 僅寫入指定審批表與通知目的地。broker 僅能讀取及條件更新指定審批記錄，並呼叫必要 callback API。SendTaskSuccess／Failure 不支援資源層級 ARN 限制，需使用 Resource "*"；因此必須縮小 Action、隔離 broker role 與 token 存取，不能宣稱這個 Allow 已限定某一筆 execution。permissions boundary 不授權，explicit deny 也不會因 role 有 Allow 而失效。[服務授權表](https://docs.aws.amazon.com/service-authorization/latest/reference/list_stepfunctions.html)
+
+持久化決策與送達 callback 是兩個步驟。送達確認前保持 pending；暫時性失敗以同一決策與目前 token 重試。重複點擊回傳已記錄決策與送達狀態，不憑空回報工作流程成功。若 callback 回應遺失，先核對 execution 狀態，再回報成功或考慮發出新 token。broker 需要指定核准表與必要記錄的 GetItem、條件式 UpdateItem 權限，才能寫入決策與送達狀態。
+
+## 補償與驗收
+
+釋放庫存應檢查是否真的保留過、是否已釋放，並使用原操作鍵。確認訂單失敗時先判斷是否已確認，避免把成功訂單的庫存釋放。補償失敗就保留待處理狀態與告警，交人工對帳；workflow 失敗不代表先前副作用自動回滾。
+
+演練核准、拒絕、48 小時逾時、兩人同時回覆、過期連結、錯誤租戶、callback 成功後回應遺失、補償失敗與頂層 timeout。圖面是邏輯設計；這些執行層演練尚未在 AWS 上進行。

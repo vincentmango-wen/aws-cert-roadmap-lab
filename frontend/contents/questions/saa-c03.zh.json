@@ -3371,5 +3371,577 @@
         "url": "https://aws.amazon.com/aws-cost-management/aws-cost-explorer/"
       }
     ]
+  },
+  {
+    "questionId": "saa-051",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "帳戶 A 的 Step Functions Standard 工作流程以 callback task 等待帳戶 B 的人工核准服務。核准者只應決定自己獲授權的申請，且不得在瀏覽器網址或日誌暴露 task token。哪項設計能滿足這些要求？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "由 B 的 IAM 角色直接呼叫 SendTaskSuccess，並以電子郵件傳送完整 task token 作為核准連結。"
+      },
+      {
+        "choiceId": "B",
+        "text": "由 A 的後端保管 token，但接受任何已登入 B 的使用者以任意申請編號提交 callback。"
+      },
+      {
+        "choiceId": "C",
+        "text": "由 A 的後端保管 token，驗證 B 的核准者與申請權限後，以 A 的角色提交 callback。"
+      },
+      {
+        "choiceId": "D",
+        "text": "由 B 的 IAM 角色直接呼叫 SendTaskSuccess，並將 token 存於 B 的加密資料庫以避免洩漏。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Task token 必須由與工作流程相同帳戶的主體提交。A 的受控後端同時處理 token 保管、申請層級授權與 callback，才能滿足跨帳戶與保密要求。",
+    "choiceExplanations": {
+      "A": "錯誤。B 的主體不符合 callback 的同帳戶限制，而且把 token 放在連結中會增加洩漏風險。",
+      "B": "錯誤。身分驗證不能取代申請層級授權；其他已登入者仍可能核准不屬於自己的申請。",
+      "C": "正確。後端以 A 的角色提交 token，並先確認核准者可操作該申請；前端僅需使用不含 token 的申請識別碼。",
+      "D": "錯誤。加密儲存可保護 token，但無法讓 B 的主體繞過 callback 的同帳戶限制。"
+    },
+    "practicalNote": "人工核准應將使用者看到的申請識別碼與 Step Functions task token 分開。後端取得核准請求後，先驗證身分、申請所屬與目前狀態，再讀取受保護的 token 並執行 callback。核准與拒絕都要記錄可稽核的事件，但日誌內容不應包含原始 token。\n\n跨帳戶不代表核准服務必須直接使用 B 的主體提交 token。可以透過 A 的受控後端，或在適當信任政策下使用 A 的角色；本題選擇前者。逾時或已完成申請的舊 token 不能當成新的核准憑證，重複請求也應檢查狀態並安全回覆，避免僅憑一個連結就能完成核准。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "iam"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-052",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "同帳戶、同區域的 Lambda 透過 event source mapping 讀取使用客戶管理 KMS 金鑰加密的 SQS 佇列。執行角色已有該佇列所需的接收、刪除及屬性讀取權限；key policy 已啟用以 IAM policy 委派權限，且無其他拒絕。錯誤指出角色缺少 kms:Decrypt。哪項最小權限修正最合適？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "在執行角色新增該金鑰的 kms:Decrypt，保留原有 SQS 消費者權限。"
+      },
+      {
+        "choiceId": "B",
+        "text": "在執行角色新增該金鑰的 kms:Encrypt，保留原有 SQS 消費者權限。"
+      },
+      {
+        "choiceId": "C",
+        "text": "在執行角色新增該金鑰的 kms:GenerateDataKey，保留原有 SQS 消費者權限。"
+      },
+      {
+        "choiceId": "D",
+        "text": "在函式資源政策允許 SQS 執行 lambda:InvokeFunction，保留原執行角色權限。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "加密 SQS 的 Lambda 消費者需要執行角色具有 kms:Decrypt。本題已排除 key policy 與其他政策阻擋，因此只需補上指定金鑰的解密權限。",
+    "choiceExplanations": {
+      "A": "正確。補上指定金鑰的 Decrypt 對應錯誤原因，且沒有擴大到所有金鑰或管理操作。",
+      "B": "錯誤。Encrypt 不提供 Decrypt，無法讓消費者讀取加密訊息。",
+      "C": "錯誤。GenerateDataKey 不是本題缺少的 Decrypt；僅新增此權限仍會遭到解密拒絕。",
+      "D": "錯誤。SQS event source mapping 由 Lambda 輪詢佇列；增加函式被呼叫權限無法修正 KMS 解密拒絕。"
+    },
+    "practicalNote": "診斷加密佇列時，應分別檢查 SQS 存取與 KMS 存取。Lambda 執行角色能接收訊息，不表示它也能使用加密金鑰。依錯誤中的操作、資源與主體確認缺少的權限，通常比直接加入廣泛管理員政策更容易驗證，也能維持最小權限。\n\n此題特別說明 key policy 已允許 IAM 委派，避免把問題混同於金鑰政策未授權的情況。正式環境仍須檢查金鑰狀態、適用政策與金鑰輪替期間的訊息需求；修正後應用實際加密訊息確認接收及刪除流程。消費者需要的解密權限與生產者建立資料金鑰的需求不可混為一談。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — kms",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-053",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "某 IAM 角色僅透過身分政策取得同帳戶 SQS 權限，沒有資源政策授權、SCP 或其他限制。身分政策 Allow ReceiveMessage、DeleteMessage，並對目標佇列 Explicit Deny DeleteMessage。permissions boundary Allow ReceiveMessage、DeleteMessage、SendMessage。對此佇列的有效權限為何？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "三項操作都允許；身分政策與 boundary 中出現的 Allow 會合併為有效權限。"
+      },
+      {
+        "choiceId": "B",
+        "text": "ReceiveMessage 與 DeleteMessage；boundary 的 Allow 會覆蓋身分政策中的 Deny。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ReceiveMessage 與 SendMessage；boundary 額外提供身分政策沒有的 SendMessage。"
+      },
+      {
+        "choiceId": "D",
+        "text": "僅 ReceiveMessage；DeleteMessage 被明確拒絕，SendMessage 未獲身分政策授權。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "此題的有效 Allow 來自身分政策與 boundary 的交集，且明確 Deny 優先。Boundary 是權限上限，不會自行授予 SendMessage。",
+    "choiceExplanations": {
+      "A": "錯誤。此處不是 Allow 的聯集，而且明確 Deny 仍然優先。",
+      "B": "錯誤。Boundary 中的 Allow 不會覆蓋任何適用的明確 Deny。",
+      "C": "錯誤。Boundary 不授予權限，僅在其中允許 SendMessage 不足以讓角色傳送訊息。",
+      "D": "正確。ReceiveMessage 同時被允許；DeleteMessage 的明確拒絕優先；SendMessage 缺少身分政策 Allow。"
+    },
+    "practicalNote": "評估 IAM 時，先辨認哪些政策對本次主體、動作與資源適用，再檢查明確拒絕。permissions boundary 用於限制身分政策最多能授予哪些權限，不是另一份可獨立發放權限的政策。因此，把動作加進 boundary 並不等於角色已能呼叫該動作。\n\n本題排除資源政策直接授權與其他政策類型，讓交集規則與明確拒絕的效果可以單獨判斷。實務診斷應保留這個前提，不能把所有資源政策與角色工作階段的情境都簡化成同一公式。調整權限後，分別驗證需要的操作與必須禁止的操作，避免只確認正常路徑而漏掉越權風險。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — iam",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html"
+      },
+      {
+        "label": "AWS 官方文件 — boundary",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html"
+      }
+    ],
+    "relatedServices": [
+      "iam",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "iam",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-054",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Lambda 從 SQS Standard 佇列一次接收 10 筆訊息。9 筆已成功處理，1 筆因暫時性錯誤失敗。希望保留失敗訊息供重試，並避免這次批次失敗使其餘 9 筆一起重送。哪項設定與程式行為最合適？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "將 visibility timeout 設得更長，並在任一訊息失敗時仍向外拋出例外。"
+      },
+      {
+        "choiceId": "B",
+        "text": "啟用 ReportBatchItemFailures，逐筆捕捉錯誤，只列出失敗 ID。"
+      },
+      {
+        "choiceId": "C",
+        "text": "啟用 ReportBatchItemFailures，但在任一訊息失敗時仍向外拋出例外。"
+      },
+      {
+        "choiceId": "D",
+        "text": "停用 ReportBatchItemFailures，捕捉逐筆錯誤並回傳整批成功的空回應。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Partial batch response 需要 mapping 設定與程式回應配合。只回報失敗的訊息 ID，可讓 Lambda 保留該筆供重試並刪除本次成功處理的訊息。",
+    "choiceExplanations": {
+      "A": "錯誤。延長可見性逾時只改變再次可見的時間，整批例外仍會使成功訊息一併重試。",
+      "B": "正確。逐筆捕捉錯誤並回傳 batchItemFailures，能識別本次真正需要重試的訊息。",
+      "C": "錯誤。函式拋出例外時整批視為失敗；只有啟用設定而沒有正確回應並不足夠。",
+      "D": "錯誤。整批成功會使失敗訊息也被視為已處理，無法保留其重試機會。"
+    },
+    "practicalNote": "Partial batch response 解決的是同一批次中成功與失敗訊息的處置差異。設定 ReportBatchItemFailures 後，函式仍須使用正確回應結構，並以 messageId 作為 itemIdentifier；不能只回傳應用程式內部的訂單編號，也不能在最後再向外拋出整批例外。\n\n這項機制不會消除 SQS 至少一次傳遞的特性，成功的業務處理仍應具備冪等性。測試可刻意讓一筆失敗，觀察重試清單、刪除數與最舊訊息年齡。若使用 FIFO，還需保留順序並依文件處理第一筆失敗後未處理的訊息；本題明確限定 Standard 佇列。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — batch",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-055",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "SQS Standard 可能重送同一訂單的付款事件，Lambda 也可能在付款 API 成功後、寫入完成紀錄前中斷。付款供應商支援以相同業務冪等鍵安全重試，保留期涵蓋全部重試窗口。哪項設計最能避免重複扣款並允許中斷後恢復？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "先查 DynamoDB 是否有訂單，若沒有就付款，最後以一般 PutItem 寫入完成紀錄。"
+      },
+      {
+        "choiceId": "B",
+        "text": "以訂單鍵條件寫入處理狀態；付款使用同一冪等鍵，重試依狀態與供應商結果恢復。"
+      },
+      {
+        "choiceId": "C",
+        "text": "在付款前以條件寫入永久完成標記；後續相同訂單一律略過，不再檢查付款結果。"
+      },
+      {
+        "choiceId": "D",
+        "text": "將佇列改為 FIFO 並設定去重 ID；移除業務處理狀態與付款 API 的冪等鍵。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "條件寫入控制同一訂單的競爭處理，供應商冪等鍵處理外部付款結果的不確定性，狀態與恢復機制則避免中斷後永久卡住或漏付。",
+    "choiceExplanations": {
+      "A": "錯誤。先讀再寫存在競爭窗口，且付款成功後中斷仍可能在重試時再次扣款。",
+      "B": "正確。原子條件寫入、可恢復狀態與供應商冪等性共同涵蓋並行及付款後中斷情境。",
+      "C": "錯誤。若寫完完成標記但尚未付款就中斷，後續會永遠略過，造成漏付。",
+      "D": "錯誤。FIFO 的訊息去重不能取代外部付款的業務冪等性，也不能修補付款後中斷的窗口。"
+    },
+    "practicalNote": "冪等鍵應來自穩定的業務操作，例如訂單的某一次付款，而不是每次 Lambda 呼叫新生成的隨機值。DynamoDB 條件寫入能避免多個工作者同時取得同一工作，但資料庫寫入與外部付款 API 不構成一個原子交易，不能僅憑一筆去重紀錄就宣稱付款恰好一次。\n\n實作需區分處理中與完成，為中斷工作安排租約或狀態恢復，並使用同一供應商冪等鍵查明或重試付款。保存期限必須涵蓋事件可能重送與人工重放的窗口；供應商未提供所需保證時，還要設計對帳與補償。本題已明確給定供應商支援及期限，才可採用此組合。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — sqs",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html"
+      },
+      {
+        "label": "AWS 官方文件 — idem",
+        "url": "https://docs.aws.amazon.com/powertools/python/latest/utilities/idempotency/"
+      },
+      {
+        "label": "AWS 官方文件 — condition",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-056",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "一個申請流程最長需等待人工核准 48 小時；核准後立即繼續，逾時則進入補救處理。團隊希望等待期間不用持續執行 Lambda 或定期輪詢核准資料。哪項設計最合適？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "使用 Express workflow 的 callback task，將該 task 的 timeout 設為 48 小時。"
+      },
+      {
+        "choiceId": "B",
+        "text": "使用單次一般 Lambda 呼叫，讓函式保持執行直到核准或 48 小時到期。"
+      },
+      {
+        "choiceId": "C",
+        "text": "使用 Standard workflow 的 callback task，設定 48 小時 timeout 並處理逾時錯誤。"
+      },
+      {
+        "choiceId": "D",
+        "text": "使用 Standard workflow 的 Wait state 固定等待 48 小時，再直接視為核准。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Standard workflow 支援長時間 callback 等待。核准服務提交 token 後即可繼續；task timeout 則讓未獲核准的流程轉入明確的補救路徑。",
+    "choiceExplanations": {
+      "A": "錯誤。Express 的最長執行時間為五分鐘，也不支援 waitForTaskToken 模式。",
+      "B": "錯誤。單次一般 Lambda 呼叫無法持續執行 48 小時，且不符合等待期間不持續執行的需求。",
+      "C": "正確。Callback 將等待狀態交給 Standard workflow，並用 timeout 區分未收到核准的情況。",
+      "D": "錯誤。固定 Wait 不會在收到核准時提前完成，也不能把時間到期等同於已獲核准。"
+    },
+    "practicalNote": "人工核准的等待時間與執行業務工作的時間不同。工作流程可以保存等待狀態，讓核准介面或後端在事件發生時提交結果；不必把運算函式掛住，也不必每隔一段時間讀取資料庫確認是否有人按下按鈕。逾時路徑應有通知、拒絕或重新申請等明確處置。\n\n設定 callback task 時，需讓整個工作流程的時間限制容納所需等待與後續步驟。若另外設定 heartbeat，必須確定有系統會按期發送，否則可能在人員核准前提早逾時。核准後的重複請求、過期 token 與逾時後補送結果也應安全處理，不能讓已關閉的申請重新繼續。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      },
+      {
+        "label": "AWS 官方文件 — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-057",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "SQS Standard 的單一 event source mapping 以標準模式驅動 Lambda，batch size 為 1。每次 invocation 最多同時發出 1 個下游請求，返回前必定等待該請求結束；沒有其他下游呼叫者。下游最多承受 20 個並行請求，函式 reserved concurrency 為 50 且帳戶容量充足。哪項調整最直接地在 mapping 層限制負載並保留佇列緩衝？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "將 mapping 的 maximum concurrency 設為 20，保留其餘設定。"
+      },
+      {
+        "choiceId": "B",
+        "text": "將該 mapping 的 batch size 設為 20，保留其他並行設定為預設值。"
+      },
+      {
+        "choiceId": "C",
+        "text": "將該 mapping 的 batching window 設為 20 秒，保留其他並行設定為預設值。"
+      },
+      {
+        "choiceId": "D",
+        "text": "將該佇列的 visibility timeout 設為 20 秒，保留其他並行設定為預設值。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Maximum concurrency 直接限制此 mapping 同時呼叫函式的數量。在題設每次 invocation 最多一個未完成下游請求的條件下，20 次 invocation 對應最多 20 個請求。",
+    "choiceExplanations": {
+      "A": "正確。Mapping 上限為 20，且 reserved concurrency 50 不低於它，可限制此來源的並行而由佇列緩衝積壓。",
+      "B": "錯誤。Batch size 控制每次呼叫的記錄數，不限制同時有多少次呼叫。",
+      "C": "錯誤。Batching window 控制收集批次的等待時間，不是並行上限。",
+      "D": "錯誤。Visibility timeout 控制收到訊息後暫時不可見的時間，不是下游請求的並行上限。"
+    },
+    "practicalNote": "保護下游時要把函式並行數轉換成實際下游負載。本題將 batch size、每次 invocation 的同時請求數與請求完成時點都固定，才可直接以 maximum concurrency 推導上限。若單次函式會平行呼叫多個 API，或返回後下游仍繼續工作，就不能使用同樣的簡單推論。\n\n此設定針對 event source mapping，不會自動限制其他來源或其他應用程式。多個 SQS mapping 共用函式時，應檢查其上限總和與 reserved concurrency 的關係。標準模式與 provisioned mode 的控制方式不同；調低並行後，也要監控最舊訊息年齡與積壓，確認吞吐量仍滿足處理期限。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — scale",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-scaling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-058",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "Step Functions 工作流程需讓三個 Lambda 步驟依序處理同一份 2 MiB JSON 文件。資料不可截斷，無法壓縮到 256 KiB 以下，且每一步都不必在狀態資料中檢視完整文件。哪項設計最合適？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "將完整 JSON 以 Base64 編碼後放入每個 state 的輸入與輸出。"
+      },
+      {
+        "choiceId": "B",
+        "text": "增加各 Lambda 的記憶體，並繼續在每個 state 傳遞完整 JSON。"
+      },
+      {
+        "choiceId": "C",
+        "text": "將工作流程改為 Express，並繼續在每個 state 傳遞完整 JSON。"
+      },
+      {
+        "choiceId": "D",
+        "text": "文件存 S3，state 傳遞物件參照，由 Lambda 讀寫。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "將大資料留在 S3 並傳遞小型參照，可避免 state payload 超過限制。各步驟只回傳必要中繼資料與下一個文件參照。",
+    "choiceExplanations": {
+      "A": "錯誤。Base64 通常會增加資料大小，不會把 2 MiB 文件縮成符合 state payload 限制的資料。",
+      "B": "錯誤。Lambda 記憶體與 Step Functions state payload 上限是不同限制，增加前者無法解決後者。",
+      "C": "錯誤。Express 不會讓這份 2 MiB 文件可以直接作為 state payload 傳遞。",
+      "D": "正確。S3 承載完整內容，工作流程傳遞小型定位資訊，能讓後續步驟取得同一文件而不搬入完整 state。"
+    },
+    "practicalNote": "大文件的儲存與流程控制可以分開設計。工作流程只需知道文件在哪裡、屬於哪個業務工作及處理是否成功；真正需要內容的 Lambda 再從 S3 取得。步驟輸出也應維持小型參照，否則讀入 S3 後又把整份文件回傳，仍會在後續狀態碰到相同問題。\n\n參照需足以識別預期版本，避免同一 key 被覆寫後讓重試讀到不同內容。也要規劃物件權限、必要的解密權限、保留期間與失敗後清理方式。不要將可任意讀取其他 bucket 的權限附給處理函式；應限制到工作所需路徑，並驗證輸入參照是否符合該工作的授權範圍。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — large",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/sfn-best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-059",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "每月有一千萬次資料轉換流程，每次約 3 秒，全部步驟可安全冪等重試，不使用 .sync 或 callback。兩種 Step Functions 類型的壓力測試都滿足吞吐量與可觀測性要求。團隊以同一區域當期費率及實測用量估算每月總相關費用（含所需日誌）：Standard 為 600 美元，非同步 Express 為 180 美元。需求不變時，哪項選擇最符合成本目標？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "保留 Standard，因為它在任何短流程中都必然比 Express 便宜。"
+      },
+      {
+        "choiceId": "B",
+        "text": "改用非同步 Express，並因其保證每個業務動作只執行一次而移除冪等處理。"
+      },
+      {
+        "choiceId": "C",
+        "text": "改用非同步 Express，保留冪等處理，並依實際時間、記憶體及日誌持續驗證成本。"
+      },
+      {
+        "choiceId": "D",
+        "text": "保留 Standard，因為任何每月超過一百萬次的流程都不支援 Express。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "題設已驗證功能及效能適配，且 Express 的同範圍成本較低。非同步 Express 仍需冪等處理，不能把這次估算推廣成所有 Express 流程都比較便宜。",
+    "choiceExplanations": {
+      "A": "錯誤。Standard 依狀態轉換計價，Express 依執行次數、時間與記憶體等計價，不能只靠短流程就宣稱 Standard 必然便宜。",
+      "B": "錯誤。非同步 Express 採至少一次執行模型，移除冪等性會引入重複處理風險。",
+      "C": "正確。功能適配與同範圍成本證據支持選用 Express；保留冪等性及成本監測可維持前提。",
+      "D": "錯誤。不存在題述的每月一百萬次通用禁用規則，而且題設已確認吞吐量符合要求。"
+    },
+    "practicalNote": "工作流程類型的成本比較需要使用同一工作量與相同範圍。除狀態轉換或執行用量外，還應納入為了查詢、稽核與排錯所需的日誌，以及周邊服務費用。本題提供的金額是情境中的估算結果，不是 AWS 的固定報價；若負載或保存需求改變，就必須重新計算。\n\n成本較低仍須以功能滿足需求為前提。長時間等待、callback 與同步服務整合等限制，可能讓 Express 不適用；非同步執行也要求處理重複的業務效果。本題已將這些條件明確列出，因此可以依估算選擇，不能只憑「高流量」或「短時間」兩個關鍵字就判定所有情況的最優解。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-060",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "一個自建 SQS 消費者在訊息稀疏時反覆呼叫 ReceiveMessage，WaitTimeSeconds 為 0，產生大量空回應。希望減少空輪詢，並在訊息到達時儘快取得；可接受請求最多等待 20 秒。哪項調整最合適？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "維持 WaitTimeSeconds 為 0，改將 visibility timeout 設為 20 秒。"
+      },
+      {
+        "choiceId": "B",
+        "text": "將 WaitTimeSeconds 設為 20，並讓 HTTP response timeout 大於 20 秒。"
+      },
+      {
+        "choiceId": "C",
+        "text": "維持 WaitTimeSeconds 為 0，改將訊息 DelaySeconds 設為 20 秒。"
+      },
+      {
+        "choiceId": "D",
+        "text": "將 WaitTimeSeconds 設為 20，並將 HTTP response timeout 設為 1 秒。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Long polling 可在等待期間取得可用訊息並減少空回應。HTTP response timeout 必須長於輪詢等待時間，避免用戶端提早中斷正常等待。",
+    "choiceExplanations": {
+      "A": "錯誤。Visibility timeout 是收到訊息後的隱藏期間，不會延長 ReceiveMessage 尋找訊息的等待。",
+      "B": "正確。20 秒 long polling 符合等待容忍度，且足夠長的 HTTP timeout 避免正常輪詢被提前終止。",
+      "C": "錯誤。DelaySeconds 延後訊息首次可見，無法改善空輪詢，反而延遲處理。",
+      "D": "錯誤。HTTP timeout 比輪詢等待短，可能在正常等待時就觸發錯誤與額外重試。"
+    },
+    "practicalNote": "Long polling 的 20 秒是最長等待時間，不代表每筆訊息都會被強制延遲 20 秒。當訊息可用時，請求可以提前回傳；低流量時則避免以大量立即返回的空請求反覆檢查佇列。應觀察空接收數與實際延遲，確認設定符合消費者的服務目標。\n\n輪詢等待、HTTP timeout、visibility timeout 與訊息延遲分別控制不同階段，不能互相替代。HTTP 層需要容納整段等待，而 visibility timeout 應依處理與重試需求設定。本題是自建消費者，不是要求調整 Lambda 管理的輪詢；如果同時處理多個佇列，還需避免單一工作者長時間等在空佇列上而阻塞其他佇列。",
+    "officialDocs": [
+      {
+        "label": "AWS 官方文件 — poll",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html"
+      },
+      {
+        "label": "AWS 官方文件 — pollsetup",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/best-practices-setting-up-long-polling.html"
+      }
+    ],
+    "relatedServices": [
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
   }
 ]

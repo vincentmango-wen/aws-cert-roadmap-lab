@@ -12,7 +12,7 @@ Amazon Route 53、Amazon CloudFront、AWS Global Accelerator 在 AWS Management 
 - 要在邊緣節點快取靜態與動態內容並高速傳遞，選 CloudFront。
 - 要把 TCP/UDP 封包透過靜態 IP 經由 AWS 骨幹網路加速，選 Global Accelerator。
 
-判斷時，從「有沒有靜態 IP」「有沒有快取」「有沒有解析 DNS」3 個軸切分，會比較容易判斷。
+判斷時，從「需要哪些通訊協定與靜態 IP 選項」「有沒有快取」「有沒有解析 DNS」3 個軸切分，會比較容易判斷。
 
 ## 比較表
 
@@ -22,7 +22,7 @@ Amazon Route 53、Amazon CloudFront、AWS Global Accelerator 在 AWS Management 
 | 分類 | DNS | CDN | 網路加速 |
 | 主要層級 | DNS 層 | 邊緣傳遞 (HTTP/HTTPS) | L3/L4 (TCP/UDP) |
 | 主要目的 | 把名稱轉換成 IP | 快取並傳遞內容 | 把封包以最短路徑運送 |
-| 靜態 IP | 沒有 (使用 DNS 名稱運作) | 沒有 (使用 DNS 名稱運作) | 有 (2 個 IPv4 靜態 IP) |
+| 靜態 IP | 沒有 (使用 DNS 名稱運作) | 預設沒有；可選用 Anycast Static IPs | 有 (2 個 IPv4 靜態 IP) |
 | 快取 | 沒有 | 有 (預設 TTL 24 小時) | 沒有 (只做路徑最佳化) |
 | 支援的通訊協定 | DNS 查詢 | HTTP / HTTPS | TCP / UDP |
 | 代表性用途 | 網域註冊、DNS 路由、健康檢查 | 圖片、影片、JS/CSS 的高速傳遞 | 遊戲、VoIP、需要固定 IP 的應用程式 |
@@ -51,7 +51,7 @@ CloudFront 是在邊緣節點快取 HTTP/HTTPS 內容的 CDN。
 
 Global Accelerator 把 TCP/UDP 流量透過 AWS 骨幹網路最佳化，並提供靜態 anycast IP。
 
-與 CloudFront 的差異在於不限於 HTTP/HTTPS，而且擁有靜態 IP。它不是快取內容，而是把封包本身放到最短路徑來加速。
+Global Accelerator 支援 HTTP/HTTPS 以外的 TCP/UDP，並提供靜態 IP。CloudFront 也提供選用的 Anycast Static IPs，因此主要差別是網路加速與 HTTP/HTTPS 內容傳遞的角色。
 
 需要固定 IP 的遊戲、VoIP，或要求 IP 白名單的金融系統等，都會把它列入候選。
 
@@ -124,7 +124,7 @@ HTTP 處理不來的通訊協定，或是想把固定 IP 分配給用戶端時�
 
 ### 不要把「全球傳遞」與「固定 IP」混淆
 
-只要是「全球傳遞」就用 CloudFront，要是「全球性的靜態 IP」也在條件內，就選 Global Accelerator。把題目中的「想要做什麼」替換成主語，就可以判斷 3 個軸的哪一個被標記。
+HTTP/HTTPS 內容傳遞與快取選 CloudFront，TCP/UDP 網路加速選 Global Accelerator。CloudFront 也提供選用的 Anycast Static IPs，因此不能只依有無靜態 IP 判斷。
 
 ## 常見錯誤
 
@@ -132,9 +132,9 @@ HTTP 處理不來的通訊協定，或是想把固定 IP 分配給用戶端時�
 
 3 個服務在不綁定區域這點上相同，但是 Route 53 在 DNS 層、CloudFront 在 CDN 層、Global Accelerator 在 L3/L4 層，各自運作的層級都不同。
 
-### 錯誤 2:以為 CloudFront 有靜態 IP
+### 錯誤 2：以為 CloudFront 預設附帶靜態 IP
 
-CloudFront 沒有靜態 IP，而是以 DNS 名稱運作。如果條件中包含靜態 IP，就要考慮 Global Accelerator。
+CloudFront 通常以 DNS 名稱使用；專用 Anycast Static IPs 是選用功能，須經 CloudFront 支援工程團隊核准，並選擇使用所有邊緣節點的價格級別。2026-11-09 查核時，AWS 提供的 IPv4 位址為每個 IP 每小時 0.005 美元，另有一般 CloudFront 用量費用。啟用前請確認官方申請條件與價格。
 
 ### 錯誤 3:把 Global Accelerator 當成 CDN 來記
 
@@ -165,4 +165,12 @@ Route 53、CloudFront、Global Accelerator 都顯示為「Global」，容易混�
 - 內容的快取傳遞:CloudFront
 - 靜態 IP 與 TCP/UDP 的路徑最佳化:Global Accelerator
 
-不要被「全球」這個字眼牽著走，而是用「有沒有靜態 IP」「有沒有快取」「有沒有解析 DNS」切分，就可以避免 3 個服務之間的混淆。
+不要被「全球」這個字眼牽著走，而是用「需要哪些通訊協定與靜態 IP 選項」「有沒有快取」「有沒有解析 DNS」切分，就可以避免 3 個服務之間的混淆。
+
+## 更正說明
+
+### 2026-11-09
+
+- 更正「CloudFront 沒有靜態 IP」的描述，補充選用 Anycast Static IPs 的申請、設定與費用條件；選型不能只依有無靜態 IP 判斷。
+
+依據：[CloudFront Anycast Static IPs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).

@@ -1,0 +1,55 @@
+---
+comparisonId: "cmp-014"
+slug: "step-functions-standard-vs-express"
+title: "Step Functions StandardとExpress：実行特性とコストで選ぶ"
+description: "実行時間、再試行と重複の特性、callback、履歴、料金の軸を比較し、人手の承認と大量の短い処理で選び方を考えます。"
+---
+
+# Step Functions StandardとExpress：実行特性とコストで選ぶ
+
+対象はStandard、非同期Express、同期Expressです。実際の料金とクォータは対象リージョン・アカウントで確認してください。
+
+## まず要件を満たせない種類を除く
+
+| 比較項目 | Standard | Express |
+|---|---|---|
+| 1回の最長実行時間 | 1年 | 5分 |
+| workflowの実行特性 | exactly-onceモデル。明示したRetryで状態を再実行し得る | 非同期はat-least-once、同期はat-most-once |
+| callback／job完了待ち | 対応する統合で.waitForTaskTokenと.syncを利用可能 | どちらの統合パターンも非対応 |
+| 履歴 | Step Functionsで保存し、完了後通常90日まで取得可能 | CloudWatch Logsを有効化。同等の組み込み履歴はない |
+| 主な課金軸 | state transitions | 実行リクエスト、実行時間、使用メモリ |
+
+この実行特性はworkflowのもので、システムをまたぐ業務副作用の保証ではありません。明示的な再試行、手動redrive、呼び出し元の再送にも適切な冪等性が必要です。同期Expressのat-most-onceも成功を保証せず、通信切断時に呼び出し元が結果を把握できない場合があります。[workflowの種類](https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html)
+
+## 三つの「再試行」を分ける
+
+ASLのRetryは、指定エラーに対し待ち時間と回数上限を設定してTaskを再実行し、Catchは別経路へ移ります。workflowを開始するAPIの再試行は、同じTaskの再試行とは別です。業務補償や手動redriveも別の操作で、すでに起きた副作用を照合する必要があります。[エラー処理](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
+
+Standardのexactly-onceという説明を理由に決済の冪等性キーを省略してはいけません。同期Expressだからといってクライアントが無条件に再送してよいわけでもありません。別executionを開始すれば業務処理が重複し得ます。
+
+## 48時間待つ承認フロー
+
+注文が人の判断を2日間待つならStandardを選びます。時間要件を満たし、callbackも使えます。Expressの5分上限とcallback非対応は制約であり、状態数を減らしても解決しません。tokenを管理されたバックエンドに保存し、検証済みbrokerが結果を返します。Lambdaを2日間待機させません。[統合パターン](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+短いサブフローだけExpressに分ける余地はあります。ただし、重複の特性、状態の受け渡し、エラーの責任を再検討します。件数が多いという理由だけで承認フロー全体をExpressにしないでください。
+
+## 大量の短いフローを見積もる
+
+次は独自に設定した計算例で、AWSの見積書や実測請求ではありません。月N=1,000,000回、Standardは1回6個の課金transitions、Expressは丸め後の課金時間0.2秒、課金メモリ64 MBと仮定します。
+
+- Standard：6,000,000 transitions × 対象のtransition単価。
+- Express：1,000,000 requests × request単価に、12,500 GB-seconds × 適用時間単価を加算。
+
+同じメモリで平均課金時間が240秒になると、Expressは15,000,000 GB-secondsになります。Standardが同じ6 transitionsなら、待ち時間が延びるだけではtransitionsは増えません。「短時間・高速・大量」は見積もりの出発点であり、Expressが必ず安いという証拠ではありません。
+
+実際には再試行後のtransitions、時間分布、課金メモリと丸め、リージョンと段階料金、Lambda・データサービス・ログなどの費用を含めます。上の式は無料枠を差し引いていません。同じ代表入力で計測し、その時点の料金を当てはめます。[Step Functions料金](https://aws.amazon.com/step-functions/pricing/)
+
+## 履歴と同期応答の違い
+
+ExpressのCloudWatch Logs配信はbest-effortです。loggingを有効にするだけで完全な監査台帳になるわけではありません。確実に残す必要のある業務証跡は別途永続化するか、Standardを検討します。ログ料金と保存期間も含めて考えます。[実行ログ](https://docs.aws.amazon.com/step-functions/latest/dg/cw-logs.html)
+
+同期ExpressはStartSyncExecutionを使います。HTTP 200でもworkflow成功とは限らないため、status、error、causeを確認します。クライアントtimeoutも、バックエンドが未実行だった証明にはなりません。[同期実行API](https://docs.aws.amazon.com/step-functions/latest/apireference/API_StartSyncExecution.html)
+
+## 選定時の確認
+
+人手の承認、長時間処理、組み込み履歴ならStandardから検討します。5分以内で冪等な大量イベント処理なら非同期Express、短いフローの結果を直ちに返すなら同期Expressを評価し、失敗・不確定な結果に対応します。最後にpayload、履歴、アカウントのクォータを確認します。大きなデータはS3参照で渡し、Expressにすれば256 KiB制限がなくなるとは考えないでください。[クォータ](https://docs.aws.amazon.com/step-functions/latest/dg/service-quotas.html)

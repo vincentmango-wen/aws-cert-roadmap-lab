@@ -15,7 +15,7 @@ Their roles are different.
 When in doubt, decide like this:
 
 - Want to deliver a notification to multiple destinations: SNS
-- Want to buffer work and process it in order: SQS
+- Want to buffer work for asynchronous processing: SQS
 - Want to route processing based on event conditions: EventBridge
 - Want to run something on a schedule: EventBridge
 
@@ -30,7 +30,7 @@ When in doubt, decide like this:
 | Message retention | Notification-oriented | Held in the queue | Routing-oriented |
 | Delivery model | Push | Pull | Rule-based |
 | Typical use | Email notifications, triggering multiple Lambda functions | Asynchronous jobs, work backlog | Scheduled execution, event-driven integration |
-| Ordering | Available with FIFO topics | Available with FIFO queues | Not designed for ordering guarantees |
+| Ordering | Standard: no guarantee; FIFO + SQS FIFO: per message group | Standard: best effort; FIFO: per MessageGroupId | Default/Classic: no guarantee; enhanced Custom bus: FIFO subscriber per event group |
 | Use in this project | Future candidate for notifications | Future candidate for asynchronous processing | Future candidate for the daily one-question delivery |
 
 ## Beginner-friendly explanation
@@ -47,7 +47,7 @@ Use it when you want to tell multiple recipients about a single event.
 
 SQS is a queue that buffers messages temporarily.
 
-The consumer side reads messages from the queue and processes them in order.
+Consumers read messages from the queue for processing; ordering depends on the queue type.
 
 Use it when you want to defer work that cannot be processed right now and handle it safely later.
 
@@ -171,3 +171,16 @@ SNS, SQS, and EventBridge are important services that appear often in system int
 SNS handles notifications, SQS handles queuing, and EventBridge handles event routing.
 
 Once these three are clearly distinguished, serverless architectures on AWS become much easier to understand.
+
+SQS Standard provides at-least-once delivery with best-effort ordering; duplicates and out-of-order messages are possible. SQS FIFO preserves order within each MessageGroupId and deduplicates sends within its deduplication window. This does not make application side effects exactly once: consumers must remain idempotent when processing is retried.
+
+SNS Standard does not guarantee order. For ordered fan-out, use an SNS FIFO topic with SQS FIFO subscriptions and align MessageGroupId; an SQS Standard subscription does not preserve end-to-end order. The rule-and-target examples here use EventBridge default/Classic buses, which do not guarantee ordering. The enhanced Custom Event Bus launched on 2026-09-24 supports FIFO subscribers: order is scoped to an event group within the publishing account, not globally across the bus.
+
+## Corrections
+
+### 2026-11-09
+
+- Corrected wording that implied SQS always processes messages in order: Standard can duplicate or reorder messages, while FIFO ordering is scoped to a message group. Added that deduplication does not guarantee exactly-once business side effects and consumers still need idempotency.
+- Added the ordering conditions for SNS FIFO with SQS FIFO and distinguished EventBridge default/Classic buses from FIFO subscriptions on the newer Custom Event Bus, avoiding a blanket no-ordering claim.
+
+References：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [SNS FIFO ordering](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [EventBridge default / Classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [EventBridge Custom bus ordering](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

@@ -17,7 +17,7 @@ author: "AWS Cert Roadmap Lab"
 published: true
 noIndex: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-02"
+updatedAt: "2026-11-09"
 ---
 
 # AWS Pricing Basics for Cloud Practitioner
@@ -35,6 +35,10 @@ Most AWS services use pay-as-you-go pricing. For example, S3 charges for storage
 The important thing is to separate services that tend to incur fixed costs just by being created from services that only charge when you use them.
 
 ## Free Tier
+
+Check the account creation date and plan before estimating a free deployment. Accounts created before 2025-07-15 remain on the legacy program, whose 12-month offers were time-limited. Eligible new customers receive USD 100 in credits and can earn up to another USD 100. The Free plan lasts up to six months or until credits run out, whichever comes first; it does not charge until you upgrade to Paid. Paid-plan usage beyond applicable credits or outside eligible offers is billed. Always Free allowances still have usage limits.
+
+The FAQ checked on 2026-11-09 gives conflicting credit-expiry descriptions: General Q6 says six months, while Free Plan Q8 says twelve months after account creation following an upgrade. Do not assume either duration applies to every account. Confirm your own expiry in Settings Portal or the Billing Credits page, and verify eligible services before launching this architecture. AWS Budgets notifications help monitor costs; they are not a guarantee that all resources stop at the budget threshold.
 
 AWS offers a Free Tier. However, "Free Tier" does not mean everything is free forever. There are conditions on time period, usage amount, and which services qualify.
 
@@ -74,3 +78,11 @@ For personal projects, the safe approach is to set up Budgets first, avoid servi
 
 - [How to build a portfolio with the AWS Free Tier](/blog/aws-free-tier-portfolio)
 - [Prevent billing surprises in personal projects with AWS Budgets](/blog/aws-budgets-cost-guardrail)
+
+## Corrections
+
+### 2026-11-09
+
+- Added account-creation-date eligibility, Free/Paid plans, and credit and usage limits, and clarified when charges can apply. The official FAQ still gives conflicting credit-expiry information, so the dated observation and account-specific expiry checks remain instead of applying one expiry period to every account.
+
+References：[AWS Free Tier FAQ](https://aws.amazon.com/free/free-tier-faqs/) / [AWS Free Tier documentation](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html) / [AWS legacy Free Tier](https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html).

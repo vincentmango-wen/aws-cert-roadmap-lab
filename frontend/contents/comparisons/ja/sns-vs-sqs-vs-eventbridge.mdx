@@ -21,7 +21,7 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-01"
+updatedAt: "2026-11-09"
 ---
 
 # SNS・SQS・EventBridgeの違い
@@ -41,7 +41,7 @@ SNS、SQS、EventBridgeは、AWSでシステム同士を連携させるサービ
 迷ったら、まずはこう判断します。
 
 - 通知を複数の宛先へ配りたい：SNS
-- 処理を待たせて順番に処理したい：SQS
+- 仕事をためて非同期に処理したい：SQS
 - イベント条件で処理を振り分けたい：EventBridge
 - 定期実行したい：EventBridge
 
@@ -56,7 +56,7 @@ SNS、SQS、EventBridgeは、AWSでシステム同士を連携させるサービ
 | メッセージ保持 | 通知中心 | キューに保持 | イベントルーティング中心 |
 | 処理方式 | Push型 | Pull型 | ルールベース |
 | 代表的な用途 | メール通知、複数Lambda起動 | 非同期ジョブ、処理待ち | 定期実行、イベント連携 |
-| 順序制御 | FIFOトピックで対応可能 | FIFOキューで対応可能 | 順序保証目的では使わない |
+| 順序制御 | Standardは保証なし。FIFO + SQS FIFOはグループ単位 | Standardはベストエフォート。FIFOはMessageGroupId単位 | default/Classicは保証なし。新Custom busはFIFO購読のイベントグループ単位 |
 | このプロジェクトでの用途 | 将来の通知候補 | 将来の非同期処理候補 | 将来の毎日1問配信候補 |
 
 ## 初学者向け説明
@@ -73,7 +73,7 @@ SNSは、メッセージを複数の宛先へ配る通知サービスです。
 
 SQSは、メッセージを一時的にためるキューです。
 
-処理する側はキューからメッセージを取り出して、順番に処理します。
+処理する側はキューからメッセージを取り出します。順序の保証はキューの種類によって異なります。
 
 「今すぐ処理できない仕事を、後で安全に処理したい」ときに使います。
 
@@ -197,3 +197,16 @@ SNS、SQS、EventBridgeは、システム連携でよく出る重要サービス
 SNSは通知、SQSはキュー、EventBridgeはイベントルーティングです。
 
 この3つを区別できると、AWSのサーバーレス構成がかなり理解しやすくなります。
+
+SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
+
+SNS Standardは順序を保証しません。順序付きファンアウトではSNS FIFOトピックとSQS FIFO購読を組み合わせ、MessageGroupIdをそろえます。SQS Standard購読ではエンドツーエンドの順序は保証されません。本記事のルールとターゲットの例は順序保証のないEventBridge default/Classicバスを対象とします。2026-09-24公開の新しいCustom Event BusはFIFO購読を提供し、発行元アカウント内のイベントグループごとに順序を維持します。バス全体の順序保証ではありません。
+
+## 訂正内容
+
+### 2026-11-09
+
+- SQS が常に順番どおりに処理するかのような説明を訂正しました。Standard では重複や順序の入れ替わりがあり、FIFO の順序保証はメッセージグループ単位です。重複排除は業務上の副作用が一度だけ起きる保証ではなく、コンシューマーにも冪等性が必要であることを追記しました。
+- SNS FIFO と SQS FIFO を組み合わせた場合の順序保証の条件を追記し、EventBridge の default／Classic バスと新しい Custom Event Bus の FIFO サブスクリプションを区別しました。順序を保証しないという説明をすべての種類に適用しないための補足です。
+
+参照資料：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [SNS FIFO ordering](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [EventBridge default / Classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [EventBridge Custom bus ordering](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).
