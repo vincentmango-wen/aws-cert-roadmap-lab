@@ -3054,9 +3054,9 @@
       "キュー操作権限を送信・受信で分ける",
       "メッセージに秘密情報を直接入れない"
     ],
-    "updatedAt": "2026-06-01",
+    "updatedAt": "2026-11-09",
     "locale": "ja",
-    "practicalNote": "Amazon SQS は、AWS のフルマネージドなメッセージキューサービスである。メッセージを\nキューに送信する側（プロデューサー）と受信する側（コンシューマー）を分離することで、\n処理を非同期化し、システム全体の疎結合化を実現する。送信側はコンシューマーの稼働\n状況を意識せずメッセージを送れ、受信側は自身のペースでメッセージを取り出して処理\nできるため、瞬間的な負荷変動に対する緩衝（バッファ）として機能する。SQS には\nStandard Queue と FIFO Queue の 2 種類があり、Standard は順序保証なし・少なくとも\n1 回配信、FIFO は順序保証あり・正確に 1 回処理を提供する。\n\n実務では、注文処理の非同期化、Lambda への処理分散、障害時のリトライバッファ、\nECS タスク間のジョブ受け渡しなどに利用される。可視性タイムアウト（Visibility\nTimeout）は SQS の重要概念で、コンシューマーがメッセージを取り出してから処理完了\n（delete）するまでの間、そのメッセージを他のコンシューマーから見えなくする時間である。\n処理がタイムアウト内に完了しなければメッセージは再び可視化され、別のコンシューマー\nが取り出せる。これにより少なくとも 1 回の処理が保証される代わりに、コンシューマー\n側で冪等性（idempotency）を担保する必要がある。\n\n料金はリクエスト数（API 呼び出し回数）に応じた従量課金で、データ転送量は別途課金\nされる。デッドレターキュー（DLQ）を設定することで、規定回数を超えて処理に失敗した\nメッセージを別キューに退避し、後続調査に回せる。CLF-C02 では「SQS = メッセージ\nキューによる疎結合化」という基本概念と、Standard / FIFO の使い分け、可視性タイム\nアウトが頻出論点となる。",
+    "practicalNote": "Amazon SQS は、AWS のフルマネージドなメッセージキューサービスである。メッセージを\nキューに送信する側（プロデューサー）と受信する側（コンシューマー）を分離することで、\n処理を非同期化し、システム全体の疎結合化を実現する。送信側はコンシューマーの稼働\n状況を意識せずメッセージを送れ、受信側は自身のペースでメッセージを取り出して処理\nできるため、瞬間的な負荷変動に対する緩衝（バッファ）として機能する。SQS には\nStandard Queue と FIFO Queue の 2 種類があり、SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。\n\n実務では、注文処理の非同期化、Lambda への処理分散、障害時のリトライバッファ、\nECS タスク間のジョブ受け渡しなどに利用される。可視性タイムアウト（Visibility\nTimeout）は SQS の重要概念で、コンシューマーがメッセージを取り出してから処理完了\n（delete）するまでの間、そのメッセージを他のコンシューマーから見えなくする時間である。\n処理がタイムアウト内に完了しなければメッセージは再び可視化され、別のコンシューマー\nが取り出せる。これにより少なくとも 1 回の処理が保証される代わりに、コンシューマー\n側で冪等性（idempotency）を担保する必要がある。\n\n料金はリクエスト数（API 呼び出し回数）に応じた従量課金で、データ転送量は別途課金\nされる。デッドレターキュー（DLQ）を設定することで、規定回数を超えて処理に失敗した\nメッセージを別キューに退避し、後続調査に回せる。CLF-C02 では「SQS = メッセージ\nキューによる疎結合化」という基本概念と、Standard / FIFO の使い分け、可視性タイム\nアウトが頻出論点となる。\n\n公式資料確認：2026-11-09",
     "officialDocs": [
       {
         "label": "Amazon Simple Queue Service とは（AWS公式ドキュメント）",
@@ -3065,6 +3065,14 @@
       {
         "label": "Amazon SQS（AWS公式）",
         "url": "https://aws.amazon.com/jp/sqs/"
+      },
+      {
+        "label": "AWS official documentation (sqs; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      },
+      {
+        "label": "AWS official documentation (fifo; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html"
       }
     ]
   },
@@ -3241,9 +3249,9 @@
       "セキュリティ警告を確認する",
       "公開設定や権限過多の指摘を放置しない"
     ],
-    "updatedAt": "2026-06-07",
+    "updatedAt": "2026-11-09",
     "locale": "ja",
-    "practicalNote": "AWS Trusted Advisor は、AWS 環境を「コスト最適化」「セキュリティ」「耐障害性」\n「パフォーマンス」「サービスクォータ」の 5 つのカテゴリでチェックし、ベスト\nプラクティスに沿った改善提案を行うサービスである。チェックは AWS があらかじめ\n用意した項目に基づいて自動実行され、結果はマネジメントコンソールでカテゴリ別に\n確認できる。代表的なチェック項目には、IAM ルートユーザーの MFA 有効化、S3 バケットの\nパブリックアクセス、未使用の EC2 Elastic IP、低稼働率の EC2 インスタンス、サービス\nクォータの使用状況などがある。\n\n利用できるチェック項目数はサポートプランによって異なる。Basic Support と Developer\nSupport では、セキュリティカテゴリと耐障害性カテゴリの選択された項目（MFA on root\naccount、S3 バケット権限、EBS/RDS パブリックスナップショット、セキュリティグループの\nポート開放状況など）とサービスクォータカテゴリの全項目が利用できる。Business Support\n以上で全カテゴリ・全項目（最新の項目数は公式ドキュメント参照）が利用可能になり、\nAPI による自動取得や週次の改善レポート送信なども提供される。試験文脈では「サポート\nプランによりチェック範囲が異なる」点が繰り返し問われるため、Basic / Developer は\n一部のセキュリティ・耐障害性チェックと全サービスクォータチェック、Business 以上は\n全項目という対応関係を押さえておく。\n\n実務では、Trusted Advisor の「コスト最適化」カテゴリで未使用リソース（停止 EC2 に\n付随する EBS、未使用 Elastic IP、低稼働 RDS）を洗い出してコスト削減に繋げる運用、\n「セキュリティ」カテゴリで IAM・S3・セキュリティグループの設定不備を継続監視する\n運用が典型的である。AWS Config Rules や AWS Security Hub と役割が一部重なるが、\nTrusted Advisor は「AWS のベストプラクティスに対する評価」を提供する点が固有の\n価値である。",
+    "practicalNote": "Trusted AdvisorはAWS環境について、コスト、セキュリティ、性能、耐障害性などの改善を提案します。すべての提案を自動で実施するサービスではありません。チェック範囲はサポートプランに依存するため、運用で特定のチェックを前提にする前に利用権限を確認します。\n\n2026-11-09確認時点では、Basic SupportはService Limitsの全チェックとSecurity・Fault Toleranceの一部のチェックを利用できます。Basicではチェックの自動更新は利用できません。現行文書は、全チェックとTrusted Advisor APIへのアクセス対象としてBusiness Support+、Enterprise Support、Unified Operationsを挙げています。Basic/DeveloperとBusiness以上を分ける旧説明は歴史的な分類であり、現在の利用権限表としては使えません。\n\nDeveloper、Business、Enterprise On-Rampは2027-01-01に終了予定ですが、AWS GovCloud (US)では引き続き利用できます。既存顧客はアカウント固有の移行条件を確認してください。提案をもとに未使用リソースや設定上のリスクを調査し、影響を確認してから変更します。チェック件数や提供範囲は変わるため、実運用の判断では公式プラン文書を確認します。",
     "officialDocs": [
       {
         "label": "AWS Trusted Advisor（AWS公式ドキュメント）",
@@ -3252,6 +3260,14 @@
       {
         "label": "AWS Trusted Advisor（AWS公式）",
         "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      },
+      {
+        "label": "AWS official documentation (ta; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
       }
     ]
   },

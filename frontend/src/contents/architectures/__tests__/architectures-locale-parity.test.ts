@@ -6,7 +6,7 @@
  * Subsequent locale additions, slugs and translations must not update only one language.
  *
  * When en/zh arrays are nonempty, verify:
- * 1. Identical slug sets across ja/en/zh (10 articles).
+ * 1. Identical slug sets across ja/en/zh.
  * 2. Matching architectureId per slug.
  * 3. Matching services/category/level/examScopes/mermaid/published/publishedAt/updatedAt; exclude
  * translated tags.
@@ -16,8 +16,7 @@
  * returns the files verified in (5).
  * 7. Leading MDX H1 equals the JSON title or is its prefix, allowing removeLeadingH1 to strip it.
  *
- * Scaffold mode (an empty en or zh array) remains a safety valve for temporary states before new
- * translations exist; normal operation does not use it.
+ * Required locales are never skipped; historical identity and approved growth are checked by article-inventory.test.ts.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -57,11 +56,10 @@ const jaMap = toMap(jaList);
 const enMap = toMap(enList);
 const zhMap = toMap(zhList);
 
-const isScaffoldMode = enList.length === 0 || zhList.length === 0;
 
 describe("architectures locale parity", () => {
-  it("(scaffold) ja JSON contains the expected 10 published architectures", () => {
-    expect(jaList.length).toBe(10);
+  it("(scaffold) ja JSON contains unique registered architectures", () => {
+    expect(jaList.length).toBe(new Set(jaList.map(item => item.architectureId)).size);
   });
 
   it("(scaffold) every ja MDX file exists on disk", () => {
@@ -74,7 +72,7 @@ describe("architectures locale parity", () => {
     }
   });
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(1) ja/en/zh have the same slug set",
     () => {
       const jaSlugs = new Set(jaList.map((a) => a.slug));
@@ -86,7 +84,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(2) architectureId is identical across ja/en/zh per slug",
     () => {
       for (const slug of jaMap.keys()) {
@@ -107,7 +105,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(3) shared metadata fields are identical across ja/en/zh per slug",
     () => {
       // Locale-independent metadata; exclude translated title, description and tags.
@@ -141,7 +139,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(4) every {ja,en,zh}/<slug>.mdx file exists on disk",
     () => {
       for (const slug of jaMap.keys()) {
@@ -156,7 +154,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(5) every locale-specific SVG file exists on disk",
     () => {
       for (const slug of jaMap.keys()) {
@@ -171,7 +169,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(6) diagramPath is identical across ja/en/zh per slug, and resolveDiagramPath(locale, meta) resolves to the file existence checked in (5)",
     () => {
       // CR1-M2: the old test reimplemented resolveDiagramPath, which could hide divergence.
@@ -221,7 +219,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(7) MDX first H1 matches JSON title (or title.startsWith(h1Text))",
     () => {
       // Match the loader's removeLeadingH1 rule: exact equality or title.startsWith(h1Text).
@@ -269,15 +267,15 @@ describe("architectures locale parity", () => {
 
   // Additional Step 6 invariants.
 
-  it("(8) en JSON contains exactly 10 architectures", () => {
-    expect(enList.length).toBe(10);
+  it("(8) en JSON contains unique registered architectures", () => {
+    expect(enList.length).toBe(new Set(enList.map(item => item.architectureId)).size);
   });
 
-  it("(9) zh JSON contains exactly 10 architectures", () => {
-    expect(zhList.length).toBe(10);
+  it("(9) zh JSON contains unique registered architectures", () => {
+    expect(zhList.length).toBe(new Set(zhList.map(item => item.architectureId)).size);
   });
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(10) every {ja,en,zh}/<slug>.mdx exists (explicit per-slug per-locale check)",
     () => {
       for (const slug of jaMap.keys()) {
@@ -292,7 +290,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(11) every slug has all 3 locale SVG files: <slug>.svg / <slug>.en.svg / <slug>.zh.svg",
     () => {
       for (const slug of jaMap.keys()) {
@@ -307,7 +305,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(12) shared metadata fields (category/level/examScopes/services/publishedAt/mermaid) are identical across ja/en/zh per slug",
     () => {
       // Exclude translated tags; invariant (13) ensures they are nonempty.
@@ -339,7 +337,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(13) title and description are non-empty strings for every slug in all 3 locales",
     () => {
       for (const slug of jaMap.keys()) {
@@ -362,7 +360,7 @@ describe("architectures locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(14) tags array is non-empty for every slug in all 3 locales",
     () => {
       for (const slug of jaMap.keys()) {

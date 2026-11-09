@@ -27,7 +27,7 @@
     "correctChoiceId": "D",
     "explanation": "正解は「需要に応じてリソースを拡張・縮小できる」です。AWSクラウドの代表的な利点は「需要に応じてリソースを増減できること」、\nつまりスケーラビリティ（拡張性）とエラスティシティ（弾力性）です。\n\nオンプレミス環境では、ピーク時のアクセスを見込んでサーバーをあらかじめ多めに用意して\nおく方式が一般的だった。この方式では、平常時は余ったサーバーが遊んで固定費になり、\n想定を超えるアクセスが来た場合には処理能力が不足する。AWSでは、Auto Scaling や\nElastic Load Balancing といった仕組みにより、アクセスの増加に応じて EC2 インスタンスを\n自動で増やし、減少に応じて自動で減らせる。使った分だけ支払う従量課金とこの弾力性が\n組み合わさることで、平常時は小さく、繁忙期だけ大きく、という運用が成立する。\n\nここで区別しておきたいのは、クラウドの利点は「安さ」そのものではなく「必要な量を\n必要なときだけ確保できる柔軟性」だという点である。需要が読みにくいワークロードや、\nアクセスに波があるワークロードほど、この弾力性の効果が大きくなる。CLF-C02 では、\nスケーラビリティ・弾力性・俊敏性（アジリティ）・従量課金が「クラウドのメリット」として\n繰り返し問われる。選択肢が「物理サーバーの購入」「AWSが全責任を負う」「永続無料」の\nように極端な言い切りになっている場合、それらはクラウドの特性と矛盾するため誤答である\nことが多い。",
     "choiceExplanations": {
-      "A": "誤り。AWSには無料利用枠（AWS無料利用枠）があるが、それは一部サービスの一定量まで、\n多くは利用開始から12か月などの条件付きである。すべてのサービスが永続的に無料という\nことはない。「永続無料」「完全無料」のような無条件の言い切りは誤りであることが多い。",
+      "A": "誤りです。無料枠の適用はアカウント作成日、プラン、対象サービス、使用量上限、クレジット期限によって異なります。旧制度の12か月無料を新規アカウントにも一律に当てはめることはできず、すべてのAWSサービスが永久無料ではありません。",
       "B": "誤り。AWSのセキュリティは「責任共有モデル」に基づき、AWSとユーザーで責任を分担する。\nAWSはデータセンターやハードウェアなど「クラウドそのもの（of the cloud）」の安全を\n担い、ユーザーはOSの更新・IAMの権限設定・データの暗号化など「クラウドの中身\n（in the cloud）」を担う。「すべてAWSが負う」は責任共有モデルの理解を問う典型的な誤り。",
       "C": "誤り。これはむしろオンプレミス（自社で物理サーバーを保有する形態）の説明である。\nAWSでは物理サーバーを自分で購入・設置する必要はなく、必要なときに EC2 インスタンスを\n起動し、不要になれば停止・削除できる。初期投資なしで開始できる点がクラウドの利点で\nあり、この選択肢は「クラウドの利点」とは逆方向の記述である。",
       "D": "正解。需要に応じてリソースを拡張・縮小できること（スケーラビリティ／弾力性）は、\nクラウドの最も代表的な利点である。アクセスのピークに合わせて自動でリソースを増減\nできるため、過剰なリソースによる無駄なコストと、不足による機会損失の両方を抑えられる。"
@@ -45,6 +45,18 @@
       {
         "label": "責任共有モデル（AWS公式）",
         "url": "https://aws.amazon.com/jp/compliance/shared-responsibility-model/"
+      },
+      {
+        "label": "AWS official documentation (free; checked 2026-11-09)",
+        "url": "https://aws.amazon.com/free/free-tier-faqs/"
+      },
+      {
+        "label": "AWS official documentation (billing; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html"
+      },
+      {
+        "label": "AWS official documentation (legacy; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html"
       }
     ],
     "relatedServices": [
@@ -63,7 +75,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-18"
+    "updatedAt": "2026-11-09"
   },
   {
     "questionId": "clf-002",
@@ -1835,8 +1847,8 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01",
-    "practicalNote": "AWS Trusted Advisor は、AWS アカウント内のリソース構成を自動でチェックし、\nコスト最適化・セキュリティ・耐障害性・パフォーマンス・サービスクォータの 5 つの\nカテゴリで改善推奨事項を提示するサービスである。代表的なチェック項目には、未使用の\nElastic IP / 使用率の低い EC2 インスタンス / 公開状態の S3 バケット / IAM 用 MFA の\n有無 / EBS スナップショットの世代管理状況などがある。\n\n提供されるチェック項目はサポートプランによって異なる。Basic / Developer サポートでは\nコアチェック（セキュリティとサービスクォータの一部）に限定され、Business 以上の\n有料サポートに加入すると全カテゴリのフルチェックが利用できるようになる。CLF-C02 では\nこの「サポートプランによる機能差」がしばしば問われる。\n\n試験文脈では「AWS 環境のコスト・セキュリティ・耐障害性の改善提案を確認できるサービス\nはどれか」という形で出題される。誤答には「S3 オブジェクトの画像編集」「EC2 ソース\nコードの自動生成」「Lambda の学習教材」など、Trusted Advisor の役割と全く関係のない\n選択肢が並ぶパターンが多い。Trusted Advisor は「推奨事項を提示する」サービスであり、\n自動で構成を変更するサービスではない点も押さえておく必要がある。",
+    "updatedAt": "2026-11-09",
+    "practicalNote": "Trusted AdvisorはAWS環境について、コスト、セキュリティ、性能、耐障害性などの改善を提案します。すべての提案を自動で実施するサービスではありません。チェック範囲はサポートプランに依存するため、運用で特定のチェックを前提にする前に利用権限を確認します。\n\n2026-11-09確認時点では、Basic SupportはService Limitsの全チェックとSecurity・Fault Toleranceの一部のチェックを利用できます。Basicではチェックの自動更新は利用できません。現行文書は、全チェックとTrusted Advisor APIへのアクセス対象としてBusiness Support+、Enterprise Support、Unified Operationsを挙げています。Basic/DeveloperとBusiness以上を分ける旧説明は歴史的な分類であり、現在の利用権限表としては使えません。\n\nDeveloper、Business、Enterprise On-Rampは2027-01-01に終了予定ですが、AWS GovCloud (US)では引き続き利用できます。既存顧客はアカウント固有の移行条件を確認してください。提案をもとに未使用リソースや設定上のリスクを調査し、影響を確認してから変更します。チェック件数や提供範囲は変わるため、実運用の判断では公式プラン文書を確認します。",
     "officialDocs": [
       {
         "label": "AWS Trusted Advisor（AWS公式）",
@@ -1845,6 +1857,14 @@
       {
         "label": "AWS Trusted Advisor の使用（AWS公式ドキュメント）",
         "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (ta; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
       }
     ]
   },
@@ -1940,7 +1960,7 @@
       }
     ],
     "correctChoiceId": "B",
-    "explanation": "AWSにはBasic、Developer、Business、Enterprise系など、用途や必要なサポートレベルに応じたサポートプランがあります。",
+    "explanation": "AWSのサポートプランは用途と必要なサポートレベルで選びます。Basicは標準で付属し、有料の選択肢や旧プランの移行は現行文書で確認します。",
     "choiceExplanations": {
       "A": "誤りです。サポートプランはAWS利用料を無料にするものではありません。",
       "B": "正解です。必要なサポート内容に応じてプランを選びます。",
@@ -1961,8 +1981,8 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-01",
-    "practicalNote": "AWS サポートには、Basic / Developer / Business / Enterprise On-Ramp / Enterprise の\n複数プランが用意されている。Basic はすべてのアカウントに無料で付帯する最小プランで、\n請求・アカウント関連の問い合わせと AWS のドキュメント・ホワイトペーパー・コミュニティ\nフォーラムへのアクセス、Trusted Advisor のコアチェック、AWS Personal Health Dashboard が\n含まれる。Developer 以上は有料で、技術サポートのケース起票・応答時間 SLA・Trusted\nAdvisor のフルチェック・サードパーティソフトウェアサポートなどがプランに応じて\n段階的に拡充される。Enterprise On-Ramp と Enterprise では Technical Account Manager\n（TAM）による定期的なアーキテクチャレビューや運用支援が提供される。\n\n試験文脈では「用途や必要なサポートレベルに応じて複数のプランが用意されている」と\nいう中立的な正解選択肢に対して、「すべてのプランで TAM が必ず付く」「サポートプランは\n完全無料である」「サポートプランを使うと AWS 利用料金が無料になる」のような極端な\n言い切り誤答が並ぶパターンが頻出する。Basic は無料で付帯するという事実と、技術\nサポートや TAM はプランによって異なるという事実の 2 つを押さえれば、極端な誤答は\n排除できる。\n\n実務でのプラン選定の目安は、本番ワークロードを 1 つでも持つなら Business 以上を検討、\nミッションクリティカルな本番運用を持つなら Enterprise On-Ramp / Enterprise を検討、\n学習用・検証用のみなら Basic または Developer に留める、という方向性が一般的である。\nサポートプランの料金は、月額固定額と AWS 利用料に対する一定割合の合算で、利用額が\n大きくなるほど料金も上がる構造である。",
+    "updatedAt": "2026-11-09",
+    "practicalNote": "Basic Supportはアカウント・請求に関する問い合わせに利用できる標準のプランで、技術サポートケースは含みません。有料サポートはワークロードと必要な応答範囲で選び、すべての有料プランにTAMやTrusted Advisorの全機能が含まれると考えず、現在の契約条件を確認します。\n\nDeveloper、Business、Enterprise On-Rampは旧プラン名です。AWSは2027-01-01にこれらを終了すると告知していますが、AWS GovCloud (US)では引き続き利用できます。これは将来の移行日であり、2026-11-09の週の期限ではありません。現在の文書にはBusiness Support+、Enterprise Support、Unified Operationsが掲載されています。旧プランの既存顧客は個別の移行通知と契約条件に従ってください。\n\n試験では、Basicが標準で付属し、サポート範囲がプランで異なるという基本概念と、古い設問に出てくる歴史的なプラン分類を区別します。実務では現在選択できるプラン、応答目標、技術ケースの受付、TAMの範囲を確認します。旧プラン名や固定されたTrusted Advisorのチェック件数から現在の権利を判断しないでください。\n\n公式資料確認：2026-11-09",
     "officialDocs": [
       {
         "label": "AWS サポートプラン比較（AWS公式）",
@@ -1971,6 +1991,14 @@
       {
         "label": "AWS Trusted Advisor の使用（AWS公式ドキュメント）",
         "url": "https://docs.aws.amazon.com/ja_jp/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
+      },
+      {
+        "label": "AWS official documentation (ta; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
       }
     ]
   },
@@ -2763,8 +2791,8 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-19",
-    "practicalNote": "AWS Support には、Basic / Developer / Business / Enterprise On-Ramp / Enterprise の\n5 つのプランがある。このうち Basic Support は、すべての AWS アカウントに標準で含まれる\n無料のサポートプランである。Basic Support の範囲は、アカウント・請求に関する 24/7 の\nカスタマーサービス、AWS Trusted Advisor のコアチェック（6 項目）、AWS Personal Health\nDashboard、サービスクォータ引き上げリクエスト、ドキュメント・ホワイトペーパー・サポート\nフォーラムへのアクセスに限定される。技術的な質問への対応や本番ワークロード向けの\nSLA は含まれない。\n\n試験文脈では「AWS のすべてのアカウントで利用できる基本サポートプラン」として\nBasic Support を選ばせる問題が出る。誤答として Developer Support（個人開発者・\n非本番ワークロード向け）、Business Support（本番ワークロード向け）、Enterprise\nSupport（ミッションクリティカルワークロード向け）が並ぶパターンが多い。Basic 以外の\n3 プランはいずれも有料であり、「すべてのアカウントに含まれる」という条件と矛盾する。\n\n実務では、Developer Support 以上のプランでは技術的なケース起票が可能になり、ケース\nへの応答 SLA・Trusted Advisor の全チェック項目（コア 6 + 全 100 超）・Infrastructure\nEvent Management・AWS の専任スタッフ（TAM: Technical Account Manager）といった機能が\nプランの階梯に応じて追加される。CLF-C02 では 5 プランの守備範囲の違い、特に「Basic は\n技術ケース起票不可」「Business 以降で 24/7 技術サポート」「Enterprise で TAM が付く」\nという階梯構造が繰り返し問われる。AWS Trusted Advisor のチェック項目数（Basic /\nDeveloper はコア 6、Business 以上で全項目）も頻出論点である。",
+    "updatedAt": "2026-11-09",
+    "practicalNote": "Basic Supportはアカウント・請求に関する問い合わせに利用できる標準のプランで、技術サポートケースは含みません。有料サポートはワークロードと必要な応答範囲で選び、すべての有料プランにTAMやTrusted Advisorの全機能が含まれると考えず、現在の契約条件を確認します。\n\nDeveloper、Business、Enterprise On-Rampは旧プラン名です。AWSは2027-01-01にこれらを終了すると告知していますが、AWS GovCloud (US)では引き続き利用できます。これは将来の移行日であり、2026-11-09の週の期限ではありません。現在の文書にはBusiness Support+、Enterprise Support、Unified Operationsが掲載されています。旧プランの既存顧客は個別の移行通知と契約条件に従ってください。\n\n試験では、Basicが標準で付属し、サポート範囲がプランで異なるという基本概念と、古い設問に出てくる歴史的なプラン分類を区別します。実務では現在選択できるプラン、応答目標、技術ケースの受付、TAMの範囲を確認します。旧プラン名や固定されたTrusted Advisorのチェック件数から現在の権利を判断しないでください。\n\n公式資料確認：2026-11-09",
     "officialDocs": [
       {
         "label": "AWS Support のプラン比較（AWS公式）",
@@ -2773,6 +2801,14 @@
       {
         "label": "AWS Support プラン（AWS公式ドキュメント）",
         "url": "https://docs.aws.amazon.com/awssupport/latest/user/aws-support-plans.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
+      },
+      {
+        "label": "AWS official documentation (ta; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
       }
     ]
   },

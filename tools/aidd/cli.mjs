@@ -2,14 +2,20 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createTask, beginRepair, readStatus, verify, replay } from './pilot.mjs';
+import { createTask, beginRepair, readStatus, verify, replay, prepareRebaseline, rebaseline } from './pilot.mjs';
 
 const [command, bundleArg, ...args] = process.argv.slice(2);
 try {
   if (!bundleArg) throw Error('Usage: node tools/aidd/cli.mjs init|verify|repair|status|replay BUNDLE [arguments]');
   const bundle = path.resolve(bundleArg);
   let result;
-  if (command === 'init') {
+  if (command === 'review-rebaseline') {
+    result = prepareRebaseline(bundle, JSON.parse(fs.readFileSync(args[0], 'utf8')), args[1]);
+    console.log(JSON.stringify(result, null, 2));
+    process.exit(0);
+  } else if (command === 'rebaseline') {
+    result = rebaseline(bundle, JSON.parse(fs.readFileSync(args[0], 'utf8')));
+  } else if (command === 'init') {
     const root = path.resolve(args[0] || '.');
     const contractPath = args[1] || 'docs/aidd/task.json';
     if (path.isAbsolute(contractPath) || contractPath.includes('\\') || contractPath.includes(':') || contractPath.split('/').some(part => !part || part === '..' || part === '.')) throw Error('Contract must be a relative path within root');

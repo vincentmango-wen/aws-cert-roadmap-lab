@@ -1,0 +1,201 @@
+{
+  "baseCommit": "66e5f13152df96dfc0b544f07fb8ec1429af2ae4",
+  "blog": [
+    {
+      "id": "blog-001",
+      "slug": "aws-cloud-practitioner-roadmap"
+    },
+    {
+      "id": "blog-002",
+      "slug": "aws-free-tier-portfolio"
+    },
+    {
+      "id": "blog-003",
+      "slug": "s3-cloudfront-static-site"
+    },
+    {
+      "id": "blog-004",
+      "slug": "lambda-api-gateway-beginner"
+    },
+    {
+      "id": "blog-005",
+      "slug": "dynamodb-vs-rds-beginner"
+    },
+    {
+      "id": "blog-006",
+      "slug": "clf-shared-responsibility-model"
+    },
+    {
+      "id": "blog-007",
+      "slug": "clf-aws-global-infrastructure"
+    },
+    {
+      "id": "blog-008",
+      "slug": "clf-aws-pricing-basics"
+    },
+    {
+      "id": "blog-009",
+      "slug": "clf-iam-basics"
+    },
+    {
+      "id": "blog-010",
+      "slug": "clf-monitoring-cloudwatch-basics"
+    },
+    {
+      "id": "blog-011",
+      "slug": "saa-multi-az-high-availability"
+    },
+    {
+      "id": "blog-012",
+      "slug": "saa-vpc-public-private-subnet"
+    },
+    {
+      "id": "blog-013",
+      "slug": "saa-s3-cloudfront-oac-design"
+    },
+    {
+      "id": "blog-014",
+      "slug": "saa-database-selection-rds-dynamodb"
+    },
+    {
+      "id": "blog-015",
+      "slug": "saa-decoupling-sqs-sns-eventbridge"
+    },
+    {
+      "id": "blog-016",
+      "slug": "s3-beginner-object-storage"
+    },
+    {
+      "id": "blog-017",
+      "slug": "lambda-beginner-serverless"
+    },
+    {
+      "id": "blog-018",
+      "slug": "apigateway-beginner-http-api"
+    },
+    {
+      "id": "blog-019",
+      "slug": "dynamodb-beginner-nosql"
+    },
+    {
+      "id": "blog-020",
+      "slug": "cloudfront-beginner-cdn"
+    },
+    {
+      "id": "blog-021",
+      "slug": "aws-portfolio-serverless-architecture"
+    },
+    {
+      "id": "blog-022",
+      "slug": "aws-budgets-cost-guardrail"
+    },
+    {
+      "id": "blog-023",
+      "slug": "github-actions-oidc-deploy"
+    },
+    {
+      "id": "blog-024",
+      "slug": "serverless-contact-api-flow"
+    },
+    {
+      "id": "blog-025",
+      "slug": "lambda-cloudwatch-logs-check"
+    }
+  ],
+  "architectures": [
+    {
+      "id": "arc-001",
+      "slug": "static-site-s3-cloudfront"
+    },
+    {
+      "id": "arc-002",
+      "slug": "serverless-api-basic"
+    },
+    {
+      "id": "arc-003",
+      "slug": "three-tier-vpc"
+    },
+    {
+      "id": "arc-004",
+      "slug": "high-availability-web-app"
+    },
+    {
+      "id": "arc-005",
+      "slug": "eventbridge-lambda-batch"
+    },
+    {
+      "id": "arc-006",
+      "slug": "private-subnet-vpc-endpoint"
+    },
+    {
+      "id": "arc-007",
+      "slug": "sqs-lambda-async-processing"
+    },
+    {
+      "id": "arc-008",
+      "slug": "sns-sqs-fanout"
+    },
+    {
+      "id": "arc-009",
+      "slug": "ecs-fargate-web-app"
+    },
+    {
+      "id": "arc-010",
+      "slug": "cloudwatch-monitoring-basic"
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "cmp-001",
+      "slug": "s3-vs-ebs-vs-efs"
+    },
+    {
+      "id": "cmp-002",
+      "slug": "rds-vs-dynamodb"
+    },
+    {
+      "id": "cmp-003",
+      "slug": "sns-vs-sqs-vs-eventbridge"
+    },
+    {
+      "id": "cmp-004",
+      "slug": "iam-user-vs-role-vs-policy"
+    },
+    {
+      "id": "cmp-005",
+      "slug": "cloudwatch-vs-cloudtrail-vs-config"
+    },
+    {
+      "id": "cmp-006",
+      "slug": "alb-vs-nlb-vs-cloudfront"
+    },
+    {
+      "id": "cmp-007",
+      "slug": "multi-az-vs-read-replica"
+    },
+    {
+      "id": "cmp-008",
+      "slug": "security-group-vs-nacl"
+    },
+    {
+      "id": "cmp-009",
+      "slug": "api-gateway-vs-alb-vs-cloudfront"
+    },
+    {
+      "id": "cmp-010",
+      "slug": "secrets-manager-vs-parameter-store"
+    },
+    {
+      "id": "cmp-011",
+      "slug": "route53-vs-cloudfront-vs-global-accelerator"
+    },
+    {
+      "id": "cmp-012",
+      "slug": "bedrock-vs-sagemaker"
+    },
+    {
+      "id": "cmp-013",
+      "slug": "nat-gateway-vs-nat-instance-vs-vpc-endpoint"
+    }
+  ]
+}

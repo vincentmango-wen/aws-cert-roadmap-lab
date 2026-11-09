@@ -80,7 +80,7 @@
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "en"
   },
   {
@@ -251,7 +251,7 @@
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-07",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "en"
   },
   {
@@ -311,7 +311,7 @@
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-16",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "en"
   },
   {
@@ -321,9 +321,21 @@
     "description": "Organizes the differences between Amazon Bedrock and Amazon SageMaker — AWS generative AI and machine learning services — along with exam-relevant points and how to use each in practice.",
     "category": "MachineLearning",
     "level": "beginner",
-    "examScopes": ["AIF-C01"],
-    "services": ["bedrock", "sagemaker"],
-    "tags": ["ai", "machine-learning", "bedrock", "sagemaker", "comparison", "aif"],
+    "examScopes": [
+      "AIF-C01"
+    ],
+    "services": [
+      "bedrock",
+      "sagemaker"
+    ],
+    "tags": [
+      "ai",
+      "machine-learning",
+      "bedrock",
+      "sagemaker",
+      "comparison",
+      "aif"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-07-25",
@@ -337,13 +349,49 @@
     "description": "Organizes the differences between NAT Gateway, NAT instances, and VPC endpoints — services that are easy to confuse when designing traffic paths out of a private subnet — covering purpose, pricing, availability, and when to use gateway versus interface endpoints.",
     "category": "Networking",
     "level": "intermediate",
-    "examScopes": ["SAA-C03"],
-    "services": ["nat-gateway", "nat-instance", "vpc-endpoint"],
-    "tags": ["networking", "vpc", "comparison", "saa"],
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "nat-gateway",
+      "nat-instance",
+      "vpc-endpoint"
+    ],
+    "tags": [
+      "networking",
+      "vpc",
+      "comparison",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-07-31",
     "updatedAt": "2026-07-31",
+    "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-014",
+    "slug": "step-functions-standard-vs-express",
+    "title": "Step Functions Standard versus Express: semantics and cost",
+    "description": "Compare duration, retry and duplicate semantics, callbacks, history and billing dimensions through approval and high-volume short-workflow examples.",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "Step Functions"
+    ],
+    "tags": [
+      "step-functions",
+      "serverless",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-11-09",
+    "updatedAt": "2026-11-09",
     "locale": "en"
   }
 ]

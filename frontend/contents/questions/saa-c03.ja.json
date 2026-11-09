@@ -3371,5 +3371,577 @@
         "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
       }
     ]
+  },
+  {
+    "questionId": "saa-051",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "アカウント A の Step Functions Standard ワークフローが、callback task でアカウント B の人による承認サービスを待機する。承認者は権限を持つ申請だけを判断でき、task token をブラウザーの URL やログに露出させてはならない。どの設計が要件を満たすか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "B の IAM ロールで SendTaskSuccess を直接呼び出し、完全な task token を承認リンクとしてメールで送る。"
+      },
+      {
+        "choiceId": "B",
+        "text": "A のバックエンドで token を保管するが、B のログイン済みユーザーなら任意の申請 ID で callback を送信できるようにする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "A のバックエンドで token を保管し、B の承認者と申請の権限を検証してから A のロールで callback を送信する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "B の IAM ロールで SendTaskSuccess を直接呼び出し、露出を防ぐため token を B の暗号化データベースに保存する。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Task token はワークフローと同じアカウントのプリンシパルから送信する必要がある。A の管理されたバックエンドで token の保管、申請単位の認可、callback を実行すれば、アカウントと機密性の要件を満たせる。",
+    "choiceExplanations": {
+      "A": "不正解。B のプリンシパルは callback の同一アカウント要件を満たさず、リンクへの token 埋め込みも漏えいリスクを増やす。",
+      "B": "不正解。認証は申請単位の認可を代替しない。別のログイン済みユーザーが権限のない申請を承認できてしまう。",
+      "C": "正解。バックエンドは対象申請の操作権限を確認して A のロールで送信する。フロントエンドには token を含まない申請 ID だけを渡せばよい。",
+      "D": "不正解。暗号化保存は token を保護するが、B のプリンシパルが同一アカウント制約を回避することはできない。"
+    },
+    "practicalNote": "承認者に表示する申請 ID と Step Functions task token は分離する。バックエンドは承認要求を受けると、本人確認、申請の所属や操作権限、現在の状態を検証してから、保護された token を取得して callback を送信する。承認と却下は監査可能なイベントとして記録するが、生の token はログに残さない。\n\nクロスアカウント承認でも B のプリンシパルで直接 token を送る必要はない。A の管理されたバックエンド、または適切な信頼ポリシーで利用する A のロールを使える。本問は前者を選ぶ。期限切れや完了済みの token は新たな承認資格にはならない。重複要求も状態を確認して安全に扱い、リンクを持つだけで承認できる構成にしない。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "iam"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-052",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "同じアカウントとリージョンで、Lambda の event source mapping がカスタマーマネージド KMS キーで暗号化された SQS キューを読み取る。実行ロールには対象キューの受信、削除、属性取得に必要な権限がある。key policy は IAM policy による権限委任を有効にしており、他の拒否はない。エラーはロールの kms:Decrypt 不足を示している。最小権限に沿った修正はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "実行ロールに対象キーの kms:Decrypt を追加し、既存の SQS コンシューマー権限を維持する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "実行ロールに対象キーの kms:Encrypt を追加し、既存の SQS コンシューマー権限を維持する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "実行ロールに対象キーの kms:GenerateDataKey を追加し、既存の SQS コンシューマー権限を維持する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "関数のリソースポリシーで SQS に lambda:InvokeFunction を許可し、実行ロールの権限は変更しない。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "暗号化 SQS を消費する Lambda の実行ロールには kms:Decrypt が必要である。本問では key policy や他のポリシーによる阻害を除外しているため、指定キーの復号権限を補えばよい。",
+    "choiceExplanations": {
+      "A": "正解。指定キーの Decrypt はエラーの原因に対応し、すべてのキーやキー管理操作への権限拡大を避けられる。",
+      "B": "不正解。Encrypt は Decrypt を付与しないため、暗号化メッセージを読めるようにはならない。",
+      "C": "不正解。GenerateDataKey は不足している Decrypt とは異なり、これだけ追加しても復号拒否が残る。",
+      "D": "不正解。Lambda は event source mapping で SQS をポーリングする。関数の呼び出し権限を増やしても KMS の復号拒否は解消しない。"
+    },
+    "practicalNote": "暗号化キューの診断では SQS アクセスと KMS アクセスを分けて確認する。メッセージを受信する権限があっても、暗号化キーを利用する権限があるとは限らない。エラーのアクション、リソース、プリンシパルを確認して不足権限を特定すると、管理者ポリシーを追加するより検証しやすく、最小権限も維持できる。\n\n本問は key policy が IAM 委任を許可していると明記し、キーのポリシー自体が未認可のケースと区別している。実環境ではキーの状態、適用ポリシー、ローテーション中のメッセージ要件も確認する。修正後は実際の暗号化メッセージで受信から削除まで検証し、コンシューマーの復号権限とプロデューサーのデータキー生成権限を混同しない。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — kms",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-053",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "ある IAM ロールは、同一アカウントの SQS 権限をアイデンティティポリシーからのみ取得する。リソースポリシーによる付与、SCP、その他の制限はない。アイデンティティポリシーは ReceiveMessage と DeleteMessage を Allow するが、対象キューの DeleteMessage を Explicit Deny する。permissions boundary は ReceiveMessage、DeleteMessage、SendMessage を Allow する。対象キューでの有効な権限はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "3 操作すべて。アイデンティティポリシーと boundary にある Allow の和集合が有効な権限になる。"
+      },
+      {
+        "choiceId": "B",
+        "text": "ReceiveMessage と DeleteMessage。boundary の Allow がアイデンティティポリシーの Deny を上書きする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ReceiveMessage と SendMessage。boundary がアイデンティティポリシーにない SendMessage を付与する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "ReceiveMessage のみ。DeleteMessage は明示的に拒否され、SendMessage にはアイデンティティポリシーの付与がない。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "本問ではアイデンティティポリシーと boundary の共通部分が有効な Allow となり、明示的 Deny が優先される。Boundary は上限であり、単独では SendMessage を付与しない。",
+    "choiceExplanations": {
+      "A": "不正解。ここで Allow は和集合にならず、明示的 Deny も引き続き優先される。",
+      "B": "不正解。Boundary の Allow は、適用される明示的 Deny を上書きできない。",
+      "C": "不正解。Boundary 自体は権限を付与しないため、そこに SendMessage があるだけでは送信できない。",
+      "D": "正解。ReceiveMessage は双方で許可される。DeleteMessage の明示的拒否は優先され、SendMessage にはアイデンティティポリシーの Allow がない。"
+    },
+    "practicalNote": "IAM の評価では、まずプリンシパル、アクション、リソースに適用されるポリシーを識別し、明示的拒否を確認する。permissions boundary はアイデンティティポリシーが付与できる最大権限を制限するもので、独立した権限の付与元ではない。したがって boundary にアクションを追加しても、それだけでロールが呼び出せるようにはならない。\n\n本問ではリソースポリシーの直接付与や他のポリシー種別を除外し、共通部分と明示的拒否の効果を単独で判断できるようにしている。実際の診断でもこの前提を保持し、すべてのリソースポリシーやロールセッションを同じ式に単純化しない。変更後は必要な操作と禁止すべき操作の両方を検証し、正常系だけの確認で越権を見逃さないようにする。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — iam",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — boundary",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html"
+      }
+    ],
+    "relatedServices": [
+      "iam",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "iam",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-054",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Lambda が SQS Standard キューから 10 件を一括受信し、9 件は成功、1 件は一時的エラーで失敗した。失敗したメッセージを再試行用に残しつつ、このバッチの失敗で成功した 9 件まで再送されることを避けたい。最適な設定とコードの動作はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "visibility timeout を長くし、1 件でも失敗したら引き続き例外を送出する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "ReportBatchItemFailures を有効にし、個別にエラーを捕捉して失敗 ID だけを列挙する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ReportBatchItemFailures を有効にするが、1 件でも失敗したら引き続き例外を送出する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "ReportBatchItemFailures を無効にし、各メッセージのエラーを捕捉してバッチ成功を示す空の応答を返す。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Partial batch response は mapping の設定と関数の応答の両方が必要である。失敗した ID のみを返すことで、Lambda はそのメッセージを再試行用に残し、今回成功したメッセージを削除できる。",
+    "choiceExplanations": {
+      "A": "不正解。可視性タイムアウトの延長は再び見える時刻を変えるだけで、バッチ例外による成功分の再試行は残る。",
+      "B": "正解。メッセージ単位のエラーを捕捉し batchItemFailures を返すと、再試行が必要なメッセージを識別できる。",
+      "C": "不正解。関数が例外を送出するとバッチ全体が失敗扱いになるため、設定だけでは不十分である。",
+      "D": "不正解。全体成功を返すと失敗分まで処理済みとなり、再試行の機会を保持できない。"
+    },
+    "practicalNote": "Partial batch response は同一バッチ内の成功と失敗を区別する。ReportBatchItemFailures の有効化後も、正しい応答構造を使用し、itemIdentifier には messageId を指定する必要がある。アプリケーション独自の注文番号で代用したり、最後にバッチ全体の例外を送出したりしてはならない。\n\nこの機能で SQS の少なくとも 1 回の配信特性がなくなるわけではなく、業務処理には依然として冪等性が必要である。意図的に 1 件を失敗させ、再試行 ID、削除数、最古メッセージの経過時間を確認する。FIFO では順序を保ち、最初の失敗後の未処理メッセージもドキュメントに従って扱う必要があるが、本問は Standard キューに限定している。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — batch",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-055",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "SQS Standard は同じ注文の支払いイベントを再配信する可能性がある。Lambda は支払い API 成功後、完了記録を書く前に停止する可能性もある。支払い事業者は同じ業務冪等キーによる安全な再試行を支援し、その保持期間は全再試行期間を含む。二重請求を避け、中断後も復旧できる最適な設計はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DynamoDB で注文の有無を確認し、なければ支払って、最後に通常の PutItem で完了を記録する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "注文キーで処理状態を条件付き書き込みし、支払いには同じ冪等キーを使い、状態と事業者の結果から復旧する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "支払い前に永続的な完了マーカーを条件付き書き込みし、以後の同じ注文は結果を確認せず常にスキップする。"
+      },
+      {
+        "choiceId": "D",
+        "text": "FIFO に変更して重複排除 ID を設定し、業務処理状態と支払い API の冪等キーを削除する。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "条件付き書き込みで同じ注文の競合処理を制御し、事業者の冪等キーで外部支払い結果の不確実性を扱う。復旧可能な状態管理により、中断後の永久停止や未払いも避けられる。",
+    "choiceExplanations": {
+      "A": "不正解。読み取り後の書き込みには競合があり、支払い成功後に停止すると再試行で再請求する可能性も残る。",
+      "B": "正解。原子的な条件付き書き込み、復旧可能な状態、事業者の冪等性を組み合わせることで、並行処理と支払い後の中断に対応できる。",
+      "C": "不正解。完了記録の後、支払い前に停止すると、以後は永久にスキップされ未払いになる。",
+      "D": "不正解。FIFO の重複排除は外部支払いの業務冪等性を代替せず、支払い後の中断の空白も解消しない。"
+    },
+    "practicalNote": "冪等キーは注文の特定の支払いなど、安定した業務操作から決める。Lambda の呼び出しごとにランダムなキーを生成してはならない。DynamoDB の条件付き書き込みは同じ作業の同時取得を防げるが、データベース書き込みと外部支払い API は 1 つの原子トランザクションではない。重複排除記録だけで支払いが厳密に 1 回と断定することはできない。\n\n処理中と完了を区別し、中断作業にはリースや状態復旧を用意する。同じ事業者冪等キーで結果を確認または再試行し、保存期間は再配信や手動再実行の期間を含める。事業者が必要な保証を提供しない場合は照合や補償も必要になる。本問は事業者の対応と保持期間を明示しているため、この組み合わせを選択できる。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — sqs",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — idem",
+        "url": "https://docs.aws.amazon.com/powertools/python/latest/utilities/idempotency/"
+      },
+      {
+        "label": "AWS 公式ドキュメント — condition",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-056",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "申請プロセスは人による承認を最長 48 時間待ち、承認後は直ちに続行し、期限切れでは是正処理に進む。待機中に Lambda を動かし続けたり、承認データを定期的にポーリングしたりしたくない。どの設計が最適か？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Express workflow の callback task を使用し、task timeout を 48 時間にする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "通常の Lambda を 1 回呼び出し、承認または 48 時間の期限まで実行し続ける。"
+      },
+      {
+        "choiceId": "C",
+        "text": "Standard workflow の callback task を使用し、48 時間の timeout とタイムアウトエラー処理を設定する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "Standard workflow の Wait state で必ず 48 時間待ち、その後は承認済みとみなす。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Standard workflow は長時間の callback 待機に対応する。承認サービスが token を返すと続行でき、task timeout により承認のなかった申請を明確な是正経路へ進められる。",
+    "choiceExplanations": {
+      "A": "不正解。Express の最大実行時間は 5 分で、waitForTaskToken 統合パターンにも対応しない。",
+      "B": "不正解。通常の Lambda の単一呼び出しは 48 時間実行できず、待機中に実行を続けない要件にも反する。",
+      "C": "正解。Callback によって待機状態を Standard workflow に保持し、timeout で未承認を区別できる。",
+      "D": "不正解。固定 Wait は承認時に早期終了せず、時間切れを承認とみなすこともできない。"
+    },
+    "practicalNote": "人の承認を待つ時間と業務処理を実行する時間は異なる。ワークフローが待機状態を保持し、承認画面やバックエンドがイベント発生時に結果を送ればよい。計算用の関数を動かし続けたり、ボタンが押されたかデータベースを繰り返し調べたりする必要はない。期限切れ時には通知、却下、再申請などの処置を定義する。\n\nワークフロー全体の制限時間には、必要な待機と後続処理を含める。heartbeat も設定する場合は定期的な送信元を確保し、承認者が回答する前に意図せず期限切れにならないようにする。重複承認、期限切れ token、期限後の遅延回答も安全に処理し、閉じた申請が再び進行しない設計にする。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-057",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "SQS Standard の単一 event source mapping が標準モード、batch size 1 で Lambda を呼び出す。各 invocation は下流リクエストを最大 1 件だけ同時実行し、その完了を待ってから返る。他の下流呼び出し元はない。下流の上限は同時 20 リクエスト、関数の reserved concurrency は 50、アカウント容量は十分である。キューのバッファを維持しつつ mapping 単位で負荷を直接制限する変更はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "mapping の maximum concurrency を 20 にし、他の設定を維持する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "mapping の batch size を 20 にし、他の並行設定はデフォルトのままにする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "mapping の batching window を 20 秒にし、他の並行設定はデフォルトのままにする。"
+      },
+      {
+        "choiceId": "D",
+        "text": "キューの visibility timeout を 20 秒にし、他の並行設定はデフォルトのままにする。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Maximum concurrency はこの mapping による同時関数呼び出し数を制限する。1 invocation に未完了の下流リクエストが最大 1 件という条件なので、20 invocation は最大 20 リクエストに対応する。",
+    "choiceExplanations": {
+      "A": "正解。mapping の上限 20 を reserved concurrency 50 が下回らないため、この送信元を制限しつつ余剰をキューに保持できる。",
+      "B": "不正解。Batch size は 1 回の呼び出しに含めるレコード数であり、同時呼び出し数の上限ではない。",
+      "C": "不正解。Batching window はバッチ収集の待機時間であり、並行数の上限ではない。",
+      "D": "不正解。Visibility timeout は受信後のメッセージ非表示期間であり、下流リクエストの並行上限ではない。"
+    },
+    "practicalNote": "下流保護では関数の並行数を実際の下流負荷に換算する必要がある。本問は batch size、各 invocation の同時リクエスト数、完了時点を固定しているため、maximum concurrency から直接上限を導ける。1 回で複数 API を並行呼び出しする場合や、関数が返った後も下流処理が続く場合には同じ単純な推論はできない。\n\nこの設定は event source mapping に作用し、他の送信元やアプリケーションを自動的には制限しない。複数の SQS mapping が関数を共有する場合は、上限の合計と reserved concurrency の関係を確認する。標準モードと provisioned mode では制御方法が異なる。並行数を下げた後も最古メッセージの経過時間と滞留を監視し、処理期限を満たすスループットを確保する。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — scale",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-scaling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-058",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "Step Functions の 3 つの Lambda ステップで同じ 2 MiB の JSON 文書を順次処理する。データを切り捨てることはできず、256 KiB 未満にも圧縮できない。どのステップも state データ内で全文を参照する必要はない。最適な設計はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "JSON 全体を Base64 エンコードして各 state の入力と出力に含める。"
+      },
+      {
+        "choiceId": "B",
+        "text": "各 Lambda のメモリを増やし、引き続き JSON 全体を各 state 間で渡す。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ワークフローを Express に変更し、引き続き JSON 全体を各 state 間で渡す。"
+      },
+      {
+        "choiceId": "D",
+        "text": "文書を S3 に保存し、state はオブジェクト参照を渡して Lambda が読み書きする。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "大きなデータを S3 に置いて小さな参照を渡せば、state payload の上限を回避できる。各ステップは必要なメタデータと次の文書参照だけを返す。",
+    "choiceExplanations": {
+      "A": "不正解。Base64 は通常サイズを増やすため、2 MiB の文書を state payload の制限内に縮める方法にはならない。",
+      "B": "不正解。Lambda メモリと Step Functions state payload は別の制限であり、前者を増やしても後者は変わらない。",
+      "C": "不正解。Express にしても、この 2 MiB 文書を state payload として直接渡せるようにはならない。",
+      "D": "正解。全文は S3 に保持し、ワークフローは小さな位置情報を渡すため、後続ステップが全文を state に入れずに取得できる。"
+    },
+    "practicalNote": "大きな文書の保存とフロー制御は分離できる。ワークフローに必要なのは、文書の場所、所属する業務作業、処理の成否などである。内容を使う Lambda が S3 から取得し、出力も小さな参照に保つ。S3 から読んだ全文を関数の結果として返すと、後続 state で同じ payload 問題が再発する。\n\n参照は想定したバージョンを識別できるものにし、同じ key の上書きによって再試行が別の内容を読まないようにする。オブジェクト権限、必要な復号権限、保持期間、失敗後の削除も計画する。関数に任意の bucket を読む権限を与えず、作業に必要なパスへ制限し、入力参照がその作業の認可範囲にあることを検証する。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — large",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/sfn-best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-059",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "月 1,000 万回のデータ変換フローがあり、1 回約 3 秒で完了する。全ステップは冪等な再試行が可能で、.sync や callback は使わない。負荷試験では Step Functions の両タイプがスループットと可観測性の要件を満たした。同一リージョンの現行料金と実測使用量から、必要なログを含む月額関連費用は Standard が 600 米ドル、非同期 Express が 180 米ドルと見積もられた。要件が変わらない場合、コスト目標に最も合う選択はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "すべての短いフローでは必ず Express より安いため、Standard を維持する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "非同期 Express に変更し、各業務動作が 1 回のみ実行される保証があるため冪等処理を削除する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "非同期 Express に変更して冪等処理を維持し、実際の時間、メモリ、ログに基づきコストを継続検証する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "月 100 万回を超えるフローには Express が対応しないため、Standard を維持する。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "本問では機能と性能の適合性が確認され、同じ範囲で Express のコストが低い。非同期 Express には引き続き冪等性が必要で、この見積もりをすべてのフローへ一般化はできない。",
+    "choiceExplanations": {
+      "A": "不正解。Standard は状態遷移、Express は実行数、時間、メモリなどで課金されるため、短さだけで Standard が必ず安いとはいえない。",
+      "B": "不正解。非同期 Express は少なくとも 1 回の実行モデルであり、冪等性を削除すると重複処理の危険がある。",
+      "C": "正解。機能適合性と同範囲の費用比較が Express を支持し、冪等性とコスト監視の維持が前提を守る。",
+      "D": "不正解。月 100 万回という一律の禁止条件はなく、問題文でもスループットを満たすと確認されている。"
+    },
+    "practicalNote": "タイプ別のコストは同じワークロードと対象範囲で比較する。状態遷移や実行使用量に加え、検索、監査、調査に必要なログと周辺サービスの費用も含める。本問の金額はシナリオ上の見積もりであり、AWS の固定価格ではない。負荷や保持要件が変われば再計算する必要がある。\n\n低コストでも機能要件を満たすことが前提になる。長時間待機、callback、同期サービス統合などによって Express が適さない場合があり、非同期実行では業務効果の重複も扱う必要がある。本問はそれらの条件を明示しているため見積もりに基づいて選べる。「高流量」「短時間」という単語だけで全ケースの最適解を決めてはならない。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-060",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "自作 SQS コンシューマーがメッセージの少ない時間帯にも WaitTimeSeconds 0 で ReceiveMessage を繰り返し、大量の空応答が発生している。空ポーリングを減らしつつ、メッセージ到着時は速やかに取得したい。リクエストは最大 20 秒待機してよい。最適な変更はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "WaitTimeSeconds は 0 のまま、visibility timeout を 20 秒にする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "WaitTimeSeconds を 20 にし、HTTP response timeout を 20 秒より長くする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "WaitTimeSeconds は 0 のまま、メッセージの DelaySeconds を 20 秒にする。"
+      },
+      {
+        "choiceId": "D",
+        "text": "WaitTimeSeconds を 20 にし、HTTP response timeout を 1 秒にする。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Long polling は待機中に利用可能なメッセージを取得し、空応答を減らせる。HTTP response timeout は待機時間より長くし、クライアントが正常な待機を途中で切断しないようにする。",
+    "choiceExplanations": {
+      "A": "不正解。Visibility timeout は受信後の非表示期間であり、ReceiveMessage がメッセージを待つ時間を延ばさない。",
+      "B": "正解。20 秒の long polling は許容待機時間に合い、長い HTTP timeout により正常なポーリングが早期終了しない。",
+      "C": "不正解。DelaySeconds は初回の可視化を遅らせるもので、空ポーリングを改善せず処理を遅延させる。",
+      "D": "不正解。HTTP timeout がポーリング待機より短いため、正常な待機中にもエラーや余計な再試行が起こり得る。"
+    },
+    "practicalNote": "Long polling の 20 秒は最大待機時間であり、すべてのメッセージを必ず 20 秒遅延させるわけではない。メッセージが利用可能になれば早く応答でき、低トラフィック時には即座に空で返る要求を大量に繰り返さずに済む。空受信数と実際の遅延を観測してサービス目標を満たすか確認する。\n\nポーリング待機、HTTP timeout、visibility timeout、メッセージ遅延は別の段階を制御し、代用できない。HTTP 層は待機全体を許容し、可視性タイムアウトは処理と再試行の要件に合わせる。本問は自作コンシューマーであり、Lambda が管理するポーリングの調整ではない。複数キューを処理する場合は、空キューを待つ単一ワーカーが他のキューを塞がない設計も必要になる。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — poll",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — pollsetup",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/best-practices-setting-up-long-polling.html"
+      }
+    ],
+    "relatedServices": [
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
   }
 ]

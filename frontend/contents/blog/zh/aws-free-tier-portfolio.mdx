@@ -17,7 +17,7 @@ targetKeywords:
 author: "AWS 認證學習路線實驗室"
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-01"
+updatedAt: "2026-11-09"
 ---
 
 # 如何用 AWS 免費方案打造作品集
@@ -42,6 +42,12 @@ updatedAt: "2026-06-01"
 這個架構與 Cloud Practitioner 及 SAA 的學習內容也相當契合。
 
 ## 可用 AWS 免費方案打造的架構
+
+估算能否免費部署前，先確認帳戶建立日期與方案。2025-07-15 以前建立的帳戶仍適用舊制，其中 12 個月免費優惠有期限。符合資格的新客戶可獲得 100 美元抵用額，完成活動後可再取得最多 100 美元。Free 方案最長六個月或抵用額用完為止，以先到者為準；升級 Paid 前不收費。Paid 方案超出適用抵用額或不符合優惠資格的用量會計費。Always Free 也有用量上限。
+
+2026-11-09 查核時，FAQ 的抵用額期限說明互相矛盾：General Q6 寫六個月，Free Plan Q8 則寫升級後自帳戶建立日起十二個月。不要將任一期間套用到所有帳戶；請在 Settings Portal 或 Billing 的 Credits 頁面確認自己的到期日，並在建立本架構前確認服務資格。AWS Budgets 通知可協助監控費用，但不保證達到預算時所有資源都會停止。
+
+官方資料查核：2026-11-09 — [AWS: free](https://aws.amazon.com/free/free-tier-faqs/) / [AWS: billing](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html) / [AWS: legacy](https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html).
 
 初學者在製作作品集時,應該避免容易產生固定費用的架構。
 
@@ -112,7 +118,7 @@ DynamoDB 用於儲存聯絡表單的資料。
 
 ## 有費用風險的服務
 
-即使使用 AWS 免費方案,費用風險也並非為零。
+Paid 方案或舊制帳戶超出適用優惠的用量可能收費。Free 方案在升級前不收費，但仍須確認服務與期間限制。
 
 初學者特別要留意以下服務。
 

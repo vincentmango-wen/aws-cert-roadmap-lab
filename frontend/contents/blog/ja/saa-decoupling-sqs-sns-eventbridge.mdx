@@ -17,7 +17,7 @@ targetKeywords:
 author: "AWS Cert Roadmap Lab"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-20"
+updatedAt: "2026-11-09"
 ---
 
 # SQS・SNS・EventBridgeで疎結合設計を理解する
@@ -141,3 +141,9 @@ SAAの問題文で「疎結合」「受信側の障害を吸収」「急増し�
 
 - [SNS・SQS・EventBridgeの違い](/comparisons/sns-vs-sqs-vs-eventbridge)
 - [EventBridge + Lambda バッチ処理構成](/architectures/eventbridge-lambda-batch)
+
+SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
+
+SNS Standardは順序を保証しません。順序付きファンアウトではSNS FIFOトピックとSQS FIFO購読を組み合わせ、MessageGroupIdをそろえます。SQS Standard購読ではエンドツーエンドの順序は保証されません。本記事のルールとターゲットの例は順序保証のないEventBridge default/Classicバスを対象とします。2026-09-24公開の新しいCustom Event BusはFIFO購読を提供し、発行元アカウント内のイベントグループごとに順序を維持します。バス全体の順序保証ではありません。
+
+公式資料確認：2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [AWS: sns](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [AWS: classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [AWS: eb](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

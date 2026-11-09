@@ -29,6 +29,24 @@ profile 中的單一命令逾時是試點技術預設，不是已批准的任務
 
 ## 修復與狀態
 
+### 已審查的基線 revision
+
+使用者已核准必要測試／契約調整時，可先產生審查快照，再執行最小 `rebaseline`。這不是批准命令，也不是重置修復次數的手段；同一任務 ID、registry、全部 repairs 及歷史 evidence 必須保留。
+
+```powershell
+node tools/aidd/cli.mjs review-rebaseline tmp/weekly-evidence docs/aidd/tasks/weekly-2026-11-09.json "Reviewed article contracts and authorized Harness extension"
+# 將輸出保存於忽略的 tmp/，檢查完整 changes、sourceHash、previousTaskHash、contract。
+# assertionReplacements 只接受每個 check 內明列的一對一更名；不得刪除或合併原測試要求。
+node tools/aidd/cli.mjs rebaseline tmp/weekly-evidence tmp/rebaseline-review.json
+node tools/aidd/cli.mjs verify tmp/weekly-evidence baseline
+```
+
+審查快照產生後，來源或 task metadata 改變會使快照失效。Profile 變更、缺少成功原基線、active operation、STOP_UNCONFIRMED、replay bundle 均拒絕。新基線必須保留所有既有 assertion；原先通過的不能消失或變 skip，新 assertion 必須通過。既有 skip 身分保留且可轉為 passed，不默許新增 skip。前一 revision 未完成成功基線前不能再 rebaseline。
+
+每次 revision 封存舊 contract/profile/engine/initial/content baseline/task、審查快照與所有歷史 run seals。status 仍驗證這些歷史證據。切換中斷會保留 exclusive active marker，需人工調解；不得刪 marker 假裝完成。此機制仍為合作型 hash 漂移偵測，不是防竄改安全邊界。
+
+限制：目前 `replay` 只選取最新 revision 的 baseline/latest。歷史 revision 保留可檢查的來源與 seals，但尚無 CLI 選取舊 revision 重跑的功能；不要把封存完整性宣稱成歷史 replay 通過。一般 verify/status 仍拒絕未審查的目前 engine drift。
+
 基線失敗先暫停功能實作；範圍內可用同一任務剩餘額度修復，範圍外／需要改驗收或擴權則停止報告。一次修復從開始一組修正動作算起，包含其驗證；中斷仍占次數。新方案算下一次。純診斷和未變更重跑不算修復，仍應留紀錄。修 bug 任務第一次修正也計次。
 
 三次為任務共用上限，包含基線與 Harness 缺陷。重新開 run、worktree 或中斷不重置；第四次前需報告證據、原因、方案和風險，取得明確授權。本 CLI 刻意不提供重置或追加額度命令，超額由人審查後另設後續方案。fixture 預期故障不是實際修復嘗試。

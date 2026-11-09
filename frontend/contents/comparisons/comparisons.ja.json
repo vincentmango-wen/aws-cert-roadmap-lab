@@ -6,9 +6,21 @@
     "description": "AWSの代表的なストレージサービスであるS3、EBS、EFSの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "Storage",
     "level": "beginner",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["s3", "ebs", "efs"],
-    "tags": ["storage", "comparison", "clf", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "s3",
+      "ebs",
+      "efs"
+    ],
+    "tags": [
+      "storage",
+      "comparison",
+      "clf",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-01",
@@ -22,9 +34,20 @@
     "description": "AWSの代表的なデータベースサービスであるRDSとDynamoDBの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "Database",
     "level": "beginner",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["rds", "dynamodb"],
-    "tags": ["database", "comparison", "clf", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "rds",
+      "dynamodb"
+    ],
+    "tags": [
+      "database",
+      "comparison",
+      "clf",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-01",
@@ -38,13 +61,26 @@
     "description": "AWSのアプリケーション連携サービスであるSNS、SQS、EventBridgeの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "Integration",
     "level": "beginner",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["sns", "sqs", "eventbridge"],
-    "tags": ["integration", "messaging", "comparison", "clf", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "sns",
+      "sqs",
+      "eventbridge"
+    ],
+    "tags": [
+      "integration",
+      "messaging",
+      "comparison",
+      "clf",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "ja"
   },
   {
@@ -54,9 +90,20 @@
     "description": "AWSの権限管理で重要なIAMユーザー、IAMロール、IAMポリシーの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "Security",
     "level": "beginner",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["iam"],
-    "tags": ["security", "iam", "comparison", "clf", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "iam"
+    ],
+    "tags": [
+      "security",
+      "iam",
+      "comparison",
+      "clf",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-01",
@@ -70,9 +117,22 @@
     "description": "AWSの運用監視で重要なCloudWatch、CloudTrail、AWS Configの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "Monitoring",
     "level": "beginner",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["cloudwatch", "cloudtrail", "config"],
-    "tags": ["monitoring", "governance", "comparison", "clf", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "cloudwatch",
+      "cloudtrail",
+      "config"
+    ],
+    "tags": [
+      "monitoring",
+      "governance",
+      "comparison",
+      "clf",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-01",
@@ -86,9 +146,22 @@
     "description": "AWSの通信入口で混同しやすいApplication Load Balancer、Network Load Balancer、Amazon CloudFrontの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "Networking",
     "level": "intermediate",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["elb", "cloudfront"],
-    "tags": ["networking", "load-balancer", "cloudfront", "comparison", "clf", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "elb",
+      "cloudfront"
+    ],
+    "tags": [
+      "networking",
+      "load-balancer",
+      "cloudfront",
+      "comparison",
+      "clf",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-07",
@@ -102,9 +175,21 @@
     "description": "Amazon RDSで混同しやすいMulti-AZ配置とRead Replicaの違いを、可用性、読み取り性能、フェイルオーバー、試験ポイントの観点で整理します。",
     "category": "Database",
     "level": "intermediate",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["rds"],
-    "tags": ["database", "rds", "multi-az", "read-replica", "comparison", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "rds"
+    ],
+    "tags": [
+      "database",
+      "rds",
+      "multi-az",
+      "read-replica",
+      "comparison",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-07",
@@ -118,9 +203,21 @@
     "description": "Amazon VPCで混同しやすいSecurity GroupとNetwork ACLの違いを、適用範囲、ステートフル、ステートレス、許可・拒否ルール、試験ポイントの観点で整理します。",
     "category": "Security",
     "level": "intermediate",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["vpc"],
-    "tags": ["security", "vpc", "security-group", "nacl", "comparison", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "vpc"
+    ],
+    "tags": [
+      "security",
+      "vpc",
+      "security-group",
+      "nacl",
+      "comparison",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-07",
@@ -134,13 +231,27 @@
     "description": "AWSでAPIやWebアプリの入口として使われるAPI Gateway、Application Load Balancer、Amazon CloudFrontの違いを、サーバーレス、負荷分散、CDN、試験ポイントの観点で整理します。",
     "category": "Networking",
     "level": "intermediate",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["api-gateway", "elb", "cloudfront"],
-    "tags": ["api", "serverless", "networking", "cloudfront", "comparison", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "api-gateway",
+      "elb",
+      "cloudfront"
+    ],
+    "tags": [
+      "api",
+      "serverless",
+      "networking",
+      "cloudfront",
+      "comparison",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-07",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "ja"
   },
   {
@@ -150,9 +261,23 @@
     "description": "AWSで設定値や機密情報を管理するSecrets ManagerとSystems Manager Parameter Storeの違いを、用途、暗号化、自動ローテーション、コスト、試験ポイントの観点で整理します。",
     "category": "Security",
     "level": "intermediate",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["secrets-manager", "systems-manager", "kms"],
-    "tags": ["security", "secrets", "parameter-store", "kms", "comparison", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "secrets-manager",
+      "systems-manager",
+      "kms"
+    ],
+    "tags": [
+      "security",
+      "secrets",
+      "parameter-store",
+      "kms",
+      "comparison",
+      "saa"
+    ],
     "priority": "medium",
     "published": true,
     "publishedAt": "2026-06-07",
@@ -166,13 +291,27 @@
     "description": "「全部グローバルサービス」で混同しやすいAmazon Route 53、Amazon CloudFront、AWS Global Acceleratorの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "Networking",
     "level": "intermediate",
-    "examScopes": ["CLF-C02", "SAA-C03"],
-    "services": ["route53", "cloudfront"],
-    "tags": ["networking", "dns", "cdn", "cloudfront", "comparison", "clf", "saa"],
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "route53",
+      "cloudfront"
+    ],
+    "tags": [
+      "networking",
+      "dns",
+      "cdn",
+      "cloudfront",
+      "comparison",
+      "clf",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-06-16",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-09",
     "locale": "ja"
   },
   {
@@ -182,9 +321,21 @@
     "description": "AWSの生成AI・機械学習サービスであるAmazon BedrockとAmazon SageMakerの違い、試験ポイント、実務での使い分けを整理します。",
     "category": "MachineLearning",
     "level": "beginner",
-    "examScopes": ["AIF-C01"],
-    "services": ["bedrock", "sagemaker"],
-    "tags": ["ai", "machine-learning", "bedrock", "sagemaker", "comparison", "aif"],
+    "examScopes": [
+      "AIF-C01"
+    ],
+    "services": [
+      "bedrock",
+      "sagemaker"
+    ],
+    "tags": [
+      "ai",
+      "machine-learning",
+      "bedrock",
+      "sagemaker",
+      "comparison",
+      "aif"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-07-25",
@@ -198,13 +349,49 @@
     "description": "プライベートサブネットからの通信設計で混同しやすいNAT Gateway、NATインスタンス、VPCエンドポイントの違いを、目的、料金、可用性、Gateway型とInterface型の使い分けの観点で整理します。",
     "category": "Networking",
     "level": "intermediate",
-    "examScopes": ["SAA-C03"],
-    "services": ["nat-gateway", "nat-instance", "vpc-endpoint"],
-    "tags": ["networking", "vpc", "comparison", "saa"],
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "nat-gateway",
+      "nat-instance",
+      "vpc-endpoint"
+    ],
+    "tags": [
+      "networking",
+      "vpc",
+      "comparison",
+      "saa"
+    ],
     "priority": "high",
     "published": true,
     "publishedAt": "2026-07-31",
     "updatedAt": "2026-07-31",
+    "locale": "ja"
+  },
+  {
+    "comparisonId": "cmp-014",
+    "slug": "step-functions-standard-vs-express",
+    "title": "Step Functions StandardとExpress：実行特性とコストで選ぶ",
+    "description": "実行時間、再試行と重複の特性、callback、履歴、料金の軸を比較し、人手の承認と大量の短い処理で選び方を考えます。",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "Step Functions"
+    ],
+    "tags": [
+      "step-functions",
+      "serverless",
+      "comparison",
+      "saa"
+    ],
+    "priority": "high",
+    "published": true,
+    "publishedAt": "2026-11-09",
+    "updatedAt": "2026-11-09",
     "locale": "ja"
   }
 ]

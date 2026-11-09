@@ -18,7 +18,7 @@ author: "AWS Cert Roadmap Lab"
 published: true
 noIndex: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-20"
+updatedAt: "2026-11-09"
 ---
 
 # Understanding Decoupled Design with SQS, SNS, and EventBridge
@@ -37,7 +37,7 @@ Placing a queue or event bus between them lets you process work asynchronously, 
 
 ## The Role of SQS
 
-SQS is a message queue. It temporarily stores messages waiting to be processed, and downstream workers pick them up in order.
+SQS is a message queue. It temporarily stores messages waiting to be processed, and downstream workers retrieve them for processing.
 
 Use it whenever you want asynchronous processing, such as image conversion, order processing, or batch jobs.
 
@@ -71,3 +71,9 @@ It also supports scheduled execution, so a feature like "deliver one question pe
 
 - [Differences Between SNS, SQS, and EventBridge](/comparisons/sns-vs-sqs-vs-eventbridge)
 - [EventBridge + Lambda Batch Processing Architecture](/architectures/eventbridge-lambda-batch)
+
+SQS Standard provides at-least-once delivery with best-effort ordering; duplicates and out-of-order messages are possible. SQS FIFO preserves order within each MessageGroupId and deduplicates sends within its deduplication window. This does not make application side effects exactly once: consumers must remain idempotent when processing is retried.
+
+SNS Standard does not guarantee order. For ordered fan-out, use an SNS FIFO topic with SQS FIFO subscriptions and align MessageGroupId; an SQS Standard subscription does not preserve end-to-end order. The rule-and-target examples here use EventBridge default/Classic buses, which do not guarantee ordering. The enhanced Custom Event Bus launched on 2026-09-24 supports FIFO subscribers: order is scoped to an event group within the publishing account, not globally across the bus.
+
+Official sources checked: 2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [AWS: sns](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [AWS: classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [AWS: eb](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

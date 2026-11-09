@@ -18,7 +18,7 @@ author: "AWS 認證學習路線實驗室"
 published: true
 noIndex: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-20"
+updatedAt: "2026-11-09"
 ---
 
 # 用 SQS、SNS、EventBridge 理解鬆耦合設計
@@ -37,7 +37,7 @@ SQS 是訊息佇列,SNS 是 Pub/Sub 通知,EventBridge 則是事件路由。避�
 
 ## SQS 的角色
 
-SQS 是訊息佇列。它會暫時保留等待處理的訊息,後續的處理端再依序取出。
+SQS 是訊息佇列。它會暫時保留等待處理的訊息,後續的處理端再取出處理。
 
 適合用於影像轉檔、訂單處理、批次作業等需要將處理非同步化的場景。
 
@@ -71,3 +71,9 @@ EventBridge 是事件匯流排,可依規則將來自 AWS 服務、SaaS 與自家
 
 - [SNS、SQS、EventBridge 的差異](/comparisons/sns-vs-sqs-vs-eventbridge)
 - [EventBridge + Lambda 批次處理架構](/architectures/eventbridge-lambda-batch)
+
+SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序。SQS FIFO 在各個 MessageGroupId 內維持順序，並在去重期間內排除重複傳送；這不等於業務副作用一定只執行一次，消費端仍須具備冪等性以因應重試。
+
+SNS Standard 不保證順序。需要保序的扇出時，搭配 SNS FIFO 主題與 SQS FIFO 訂閱，並對齊 MessageGroupId；SQS Standard 訂閱不提供端到端保序。本篇使用規則與目標的範例適用於不保證順序的 EventBridge default/Classic 匯流排。2026-09-24 推出的新版 Custom Event Bus 支援 FIFO 訂閱，其順序範圍為發佈帳戶內的事件群組，並非整條匯流排的全域順序。
+
+官方資料查核：2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [AWS: sns](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [AWS: classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [AWS: eb](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

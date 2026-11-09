@@ -12,7 +12,7 @@ Their roles, however, sit at different layers.
 - To cache static and dynamic content at edge locations for fast delivery, use CloudFront.
 - To carry TCP/UDP packets onto the AWS backbone through static IPs for low-latency delivery, use Global Accelerator.
 
-When in doubt, separate the three by asking "is there a static IP?", "is content cached?", and "is DNS resolved?"
+When in doubt, separate the three by asking "which protocols and static IP options are required?", "is content cached?", and "is DNS resolved?"
 
 ## Comparison table
 
@@ -22,7 +22,7 @@ When in doubt, separate the three by asking "is there a static IP?", "is content
 | Category | DNS | CDN | Network acceleration |
 | Primary layer | DNS layer | Edge delivery (HTTP/HTTPS) | L3/L4 (TCP/UDP) |
 | Primary purpose | Resolve names to IPs | Cache and deliver content | Carry packets along the shortest path |
-| Static IP | None (operated by DNS name) | None (operated by DNS name) | Yes (two static IPv4 addresses) |
+| Static IP | None (operated by DNS name) | Not by default; optional Anycast Static IPs | Yes (two static IPv4 addresses) |
 | Caching | No | Yes (default TTL 24 hours) | No (path optimization only) |
 | Supported protocols | DNS queries | HTTP / HTTPS | TCP / UDP |
 | Typical use cases | Domain registration, DNS routing, health checks | Fast delivery of images, video, JS/CSS | Games, VoIP, apps that require fixed IPs |
@@ -51,7 +51,7 @@ CloudFront pairs well with Amazon S3 static sites and image delivery, and this p
 
 Global Accelerator optimizes TCP/UDP traffic over the AWS backbone and provides static anycast IPs.
 
-The differences from CloudFront are that it is not limited to HTTP/HTTPS and that it provides static IPs. Rather than caching content, it puts the packets themselves on the shortest path to accelerate delivery.
+Global Accelerator supports TCP/UDP beyond HTTP/HTTPS and provides static IPs. CloudFront also offers optional Anycast Static IPs, so the main distinction is network acceleration versus HTTP/HTTPS content delivery.
 
 It is a candidate for games or VoIP that require fixed IPs, and for financial systems that require IP allowlisting.
 
@@ -124,7 +124,7 @@ Global Accelerator is a candidate for protocols that HTTP cannot carry, and for 
 
 ### Do not confuse "global delivery" with "global static IPs"
 
-If the requirement is only "deliver globally", the answer is CloudFront. If "global static IPs" enters the requirements, the answer is Global Accelerator. Rephrasing the exam question around "what does the user want done" makes it clear which of the three axes is checked.
+Choose CloudFront for HTTP/HTTPS content delivery and caching, and Global Accelerator for TCP/UDP network acceleration. Static IPs alone do not distinguish them: CloudFront also offers optional Anycast Static IPs.
 
 ## Common mistakes
 
@@ -132,9 +132,11 @@ If the requirement is only "deliver globally", the answer is CloudFront. If "glo
 
 The three services share the property of not being tied to a region, but Route 53 works at the DNS layer, CloudFront at the CDN layer, and Global Accelerator at the L3/L4 layer.
 
-### Mistake 2: Assuming CloudFront has static IPs
+### Mistake 2: Assuming static IPs are included by default in CloudFront
 
-CloudFront does not provide static IPs; it is operated by DNS name. If a static IP is in the requirements, consider Global Accelerator.
+CloudFront normally uses a DNS name; dedicated Anycast Static IPs are optional. They require approval from CloudFront support engineering and the Use all edge locations price class. As checked on 2026-11-09, AWS-provided IPv4 addresses cost USD 0.005 per IP-hour, in addition to normal CloudFront usage charges. Check the official prerequisites and pricing before enabling them.
+
+Official sources checked: 2026-11-09 — [AWS: cf](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [AWS: cfprice](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).
 
 ### Mistake 3: Remembering Global Accelerator as a CDN
 
@@ -165,4 +167,4 @@ Three axes make the decision easier.
 - Cache delivery of content: CloudFront
 - Static IPs and TCP/UDP path optimization: Global Accelerator
 
-Instead of being pulled in by the word *global*, separate by "is there a static IP?", "is content cached?", and "is DNS resolved?" to avoid mixing up the three services.
+Instead of being pulled in by the word *global*, separate by "which protocols and static IP options are required?", "is content cached?", and "is DNS resolved?" to avoid mixing up the three services.

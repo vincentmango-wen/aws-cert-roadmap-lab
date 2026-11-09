@@ -22,7 +22,7 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-06-07"
+updatedAt: "2026-11-09"
 ---
 
 # API Gateway・ALB・CloudFrontの違い
@@ -47,7 +47,7 @@ API Gateway、ALB、CloudFrontは、どれも外部からのリクエストを�
 | 主な用途 | REST API / HTTP API / WebSocket API公開 | Webアプリの負荷分散 | 静的・動的コンテンツの高速配信 |
 | 代表的な接続先 | Lambda、HTTPエンドポイント、AWSサービス | EC2、ECS、Lambda | S3、ALB、API Gateway、HTTPオリジン |
 | 認証・認可 | IAM、Lambda Authorizer、Cognitoなど | OIDC認証など | 署名付きURL、WAF連携など |
-| キャッシュ | APIキャッシュ機能あり | 主目的ではない | 得意 |
+| キャッシュ | REST APIは内蔵キャッシュ対応、HTTP APIは非対応 | 主目的ではない | 得意 |
 | サーバーレスとの相性 | 高い | 中 | 高い |
 | WebSocket | 対応 | 主目的ではない | 主目的ではない |
 | 試験キーワード | serverless API, REST, HTTP API, Lambda | load balancing, HTTP routing | CDN, edge, cache, static content |
@@ -218,3 +218,5 @@ API Gateway、ALB、CloudFrontは、目的で分けると理解しやすいで�
 - CloudFront：コンテンツの高速配信
 
 このプロジェクトでは、CloudFrontとAPI Gatewayを使うため、ポートフォリオ説明でも重要な比較です。
+
+公式資料確認：2026-11-09 — [AWS: api](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html).

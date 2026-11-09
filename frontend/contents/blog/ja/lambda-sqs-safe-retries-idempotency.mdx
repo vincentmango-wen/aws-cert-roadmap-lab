@@ -1,0 +1,71 @@
+---
+postId: "blog-026"
+slug: "lambda-sqs-safe-retries-idempotency"
+title: "LambdaとSQS：安全な再試行と業務の冪等性"
+description: "注文イベントの重複を例に、業務の冪等性キー、条件付き書き込み、部分バッチ応答、追跡できるDLQ再送を設計します。"
+category: "SAA"
+tags:
+  - "Lambda"
+  - "SQS"
+  - "Idempotency"
+targetKeywords:
+  - "Lambda SQS 冪等性"
+  - "partial batch failure"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-11-09"
+updatedAt: "2026-11-09"
+---
+
+# LambdaとSQS：安全な再試行と業務の冪等性
+
+対象は、SQSを読み取るLambdaイベントソースマッピングです。主な例ではStandardキューを使い、同じリージョンに配置します。繁体字中国語の原稿revision 1から翻訳。公式情報の確認日：2026-11-09。
+
+## 注文がもう一度届いたら
+
+架空の店舗で、注文O-731の決済イベントを受け取りました。決済事業者では課金が完了しましたが、結果を保存する前にLambdaが停止しました。再配信で課金を繰り返すと二重請求になり得ます。一方、単に捨てると未完了の処理を完了扱いするおそれがあります。
+
+SQSイベントソースマッピングは少なくとも1回配信し、レコードの処理が重複する場合があります。Lambdaはバッチ処理の成功後にメッセージを削除し、通常のバッチ失敗ではvisibility timeout後に全件が再び可視になります。この配信方式は、業務上の副作用が必ず1回だけ起こるという保証ではありません。[LambdaとSQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
+
+## 業務キーと永続的な状態
+
+まず、何を同じ操作とみなすか決めます。この例ではtenantId、orderId、operationVersionを組み合わせます。再発行で変わり得るtransportのmessageIdとは別です。決済と返金は別操作とし、同じキーで金額が変わっていないかpayload digestも確認します。
+
+| 永続レコード | コンシューマーの対応 |
+|---|---|
+| なし | 所有者、リース期限、digestを含むIN_PROGRESSを条件付きで作成 |
+| IN_PROGRESSでリース有効 | 副作用を繰り返さず後で再試行。完了として削除しない |
+| COMPLETEでdigest一致 | 保存済みの結果を返し、このレコードを成功扱いにする |
+| リース切れ、またはdigest不一致 | 決済結果を照合するか隔離。無条件に再課金しない |
+
+DynamoDBのattribute_not_exists条件により、複数workerが同じ主キーを同時に作ることを防げます。読み取り後の無条件書き込みでは、この排他性は得られません。更新時も所有者とバージョンを確認します。[条件付き書き込み](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html)
+
+これはアプリケーション設計であり、ロックだけによる決済1回保証ではありません。決済側が同じ業務の冪等性キーを受け付けるか、既存取引を照会できる必要があります。決済成功からCOMPLETE保存までの間に停止したら、そのキーで既存結果を取得・照合します。どちらもできない場合は不確定状態を保持し、調査します。リース切れだけで再課金が安全になるわけではありません。保存期間は最大の再送・照合期間を含め、TTL削除を正確な時刻のロック解除として使わないでください。
+
+## 失敗したレコードだけを返す
+
+m1、m2、m3のうちm2だけが未完了なら、mappingでReportBatchItemFailuresを有効にし、次を返します。
+
+```json
+{
+  "batchItemFailures": [
+    { "itemIdentifier": "m2" }
+  ]
+}
+```
+
+itemIdentifierは再試行するレコードのSQS messageIdです。業務キーとは役割が異なります。レコードごとに失敗を捕捉し、外側のhandlerから例外を投げてバッチ全体を失敗させないようにします。FIFOでは最初の失敗後に処理を止め、失敗分と未処理分の両方を返して順序を守ります。[部分バッチ応答](https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html)
+
+## 再試行の余裕と障害の境界
+
+AWSはvisibility timeoutを関数timeoutの少なくとも6倍とし、batch windowを使う場合はその時間も加えることを推奨しています。負荷試験で妥当性を確認します。実行ロールには対象キューのReceiveMessage、DeleteMessage、GetQueueAttributesが必要です。KMS暗号化時は対応するDecryptとキー側の許可も必要です。[mapping設定](https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html)
+
+処理不能なメッセージ向けに、ソースキューのredrive policyとDLQを設定します。メッセージ経過時間、エラー率、DLQ蓄積を監視します。SQSはポーリング方式なので、Lambda非同期呼び出しの再試行設定をキューの再試行ポリシーと混同しないでください。
+
+## 再送の手順
+
+原因を修正し、まず合成注文1件で確認します。業務キーと重複判定記録が必要な期間残っていることを確認し、小さいバッチから再送します。下流負荷を制限し、重複検出、成功、失敗件数を観察し、閾値を超えたら止めます。操作者、元の業務キー、結果を記録し、決済認証情報はログに残しません。
+
+同時重複、決済直後の停止、COMPLETE後の再配信、同じキーで異なる金額、バッチ1件だけの失敗、保存期間を超えた手動再送を演習します。合否は取引記録と各メッセージの結果で判断し、Lambdaの成功表示だけでは判定しません。
+
+関連資料：[SQS DLQ redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html)。本記事は教材用の設計で、AWSリソース作成や実決済の検証は行っていません。

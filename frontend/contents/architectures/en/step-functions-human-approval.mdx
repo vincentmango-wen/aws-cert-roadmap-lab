@@ -1,0 +1,67 @@
+# Step Functions Standard: an order approval workflow
+
+Scope: order approvals that can wait up to 48 hours, using the Standard callback pattern. This fictional design contains no deployed resources. Translated from Traditional Chinese revision 1; all diagrams share the same nodes and branches. Official sources checked: 2026-11-09.
+
+## Requirements and responsibilities
+
+Reserve inventory when an order arrives, then ask an authorized person to approve it. Confirm only after approval; rejection or expiry releases the reservation. Reservation, confirmation and compensation each use orderId plus an operation version for idempotency, preventing repeated execution from subtracting or returning inventory twice.
+
+Standard supports long waits and .waitForTaskToken; Express does not support this callback pattern. Lambda need not run throughout the 48-hour wait. [Integration patterns](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+In the diagram, A receives an authenticated order; B reserves inventory; C waits; D is the protected approval interface and broker; E evaluates the reply. F confirms the order. G and H handle rejection and expiry respectively, and I handles failed compensation. The letters match across languages. Read the branch labels rather than relying on color alone.
+
+## Approval, rejection and expiry
+
+| Condition | Action | Evidence to retain |
+|---|---|---|
+| Authorized approval before expiry | Broker returns approved=true; confirm order | Approver, order version, time and confirmation result |
+| Authorized rejection | Return approved=false; release reservation | Rejection reason and compensation result |
+| C reaches its 48-hour timeout | Catch States.Timeout; release reservation | Expiry event and compensation result |
+| Confirmation or compensation is uncertain | Reconcile, retry within limits, then escalate to I | Original operation key, attempts and manual resolution |
+
+Business rejection is not a system error. This example uses SendTaskSuccess with a Boolean decision and a Choice state. A technical broker failure may use SendTaskFailure and a separate Catch; it must not be misrepresented as the user's rejection. [Callback API](https://docs.aws.amazon.com/step-functions/latest/apireference/API_SendTaskSuccess.html)
+
+## The waiting state
+
+This JSONPath ASL fragment needs the remaining Reserve, Decision, ReleaseReservation and HandleFailure states and real ARNs before deployment. Input includes orderId. The dispatcher stores the current token and sends an approval notification without that token.
+
+```json
+{
+  "WaitForApproval": {
+    "Type": "Task",
+    "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+    "Parameters": {
+      "FunctionName": "REPLACE_APPROVAL_DISPATCHER_ARN",
+      "Payload": {
+        "orderId.$": "$.orderId",
+        "taskToken.$": "$$.Task.Token"
+      }
+    },
+    "TimeoutSeconds": 172800,
+    "ResultPath": "$.approval",
+    "Catch": [
+      { "ErrorEquals": ["States.Timeout"], "ResultPath": "$.error", "Next": "ReleaseReservation" },
+      { "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "HandleFailure" }
+    ],
+    "Next": "Decision"
+  }
+}
+```
+
+Decision reaches ConfirmOrder only when $.approval.approved is true; other replies follow validation/rejection handling. Give the overall workflow a longer deadline than the approval wait to leave time for compensation. A top-level execution timeout is not caught by this Task Catch; use expiry events, alerts and reconciliation separately. [Error handling](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
+
+## Callback security and IAM boundaries
+
+Approval links carry only an opaque request ID. After login, the backend checks the person, tenant, order, version and deadline before retrieving the token from protected storage. Keep tokens out of URLs, email and ordinary logs. Restrict access to execution history and token storage. A conditional update accepts the first valid decision; repeated clicks return the stored result. A timed-out or closed token must not turn into a fresh successful approval automatically.
+
+The AWS principal returning a token must belong to the workflow's account. A cross-account approval application can call a validated broker in that account or assume a tightly trusted role there. Adding an Allow to a principal in the other account alone does not make its token callback valid. [Account restriction](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+The workflow role invokes only the designated dispatcher/inventory functions. The dispatcher writes only the designated approval table and notification destination. The broker accesses necessary token records and callback actions. SendTaskSuccess/Failure do not support resource-level ARN restrictions and require Resource "*": narrow the actions, isolate the broker role and control token access. Do not claim this Allow restricts callbacks to one execution ARN. A permissions boundary grants nothing by itself, and an explicit deny still applies. [Service authorization table](https://docs.aws.amazon.com/service-authorization/latest/reference/list_stepfunctions.html)
+
+Persisting the decision and delivering the callback are separate steps. Track delivery as pending until confirmed; retry transient failures with the same decision and current token. A repeated click returns the recorded decision and delivery status, not an invented workflow success. If the callback response is lost, reconcile execution state before reporting success or issuing a new token. Grant the broker GetItem and conditional UpdateItem only for the designated approval table and necessary records, so it can store decisions and delivery status.
+
+## Compensation and acceptance
+
+Before releasing inventory, check that a reservation exists and has not already been released; reuse its operation key. If confirmation fails, reconcile whether it actually completed before releasing inventory for a potentially successful order. Failed compensation keeps an unresolved state and an alert for manual reconciliation. Workflow failure does not automatically roll back earlier effects.
+
+Exercise approval, rejection, 48-hour expiry, simultaneous replies, expired links, wrong tenants, a lost response after successful callback, failed compensation and top-level timeout. The diagram is a logical design; these execution tests have not been run in AWS.

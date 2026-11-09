@@ -1,0 +1,71 @@
+---
+postId: "blog-026"
+slug: "lambda-sqs-safe-retries-idempotency"
+title: "Lambda＋SQS：安全重試與業務冪等設計"
+description: "從重複訂單事件出發，設計業務冪等鍵、條件寫入、部分批次失敗與可追蹤的 DLQ 重送流程。"
+category: "SAA"
+tags:
+  - "Lambda"
+  - "SQS"
+  - "Idempotency"
+targetKeywords:
+  - "Lambda SQS 冪等"
+  - "partial batch failure"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-11-09"
+updatedAt: "2026-11-09"
+---
+
+# Lambda＋SQS：安全重試與業務冪等設計
+
+適用範圍：Lambda event source mapping 消費 SQS；主例使用 Standard queue，同區域部署。繁中原稿 revision 1，日文與英文依同一版本翻譯。官方查核日：2026-11-09。
+
+## 從「又收到一次訂單」開始
+
+虛構商店收到訂單 O-731 的付款事件。支付端已完成扣款，Lambda 卻在寫回結果前中斷。訊息再次出現時，直接重跑扣款可能造成重複收費；直接丟棄則可能把尚未完成的交易當作成功。
+
+Lambda 的 SQS event source mapping 至少投遞一次，處理也可能重複。成功回傳整批結果時，Lambda 才刪除該批訊息；預設批次失敗會使整批在 visibility timeout 後再次可見。因此「at-least-once」不是副作用恰好一次的承諾。[Lambda 與 SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
+
+## 業務鍵與持久狀態
+
+先定義什麼算「同一個操作」。本例採 tenantId＋orderId＋operationVersion，而非每次重送都可能不同的 transport messageId。退款與付款使用不同 operation；重複請求的 payload digest 也要一致，避免同一鍵被拿來處理不同金額。
+
+| 持久記錄 | 消費者處理方式 |
+|---|---|
+| 不存在 | 條件寫入 IN_PROGRESS，記錄擁有者、租約期限與 payload digest |
+| IN_PROGRESS 且租約有效 | 不重做副作用；讓訊息稍後重試，不能當成已完成刪除 |
+| COMPLETE 且 digest 相符 | 回傳既存結果，將這筆視為成功 |
+| 租約逾期或 digest 不符 | 查明支付端結果或隔離調查，不盲目重新扣款 |
+
+DynamoDB 的 attribute_not_exists 條件可防止兩個 worker 同時建立同一主鍵的記錄；讀取後再無條件寫入無法提供這個互斥效果。後續更新也應核對擁有者與版本。[條件寫入](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html)
+
+這是應用設計，不是單靠一個 lock 就能保證付款一次。外部付款端必須支援同一業務 idempotency key，或能查詢既有交易。若「付款成功、COMPLETE 尚未寫入」時斷線，重試應先以相同鍵查詢／取得既有結果。若下游無法冪等或查詢，就保留不確定狀態交人工核對；不要把租約到期當成可安全重做的證明。保留期應涵蓋最大重送及對帳窗口，TTL 清除不能當成準時解鎖機制。
+
+## 部分批次失敗
+
+假設批次包含 m1、m2、m3，只有 m2 尚未成功。開啟 mapping 的 ReportBatchItemFailures，並回傳：
+
+```json
+{
+  "batchItemFailures": [
+    { "itemIdentifier": "m2" }
+  ]
+}
+```
+
+itemIdentifier 使用 SQS messageId，這個欄位負責告知重試哪筆；它和付款的業務冪等鍵用途不同。逐筆捕捉失敗並回傳清單；若 handler 在外層直接拋錯，整批仍被視為失敗。FIFO queue 應在第一筆失敗後停止處理，回報失敗及尚未處理的訊息，以維持排序。[部分批次回應](https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html)
+
+## 給重試留時間，也給故障設邊界
+
+AWS 建議 visibility timeout 至少為函式 timeout 的六倍；使用 batch window 時再納入該等待時間。這提供重試餘裕，不替代實測。執行角色需要對來源 queue 的 ReceiveMessage、DeleteMessage、GetQueueAttributes；使用 KMS 加密時還須有相應的 Decrypt 與金鑰授權。[mapping 設定](https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html)
+
+對毒性訊息設定來源 queue 的 redrive policy 與 DLQ，觀察訊息年齡、錯誤率及 DLQ 累積。SQS 觸發是輪詢模式，不要把 Lambda 非同步 invocation 的重試設定當成來源 queue 的重試控制。
+
+## 重送操作手冊
+
+先修復根因並用一筆合成訂單驗證；確認業務鍵及去重記錄仍在保留窗口內。小批量重送，限制下游負載並觀察重複命中、成功與失敗數量。若吞吐或錯誤超標就停下，而非一次把整個 DLQ 灌回。保留操作者、原始業務鍵與處理結果；不在日誌輸出支付憑證。
+
+演練至少涵蓋：同一事件同時進兩個 worker、付款後斷線、COMPLETE 後再次投遞、同鍵不同金額、批次只有一筆失敗，以及超出保留窗口的人工重送。驗收證據應是交易記錄與每筆訊息結果，不是只有 Lambda 顯示綠燈。
+
+延伸閱讀：[SQS DLQ redrive](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html)。本文是教學設計，未建立 AWS 資源或執行扣款測試。

@@ -22,14 +22,14 @@ tags:
 mermaid: true
 published: true
 publishedAt: "2026-06-08"
-updatedAt: "2026-06-08"
+updatedAt: "2026-11-09"
 ---
 
 # SQS + Lambda 非同期処理構成
 
 ## 概要
 
-この構成は、処理依頼をAmazon SQSに一度ためてから、AWS Lambdaで順番に処理する非同期アーキテクチャです。
+この構成は、処理依頼をAmazon SQSに一度ためてから、AWS Lambdaで処理する非同期アーキテクチャです。
 
 ユーザー操作や外部システムからのリクエストをその場で重い処理まで完了させると、レスポンスが遅くなったり、処理失敗時にユーザー体験が悪くなったりします。
 
@@ -111,7 +111,7 @@ SQSとLambdaは従量課金のため、常時起動サーバーを使わない�
 
 ### パフォーマンス
 
-大量の処理依頼が来ても、SQSに一度ためて順番に処理できます。
+大量の処理依頼が来ても、SQSに一度ためて、コンシューマーの処理能力に合わせて処理できます。
 
 Lambdaの同時実行数を制御すれば、後続のDynamoDBや外部APIを過負荷にしない設計にできます。
 
@@ -148,3 +148,7 @@ Lambdaの同時実行数を制御すれば、後続のDynamoDBや外部APIを過
 SQS + Lambdaは、サーバーレスで非同期処理を実装する代表的な構成です。
 
 SAAでは「処理を後回しにしたい」「急なリクエスト増加を吸収したい」「コンポーネント間を疎結合にしたい」という条件があれば、SQSを使う構成を考えます。
+
+SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
+
+公式資料確認：2026-11-09 — [AWS: sqs](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [AWS: fifo](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
