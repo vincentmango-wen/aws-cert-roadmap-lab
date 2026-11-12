@@ -1,6 +1,14 @@
 import type { UiDictionary } from "./ja";
 
 export const zhDictionary: UiDictionary = {
+  updates: {
+    title: "最新內容與公告",
+    introduction: "依文章發布或更新日期與公告日期，查看最近的學習內容、題庫與網站功能消息。文章清單顯示目前版本，並非完整修訂歷史。",
+    empty: "目前尚無可顯示的內容或公告", viewAll: "查看所有內容與公告",
+    original: "原始公告", correction: "更正公告",
+    categories: { blog: "部落格", architecture: "架構圖", comparison: "服務比較", "question-bank": "題庫公告", feature: "功能公告" },
+    dates: { published: "發布", updated: "更新", announced: "公告" },
+  },
   site: {
     name: "AWS 認證學習路線圖實驗室",
     shortName: "AWS Cert Roadmap Lab",
@@ -25,6 +33,7 @@ export const zhDictionary: UiDictionary = {
     questions: "模擬題",
     architectures: "架構圖",
     blog: "部落格",
+    updates: "最新內容與公告",
     roadmap: "學習路線圖",
     contact: "聯絡我們",
     about: "關於本站",
@@ -53,7 +62,7 @@ export const zhDictionary: UiDictionary = {
       },
       siteInfo: {
         title: "網站資訊",
-        linkKeys: ["about", "contact", "privacy", "disclaimer"],
+        linkKeys: ["updates", "about", "contact", "privacy", "disclaimer"],
       },
       portfolio: {
         title: "作品集",

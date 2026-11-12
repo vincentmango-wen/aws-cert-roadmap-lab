@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createPageMetadata, pageSeo } from "@/lib/seo";
+import { UpdatesSection } from "@/components/updates/UpdatesSection";
+import { getUpdatesInventory, selectHomeUpdates } from "@/contents/updates";
 
 export const metadata: Metadata = createPageMetadata(pageSeo.home);
 
@@ -168,6 +170,56 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl space-y-8 rounded-3xl bg-[#ddf5ee] px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-3">
+            <p className="text-sm font-bold uppercase tracking-wider text-[#0f766e]">
+              Latest Articles
+            </p>
+            <h2 className="text-3xl font-bold text-[#134e4a]">
+              最新記事
+            </h2>
+            <p className="max-w-3xl leading-7 text-[#334155]">
+              AWS資格、サーバーレス構成、無料枠ポートフォリオに関する記事を追加していきます。
+            </p>
+          </div>
+
+          <Link
+            href="/blog"
+            className="text-sm font-bold text-[#115e59] hover:text-[#134e4a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0f766e]"
+          >
+            ブログ一覧へ →
+          </Link>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          {blogPreviews.map((post) => (
+            <article
+              key={post.href}
+              className="rounded-2xl border border-[#0f766e] bg-white p-6 shadow-sm"
+            >
+              <span className="rounded-full bg-[#ccfbf1] px-3 py-1 text-xs font-bold text-[#115e59]">
+                {post.category}
+              </span>
+              <h3 className="mt-4 text-lg font-bold leading-7 text-[#134e4a]">
+                {post.title}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-[#334155]">
+                {post.description}
+              </p>
+              <Link
+                href={post.href}
+                className="mt-5 inline-flex text-sm font-bold text-[#115e59] hover:text-[#134e4a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0f766e]"
+              >
+                記事を読む →
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <UpdatesSection items={selectHomeUpdates(getUpdatesInventory().itemsByLocale.ja)} locale="ja" />
+
       <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
         <div className="space-y-3">
           <p className="text-sm font-bold uppercase tracking-wider text-sky-700">
@@ -246,54 +298,6 @@ export default function HomePage() {
               AWS構成図を見る
             </Link>
           </article>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-3">
-            <p className="text-sm font-bold uppercase tracking-wider text-sky-700">
-              Latest Articles
-            </p>
-            <h2 className="text-3xl font-bold text-slate-950">
-              最新記事
-            </h2>
-            <p className="max-w-3xl leading-7 text-slate-600">
-              AWS資格、サーバーレス構成、無料枠ポートフォリオに関する記事を追加していきます。
-            </p>
-          </div>
-
-          <Link
-            href="/blog"
-            className="text-sm font-bold text-sky-700 hover:text-sky-900"
-          >
-            ブログ一覧へ →
-          </Link>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {blogPreviews.map((post) => (
-            <article
-              key={post.href}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">
-                {post.category}
-              </span>
-              <h3 className="mt-4 text-lg font-bold leading-7 text-slate-950">
-                {post.title}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {post.description}
-              </p>
-              <Link
-                href={post.href}
-                className="mt-5 inline-flex text-sm font-bold text-sky-700 hover:text-sky-900"
-              >
-                記事を読む →
-              </Link>
-            </article>
-          ))}
         </div>
       </section>
 

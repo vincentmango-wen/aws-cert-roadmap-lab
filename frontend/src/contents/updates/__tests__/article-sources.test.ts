@@ -1,0 +1,58 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { afterEach, beforeEach, expect, it } from "vitest";
+import { readArticleCandidates } from "../article-sources";
+import { aggregateUpdates } from "../aggregate";
+import { isPublishedLocale } from "@/i18n/release-gate";
+
+let root: string;
+const registry = [{ postId: "b1", slug: "sample", publishedAt: "2026-11-01", updatedAt: "2026-11-09", published: true }];
+const write = (relative: string, text: string) => { const file = path.join(root, relative); fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, text); };
+beforeEach(() => { root = fs.mkdtempSync(path.join(os.tmpdir(), "updates-source-")); });
+afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
+function seed(kind: "blog" | "architecture" | "comparison", locale: string, extra = "", body = "Actual localized body") {
+  const folder = kind === "blog" ? "blog" : `${kind}s`;
+  const idKey = kind === "blog" ? "postId" : `${kind}Id`;
+  if (kind !== "blog") write(`${folder}/${folder}.${locale}.json`, JSON.stringify([{ [idKey]: "b1", slug: "sample", title: `${locale} title`, description: `${locale} summary`, publishedAt: "2026-11-01", updatedAt: "2026-11-09", published: true }]));
+  write(`${folder}/${locale}/sample.mdx`, `---\n${idKey}: b1\nslug: sample\ntitle: ${locale} title\ndescription: ${locale} summary\n${extra}---\n${body}`);
+}
+const read = () => readArticleCandidates({ contentsRoot: root, blogRegistry: registry });
+
+it.each(["blog", "architecture", "comparison"] as const)("reads actual %s translations and bodies", (kind) => {
+  for (const locale of ["ja", "en", "zh"]) seed(kind, locale);
+  const value = read().find((item) => item.kind === kind)!;
+  expect(Object.keys(value.translations)).toHaveLength(3);
+  expect(value.translations.en).toMatchObject({ title: "en title", summary: "en summary", bodyPresent: true, publishedAt: "2026-11-01", updatedAt: "2026-11-09" });
+});
+it("uses blog registry dates but reports explicit MDX disagreement", () => {
+  seed("blog", "ja", 'publishedAt: "2026-10-01"\n');
+  const translation = read()[0].translations.ja!;
+  expect(translation.publishedAt).toBe("2026-11-01");
+  expect(translation.metadataConflict).toBe(true);
+});
+it.each(["blog", "architecture", "comparison"] as const)("preserves %s explicit publication/noindex and empty body", (kind) => {
+  seed(kind, "en", "published: false\nnoIndex: true\n", "   ");
+  expect(read().find((item) => item.kind === kind)!.translations.en).toMatchObject({ published: false, noIndex: true, bodyPresent: false });
+});
+it.each(["architecture", "comparison"] as const)("does not supply Japanese fallback for missing %s metadata or body", (kind) => {
+  seed(kind, "ja"); seed(kind, "en");
+  fs.unlinkSync(path.join(root, `${kind}s/en/sample.mdx`));
+  const value = read().find((item) => item.kind === kind)!;
+  expect(value.translations.zh).toBeUndefined();
+  expect(value.translations.en?.bodyPresent).toBe(false);
+});
+it("preserves missing blog display fields instead of synthesizing translated copy", () => {
+  write("blog/en/sample.mdx", "---\npostId: b1\nslug: sample\n---\nbody");
+  expect(read()[0].translations.en).toMatchObject({ title: "", summary: "" });
+});
+
+it("reports real-source eligibility with the same IDs and dates in every locale", () => {
+  const candidates = readArticleCandidates();
+  const inventory = aggregateUpdates({ articles: candidates, announcements: [], today: "2026-11-12", isPublicPath: (_path, locale) => isPublishedLocale(locale) });
+  const sequence = (locale: "ja" | "en" | "zh") => inventory.itemsByLocale[locale].map(({ id, date }) => ({ id, date }));
+  expect(candidates.length).toBeGreaterThan(0);
+  expect(sequence("en")).toEqual(sequence("ja"));
+  expect(sequence("zh")).toEqual(sequence("ja"));
+  console.info("Real-source updates diagnostics", JSON.stringify({ candidates: candidates.length, eligible: sequence("ja").length, diagnostics: inventory.diagnostics }));
+});

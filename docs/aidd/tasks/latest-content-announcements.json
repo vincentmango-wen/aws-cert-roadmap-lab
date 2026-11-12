@@ -1,0 +1,41 @@
+{
+  "id": "latest-content-announcements-b-v2-2026-11-12",
+  "goal": "Implement the user-approved B v2 trilingual current-content and announcements timeline, preserving source work and review gates",
+  "base": "6c66041341b92310a48a784598ea8fc4be38a62b",
+  "allowed": [
+    "frontend/src/contents/updates/",
+    "frontend/src/components/updates/",
+    "frontend/src/app/(site)/page.tsx",
+    "frontend/src/app/(site)/en/page.tsx",
+    "frontend/src/app/(site)/zh/page.tsx",
+    "frontend/src/app/(site)/updates/",
+    "frontend/src/app/(site)/en/updates/",
+    "frontend/src/app/(site)/zh/updates/",
+    "frontend/src/app/sitemap.ts",
+    "frontend/src/i18n/dictionaries/",
+    "frontend/src/components/layout/Footer.tsx",
+    "frontend/package.json",
+    "frontend/scripts/build-with-updates-date.mjs",
+    "docs/aidd/tasks/latest-content-announcements.json",
+    "docs/superpowers/plans/2026-11-12-latest-content-and-announcements.md"
+  ],
+  "maxRepairs": 3,
+  "humanAcceptance": [
+    "Review fixed Asia/Taipei build date, real calendar validation and future-date exclusion evidence",
+    "Review trilingual article source eligibility, no fallback, actionable diagnostics and identical ordered inventories",
+    "Review exact approved 2026-11-09 SAA announcement, public links and correction history",
+    "Review identical first-three previews and full routes in all locales, Footer, locale switching and SEO",
+    "Review desktop/mobile and keyboard acceptance, empty and linkless states, exported links and locale seals",
+    "Review TDD outputs, all seven candidate checks, retained assertions and repair history",
+    "Confirm original dirty files, Serena files and project rules preserved; explicit approval required for publication",
+    "Review three home locales ordered Hero, Articles, Updates, Learning, Certification, Portfolio; approved teal article palette, preserved amber palette, 24px panel corners and top/bottom32/40/48px at640/1024 breakpoints; preserve80px gaps, widths, cards, content and links"
+  ],
+  "prohibited": [
+    "Changing the verification profile, weakening checks, removing assertions or adding skips",
+    "Resetting repair history or silently changing the approved design",
+    "Unrelated content corrections, issue 348, infrastructure or deployment changes",
+    "Commit, push, PR, merge, auto-merge or deployment without new applicable authorization"
+  ],
+  "publication": "User authorized commit, push on a dedicated feature branch, and PR after approved implementation, TDD, full AIDD, responsive/keyboard/contrast checks and independent review. No merge, auto-merge or production deployment. Vercel Preview may run under existing rules.",
+  "note": "User approved the referenced plan and protected build-entry changes, then separately approved an isolated official Node 22.13.0/npm 10.9.2 toolchain. Protected-file and test changes still require reviewed rebaseline, retaining original assertions and all evidence. Later user approved home placement/color/spacing design and its implementation plan. Actual repair history is10: CLI3 plus explicitly authorized exceptions4–10; exception10 is limited to label colors, preserved card styling and focus clipping acceptance. No11 authorized; all original evidence and assertions remain."
+}

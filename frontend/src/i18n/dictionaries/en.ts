@@ -1,6 +1,14 @@
 import type { UiDictionary } from "./ja";
 
 export const enDictionary: UiDictionary = {
+  updates: {
+    title: "Latest Content and Announcements",
+    introduction: "Explore recent learning content, practice questions, and site features by article publication or update date and announcement date. Articles show their current version, not a complete revision history.",
+    empty: "No content or announcements are currently available", viewAll: "View all content and announcements",
+    original: "Original announcement", correction: "Correction announcement",
+    categories: { blog: "Blog", architecture: "Architecture", comparison: "Comparison", "question-bank": "Question-bank announcement", feature: "Feature announcement" },
+    dates: { published: "Published", updated: "Updated", announced: "Announced" },
+  },
   site: {
     name: "AWS Cert Roadmap Lab",
     shortName: "AWS Cert Roadmap Lab",
@@ -25,6 +33,7 @@ export const enDictionary: UiDictionary = {
     questions: "Practice Questions",
     architectures: "Architectures",
     blog: "Blog",
+    updates: "Latest Content and Announcements",
     roadmap: "Roadmap",
     contact: "Contact",
     about: "About",
@@ -53,7 +62,7 @@ export const enDictionary: UiDictionary = {
       },
       siteInfo: {
         title: "Site Information",
-        linkKeys: ["about", "contact", "privacy", "disclaimer"],
+        linkKeys: ["updates", "about", "contact", "privacy", "disclaimer"],
       },
       portfolio: {
         title: "Portfolio",

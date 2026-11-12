@@ -165,6 +165,11 @@ function getStaticRoutes(): SitemapRouteInput[] {
       changeFrequency: "weekly",
     },
     {
+      pathname: "/updates",
+      priority: 0.6,
+      changeFrequency: "weekly",
+    },
+    {
       pathname: "/contact",
       priority: 0.4,
       changeFrequency: "yearly",
@@ -331,7 +336,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getBlogSitemapRoutes(),
   ];
 
-  const sitemapItems = routes.flatMap(createLocalizedSitemapItems);
+  const sitemapItems = routes.flatMap((route) => {
+    const items = createLocalizedSitemapItems(route);
+    if (route.pathname === "/updates") {
+      // This index has no recorded modification date; do not substitute build time.
+      for (const item of items) delete item.lastModified;
+    }
+    return items;
+  });
 
   return filterSealedLocaleUrls(deduplicateByUrl(sitemapItems)).sort((a, b) =>
     a.url.localeCompare(b.url),
