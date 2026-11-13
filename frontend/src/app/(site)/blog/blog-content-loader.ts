@@ -90,7 +90,7 @@ export function parseFrontmatterBlock(
   frontmatterText: string,
 ): Record<string, BlogFrontmatterValue> {
   const parsed: Record<string, BlogFrontmatterValue> = {};
-  const lines = frontmatterText.split(/\r?\n/);
+  const lines = frontmatterText.split(/\r\n|\n|\r/);
 
   let currentListKey: string | null = null;
 

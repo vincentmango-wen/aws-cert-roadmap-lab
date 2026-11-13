@@ -5,6 +5,7 @@ export type NavigationKey =
   | "questions"
   | "architectures"
   | "blog"
+  | "updates"
   | "roadmap"
   | "contact"
   | "about"
@@ -99,6 +100,15 @@ export type QuestionsDictionary = {
 };
 
 export type UiDictionary = {
+  updates: {
+    title: string; introduction: string; empty: string; viewAll: string;
+    original: string; correction: string;
+    categories: Record<"blog" | "architecture" | "comparison" | "question-bank" | "feature", string>;
+    dates: Record<"published" | "updated" | "announced", string>;
+    events: Record<"new" | "update", string>;
+    eventDescriptions: Record<"new" | "update", string>;
+    notes: string; missingNotes: string;
+  };
   site: {
     name: string;
     shortName: string;
@@ -205,6 +215,17 @@ export type UiDictionary = {
 };
 
 export const jaDictionary: UiDictionary = {
+  updates: {
+    title: "最新コンテンツとお知らせ",
+    introduction: "記事の公開日・更新日とお知らせの日付から、最近の学習コンテンツ、問題集、サイト機能の情報を確認できます。記事一覧には現在の版を表示しており、すべての改訂履歴ではありません。",
+    empty: "現在表示できるコンテンツやお知らせはありません", viewAll: "すべてのコンテンツとお知らせを見る",
+    original: "元のお知らせ", correction: "訂正のお知らせ",
+    categories: { blog: "ブログ", architecture: "構成図", comparison: "サービス比較", "question-bank": "問題集のお知らせ", feature: "機能のお知らせ" },
+    dates: { published: "公開", updated: "更新", announced: "お知らせ" },
+    events: { new: "New", update: "Update" },
+    eventDescriptions: { new: "初回公開", update: "内容の更新" },
+    notes: "更新・訂正内容", missingNotes: "この版には更新内容が記録されていません。",
+  },
   site: {
     name: "AWS資格ロードマップラボ",
     shortName: "AWS Cert Roadmap Lab",
@@ -229,6 +250,7 @@ export const jaDictionary: UiDictionary = {
     questions: "模擬問題",
     architectures: "構成図",
     blog: "ブログ",
+    updates: "最新コンテンツとお知らせ",
     roadmap: "ロードマップ",
     contact: "問い合わせ",
     about: "運営者情報",
@@ -257,7 +279,7 @@ export const jaDictionary: UiDictionary = {
       },
       siteInfo: {
         title: "サイト情報",
-        linkKeys: ["about", "contact", "privacy", "disclaimer"],
+        linkKeys: ["updates", "about", "contact", "privacy", "disclaimer"],
       },
       portfolio: {
         title: "ポートフォリオ",

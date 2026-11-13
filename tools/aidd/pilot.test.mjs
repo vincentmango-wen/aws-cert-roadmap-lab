@@ -4,9 +4,129 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import childProcess from 'node:child_process';
+import { syncBuiltinESMExports } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { createTask, beginRepair, readStatus, verify, replay, parseVitest, manifest } from './pilot.mjs';
 import * as pilot from './pilot.mjs';
+
+test('ignored traversal avoids root tmp directory warnings and preserves literal root names', t => {
+  const f = fixture(t);
+  fs.appendFileSync(path.join(f.root, '.gitignore'), '/tmp/\nroot*/\n-leading/\nfrontend/tmp/\n');
+  const retained = ['root[1]/cache.txt', 'root space/cache.txt', '-leading/cache.txt', 'frontend/tmp/cache.txt'];
+  for (const name of ['tmp/sentinel.txt', ...retained]) {
+    fs.mkdirSync(path.dirname(path.join(f.root, name)), { recursive: true });
+    fs.writeFileSync(path.join(f.root, name), 'synthetic traversal fixture');
+  }
+  fs.symlinkSync(path.join(f.dir, 'absent-target'), path.join(f.root, 'tmp', 'broken-directory'), process.platform === 'win32' ? 'junction' : 'dir');
+  const control = childProcess.spawnSync('git', ['-C', f.root, 'ls-files', '--others', '--ignored', '--exclude-standard', '-z'], { maxBuffer: 20 * 1024 * 1024 });
+  assert.ifError(control.error);
+  assert.equal(control.status, 0);
+  assert.ok(control.stdout.toString().includes('tmp/sentinel.txt'));
+  if (process.platform === 'win32') assert.match(control.stderr.toString(), /tmp\/broken-directory/, 'control must detect actual traversal of the broken junction');
+  const run = childProcess.execFileSync;
+  const scans = [];
+  const spy = t.mock.method(childProcess, 'execFileSync', (command, args, options) => {
+    if (command !== 'git' || !args.includes('ls-files')) return run(command, args, options);
+    const result = childProcess.spawnSync(command, args, { ...options, stdio: 'pipe' });
+    assert.ifError(result.error);
+    assert.equal(result.status, 0, result.stderr.toString());
+    scans.push({ ignored: args.includes('--ignored'), stdout: result.stdout.toString(), stderr: result.stderr.toString() });
+    return result.stdout;
+  });
+  syncBuiltinESMExports();
+  try {
+    manifest(f.root, f.profile);
+    assert.equal(scans.length, 2);
+    console.info('Git traversal probe', JSON.stringify({ platform: process.platform, controlStderr: control.stderr.toString(), candidateStderr: scans.map(scan => scan.stderr) }));
+    for (const scan of scans) assert.equal(scan.stderr, '', 'neither Git query may visit the excluded broken tmp junction');
+    const ignored = scans.find(scan => scan.ignored).stdout.split('\0').filter(Boolean);
+    for (const name of retained) assert.ok(ignored.includes(name), name);
+    assert.equal(ignored.some(name => name.startsWith('tmp/')), false);
+  } finally {
+    spy.mock.restore();
+    syncBuiltinESMExports();
+  }
+});
+
+test('ignored traversal retains dotenv under special literal root names', t => {
+  const f = fixture(t);
+  fs.appendFileSync(path.join(f.root, '.gitignore'), '.env\n');
+  for (const name of ['root[1]', 'root space', '-leading']) {
+    const dir = path.join(f.root, name);
+    fs.mkdirSync(dir);
+    const file = path.join(dir, '.env');
+    fs.writeFileSync(file, 'SYNTHETIC_ONLY=1');
+    assert.throws(() => manifest(f.root, f.profile), /Unrecorded dotenv input/, name);
+    fs.unlinkSync(file);
+  }
+});
+
+test('ignored enumeration excludes root tmp before filtering but retains nested and similar paths', t => {
+  const f = fixture(t);
+  fs.appendFileSync(path.join(f.root, '.gitignore'), '/tmp/\n/tmp-other/\nfrontend/tmp/\n');
+  for (const name of ['tmp/store/cache.txt', 'tmp/deep/.env', 'tmp-other/cache.txt', 'frontend/tmp/cache.txt']) {
+    fs.mkdirSync(path.dirname(path.join(f.root, name)), { recursive: true });
+    fs.writeFileSync(path.join(f.root, name), 'synthetic fixture');
+  }
+  const runGit = childProcess.execFileSync;
+  const ignoredResults = [];
+  const spy = t.mock.method(childProcess, 'execFileSync', (command, args, options) => {
+    const result = runGit(command, args, options);
+    if (command === 'git' && args.includes('--ignored')) ignoredResults.push(result.toString().split('\0').filter(Boolean));
+    return result;
+  });
+  syncBuiltinESMExports();
+  try {
+    const inputs = manifest(f.root, f.profile);
+    assert.ok(Object.hasOwn(inputs, 'source.txt'));
+    assert.equal(ignoredResults.length, 1);
+    assert.equal(ignoredResults[0].some(name => name.startsWith('tmp/')), false, 'root tmp must be absent from raw Git output, not merely filtered afterwards');
+    assert.ok(ignoredResults[0].includes('tmp-other/cache.txt'));
+    assert.ok(ignoredResults[0].includes('frontend/tmp/cache.txt'));
+  } finally {
+    spy.mock.restore();
+    syncBuiltinESMExports();
+  }
+});
+
+test('ignored enumeration retains non-tmp dotenv protection at exact root and nested boundaries', t => {
+  const f = fixture(t);
+  fs.appendFileSync(path.join(f.root, '.gitignore'), '.env\n.env.*\n');
+  for (const name of ['.env', 'tmp-other/.env', 'nested/tmp/.env', 'frontend/tmp/.env.local']) {
+    const file = path.join(f.root, name);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, 'SYNTHETIC_FIXTURE_ONLY=1');
+    assert.throws(() => manifest(f.root, f.profile), /Unrecorded dotenv input/, name);
+    fs.unlinkSync(file);
+  }
+  fs.writeFileSync(path.join(f.root, '.env.example'), 'SYNTHETIC_EXAMPLE=');
+  assert.doesNotThrow(() => manifest(f.root, f.profile));
+});
+
+test('ignored enumeration still rejects hidden frontend sources including nested tmp', t => {
+  const f = fixture(t);
+  fs.appendFileSync(path.join(f.root, '.gitignore'), 'frontend/\n');
+  for (const name of ['frontend/hidden.ts', 'frontend/tmp/hidden.ts', 'frontend/tmp-other/hidden.json']) {
+    const file = path.join(f.root, name);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, 'synthetic fixture');
+    assert.throws(() => manifest(f.root, f.profile), /Ignored source inputs require review/, name);
+    fs.unlinkSync(file);
+  }
+});
+
+test('ignored enumeration does not hide tracked ignored sources or sensitive inputs', t => {
+  const f = fixture(t);
+  fs.appendFileSync(path.join(f.root, '.gitignore'), '/tmp/\n*.pem\n');
+  fs.mkdirSync(path.join(f.root, 'tmp'));
+  fs.writeFileSync(path.join(f.root, 'tmp', 'tracked.txt'), 'tracked fixture');
+  execFileSync('git', ['-C', f.root, 'add', '-f', 'tmp/tracked.txt']);
+  assert.ok(Object.hasOwn(manifest(f.root, f.profile), 'tmp/tracked.txt'), 'tracked query must remain unchanged');
+  fs.writeFileSync(path.join(f.root, 'synthetic.pem'), 'NOT A REAL CERTIFICATE OR KEY');
+  execFileSync('git', ['-C', f.root, 'add', '-f', 'synthetic.pem']);
+  assert.throws(() => manifest(f.root, f.profile), /Sensitive input refused/);
+});
 
 function fixture(t, script = 'console.log("ok")') {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aidd-fixture-'));

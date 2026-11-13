@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createAbsoluteUrl, createLocaleAwareRobots, siteConfig } from "@/lib/seo";
+import { UpdatesSection } from "@/components/updates/UpdatesSection";
+import { ChangeDetails } from "@/components/updates/ChangeDetails";
+import { getUpdatesInventory, selectHomeUpdates, selectLatestArticles } from "@/contents/updates";
 
 const pagePath = "/zh";
 
@@ -9,13 +12,6 @@ type FeatureCard = {
   description: string;
   href: string;
   label: string;
-};
-
-type BlogPreview = {
-  title: string;
-  description: string;
-  href: string;
-  category: string;
 };
 
 type AwsService = {
@@ -98,30 +94,6 @@ const featureCards: FeatureCard[] = [
   },
 ];
 
-const blogPreviews: BlogPreview[] = [
-  {
-    title: "AWS Cloud Practitioner學習路線圖",
-    description:
-      "整理初學者準備Cloud Practitioner時，應該先掌握的學習順序與重點。",
-    href: "/zh/blog/aws-cloud-practitioner-roadmap",
-    category: "CLF",
-  },
-  {
-    title: "用AWS免費額度打造作品集的思路",
-    description:
-      "說明個人開發如何控制成本，同時展示AWS實作經驗與雲端設計思維。",
-    href: "/zh/blog/aws-free-tier-portfolio",
-    category: "Portfolio",
-  },
-  {
-    title: "用S3與CloudFront發布靜態網站",
-    description:
-      "學習不直接公開S3，而是透過CloudFront與OAC安全發布靜態網站的基本架構。",
-    href: "/zh/blog/s3-cloudfront-static-site",
-    category: "Serverless",
-  },
-];
-
 const awsServices: AwsService[] = [
   {
     name: "Amazon S3",
@@ -142,6 +114,8 @@ const awsServices: AwsService[] = [
 ];
 
 export default function ChineseHomePage(): React.JSX.Element {
+  const inventory = getUpdatesInventory().itemsByLocale.zh;
+  const blogPreviews = selectLatestArticles(inventory);
   return (
     <div className="space-y-20">
       <section className="rounded-3xl bg-slate-950 px-6 py-16 text-white shadow-sm sm:px-10 lg:px-16">
@@ -211,6 +185,57 @@ export default function ChineseHomePage(): React.JSX.Element {
           </div>
         </div>
       </section>
+
+      <section className="mx-auto max-w-6xl space-y-8 rounded-3xl bg-[#ddf5ee] px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-3">
+            <p className="text-sm font-bold uppercase tracking-wider text-[#0f766e]">
+              Latest Articles
+            </p>
+            <h2 className="text-3xl font-bold text-[#134e4a]">最新文章</h2>
+            <p className="max-w-3xl leading-7 text-[#334155]">
+              這裡會持續追加AWS證照、Serverless架構、免費額度與作品集開發相關文章。
+            </p>
+          </div>
+
+          <Link
+            href="/zh/blog"
+            className="text-sm font-bold text-[#115e59] hover:text-[#134e4a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0f766e]"
+          >
+            查看文章列表 →
+          </Link>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          {blogPreviews.map((post) => (
+            <article
+              key={post.id}
+              data-article-id={post.id}
+              className="rounded-2xl border border-[#0f766e] bg-white p-6 shadow-sm"
+            >
+              <span className="rounded-full bg-[#ccfbf1] px-3 py-1 text-xs font-bold text-[#115e59]">
+                {post.blogCategory}
+              </span>
+              <ChangeDetails item={post} locale="zh" part="metadata" tone="article" />
+              <h3 className="mt-4 text-lg font-bold leading-7 text-[#134e4a]">
+                {post.title}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-[#334155]">
+                {post.summary}
+              </p>
+              <ChangeDetails item={post} locale="zh" part="notes" tone="article" />
+              <Link
+                href={post.links[0].href}
+                className="mt-5 inline-flex text-sm font-bold text-[#115e59] hover:text-[#134e4a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0f766e]"
+              >
+                閱讀文章 →
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <UpdatesSection items={selectHomeUpdates(inventory)} locale="zh" />
 
       <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
         <div className="space-y-3">
@@ -288,52 +313,6 @@ export default function ChineseHomePage(): React.JSX.Element {
               查看AWS架構圖
             </Link>
           </article>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-3">
-            <p className="text-sm font-bold uppercase tracking-wider text-sky-700">
-              Latest Articles
-            </p>
-            <h2 className="text-3xl font-bold text-slate-950">最新文章</h2>
-            <p className="max-w-3xl leading-7 text-slate-600">
-              這裡會持續追加AWS證照、Serverless架構、免費額度與作品集開發相關文章。
-            </p>
-          </div>
-
-          <Link
-            href="/zh/blog"
-            className="text-sm font-bold text-sky-700 hover:text-sky-900"
-          >
-            查看文章列表 →
-          </Link>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {blogPreviews.map((post) => (
-            <article
-              key={post.href}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">
-                {post.category}
-              </span>
-              <h3 className="mt-4 text-lg font-bold leading-7 text-slate-950">
-                {post.title}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {post.description}
-              </p>
-              <Link
-                href={post.href}
-                className="mt-5 inline-flex text-sm font-bold text-sky-700 hover:text-sky-900"
-              >
-                閱讀文章 →
-              </Link>
-            </article>
-          ))}
         </div>
       </section>
 

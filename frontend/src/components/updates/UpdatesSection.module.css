@@ -1,0 +1,31 @@
+.section {
+  background-color: #fff3d6;
+}
+
+.section h2,
+.section h3 {
+  color: #172554;
+}
+
+.section p {
+  color: #475569;
+}
+
+.section article,
+.section > p[class*="rounded-2xl"] {
+  background-color: #ffffff;
+  border-color: #b7791f;
+}
+
+.section article > p:first-child {
+  color: #92400e;
+}
+
+.section a {
+  color: #1e40af;
+  outline-color: #1d4ed8;
+}
+
+.section a:hover {
+  color: #172554;
+}
