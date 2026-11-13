@@ -26,6 +26,12 @@ export function selectHomeUpdates(items: UpdateItem[]): UpdateItem[] {
   return items.slice(0, 3);
 }
 
+export function selectLatestArticles(items: UpdateItem[]): UpdateItem[] {
+  const compare = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
+  return items.filter((item) => item.category === "blog")
+    .sort((a, b) => compare(b.date, a.date) || compare(a.id, b.id)).slice(0, 3);
+}
+
 export function getUpdatesInventory() {
   const articles = readArticleCandidates();
   return aggregateUpdates({ articles, announcements, today: getUpdatesBuildDate(), isPublicPath: (target, locale) => isPublicUpdatesPath(target, locale, articles) });

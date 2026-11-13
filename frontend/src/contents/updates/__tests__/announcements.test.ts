@@ -6,8 +6,32 @@ import { aggregateUpdates } from "../aggregate";
 import { isPublicUpdatesPath, selectHomeUpdates } from "../index";
 import type { Announcement, ArticleCandidate } from "../types";
 
-const make = (id = "first", date = "2026-11-09"): Announcement => ({ id, date, category: "feature", published: true, links: [], translations: { ja: { title: "日本語", summary: "説明" }, en: { title: "English", summary: "Summary" }, zh: { title: "繁體中文", summary: "說明" } } });
+const make = (id = "first", date = "2026-11-09"): Announcement => ({ id, date, eventKind: "update", category: "feature", published: true, links: [], translations: {
+  ja: { title: "日本語", summary: "説明", updateNotes: [{ type: "paragraph", children: [{ type: "text", value: "更新内容" }] }] },
+  en: { title: "English", summary: "Summary", updateNotes: [{ type: "paragraph", children: [{ type: "text", value: "Complete update" }] }] },
+  zh: { title: "繁體中文", summary: "說明", updateNotes: [{ type: "paragraph", children: [{ type: "text", value: "完整更新說明" }] }] },
+} });
 const run = (values: Announcement[], isPublicPath = () => true) => aggregateUpdates({ articles: [], announcements: values, today: "2026-11-12", isPublicPath });
+
+it("uses explicit announcement events and complete localized update notes", () => {
+  expect(run(announcements).itemsByLocale.zh[0]).toMatchObject({ eventKind: "new", changeNotes: { status: "not-applicable" } });
+  expect(run([make()]).itemsByLocale.en[0]).toMatchObject({ eventKind: "update", changeNotes: { status: "available", entry: { date: "2026-11-09", blocks: [{ type: "paragraph", children: [{ type: "text", value: "Complete update" }] }] } } });
+});
+
+it("rejects unspecified events, incomplete update notes and unsafe note links", () => {
+  const missing = make(); delete (missing as Partial<Announcement>).eventKind;
+  const incomplete = make(); delete incomplete.translations.zh.updateNotes;
+  const unsafe = make(); unsafe.translations.en.updateNotes = [{ type: "paragraph", children: [{ type: "link", href: "javascript:alert(1)", children: [{ type: "text", value: "Unsafe" }] }] }];
+  for (const value of [missing, incomplete, unsafe]) {
+    expect(run([value]).itemsByLocale.ja).toEqual([]);
+    expect(run([value]).diagnostics.length).toBeGreaterThan(0);
+  }
+});
+
+it("requires a correcting announcement to be explicitly Update", () => {
+  const correction = make("second"); correction.corrects = "first"; correction.eventKind = "new";
+  expect(run([make(), correction]).itemsByLocale.en.map((value) => value.id)).toEqual(["announcement:first"]);
+});
 
 it("contains only the exact approved ten-question announcement", () => {
   expect(announcements).toHaveLength(1);

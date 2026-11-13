@@ -8,6 +8,9 @@ export const zhDictionary: UiDictionary = {
     original: "原始公告", correction: "更正公告",
     categories: { blog: "部落格", architecture: "架構圖", comparison: "服務比較", "question-bank": "題庫公告", feature: "功能公告" },
     dates: { published: "發布", updated: "更新", announced: "公告" },
+    events: { new: "New", update: "Update" },
+    eventDescriptions: { new: "首次發布", update: "內容更新" },
+    notes: "更正與更新說明", missingNotes: "此版本未附更新說明。",
   },
   site: {
     name: "AWS 認證學習路線圖實驗室",

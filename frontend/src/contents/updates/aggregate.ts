@@ -1,5 +1,6 @@
 import { createLocalizedPath, locales, type Pathname } from "@/i18n/locales";
 import { isCalendarDate } from "./dates";
+import { isSafeNoteBlocks } from "./corrections";
 import type { AggregateInput, Announcement, ArticleKind, UpdateInventory } from "./types";
 
 const folders: Record<ArticleKind, string> = { blog: "blog", architecture: "architectures", comparison: "comparisons" };
@@ -30,10 +31,23 @@ export function aggregateUpdates(input: AggregateInput): UpdateInventory {
     if (reference.publishedAt > input.today || date > input.today) { reject("future-date"); continue; }
     const route = `/${folders[article.kind]}/${article.slug}` as Pathname;
     if (locales.some((locale) => !input.isPublicPath(route, locale))) { reject("sealed-or-missing-path"); continue; }
+    const entries = translations.map((t) => t.correctionNotes?.errors.length ? undefined
+      : t.correctionNotes?.entries.find((entry) => entry.date === date && isSafeNoteBlocks(entry.blocks)));
+    const eventKind = date > reference.publishedAt || entries.some(Boolean) ? "update" : "new";
+    const completeNotes = entries.every(Boolean);
+    const needsNotes = eventKind === "update" || translations.some((t) => !!t.correctionNotes?.errors.length || !!t.correctionNotes?.entries.length);
+    if (needsNotes && !completeNotes) for (const locale of locales) {
+      const t = article.translations[locale]!;
+      result.diagnostics.push({ code: "correction-notes-unavailable", id, locale, sourcePath: t.sourcePath });
+      for (const error of t.correctionNotes?.errors ?? []) result.diagnostics.push({ code: `correction-parse:${error}`, id, locale, sourcePath: t.sourcePath });
+    }
     for (const locale of locales) {
       const t = article.translations[locale]!;
       result.itemsByLocale[locale].push({
-        id, category: article.kind, date, dateLabel: date > reference.publishedAt ? "updated" : "published",
+        id, category: article.kind, date, dateLabel: eventKind === "update" ? "updated" : "published",
+        eventKind, publishedAt: t.publishedAt, updatedAt: t.updatedAt, blogCategory: t.blogCategory,
+        changeNotes: completeNotes ? { status: "available", entry: entries[locales.indexOf(locale)]! }
+          : needsNotes ? { status: "missing" } : { status: "not-applicable" },
         title: t.title, summary: t.summary, links: [{ href: createLocalizedPath(locale, route), label: t.title }],
       });
     }
@@ -49,6 +63,9 @@ export function aggregateUpdates(input: AggregateInput): UpdateInventory {
     if (!isCalendarDate(value.date)) { reject("invalid-date"); continue; }
     if (value.date > input.today) { reject("future-date"); continue; }
     if (locales.some((locale) => !value.translations[locale]?.title.trim() || !value.translations[locale]?.summary.trim())) { reject("missing-translation"); continue; }
+    if (value.eventKind !== "new" && value.eventKind !== "update") { reject("invalid-event-kind"); continue; }
+    if (value.corrects && value.eventKind !== "update") { reject("invalid-correction-event"); continue; }
+    if (value.eventKind === "update" && locales.some((locale) => !isSafeNoteBlocks(value.translations[locale].updateNotes))) { reject("invalid-update-notes"); continue; }
     if (value.category === "question-bank" && value.links.length === 0) { reject("missing-question-link"); continue; }
     if (value.links.some((link) => !/^\/(?:[a-z0-9-]+\/?)*$/.test(link.path) || /^\/(en|zh)(\/|$)/.test(link.path) || locales.some((locale) => !link.labels[locale]?.trim() || !input.isPublicPath(link.path, locale)))) { reject("invalid-public-link"); continue; }
     visible.set(value.id, value);
@@ -74,7 +91,10 @@ export function aggregateUpdates(input: AggregateInput): UpdateInventory {
       .sort((a, b) => compare(a.date, b.date) || compare(a.id, b.id)).map((other) => `announcement:${other.id}`);
     for (const locale of locales) result.itemsByLocale[locale].push({
       id: `announcement:${value.id}`, category: value.category, date: value.date, dateLabel: "announced",
-      ...value.translations[locale], links: value.links.map((link) => ({ href: createLocalizedPath(locale, link.path), label: link.labels[locale] })),
+      title: value.translations[locale].title, summary: value.translations[locale].summary,
+      eventKind: value.eventKind, changeNotes: value.eventKind === "update"
+        ? { status: "available", entry: { date: value.date, blocks: value.translations[locale].updateNotes! } } : { status: "not-applicable" },
+      links: value.links.map((link) => ({ href: createLocalizedPath(locale, link.path), label: link.labels[locale] })),
       corrects: value.corrects === undefined ? undefined : `announcement:${value.corrects}`, corrections,
     });
   }

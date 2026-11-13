@@ -19,6 +19,22 @@ function seed(kind: "blog" | "architecture" | "comparison", locale: string, extr
 }
 const read = () => readArticleCandidates({ contentsRoot: root, blogRegistry: registry });
 
+it("carries each locale's full dated notes and original blog category", () => {
+  const headings = { ja: "訂正内容", en: "Corrections", zh: "更正說明" };
+  for (const locale of ["ja", "en", "zh"] as const) {
+    seed("blog", locale, 'category: "CLF"\n', `Actual body\n\n## ${headings[locale]}\n\n### 2026-11-09\n\n- ${locale} complete note.`);
+  }
+  const article = read()[0];
+  for (const locale of ["ja", "en", "zh"] as const) {
+    expect(article.translations[locale]).toMatchObject({
+      blogCategory: "CLF",
+      correctionNotes: { errors: [], entries: [{ date: "2026-11-09", blocks: [
+        { type: "list", ordered: false, items: [[{ type: "paragraph", children: [{ type: "text", value: `${locale} complete note.` }] }]] },
+      ] }] },
+    });
+  }
+});
+
 it.each(["blog", "architecture", "comparison"] as const)("reads actual %s translations and bodies", (kind) => {
   for (const locale of ["ja", "en", "zh"]) seed(kind, locale);
   const value = read().find((item) => item.kind === kind)!;

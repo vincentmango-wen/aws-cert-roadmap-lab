@@ -8,6 +8,9 @@ export const enDictionary: UiDictionary = {
     original: "Original announcement", correction: "Correction announcement",
     categories: { blog: "Blog", architecture: "Architecture", comparison: "Comparison", "question-bank": "Question-bank announcement", feature: "Feature announcement" },
     dates: { published: "Published", updated: "Updated", announced: "Announced" },
+    events: { new: "New", update: "Update" },
+    eventDescriptions: { new: "First publication", update: "Content update" },
+    notes: "Update notes", missingNotes: "This version has no update notes.",
   },
   site: {
     name: "AWS Cert Roadmap Lab",

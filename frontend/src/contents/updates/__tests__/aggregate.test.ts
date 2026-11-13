@@ -8,6 +8,53 @@ export function article(kind: ArticleKind = "blog", id = "one"): ArticleCandidat
 }
 const run = (articles: ArticleCandidate[], isPublicPath = () => true) => aggregateUpdates({ articles, announcements: [], today: "2026-11-12", isPublicPath });
 
+function notes(value: ArticleCandidate, date: string) {
+  for (const locale of ["ja", "en", "zh"] as const) value.translations[locale]!.correctionNotes = {
+    errors: [], entries: [{ date, blocks: [{ type: "paragraph", children: [{ type: "text", value: `${locale} complete correction.` }] }] }],
+  };
+  return value;
+}
+
+it("distinguishes same-day first publication from a recorded same-day correction without expiry", () => {
+  const fresh = article();
+  expect(run([fresh]).itemsByLocale.en[0]).toMatchObject({ eventKind: "new", publishedAt: "2026-11-01", changeNotes: { status: "not-applicable" } });
+  notes(fresh, "2026-11-01");
+  const result = aggregateUpdates({ articles: [fresh], announcements: [], today: "2027-11-01", isPublicPath: () => true });
+  for (const locale of ["ja", "en", "zh"] as const) expect(result.itemsByLocale[locale][0]).toMatchObject({
+    eventKind: "update", dateLabel: "updated", date: "2026-11-01", publishedAt: "2026-11-01",
+    changeNotes: { status: "available", entry: { date: "2026-11-01", blocks: [{ type: "paragraph", children: [{ type: "text", value: `${locale} complete correction.` }] }] } },
+  });
+});
+
+it("retains both recorded dates and selects only the current correction entry", () => {
+  const value = notes(article(), "2026-11-09");
+  for (const t of Object.values(value.translations)) {
+    t.updatedAt = "2026-11-09";
+    t.correctionNotes!.entries.unshift({ date: "2026-11-02", blocks: [{ type: "paragraph", children: [{ type: "text", value: "Old note" }] }] });
+  }
+  const item = run([value]).itemsByLocale.en[0];
+  expect(item).toMatchObject({ eventKind: "update", publishedAt: "2026-11-01", updatedAt: "2026-11-09", changeNotes: { status: "available", entry: { date: "2026-11-09" } } });
+  expect(JSON.stringify(item.changeNotes)).not.toContain("Old note");
+});
+
+it.each(["absent", "older", "future", "one-locale-missing", "malformed"])("discloses %s notes consistently without removing the article", (condition) => {
+  const value = notes(article(), "2026-11-09");
+  for (const t of Object.values(value.translations)) t.updatedAt = "2026-11-09";
+  if (condition === "absent") for (const t of Object.values(value.translations)) delete t.correctionNotes;
+  if (condition === "older" || condition === "future") for (const t of Object.values(value.translations)) t.correctionNotes!.entries[0].date = condition === "older" ? "2026-11-02" : "2026-11-13";
+  if (condition === "one-locale-missing") delete value.translations.zh!.correctionNotes;
+  if (condition === "malformed") value.translations.en!.correctionNotes!.errors.push("invalid-entry-date");
+  const result = run([value]);
+  for (const locale of ["ja", "en", "zh"] as const) expect(result.itemsByLocale[locale]).toMatchObject([{ eventKind: "update", changeNotes: { status: "missing" } }]);
+  expect(result.diagnostics.length).toBeGreaterThan(0);
+});
+
+it("keeps one consistent Update event for a same-day correction with incomplete locale notes", () => {
+  const value = notes(article(), "2026-11-01");
+  delete value.translations.zh!.correctionNotes;
+  for (const items of Object.values(run([value]).itemsByLocale)) expect(items[0]).toMatchObject({ eventKind: "update", dateLabel: "updated", changeNotes: { status: "missing" } });
+});
+
 describe.each(["blog", "architecture", "comparison"] as const)("%s eligibility", (kind) => {
   it("localizes a single common inventory", () => {
     const result = run([article(kind)]);

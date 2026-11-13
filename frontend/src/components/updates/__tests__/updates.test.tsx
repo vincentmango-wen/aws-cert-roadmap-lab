@@ -9,13 +9,50 @@ import JaHome from "@/app/(site)/page";
 import EnHome from "@/app/(site)/en/page";
 import ZhHome from "@/app/(site)/zh/page";
 
-vi.mock("@/contents/updates", () => ({
-  getUpdatesInventory: () => ({ itemsByLocale: Object.fromEntries(["ja", "en", "zh"].map((locale) => [locale, ["one", "two", "three", "four"].map((id) => ({ id: `announcement:${id}`, category: "feature", date: "2026-11-09", dateLabel: "announced", title: `${locale} ${id}`, summary: "Summary", links: [] }))])), diagnostics: [] }),
-  selectHomeUpdates: (items: UpdateItem[]) => items.slice(0, 3),
-}));
-const item: UpdateItem = { id: "announcement:sample", category: "question-bank", date: "2026-11-09", dateLabel: "announced", title: "Title", summary: "Summary", links: [{ href: "/zh/questions/saa", label: "查看 SAA-C03 題庫" }] };
+vi.mock("@/contents/updates", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/contents/updates")>();
+  return { ...actual,
+    getUpdatesInventory: () => ({ itemsByLocale: Object.fromEntries(["ja", "en", "zh"].map((locale) => [locale, [
+      ...["one", "two", "three", "four"].map((id) => ({ id: `announcement:${id}`, category: "feature", date: "2026-11-09", dateLabel: "announced", eventKind: "new", changeNotes: { status: "not-applicable" }, title: `${locale} ${id}`, summary: "Summary", links: [] })),
+      ...[["002", "aws-free-tier-portfolio"], ["008", "clf-aws-pricing-basics"], ["015", "saa-decoupling-sqs-sns-eventbridge"]].map(([id, slug]) => ({ id: `blog:blog-${id}`, category: "blog", blogCategory: "CLF", date: "2026-11-09", dateLabel: "updated", publishedAt: id === "002" ? "2026-06-01" : "2026-06-07", updatedAt: "2026-11-09", eventKind: "update", changeNotes: { status: "available", entry: { date: "2026-11-09", blocks: [{ type: "paragraph", children: [{ type: "text", value: `${locale} complete note ${id}` }] }] } }, title: `${locale} article ${id}`, summary: `${locale} summary ${id}`, links: [{ href: `${locale === "ja" ? "" : `/${locale}`}/blog/${slug}`, label: `${locale} article ${id}` }] })),
+    ]])), diagnostics: [] }),
+  };
+});
+const item: UpdateItem = { id: "announcement:sample", category: "question-bank", date: "2026-11-09", dateLabel: "announced", title: "Title", summary: "Summary", eventKind: "new", changeNotes: { status: "not-applicable" }, links: [{ href: "/zh/questions/saa", label: "查看 SAA-C03 題庫" }] };
 
 describe.each(["ja", "en", "zh"] as const)("%s presentation", (locale) => {
+  it("renders both dates, permanent event labels and complete safe update notes", () => {
+    const note = "Full correction with its applicability and limitations retained.";
+    const value: UpdateItem = { ...item, category: "blog", eventKind: "update", dateLabel: "updated", publishedAt: "2026-06-07", updatedAt: "2026-11-09", changeNotes: { status: "available", entry: { date: "2026-11-09", blocks: [
+      { type: "list", ordered: false, items: [
+        [{ type: "paragraph", children: [{ type: "text", value: note }] }],
+        [{ type: "paragraph", children: [{ type: "text", value: "Second complete bullet." }] }],
+      ] },
+      { type: "paragraph", children: [{ type: "link", href: "https://docs.aws.amazon.com/example", children: [{ type: "text", value: "Official source" }] }] },
+    ] } } };
+    const html = renderToStaticMarkup(<UpdateCard item={value} locale={locale} />);
+    expect(html).toContain(">Update<");
+    expect(html).toContain('<time dateTime="2026-06-07">');
+    expect(html).toContain('<time dateTime="2026-11-09">');
+    expect(html).toContain(note);
+    expect(html).toContain("Second complete bullet.");
+    expect(html).toContain('href="https://docs.aws.amazon.com/example"');
+    expect(html).not.toContain("line-clamp");
+    const fresh = renderToStaticMarkup(<UpdateCard item={item} locale={locale} />);
+    expect(fresh).toContain(">New<");
+    const sameDay = renderToStaticMarkup(<UpdateCard item={{ ...value, publishedAt: "2026-11-09" }} locale={locale} />);
+    expect(sameDay).toContain(">Update<");
+    expect((sameDay.match(/<time /g) ?? [])).toHaveLength(2);
+  });
+  it("discloses missing notes and refuses unsafe authored note markup", () => {
+    const missing = { ja: "この版には更新内容が記録されていません。", en: "This version has no update notes.", zh: "此版本未附更新說明。" };
+    const value: UpdateItem = { ...item, eventKind: "update", changeNotes: { status: "missing" } };
+    expect(renderToStaticMarkup(<UpdateCard item={value} locale={locale} />)).toContain(missing[locale]);
+    value.changeNotes = { status: "available", entry: { date: value.date, blocks: [{ type: "paragraph", children: [{ type: "link", href: "javascript:alert(1)", children: [{ type: "text", value: "Unsafe" }] }] }] } };
+    const html = renderToStaticMarkup(<UpdateCard item={value} locale={locale} />);
+    expect(html).toContain(missing[locale]);
+    expect(html).not.toContain("javascript:");
+  });
   it("renders localized categories, dates, semantic time and focusable links", () => {
     const html = renderToStaticMarkup(<UpdateCard item={item} locale={locale} />);
     const labels = getDictionary(locale).updates;
@@ -59,7 +96,8 @@ it.each([["ja", JaHome], ["en", EnHome], ["zh", ZhHome]] as const)("places exact
   const html = renderToStaticMarkup(<Home />);
   const updates = html.indexOf('id="updates-heading"');
   const prefix = locale === "ja" ? "" : `/${locale}`;
-  const blog = html.indexOf(`href="${prefix}/blog/aws-cloud-practitioner-roadmap"`);
+  const blog = html.indexOf(`href="${prefix}/blog/aws-free-tier-portfolio"`);
+  expect(blog).toBeGreaterThan(-1);
   expect(updates).toBeGreaterThan(blog);
   expect(html.indexOf("Portfolio Architecture")).toBeGreaterThan(updates);
   expect([...html.matchAll(/data-update-id="([^"]+)"/g)].map((match) => match[1])).toEqual(["announcement:one", "announcement:two", "announcement:three"]);
@@ -76,7 +114,9 @@ it.each([
   expect(sections).toHaveLength(6);
   expect(sections[0]).toContain("<h1");
   expect(sections[1]).toContain(`href="${prefix}/blog"`);
-  expect(sections[1]).toContain(`href="${prefix}/blog/aws-cloud-practitioner-roadmap"`);
+  expect(sections[1]).toContain(`href="${prefix}/blog/aws-free-tier-portfolio"`);
+  expect([...sections[1].matchAll(/data-article-id="([^"]+)"/g)].map((match) => match[1])).toEqual(["blog:blog-002", "blog:blog-008", "blog:blog-015"]);
+  for (const id of ["002", "008", "015"]) expect(sections[1]).toContain(`${locale} complete note ${id}`);
   expect(sections[2]).toContain('id="updates-heading"');
   expect(sections[3]).toContain(learningHeading);
   expect(sections[4]).toContain("Cloud Practitioner");

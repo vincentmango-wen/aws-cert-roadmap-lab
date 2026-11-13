@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createAbsoluteUrl, createLocaleAwareRobots, siteConfig } from "@/lib/seo";
 import { UpdatesSection } from "@/components/updates/UpdatesSection";
-import { getUpdatesInventory, selectHomeUpdates } from "@/contents/updates";
+import { ChangeDetails } from "@/components/updates/ChangeDetails";
+import { getUpdatesInventory, selectHomeUpdates, selectLatestArticles } from "@/contents/updates";
 
 const pagePath = "/zh";
 
@@ -11,13 +12,6 @@ type FeatureCard = {
   description: string;
   href: string;
   label: string;
-};
-
-type BlogPreview = {
-  title: string;
-  description: string;
-  href: string;
-  category: string;
 };
 
 type AwsService = {
@@ -100,30 +94,6 @@ const featureCards: FeatureCard[] = [
   },
 ];
 
-const blogPreviews: BlogPreview[] = [
-  {
-    title: "AWS Cloud Practitioner學習路線圖",
-    description:
-      "整理初學者準備Cloud Practitioner時，應該先掌握的學習順序與重點。",
-    href: "/zh/blog/aws-cloud-practitioner-roadmap",
-    category: "CLF",
-  },
-  {
-    title: "用AWS免費額度打造作品集的思路",
-    description:
-      "說明個人開發如何控制成本，同時展示AWS實作經驗與雲端設計思維。",
-    href: "/zh/blog/aws-free-tier-portfolio",
-    category: "Portfolio",
-  },
-  {
-    title: "用S3與CloudFront發布靜態網站",
-    description:
-      "學習不直接公開S3，而是透過CloudFront與OAC安全發布靜態網站的基本架構。",
-    href: "/zh/blog/s3-cloudfront-static-site",
-    category: "Serverless",
-  },
-];
-
 const awsServices: AwsService[] = [
   {
     name: "Amazon S3",
@@ -144,6 +114,8 @@ const awsServices: AwsService[] = [
 ];
 
 export default function ChineseHomePage(): React.JSX.Element {
+  const inventory = getUpdatesInventory().itemsByLocale.zh;
+  const blogPreviews = selectLatestArticles(inventory);
   return (
     <div className="space-y-20">
       <section className="rounded-3xl bg-slate-950 px-6 py-16 text-white shadow-sm sm:px-10 lg:px-16">
@@ -237,20 +209,23 @@ export default function ChineseHomePage(): React.JSX.Element {
         <div className="grid gap-5 md:grid-cols-3">
           {blogPreviews.map((post) => (
             <article
-              key={post.href}
+              key={post.id}
+              data-article-id={post.id}
               className="rounded-2xl border border-[#0f766e] bg-white p-6 shadow-sm"
             >
               <span className="rounded-full bg-[#ccfbf1] px-3 py-1 text-xs font-bold text-[#115e59]">
-                {post.category}
+                {post.blogCategory}
               </span>
+              <ChangeDetails item={post} locale="zh" part="metadata" tone="article" />
               <h3 className="mt-4 text-lg font-bold leading-7 text-[#134e4a]">
                 {post.title}
               </h3>
               <p className="mt-3 text-sm leading-6 text-[#334155]">
-                {post.description}
+                {post.summary}
               </p>
+              <ChangeDetails item={post} locale="zh" part="notes" tone="article" />
               <Link
-                href={post.href}
+                href={post.links[0].href}
                 className="mt-5 inline-flex text-sm font-bold text-[#115e59] hover:text-[#134e4a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0f766e]"
               >
                 閱讀文章 →
@@ -260,7 +235,7 @@ export default function ChineseHomePage(): React.JSX.Element {
         </div>
       </section>
 
-      <UpdatesSection items={selectHomeUpdates(getUpdatesInventory().itemsByLocale.zh)} locale="zh" />
+      <UpdatesSection items={selectHomeUpdates(inventory)} locale="zh" />
 
       <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
         <div className="space-y-3">

@@ -105,6 +105,9 @@ export type UiDictionary = {
     original: string; correction: string;
     categories: Record<"blog" | "architecture" | "comparison" | "question-bank" | "feature", string>;
     dates: Record<"published" | "updated" | "announced", string>;
+    events: Record<"new" | "update", string>;
+    eventDescriptions: Record<"new" | "update", string>;
+    notes: string; missingNotes: string;
   };
   site: {
     name: string;
@@ -219,6 +222,9 @@ export const jaDictionary: UiDictionary = {
     original: "元のお知らせ", correction: "訂正のお知らせ",
     categories: { blog: "ブログ", architecture: "構成図", comparison: "サービス比較", "question-bank": "問題集のお知らせ", feature: "機能のお知らせ" },
     dates: { published: "公開", updated: "更新", announced: "お知らせ" },
+    events: { new: "New", update: "Update" },
+    eventDescriptions: { new: "初回公開", update: "内容の更新" },
+    notes: "更新・訂正内容", missingNotes: "この版には更新内容が記録されていません。",
   },
   site: {
     name: "AWS資格ロードマップラボ",

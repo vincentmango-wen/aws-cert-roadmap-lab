@@ -5,7 +5,8 @@ import { locales, type Locale } from "@/i18n/locales";
 import { blogPosts } from "@/contents/blog/blogPosts";
 import { parseFrontmatterBlock, removeLeadingH1 } from "@/app/(site)/blog/blog-content-loader";
 import type { ArticleCandidate, ArticleTranslation } from "./types";
-export type BlogRegistryEntry = { postId: string; slug: string; publishedAt: string; updatedAt?: string; published: boolean; noIndex?: boolean };
+import { parseCorrectionNotes } from "./corrections";
+export type BlogRegistryEntry = { postId: string; slug: string; publishedAt: string; updatedAt?: string; published: boolean; noIndex?: boolean; category?: string };
 type Metadata = Record<string, unknown>;
 const text = (value: unknown): string => typeof value === "string" ? value : "";
 
@@ -15,10 +16,10 @@ function readBody(root: string, folder: string, locale: Locale, slug: string) {
   if (!fs.existsSync(file)) return null;
   // Preserve date strings, rather than allowing YAML to coerce them into Date values.
   const parsed = matter(fs.readFileSync(file, "utf8"), { engines: { yaml: parseFrontmatterBlock } });
-  return { data: parsed.data as Metadata, body: parsed.content };
+  return { data: parsed.data as Metadata, body: parsed.content, sourcePath: file };
 }
 
-function translation(meta: Metadata, mdx: ReturnType<typeof readBody>, idKey: string, localizedDisplay: boolean): ArticleTranslation {
+function translation(meta: Metadata, mdx: ReturnType<typeof readBody>, idKey: string, localizedDisplay: boolean, locale: Locale): ArticleTranslation {
   const explicit = mdx?.data ?? {};
   const id = text(meta[idKey]), slug = text(meta.slug);
   const title = text(localizedDisplay ? explicit.title : meta.title);
@@ -34,6 +35,9 @@ function translation(meta: Metadata, mdx: ReturnType<typeof readBody>, idKey: st
     noIndex: meta.noIndex === true || explicit.noIndex === true,
     bodyPresent: !!mdx && removeLeadingH1(mdx.body, title).trim().length > 0,
     metadataConflict: conflicts || malformedFlag,
+    correctionNotes: parseCorrectionNotes(mdx?.body ?? "", locale),
+    blogCategory: localizedDisplay ? text(explicit.category ?? meta.category) : undefined,
+    sourcePath: mdx?.sourcePath,
   };
 }
 
@@ -44,7 +48,7 @@ export function readArticleCandidates(options: { contentsRoot?: string; blogRegi
     const translations: ArticleCandidate["translations"] = {};
     for (const locale of locales) {
       const mdx = readBody(root, "blog", locale, meta.slug);
-      if (mdx) translations[locale] = translation(meta, mdx, "postId", true);
+      if (mdx) translations[locale] = translation(meta, mdx, "postId", true, locale);
     }
     return { kind: "blog", id: meta.postId, slug: meta.slug, translations };
   });
@@ -62,7 +66,7 @@ export function readArticleCandidates(options: { contentsRoot?: string; blogRegi
         if (candidate.translations[locale]) {
           candidate.translations[locale]!.metadataConflict = true;
         } else {
-          candidate.translations[locale] = translation(meta, readBody(root, folder, locale, slug), idKey, false);
+          candidate.translations[locale] = translation(meta, readBody(root, folder, locale, slug), idKey, false, locale);
         }
         grouped.set(id, candidate);
       }

@@ -24,7 +24,8 @@ it.each([
   const items = inventory.itemsByLocale[locale];
   const html = renderToStaticMarkup(createElement(Page));
   expect(ids(html)).toEqual(items.map((item) => item.id));
-  expect([...html.matchAll(/dateTime="([^"]+)"/g)].map((match) => match[1])).toEqual(items.map((item) => item.date));
+  expect([...html.matchAll(/data-date-kind="effective"[^>]*>[\s\S]*?<time dateTime="([^"]+)"/g)].map((match) => match[1])).toEqual(items.map((item) => item.date));
+  expect([...html.matchAll(/data-date-kind="published"[^>]*>[\s\S]*?<time dateTime="([^"]+)"/g)].map((match) => match[1])).toEqual(items.filter((item) => item.eventKind === "update" && item.publishedAt).map((item) => item.publishedAt));
   expect(html).toContain(getDictionary(locale).updates.title);
   expect(ids(renderToStaticMarkup(createElement(Home)))).toEqual(items.slice(0, 3).map((item) => item.id));
   expect(metadata.title).toBe(getDictionary(locale).updates.title);

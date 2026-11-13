@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo";
 import { UpdatesSection } from "@/components/updates/UpdatesSection";
-import { getUpdatesInventory, selectHomeUpdates } from "@/contents/updates";
+import { ChangeDetails } from "@/components/updates/ChangeDetails";
+import { getUpdatesInventory, selectHomeUpdates, selectLatestArticles } from "@/contents/updates";
 
 export const metadata: Metadata = createPageMetadata({
   title: "AWS Cert Roadmap Lab",
@@ -28,13 +29,6 @@ type FeatureCard = {
   description: string;
   href: string;
   label: string;
-};
-
-type BlogPreview = {
-  title: string;
-  description: string;
-  href: string;
-  category: string;
 };
 
 type AwsService = {
@@ -73,30 +67,6 @@ const featureCards: FeatureCard[] = [
   },
 ];
 
-const blogPreviews: BlogPreview[] = [
-  {
-    title: "AWS Cloud Practitioner Learning Roadmap",
-    description:
-      "A beginner-friendly learning path for preparing for AWS Cloud Practitioner while building practical AWS knowledge.",
-    href: "/en/blog/aws-cloud-practitioner-roadmap",
-    category: "CLF",
-  },
-  {
-    title: "How to Build an AWS Portfolio with the Free Tier",
-    description:
-      "Learn how to keep AWS costs low while showing practical cloud implementation experience through a portfolio project.",
-    href: "/en/blog/aws-free-tier-portfolio",
-    category: "Portfolio",
-  },
-  {
-    title: "Static Site Hosting with S3 and CloudFront",
-    description:
-      "Understand the basic architecture for serving a static website through CloudFront while keeping the S3 bucket private.",
-    href: "/en/blog/s3-cloudfront-static-site",
-    category: "Serverless",
-  },
-];
-
 const awsServices: AwsService[] = [
   {
     name: "Amazon S3",
@@ -117,6 +87,8 @@ const awsServices: AwsService[] = [
 ];
 
 export default function EnglishHomePage() {
+  const inventory = getUpdatesInventory().itemsByLocale.en;
+  const blogPreviews = selectLatestArticles(inventory);
   return (
     <div className="space-y-20">
       <section className="rounded-3xl bg-slate-950 px-6 py-16 text-white shadow-sm sm:px-10 lg:px-16">
@@ -215,20 +187,23 @@ export default function EnglishHomePage() {
         <div className="grid gap-5 md:grid-cols-3">
           {blogPreviews.map((post) => (
             <article
-              key={post.href}
+              key={post.id}
+              data-article-id={post.id}
               className="rounded-2xl border border-[#0f766e] bg-white p-6 shadow-sm"
             >
               <span className="rounded-full bg-[#ccfbf1] px-3 py-1 text-xs font-bold text-[#115e59]">
-                {post.category}
+                {post.blogCategory}
               </span>
+              <ChangeDetails item={post} locale="en" part="metadata" tone="article" />
               <h3 className="mt-4 text-lg font-bold leading-7 text-[#134e4a]">
                 {post.title}
               </h3>
               <p className="mt-3 text-sm leading-6 text-[#334155]">
-                {post.description}
+                {post.summary}
               </p>
+              <ChangeDetails item={post} locale="en" part="notes" tone="article" />
               <Link
-                href={post.href}
+                href={post.links[0].href}
                 className="mt-5 inline-flex text-sm font-bold text-[#115e59] hover:text-[#134e4a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0f766e]"
               >
                 Read article →
@@ -238,7 +213,7 @@ export default function EnglishHomePage() {
         </div>
       </section>
 
-      <UpdatesSection items={selectHomeUpdates(getUpdatesInventory().itemsByLocale.en)} locale="en" />
+      <UpdatesSection items={selectHomeUpdates(inventory)} locale="en" />
 
       <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
         <div className="space-y-3">
