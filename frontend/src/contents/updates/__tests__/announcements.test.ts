@@ -33,9 +33,9 @@ it("requires a correcting announcement to be explicitly Update", () => {
   expect(run([make(), correction]).itemsByLocale.en.map((value) => value.id)).toEqual(["announcement:first"]);
 });
 
-it("contains only the exact approved ten-question announcement", () => {
-  expect(announcements).toHaveLength(1);
-  expect(announcements[0]).toMatchObject({ id: "saa-c03-051-060", category: "question-bank", date: "2026-11-09", published: true, translations: {
+it("contains the exact approved SAA and feature announcements", () => {
+  expect(announcements.map((value) => value.id).sort()).toEqual(["latest-articles-and-updates", "saa-c03-051-060"]);
+  expect(announcements.find((value) => value.id === "saa-c03-051-060")).toMatchObject({ id: "saa-c03-051-060", category: "question-bank", date: "2026-11-09", published: true, translations: {
     zh: { title: "新增 10 道 SAA-C03 情境題", summary: "新增 10 道 SAA-C03 情境題，提供繁體中文、日文與英文版本，附四個選項、正確答案及逐項解析。" },
     ja: { title: "SAA-C03のシナリオ問題を10問追加", summary: "SAA-C03のシナリオ問題を10問追加しました。日本語・英語・繁体字中国語で、4つの選択肢、正解、各選択肢の解説を確認できます。" },
     en: { title: "10 new SAA-C03 scenario questions", summary: "Added 10 SAA-C03 scenario questions in Japanese, English, and Traditional Chinese, with four choices, the correct answer, and explanations for each choice." },
@@ -102,4 +102,57 @@ it("sorts mixed items consistently and previews exactly the first three", () => 
     expect(selectHomeUpdates(items.slice(0, 1))).toEqual(items.slice(0, 1));
   }
   expect(selectHomeUpdates([])).toEqual([]);
+});
+
+const approvedFeatureCopy = {
+  "zh": {
+    "title": "新增「最新文章」與「最新內容與公告」",
+    "summary": "首頁新增「最新文章」與「最新內容與公告」，讓你更容易找到近期發布或更新的學習內容，以及網站的新功能與題庫消息。 「最新文章」依文章的發布或更新日期，列出最近的三篇部落格文章，並提供文章連結。 「最新內容與公告」彙整文章、架構與比較內容的發布及更新，以及題庫和網站功能公告。首頁顯示最近三則，完整清單可在「最新內容與公告」頁查看。 每則項目會標示新增或更新及相關日期；更新內容會呈現已記錄的修正說明與來源連結，缺少說明時也會明確標示。上述功能提供繁體中文、英文與日文版本。",
+    "homeLabel": "前往首頁查看最新文章",
+    "updatesLabel": "查看最新內容與公告"
+  },
+  "en": {
+    "title": "Introducing Latest Articles and Latest Content and Announcements",
+    "summary": "The home page adds Latest Articles and Latest Content and Announcements, making it easier to find recently published or updated learning content, new site features, and question-bank news. Latest Articles lists the three most recent blog articles by publication or update date and provides links to the articles. Latest Content and Announcements brings together new and updated articles, architecture guides, and comparisons, as well as question-bank and site-feature announcements. The home page shows the three most recent items; the full list is available on the Latest Content and Announcements page. Each item shows whether it is new or updated and its relevant date. Updated content includes recorded correction notes and source links; missing notes are also clearly indicated. These features are available in Traditional Chinese, English, and Japanese.",
+    "homeLabel": "View Latest Articles on the home page",
+    "updatesLabel": "View Latest Content and Announcements"
+  },
+  "ja": {
+    "title": "「最新記事」と「最新コンテンツとお知らせ」を追加",
+    "summary": "ホームページに「最新記事」と「最新コンテンツとお知らせ」を追加し、最近公開・更新された学習コンテンツや、サイトの新機能、問題集のお知らせを見つけやすくしました。 「最新記事」では、公開日または更新日が新しいブログ記事を3件表示し、各記事へのリンクを掲載しています。 「最新コンテンツとお知らせ」では、記事、アーキテクチャ解説、比較コンテンツの公開・更新情報と、問題集やサイト機能のお知らせをまとめて確認できます。ホームページには最新の3件を表示し、全件は「最新コンテンツとお知らせ」ページで確認できます。 各項目には新規・更新の区分と関連する日付を表示します。更新されたコンテンツには、記録された修正内容と参照元へのリンクを表示し、説明がない場合もその旨を明示します。これらの機能は繁体字中国語、英語、日本語で利用できます。",
+    "homeLabel": "ホームページで最新記事を見る",
+    "updatesLabel": "最新コンテンツとお知らせを見る"
+  }
+} as const;
+
+it.each(["ja", "en", "zh"] as const)("publishes the complete approved feature announcement and localized destinations in %s", (locale) => {
+  const feature = announcements.find((value) => value.id === "latest-articles-and-updates");
+  expect(feature).toBeDefined();
+  if (!feature) return;
+  const approved = approvedFeatureCopy[locale];
+  expect(feature).toMatchObject({ category: "feature", eventKind: "new", date: "2026-11-13", published: true });
+  expect(feature.corrects).toBeUndefined();
+  expect(feature.translations[locale]).toEqual({ title: approved.title, summary: approved.summary });
+  expect(feature.links.map((link) => [link.path, link.labels[locale]])).toEqual([["/", approved.homeLabel], ["/updates", approved.updatesLabel]]);
+  const result = aggregateUpdates({ articles: [], announcements, today: "2026-11-13", isPublicPath: (target, language) => isPublicUpdatesPath(target, language) });
+  const value = result.itemsByLocale[locale].find((entry) => entry.id === "announcement:latest-articles-and-updates");
+  const destinations = { ja: ["/", "/updates"], en: ["/en", "/en/updates"], zh: ["/zh", "/zh/updates"] };
+  expect(value).toMatchObject({ eventKind: "new", date: "2026-11-13", dateLabel: "announced", changeNotes: { status: "not-applicable" }, title: approved.title, summary: approved.summary });
+  expect(value?.links.map((link) => link.href)).toEqual(destinations[locale]);
+  expect(result.diagnostics).toEqual([]);
+});
+
+it.each(["unpublished", "missing-title", "missing-summary", "empty-label", "sealed-destination"] as const)("omits the feature consistently across locales when %s", (failure) => {
+  const source = announcements.find((value) => value.id === "latest-articles-and-updates");
+  expect(source).toBeDefined();
+  if (!source) return;
+  const feature = structuredClone(source);
+  if (failure === "unpublished") feature.published = false;
+  if (failure === "missing-title") feature.translations.en.title = "";
+  if (failure === "missing-summary") feature.translations.ja.summary = " ";
+  if (failure === "empty-label") feature.links[1].labels.zh = "";
+  const result = aggregateUpdates({ articles: [], announcements: [feature], today: "2026-11-13", isPublicPath: (target, locale) => !(failure === "sealed-destination" && locale === "en" && target === "/updates") });
+  for (const locale of ["ja", "en", "zh"] as const) expect(result.itemsByLocale[locale]).toEqual([]);
+  const code = failure === "unpublished" ? "unpublished" : failure === "missing-title" || failure === "missing-summary" ? "missing-translation" : "invalid-public-link";
+  expect(result.diagnostics).toContainEqual({ code, id: "announcement:latest-articles-and-updates" });
 });
