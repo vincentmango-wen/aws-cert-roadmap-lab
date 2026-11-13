@@ -27,7 +27,8 @@ const manifestDiff = (a, b) => [...new Set([...Object.keys(a), ...Object.keys(b)
 
 export function manifest(root, profile) {
   const files = execFileSync('git', ['-C', root, 'ls-files', '--cached', '--others', '--exclude-standard', '-z'], { maxBuffer: 20 * 1024 * 1024 }).toString().split('\0').filter(Boolean);
-  const ignored = execFileSync('git', ['-C', root, 'ls-files', '--others', '--ignored', '--exclude-standard', '-z'], { maxBuffer: 20 * 1024 * 1024 }).toString().split('\0').filter(Boolean);
+  const ignoredRoots = fs.readdirSync(root).filter(name => name !== 'tmp').map(name => `:(top,literal)${name}`);
+  const ignored = ignoredRoots.length ? execFileSync('git', ['-C', root, 'ls-files', '--others', '--ignored', '--exclude-standard', '-z', '--', ...ignoredRoots], { maxBuffer: 20 * 1024 * 1024 }).toString().split('\0').filter(Boolean) : [];
   // Environment files are deliberately not copied or hashed. Refuse to run with hidden dotenv inputs.
   const secretName = name => /(^|\/)\.env($|\.)/.test(name) && !/\.example$/.test(name);
   if ([...files, ...ignored].some(name => !name.includes('node_modules/') && !name.startsWith('tmp/') && secretName(name))) throw Error('Unrecorded dotenv input: remove from verification workspace, do not copy secrets');
