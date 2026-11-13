@@ -60,7 +60,25 @@
     "frontend/contents/blog/en/serverless-contact-api-flow.mdx",
     "frontend/contents/blog/zh/serverless-contact-api-flow.mdx",
     "frontend/contents/blog/en/lambda-cloudwatch-logs-check.mdx",
-    "frontend/contents/blog/zh/lambda-cloudwatch-logs-check.mdx"
+    "frontend/contents/blog/zh/lambda-cloudwatch-logs-check.mdx",
+    "frontend/src/app/(site)/blog/blog-content-loader.ts",
+    "docs/superpowers/plans/2026-11-13-pr349-repair17.md",
+    "frontend/contents/architectures/ja/static-site-s3-cloudfront.mdx",
+    "frontend/contents/architectures/ja/serverless-api-basic.mdx",
+    "frontend/contents/architectures/ja/three-tier-vpc.mdx",
+    "frontend/contents/architectures/ja/high-availability-web-app.mdx",
+    "frontend/contents/architectures/ja/eventbridge-lambda-batch.mdx",
+    "frontend/contents/architectures/ja/private-subnet-vpc-endpoint.mdx",
+    "frontend/contents/architectures/ja/sns-sqs-fanout.mdx",
+    "frontend/contents/architectures/ja/ecs-fargate-web-app.mdx",
+    "frontend/contents/architectures/ja/cloudwatch-monitoring-basic.mdx",
+    "frontend/contents/comparisons/ja/s3-vs-ebs-vs-efs.mdx",
+    "frontend/contents/comparisons/ja/rds-vs-dynamodb.mdx",
+    "frontend/contents/comparisons/ja/cloudwatch-vs-cloudtrail-vs-config.mdx",
+    "frontend/contents/comparisons/ja/alb-vs-nlb-vs-cloudfront.mdx",
+    "frontend/contents/comparisons/ja/multi-az-vs-read-replica.mdx",
+    "frontend/contents/comparisons/ja/security-group-vs-nacl.mdx",
+    "frontend/contents/comparisons/ja/secrets-manager-vs-parameter-store.mdx"
   ],
   "maxRepairs": 3,
   "humanAcceptance": [
@@ -74,7 +92,8 @@
     "Review three home locales ordered Hero, Articles, Updates, Learning, Certification, Portfolio; approved teal article palette, preserved amber palette, 24px panel corners and top/bottom32/40/48px at640/1024 breakpoints; preserve80px gaps, widths, cards, content and links",
     "Review exact 40 en/zh noIndex removals for blog-006 through blog-025; Japanese/content dates/body unchanged; actual metadata and exported robots index/follow, unchanged 78 blog sitemap URLs and other restrictions preserved",
     "Review 52 ordered items per locale, latest blogs 002/008/015 by effective date and stable ID, permanent New/Update labels, complete current correction bullets/source links and explicit missing notes on home sections/full updates",
-    "Review safe correction parser, approved unified/remark-parse dependencies and lockfile, reviewed protected tests, responsive/keyboard/contrast evidence and preserved actual 15 repairs (CLI 3 plus user-authorized exceptions 4–15)"
+    "Review safe correction parser, approved unified/remark-parse dependencies and lockfile, reviewed protected tests, responsive/keyboard/contrast evidence and preserved actual 15 repairs (CLI 3 plus user-authorized exceptions 4–15)",
+    "Review explicitly authorized repair17: LF/CRLF parser parity, exactly16 JA legacy updatedAt fields synchronized to canonical JSON2026-06-21, all other dates/bodies/JSON unchanged, strict conflicts and52items preserved, exact Git-blob parity and affected SEO/browser acceptance"
   ],
   "prohibited": [
     "Changing the verification profile, weakening checks, removing assertions or adding skips",
@@ -83,5 +102,5 @@
     "Commit, push, PR, merge, auto-merge or deployment without new applicable authorization"
   ],
   "publication": "User authorized commit, push on a dedicated feature branch, and PR after approved implementation, TDD, full AIDD, responsive/keyboard/contrast checks and independent review. No merge, auto-merge or production deployment. Vercel Preview may run under existing rules.",
-  "note": "User approved the referenced plan and protected build-entry changes, then separately approved an isolated official Node 22.13.0/npm 10.9.2 toolchain. Protected-file and test changes still require reviewed rebaseline, retaining original assertions and all evidence. Later user approved home placement/color/spacing design and its implementation plan. Actual repair history is10: CLI3 plus explicitly authorized exceptions4–10; exception10 is limited to label colors, preserved card styling and focus clipping acceptance. No11 authorized; all original evidence and assertions remain. 2026-11-13 addendum: subsequent authorized exceptions 11 and 12 are recorded in tmp/home-top-sections-implementation-20261112/final-verification.json and progress.md; actual total12, CLI3. User explicitly approved the revised dates/change-notes plan, 40 localized noIndex removals, unified/remark-parse direct dependencies/lockfile, and implementation with verification/review before updating existing PR349. No repair13, new PR, merge or production deployment authorized. Earlier count statements remain historical only. 2026-11-13 exception13 explicitly authorized: declare exact existing cached unified11.0.5/remark-parse11.0.0 directly without transitive lock changes, independent review/rebaseline and unchanged npm ci; no TLS/registry/certificate/profile changes. Actual repairs13, CLI3; no14 authorized. Earlier no13 statement is historical. Subsequent user-authorized exception14 corrected only a new reader fixture newline; exception15 reused the Markdown processor and added bounded exact-locale/full-body pure-parser caching with independent results and regression tests. Actual repairs15, CLI3; no16 authorized. All earlier counts and prohibitions on later attempts are historical and superseded only by these specific approvals; no limits, assertions or evidence were reset."
+  "note": "User approved the referenced plan and protected build-entry changes, then separately approved an isolated official Node 22.13.0/npm 10.9.2 toolchain. Protected-file and test changes still require reviewed rebaseline, retaining original assertions and all evidence. Later user approved home placement/color/spacing design and its implementation plan. Actual repair history is10: CLI3 plus explicitly authorized exceptions4–10; exception10 is limited to label colors, preserved card styling and focus clipping acceptance. No11 authorized; all original evidence and assertions remain. 2026-11-13 addendum: subsequent authorized exceptions 11 and 12 are recorded in tmp/home-top-sections-implementation-20261112/final-verification.json and progress.md; actual total12, CLI3. User explicitly approved the revised dates/change-notes plan, 40 localized noIndex removals, unified/remark-parse direct dependencies/lockfile, and implementation with verification/review before updating existing PR349. No repair13, new PR, merge or production deployment authorized. Earlier count statements remain historical only. 2026-11-13 exception13 explicitly authorized: declare exact existing cached unified11.0.5/remark-parse11.0.0 directly without transitive lock changes, independent review/rebaseline and unchanged npm ci; no TLS/registry/certificate/profile changes. Actual repairs13, CLI3; no14 authorized. Earlier no13 statement is historical. Subsequent user-authorized exception14 corrected only a new reader fixture newline; exception15 reused the Markdown processor and added bounded exact-locale/full-body pure-parser caching with independent results and regression tests. Actual repairs15, CLI3; no16 authorized. All earlier counts and prohibitions on later attempts are historical and superseded only by these specific approvals; no limits, assertions or evidence were reset. 2026-11-13: exception16 was explicitly approved for ignored browser color/relationship helpers only and is preserved in the task ledger. User subsequently explicitly approved exception17, option2 of DATE-PROVENANCE-AND-OPTIONS.md: repair line-ending parsing and synchronize only the16 listed JA updatedAt fields to existing JSON2026-06-21, retaining publishedAt/body/correction history, strict conflicts and52items. Actual repairs17 (CLI3 plus exceptions4-17); no18 authorized. Existing no16/no17 statements are historical; no counter, limit or evidence is reset."
 }

@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, expect, it } from "vitest";
 import { readArticleCandidates } from "../article-sources";
+import { parseFrontmatterBlock } from "@/app/(site)/blog/blog-content-loader";
 import { aggregateUpdates } from "../aggregate";
 import { isPublishedLocale } from "@/i18n/release-gate";
 
@@ -72,3 +73,41 @@ it("reports real-source eligibility with the same IDs and dates in every locale"
   expect(sequence("zh")).toEqual(sequence("ja"));
   console.info("Real-source updates diagnostics", JSON.stringify({ candidates: candidates.length, eligible: sequence("ja").length, diagnostics: inventory.diagnostics }));
 });
+
+// A lost final frontmatter key must neither hide a real date conflict nor
+// change eligibility merely because Git or the checkout uses different EOLs.
+it.each([
+  ["LF, no terminal newline", "\n", ""],
+  ["LF, terminal newline", "\n", "\n"],
+  ["CRLF, no terminal newline", "\r\n", ""],
+  ["CRLF, terminal newline", "\r\n", "\r\n"],
+  ["gray-matter terminal CR", "\r\n", "\r"],
+])("preserves the final date and existing scalar/list values: %s", (_name, eol, ending) => {
+  const input = ['title: "Example"', 'published: true', 'tags:', '  - "aws"', '  - "study"', 'updatedAt: "2026-06-21"'].join(eol) + ending;
+  expect(parseFrontmatterBlock(input)).toEqual({ title: "Example", published: true, tags: ["aws", "study"], updatedAt: "2026-06-21" });
+});
+
+for (const kind of ["blog", "architecture", "comparison"] as const) {
+  for (const [eolName, eol] of [["LF", "\n"], ["CRLF", "\r\n"]] as const) {
+    for (const terminalNewline of [false, true]) {
+      it.each([
+        ["matching", "2026-11-09", false, 1],
+        ["conflicting", "2026-11-08", true, 0],
+      ] as const)(`${kind} ${eolName} terminalNewline=${terminalNewline} keeps %s final dates observable through the reader`, (_label, date, conflict, count) => {
+        for (const locale of ["ja", "en", "zh"] as const) {
+          seed(kind, locale, `updatedAt: "${date}"\n`);
+          const file = path.join(root, kind === "blog" ? "blog" : `${kind}s`, locale, "sample.mdx");
+          const source = fs.readFileSync(file, "utf8").replace(/\r?\n/g, eol) + (terminalNewline ? eol : "");
+          fs.writeFileSync(file, source);
+        }
+        const candidate = read().find((item) => item.kind === kind)!;
+        for (const locale of ["ja", "en", "zh"] as const) {
+          expect(candidate.translations[locale]).toMatchObject({ updatedAt: "2026-11-09", metadataConflict: conflict });
+        }
+        const inventory = aggregateUpdates({ articles: [candidate], announcements: [], today: "2026-11-13", isPublicPath: () => true });
+        for (const locale of ["ja", "en", "zh"] as const) expect(inventory.itemsByLocale[locale]).toHaveLength(count);
+        if (conflict) expect(inventory.diagnostics).toContainEqual(expect.objectContaining({ code: "metadata-conflict", id: `${kind}:b1` }));
+      });
+    }
+  }
+}
