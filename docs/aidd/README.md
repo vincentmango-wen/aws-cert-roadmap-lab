@@ -4,7 +4,7 @@
 
 ## 執行前
 
-使用 Node **22.13.0** 和 npm **10.9.2**（隨該 Node 版本）。不修改部署環境或另一份 pnpm lockfile。先確認工作區／既有變更並使用隔離 checkout。契約位於 `docs/aidd/task.json`，profile 位於 `tools/aidd/profile.json`；新任務必須由使用者批准契約與唯一任務 ID，不能重命名原任務來重置額度。 Task ownership and independent allowances follow the approved policy below; a PR and its associated issue are one task.
+使用 Node **22.13.0** 和 npm **10.9.2**（隨該 Node 版本）。不修改部署環境或另一份 pnpm lockfile。先確認工作區／既有變更並使用隔離 checkout。契約位於 `docs/aidd/task.json`，profile 位於 `tools/aidd/profile.json`；新任務必須由使用者批准契約與唯一任務 ID，不能重命名原任務來重置額度。 任務歸屬與獨立額度依下方已核准規則辦理；PR 與其對應 issue 視為同一任務。
 
 本機驗證清除任意繼承環境，只保留基本 OS 路徑及明列的 CI、telemetry 設定；不記錄完整環境或憑證。含實際 dotenv 的驗證工作區會受阻。此 profile 不重現遠端 API/site/analytics 環境，Windows 通過不代表 Ubuntu CI 通過或可部署。
 
@@ -49,15 +49,17 @@ node tools/aidd/cli.mjs verify tmp/weekly-evidence baseline
 
 基線失敗先暫停功能實作；範圍內可用同一任務剩餘額度修復，範圍外／需要改驗收或擴權則停止報告。一次修復從開始一組修正動作算起，包含其驗證；中斷仍占次數。新方案算下一次。純診斷和未變更重跑不算修復，仍應留紀錄。修 bug 任務第一次修正也計次。
 
-### Task ownership and repair allowance (approved 2026-11-16)
+### 任務歸屬與修復額度（2026-11-16 核准）
 
-- Each independently scoped and user-authorized PR or issue task has its own allowance of three repair attempts, including corrections to its baseline and validation harness. Before implementation, record its objective, acceptance criteria, related PRs/issues, predecessor tasks, and repair ledger. A PR and its associated issue represent one task, not two allowances. Multiple issues addressed as one cohesive change share one allowance.
-- Task identity follows the underlying problem and acceptance criteria, not its label or container. Continuing, reopening, replacing, splitting, or moving the same unresolved work to another issue, PR, branch, run, bundle, worktree, or clone does not create a new allowance. Review corrections and regressions caused by that work remain attached to its original task. A genuinely independent objective may receive its own allowance even in the same conversation; record why it is independent. If ownership is unclear, diagnose first and obtain user clarification before corrective changes.
-- A bug-fix task's first correction counts. An attempt starts when a set of corrective changes begins and includes its verification; interruption still consumes the attempt. A different correction approach starts the next attempt. Pure diagnosis, unchanged reruns, and expected failures in negative test fixtures do not consume attempts, but must be recorded.
-- Before exceeding a task's three attempts, report the evidence, cause, proposed correction and risk, and obtain explicit authorization for a bounded additional attempt. Submission or review does not reset the count. One-time exceptions do not authorize further attempts.
-- Apply this policy prospectively from its explicit approval. Preserve all existing counts, exceptions and evidence; do not retroactively split or renumber recorded attempts. Any transition for an active task requires an explicit user decision recorded alongside its existing history.
+- 每個範圍獨立且經使用者授權的 PR 或 issue 任務，各有三次修復額度，包含該任務基線與驗證工具的修正。實作前須記錄目標、驗收條件、相關 PR／issue、前置任務及修復紀錄。PR 與其對應 issue 是同一任務，不是兩份額度。多個 issue 若以同一組完整變更處理，須共用一份額度。
+- 任務身分依實際問題與驗收條件判定，不依標籤或承載方式判定。同一未解決工作即使延續、重開、替換、拆分，或移至另一個 issue、PR、分支、執行批次、bundle、worktree 或 clone，也不會取得新額度。審查修正及該工作造成的回歸問題仍歸屬原任務。即使在同一對話中，真正獨立的目標仍可有自己的額度，但須記錄其獨立原因。若歸屬不明，先診斷，並在修正前取得使用者釐清。
+- 修 bug 任務的第一次修正也計次。一次修復從開始一組修正動作算起，包含其驗證；中斷仍占用該次額度。採用不同修正方案時，開始計算下一次。純診斷、未變更重跑，以及負向測試 fixture 中預期發生的失敗不占修復額度，但仍須記錄。
+- 超過任務的三次額度前，須回報證據、原因、擬議修正與風險，並取得使用者對範圍明確之額外一次修復的明確授權。提交或審查不會重置次數。一次性例外不代表授權後續修復。
+- 本規則自明確核准後向前適用。保留全部既有次數、例外及證據；不得追溯拆分或重新編號已記錄的修復。進行中任務若要轉換適用方式，須由使用者明確決定，並連同既有歷史一併記錄。
 
-Record task ownership in the reviewed contract or companion ledger before implementation. Compare the objective, acceptance criteria and causal relationship with predecessor tasks; new identifiers alone do not establish independence. Link a PR and its associated issues to the same ledger. The CLI retains maxRepairs: 3 and provides no reset or extra-allowance command; semantic independence and any bounded exception require human review. Preserve the comparison-link/Blog task's original 3/3 and authorized exceptions 4 and 5 without granting it further attempts.
+實作前，在已審查的契約或附屬紀錄中記載任務歸屬。比較它與前置任務的目標、驗收條件及因果關係；只有新識別碼不能證明獨立性。PR 與其對應 issue 須連至同一份修復紀錄。CLI 保留 `maxRepairs: 3`，不提供重置或增加額度的命令；實質獨立性與任何範圍明確的例外都須經人工審查。保留比較連結／Blog 任務原有的 3/3，以及已授權的第 4、5 次例外，不授予該任務更多修復額度。
+
+目前唯一正式規則來源為專案根目錄的 [AGENTS.md](../../AGENTS.md)。本檔依使用者於 2026-11-16 的明確要求使用繁體中文；保留必要技術名詞與指令。
 
 同一 Git common directory 以任務 ID 登記 bundle，重開 bundle 或 linked worktree 不能重設該任務。這仍是合作型限制：另 clone／改 ID 或手動改紀錄不是強制防護能阻止的事，規約禁止如此繞過。重跑快照繼承修復計數與原始測試身分。
 
