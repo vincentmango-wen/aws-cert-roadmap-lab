@@ -4,7 +4,7 @@
 
 ## 執行前
 
-使用 Node **22.13.0** 和 npm **10.9.2**（隨該 Node 版本）。不修改部署環境或另一份 pnpm lockfile。先確認工作區／既有變更並使用隔離 checkout。契約位於 `docs/aidd/task.json`，profile 位於 `tools/aidd/profile.json`；新任務必須由使用者批准契約與唯一任務 ID，不能重命名原任務來重置額度。
+使用 Node **22.13.0** 和 npm **10.9.2**（隨該 Node 版本）。不修改部署環境或另一份 pnpm lockfile。先確認工作區／既有變更並使用隔離 checkout。契約位於 `docs/aidd/task.json`，profile 位於 `tools/aidd/profile.json`；新任務必須由使用者批准契約與唯一任務 ID，不能重命名原任務來重置額度。 Task ownership and independent allowances follow the approved policy below; a PR and its associated issue are one task.
 
 本機驗證清除任意繼承環境，只保留基本 OS 路徑及明列的 CI、telemetry 設定；不記錄完整環境或憑證。含實際 dotenv 的驗證工作區會受阻。此 profile 不重現遠端 API/site/analytics 環境，Windows 通過不代表 Ubuntu CI 通過或可部署。
 
@@ -49,7 +49,15 @@ node tools/aidd/cli.mjs verify tmp/weekly-evidence baseline
 
 基線失敗先暫停功能實作；範圍內可用同一任務剩餘額度修復，範圍外／需要改驗收或擴權則停止報告。一次修復從開始一組修正動作算起，包含其驗證；中斷仍占次數。新方案算下一次。純診斷和未變更重跑不算修復，仍應留紀錄。修 bug 任務第一次修正也計次。
 
-三次為任務共用上限，包含基線與 Harness 缺陷。重新開 run、worktree 或中斷不重置；第四次前需報告證據、原因、方案和風險，取得明確授權。本 CLI 刻意不提供重置或追加額度命令，超額由人審查後另設後續方案。fixture 預期故障不是實際修復嘗試。
+### Task ownership and repair allowance (approved 2026-11-16)
+
+- Each independently scoped and user-authorized PR or issue task has its own allowance of three repair attempts, including corrections to its baseline and validation harness. Before implementation, record its objective, acceptance criteria, related PRs/issues, predecessor tasks, and repair ledger. A PR and its associated issue represent one task, not two allowances. Multiple issues addressed as one cohesive change share one allowance.
+- Task identity follows the underlying problem and acceptance criteria, not its label or container. Continuing, reopening, replacing, splitting, or moving the same unresolved work to another issue, PR, branch, run, bundle, worktree, or clone does not create a new allowance. Review corrections and regressions caused by that work remain attached to its original task. A genuinely independent objective may receive its own allowance even in the same conversation; record why it is independent. If ownership is unclear, diagnose first and obtain user clarification before corrective changes.
+- A bug-fix task's first correction counts. An attempt starts when a set of corrective changes begins and includes its verification; interruption still consumes the attempt. A different correction approach starts the next attempt. Pure diagnosis, unchanged reruns, and expected failures in negative test fixtures do not consume attempts, but must be recorded.
+- Before exceeding a task's three attempts, report the evidence, cause, proposed correction and risk, and obtain explicit authorization for a bounded additional attempt. Submission or review does not reset the count. One-time exceptions do not authorize further attempts.
+- Apply this policy prospectively from its explicit approval. Preserve all existing counts, exceptions and evidence; do not retroactively split or renumber recorded attempts. Any transition for an active task requires an explicit user decision recorded alongside its existing history.
+
+Record task ownership in the reviewed contract or companion ledger before implementation. Compare the objective, acceptance criteria and causal relationship with predecessor tasks; new identifiers alone do not establish independence. Link a PR and its associated issues to the same ledger. The CLI retains maxRepairs: 3 and provides no reset or extra-allowance command; semantic independence and any bounded exception require human review. Preserve the comparison-link/Blog task's original 3/3 and authorized exceptions 4 and 5 without granting it further attempts.
 
 同一 Git common directory 以任務 ID 登記 bundle，重開 bundle 或 linked worktree 不能重設該任務。這仍是合作型限制：另 clone／改 ID 或手動改紀錄不是強制防護能阻止的事，規約禁止如此繞過。重跑快照繼承修復計數與原始測試身分。
 
