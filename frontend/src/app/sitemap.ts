@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import {
   createLocalizedSitemapItems,
@@ -8,8 +8,11 @@ import {
   type LocalizedSitemapRouteInput,
   type SitemapItem,
 } from "../i18n/seo/sitemap";
-import { isSealedPathname } from "../i18n/release-gate";
-import { getAvailableLocalesForPathname } from "../i18n/locales";
+import { isPublishedLocale, isSealedPathname } from "../i18n/release-gate";
+import { blogPosts } from "@/contents/blog/blogPosts";
+import { getPublishedBlogPosts } from "./(site)/blog/blog-detail-data";
+import { loadBlogContent } from "./(site)/blog/blog-content-loader";
+import { locales, getAvailableLocalesForPathname } from "../i18n/locales";
 
 export const dynamic = "force-static";
 
@@ -33,13 +36,6 @@ type LocalizedContent = {
   published?: unknown;
 };
 
-type MdxContentMeta = {
-  slug: string;
-  updatedAt?: string;
-  published: boolean;
-  noIndex: boolean;
-};
-
 const CONTENT_ROOT = path.join(process.cwd(), "contents");
 
 function isNonEmptyString(value: unknown): value is string {
@@ -61,60 +57,6 @@ function readRequiredJsonArray<T>(relativeFilePath: string): T[] {
   }
 
   return parsedContent as T[];
-}
-
-function extractFrontmatter(content: string): string {
-  if (!content.startsWith("---")) {
-    return "";
-  }
-
-  const closingMarkerIndex = content.indexOf("\n---", 3);
-
-  if (closingMarkerIndex === -1) {
-    return "";
-  }
-
-  return content.slice(3, closingMarkerIndex);
-}
-
-function readFrontmatterValue(frontmatter: string, key: string): string | undefined {
-  const pattern = new RegExp(`^${key}:\\s*["']?([^"'\\n]+)["']?\\s*$`, "m");
-  const match = frontmatter.match(pattern);
-
-  return match?.[1]?.trim();
-}
-
-function readMdxContentMetas(directoryName: string): MdxContentMeta[] {
-  const directoryPath = path.join(CONTENT_ROOT, directoryName);
-
-  if (!existsSync(directoryPath)) {
-    return [];
-  }
-
-  return readdirSync(directoryPath, { withFileTypes: true })
-    .filter((entry) => entry.isFile())
-    .filter((entry) => entry.name.endsWith(".mdx"))
-    .map((entry) => {
-      const slug = entry.name.replace(/\.mdx$/, "");
-      const filePath = path.join(directoryPath, entry.name);
-      const fileContent = readFileSync(filePath, "utf8");
-      const frontmatter = extractFrontmatter(fileContent);
-
-      const publishedValue = readFrontmatterValue(frontmatter, "published");
-      const noIndexValue = readFrontmatterValue(frontmatter, "noIndex");
-      const updatedAt =
-        readFrontmatterValue(frontmatter, "updatedAt") ??
-        readFrontmatterValue(frontmatter, "publishedAt");
-
-      return {
-        slug,
-        updatedAt,
-        published: publishedValue !== "false",
-        noIndex: noIndexValue === "true",
-      };
-    })
-    .filter((meta) => meta.slug.length > 0 && meta.published && !meta.noIndex)
-    .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 function getStaticRoutes(): SitemapRouteInput[] {
@@ -283,21 +225,26 @@ export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
   );
 }
 
-/**
- * Generate blog detail URLs from Japanese MDX slugs in contents/blog/ja/<slug>.mdx. After P5-050 moved
- * MDX into ja/en/zh subdirectories, the old nonrecursive getMdxRoutes("blog", "/blog", ...) scan of
- * contents/blog returned empty arrays. Japanese MDX defines the full published slug set;
- * createLocalizedSitemapItems generates all three locales together.
- */
+/** Blog sitemap eligibility uses the same localized metadata as article routes. */
 export function getBlogSitemapRoutes(): SitemapRouteInput[] {
-  return readMdxContentMetas(path.join("blog", "ja"))
-    .filter((meta) => meta.published)
-    .map((meta) => ({
-      pathname: `/blog/${meta.slug}`,
+  const indexableSlugs = Object.fromEntries(locales.map((locale) => [locale,
+    new Set(getPublishedBlogPosts(locale).filter((post) => !post.noIndex).map((post) => post.slug)),
+  ]));
+  return blogPosts.flatMap((post): SitemapRouteInput[] => {
+    const availableLocales = locales.filter((locale) =>
+      isPublishedLocale(locale) && indexableSlugs[locale].has(post.slug),
+    );
+    // The generic sitemap helper falls back on empty lists; never pass one for Blog.
+    if (availableLocales.length === 0) return [];
+    const japanese = loadBlogContent("ja", post.slug)?.frontmatter;
+    return [{
+      pathname: `/blog/${post.slug}`,
       priority: 0.7,
       changeFrequency: "weekly",
-      lastModified: meta.updatedAt,
-    }));
+      lastModified: japanese?.updatedAt || japanese?.publishedAt || post.updatedAt || post.publishedAt,
+      availableLocales,
+    }];
+  });
 }
 
 function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
@@ -338,6 +285,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const sitemapItems = routes.flatMap((route) => {
     const items = createLocalizedSitemapItems(route);
+    if (route.pathname.startsWith("/blog/") && !route.availableLocales?.includes("ja")) {
+      // A hidden Japanese article must not remain the Blog cluster's default destination.
+      for (const item of items) {
+        if (item.alternates?.languages) delete item.alternates.languages["x-default"];
+      }
+    }
     if (route.pathname === "/updates") {
       // This index has no recorded modification date; do not substitute build time.
       for (const item of items) delete item.lastModified;

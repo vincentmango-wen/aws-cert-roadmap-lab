@@ -37,6 +37,7 @@ export type PageMetadataInput = {
   publishedTime?: string;
   modifiedTime?: string;
   enableLanguageAlternates?: boolean;
+  availableLocales?: readonly SeoLocale[];
   locale?: SeoLocale;
 };
 
@@ -133,7 +134,7 @@ export function createPageMetadata(input: PageMetadataInput): Metadata {
   const ogImageUrl = createAbsoluteUrl(imagePath);
   const imageAlt = input.imageAlt ?? `${input.title} - ${siteName}`;
   const languages =
-    input.enableLanguageAlternates === true ? createHreflangAlternates(input.path) : {};
+    input.enableLanguageAlternates === true ? createHreflangAlternates(input.path, input.availableLocales) : {};
 
   return {
     title: input.title,

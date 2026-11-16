@@ -7,7 +7,7 @@
  * R. Registry slugs equal Japanese MDX slugs (always checked).
  * 1. All three locale slug sets match when en/zh are nonempty.
  * 2. postId matches across locales per slug.
- * 3. Shared publishedAt/updatedAt/published metadata matches; localized display fields are excluded (see
+ * 3. Shared publishedAt/updatedAt metadata matches; localized display fields are excluded (see
  * assertions below).
  * 4. Every localized MDX file exists.
  * 5. Required frontmatter fields are present and nonempty.
@@ -241,14 +241,14 @@ describe("blog locale parity", () => {
   );
 
   it(
-    "(3) shared metadata fields (publishedAt/updatedAt/published) are identical across ja/en/zh per slug",
+    "(3) shared metadata fields (publishedAt/updatedAt) are identical across ja/en/zh per slug",
     () => {
+      // Publication is locale-specific; blog-publication.test.ts covers visibility behavior.
       // Category labels are translated per locale (for example, AWS Services in English),
       // so exclude them just like title, description and tags.
       const SHARED_FIELDS: Array<keyof ParsedFrontmatter> = [
         "publishedAt",
         "updatedAt",
-        "published",
       ];
 
       for (const slug of jaSlugs) {
