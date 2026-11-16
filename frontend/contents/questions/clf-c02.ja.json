@@ -316,9 +316,7 @@
     "relatedTerms": [
       "scalability"
     ],
-    "relatedComparisons": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "relatedComparisons": [],
     "tags": [
       "scalability",
       "auto-scaling"
@@ -1177,9 +1175,7 @@
       "virtual-server",
       "compute"
     ],
-    "relatedComparisons": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "relatedComparisons": [],
     "tags": [
       "ec2",
       "compute",
@@ -1246,9 +1242,7 @@
       "serverless",
       "event-driven"
     ],
-    "relatedComparisons": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "relatedComparisons": [],
     "tags": [
       "lambda",
       "serverless",
@@ -2284,9 +2278,7 @@
       "eventbridge"
     ],
     "relatedTerms": [],
-    "relatedComparisons": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "relatedComparisons": [],
     "tags": [
       "lambda",
       "serverless",
@@ -2851,9 +2843,7 @@
       "auto-scaling"
     ],
     "relatedTerms": [],
-    "relatedComparisons": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "relatedComparisons": [],
     "tags": [
       "cloud-concepts",
       "scalability",
