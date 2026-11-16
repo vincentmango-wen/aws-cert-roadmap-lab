@@ -11,6 +11,7 @@ import type { BlogPostMeta } from "@/types/blog";
 import { blogPosts } from "@/contents/blog/blogPosts";
 import {
   createLocalizedPath,
+  locales,
   type Locale,
   type Pathname,
 } from "@/i18n/locales";
@@ -108,16 +109,17 @@ export const blogDetailLabelsByLocale: Record<Locale, BlogDetailLabels> = {
 export function getPublishedBlogPosts(locale: Locale): BlogPostMeta[] {
   return blogPosts
     .filter((post) => post.published)
-    .map((post) => {
+    .flatMap((post) => {
       const loaded = loadBlogContent(locale, post.slug);
 
       if (!loaded) {
-        return post;
+        return [post];
       }
+      if (!loaded.frontmatter.published) return [];
 
       const { frontmatter } = loaded;
 
-      return {
+      return [{
         ...post,
         title: frontmatter.title || post.title,
         description: frontmatter.description || post.description,
@@ -128,7 +130,7 @@ export function getPublishedBlogPosts(locale: Locale): BlogPostMeta[] {
             ? frontmatter.targetKeywords
             : post.targetKeywords,
         noIndex: frontmatter.noIndex,
-      } satisfies BlogPostMeta;
+      } satisfies BlogPostMeta];
     })
     .sort((firstPost, secondPost) =>
       secondPost.publishedAt.localeCompare(firstPost.publishedAt),
@@ -178,6 +180,23 @@ export function getBlogStaticParams(locale: Locale): BlogStaticParams[] {
   return getPublishedBlogPosts(locale).map((post) => ({ postSlug: post.slug }));
 }
 
+/** Server-built navigation data; never send MDX or filesystem imports to the client. */
+export function getBlogPublishedLocaleMap(): Record<string, Locale[]> {
+  const result: Record<string, Locale[]> = {};
+  for (const locale of locales) {
+    for (const post of getPublishedBlogPosts(locale)) {
+      (result[post.slug] ??= []).push(locale);
+    }
+  }
+  return result;
+}
+
+export function getBlogIndexableLocales(slug: string): Locale[] {
+  return locales.filter((locale) =>
+    getPublishedBlogPosts(locale).some((post) => post.slug === slug && !post.noIndex),
+  );
+}
+
 export function createBlogPostPath(locale: Locale, slug: string): Pathname {
   return createLocalizedPath(locale, `/blog/${slug}`);
 }
@@ -207,5 +226,7 @@ export function createBlogDetailMetadataInput(
     publishedTime: post.publishedAt,
     modifiedTime: post.updatedAt,
     noIndex: post.noIndex,
+    enableLanguageAlternates: !post.noIndex,
+    availableLocales: getBlogIndexableLocales(post.slug),
   };
 }

@@ -7,6 +7,7 @@ import {
   createLocalizedPath,
   getAvailableLocalesForPathname,
   getHtmlLang,
+  removeLocalePrefix,
   getLocaleFromPathname,
   getLocaleConfig,
   type Locale,
@@ -14,6 +15,7 @@ import {
 
 type LanguageSwitcherProps = {
   onNavigate?: () => void;
+  blogLocales: Record<string, readonly Locale[]>;
 };
 
 type LanguageSwitcherText = {
@@ -40,9 +42,12 @@ const languageSwitcherText: Record<Locale, LanguageSwitcherText> = {
   },
 };
 
-export function LanguageSwitcher({ onNavigate }: LanguageSwitcherProps): ReactElement | null {
+export function LanguageSwitcher({ onNavigate, blogLocales }: LanguageSwitcherProps): ReactElement | null {
   const pathname = usePathname();
-  const availableLocales = getAvailableLocalesForPathname(pathname);
+  const blogSlug = removeLocalePrefix(pathname).match(/^\/blog\/([^/]+)$/)?.[1];
+  const availableLocales = blogSlug
+    ? (blogLocales[blogSlug] ?? [])
+    : getAvailableLocalesForPathname(pathname);
   const currentLocale = getLocaleFromPathname(pathname);
   const text = languageSwitcherText[currentLocale];
 

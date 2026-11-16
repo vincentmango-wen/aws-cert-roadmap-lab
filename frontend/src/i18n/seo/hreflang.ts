@@ -90,15 +90,20 @@ export function createXDefaultUrl(): string {
  * clusters; a Japanese-only ja/x-default pair duplicates canonical signals and triggers Search Console
  * warnings. All four entries return automatically on publication.
  */
-export function createHreflangAlternates(pathname: string): Partial<HreflangAlternates> {
+export function createHreflangAlternates(
+  pathname: string,
+  availableLocales: readonly Locale[] = ["ja", "en", "zh"],
+): Partial<HreflangAlternates> {
   if (!LOCALIZED_ROUTES_PUBLISHED) {
     return {};
   }
 
-  return {
-    [HREFLANG_BY_LOCALE.ja]: createAbsoluteUrl(createLocalizedPathname("ja", pathname)),
-    [HREFLANG_BY_LOCALE.en]: createAbsoluteUrl(createLocalizedPathname("en", pathname)),
-    [HREFLANG_BY_LOCALE.zh]: createAbsoluteUrl(createLocalizedPathname("zh", pathname)),
-    "x-default": createAbsoluteUrl(createLocalizedPathname("ja", pathname)),
-  };
+  const languages: Partial<HreflangAlternates> = {};
+  for (const locale of availableLocales) {
+    languages[HREFLANG_BY_LOCALE[locale]] = createAbsoluteUrl(createLocalizedPathname(locale, pathname));
+  }
+  if (availableLocales.includes("ja")) {
+    languages["x-default"] = createAbsoluteUrl(createLocalizedPathname("ja", pathname));
+  }
+  return languages;
 }
