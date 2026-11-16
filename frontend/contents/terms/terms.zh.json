@@ -1347,9 +1347,7 @@
       "ebs",
       "vpc"
     ],
-    "comparisonSlugs": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "comparisonSlugs": [],
     "architectureSlugs": [
       "three-tier-vpc",
       "high-availability-web-app"
@@ -1489,9 +1487,7 @@
       "cloudwatch",
       "iam"
     ],
-    "comparisonSlugs": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "comparisonSlugs": [],
     "architectureSlugs": [
       "ecs-fargate-web-app"
     ],
@@ -2408,9 +2404,7 @@
       "eventbridge",
       "cloudwatch"
     ],
-    "comparisonSlugs": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "comparisonSlugs": [],
     "architectureSlugs": [
       "serverless-api-basic",
       "eventbridge-lambda-batch"
