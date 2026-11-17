@@ -1,3 +1,5 @@
+import * as articleSources from "../article-sources";
+import { beforeIssue348Corrections } from "./fixtures/architecture-dates-before-issue-348";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, expect, it, vi } from "vitest";
@@ -13,7 +15,7 @@ import { createLocalizedPath } from "@/i18n/locales";
 import { getUpdatesInventory } from "../index";
 import { announcements } from "../announcements";
 
-afterEach(() => { vi.unstubAllEnvs(); vi.doUnmock("@/i18n/release-gate"); vi.resetModules(); });
+afterEach(() => { vi.restoreAllMocks(); vi.unstubAllEnvs(); vi.doUnmock("@/i18n/release-gate"); vi.resetModules(); });
 const ids = (html: string) => [...html.matchAll(/data-update-id="([^"]+)"/g)].map((match) => match[1]);
 it.each([
   ["ja", JaUpdates, JaHome, jaMetadata, "/updates"],
@@ -55,6 +57,8 @@ it.each([
   ["zh", ZhUpdates, ZhHome, "/zh", "/zh/updates", "新增「最新文章」與「最新內容與公告」"],
 ] as const)("renders the complete feature announcement on home and full updates in %s", (locale, Page, Home, homePath, updatesPath, title) => {
   vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-13");
+  const historical = beforeIssue348Corrections(articleSources.readArticleCandidates());
+  vi.spyOn(articleSources, "readArticleCandidates").mockReturnValue(historical);
   const feature = announcements.find((value) => value.id === "latest-articles-and-updates");
   expect(feature).toBeDefined();
   if (!feature) return;

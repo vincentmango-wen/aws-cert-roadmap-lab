@@ -10,37 +10,20 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者]
-    R53[Route 53]
-    ACM[ACM]
-    ALB[Application Load Balancer]
-    ASG[Auto Scaling Group]
-    EC2A[EC2 App AZ-a]
-    EC2C[EC2 App AZ-c]
-    RDSA[(RDS Primary AZ-a)]
-    RDSC[(RDS Standby AZ-c)]
-    CW[CloudWatch]
-    SNS[SNS 可選]
-    IAM[IAM Role]
+上圖的 AZ-A／AZ-B 是不同可用區域的示意名稱。資料庫採用單一 Standby 的 Multi-AZ DB instance，並非 Multi-AZ DB cluster。
 
-    User -->|DNS 名稱解析| R53
-    R53 --> ALB
-    ACM -.TLS 憑證.-> ALB
-    User -->|HTTPS| ALB
-    ALB --> EC2A
-    ALB --> EC2C
-    ASG -.維持與增減實例.-> EC2A
-    ASG -.維持與增減實例.-> EC2C
-    EC2A -->|資料庫連線| RDSA
-    EC2C -->|資料庫連線| RDSA
-    RDSA -.同步複寫.-> RDSC
-    CW -.指標監控.-> ASG
-    CW -.警示通知.-> SNS
-    IAM -.EC2 權限控管.-> EC2A
-    IAM -.EC2 權限控管.-> EC2C
-```
+| 關係 | 路徑與意義 |
+|---|---|
+| DNS | 使用者透過 Route 53 解析 ALB 名稱；Route 53 不負責轉送 HTTP |
+| TLS | 將 ACM 憑證關聯至 ALB 的 HTTPS listener |
+| 請求 | 使用者 → ALB → AZ-A／AZ-B 的 EC2，須設定 ALB 健康檢查 |
+| 容量管理 | 一個 ASG 維持及調整跨兩個 AZ 的 EC2 數量 |
+| 資料庫連線 | 兩台 EC2 → RDS Primary，不將讀取請求送至 Standby |
+| 複寫與復原 | Primary → 跨 AZ Standby 同步複寫；資料庫故障時自動容錯切換 |
+| 監控 | 依 CloudWatch 指標設定擴縮 → ASG；需要時加入告警 → SNS 通知 |
+| 權限 | IAM 角色控制兩台 EC2 存取 AWS 服務的權限 |
+
+ALB 與跨兩個 AZ 的 EC2／RDS 位於同一 VPC。ALB 使用公有子網路，EC2 與 RDS 使用私有子網路，透過安全群組允許 ALB → EC2 → RDS 所需連接埠。這是設計範例，不代表本專案 MVP 已部署此架構。
 
 ## 此架構可達成的事項
 
@@ -148,3 +131,11 @@ RDS 的安全群組僅允許來自 EC2 的資料庫埠。
 ALB + Auto Scaling + RDS Multi-AZ 是重視可用性的 Web 應用程式代表性架構。
 
 本專案的正式 MVP 雖未使用此架構,但在 SAA 對策與說明 AWS 設計能力時,是必備等級的構成。
+
+## 更正說明
+
+### 2026-11-17
+
+修正圖中右側 EC2 看似連往 Standby 的線，兩台 EC2 均連線至 Primary。明示跨兩個 AZ 的單一 ASG、DNS 與 HTTPS 的差異、TLS 憑證關聯、同步複寫與容錯切換。Standby 不提供讀取的說明，限定為單一 Standby 的 Multi-AZ DB instance。
+
+依據：[RDS Multi-AZ DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html)、[Route 53 解析至 ELB](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html)。

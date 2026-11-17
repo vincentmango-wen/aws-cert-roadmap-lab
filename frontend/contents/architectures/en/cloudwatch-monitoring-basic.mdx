@@ -10,35 +10,19 @@ In this project, monitoring is centered on CloudWatch Logs, CloudWatch Metrics, 
 
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User]
-    CF[Amazon CloudFront]
-    S3[(Amazon S3)]
-    APIGW[API Gateway]
-    Lambda[AWS Lambda]
-    DDB[(DynamoDB)]
-    CWLogs[CloudWatch Logs]
-    CWMetrics[CloudWatch Metrics]
-    Budget[AWS Budgets]
-    GH[GitHub Actions]
-    Dev[Developer]
+The diagram above separates requests, monitoring signals, and notifications. Read each path as follows.
 
-    User --> CF
-    CF --> S3
-    User --> APIGW
-    APIGW --> Lambda
-    Lambda --> DDB
-    Lambda --> CWLogs
-    CF --> CWMetrics
-    APIGW --> CWMetrics
-    Lambda --> CWMetrics
-    DDB --> CWMetrics
-    Budget -->|Email Notification| Dev
-    GH -->|CI/CD Result| Dev
-    Dev --> CWLogs
-    Dev --> CWMetrics
-```
+| Kind | Path and meaning |
+|---|---|
+| Static site | User → CloudFront → S3 |
+| Contact API | User → API Gateway → Lambda → DynamoDB (write) |
+| Logs | Lambda → CloudWatch Logs; the execution role needs logging permissions |
+| Metrics | CloudFront, API Gateway, Lambda, DynamoDB → CloudWatch Metrics |
+| Cost notification | AWS Budgets → developer by email, with configured cost thresholds |
+| Deployment results | GitHub Actions → developer reviews CI/CD results |
+| Manual inspection | Developer → views CloudWatch Logs / Metrics |
+
+AWS Budgets monitors cost and usage; it is not a destination for application data. The MVP relies on manual inspection, with alarms added when needed.
 
 ## What This Architecture Enables
 
@@ -141,3 +125,11 @@ If DynamoDB throttling appears, suspect a traffic spike or a design issue.
 A CloudWatch-centered operational monitoring setup is the minimum bar for safely running a portfolio published on AWS.
 
 For SAA, you need to clearly distinguish "logs", "metrics", "alarms", and "billing monitoring". In this project, we start small with CloudWatch Logs, CloudWatch Metrics, and AWS Budgets.
+
+## Corrections
+
+### 2026-11-17
+
+Corrected the diagram's misleading DynamoDB → Budgets → CloudWatch path. Lambda logs and service metrics are separate, and the diagram now identifies Budgets email notifications, GitHub Actions results, and developer inspection. Monitoring permissions and notification configuration are required.
+
+Sources: [Lambda logs and permissions](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-cloudwatchlogs.html), [AWS Budgets cost/usage monitoring and notifications](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html).

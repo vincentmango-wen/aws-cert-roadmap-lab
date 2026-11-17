@@ -21,10 +21,10 @@ tags:
   - "logs"
   - "metrics"
   - "serverless"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-08"
-updatedAt: "2026-06-21"
+updatedAt: "2026-11-17"
 ---
 
 # CloudWatch サーバーレス運用監視構成
@@ -39,35 +39,19 @@ updatedAt: "2026-06-21"
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー]
-    CF[Amazon CloudFront]
-    S3[(Amazon S3)]
-    APIGW[API Gateway]
-    Lambda[AWS Lambda]
-    DDB[(DynamoDB)]
-    CWLogs[CloudWatch Logs]
-    CWMetrics[CloudWatch Metrics]
-    Budget[AWS Budgets]
-    GH[GitHub Actions]
-    Dev[開発者]
+上の図は、リクエスト、監視情報、通知を分けて示しています。各経路は次のとおりです。
 
-    User --> CF
-    CF --> S3
-    User --> APIGW
-    APIGW --> Lambda
-    Lambda --> DDB
-    Lambda --> CWLogs
-    CF --> CWMetrics
-    APIGW --> CWMetrics
-    Lambda --> CWMetrics
-    DDB --> CWMetrics
-    Budget -->|メール通知| Dev
-    GH -->|CI/CD結果| Dev
-    Dev --> CWLogs
-    Dev --> CWMetrics
-```
+| 種類 | 経路と意味 |
+|---|---|
+| 静的サイト | ユーザー → CloudFront → S3 |
+| 問い合わせ API | ユーザー → API Gateway → Lambda → DynamoDB（保存） |
+| ログ | Lambda → CloudWatch Logs。実行ロールにログ出力権限が必要 |
+| メトリクス | CloudFront、API Gateway、Lambda、DynamoDB → CloudWatch Metrics |
+| 費用通知 | AWS Budgets → 開発者へメール。費用のしきい値を設定する |
+| デプロイ結果 | GitHub Actions → 開発者が CI/CD 結果を確認 |
+| 手動確認 | 開発者 → CloudWatch Logs / Metrics を閲覧 |
+
+AWS Budgets は費用・使用量の監視であり、アプリケーションデータの転送先ではありません。MVP は手動確認を基本とし、必要に応じてアラームを追加します。
 
 ## この構成で実現できること
 
@@ -170,3 +154,11 @@ DynamoDBのスロットリングが出ている場合は、アクセス急増や
 CloudWatchを中心にした運用監視構成は、AWS上で公開したポートフォリオを安全に運用するための最低ラインです。
 
 SAAでは「ログ」「メトリクス」「アラーム」「課金監視」を分けて理解する必要があります。このプロジェクトでは、まずCloudWatch Logs、CloudWatch Metrics、AWS Budgetsを使って小さく運用監視を始めます。
+
+## 訂正内容
+
+### 2026-11-17
+
+図の DynamoDB → Budgets → CloudWatch という誤解を招く経路を修正しました。Lambda のログと各サービスのメトリクスを分離し、Budgets のメール通知、GitHub Actions の結果、開発者の確認経路を明示しました。監視権限と通知設定が必要です。
+
+根拠：[Lambda のログと権限](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-cloudwatchlogs.html)、[AWS Budgets の費用・使用量監視と通知](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html)。
