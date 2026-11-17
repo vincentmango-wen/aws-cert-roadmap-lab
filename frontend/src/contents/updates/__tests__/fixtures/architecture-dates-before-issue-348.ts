@@ -1,0 +1,20 @@
+import type { ArticleCandidate } from "../../types";
+
+/**
+ * Preserve the Nov 12–14 announcement fixtures when Issue 348 changes these
+ * articles on Nov 17. Historical assertions stay intact; current real content
+ * is covered separately by architecture-diagram-coverage.test.tsx.
+ */
+export function beforeIssue348Corrections(articles: ArticleCandidate[]): ArticleCandidate[] {
+  const historical = structuredClone(articles);
+  for (const article of historical) {
+    if (article.kind !== "architecture" || !["arc-004", "arc-005", "arc-010"].includes(article.id)) continue;
+    for (const locale of ["ja", "en", "zh"] as const) {
+      const translation = article.translations[locale];
+      if (!translation) continue;
+      translation.updatedAt = "2026-06-21";
+      translation.correctionNotes = { entries: [], errors: [] };
+    }
+  }
+  return historical;
+}

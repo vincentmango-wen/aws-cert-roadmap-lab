@@ -119,10 +119,10 @@
       "耐障害性"
     ],
     "diagramPath": "/images/architectures/high-availability-web-app.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-17",
     "locale": "ja"
   },
   {
@@ -149,10 +149,10 @@
       "自動化"
     ],
     "diagramPath": "/images/architectures/eventbridge-lambda-batch.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-17",
     "locale": "ja"
   },
   {
@@ -311,10 +311,10 @@
       "運用監視"
     ],
     "diagramPath": "/images/architectures/cloudwatch-monitoring-basic.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-08",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-17",
     "locale": "ja"
   },
   {

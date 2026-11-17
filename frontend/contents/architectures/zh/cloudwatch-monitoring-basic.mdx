@@ -10,35 +10,19 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者]
-    CF[Amazon CloudFront]
-    S3[(Amazon S3)]
-    APIGW[API Gateway]
-    Lambda[AWS Lambda]
-    DDB[(DynamoDB)]
-    CWLogs[CloudWatch Logs]
-    CWMetrics[CloudWatch Metrics]
-    Budget[AWS Budgets]
-    GH[GitHub Actions]
-    Dev[開發者]
+上圖將請求、監控資訊與通知分開呈現，各路徑的意義如下。
 
-    User --> CF
-    CF --> S3
-    User --> APIGW
-    APIGW --> Lambda
-    Lambda --> DDB
-    Lambda --> CWLogs
-    CF --> CWMetrics
-    APIGW --> CWMetrics
-    Lambda --> CWMetrics
-    DDB --> CWMetrics
-    Budget -->|Email 通知| Dev
-    GH -->|CI/CD 結果| Dev
-    Dev --> CWLogs
-    Dev --> CWMetrics
-```
+| 類型 | 路徑與意義 |
+|---|---|
+| 靜態網站 | 使用者 → CloudFront → S3 |
+| 詢問 API | 使用者 → API Gateway → Lambda → DynamoDB（寫入） |
+| 日誌 | Lambda → CloudWatch Logs；執行角色須有日誌輸出權限 |
+| 指標 | CloudFront、API Gateway、Lambda、DynamoDB → CloudWatch Metrics |
+| 費用通知 | AWS Budgets → 開發者電子郵件，須設定費用門檻 |
+| 部署結果 | GitHub Actions → 開發者確認 CI/CD 結果 |
+| 手動檢視 | 開發者 → 檢視 CloudWatch Logs / Metrics |
+
+AWS Budgets 監控費用與用量，不是應用程式資料的傳送目的地。MVP 以手動確認為主，再按需求加入告警。
 
 ## 此架構可實現的事項
 
@@ -141,3 +125,11 @@ CloudWatch Dashboard 與 Synthetics 雖然好用,但在 MVP 階段並非必要�
 以 CloudWatch 為核心的維運監控架構,是在 AWS 上安全運行作品集的最低基準線。
 
 在 SAA 考試中,必須將「日誌」「指標」「告警」「費用監控」分別理解。在本專案中,先從 CloudWatch Logs、CloudWatch Metrics、AWS Budgets 著手,以小規模開始進行維運監控。
+
+## 更正說明
+
+### 2026-11-17
+
+修正圖中容易誤解的 DynamoDB → Budgets → CloudWatch 路徑。分開 Lambda 日誌與各服務指標，並明示 Budgets 電子郵件通知、GitHub Actions 結果及開發者檢視路徑。監控權限與通知設定仍須配置。
+
+依據：[Lambda 日誌與權限](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-cloudwatchlogs.html)、[AWS Budgets 費用／用量監控與通知](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html)。

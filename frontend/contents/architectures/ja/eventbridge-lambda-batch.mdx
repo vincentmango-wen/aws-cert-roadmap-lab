@@ -20,10 +20,10 @@ tags:
   - "eventbridge"
   - "lambda"
   - "scheduler"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-21"
+updatedAt: "2026-11-17"
 ---
 
 # EventBridge + Lambda バッチ処理構成
@@ -38,31 +38,20 @@ EventBridgeで決まった時刻にイベントを発生させ、Lambdaを実行
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    Scheduler[EventBridge Scheduler]
-    Rule[EventBridge Rule]
-    Lambda[AWS Lambda Batch Function]
-    DDB[(DynamoDB)]
-    SNS[SNS 任意]
-    SES[SES 任意]
-    CW[CloudWatch Logs]
-    Alarm[CloudWatch Alarm 任意]
-    IAM[IAM Role]
-    Budget[AWS Budgets]
+上図は、定期実行に EventBridge Scheduler を使う読み取り中心の例です。点線は任意の機能で、利用には個別の設定が必要です。
 
-    Scheduler -->|毎日決まった時刻に起動| Lambda
-    Rule -.イベントパターンで起動.-> Lambda
-    Lambda -->|問題データ取得| DDB
-    Lambda -->|通知 任意| SNS
-    Lambda -->|メール送信 任意| SES
-    Lambda -->|ログ出力| CW
-    CW -->|エラー検知 任意| Alarm
-    IAM -.Lambda実行権限.-> Lambda
-    IAM -.DynamoDB読み取り権限.-> DDB
-    Budget -.課金監視.-> Scheduler
-    Budget -.課金監視.-> Lambda
-```
+| 関係 | 経路と条件 |
+|---|---|
+| 定期起動 | Scheduler → Lambda。cron / rate または指定時刻で呼び出す。Scheduler の実行ロールに呼び出し権限が必要 |
+| イベント起動（任意） | イベントパターンに一致した EventBridge Rule → Lambda。定期起動とは別の経路 |
+| データ取得 | Lambda → DynamoDB の対象テーブルを読み取る |
+| 通知（任意） | Lambda → SNS または SES。必要な送信権限・通知先を設定する |
+| ログ | Lambda → CloudWatch Logs。実行ロールにログ出力権限が必要 |
+| アラーム（任意） | Lambda メトリクス、または Logs の metric filter で生成したメトリクス → CloudWatch Alarm → 設定した SNS 通知先 |
+| 権限 | Lambda 実行ロールで DynamoDB 読み取り、ログ出力、必要な通知だけを許可 |
+| 費用 | AWS Budgets で Scheduler / Lambda などの費用・使用量を監視。実行エラーの即時検知ではない |
+
+この例は DynamoDB 読み取りのみです。古いデータの削除や処理状態の書き込みを追加する場合は、対象を限定した書き込み・削除権限と処理を別途設計します。従来の scheduled rule も cron / rate に対応しますが、新規の定期処理には Scheduler を優先します。ここで示す Rule はイベントパターン用です。
 
 ## この構成で実現できること
 
@@ -87,7 +76,7 @@ flowchart TD
 | Amazon CloudWatch Logs | Lambda実行ログの確認 |
 | CloudWatch Alarm | バッチ失敗時の通知 |
 | IAM | Lambdaが各サービスへアクセスする権限制御 |
-| AWS Budgets | 実行回数増加や課金事故の検知 |
+| AWS Budgets | 費用・使用量のしきい値超過を通知 |
 
 ## 通信フロー
 
@@ -97,8 +86,8 @@ flowchart TD
 4. Lambdaが定期処理を実行する
 5. 通知が必要な場合はSNSまたはSESへ連携する
 6. LambdaがCloudWatch Logsへ実行結果を出力する
-7. エラーが発生した場合はCloudWatch Alarmで通知する
-8. AWS Budgetsで想定外の実行増加や課金を監視する
+7. 必要に応じてメトリクスに基づく CloudWatch Alarm と SNS 通知を設定する
+8. AWS Budgets で想定外の費用・使用量増加を監視する
 
 ## 設計ポイント
 
@@ -130,7 +119,7 @@ CloudWatch Logsには、開始時刻、終了時刻、処理件数、エラー�
 
 ## SAA試験で問われるポイント
 
-- 定期実行にはEventBridge SchedulerまたはEventBridge Ruleを使う
+- 新規の定期実行には EventBridge Scheduler を優先する。従来の scheduled rule も cron / rate に対応する
 - サーバーレスなバッチ処理にはEventBridge + Lambdaが候補になる
 - Lambdaの最大実行時間やタイムアウトを理解する
 - 失敗時の再試行、DLQ、通知を設計する
@@ -164,3 +153,11 @@ CloudWatch Logsには、開始時刻、終了時刻、処理件数、エラー�
 EventBridge + Lambdaは、サーバーレスで定期処理を実装する代表的な構成です。
 
 このプロジェクトでは将来的な毎日1問配信や学習リマインドに応用できますが、MVPではコストと運用を抑えるため、必要になってから導入します。
+
+## 訂正内容
+
+### 2026-11-17
+
+図の Schedule Rule を定期実行用の Scheduler と任意のイベントパターン Rule に分けました。DynamoDB の Read / Write 表記を本文の読み取り権限に合わせ、書き込み・削除は追加設計が必要と明示しました。ログ出力とメトリクスを分離し、任意のアラームはメトリクスを入力とすること、Budgets は費用・使用量監視であることを明確にしました。
+
+根拠：[従来の scheduled rule と Scheduler](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduled-rule-pattern.html)、[Scheduler のターゲットと権限](https://docs.aws.amazon.com/scheduler/latest/UserGuide/managing-targets-templated.html)、[ログからのメトリクス生成](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html)、[AWS Budgets](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html)。

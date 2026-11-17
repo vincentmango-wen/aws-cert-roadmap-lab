@@ -1,3 +1,4 @@
+import { beforeIssue348Corrections } from "./fixtures/architecture-dates-before-issue-348";
 import { expect, it } from "vitest";
 import { aggregateUpdates } from "../aggregate";
 import { readArticleCandidates } from "../article-sources";
@@ -19,7 +20,7 @@ it("filters blogs before taking three, sorts dates and stable ties, and never mu
 });
 
 it("selects 002/008/015 with full current notes from the same 53-item three-locale inventory", () => {
-  const articles = readArticleCandidates();
+  const articles = beforeIssue348Corrections(readArticleCandidates());
   const result = aggregateUpdates({ articles, announcements, today: "2026-11-13", isPublicPath: (target, locale) => isPublicUpdatesPath(target, locale, articles) });
   for (const locale of ["ja", "en", "zh"] as const) {
     const values = result.itemsByLocale[locale];
@@ -41,7 +42,7 @@ it("selects 002/008/015 with full current notes from the same 53-item three-loca
 });
 
 it("adds only the feature at its creation date and preserves the complete historical inventory", () => {
-  const articles = readArticleCandidates();
+  const articles = beforeIssue348Corrections(readArticleCandidates());
   const inventory = (today: string) => aggregateUpdates({ articles, announcements, today, isPublicPath: (target, locale) => isPublicUpdatesPath(target, locale, articles) });
   const historical = inventory("2026-11-12"), created = inventory("2026-11-13"), later = inventory("2026-11-14");
   for (const locale of ["ja", "en", "zh"] as const) {
