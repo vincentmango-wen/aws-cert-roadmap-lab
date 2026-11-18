@@ -10,26 +10,16 @@ By placing SQS in between, you can decouple the receiving process from the execu
 
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User / External System]
-    API[API Gateway / Application]
-    Queue[(Amazon SQS Queue)]
-    DLQ[(Dead Letter Queue)]
-    Lambda[AWS Lambda Worker]
-    DDB[(DynamoDB / Storage)]
-    CW[CloudWatch Logs]
-    IAM[IAM Role]
+### Flow and permissions
 
-    User -->|Request| API
-    API -->|Send Message| Queue
-    Queue -->|Event Trigger| Lambda
-    Lambda -->|Store Result| DDB
-    Lambda -->|Output Logs| CW
-    Queue -->|Exceeds Max Receive Count| DLQ
-    IAM -.-> Lambda
-    IAM -.-> Queue
-```
+Lambda event source mapping polls SQS and invokes the worker synchronously. The business workflow is asynchronous; this is not Lambda asynchronous invocation.
+
+| Step / principal | Behavior / permission |
+|---|---|
+| Application → queue | Grant the sender `sqs:SendMessage` on the target queue. |
+| Consumer execution role | Allow `sqs:ReceiveMessage`, `sqs:DeleteMessage`, and `sqs:GetQueueAttributes` on its queue. |
+| Logs and results | Each worker writes CloudWatch Logs with logging permissions. Grant application-specific storage permissions separately; SQS permissions do not grant DynamoDB writes. |
+| Queue → DLQ | Configure a source-queue redrive policy and DLQ. `maxReceiveCount` counts message receptions, not application failure events. |
 
 ## What This Architecture Achieves
 
@@ -47,7 +37,7 @@ flowchart TD
 |---|---|
 | Amazon SQS | Queue that stores messages awaiting processing |
 | AWS Lambda | Execution platform that processes SQS messages |
-| Dead Letter Queue | Destination for messages that have failed a defined number of times |
+| Dead Letter Queue | Destination configured by the source queue’s redrive policy and maximum receive count |
 | Amazon DynamoDB | Storage destination for processing results and state |
 | Amazon CloudWatch Logs | Reviewing Lambda processing logs |
 | IAM | Permissions for Lambda to access SQS and DynamoDB |
@@ -57,10 +47,10 @@ flowchart TD
 1. The user or external system sends a request to the API
 2. The API or application sends a message to SQS
 3. The message is stored in SQS
-4. Lambda receives the SQS event and processes it
+4. The Lambda event source mapping polls SQS and synchronously invokes the worker
 5. The processing result is saved to DynamoDB or similar
 6. Processing logs are output to CloudWatch Logs
-7. Messages that fail the defined number of times are sent to the DLQ
+7. SQS moves messages to the configured DLQ according to the redrive policy’s maximum receive count
 
 ## Design Considerations
 
@@ -72,7 +62,7 @@ Setting up a DLQ allows you to investigate failed messages later.
 
 ### Security
 
-The Lambda execution role permits only reading from the target SQS queue, writing to the target DynamoDB table, and outputting to CloudWatch Logs.
+Scope the Lambda execution role to the queue consumption, application storage, and logging permissions listed above.
 
 The entities allowed to send messages to SQS are also restricted via IAM.
 
@@ -131,3 +121,9 @@ SQS Standard provides at-least-once delivery with best-effort ordering; duplicat
 - Corrected wording that implied SQS always processes messages in order: Standard can duplicate or reorder messages, while FIFO ordering is scoped to a message group. Added that deduplication does not guarantee exactly-once business side effects and consumers still need idempotency.
 
 References：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
+
+### 2026-11-18
+
+- Replaced ambiguous event-trigger and failure-count descriptions with SQS polling, synchronous worker invocation, reception-count redrive, and explicit consumer permissions. The static diagram and table preserve result storage, logs, and DLQ paths.
+
+References: [Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
