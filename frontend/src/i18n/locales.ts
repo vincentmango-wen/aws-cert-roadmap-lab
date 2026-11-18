@@ -1,6 +1,12 @@
 export const locales = ["ja", "en", "zh"] as const;
 
 export type Locale = (typeof locales)[number];
+
+export const LOCALE_DIR_NAMES: Record<Locale, string> = {
+  ja: "ja",
+  en: "en",
+  zh: "zh",
+};
 export type Pathname = "/" | `/${string}`;
 
 export const defaultLocale = "ja" satisfies Locale;

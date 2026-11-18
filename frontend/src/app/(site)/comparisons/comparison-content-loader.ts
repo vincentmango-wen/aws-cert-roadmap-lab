@@ -5,13 +5,8 @@
  */
 import fs from "fs";
 import path from "path";
+import { LOCALE_DIR_NAMES } from "@/i18n/locales";
 import type { ComparisonLocale } from "@/types/comparison";
-
-const LOCALE_DIR_NAMES: Record<ComparisonLocale, string> = {
-  ja: "ja",
-  en: "en",
-  zh: "zh",
-};
 
 function getComparisonsLocaleDirectory(
   locale: ComparisonLocale,
