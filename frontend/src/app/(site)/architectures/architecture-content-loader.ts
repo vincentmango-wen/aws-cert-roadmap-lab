@@ -5,13 +5,8 @@
  */
 import fs from "fs";
 import path from "path";
+import { LOCALE_DIR_NAMES } from "@/i18n/locales";
 import type { ArchitectureLocale } from "@/types/architecture";
-
-const LOCALE_DIR_NAMES: Record<ArchitectureLocale, string> = {
-  ja: "ja",
-  en: "en",
-  zh: "zh",
-};
 
 function getArchitecturesLocaleDirectory(
   locale: ArchitectureLocale,

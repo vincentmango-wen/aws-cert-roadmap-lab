@@ -5,7 +5,7 @@
  */
 import fs from "fs";
 import path from "path";
-import type { Locale } from "@/i18n/locales";
+import { LOCALE_DIR_NAMES, type Locale } from "@/i18n/locales";
 
 export type BlogFrontmatterValue = string | boolean | string[];
 
@@ -22,12 +22,6 @@ export type BlogPostFrontmatter = {
   noIndex: boolean;
   publishedAt: string;
   updatedAt: string;
-};
-
-const LOCALE_DIR_NAMES: Record<Locale, string> = {
-  ja: "ja",
-  en: "en",
-  zh: "zh",
 };
 
 function getBlogLocaleDirectory(locale: Locale): string | null {
