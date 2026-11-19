@@ -16,8 +16,11 @@ for (const locale of ["ja", "en", "zh"] as const) {
   it(`${locale}/sqs-lambda-async-processing shows the latest correction before older history`, () => {
     const architecture = getArchitectureBySlug(locale, "sqs-lambda-async-processing")!;
     const html = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
-    const correctionDates = [...html.matchAll(/<h3[^>]*>(\d{4}-\d{2}-\d{2})<\/h3>/g)].map((match) => match[1]);
+    const correctionDates = [...html.matchAll(/<time dateTime="(\d{4}-\d{2}-\d{2})">\1<\/time>/g)]
+      .map((match) => match[1]);
     expect(correctionDates).toEqual(["2026-11-18", "2026-11-09"]);
+    expect(html).toMatch(/<h3[^>]*><time dateTime="2026-11-18">/);
+    expect(html).toMatch(/<details class="[^"]+"><summary[^>]*><time dateTime="2026-11-09">/);
   });
 }
 // Catch raw diagram-code leakage and missing localized assets at the real reader boundary.

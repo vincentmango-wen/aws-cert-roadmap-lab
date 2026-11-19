@@ -12,7 +12,7 @@ import {
   levelLabelsByLocale,
   resolveDiagramPath,
 } from "@/app/(site)/architectures/architecture-detail-data";
-import { MarkdownContent } from "@/components/comparisons/MarkdownContent";
+import { ArchitectureArticleBody } from "./ArchitectureArticleBody";
 import {
   isExistingArchitectureForLocale,
   isExistingTerm,
@@ -219,7 +219,7 @@ export function ArchitectureDetailContent({
 
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           {architecture.content ? (
-            <MarkdownContent content={architecture.content} locale={locale} />
+            <ArchitectureArticleBody content={architecture.content} locale={locale} />
           ) : architecture.sections && architecture.sections.length > 0 ? (
             <div className="space-y-8">
               {architecture.sections.map((section) => (
