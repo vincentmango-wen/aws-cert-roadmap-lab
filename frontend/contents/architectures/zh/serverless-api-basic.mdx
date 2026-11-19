@@ -10,28 +10,15 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者]
-    Frontend[Frontend S3 + CloudFront]
-    APIGW[API Gateway HTTP API]
-    Lambda[AWS Lambda contact-submit]
-    DDB[(DynamoDB ContactsTable)]
-    CW[CloudWatch Logs]
-    IAM[IAM Role]
-    Budget[AWS Budgets]
+瀏覽器先載入表單，再另送出表單。CloudFront 與 S3 負責提供靜態頁面，不會替瀏覽器呼叫表單 API。
 
-    User -->|表單輸入| Frontend
-    Frontend -->|POST /contact| APIGW
-    APIGW -->|Lambda Proxy Integration| Lambda
-    Lambda -->|PutItem| DDB
-    Lambda -->|輸出記錄| CW
-    IAM -.執行權限.-> Lambda
-    IAM -.僅允許 PutItem.-> DDB
-    Budget -.費用監控.-> APIGW
-    Budget -.費用監控.-> Lambda
-    Budget -.費用監控.-> DDB
-```
+| 流程或職責 | 實際運作 |
+|---|---|
+| 載入表單 | 瀏覽器從 CloudFront 載入靜態表單，S3 是靜態檔案的來源。 |
+| 送出表單 | 經用戶端檢查後，瀏覽器中的 JavaScript 向 API Gateway HTTP API 送出 `POST /contact`。 |
+| 驗證、儲存與回應 | HTTP API 透過 Lambda 代理整合呼叫 `contact-submit`。Lambda 驗證輸入，有效時對 `ContactsTable` 執行 `PutItem`，並透過 API Gateway 將結果傳回瀏覽器。 |
+| 權限 | API Gateway 需要呼叫函式的權限。獨立的 Lambda 執行角色只授予目標資料表的 `dynamodb:PutItem` 與必要的日誌寫入權限。 |
+| 日誌與成本監控 | Lambda 將運作日誌寫到 CloudWatch Logs。AWS Budgets 可通知 API Gateway、Lambda 或 DynamoDB 的費用增加，兩者都不在請求路徑上。 |
 
 ## 此架構可達成的功能
 
@@ -59,7 +46,7 @@ flowchart TD
 
 1. 使用者填寫聯絡表單
 2. 前端驗證必填欄位與字數
-3. 前端呼叫 API Gateway 的 `POST /contact`
+3. 瀏覽器中的 JavaScript 向 API Gateway 送出 `POST /contact`
 4. API Gateway 透過 Lambda Proxy Integration 呼叫 Lambda
 5. Lambda 解析 JSON
 6. Lambda 確認 honeypot
@@ -134,3 +121,9 @@ API Gateway、Lambda、DynamoDB 採用按用量計費。
 API Gateway + Lambda + DynamoDB 是在個人開發 MVP 中,以最小幅度新增動態處理的基本架構。
 
 在本專案中,僅將聯絡表單 API 化,而用語、題目、文章與架構圖則以靜態檔案方式提供,藉此壓低成本與實作範圍。
+
+## 更正說明
+
+### 2026-11-19
+
+更正送出來源：呼叫 HTTP API 送出表單的是瀏覽器，不是 S3 或 CloudFront。架構圖分別呈現載入靜態頁面與送出表單。參考 [HTTP API 的 Lambda 代理整合](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)及 [API Gateway 的函式呼叫權限](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html)。

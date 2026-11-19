@@ -10,28 +10,15 @@ Because there is no always-on server, this architecture pairs well with small-sc
 
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User]
-    Frontend[Frontend S3 + CloudFront]
-    APIGW[API Gateway HTTP API]
-    Lambda[AWS Lambda contact-submit]
-    DDB[(DynamoDB ContactsTable)]
-    CW[CloudWatch Logs]
-    IAM[IAM Role]
-    Budget[AWS Budgets]
+The browser loads the form first and submits it separately. CloudFront and S3 serve the page; neither sends the contact form's API request.
 
-    User -->|Form input| Frontend
-    Frontend -->|POST /contact| APIGW
-    APIGW -->|Lambda Proxy Integration| Lambda
-    Lambda -->|PutItem| DDB
-    Lambda -->|Log output| CW
-    IAM -.Execution permission.-> Lambda
-    IAM -.PutItem only.-> DDB
-    Budget -.Cost monitoring.-> APIGW
-    Budget -.Cost monitoring.-> Lambda
-    Budget -.Cost monitoring.-> DDB
-```
+| Flow or responsibility | What happens |
+|---|---|
+| Load the form | The browser loads the static form from CloudFront; S3 is the static origin. |
+| Submit the form | After client-side checks, JavaScript in the browser sends `POST /contact` to API Gateway HTTP API. |
+| Validate, save, respond | The HTTP API invokes `contact-submit` through a Lambda proxy integration. Lambda validates the request, calls `PutItem` on `ContactsTable` if valid, and returns the result to the browser through API Gateway. |
+| Permissions | API Gateway needs permission to invoke the function. The separate Lambda execution role grants `dynamodb:PutItem` only on the target table and permission to write the necessary logs. |
+| Logs and cost monitoring | Lambda writes operational logs to CloudWatch Logs. AWS Budgets can notify you of increased costs from API Gateway, Lambda, or DynamoDB. Neither is a step in the request path. |
 
 ## What this architecture achieves
 
@@ -59,7 +46,7 @@ flowchart TD
 
 1. The user fills in the contact form
 2. The frontend validates required fields and character counts
-3. The frontend calls `POST /contact` on API Gateway
+3. JavaScript in the browser sends `POST /contact` to API Gateway
 4. API Gateway invokes Lambda via Lambda Proxy Integration
 5. Lambda parses the JSON
 6. Lambda checks the honeypot
@@ -134,3 +121,9 @@ Do not log the full email address or the full body of the contact submission.
 API Gateway + Lambda + DynamoDB is a foundational architecture for adding minimal dynamic processing to an individual MVP.
 
 In this project, only the contact form is exposed as an API, while terms, questions, articles, and architecture diagrams are delivered as static files, keeping cost and implementation scope in check.
+
+## Corrections
+
+### 2026-11-19
+
+Corrected the request origin: the browser, not S3 or CloudFront, submits the form to the HTTP API. The diagram separates loading the static page from submitting the form. See [HTTP API Lambda proxy integrations](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html) and [API Gateway invocation permissions](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html).

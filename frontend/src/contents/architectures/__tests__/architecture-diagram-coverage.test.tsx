@@ -11,6 +11,7 @@ import { getUpdatesInventory, selectLatestArticles } from "@/contents/updates";
 
 import * as articleSources from "@/contents/updates/article-sources";
 import { beforeIssue348Batch2Corrections } from "@/contents/updates/__tests__/fixtures/architecture-dates-before-issue-348-batch2";
+import { beforeIssue348Batch3Corrections } from "@/contents/updates/__tests__/fixtures/architecture-dates-before-issue-348-batch3";
 
 afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
 
@@ -51,7 +52,7 @@ describe("batch 1 architecture diagrams", () => {
 
 it.each(["ja", "en", "zh"] as const)("%s publishes the three dated corrections without changing Blog recommendations", (locale) => {
   vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-17");
-  const historical = beforeIssue348Batch2Corrections(articleSources.readArticleCandidates());
+  const historical = beforeIssue348Batch2Corrections(beforeIssue348Batch3Corrections(articleSources.readArticleCandidates()));
   vi.spyOn(articleSources, "readArticleCandidates").mockReturnValue(historical);
   const inventory = getUpdatesInventory();
   const values = inventory.itemsByLocale[locale];

@@ -7,9 +7,10 @@ import { getArchitectureBySlug } from "@/app/(site)/architectures/architecture-d
 import { ArchitectureDetailContent } from "@/components/architectures/ArchitectureDetailContent";
 import { MarkdownContent } from "@/components/comparisons/MarkdownContent";
 import { getUpdatesInventory, selectLatestArticles } from "@/contents/updates";
-import { readArticleCandidates } from "@/contents/updates/article-sources";
+import * as articleSources from "@/contents/updates/article-sources";
+import { beforeIssue348Batch3Corrections } from "@/contents/updates/__tests__/fixtures/architecture-dates-before-issue-348-batch3";
 
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
 const slugs = ["sqs-lambda-async-processing", "sns-sqs-fanout"] as const;
 for (const locale of ["ja", "en", "zh"] as const) {
   it(`${locale}/sqs-lambda-async-processing shows the latest correction before older history`, () => {
@@ -50,6 +51,8 @@ for (const locale of ["ja", "en", "zh"] as const) {
   });
   it(`${locale} exposes both current corrections without losing history or Blog recommendations`, () => {
     vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-18");
+    const articles = beforeIssue348Batch3Corrections(articleSources.readArticleCandidates());
+    vi.spyOn(articleSources, "readArticleCandidates").mockReturnValue(articles);
     const inventory = getUpdatesInventory();
     const values = inventory.itemsByLocale[locale];
     expect(values).toHaveLength(53);
@@ -58,7 +61,6 @@ for (const locale of ["ja", "en", "zh"] as const) {
       expect(entry).toMatchObject({ publishedAt: "2026-06-08", date: "2026-11-18", eventKind: "update", changeNotes: { status: "available", entry: { date: "2026-11-18" } } });
     }
     expect(selectLatestArticles(values).map((entry) => entry.id)).toEqual(["blog:blog-002", "blog:blog-008", "blog:blog-015"]);
-    const articles = readArticleCandidates();
     for (const [index, id] of ["arc-007", "arc-008"].entries()) {
       const article = articles.find((value) => value.kind === "architecture" && value.id === id)!;
       expect(article.slug).toBe(slugs[index]);
@@ -92,7 +94,7 @@ for (const locale of ["ja", "en", "zh"] as const) {
     });
   }
   it(`${locale} leaves non-opted-in and missing diagrams unchanged`, () => {
-    const architecture = getArchitectureBySlug(locale, "static-site-s3-cloudfront")!;
+    const architecture = getArchitectureBySlug(locale, "ecs-fargate-web-app")!;
     const html = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
     expect(html).not.toContain('role="region"');
     expect(html).toMatch(/<img[^>]*class="w-full /);

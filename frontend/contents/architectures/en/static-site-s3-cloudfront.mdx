@@ -10,31 +10,15 @@ In this project, it is used as the MVP publishing setup for the AWS certificatio
 
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User]
-    Domain[Custom Domain optional]
-    R53[Route 53 optional]
-    ACM[ACM Certificate optional]
-    CF[Amazon CloudFront]
-    OAC[Origin Access Control]
-    S3[(Amazon S3 Static Files)]
-    IAM[IAM Deploy Role]
-    Budget[AWS Budgets]
-    GH[GitHub Actions]
+The diagram separates requests from deployment. The optional DNS alias and certificate are settings, not stops on the HTTPS path.
 
-    User -->|HTTPS Access| CF
-    Domain -.When using custom domain.-> R53
-    R53 -.Alias Record.-> CF
-    ACM -.TLS Certificate.-> CF
-    CF -->|Fetch via OAC| S3
-    OAC -.Block direct S3 access.-> S3
-    GH -->|Build and Deploy| IAM
-    IAM -->|S3 sync| S3
-    IAM -->|Invalidation| CF
-    Budget -.Billing monitoring.-> CF
-    Budget -.Billing monitoring.-> S3
-```
+| Flow | What happens |
+|---|---|
+| Viewer HTTPS | The browser connects directly to CloudFront. A cache hit can be served without contacting S3. |
+| Origin access | On a cache miss, CloudFront uses OAC to sign the request to the regular, private S3 bucket origin. Use S3 Block Public Access and a bucket policy that grants CloudFront the required read access for this distribution. |
+| Optional custom domain | For a custom domain, Route 53 can resolve the alias to CloudFront, and CloudFront uses the associated ACM certificate in `us-east-1` for viewer HTTPS. |
+| Deployment | GitHub Actions builds the static output and uses the IAM deployment role to sync it to S3 and create a CloudFront cache invalidation. This is separate from browsing. |
+| Cost monitoring | AWS Budgets can notify you about costs such as CloudFront delivery and S3 storage. It does not serve requests. |
 
 ## What This Architecture Enables
 
@@ -65,7 +49,7 @@ flowchart TD
 2. CloudFront receives the HTTPS request
 3. If CloudFront has a cached response, it returns it directly to the user
 4. If there is no cache, CloudFront fetches the file from S3 via OAC
-5. S3 allows access only from the CloudFront Distribution
+5. For viewer delivery, the S3 bucket policy allows the specified CloudFront distribution to read files. The IAM deployment role uses separate permissions.
 6. CloudFront returns the HTML, CSS, JavaScript, and images to the user
 7. On deploy, GitHub Actions syncs to S3 and runs CloudFront Invalidation
 
@@ -110,7 +94,7 @@ Large images and JavaScript bundles increase data transfer, so reducing file siz
 
 - Use the standard S3 origin, not the S3 Static website hosting endpoint
 - Do not disable S3 Public Access Block
-- Set the correct CloudFront Distribution ID in the Bucket Policy's SourceArn
+- In the S3 bucket policy, use the full CloudFront distribution ARN in `AWS:SourceArn` (for example, `arn:aws:cloudfront::111122223333:distribution/EXAMPLE123`), not the distribution ID alone.
 - Updates may not be reflected immediately due to CloudFront caching
 - Frequent `/*` invalidations can drive up costs
 - This architecture alone cannot handle API processing or per-user data storage
@@ -134,3 +118,9 @@ Large images and JavaScript bundles increase data transfer, so reducing file siz
 S3 + CloudFront is the ideal baseline architecture for static-content-centric learning sites and portfolio sites.
 
 In this project, it is adopted as the MVP publishing platform that simultaneously satisfies low cost, HTTPS delivery, S3 non-exposure, and CI/CD integration.
+
+## Corrections
+
+### 2026-11-19
+
+Separated viewer HTTPS, origin access, custom-domain settings, and deployment in the diagram. Corrected the S3 bucket policy example: `AWS:SourceArn` uses the full CloudFront distribution ARN. See [AWS guidance on OAC and bucket policies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html), [Route 53 aliases for CloudFront](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html), and [CloudFront TLS certificate requirements](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cnames-and-https-requirements.html).
