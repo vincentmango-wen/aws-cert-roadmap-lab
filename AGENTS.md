@@ -37,7 +37,7 @@ Use other applicable Superpowers skills at the relevant stage, without bypassing
 ## Human review, Git and deployment
 
 - Local verification, remote CI, readiness for review, human acceptance, merge authorization and deployment authorization are separate states. Human acceptance remains pending until the user actually accepts.
-- Commit, push and draft PR creation must be within the current task's authorization. Before any authorized push/PR, inspect remote, head/base, workflows, branch protection and external integrations. A draft PR does not prevent Actions or Preview deployments.
+- Commit, push and PR creation must be within the current task's authorization. Once ready to submit, open new PRs as Ready for review, not Draft. Before any authorized push/PR, inspect remote, head/base, workflows, branch protection and external integrations. Opening a PR can trigger GitHub Actions and Preview deployments; it does not authorize a merge or production deployment.
 - Do not push to master or another branch that would deploy before the required review. If deployment side effects cannot be established as authorized, stop before the action and report them.
 - PR approval alone is not a merge or deployment instruction. Do not enable auto-merge. Merge and production deployment require explicit applicable user authorization; a past task's conditional authorization must not be reused.
 - `master` is the production branch. The current AWS frontend workflow can deploy on matching master changes or manual dispatch. Deployment commands in the README are documentation, not permission to execute them.
@@ -58,6 +58,7 @@ Use the checks appropriate to the approved change. Current frontend scripts incl
 
 The consolidation preserves these sources, with the latest explicit user instruction taking precedence:
 
+- The 2026-11-19 owner decision: open new PRs as Ready for review instead of Draft without changing merge or production deployment approval requirements.
 - The user's 2026-11-16 approval of the repair-allowance amendment: independently scoped and authorized PR/issue tasks each receive three attempts prospectively; a PR and its associated issue share one allowance. Existing task histories and one-time exceptions are retained. The comparison-link/Blog task keeps its original 3/3 plus explicitly authorized exceptions 4 and 5, with no additional allowance from this amendment.
 - The user's 2026-11-12 restoration/rules request: desktop workspace, safe restoration, required feature stages, renewed approval for material design changes, no resumed updates-center development.
 - `README.md`, `README.zh-TW.md`, `docs/README.md`, localization policy and `.github/workflows/deploy-frontend.yml` at local baseline `5fae04f28f3878043c67cff591c295491760b059`.
