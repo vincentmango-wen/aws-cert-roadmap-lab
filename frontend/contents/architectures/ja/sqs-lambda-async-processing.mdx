@@ -143,14 +143,14 @@ SQS Standardは少なくとも1回の配信とベストエフォートの順序�
 
 ## 訂正内容
 
-### 2026-11-09
-
-- SQS が常に順番どおりに処理するかのような説明を訂正しました。Standard では重複や順序の入れ替わりがあり、FIFO の順序保証はメッセージグループ単位です。重複排除は業務上の副作用が一度だけ起きる保証ではなく、コンシューマーにも冪等性が必要であることを追記しました。
-
-参照資料：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
-
 ### 2026-11-18
 
 - 曖昧なイベント起動と失敗回数の説明を訂正し、SQS のポーリング、ワーカーの同期呼び出し、受信回数に基づく DLQ への移動、必要な権限を明記しました。静的な図と表で結果保存、ログ、DLQ の経路を維持しています。
 
 参照資料：[Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
+
+### 2026-11-09
+
+- SQS が常に順番どおりに処理するかのような説明を訂正しました。Standard では重複や順序の入れ替わりがあり、FIFO の順序保証はメッセージグループ単位です。重複排除は業務上の副作用が一度だけ起きる保証ではなく、コンシューマーにも冪等性が必要であることを追記しました。
+
+参照資料：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).

@@ -116,14 +116,14 @@ SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序�
 
 ## 更正說明
 
-### 2026-11-09
-
-- 更正將 SQS 一概描述為依序處理的文字：Standard 可能重複或亂序，FIFO 的順序範圍是訊息群組；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
-
-依據：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
-
 ### 2026-11-18
 
 - 更正模糊的事件觸發與失敗次數描述，明確說明 SQS 輪詢、同步呼叫工作函式、依接收次數移至 DLQ，以及消費端所需權限。靜態圖與表格保留結果儲存、日誌及 DLQ 流程。
 
 依據：[Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
+
+### 2026-11-09
+
+- 更正將 SQS 一概描述為依序處理的文字：Standard 可能重複或亂序，FIFO 的順序範圍是訊息群組；補充去重不等於業務副作用只執行一次，消費端仍須處理冪等性。
+
+依據：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html).
