@@ -19,10 +19,10 @@ tags:
   - "serverless"
   - "asynchronous"
   - "saa"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-08"
-updatedAt: "2026-11-09"
+updatedAt: "2026-11-18"
 ---
 
 # SQS + Lambda 非同期処理構成
@@ -37,26 +37,16 @@ SQSを挟むことで、受付処理と実行処理を分離できます。こ�
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー / 外部システム]
-    API[API Gateway / Application]
-    Queue[(Amazon SQS Queue)]
-    DLQ[(Dead Letter Queue)]
-    Lambda[AWS Lambda Worker]
-    DDB[(DynamoDB / 保存先)]
-    CW[CloudWatch Logs]
-    IAM[IAM Role]
+### フローと権限
 
-    User -->|リクエスト| API
-    API -->|メッセージ送信| Queue
-    Queue -->|イベント起動| Lambda
-    Lambda -->|処理結果保存| DDB
-    Lambda -->|ログ出力| CW
-    Queue -->|処理失敗が規定回数超過| DLQ
-    IAM -.-> Lambda
-    IAM -.-> Queue
-```
+Lambda のイベントソースマッピングが SQS をポーリングし、ワーカー関数を同期呼び出しします。業務フローは非同期ですが、Lambda の非同期呼び出し方式とは異なります。
+
+| 手順／主体 | 動作／権限 |
+|---|---|
+| アプリケーション → キュー | 送信側に対象キューの `sqs:SendMessage` を許可します。 |
+| コンシューマーの実行ロール | 対象キューの `sqs:ReceiveMessage`、`sqs:DeleteMessage`、`sqs:GetQueueAttributes` を許可します。 |
+| ログと処理結果 | 各ワーカーには CloudWatch Logs への書き込み権限が必要です。アプリケーションの保存先への権限は別途付与します。SQS 権限だけでは DynamoDB に書き込めません。 |
+| ソースキュー → DLQ | ソースキューの redrive policy と DLQ を設定します。`maxReceiveCount` はメッセージの受信回数であり、アプリケーションの失敗回数ではありません。 |
 
 ## この構成で実現できること
 
@@ -74,7 +64,7 @@ flowchart TD
 |---|---|
 | Amazon SQS | 処理待ちメッセージを保存するキュー |
 | AWS Lambda | SQSメッセージを処理する実行基盤 |
-| Dead Letter Queue | 規定回数失敗したメッセージの退避先 |
+| Dead Letter Queue | ソースキューの redrive policy と最大受信回数に基づく退避先 |
 | Amazon DynamoDB | 処理結果や状態の保存先 |
 | Amazon CloudWatch Logs | Lambdaの処理ログ確認 |
 | IAM | LambdaがSQSやDynamoDBへアクセスするための権限 |
@@ -84,10 +74,10 @@ flowchart TD
 1. ユーザーまたは外部システムがAPIへリクエストする
 2. APIまたはアプリケーションがSQSへメッセージを送信する
 3. SQSにメッセージが保存される
-4. LambdaがSQSイベントを受け取って処理する
+4. Lambda のイベントソースマッピングが SQS をポーリングし、ワーカーを同期呼び出しする
 5. 処理結果をDynamoDBなどへ保存する
 6. 処理ログをCloudWatch Logsへ出力する
-7. 規定回数失敗したメッセージはDLQへ送られる
+7. SQS が redrive policy の最大受信回数に基づいて、設定済みの DLQ へメッセージを移動する
 
 ## 設計ポイント
 
@@ -99,7 +89,7 @@ DLQを設定することで、失敗メッセージを後から調査できま�
 
 ### セキュリティ
 
-Lambda実行ロールには、対象SQSキューの読み取り、対象DynamoDBテーブルへの書き込み、CloudWatch Logsへの出力だけを許可します。
+Lambda の実行ロールは、上表のキュー消費、アプリケーションの保存先、ログに必要な権限に限定します。
 
 SQSへメッセージを送信できる主体もIAMで制限します。
 
@@ -152,6 +142,12 @@ SAAでは「処理を後回しにしたい」「急なリクエスト増加を�
 SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
 
 ## 訂正内容
+
+### 2026-11-18
+
+- 曖昧なイベント起動と失敗回数の説明を訂正し、SQS のポーリング、ワーカーの同期呼び出し、受信回数に基づく DLQ への移動、必要な権限を明記しました。静的な図と表で結果保存、ログ、DLQ の経路を維持しています。
+
+参照資料：[Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
 
 ### 2026-11-09
 

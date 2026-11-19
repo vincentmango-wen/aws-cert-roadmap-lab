@@ -212,10 +212,10 @@
       "Loose Coupling"
     ],
     "diagramPath": "/images/architectures/sqs-lambda-async-processing.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-08",
-    "updatedAt": "2026-11-09",
+    "updatedAt": "2026-11-18",
     "locale": "en"
   },
   {
@@ -244,10 +244,10 @@
       "Event-driven"
     ],
     "diagramPath": "/images/architectures/sns-sqs-fanout.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-08",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-18",
     "locale": "en"
   },
   {

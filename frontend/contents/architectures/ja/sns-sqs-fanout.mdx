@@ -20,17 +20,17 @@ tags:
   - "fanout"
   - "event-driven"
   - "saa"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-08"
-updatedAt: "2026-06-21"
+updatedAt: "2026-11-18"
 ---
 
 # SNS + SQS ファンアウト構成
 
 ## 概要
 
-この構成は、1つのイベントをAmazon SNSで受け取り、複数のAmazon SQSキューへ同時に配信するイベント駆動アーキテクチャです。
+この構成は、1つのイベントをAmazon SNSで受け取り、複数のAmazon SQSキューへそれぞれ配信するイベント駆動アーキテクチャです。
 
 例えば、注文が作成されたときに「メール通知」「在庫更新」「分析用ログ保存」など、複数の処理を同時に開始したいケースがあります。
 
@@ -38,40 +38,24 @@ SNS + SQSのファンアウト構成にすると、イベント発行側はSNS�
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    App[アプリケーション]
-    Topic[Amazon SNS Topic]
-    QueueA[(SQS Queue A<br/>通知処理)]
-    QueueB[(SQS Queue B<br/>在庫更新)]
-    QueueC[(SQS Queue C<br/>分析ログ)]
-    LambdaA[Lambda A]
-    LambdaB[Lambda B]
-    LambdaC[Lambda C]
-    CW[CloudWatch Logs]
-    IAM[IAM Policy]
+### フローと権限
 
-    App -->|Publish Event| Topic
-    Topic --> QueueA
-    Topic --> QueueB
-    Topic --> QueueC
-    QueueA --> LambdaA
-    QueueB --> LambdaB
-    QueueC --> LambdaC
-    LambdaA --> CW
-    LambdaB --> CW
-    LambdaC --> CW
-    IAM -.-> Topic
-    IAM -.-> QueueA
-    IAM -.-> QueueB
-    IAM -.-> QueueC
-```
+Lambda のイベントソースマッピングが SQS をポーリングし、ワーカー関数を同期呼び出しします。業務フローは非同期ですが、Lambda の非同期呼び出し方式とは異なります。
+
+| 手順／主体 | 動作／権限 |
+|---|---|
+| 発行側 → SNS | 対象トピックの `sns:Publish` を許可します。 |
+| SNS → 各キュー | 各サブスクリプションとキューのリソースポリシーを設定します。SNS サービスの `sqs:SendMessage` を許可し、`aws:SourceArn` で送信元トピックの ARN に制限します。 |
+| 独立したコンシューマー | 通知、在庫、分析ごとにキュー、マッピング、ワーカーを設けます。同時実行は保証しません。各キューの DLQ は別途設定し、SNS サブスクリプションの DLQ とは区別します。 |
+| コンシューマーの実行ロール | 対象キューの `sqs:ReceiveMessage`、`sqs:DeleteMessage`、`sqs:GetQueueAttributes` を許可します。 |
+| ログと処理結果 | 各ワーカーには CloudWatch Logs への書き込み権限が必要です。アプリケーションの保存先への権限は別途付与します。SQS 権限だけでは DynamoDB に書き込めません。 |
+| ソースキュー → DLQ | ソースキューの redrive policy と DLQ を設定します。`maxReceiveCount` はメッセージの受信回数であり、アプリケーションの失敗回数ではありません。 |
 
 ## この構成で実現できること
 
 | 項目 | 内容 |
 |---|---|
-| 複数処理への同時配信 | 1つのイベントを複数の処理へ分岐できる |
+| 複数処理への配信 | 1つのイベントを複数の処理へ分岐できる |
 | 疎結合 | 発行側が各処理の詳細を知らなくてよい |
 | 独立スケール | 処理ごとにSQSキューとLambdaを分けられる |
 | 障害分離 | 1つの処理が失敗しても他の処理へ影響しにくい |
@@ -92,7 +76,7 @@ flowchart TD
 1. アプリケーションがSNS TopicへイベントをPublishする
 2. SNSが購読設定に基づいて複数のSQSキューへメッセージを配信する
 3. 各SQSキューが処理待ちメッセージを保持する
-4. 各Lambdaが自分の担当キューからメッセージを受け取る
+4. 各 Lambda のイベントソースマッピングが担当キューをポーリングし、ワーカーを同期呼び出しする
 5. Lambdaごとに通知、在庫更新、分析ログ保存などを実行する
 6. 各処理のログをCloudWatch Logsへ出力する
 
@@ -155,3 +139,11 @@ SNS、SQS、Lambdaはいずれも従量課金です。常時起動サーバー�
 SNS + SQSのファンアウト構成は、1つのイベントから複数の処理を安全に分岐させる代表的なパターンです。
 
 SAAでは「複数のシステムへ同じイベントを配信したい」「処理ごとに失敗を分離したい」という条件が出たら、この構成を候補にします。
+
+## 訂正内容
+
+### 2026-11-18
+
+- ファンアウト後の独立した処理、SQS のポーリング、発行側・キューポリシー・コンシューマーの権限の違いを明確にしました。静的な図と表で3系統の処理、ログ、キューごとの DLQ 設定を維持しています。
+
+参照資料：[Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) / [SNS → SQS](https://docs.aws.amazon.com/sns/latest/dg/subscribe-sqs-queue-to-sns-topic.html).

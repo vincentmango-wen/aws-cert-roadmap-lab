@@ -10,26 +10,16 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者 / 外部系統]
-    API[API Gateway / Application]
-    Queue[(Amazon SQS Queue)]
-    DLQ[(Dead Letter Queue)]
-    Lambda[AWS Lambda Worker]
-    DDB[(DynamoDB / 儲存目的地)]
-    CW[CloudWatch Logs]
-    IAM[IAM Role]
+### 流程與權限
 
-    User -->|請求| API
-    API -->|傳送訊息| Queue
-    Queue -->|事件觸發| Lambda
-    Lambda -->|儲存處理結果| DDB
-    Lambda -->|輸出日誌| CW
-    Queue -->|處理失敗超過規定次數| DLQ
-    IAM -.-> Lambda
-    IAM -.-> Queue
-```
+Lambda 事件來源映射會輪詢 SQS，並同步呼叫工作函式。業務流程是非同步處理，不代表使用 Lambda 的非同步呼叫模式。
+
+| 步驟／主體 | 行為／權限 |
+|---|---|
+| 應用程式 → 佇列 | 授予傳送端對目標佇列的 `sqs:SendMessage` 權限。 |
+| 消費端執行角色 | 對所屬佇列授予 `sqs:ReceiveMessage`、`sqs:DeleteMessage` 與 `sqs:GetQueueAttributes`。 |
+| 日誌與處理結果 | 各工作函式須具備 CloudWatch Logs 寫入權限。應用程式所需的儲存權限另行授予；SQS 權限不包含 DynamoDB 寫入。 |
+| 來源佇列 → DLQ | 須設定來源佇列的 redrive policy 與 DLQ。`maxReceiveCount` 計算訊息被接收的次數，不是應用程式失敗次數。 |
 
 ## 此架構能實現的目標
 
@@ -47,7 +37,7 @@ flowchart TD
 |---|---|
 | Amazon SQS | 儲存待處理訊息的佇列 |
 | AWS Lambda | 處理 SQS 訊息的執行平台 |
-| Dead Letter Queue | 失敗達規定次數的訊息退避目的地 |
+| Dead Letter Queue | 依來源佇列 redrive policy 與最大接收次數設定的退避目的地 |
 | Amazon DynamoDB | 儲存處理結果與狀態的目的地 |
 | Amazon CloudWatch Logs | 確認 Lambda 處理日誌 |
 | IAM | Lambda 存取 SQS 與 DynamoDB 所需的權限 |
@@ -57,10 +47,10 @@ flowchart TD
 1. 使用者或外部系統向 API 發送請求
 2. API 或應用程式向 SQS 傳送訊息
 3. 訊息保存於 SQS
-4. Lambda 接收 SQS 事件並進行處理
+4. Lambda 事件來源映射輪詢 SQS，再同步呼叫工作函式
 5. 將處理結果儲存至 DynamoDB 等
 6. 將處理日誌輸出至 CloudWatch Logs
-7. 失敗達規定次數的訊息被送至 DLQ
+7. SQS 依 redrive policy 的最大接收次數將訊息移至所設定的 DLQ
 
 ## 設計重點
 
@@ -72,7 +62,7 @@ flowchart TD
 
 ### 安全性
 
-Lambda 執行角色僅允許讀取目標 SQS 佇列、寫入目標 DynamoDB 資料表,以及輸出至 CloudWatch Logs。
+依上表將 Lambda 執行角色限制在所需的佇列消費、應用程式儲存與日誌權限。
 
 可向 SQS 傳送訊息的主體也以 IAM 加以限制。
 
@@ -125,6 +115,12 @@ SQS + Lambda 是以無伺服器方式實作非同步處理的代表性架構。
 SQS Standard 至少傳遞一次，僅盡力維持順序，可能重複或亂序。SQS FIFO 在各個 MessageGroupId 內維持順序，並在去重期間內排除重複傳送；這不等於業務副作用一定只執行一次，消費端仍須具備冪等性以因應重試。
 
 ## 更正說明
+
+### 2026-11-18
+
+- 更正模糊的事件觸發與失敗次數描述，明確說明 SQS 輪詢、同步呼叫工作函式、依接收次數移至 DLQ，以及消費端所需權限。靜態圖與表格保留結果儲存、日誌及 DLQ 流程。
+
+依據：[Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
 
 ### 2026-11-09
 
