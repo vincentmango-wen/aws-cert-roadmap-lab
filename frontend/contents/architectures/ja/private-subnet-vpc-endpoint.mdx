@@ -19,10 +19,10 @@ tags:
   - "private-subnet"
   - "security"
   - "saa"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-08"
-updatedAt: "2026-06-21"
+updatedAt: "2026-11-19"
 ---
 
 # VPC Endpoint プライベート接続構成
@@ -31,34 +31,20 @@ updatedAt: "2026-06-21"
 
 この構成は、VPC内のプライベートサブネットにあるアプリケーションから、インターネットを経由せずにS3やDynamoDBなどのAWSサービスへアクセスするための設計です。
 
-通常、プライベートサブネットからインターネット上のAWSサービスへ出るにはNAT Gatewayが必要になります。しかし、S3やDynamoDBなど一部のAWSサービスに対してはVPC Endpointを使うことで、AWSネットワーク内で通信を完結できます。
+公開 IPv4 インターネット接続には NAT Gateway がよく使われます。この例の同一リージョンの S3 と DynamoDB への通信は、サービスごとのゲートウェイエンドポイントを使い、NAT やインターネットゲートウェイを必要としません。
 
 この構成は、セキュリティとコストの両方を意識したネットワーク設計としてSAAで問われやすいです。
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー]
-    ALB[Application Load Balancer]
-    VPC[VPC]
-    PublicSubnet[Public Subnet]
-    PrivateSubnet[Private Subnet]
-    App[EC2 / Lambda / Container App]
-    Endpoint[VPC Endpoint]
-    S3[(Amazon S3)]
-    DDB[(Amazon DynamoDB)]
-    IAM[IAM Policy]
+必要に応じて用意するユーザーの受信経路と、AWS サービスへのプライベート通信は別の流れです。ルートテーブルは経路の設定であり、通信機器ではありません。
 
-    User -->|HTTPS| ALB
-    ALB --> PublicSubnet
-    PublicSubnet --> PrivateSubnet
-    PrivateSubnet --> App
-    App -->|Private Access| Endpoint
-    Endpoint --> S3
-    Endpoint --> DDB
-    IAM -.-> Endpoint
-```
+| 項目 | 仕組み |
+|---|---|
+| 任意の HTTPS 受信 | 公開 ALB はプライベートサブネットのアプリへリクエストを転送できます。ゲートウェイエンドポイントは利用者の受信トラフィックを扱いません。 |
+| プライベート経路 | プライベートサブネットのルートテーブルには、同じリージョンの S3 と DynamoDB それぞれのプレフィックスリスト向けルートがあり、対応するゲートウェイエンドポイントを指定します。これらのサービス向け通信は NAT やインターネットゲートウェイを経由しません。 |
+| ポリシーの評価 | エンドポイントポリシーはエンドポイントの利用範囲を制限します。IAM のアイデンティティポリシーや S3 バケットポリシーなどのリソースポリシーとは別で、それらに代わって権限を付与しません。 |
+| インターフェイス型との違い | インターフェイスエンドポイントは選択したサブネットにネットワークインターフェイスを配置します。AZ の選択、対応サービス、時間・データ処理料金がゲートウェイ型とは異なります。 |
 
 ## この構成で実現できること
 
@@ -85,8 +71,8 @@ flowchart TD
 1. ユーザーがApplication Load BalancerへHTTPSアクセスする
 2. ALBがプライベートサブネット内のアプリケーションへリクエストを転送する
 3. アプリケーションがS3またはDynamoDBへアクセスする
-4. 通信はVPC Endpointを通る
-5. AWSサービス側でIAM PolicyとEndpoint Policyが評価される
+4. サービスのプレフィックスリスト向けルートが、対応するゲートウェイエンドポイントに通信を送る
+5. エンドポイントポリシーと、そのリクエストに適用されるその他の認可ポリシーが評価される
 6. 許可された操作だけが実行される
 
 ## 設計ポイント
@@ -150,3 +136,11 @@ AWSネットワーク内で通信できるため、インターネット経由�
 VPC Endpointは、プライベートサブネットからAWSサービスへ安全にアクセスするための重要な構成です。
 
 SAAでは「インターネットを経由しない」「NAT Gatewayを使わない」「S3やDynamoDBへアクセスしたい」という条件が出たら、VPC Endpointを候補に入れます。
+
+## 訂正内容
+
+### 2026-11-19
+
+1 つの共用エンドポイントではなく、サービスごとのゲートウェイエンドポイントとプレフィックスリスト向けルートを明示しました。任意の ALB はアプリの受信用で、エンドポイント向けリクエストの経由先ではありません。エンドポイントポリシーは IAM やリソースの権限を置き換えません。
+
+根拠：[VPC gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) · [Endpoint policies](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html)

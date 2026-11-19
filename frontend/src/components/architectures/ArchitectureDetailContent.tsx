@@ -37,6 +37,9 @@ const horizontalDiagramWidths: Readonly<Record<string, number>> = {
   "eventbridge-lambda-batch": 1000,
   "static-site-s3-cloudfront": 1000,
   "serverless-api-basic": 1000,
+  "ecs-fargate-web-app": 1000,
+  "private-subnet-vpc-endpoint": 1000,
+  "three-tier-vpc": 1000,
 };
 
 function formatServiceName(service: string): string {

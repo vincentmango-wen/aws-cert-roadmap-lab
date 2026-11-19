@@ -100,7 +100,7 @@ describe("issue #348 batch 3 architecture diagrams", () => {
       }));
       expect(code).toContain("<pre");
       expect(code).toContain("<code>const threshold = 5;</code>");
-      const architecture = getArchitectureBySlug(locale, "ecs-fargate-web-app")!;
+      const architecture = getArchitectureBySlug(locale, "step-functions-human-approval")!;
       const unchanged = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
       expect(unchanged).not.toContain('role="region"');
       expect(unchanged).toMatch(/<img[^>]*class="w-full /);

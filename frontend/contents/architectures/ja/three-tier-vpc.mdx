@@ -19,10 +19,10 @@ tags:
   - "three-tier"
   - "network"
   - "saa"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-21"
+updatedAt: "2026-11-19"
 ---
 
 # VPC内3層Webアプリ構成
@@ -41,42 +41,15 @@ AWSでは、VPC、Subnet、Route Table、Security Group、ALB、EC2、RDSなど�
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー]
-    IGW[Internet Gateway]
-    ALB[Application Load Balancer]
-    PublicSubnetA[Public Subnet AZ-a]
-    PublicSubnetC[Public Subnet AZ-c]
-    PrivateSubnetA[Private Subnet App AZ-a]
-    PrivateSubnetC[Private Subnet App AZ-c]
-    DBSubnetA[Private DB Subnet AZ-a]
-    DBSubnetC[Private DB Subnet AZ-c]
-    EC2A[EC2 App AZ-a]
-    EC2C[EC2 App AZ-c]
-    DBA[(RDS Primary)]
-    DBC[(RDS Standby)]
-    NAT[NAT Gateway 任意]
-    CW[CloudWatch]
+公開、アプリ用、DB 用のサブネットはリソースの配置を示し、通信を中継する機器ではありません。両方のアプリは同じ DB エンドポイントを使います。
 
-    User -->|HTTPS| IGW
-    IGW --> ALB
-    ALB --> PublicSubnetA
-    ALB --> PublicSubnetC
-    PublicSubnetA --> EC2A
-    PublicSubnetC --> EC2C
-    EC2A --> PrivateSubnetA
-    EC2C --> PrivateSubnetC
-    EC2A -->|DB接続| DBA
-    EC2C -->|DB接続| DBA
-    DBA --> DBSubnetA
-    DBC --> DBSubnetC
-    DBA -.同期レプリケーション.-> DBC
-    EC2A -->|外部通信が必要な場合| NAT
-    EC2C -->|外部通信が必要な場合| NAT
-    EC2A -.ログ.-> CW
-    EC2C -.ログ.-> CW
-```
+| 項目 | 仕組み |
+|---|---|
+| 受信 | VPC のインターネットゲートウェイは、2 つの公開サブネットを使う 1 台のインターネット向け ALB に公開接続を提供します。ALB は 2 つのプライベートサブネットの正常な EC2 に転送します。 |
+| DB アクセス | 両方の EC2 アプリは、現在のプライマリを指す RDS DB エンドポイント（DNS 名）で接続します。DB ポートはアプリのセキュリティグループからだけ許可し、DB サブネットグループは 2 つの AZ にまたがります。 |
+| 単一スタンバイへの複製 | プライマリは別 AZ の単一スタンバイに同期レプリケーションします。スタンバイは読み取り先ではありません。フェイルオーバー後は RDS がエンドポイントの DNS レコードを更新し、アプリは同じエンドポイントに再接続します。 |
+| 任意の外向き IPv4 通信 | 必要な場合にだけ、受信や DB アクセスとは別の経路でインターネットへ接続します。ゾーン NAT の場合は、各アプリ用サブネットから同じ AZ のパブリック NAT とインターネットゲートウェイを経由します。リージョン NAT はパブリック NAT の配置用サブネットが不要な別の選択肢です。 |
+| 監視 | CloudWatch では、設定に応じて ALB、EC2、RDS のメトリクスやログを監視します。閲覧リクエストは監視を経由しません。 |
 
 ## この構成で実現できること
 
@@ -93,7 +66,7 @@ flowchart TD
 | サービス | 役割 |
 |---|---|
 | Amazon VPC | アプリケーション全体のネットワーク境界 |
-| Public Subnet | ALBやNAT Gatewayなど外部接続が必要なリソースの配置先 |
+| Public Subnet | インターネット向け ALB と、この例でゾーン型を使う場合のパブリック NAT の配置先 |
 | Private Subnet | アプリケーションサーバーの配置先 |
 | Database Subnet | RDSを配置する非公開サブネット |
 | Application Load Balancer | HTTPSリクエストをアプリ層へ分散 |
@@ -107,10 +80,10 @@ flowchart TD
 1. ユーザーがWebサイトへHTTPSアクセスする
 2. Internet Gateway経由でALBがリクエストを受け取る
 3. ALBがPrivate Subnet内のEC2へリクエストを転送する
-4. EC2アプリケーションがRDS PrimaryへDB接続する
-5. RDS Multi-AZ構成の場合、PrimaryからStandbyへ同期レプリケーションされる
+4. 両方の EC2 アプリは RDS DB エンドポイントで現在のプライマリへ接続する
+5. この単一スタンバイの RDS Multi-AZ DB インスタンスでは、プライマリからスタンバイへ同期レプリケーションする
 6. EC2やRDSのメトリクスをCloudWatchで確認する
-7. 外部パッケージ取得などが必要な場合のみ、Private SubnetからNAT Gateway経由で外部通信する
+7. 外部パッケージの取得など公開 IPv4 通信が必要なら、プライベートサブネットからパブリック NAT を使うことができる
 
 ## 設計ポイント
 
@@ -149,7 +122,7 @@ SSM Session Managerを使うと、SSH用の踏み台サーバーを減らせま�
 - DBはPrivate Subnetに配置し、直接インターネット公開しない
 - Security Groupはステートフル、NACLはステートレス
 - RDS Multi-AZは可用性向上、Read Replicaは読み取り性能向上
-- Private Subnetからインターネットへ出る場合はNAT Gatewayが必要になる
+- パブリック NAT は公開 IPv4 の外向き通信の選択肢で、閲覧や DB 通信の経路ではない
 - S3やDynamoDBへ閉域接続したい場合はVPC Endpointも候補になる
 
 ## この構成の注意点
@@ -181,3 +154,11 @@ SSM Session Managerを使うと、SSH用の踏み台サーバーを減らせま�
 VPC内3層Webアプリ構成は、AWSのネットワーク設計を理解するための基本形です。
 
 このプロジェクト本体では低コストのため採用しませんが、SAA対策と面接説明では非常に重要な構成です。
+
+## 訂正内容
+
+### 2026-11-19
+
+2 つの AZ を使う ALB は 1 台で、両方の EC2 アプリは DB エンドポイントを通じて現在の RDS プライマリに接続します。単一スタンバイは読み取り先ではなく、点線は同期レプリケーションです。監視と任意の外向き IPv4 通信をリクエスト経路から分離しました。
+
+根拠：[Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html) · [RDS Multi-AZ DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html) · [RDS failover](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.Failover.html) · [Zonal NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-basics.html) · [Regional NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html)
