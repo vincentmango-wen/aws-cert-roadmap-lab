@@ -1,66 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="2250" viewBox="0 0 640 2250" role="img" aria-labelledby="title desc" xml:lang="zh">
-<title id="title">SNS + SQS fan-out</title>
-<desc id="desc">獨立消費端. 權限及 DLQ 設定 詳見流程表格。</desc>
-<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#334155"/></marker></defs>
-<rect width="640" height="2250" rx="24" fill="#f8fafc"/>
-<g font-family="Arial, Noto Sans CJK TC, Noto Sans CJK JP, sans-serif" fill="#0f172a">
-<text x="320" y="50" text-anchor="middle" font-size="34">SNS + SQS fan-out</text>
-<g id="app"><rect x="90" y="90" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="150.0" text-anchor="middle" font-size="30">應用程式</text>
-</g>
-<path d="M320 190 V270" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<text x="460" y="238" text-anchor="middle" font-size="26">發佈</text>
-<g id="topic"><rect x="90" y="270" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="330.0" text-anchor="middle" font-size="30">Amazon SNS Topic</text>
-</g>
-<text x="320" y="430" text-anchor="middle" font-size="28">依訂閱遞送</text>
-<path d="M90 320 H40 V1670" fill="none" stroke="#334155" stroke-width="3"/>
-<text x="365" y="512" text-anchor="middle" font-size="32">通知</text>
-<g id="queue-0"><rect x="130" y="540" width="470" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="600.0" text-anchor="middle" font-size="30">SQS 佇列</text>
-</g>
-<path d="M40 590 H130" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<path d="M365 640 V680" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="mapping-0"><rect x="130" y="680" width="470" height="120" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="732.0" text-anchor="middle" font-size="30">Lambda 事件來源映射</text>
-<text x="365.0" y="768.0" text-anchor="middle" font-size="30">輪詢 SQS</text>
-</g>
-<text x="365" y="837" text-anchor="middle" font-size="26">同步呼叫</text>
-<path d="M365 846 V880" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="worker-0"><rect x="130" y="880" width="470" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="940.0" text-anchor="middle" font-size="30">Lambda 工作函式</text>
-</g>
-<text x="365" y="1052" text-anchor="middle" font-size="32">庫存</text>
-<g id="queue-1"><rect x="130" y="1080" width="470" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="1140.0" text-anchor="middle" font-size="30">SQS 佇列</text>
-</g>
-<path d="M40 1130 H130" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<path d="M365 1180 V1220" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="mapping-1"><rect x="130" y="1220" width="470" height="120" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="1272.0" text-anchor="middle" font-size="30">Lambda 事件來源映射</text>
-<text x="365.0" y="1308.0" text-anchor="middle" font-size="30">輪詢 SQS</text>
-</g>
-<text x="365" y="1377" text-anchor="middle" font-size="26">同步呼叫</text>
-<path d="M365 1386 V1420" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="worker-1"><rect x="130" y="1420" width="470" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="1480.0" text-anchor="middle" font-size="30">Lambda 工作函式</text>
-</g>
-<text x="365" y="1592" text-anchor="middle" font-size="32">分析</text>
-<g id="queue-2"><rect x="130" y="1620" width="470" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="1680.0" text-anchor="middle" font-size="30">SQS 佇列</text>
-</g>
-<path d="M40 1670 H130" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<path d="M365 1720 V1760" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="mapping-2"><rect x="130" y="1760" width="470" height="120" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="1812.0" text-anchor="middle" font-size="30">Lambda 事件來源映射</text>
-<text x="365.0" y="1848.0" text-anchor="middle" font-size="30">輪詢 SQS</text>
-</g>
-<text x="365" y="1917" text-anchor="middle" font-size="26">同步呼叫</text>
-<path d="M365 1926 V1960" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="worker-2"><rect x="130" y="1960" width="470" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="365.0" y="2020.0" text-anchor="middle" font-size="30">Lambda 工作函式</text>
-</g>
-<text x="320" y="2160" text-anchor="middle" font-size="28">權限及 DLQ 設定</text>
-<text x="320" y="2196" text-anchor="middle" font-size="28">詳見流程表格。</text>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" xml:lang="zh" viewBox="0 0 774 404" width="774" height="404" role="img" aria-labelledby="title-desktop desc-desktop">
+<title id="title-desktop">SNS + SQS 扇出架構</title><desc id="desc-desktop">應用程式發佈至 SNS，各訂閱 SQS 佇列由 Lambda 事件來源映射輪詢並同步呼叫各自的函式。分支獨立，沒有執行順序。權限、日誌與 DLQ 設定詳見流程表。</desc>
+<style>text{font-family:Arial,'Noto Sans CJK TC','Noto Sans CJK JP',sans-serif;fill:#17253a}.heading{font-weight:700;font-size:19px}.note{font-size:13px;fill:#445469}.wire{fill:none;stroke:#445469;stroke-width:2}.lane{fill:#f8fafc;stroke:#d8e1eb}.label,.sub{text-anchor:middle}.label{font-size:15px;font-weight:600}.sub{font-size:12px;fill:#394a60}.branch{font-size:14px;font-weight:700}.neutral{fill:#fff;stroke:#aab9cb}.sns{fill:#ede9fe;stroke:#8b5cf6}.sqs{fill:#fef3c7;stroke:#b3670c}.lambda,.mapping{fill:#eff6ff;stroke:#6098db}.mapping{stroke-dasharray:4 3}</style><defs><marker id="arrow-desktop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#445469"/></marker></defs>
+<text x="22" y="30" class="heading">SNS + SQS 扇出架構</text><text x="22" y="54" class="note">同一事件分送至三個訂閱佇列，各分支獨立處理</text>
+<path class="wire" d="M164 241 H201 M201 120 V362"/><path class="wire" d="M78 185 V209" marker-end="url(#arrow-desktop)"/><text x="94" y="201" class="note">發佈</text>
+<rect class="neutral" x="22" y="131" width="112" height="54" rx="11"/><text class="label" x="78.0" y="163.0">應用程式</text><rect class="sns" x="22" y="209" width="142" height="64" rx="11"/><text class="label" x="93.0" y="239.0">Amazon SNS</text><text class="sub" x="93.0" y="259.0">Topic</text><rect class="lane" x="218" y="67" width="538" height="87" rx="11"/>
+<rect x="230" y="73" width="4" height="15" rx="2" fill="#0e766e"/><text x="241" y="85" class="branch">通知分支</text>
+<circle cx="201" cy="120" r="3.5" fill="#445469"/>
+<path class="wire" d="M201 120 H230" marker-end="url(#arrow-desktop)"/><path class="wire" d="M431 120 H352" marker-end="url(#arrow-desktop)"/><path class="wire" d="M554 120 H635" marker-end="url(#arrow-desktop)"/>
+<text class="sub" x="391" y="110">輪詢</text><text class="sub" x="595" y="110">同步呼叫</text><rect class="sqs" x="230" y="99" width="122" height="42" rx="11"/><text class="label" x="291.0" y="125.0">SQS 佇列</text><rect class="mapping" x="431" y="97" width="123" height="46" rx="11"/><text class="label" x="492.5" y="125.0">事件來源映射</text><rect class="lambda" x="635" y="99" width="108" height="42" rx="11"/><text class="label" x="689.0" y="125.0">Lambda 函式</text><rect class="lane" x="218" y="188" width="538" height="87" rx="11"/>
+<rect x="230" y="194" width="4" height="15" rx="2" fill="#97541c"/><text x="241" y="206" class="branch">庫存分支</text>
+<circle cx="201" cy="241" r="3.5" fill="#445469"/>
+<path class="wire" d="M201 241 H230" marker-end="url(#arrow-desktop)"/><path class="wire" d="M431 241 H352" marker-end="url(#arrow-desktop)"/><path class="wire" d="M554 241 H635" marker-end="url(#arrow-desktop)"/>
+<text class="sub" x="391" y="231">輪詢</text><text class="sub" x="595" y="231">同步呼叫</text><rect class="sqs" x="230" y="220" width="122" height="42" rx="11"/><text class="label" x="291.0" y="246.0">SQS 佇列</text><rect class="mapping" x="431" y="218" width="123" height="46" rx="11"/><text class="label" x="492.5" y="246.0">事件來源映射</text><rect class="lambda" x="635" y="220" width="108" height="42" rx="11"/><text class="label" x="689.0" y="246.0">Lambda 函式</text><rect class="lane" x="218" y="309" width="538" height="87" rx="11"/>
+<rect x="230" y="315" width="4" height="15" rx="2" fill="#7144ac"/><text x="241" y="327" class="branch">分析分支</text>
+<circle cx="201" cy="362" r="3.5" fill="#445469"/>
+<path class="wire" d="M201 362 H230" marker-end="url(#arrow-desktop)"/><path class="wire" d="M431 362 H352" marker-end="url(#arrow-desktop)"/><path class="wire" d="M554 362 H635" marker-end="url(#arrow-desktop)"/>
+<text class="sub" x="391" y="352">輪詢</text><text class="sub" x="595" y="352">同步呼叫</text><rect class="sqs" x="230" y="341" width="122" height="42" rx="11"/><text class="label" x="291.0" y="367.0">SQS 佇列</text><rect class="mapping" x="431" y="339" width="123" height="46" rx="11"/><text class="label" x="492.5" y="367.0">事件來源映射</text><rect class="lambda" x="635" y="341" width="108" height="42" rx="11"/><text class="label" x="689.0" y="367.0">Lambda 函式</text></svg>

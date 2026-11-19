@@ -28,6 +28,12 @@ type ArchitectureDetailContentProps = {
   architecture: ArchitectureArticle;
 };
 
+// Only reviewed horizontal diagrams opt in; all other articles retain responsive images.
+const horizontalDiagramWidths: Readonly<Record<string, number>> = {
+  "sns-sqs-fanout": 774,
+  "sqs-lambda-async-processing": 1040,
+};
+
 function formatServiceName(service: string): string {
   return awsServiceLabels[service] ?? service;
 }
@@ -40,6 +46,7 @@ export function ArchitectureDetailContent({
   const levelLabels = levelLabelsByLocale[locale];
 
   const diagramPath = resolveDiagramPath(locale, architecture);
+  const diagramWidth = horizontalDiagramWidths[architecture.slug];
 
   const relatedArchitectures = getPublishedArchitectures(locale)
     .filter((item) => item.slug !== architecture.slug)
@@ -141,12 +148,32 @@ export function ArchitectureDetailContent({
             <h2 className="mb-4 text-xl font-bold text-slate-950">
               {labels.diagramTitle}
             </h2>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={diagramPath}
-              alt={`${architecture.title}${labels.diagramAltSuffix}`}
-              className="w-full rounded-2xl border border-slate-200 bg-white"
-            />
+            {diagramWidth ? (
+              <>
+                <p className="mb-2 text-sm text-slate-600">↔ {labels.diagramScrollHint}</p>
+                <div
+                  role="region"
+                  aria-label={`${architecture.title}: ${labels.diagramScrollHint}`}
+                  tabIndex={0}
+                  className="max-w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={diagramPath}
+                    alt={`${architecture.title}${labels.diagramAltSuffix}`}
+                    style={{ width: diagramWidth, maxWidth: "none", height: "auto" }}
+                    className="block"
+                  />
+                </div>
+              </>
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={diagramPath}
+                alt={`${architecture.title}${labels.diagramAltSuffix}`}
+                className="w-full rounded-2xl border border-slate-200 bg-white"
+              />
+            )}
           </section>
         ) : null}
 

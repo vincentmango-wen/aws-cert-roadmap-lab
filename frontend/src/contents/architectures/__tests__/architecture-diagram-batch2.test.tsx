@@ -61,3 +61,45 @@ for (const locale of ["ja", "en", "zh"] as const) {
     expect(notes.entries.map((entry) => entry.date).sort()).toEqual(["2026-11-09", "2026-11-18"]);
   });
 }
+
+for (const locale of ["ja", "en", "zh"] as const) {
+  for (const slug of slugs) {
+    it(`${locale}/${slug} exposes a named keyboard-reachable fixed-width scroll frame`, () => {
+      const architecture = getArchitectureBySlug(locale, slug)!;
+      const html = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
+      const region = html.match(/<div[^>]*role="region"[^>]*>[\s\S]*?<\/div>/)?.[0];
+      expect(region).toBeDefined();
+      expect(region).toContain('tabindex="0"');
+      expect(region).toMatch(/aria-label="[^"＂]+"/);
+      expect(region).toContain('overflow-x-auto');
+      expect(region).toContain('focus-visible:ring-2');
+      expect(region?.match(/<img /g)).toHaveLength(1);
+      expect(region).toContain(`width:${slug === "sns-sqs-fanout" ? 774 : 1040}px`);
+      expect(region).toContain('max-width:none');
+      const svg = fs.readFileSync(path.join(process.cwd(), "public/images/architectures", `${slug}${locale === "ja" ? "" : `.${locale}`}.svg`), "utf8");
+      const size = svg.match(/width="(\d+)" height="(\d+)"/)!;
+      expect(Number(size[1])).toBeGreaterThan(Number(size[2]));
+      expect(svg).toContain('#fef3c7');
+      if (slug === "sns-sqs-fanout") expect(svg).toContain('#ede9fe');
+    });
+  }
+  it(`${locale} leaves non-opted-in and missing diagrams unchanged`, () => {
+    const architecture = getArchitectureBySlug(locale, "cloudwatch-monitoring-basic")!;
+    const html = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
+    expect(html).not.toContain('role="region"');
+    expect(html).toMatch(/<img[^>]*class="w-full /);
+    const absent = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture: { ...architecture, diagramPath: undefined } }));
+    expect(absent).not.toContain('<img');
+    expect(absent).not.toContain('role="region"');
+  });
+}
+
+it("retains the approved Traditional Chinese fan-out primary-label typography", () => {
+  const svg = fs.readFileSync(path.join(process.cwd(), "public/images/architectures/sns-sqs-fanout.zh.svg"), "utf8");
+  expect(svg).toContain('.label{font-size:15px;font-weight:600}');
+  for (const label of ["應用程式", "事件來源映射", "Lambda 函式"]) {
+    const matches = [...svg.matchAll(new RegExp(`<text class="([^"]+)"[^>]*>${label}</text>`, "g"))];
+    expect(matches).toHaveLength(label === "應用程式" ? 1 : 3);
+    for (const match of matches) expect(match[1]).toBe("label");
+  }
+});

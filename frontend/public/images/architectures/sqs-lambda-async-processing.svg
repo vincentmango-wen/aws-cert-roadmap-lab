@@ -1,54 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="1780" viewBox="0 0 640 1780" role="img" aria-labelledby="title desc" xml:lang="ja">
-<title id="title">SQS + Lambda</title>
-<desc id="desc">同期呼び出し. 権限と DLQ の設定は フロー表を参照してください。</desc>
-<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#334155"/></marker></defs>
-<rect width="640" height="1780" rx="24" fill="#f8fafc"/>
-<g font-family="Arial, Noto Sans CJK TC, Noto Sans CJK JP, sans-serif" fill="#0f172a">
-<text x="320" y="50" text-anchor="middle" font-size="34">SQS + Lambda</text>
-<g id="request"><rect x="90" y="90" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="150.0" text-anchor="middle" font-size="30">ユーザー／外部システム</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="420" viewBox="0 0 1040 420" role="img" aria-labelledby="title desc" xml:lang="ja">
+<title id="title">SQS + Lambda 非同期処理</title>
+<desc id="desc">業務処理は非同期ですが、マッピングは Lambda を同期呼び出しします。 設定した redrive policy / maxReceiveCount: メッセージ受信回数</desc>
+<defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="9" refY="5" viewBox="0 0 10 10" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#445469"/></marker></defs>
+<rect width="1040" height="420" rx="16" fill="#f8fafc"/>
+<g font-family="Arial, Noto Sans CJK TC, Noto Sans CJK JP, sans-serif" fill="#17253a">
+<text x="22" y="32" text-anchor="start" font-size="21">SQS + Lambda 非同期処理</text>
+<text x="22" y="58" text-anchor="start" font-size="14">リクエスト受付とワーカー処理を分離</text>
+<g id="request"><rect x="20" y="125" width="112" height="64" rx="10" fill="#ffffff" stroke="#aab9cb"/>
+<text x="76.0" y="151.5" text-anchor="middle" font-size="14">ユーザー／</text>
+<text x="76.0" y="170.5" text-anchor="middle" font-size="14">外部システム</text>
 </g>
-<path d="M320 190 V230" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="api"><rect x="90" y="230" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="290.0" text-anchor="middle" font-size="30">API／アプリケーション</text>
+<g id="api"><rect x="164" y="125" width="128" height="64" rx="10" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="228.0" y="151.5" text-anchor="middle" font-size="14">API／</text>
+<text x="228.0" y="170.5" text-anchor="middle" font-size="14">アプリケーション</text>
 </g>
-<path d="M320 330 V410" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<text x="465" y="378" text-anchor="middle" font-size="26">メッセージ送信</text>
-<g id="queue"><rect x="90" y="410" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="470.0" text-anchor="middle" font-size="30">SQS キュー</text>
+<g id="queue"><rect x="356" y="125" width="108" height="64" rx="10" fill="#fef3c7" stroke="#b3670c"/>
+<text x="410.0" y="161.0" text-anchor="middle" font-size="14">SQS キュー</text>
 </g>
-<path d="M320 510 V550" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="mapping"><rect x="90" y="550" width="460" height="120" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="602.0" text-anchor="middle" font-size="30">Lambda イベントソース</text>
-<text x="320.0" y="638.0" text-anchor="middle" font-size="30">マッピング（ポーリング）</text>
+<g id="mapping"><rect x="528" y="125" width="146" height="64" rx="10" fill="#eff6ff" stroke="#60a5fa" stroke-dasharray="4 3"/>
+<text x="601.0" y="151.5" text-anchor="middle" font-size="14">Lambda イベント</text>
+<text x="601.0" y="170.5" text-anchor="middle" font-size="14">ソースマッピング</text>
 </g>
-<path d="M320 724 V750" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<text x="320" y="718" text-anchor="middle" font-size="26">同期呼び出し</text>
-<g id="worker"><rect x="90" y="750" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="810.0" text-anchor="middle" font-size="30">Lambda ワーカー</text>
+<g id="worker"><rect x="754" y="125" width="132" height="64" rx="10" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="820.0" y="161.0" text-anchor="middle" font-size="14">Lambda ワーカー</text>
 </g>
-<path d="M320 850 V890" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="result"><rect x="90" y="890" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="950.0" text-anchor="middle" font-size="30">DynamoDB／保存先</text>
+<g id="result"><rect x="920" y="125" width="100" height="64" rx="10" fill="#ecfdf5" stroke="#34d399"/>
+<text x="970.0" y="151.5" text-anchor="middle" font-size="14">DynamoDB／</text>
+<text x="970.0" y="170.5" text-anchor="middle" font-size="14">保存先</text>
 </g>
-<text x="320" y="1070" text-anchor="middle" font-size="30">ログ出力</text>
-<g id="logging-worker"><rect x="90" y="1110" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="1170.0" text-anchor="middle" font-size="30">Lambda ワーカー</text>
+<path id="request-to-api" d="M132 157 H164" fill="none" stroke="#445469" stroke-width="2" marker-end="url(#arrow)"/>
+<path id="send-message" d="M292 157 H356" fill="none" stroke="#445469" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="324" y="105" text-anchor="middle" font-size="12">メッセージ送信</text>
+<path id="poll" d="M528 157 H464" fill="none" stroke="#445469" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="496" y="105" text-anchor="middle" font-size="12">ポーリング</text>
+<path id="sync-invoke" d="M674 157 H754" fill="none" stroke="#445469" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="714" y="105" text-anchor="middle" font-size="12">同期呼び出し</text>
+<path id="save-result" d="M886 157 H920" fill="none" stroke="#445469" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="970" y="105" text-anchor="middle" font-size="12">結果保存</text>
+<g id="logs"><rect x="742" y="276" width="158" height="64" rx="10" fill="#ffffff" stroke="#aab9cb"/>
+<text x="821.0" y="312.0" text-anchor="middle" font-size="14">CloudWatch Logs</text>
 </g>
-<path d="M320 1210 V1250" fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-<g id="logs"><rect x="90" y="1250" width="460" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="320.0" y="1310.0" text-anchor="middle" font-size="30">CloudWatch Logs</text>
+<path id="log-output" d="M820 189 V276" fill="none" stroke="#445469" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="875" y="240" text-anchor="middle" font-size="12">ログ出力</text>
+<g id="dlq"><rect x="356" y="276" width="108" height="64" rx="10" fill="#fef3c7" stroke="#b3670c"/>
+<text x="410.0" y="312.0" text-anchor="middle" font-size="14">DLQ</text>
 </g>
-<text x="320" y="1420" text-anchor="middle" font-size="28">redrive policy を設定</text>
-<text x="320" y="1456" text-anchor="middle" font-size="28">maxReceiveCount</text>
-<g id="redrive-source"><rect x="30" y="1500" width="260" height="100" rx="14" fill="#eff6ff" stroke="#64748b" stroke-width="2"/>
-<text x="160.0" y="1560.0" text-anchor="middle" font-size="30">SQS キュー</text>
-</g>
-<g id="dlq"><rect x="370" y="1500" width="240" height="100" rx="14" fill="#fff7ed" stroke="#64748b" stroke-width="2"/>
-<text x="490.0" y="1560.0" text-anchor="middle" font-size="30">DLQ</text>
-</g>
-<path d="M290 1550 H370" fill="none" stroke="#334155" stroke-width="3" stroke-dasharray="9 6" marker-end="url(#arrow)"/>
-<text x="320" y="1680" text-anchor="middle" font-size="28">権限と DLQ の設定は</text>
-<text x="320" y="1716" text-anchor="middle" font-size="28">フロー表を参照してください。</text>
+<path id="redrive" d="M410 189 V276" fill="none" stroke="#445469" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+<text x="430" y="224" text-anchor="start" font-size="12">設定した redrive policy</text>
+<text x="430" y="243" text-anchor="start" font-size="12">maxReceiveCount: メッセージ受信回数</text>
+<text x="22" y="390" text-anchor="start" font-size="14">業務処理は非同期ですが、マッピングは Lambda を同期呼び出しします。</text>
 </g>
 </svg>

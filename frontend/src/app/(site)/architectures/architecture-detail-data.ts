@@ -37,6 +37,7 @@ export type ArchitectureDetailLabels = {
   questionsCtaLabel: string;
   diagramTitle: string;
   diagramAltSuffix: string;
+  diagramScrollHint: string;
   usedServicesTitle: string;
   usedServicesDescription: string;
   nextLearningTitle: string;
@@ -62,6 +63,7 @@ export const architectureDetailLabelsByLocale: Record<
     termsCtaLabel: "AWS用語集を見る",
     questionsCtaLabel: "模擬問題を解く",
     diagramTitle: "構成図",
+    diagramScrollHint: "左右にスクロールして構成図全体を確認できます",
     diagramAltSuffix: "の構成図",
     usedServicesTitle: "使用AWSサービス",
     usedServicesDescription:
@@ -85,6 +87,7 @@ export const architectureDetailLabelsByLocale: Record<
     termsCtaLabel: "View AWS glossary",
     questionsCtaLabel: "Go to practice questions",
     diagramTitle: "Architecture diagram",
+    diagramScrollHint: "Scroll horizontally to view the complete diagram",
     diagramAltSuffix: " architecture diagram",
     usedServicesTitle: "AWS services used",
     usedServicesDescription:
@@ -109,6 +112,7 @@ export const architectureDetailLabelsByLocale: Record<
     termsCtaLabel: "查看 AWS 術語集",
     questionsCtaLabel: "前往模擬題",
     diagramTitle: "架構圖",
+    diagramScrollHint: "左右捲動查看完整架構圖",
     diagramAltSuffix: " 架構圖",
     usedServicesTitle: "使用的 AWS 服務",
     usedServicesDescription:
