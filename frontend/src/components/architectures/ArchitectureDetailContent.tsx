@@ -32,6 +32,9 @@ type ArchitectureDetailContentProps = {
 const horizontalDiagramWidths: Readonly<Record<string, number>> = {
   "sns-sqs-fanout": 774,
   "sqs-lambda-async-processing": 1040,
+  "cloudwatch-monitoring-basic": 1000,
+  "high-availability-web-app": 1000,
+  "eventbridge-lambda-batch": 1000,
 };
 
 function formatServiceName(service: string): string {
