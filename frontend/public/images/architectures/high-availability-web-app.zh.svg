@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="780" viewBox="0 0 1000 780" role="img" aria-labelledby="title desc" xml:lang="zh-Hant">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="690" viewBox="0 0 1000 690" role="img" aria-labelledby="title desc" xml:lang="zh-Hant">
 <title id="title">高可用性 Web 應用程式</title>
-<desc id="desc">上圖的 AZ-A／AZ-B 是不同可用區域的示意名稱。資料庫採用單一 Standby 的 Multi-AZ DB instance，並非 Multi-AZ DB cluster。</desc>
+<desc id="desc">上圖的 AZ-A／AZ-B 是不同可用區域的示意名稱。資料庫採用單一 Standby 的 Multi-AZ DB instance，並非 Multi-AZ DB cluster。 使用者透過 Route 53 解析自訂網域，再直接以 HTTPS 連線至 ALB。ACM 憑證關聯至同一個 ALB 的 HTTPS 監聽器。</desc>
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#334155"/></marker></defs>
-<rect width="1000" height="780" rx="20" fill="#f8fafc"/>
+<rect width="1000" height="690" rx="20" fill="#f8fafc"/>
 <g font-family="Arial, 'Yu Gothic', 'Microsoft JhengHei', sans-serif" fill="#0f172a" font-size="15">
 <text x="500" y="35" text-anchor="middle" font-size="22" font-weight="400">高可用性 Web 應用程式</text>
 <rect x="350" y="85" width="633.333" height="185" rx="12" fill="#eff6ff" stroke="#93c5fd"/>
@@ -11,13 +11,30 @@
 <text x="937.5" y="310" text-anchor="middle" font-size="15" font-weight="400">AZ-B</text>
 <rect x="370.833" y="115" width="204.167" height="335" rx="12" fill="none" stroke="#8b5cf6" stroke-dasharray="7 5"/>
 <text x="472.5" y="140" text-anchor="middle" font-size="16" font-weight="400">一個 Auto Scaling Group</text>
+<g id="dns">
+<rect x="20.8333" y="98" width="116.667" height="66" rx="12" fill="#cffafe" stroke="#0e7490"/>
+<text x="79.1667" y="138" text-anchor="middle" font-weight="600">Route 53</text>
+</g>
+<path data-from="user" data-to="dns" data-relationship="dns" d="M39 235 V164" fill="none" stroke="#0e7490" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path data-from="dns" data-to="user" data-relationship="dns" d="M119 164 V235" fill="none" stroke="#0e7490" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="79" y="191" text-anchor="middle" fill="#155e75">DNS</text>
+<text x="79" y="212" text-anchor="middle" fill="#155e75">ALB IP</text>
+<g id="acm">
+<rect x="200" y="98" width="116.667" height="66" rx="12" fill="#fef3c7" stroke="#b45309"/>
+<text x="258.333" y="126" text-anchor="middle" font-weight="600">ACM</text>
+<text x="258.333" y="147" text-anchor="middle">TLS 憑證</text>
+</g>
+<path data-from="acm" data-to="alb" data-relationship="tls" d="M258.333 164 V235" fill="none" stroke="#b45309" stroke-width="2" stroke-dasharray="8 5" marker-end="url(#arrow)"/>
+<text x="272" y="204" fill="#92400e">關聯</text>
 <g id="user">
 <rect x="20.8333" y="235" width="116.667" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
-<text x="79.1667" y="273.0" text-anchor="middle" font-size="15" font-weight="600">使用者</text>
+<text x="79.1667" y="261" text-anchor="middle" font-size="15" font-weight="600">使用者</text>
+<text x="79.1667" y="283" text-anchor="middle">自訂網域</text>
 </g>
 <g id="alb">
 <rect x="200" y="235" width="116.667" height="66" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
-<text x="258.333" y="273.0" text-anchor="middle" font-size="15" font-weight="600">ALB</text>
+<text x="258.333" y="261" text-anchor="middle" font-size="15" font-weight="600">ALB</text>
+<text x="258.333" y="283" text-anchor="middle">HTTPS :443</text>
 </g>
 <text x="166.667" y="255" text-anchor="middle" font-size="15" font-weight="400">HTTPS</text>
 <g id="ec2-a">
@@ -40,7 +57,7 @@
 <text x="843.75" y="383.0" text-anchor="middle" font-size="15" font-weight="600">RDS Standby</text>
 <text x="843.75" y="403.0" text-anchor="middle" font-size="15" font-weight="400">不提供讀取</text>
 </g>
-<path data-from="user" data-to="alb" d="M137.5 268 H200" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<path data-from="user" data-to="alb" data-relationship="https" d="M137.5 268 H200" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
 <path data-from="alb" data-to="ec2-a" d="M316.667 268 H337.5 V198 H391.667" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
 <path data-from="alb" data-to="ec2-b" d="M337.5 268 V383 H391.667" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
 <path data-from="ec2-a" data-to="primary" d="M554.167 198 H750" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
@@ -53,29 +70,15 @@
 <text x="904.167" y="286" text-anchor="middle" font-size="15" font-weight="400">同步複寫</text>
 <text x="500" y="505" text-anchor="middle" font-size="15" font-weight="400">資料庫故障時自動容錯切換</text>
 <text x="500" y="528" text-anchor="middle" font-size="15" font-weight="400">Multi-AZ DB instance：單一 Standby</text>
-<text x="245.833" y="570" text-anchor="middle" font-size="17" font-weight="400">DNS 名稱解析</text>
-<g id="dns">
-<rect x="29.1667" y="590" width="166.667" height="66" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
-<text x="112.5" y="628.0" text-anchor="middle" font-size="15" font-weight="600">Route 53</text>
+<g id="connection-legend">
+<path d="M128 583 H164" stroke="#0e7490" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/>
+<text x="174" y="588">DNS 查詢／回應</text>
+<path d="M400 583 H436" stroke="#b45309" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="446" y="588">TLS 憑證設定</text>
+<path d="M714 583 H750" stroke="#334155" stroke-width="2"/>
+<text x="760" y="588">HTTPS 請求</text>
 </g>
-<g id="dns-answer">
-<rect x="275" y="590" width="191.667" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
-<text x="370.833" y="618.0" text-anchor="middle" font-size="15" font-weight="600">使用者</text>
-<text x="370.833" y="638.0" text-anchor="middle" font-size="15" font-weight="400">ALB DNS</text>
-</g>
-<path data-from="dns" data-to="dns-answer" d="M195.833 623 H275" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
-<text x="741.667" y="570" text-anchor="middle" font-size="17" font-weight="400">關聯 TLS 憑證</text>
-<g id="acm">
-<rect x="541.667" y="590" width="166.667" height="66" rx="12" fill="#fff" stroke="#cbd5e1"/>
-<text x="625" y="628.0" text-anchor="middle" font-size="15" font-weight="600">ACM</text>
-</g>
-<g id="tls-listener">
-<rect x="787.5" y="590" width="191.667" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
-<text x="883.333" y="618.0" text-anchor="middle" font-size="15" font-weight="600">ALB</text>
-<text x="883.333" y="638.0" text-anchor="middle" font-size="15" font-weight="400">HTTPS listener</text>
-</g>
-<path data-from="acm" data-to="tls-listener" d="M708.333 623 H787.5" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
-<text x="500" y="710" text-anchor="middle" font-size="15" font-weight="400">CloudWatch → ASG／選用 SNS</text>
-<text x="500" y="737" text-anchor="middle" font-size="15" font-weight="400">IAM 角色 → 兩台 EC2 的權限</text>
+<text x="500" y="628" text-anchor="middle" font-size="15" font-weight="400">CloudWatch → ASG／選用 SNS</text>
+<text x="500" y="654" text-anchor="middle" font-size="15" font-weight="400">IAM 角色 → 兩台 EC2 的權限</text>
 </g>
 </svg>

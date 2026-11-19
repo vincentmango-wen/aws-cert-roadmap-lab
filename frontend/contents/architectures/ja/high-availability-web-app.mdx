@@ -33,8 +33,6 @@ updatedAt: "2026-11-17"
 
 本格的なWebアプリケーションの基本形であり、SAAで頻出する構成です。
 
-本プロジェクトのMVPでは低コストを優先するため採用しませんが、面接でAWS設計力を説明するときに重要な構成です。
-
 ## 構成図
 
 上図の AZ-A / AZ-B は異なる可用性ゾーンを表す例示名です。データベースは単一 Standby を持つ Multi-AZ DB instance であり、Multi-AZ DB cluster ではありません。
@@ -160,6 +158,12 @@ ALB + Auto Scaling + RDS Multi-AZは、可用性を重視するWebアプリの�
 このプロジェクトでは本番MVPには使いませんが、SAA対策とAWS設計力の説明では必須級の構成です。
 
 ## 訂正内容
+
+### 2026-11-19
+
+Route 53 の名前解決と ACM 証明書の関連付けをメインの構成図に統合しました。DNS は ALB の IP アドレスを返し、ユーザーは ALB に直接 HTTPS 接続します。証明書は ALB の HTTPS リスナーの設定であり、リクエストが ACM を経由するわけではありません。
+
+根拠：[Route 53 のエイリアスレコード](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html)、[ALB の TLS 証明書](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html)。
 
 ### 2026-11-17
 

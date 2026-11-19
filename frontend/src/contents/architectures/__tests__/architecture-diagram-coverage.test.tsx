@@ -94,11 +94,25 @@ for (const locale of ["ja", "en", "zh"] as const) {
         expect(note).toBeDefined();
         const baselines = [...note!.matchAll(/y="([\d.]+)"/g)].map((m) => Number(m[1]));
         expect(baselines).toEqual([152, 176]);
+        const relationship = (from: string, to: string) =>
+          svg.match(new RegExp(`<path data-from="${from}" data-to="${to}"[^>]*>`))?.[0];
+        for (const [from, to] of [["user", "dns"], ["dns", "user"]]) {
+          const dns = relationship(from, to);
+          expect(dns).toContain('data-relationship="dns"');
+          expect(dns).toContain('stroke-dasharray="2 5"');
+        }
+        const tls = relationship("acm", "alb");
+        expect(tls).toContain('data-relationship="tls"');
+        expect(tls).toContain('stroke-dasharray="8 5"');
+        const https = relationship("user", "alb");
+        expect(https).toContain('data-relationship="https"');
+        expect(https).not.toContain("stroke-dasharray");
+        expect(svg).not.toMatch(/id="(?:dns-answer|tls-listener)"/);
       }
       const edges = slug === "cloudwatch-monitoring-basic"
         ? [["user", "cloudfront"], ["user", "api-gateway"], ["cloudfront", "s3"], ["api-gateway", "lambda"], ["lambda", "dynamodb"], ["metric-sources", "metrics"], ["log-source", "logs"], ["budgets", "developer"], ["github", "developer"]]
         : slug === "high-availability-web-app"
-          ? [["user", "alb"], ["alb", "ec2-a"], ["alb", "ec2-b"], ["ec2-a", "primary"], ["ec2-b", "primary"], ["primary", "standby"], ["dns", "dns-answer"], ["acm", "tls-listener"]]
+          ? [["user", "alb"], ["alb", "ec2-a"], ["alb", "ec2-b"], ["ec2-a", "primary"], ["ec2-b", "primary"], ["primary", "standby"], ["user", "dns"], ["dns", "user"], ["acm", "alb"]]
           : [["scheduler", "lambda"], ["rule", "lambda"], ["lambda", "dynamodb"], ["logging-lambda", "logs"], ["logs", "log-metrics"], ["lambda-metrics", "alarm"], ["log-metrics", "alarm"], ["notifying-lambda", "destinations"]];
       for (const [from, to] of edges) {
         expect(svg).toContain(`data-from="${from}" data-to="${to}"`);
