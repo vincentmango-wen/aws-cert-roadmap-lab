@@ -6,8 +6,6 @@ This architecture deploys EC2 instances across multiple Availability Zones, dist
 
 It is a foundational pattern for production-grade web applications and appears frequently on the SAA exam.
 
-The production MVP of this project prioritizes low cost and does not adopt this pattern, but it is a critical architecture for demonstrating AWS design skills in interviews.
-
 ## Architecture Diagram
 
 AZ-A / AZ-B in the diagram are illustrative names for different Availability Zones. The database is a Multi-AZ DB instance deployment with one standby, not a Multi-AZ DB cluster.
@@ -133,6 +131,12 @@ ALB + Auto Scaling + RDS Multi-AZ is the representative architecture for availab
 This project does not use it for the production MVP, but it is essential for SAA preparation and for explaining AWS design skills.
 
 ## Corrections
+
+### 2026-11-19
+
+Integrated Route 53 DNS resolution and ACM certificate association into the main diagram. DNS returns the ALB IP addresses, and the user connects directly to the ALB over HTTPS. The certificate is configured on the ALB HTTPS listener; requests do not pass through ACM.
+
+Sources: [Route 53 alias records](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html), [ALB TLS certificates](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html).
 
 ### 2026-11-17
 

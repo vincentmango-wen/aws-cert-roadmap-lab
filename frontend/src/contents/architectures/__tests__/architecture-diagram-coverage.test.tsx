@@ -66,3 +66,59 @@ it.each(["ja", "en", "zh"] as const)("%s publishes the three dated corrections w
     "blog:blog-002", "blog:blog-008", "blog:blog-015",
   ]);
 });
+// Stage 2 keeps the existing real-loader/renderer and historical coverage above.
+for (const locale of ["ja", "en", "zh"] as const) {
+  for (const slug of slugs) {
+    it(`${locale}/${slug} provides a horizontal readable diagram frame`, () => {
+      const architecture = getArchitectureBySlug(locale, slug)!;
+      const html = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
+      const region = html.match(/<div[^>]*role="region"[^>]*>[\s\S]*?<\/div>/)?.[0];
+      expect(region).toBeDefined();
+      expect(region).toContain('tabindex="0"');
+      expect(region).toMatch(/aria-label="[^"]+"/);
+      expect(region).toContain('overflow-x-auto');
+      expect(region).toContain('focus-visible:ring-2');
+      expect(region?.match(/<img /g)).toHaveLength(1);
+      expect(region).toContain('width:1000px');
+      expect(region).toContain('max-width:none');
+      const suffix = locale === "ja" ? "" : `.${locale}`;
+      const svg = fs.readFileSync(path.join(process.cwd(), "public/images/architectures", `${slug}${suffix}.svg`), "utf8");
+      const viewBox = svg.match(/viewBox="0 0 (\d+) (\d+)"/)!;
+      expect(Number(viewBox[1])).toBe(1000);
+      expect(Number(viewBox[1])).toBeGreaterThan(Number(viewBox[2]));
+      expect(svg).toContain('font-size="15"');
+      // 1440px desktop: 1152 max width - 64 main padding - 50 section - 2 frame = 1036px.
+      expect(Number(viewBox[1])).toBeLessThanOrEqual(1036);
+      if (slug === "high-availability-web-app") {
+        const note = svg.match(/<g id="primary-connection-note">([\s\S]*?)<\/g>/)?.[1];
+        expect(note).toBeDefined();
+        const baselines = [...note!.matchAll(/y="([\d.]+)"/g)].map((m) => Number(m[1]));
+        expect(baselines).toEqual([152, 176]);
+        const relationship = (from: string, to: string) =>
+          svg.match(new RegExp(`<path data-from="${from}" data-to="${to}"[^>]*>`))?.[0];
+        for (const [from, to] of [["user", "dns"], ["dns", "user"]]) {
+          const dns = relationship(from, to);
+          expect(dns).toContain('data-relationship="dns"');
+          expect(dns).toContain('stroke-dasharray="2 5"');
+        }
+        const tls = relationship("acm", "alb");
+        expect(tls).toContain('data-relationship="tls"');
+        expect(tls).toContain('stroke-dasharray="8 5"');
+        const https = relationship("user", "alb");
+        expect(https).toContain('data-relationship="https"');
+        expect(https).not.toContain("stroke-dasharray");
+        expect(svg).not.toMatch(/id="(?:dns-answer|tls-listener)"/);
+      }
+      const edges = slug === "cloudwatch-monitoring-basic"
+        ? [["user", "cloudfront"], ["user", "api-gateway"], ["cloudfront", "s3"], ["api-gateway", "lambda"], ["lambda", "dynamodb"], ["metric-sources", "metrics"], ["log-source", "logs"], ["budgets", "developer"], ["github", "developer"]]
+        : slug === "high-availability-web-app"
+          ? [["user", "alb"], ["alb", "ec2-a"], ["alb", "ec2-b"], ["ec2-a", "primary"], ["ec2-b", "primary"], ["primary", "standby"], ["user", "dns"], ["dns", "user"], ["acm", "alb"]]
+          : [["scheduler", "lambda"], ["rule", "lambda"], ["lambda", "dynamodb"], ["logging-lambda", "logs"], ["logs", "log-metrics"], ["lambda-metrics", "alarm"], ["log-metrics", "alarm"], ["notifying-lambda", "destinations"]];
+      for (const [from, to] of edges) {
+        expect(svg).toContain(`data-from="${from}" data-to="${to}"`);
+        expect(svg).toContain(`id="${from}"`);
+        expect(svg).toContain(`id="${to}"`);
+      }
+    });
+  }
+}

@@ -6,8 +6,6 @@
 
 它是正式 Web 應用程式的基本型態,也是 SAA 考試常見的架構。
 
-本專案的 MVP 為了優先壓低成本並未採用此架構,但在面試中說明 AWS 設計能力時是相當重要的構成。
-
 ## 架構圖
 
 上圖的 AZ-A／AZ-B 是不同可用區域的示意名稱。資料庫採用單一 Standby 的 Multi-AZ DB instance，並非 Multi-AZ DB cluster。
@@ -133,6 +131,12 @@ ALB + Auto Scaling + RDS Multi-AZ 是重視可用性的 Web 應用程式代表�
 本專案的正式 MVP 雖未使用此架構,但在 SAA 對策與說明 AWS 設計能力時,是必備等級的構成。
 
 ## 更正說明
+
+### 2026-11-19
+
+將 Route 53 名稱解析與 ACM 憑證關聯整合至主圖。DNS 回傳 ALB 的 IP 位址，使用者再直接以 HTTPS 連線至 ALB。憑證關聯是 ALB 的 HTTPS 監聽器設定，請求不會經過 ACM。
+
+依據：[Route 53 別名記錄](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html)、[ALB 的 TLS 憑證](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html)。
 
 ### 2026-11-17
 
