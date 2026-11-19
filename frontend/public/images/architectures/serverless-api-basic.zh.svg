@@ -1,63 +1,54 @@
-<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="720" rx="32" fill="#F8FAFC"/>
-
-  <text x="600" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#0F172A">
-    API Gateway + Lambda + DynamoDB 無伺服器 API 架構
-  </text>
-
-  <text x="600" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#475569">
-    以無伺服器方式接收、處理並儲存聯絡表單等 HTTP 請求的基本架構
-  </text>
-
-  <rect x="60" y="250" width="190" height="120" rx="20" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
-  <circle cx="155" cy="290" r="28" fill="#DBEAFE"/>
-  <text x="155" y="299" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#1D4ED8">U</text>
-  <text x="155" y="342" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#0F172A">User</text>
-  <text x="155" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#64748B">Contact Form</text>
-
-  <rect x="335" y="230" width="220" height="160" rx="24" fill="#FFFFFF" stroke="#7C3AED" stroke-width="3"/>
-  <rect x="370" y="262" width="150" height="52" rx="14" fill="#EDE9FE"/>
-  <text x="445" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#6D28D9">API Gateway</text>
-  <text x="445" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">HTTP API</text>
-  <text x="445" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">POST /contact</text>
-
-  <rect x="665" y="230" width="220" height="160" rx="24" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
-  <rect x="710" y="262" width="130" height="52" rx="14" fill="#FFEDD5"/>
-  <text x="775" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#C2410C">Lambda</text>
-  <text x="775" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">Validation</text>
-  <text x="775" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">Business Logic</text>
-
-  <rect x="970" y="230" width="180" height="160" rx="24" fill="#FFFFFF" stroke="#22C55E" stroke-width="3"/>
-  <rect x="1005" y="262" width="110" height="52" rx="14" fill="#DCFCE7"/>
-  <text x="1060" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#15803D">DynamoDB</text>
-  <text x="1060" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">ContactsTable</text>
-  <text x="1060" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">PutItem</text>
-
-  <path d="M250 310H316" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
-  <path d="M306 298L326 310L306 322" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="288" y="287" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#1D4ED8">HTTPS</text>
-
-  <path d="M555 310H646" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
-  <path d="M636 298L656 310L636 322" stroke="#7C3AED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="605" y="287" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#6D28D9">Invoke</text>
-
-  <path d="M885 310H951" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
-  <path d="M941 298L961 310L941 322" stroke="#EA580C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="923" y="287" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#C2410C">Write</text>
-
-  <rect x="665" y="500" width="220" height="100" rx="20" fill="#FFFFFF" stroke="#0EA5E9" stroke-width="2"/>
-  <text x="775" y="542" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#0369A1">CloudWatch Logs</text>
-  <text x="775" y="574" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#64748B">處理結果與錯誤確認</text>
-
-  <rect x="970" y="500" width="180" height="100" rx="20" fill="#FFFFFF" stroke="#A855F7" stroke-width="2"/>
-  <text x="1060" y="542" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#7E22CE">IAM Role</text>
-  <text x="1060" y="574" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#64748B">最小權限</text>
-
-  <path d="M775 390V482" stroke="#0EA5E9" stroke-width="3" stroke-dasharray="8 8"/>
-  <path d="M970 500L870 390" stroke="#A855F7" stroke-width="3" stroke-dasharray="8 8"/>
-
-  <rect x="110" y="650" width="980" height="42" rx="21" fill="#E2E8F0"/>
-  <text x="600" y="677" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
-    重點：不需常駐伺服器,僅在請求時執行,能以低成本建構 API
-  </text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="365" viewBox="0 0 1000 365" role="img" aria-labelledby="diagram-title diagram-description" xml:lang="zh">
+  <title id="diagram-title">聯絡表單：載入靜態頁面與送出 API 請求</title>
+  <desc id="diagram-description">瀏覽器先從 CloudFront 載入表單，再另向 HTTP API 送出 POST /contact。Lambda 驗證後寫入 DynamoDB。</desc>
+  <defs>
+    <marker id="arrow-viewer" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#075985"/></marker>
+    <marker id="arrow-origin" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#047857"/></marker>
+    <marker id="arrow-dns" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#6d28d9"/></marker>
+    <marker id="arrow-tls" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#a21caf"/></marker>
+    <marker id="arrow-deployment" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#92400e"/></marker>
+    <marker id="arrow-form-load" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#075985"/></marker>
+    <marker id="arrow-submit" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#075985"/></marker>
+    <marker id="arrow-invoke" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#6d28d9"/></marker>
+    <marker id="arrow-write" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8z" fill="#047857"/></marker>
+  </defs>
+  <rect width="1000" height="365" fill="#ffffff"/>
+  <g font-family="system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+    <text x="32" y="42" font-size="25" font-weight="700" text-anchor="start" fill="#0f172a">聯絡表單：載入靜態頁面與送出 API 請求</text>
+    <rect x="24" y="75" width="952" height="95" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="24" y="185" width="952" height="143" rx="12" fill="#f8fafc" stroke="#e2e8f0"/>
+    <path data-from="browser" data-to="frontend" data-relationship="form-load" d="M192 221H221V126H322" fill="none" stroke="#075985" stroke-width="2.5" marker-end="url(#arrow-form-load)"/>
+    <text x="260" y="113" font-size="15" font-weight="600" text-anchor="middle" fill="#075985">1 · 載入表單</text>
+    <path data-from="browser" data-to="http-api" data-relationship="submit" d="M192 251H322" fill="none" stroke="#075985" stroke-width="2.5" marker-end="url(#arrow-submit)"/>
+    <text x="257" y="237" font-size="15" font-weight="600" text-anchor="middle" fill="#075985">2 · POST /contact</text>
+    <path data-from="http-api" data-to="lambda" data-relationship="invoke" d="M473 251H557" fill="none" stroke="#6d28d9" stroke-width="2.5" marker-end="url(#arrow-invoke)"/>
+    <text x="516" y="206" font-size="15" font-weight="600" text-anchor="middle" fill="#6d28d9">代理呼叫</text>
+    <path data-from="lambda" data-to="dynamodb" data-relationship="write" d="M708 251H802" fill="none" stroke="#047857" stroke-width="2.5" marker-end="url(#arrow-write)"/>
+    <text x="755" y="237" font-size="15" font-weight="600" text-anchor="middle" fill="#047857">PutItem</text>
+    <g id="browser">
+    <rect x="40" y="216" width="152" height="70" rx="12" fill="#e0f2fe" stroke="#64748b"/>
+    <text x="116" y="244" font-size="17" font-weight="600" text-anchor="middle" fill="#0f172a">瀏覽器</text>
+    <text x="116" y="267" font-size="15" font-weight="500" text-anchor="middle" fill="#334155">網站訪客</text>
+    </g>
+    <g id="frontend">
+    <rect x="322" y="92" width="151" height="70" rx="12" fill="#e0f2fe" stroke="#64748b"/>
+    <text x="397" y="120" font-size="17" font-weight="600" text-anchor="middle" fill="#0f172a">靜態表單</text>
+    <text x="397" y="143" font-size="15" font-weight="500" text-anchor="middle" fill="#334155">S3＋CloudFront</text>
+    </g>
+    <g id="http-api">
+    <rect x="322" y="216" width="151" height="70" rx="12" fill="#ede9fe" stroke="#64748b"/>
+    <text x="397" y="244" font-size="17" font-weight="600" text-anchor="middle" fill="#0f172a">API Gateway</text>
+    <text x="397" y="267" font-size="15" font-weight="500" text-anchor="middle" fill="#334155">HTTP API</text>
+    </g>
+    <g id="lambda">
+    <rect x="557" y="216" width="151" height="70" rx="12" fill="#fef3c7" stroke="#64748b"/>
+    <text x="632" y="244" font-size="17" font-weight="600" text-anchor="middle" fill="#0f172a">AWS Lambda</text>
+    <text x="632" y="267" font-size="15" font-weight="500" text-anchor="middle" fill="#334155">contact-submit</text>
+    </g>
+    <g id="dynamodb">
+    <rect x="802" y="216" width="151" height="70" rx="12" fill="#d1fae5" stroke="#64748b"/>
+    <text x="877" y="244" font-size="17" font-weight="600" text-anchor="middle" fill="#0f172a">DynamoDB</text>
+    <text x="877" y="267" font-size="15" font-weight="500" text-anchor="middle" fill="#334155">ContactsTable</text>
+    </g>
+  </g>
 </svg>

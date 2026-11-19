@@ -10,31 +10,15 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者]
-    Domain[自訂網域 選用]
-    R53[Route 53 選用]
-    ACM[ACM 憑證 選用]
-    CF[Amazon CloudFront]
-    OAC[Origin Access Control]
-    S3[(Amazon S3 靜態檔案)]
-    IAM[IAM Deploy Role]
-    Budget[AWS Budgets]
-    GH[GitHub Actions]
+圖中把讀者請求與部署分開。選用的 DNS 別名與憑證是設定，不是 HTTPS 請求經過的節點。
 
-    User -->|HTTPS 存取| CF
-    Domain -.使用自訂網域時.-> R53
-    R53 -.Alias Record.-> CF
-    ACM -.TLS 憑證.-> CF
-    CF -->|透過 OAC 取得| S3
-    OAC -.防止 S3 直接公開.-> S3
-    GH -->|Build and Deploy| IAM
-    IAM -->|S3 sync| S3
-    IAM -->|Invalidation| CF
-    Budget -.費用監控.-> CF
-    Budget -.費用監控.-> S3
-```
+| 流程 | 實際運作 |
+|---|---|
+| 讀者的 HTTPS 請求 | 瀏覽器直接連線至 CloudFront。快取命中時，CloudFront 不必向 S3 取檔。 |
+| 存取來源 | 快取未命中時，CloudFront 以 OAC 簽署請求，向一般的私有 S3 儲存貯體來源取檔。開啟 S3 封鎖公開存取，並在儲存貯體政策中授權這個 CloudFront 分佈所需的讀取權限。 |
+| 自訂網域（選用） | 如使用自訂網域，Route 53 可用別名將網域解析至 CloudFront。CloudFront 使用關聯的 `us-east-1` ACM 憑證向讀者提供 HTTPS。 |
+| 部署 | GitHub Actions 建置靜態輸出，使用 IAM 部署角色將檔案同步至 S3，並執行 CloudFront 快取失效。這不是讀者請求的一部分。 |
+| 成本監控 | AWS Budgets 可通知 CloudFront 配送、S3 儲存等費用，不參與處理請求。 |
 
 ## 此架構能實現的事
 
@@ -65,7 +49,7 @@ flowchart TD
 2. CloudFront 接收 HTTPS 請求
 3. 若 CloudFront 有快取,則直接回傳給使用者
 4. 若無快取,CloudFront 透過 OAC 從 S3 取得檔案
-5. S3 僅允許來自 CloudFront Distribution 的存取
+5. 在讀者瀏覽的流程中，S3 儲存貯體政策允許指定的 CloudFront 分佈讀取檔案。IAM 部署角色使用另外授予的權限。
 6. CloudFront 將 HTML、CSS、JavaScript、圖片回傳給使用者
 7. 部署時,GitHub Actions 同步至 S3 並執行 CloudFront Invalidation
 
@@ -110,7 +94,7 @@ HTTP 存取由 CloudFront 重新導向至 HTTPS。
 
 - 使用一般的 S3 來源,而非 S3 Static website hosting 端點
 - 不要停用 S3 Public Access Block
-- 在 Bucket Policy 的 SourceArn 中正確填入 CloudFront Distribution ID
+- S3 儲存貯體政策的 `AWS:SourceArn` 應填入完整的 CloudFront 分佈 ARN（例如 `arn:aws:cloudfront::111122223333:distribution/EXAMPLE123`），不能只填分佈 ID。
 - 由於 CloudFront 快取,更新可能不會立即反映
 - 每次都執行 `/*` 的 Invalidation 會導致費用增加
 - 僅靠此架構無法實現 API 處理或使用者個別資料儲存
@@ -134,3 +118,9 @@ HTTP 存取由 CloudFront 重新導向至 HTTPS。
 S3 + CloudFront 是以靜態內容為主的學習網站與作品集網站的最佳基本架構。
 
 在本專案中,作為同時滿足低成本、HTTPS 配送、S3 非公開化、CI/CD 整合的 MVP 公開基礎平台採用。
+
+## 更正說明
+
+### 2026-11-19
+
+在架構圖區分讀者 HTTPS、來源存取、自訂網域設定及部署流程，並更正 S3 儲存貯體政策的 `AWS:SourceArn` 應使用完整的 CloudFront 分佈 ARN。參考 [OAC 與儲存貯體政策](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)、[Route 53 Alias 指向 CloudFront](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html)及 [CloudFront TLS 憑證要求](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cnames-and-https-requirements.html)。

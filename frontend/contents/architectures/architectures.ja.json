@@ -25,10 +25,10 @@
       "低コスト"
     ],
     "diagramPath": "/images/architectures/static-site-s3-cloudfront.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-19",
     "locale": "ja"
   },
   {
@@ -57,10 +57,10 @@
       "従量課金"
     ],
     "diagramPath": "/images/architectures/serverless-api-basic.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-19",
     "locale": "ja"
   },
   {

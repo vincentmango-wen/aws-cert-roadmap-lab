@@ -35,6 +35,8 @@ const horizontalDiagramWidths: Readonly<Record<string, number>> = {
   "cloudwatch-monitoring-basic": 1000,
   "high-availability-web-app": 1000,
   "eventbridge-lambda-batch": 1000,
+  "static-site-s3-cloudfront": 1000,
+  "serverless-api-basic": 1000,
 };
 
 function formatServiceName(service: string): string {

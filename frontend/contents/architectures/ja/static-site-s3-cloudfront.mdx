@@ -19,10 +19,10 @@ tags:
   - "cloudfront"
   - "s3"
   - "portfolio"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-21"
+updatedAt: "2026-11-19"
 ---
 
 # S3 + CloudFront 静的Webサイト構成
@@ -37,31 +37,15 @@ S3に保存したHTML、CSS、JavaScript、画像ファイルを、CloudFront経
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー]
-    Domain[独自ドメイン 任意]
-    R53[Route 53 任意]
-    ACM[ACM 証明書 任意]
-    CF[Amazon CloudFront]
-    OAC[Origin Access Control]
-    S3[(Amazon S3 静的ファイル)]
-    IAM[IAM Deploy Role]
-    Budget[AWS Budgets]
-    GH[GitHub Actions]
+図は閲覧リクエストとデプロイを分けて示します。任意の DNS エイリアスと証明書は設定であり、HTTPS リクエストの中継先ではありません。
 
-    User -->|HTTPSアクセス| CF
-    Domain -.独自ドメイン利用時.-> R53
-    R53 -.Alias Record.-> CF
-    ACM -.TLS証明書.-> CF
-    CF -->|OAC経由で取得| S3
-    OAC -.S3直接公開防止.-> S3
-    GH -->|Build and Deploy| IAM
-    IAM -->|S3 sync| S3
-    IAM -->|Invalidation| CF
-    Budget -.課金監視.-> CF
-    Budget -.課金監視.-> S3
-```
+| フロー | 処理内容 |
+|---|---|
+| 閲覧時の HTTPS | ブラウザーは CloudFront に直接接続します。キャッシュヒットなら S3 へアクセスせずに応答できます。 |
+| オリジンへのアクセス | キャッシュミス時、CloudFront は OAC で署名したリクエストを通常の非公開 S3 バケットオリジンに送ります。S3 のブロックパブリックアクセスを有効にし、このディストリビューションに必要な読み取りアクセスをバケットポリシーで許可します。 |
+| 独自ドメイン（任意） | 独自ドメインを使う場合、Route 53 のエイリアスで CloudFront を名前解決できます。閲覧時の HTTPS には、CloudFront に関連付けた `us-east-1` の ACM 証明書を使います。 |
+| デプロイ | GitHub Actions が静的出力をビルドします。IAM デプロイロールで S3 に同期し、CloudFront のキャッシュを無効化します。閲覧リクエストとは別経路です。 |
+| コスト監視 | AWS Budgets は CloudFront 配信や S3 ストレージなどのコストを通知できます。リクエスト処理には関与しません。 |
 
 ## この構成で実現できること
 
@@ -92,7 +76,7 @@ flowchart TD
 2. CloudFrontがHTTPSリクエストを受け取る
 3. CloudFrontにキャッシュがあれば、そのままユーザーへ返す
 4. キャッシュがなければ、CloudFrontがOAC経由でS3からファイルを取得する
-5. S3はCloudFront Distributionからのアクセスだけを許可する
+5. 閲覧者への配信では、S3 バケットポリシーで指定した CloudFront ディストリビューションにファイルの読み取りを許可します。IAM デプロイロールには別途権限を設定します。
 6. CloudFrontがHTML、CSS、JavaScript、画像をユーザーへ返す
 7. デプロイ時はGitHub ActionsがS3へ同期し、CloudFront Invalidationを実行する
 
@@ -137,7 +121,7 @@ CloudFrontのキャッシュを利用することで、S3へのリクエスト�
 
 - S3のStatic website hostingエンドポイントではなく、通常のS3オリジンを使う
 - S3 Public Access Blockを無効化しない
-- Bucket PolicyのSourceArnにCloudFront Distribution IDを正しく入れる
+- S3 バケットポリシーの `AWS:SourceArn` には CloudFront ディストリビューションの完全な ARN（例：`arn:aws:cloudfront::111122223333:distribution/EXAMPLE123`）を指定します。ID だけでは指定できません。
 - CloudFrontキャッシュにより、更新がすぐ反映されない場合がある
 - 毎回 `/*` のInvalidationを大量実行するとコスト増につながる
 - API処理やユーザー別データ保存はこの構成だけでは実現できない
@@ -161,3 +145,9 @@ CloudFrontのキャッシュを利用することで、S3へのリクエスト�
 S3 + CloudFrontは、静的コンテンツ中心の学習サイトやポートフォリオサイトに最適な基本構成です。
 
 このプロジェクトでは、低コスト、HTTPS配信、S3非公開化、CI/CD連携を同時に満たすMVP公開基盤として採用します。
+
+## 訂正内容
+
+### 2026-11-19
+
+閲覧時の HTTPS、オリジンへのアクセス、独自ドメインの設定、デプロイを構成図で区別しました。S3 バケットポリシーの `AWS:SourceArn` は、CloudFront ディストリビューションの完全な ARN を指定するよう訂正しました。[AWS の OAC とバケットポリシー](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)、[CloudFront への Route 53 エイリアス](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html)、[CloudFront の TLS 証明書要件](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cnames-and-https-requirements.html)を参照してください。
