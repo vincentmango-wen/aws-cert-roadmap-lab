@@ -14,42 +14,15 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者]
-    IGW[Internet Gateway]
-    ALB[Application Load Balancer]
-    PublicSubnetA[Public Subnet AZ-a]
-    PublicSubnetC[Public Subnet AZ-c]
-    PrivateSubnetA[Private Subnet App AZ-a]
-    PrivateSubnetC[Private Subnet App AZ-c]
-    DBSubnetA[Private DB Subnet AZ-a]
-    DBSubnetC[Private DB Subnet AZ-c]
-    EC2A[EC2 App AZ-a]
-    EC2C[EC2 App AZ-c]
-    DBA[(RDS Primary)]
-    DBC[(RDS Standby)]
-    NAT[NAT Gateway 選用]
-    CW[CloudWatch]
+公開子網、私有應用子網與私有資料庫子網代表資源的放置位置，不是封包的轉送節點。兩個應用都使用同一個資料庫端點。
 
-    User -->|HTTPS| IGW
-    IGW --> ALB
-    ALB --> PublicSubnetA
-    ALB --> PublicSubnetC
-    PublicSubnetA --> EC2A
-    PublicSubnetC --> EC2C
-    EC2A --> PrivateSubnetA
-    EC2C --> PrivateSubnetC
-    EC2A -->|DB 連線| DBA
-    EC2C -->|DB 連線| DBA
-    DBA --> DBSubnetA
-    DBC --> DBSubnetC
-    DBA -.同步複寫.-> DBC
-    EC2A -->|需要對外通訊時| NAT
-    EC2C -->|需要對外通訊時| NAT
-    EC2A -.日誌.-> CW
-    EC2C -.日誌.-> CW
-```
+| 項目 | 運作方式 |
+|---|---|
+| 進站 | VPC 的網際網路閘道提供公開連線給一個跨兩個公開子網的 ALB，ALB 再轉送至兩個私有應用子網內的健康 EC2。 |
+| 存取資料庫 | 兩個 EC2 應用程式透過 RDS 資料庫端點（DNS 名稱）連到目前的主庫。僅允許應用程式安全群組存取資料庫連接埠。資料庫子網群組橫跨兩個可用區。 |
+| 單一備援的複寫 | 主庫同步複寫至另一可用區的單一備援庫，備援庫不提供讀取。容錯移轉後，RDS 更新端點的 DNS 記錄，應用程式使用同一端點重新連線。 |
+| 選用的 IPv4 對外連線 | 只有需要存取公開網際網路時，才使用與進站、資料庫存取分開的對外連線。若用分區公用 NAT，每個應用子網應經同一可用區的 NAT 與網際網路閘道連出；區域型公用 NAT 則可不在公開子網內放置 NAT。 |
+| 監控 | 依設定用 CloudWatch 觀察 ALB、EC2、RDS 指標或日誌。監控不在讀者請求路徑上。 |
 
 ## 此架構可達成的事項
 
@@ -66,7 +39,7 @@ flowchart TD
 | 服務 | 角色 |
 |---|---|
 | Amazon VPC | 整個應用程式的網路邊界 |
-| Public Subnet | 用於放置 ALB、NAT Gateway 等需要對外連線的資源 |
+| Public Subnet | 放置面向網際網路的 ALB，以及本例若採用的分區公用 NAT Gateway |
 | Private Subnet | 用於放置應用程式伺服器 |
 | Database Subnet | 用於放置 RDS 的非公開 Subnet |
 | Application Load Balancer | 將 HTTPS 請求分散至應用層 |
@@ -80,10 +53,10 @@ flowchart TD
 1. 使用者以 HTTPS 存取網站
 2. ALB 透過 Internet Gateway 接收請求
 3. ALB 將請求轉送至 Private Subnet 內的 EC2
-4. EC2 應用程式連線至 RDS Primary
-5. 若採用 RDS Multi-AZ 架構,Primary 會同步複寫至 Standby
+4. 兩個 EC2 應用都透過 RDS 資料庫端點連線至目前的主庫
+5. 在本例的單一備援 RDS Multi-AZ DB 執行個體架構中，主庫會同步複寫至備援庫
 6. 透過 CloudWatch 觀察 EC2 與 RDS 的指標
-7. 僅當需要對外通訊 (例如取得外部套件) 時,Private Subnet 才會透過 NAT Gateway 對外連線
+7. 若需以公開 IPv4 對外連線（例如取得外部套件），私有應用子網可選用公用 NAT Gateway
 
 ## 設計重點
 
@@ -122,7 +95,7 @@ ALB、EC2、RDS、NAT Gateway 容易產生固定費或持續性費用。
 - 資料庫放在 Private Subnet,不可直接對網際網路公開
 - Security Group 為有狀態 (stateful),NACL 為無狀態 (stateless)
 - RDS Multi-AZ 主要提升可用性,Read Replica 主要提升讀取效能
-- 從 Private Subnet 對外連線到網際網路時需要 NAT Gateway
+- 私有子網若需以公開 IPv4 對外連線，可以選用公用 NAT Gateway；它不在讀者或資料庫的路徑上
 - 想要以閉域方式連線至 S3 或 DynamoDB 時,VPC Endpoint 也是選項之一
 
 ## 此架構的注意事項
@@ -154,3 +127,11 @@ ALB、EC2、RDS、NAT Gateway 容易產生固定費或持續性費用。
 VPC 內三層 Web 應用程式架構,是理解 AWS 網路設計的基本範式。
 
 本專案主體因為成本考量而未採用,但在 SAA 考試對策與面試說明時,這是相當重要的基本架構。
+
+## 更正說明
+
+### 2026-11-19
+
+明確表示一個 ALB 橫跨兩個可用區，兩個 EC2 應用都透過同一資料庫端點連到目前的 RDS 主庫。單一備援庫不提供讀取，虛線表示同步複寫。將監控與選用的 IPv4 對外連線獨立標示。
+
+依據：[Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html) · [RDS Multi-AZ DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html) · [RDS failover](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.Failover.html) · [Zonal NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-basics.html) · [Regional NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html)

@@ -94,7 +94,7 @@ for (const locale of ["ja", "en", "zh"] as const) {
     });
   }
   it(`${locale} leaves non-opted-in and missing diagrams unchanged`, () => {
-    const architecture = getArchitectureBySlug(locale, "ecs-fargate-web-app")!;
+    const architecture = getArchitectureBySlug(locale, "step-functions-human-approval")!;
     const html = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
     expect(html).not.toContain('role="region"');
     expect(html).toMatch(/<img[^>]*class="w-full /);

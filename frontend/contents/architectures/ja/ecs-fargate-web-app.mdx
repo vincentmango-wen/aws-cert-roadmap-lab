@@ -22,10 +22,10 @@ tags:
   - "container"
   - "alb"
   - "saa"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-08"
-updatedAt: "2026-06-21"
+updatedAt: "2026-11-19"
 ---
 
 # ECS Fargate コンテナWebアプリ構成
@@ -40,32 +40,15 @@ EC2を自分で管理するECS構成と違い、Fargateではコンテナ実行�
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー]
-    DNS[Route 53]
-    ACM[AWS Certificate Manager]
-    ALB[Application Load Balancer]
-    VPC[VPC]
-    PublicSubnet[Public Subnets]
-    PrivateSubnet[Private Subnets]
-    ECS[Amazon ECS Service]
-    Task[Fargate Tasks]
-    ECR[(Amazon ECR)]
-    CW[CloudWatch Logs]
-    IAM[IAM Task Role]
+実線は閲覧時のリクエストを示します。名前解決、証明書の関連付け、タスク配置、イメージ取得、ログ送信は別の処理です。
 
-    User -->|HTTPS| DNS
-    DNS --> ALB
-    ACM -.-> ALB
-    ALB --> PublicSubnet
-    PublicSubnet --> PrivateSubnet
-    PrivateSubnet --> ECS
-    ECS --> Task
-    Task -->|Pull Image| ECR
-    Task -->|Logs| CW
-    IAM -.-> Task
-```
+| 項目 | 仕組み |
+|---|---|
+| DNS と TLS | Route 53 のエイリアスレコードで独自ドメインを公開 ALB に名前解決します。ブラウザーは、ACM 証明書が関連付けられた ALB の HTTPS リスナーに直接接続します。Route 53 や ACM が HTTPS リクエストを中継するわけではありません。 |
+| リクエスト経路 | 1 台のインターネット向け ALB が、異なる AZ の 2 つの公開サブネットにまたがります。ターゲットタイプが `ip` のターゲットグループから、2 つのプライベートサブネットの正常な Fargate タスク IP に転送します。タスクのセキュリティグループはアプリ用ポートで ALB のセキュリティグループからの通信を許可します。 |
+| 配置とヘルスチェック | ECS サービスは希望するタスク数を維持し、配置や登録を管理します。ALB がターゲットの状態を確認し、ECS サービス自体はリクエストを中継しません。 |
+| 起動とログ | Fargate はタスク実行ロールでプライベート ECR からイメージを取得し、`awslogs` ドライバーでログを送ります。プライベートタスクには NAT などのネットワーク経路が必要です。インターネット接続を使わない場合は ECR と S3 に必要な VPC エンドポイント、および `awslogs` 用の CloudWatch Logs エンドポイントを用意します。 |
+| アプリの権限 | 別のタスクロールで、アプリに必要な AWS API の権限だけを付与します。 |
 
 ## この構成で実現できること
 
@@ -95,10 +78,10 @@ flowchart TD
 1. ユーザーが独自ドメインへHTTPSアクセスする
 2. Route 53がALBへ名前解決する
 3. ALBがリクエストを受ける
-4. ALBがターゲットグループ経由でECS Fargateタスクへ転送する
+4. ALB は IP ターゲットグループ経由で ECS Fargate タスクへ転送する
 5. Fargateタスク上のコンテナがリクエストを処理する
 6. コンテナログをCloudWatch Logsへ出力する
-7. デプロイ時はECRからコンテナイメージを取得する
+7. 起動時は、タスク実行ロールで ECR からコンテナイメージを取得する
 
 ## 設計ポイント
 
@@ -166,3 +149,11 @@ ALBのヘルスチェックに失敗したタスクは切り離されるため�
 ECS Fargateは、コンテナ化したWebアプリをサーバー管理なしで動かすための有力な選択肢です。
 
 ただし、静的サイト中心の個人MVPでは固定費が増えやすいため、このプロジェクトでは学習用の構成図として扱い、本体公開はS3 + CloudFrontを優先します。
+
+## 訂正内容
+
+### 2026-11-19
+
+名前解決、証明書の関連付け、ECS のタスク配置を HTTPS の経路から分離しました。ALB は IP ターゲットグループを使って 2 つのプライベートサブネットの Fargate タスクに転送します。イメージ取得とログ送信には、アプリのタスクロールとは別のタスク実行ロールを使います。
+
+根拠：[Amazon ECS Fargate networking](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-networking.html) · [IAM roles for ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-iam-role-overview.html) · [ECR endpoints](https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html) · [Route 53 alias for an ELB load balancer](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html) · [ALB certificates](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html)

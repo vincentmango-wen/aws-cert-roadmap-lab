@@ -88,10 +88,10 @@
       "網路隔離"
     ],
     "diagramPath": "/images/architectures/three-tier-vpc.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-01",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-19",
     "locale": "zh"
   },
   {
@@ -180,10 +180,10 @@
       "低成本"
     ],
     "diagramPath": "/images/architectures/private-subnet-vpc-endpoint.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-08",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-19",
     "locale": "zh"
   },
   {
@@ -278,10 +278,10 @@
       "ECR"
     ],
     "diagramPath": "/images/architectures/ecs-fargate-web-app.svg",
-    "mermaid": true,
+    "mermaid": false,
     "published": true,
     "publishedAt": "2026-06-08",
-    "updatedAt": "2026-06-21",
+    "updatedAt": "2026-11-19",
     "locale": "zh"
   },
   {
