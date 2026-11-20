@@ -100,4 +100,8 @@ export const awsServiceLabels: Record<string, string> = {
   fargate: "Fargate",
   ecr: "ECR",
   "aws-budgets": "AWS Budgets",
+  "aws-backup": "AWS Backup",
+  ebs: "Amazon EBS",
+  organizations: "AWS Organizations",
+  kms: "AWS KMS",
 };

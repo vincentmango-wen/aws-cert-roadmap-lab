@@ -357,11 +357,11 @@
       "SAA-C03"
     ],
     "services": [
-      "AWS Backup",
-      "Amazon EBS",
+      "aws-backup",
+      "ebs",
       "ec2",
-      "AWS Organizations",
-      "AWS KMS"
+      "organizations",
+      "kms"
     ],
     "tags": [
       "AWS Backup",

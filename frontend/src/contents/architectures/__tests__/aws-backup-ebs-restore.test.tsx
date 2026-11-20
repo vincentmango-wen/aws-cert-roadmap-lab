@@ -26,3 +26,15 @@ it.each(["ja", "en", "zh"] as const)("shows the labeled same-Region EBS recovery
   expect(html).toContain("https://docs.aws.amazon.com/aws-backup/latest/devguide/create-cross-account-backup.html");
   expect(html).toContain("https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-ebs.html");
 });
+
+it.each(["ja", "en", "zh"] as const)("links to the localized Backup service terms in %s without changing their labels", (locale) => {
+  const architecture = getArchitectureBySlug(locale, slug)!;
+  const html = renderToStaticMarkup(createElement(ArchitectureDetailContent, { locale, architecture }));
+  const prefix = locale === "ja" ? "" : `/${locale}`;
+  for (const [id, label] of [
+    ["aws-backup", "AWS Backup"], ["ebs", "Amazon EBS"], ["ec2", "EC2"],
+    ["organizations", "AWS Organizations"], ["kms", "AWS KMS"],
+  ]) {
+    expect(html).toMatch(new RegExp(`<a[^>]*href="${prefix}/terms/${id}"[^>]*>${label}</a>`));
+  }
+});
