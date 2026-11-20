@@ -1,3 +1,4 @@
+import { beforeIssue365Corrections } from "@/contents/updates/__tests__/fixtures/blog-dates-before-issue-365";
 import fs from "node:fs";
 import path from "node:path";
 import { createElement } from "react";
@@ -54,7 +55,7 @@ for (const locale of ["ja", "en", "zh"] as const) {
   });
   it(`${locale} exposes both current corrections without losing history or Blog recommendations`, () => {
     vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-18");
-    const articles = beforeIssue348Batch3Corrections(articleSources.readArticleCandidates());
+    const articles = beforeIssue348Batch3Corrections(beforeIssue365Corrections(articleSources.readArticleCandidates()));
     vi.spyOn(articleSources, "readArticleCandidates").mockReturnValue(articles);
     const inventory = getUpdatesInventory();
     const values = inventory.itemsByLocale[locale];

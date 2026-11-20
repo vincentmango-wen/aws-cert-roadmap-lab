@@ -170,7 +170,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-08-20",
+    updatedAt: "2026-11-21",
   },
   {
     postId: "blog-010",
@@ -188,7 +188,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-11-21",
   },
   {
     postId: "blog-011",
