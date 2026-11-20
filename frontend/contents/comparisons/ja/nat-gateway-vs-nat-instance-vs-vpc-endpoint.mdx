@@ -24,7 +24,7 @@ updatedAt: "2026-07-31"
 
 # NAT Gateway・NATインスタンス・VPCエンドポイントの違い
 
-## 結論
+## 選択のポイント
 
 この3つは、どれも「プライベートサブネットに置いたリソースが外部と通信する」場面で登場します。
 
@@ -129,13 +129,13 @@ EC2 ──▶ Gateway Endpoint ──▶ Amazon S3      （ルートテーブル
 EC2 ──▶ Interface Endpoint (ENI) ──▶ AWS Systems Manager  （PrivateLink / 時間課金）
 ```
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
-### SAA-C03で問われやすいポイント
+### SAA-C03 の学習ポイント
 
 - プライベートサブネットのEC2がインターネット上のリポジトリからパッチを取得したい → NAT Gateway
 - 高可用性が要件なら、**AZごとにNAT Gatewayを配置**し、各AZのプライベートサブネットのルートテーブルを同一AZのNAT Gatewayに向ける
-- NAT Gatewayは時間課金とデータ処理量課金の両方が発生する。S3へ大量のデータを送っている構成では、**S3のGateway型VPCエンドポイントを追加してNAT Gatewayを迂回させる**とコストが下がる（頻出パターン）
+- NAT Gatewayは時間課金とデータ処理量課金の両方が発生する。S3へ大量のデータを送っている構成では、**S3のGateway型VPCエンドポイントを追加してNAT Gatewayを迂回させる**とコストが下がる（料金比較の例）
 - 「インターネットを経由せずにS3へアクセスしたい」→ Gateway型VPCエンドポイント
 - 「オンプレミスからPrivateLink経由でAWSサービスへ到達したい」→ Interface型VPCエンドポイント
 - NAT Gatewayには**セキュリティグループを割り当てられない**。制御はサブネットのNetwork ACLで行う
@@ -192,7 +192,7 @@ NATインスタンスを使う場合は、送信元/送信先チェックの無�
 
 ただしSAA-C03では、VPCの経路設計は避けて通れない出題領域です。「どの通信をインターネットに出し、どの通信を出さないか」を図で描けるようにしておく必要があります。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：VPCエンドポイントを「インターネットへ出るための仕組み」だと思う
 
@@ -230,6 +230,22 @@ NAT Gatewayにセキュリティグループは割り当てられません。
 
 通信を制御したい場合は、NAT Gatewayを配置したサブネットのNetwork ACL、またはプライベートサブネット側のリソースのセキュリティグループで行います。
 
+## まとめ
+
+3つの違いは、「インターネットへ出るのか、出ないのか」で整理すると迷いません。
+
+- NAT Gateway：マネージドで外へ出る。AZごとに配置。時間課金+データ処理量課金
+- NATインスタンス：EC2で自前構築。安価だが自己責任。送信元/送信先チェックの無効化が必須
+- VPCエンドポイント：外へ出ない。Gateway型はS3・DynamoDBのみで追加料金なし、Interface型はPrivateLinkで多数のサービスに対応し時間課金
+
+SAA-C03 の学習では、この三つの選択肢を、費用とワークロードの通信にインターネット経路が必要かという観点で比較します。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [NAT ゲートウェイと NAT インスタンスの比較](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-comparison.html) · [S3 と DynamoDB のゲートウェイエンドポイント](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) · [インターフェイスエンドポイントとセキュリティグループ](https://docs.aws.amazon.com/vpc/latest/privatelink/interface-endpoints.html)
+- 料金とサイジング: [NAT ゲートウェイの料金項目](https://aws.amazon.com/vpc/pricing/) · [インターフェイスエンドポイントの料金項目](https://aws.amazon.com/privatelink/pricing/)
+- [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon VPC](/terms/vpc)
@@ -241,13 +257,3 @@ NAT Gatewayにセキュリティグループは割り当てられません。
 ## 関連問題
 
 - [SAA模擬問題一覧](/questions/saa)
-
-## まとめ
-
-3つの違いは、「インターネットへ出るのか、出ないのか」で整理すると迷いません。
-
-- NAT Gateway：マネージドで外へ出る。AZごとに配置。時間課金+データ処理量課金
-- NATインスタンス：EC2で自前構築。安価だが自己責任。送信元/送信先チェックの無効化が必須
-- VPCエンドポイント：外へ出ない。Gateway型はS3・DynamoDBのみで追加料金なし、Interface型はPrivateLinkで多数のサービスに対応し時間課金
-
-SAA-C03では、この3つを組み合わせた「コストを下げつつ通信をインターネットに出さない構成」が繰り返し問われます。

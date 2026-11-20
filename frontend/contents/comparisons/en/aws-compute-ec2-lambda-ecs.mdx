@@ -1,6 +1,6 @@
 # How to choose between EC2, Lambda, and ECS
 
-## Start with what you need to run
+## Selection at a glance
 
 - **Need control over the operating system? Start with Amazon EC2.** A legacy internal system might need a host agent installed or system settings adjusted. EC2 provides virtual machines: you choose the operating system and instance type, and you are responsible for updating and maintaining the guest OS.
 - **Run a short piece of code only when an event occurs? Start with the default AWS Lambda mode.** For example, you might generate a thumbnail each time an image is uploaded to S3. The event triggers the work, which ends when processing is complete. You don't need to keep a virtual machine running while waiting for the next image.
@@ -14,7 +14,7 @@
 | Images arrive occasionally and take seconds to process | On-demand Lambda Event Functions | Manage function code and settings, not hosts. Concurrency grows with event demand, subject to the scaling rate and concurrency quota. | Mainly requests and execution duration. The duration charge also depends on configured memory. |
 | An API needs to stay available continuously | ECS on Fargate | Manage container images and task settings, not hosts. ECS Service Auto Scaling can adjust task count as load changes. | Provisioned task vCPU, memory, billable ephemeral storage and usage time. With ECS on EC2, you pay for the underlying resources instead. |
 
-## What the exams often test
+## Exam guide and decision cues
 
 These cues follow the official CLF-C02 and SAA-C03 exam guides:
 

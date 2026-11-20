@@ -1,6 +1,6 @@
 # RDS Multi-AZ、Read Replica 的差異
 
-## 結論
+## 選擇重點
 
 RDS Multi-AZ 與 Read Replica 都與資料庫複製有關。
 
@@ -25,7 +25,7 @@ RDS Multi-AZ 與 Read Replica 都與資料庫複製有關。
 | 考試關鍵字 | high availability、failover、standby | read scaling、read-heavy workload |
 | 成本 | 增加待命機的成本 | 增加每個複本的成本 |
 
-## 初學者導向說明
+## 入門說明
 
 Multi-AZ 是為了在主要 DB 發生故障時提供備援的機制。
 
@@ -48,7 +48,7 @@ Read Replica
 
 應用程式可以把寫入導向 Primary DB，把讀取導向 Read Replica。
 
-## 考試常考重點
+## 考綱與判斷重點
 
 ### 容易選 Multi-AZ 的情境
 
@@ -65,7 +65,7 @@ Read Replica
 - 想提升讀取吞吐量
 - 想在不同 Region 放置讀取用 DB
 
-## 實務上的使用方式
+## 實務選型
 
 ### 正式環境 DB 的容錯設計
 
@@ -124,6 +124,20 @@ Read Replica 的主要目的是提升讀取效能。
 
 原因在於 RDS 容易產生固定費用，而僅需要儲存使用者諮詢資料時，使用 Amazon DynamoDB 就已足夠。
 
+## 總結
+
+RDS Multi-AZ 與 Read Replica，從「目的」來區分最容易記憶。
+
+- Multi-AZ:容錯與高可用性
+- Read Replica:提升讀取效能
+
+考試中看到「high availability」時可懷疑 Multi-AZ，看到「read-heavy workload」時則可懷疑 Read Replica。
+
+## AWS 官方參考
+
+- 服務行為與設計: [RDS 多可用區部署類型與容錯移轉](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html) · [RDS 唯讀複本行為與用途](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html) · [多可用區 DB 執行個體備用節點行為](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html)
+- [CLF-C02 考試指南](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 相關用語
 
 - [Amazon RDS](/terms/rds)
@@ -134,12 +148,3 @@ Read Replica 的主要目的是提升讀取效能。
 ## 相關題目
 
 - [CLF 模擬試題](/questions/clf)
-
-## 總結
-
-RDS Multi-AZ 與 Read Replica，從「目的」來區分最容易記憶。
-
-- Multi-AZ:容錯與高可用性
-- Read Replica:提升讀取效能
-
-考試中看到「high availability」時可懷疑 Multi-AZ，看到「read-heavy workload」時則可懷疑 Read Replica。

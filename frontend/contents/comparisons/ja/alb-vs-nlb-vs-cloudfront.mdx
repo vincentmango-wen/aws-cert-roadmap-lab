@@ -26,7 +26,7 @@ updatedAt: "2026-06-21"
 
 # ALB・NLB・CloudFrontの違い
 
-## 結論
+## 選択のポイント
 
 ALB、NLB、CloudFrontは、どれもユーザーからの通信を受ける入口として登場します。
 
@@ -74,7 +74,7 @@ CloudFrontは、ロードバランサーではなくCDNです。
 
 ユーザーの近くにあるエッジロケーションからコンテンツを返すことで、表示速度を上げます。S3静的サイトや画像配信と相性が良いです。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
 ### ALBが正解になりやすいケース
 
@@ -159,7 +159,7 @@ EC2 / ECS
 
 CloudFrontでキャッシュ・TLS終端・エッジ配信を行い、ALBでアプリケーションへ振り分けます。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：CloudFrontをロードバランサーとして覚える
 
@@ -179,6 +179,21 @@ URLパスで振り分けるならALB、TCP/UDPや固定IPならNLBです。
 
 ALB + EC2で静的サイトを配信すると、常時起動サーバーが必要になり、MVPではコスト面で不利です。
 
+## まとめ
+
+試験対策でも実務でも、アプリケーションの振り分け、トランスポート層の負荷分散、エッジ配信を切り分けます。
+
+最初は次のように覚えると判断しやすいです。
+
+- WebアプリのHTTP/HTTPS振り分け：ALB
+- TCP/UDPや固定IP：NLB
+- 静的コンテンツ配信・キャッシュ・エッジ配信：CloudFront
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [ALB のリクエストルーティング](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html) · [NLB のプロトコルとリスナー](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html) · [CloudFront のエッジ配信とオリジン](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Elastic Load Balancing](/terms/elb)
@@ -190,13 +205,3 @@ ALB + EC2で静的サイトを配信すると、常時起動サーバーが必�
 ## 関連問題
 
 - [CLF模擬問題一覧](/questions/clf)
-
-## まとめ
-
-ALB、NLB、CloudFrontの違いは、AWS試験でも実務でも頻出です。
-
-最初は次のように覚えると判断しやすいです。
-
-- WebアプリのHTTP/HTTPS振り分け：ALB
-- TCP/UDPや固定IP：NLB
-- 静的コンテンツ配信・キャッシュ・エッジ配信：CloudFront

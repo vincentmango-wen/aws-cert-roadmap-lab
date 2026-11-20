@@ -1,6 +1,6 @@
 # ALB、NLB、CloudFront 的差異
 
-## 結論
+## 選擇重點
 
 Application Load Balancer (ALB)、Network Load Balancer (NLB)、Amazon CloudFront，三者都會出現在 AWS 接收使用者流量的入口位置。
 
@@ -26,9 +26,9 @@ Application Load Balancer (ALB)、Network Load Balancer (NLB)、Amazon CloudFron
 | 靜態 IP | 基本上不適合 | 適合 | 預設使用 CloudFront 網域或自訂網域 |
 | 快取 | 沒有 | 沒有 | 有 |
 | 全球傳遞 | 不是主要目的 | 不是主要目的 | 擅長 |
-| 考試常見關鍵字 | HTTP, HTTPS, path routing, host routing | TCP, UDP, static IP, high performance | CDN, edge location, cache, S3 static site |
+| 判斷線索 | HTTP, HTTPS, path routing, host routing | TCP, UDP, static IP, high performance | CDN, edge location, cache, S3 static site |
 
-## 初學者解說
+## 入門說明
 
 ALB 是 Web 應用程式的入口。
 
@@ -48,7 +48,7 @@ CloudFront 不是負載平衡器，而是 CDN。
 
 它會從靠近使用者的邊緣節點 (edge location) 回應內容，藉此提升顯示速度。和 Amazon S3 靜態網站、圖片傳遞特別契合。
 
-## 考試常出的重點
+## 考綱與判斷重點
 
 ### ALB 容易成為答案的情境
 
@@ -73,7 +73,7 @@ CloudFront 不是負載平衡器，而是 CDN。
 - 想減少對來源的存取量。
 - 想不直接公開 Amazon S3，而是透過前端來傳遞。
 
-## 實務上的使用區分
+## 實務選型
 
 ### 公開 Amazon S3 靜態網站時
 
@@ -133,7 +133,7 @@ Amazon EC2 / Amazon ECS
 
 CloudFront 負責快取、TLS 終止、邊緣傳遞，ALB 則負責往應用程式分配流量。
 
-## 常見的誤解
+## 常見誤解
 
 ### 誤解 1:把 CloudFront 當成負載平衡器
 
@@ -153,6 +153,21 @@ ALB 屬於應用層，NLB 屬於網路層。
 
 如果用 ALB 加 Amazon EC2 來傳遞靜態網站，就需要持續啟動的伺服器，以 MVP 來說在成本上並不划算。
 
+## 總結
+
+實務與備考都可先分辨：需要的是應用層路由、傳輸層負載平衡，還是邊緣傳遞。
+
+一開始可以用下面這樣的方式記憶，比較容易判斷。
+
+- Web 應用程式的 HTTP/HTTPS 分配:ALB
+- TCP/UDP 或靜態 IP:NLB
+- 靜態內容傳遞、快取、邊緣傳遞:CloudFront
+
+## AWS 官方參考
+
+- 服務行為與設計: [ALB 請求路由](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html) · [NLB 通訊協定與接聽程式](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html) · [CloudFront 邊緣傳遞與來源](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
+- [CLF-C02 考試指南](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 相關用語
 
 - [Elastic Load Balancing](/terms/elb)
@@ -161,16 +176,6 @@ ALB 屬於應用層，NLB 屬於網路層。
 - [Amazon S3](/terms/s3)
 - [AWS Certificate Manager](/terms/acm)
 
-## 相關問題
+## 相關題目
 
 - [CLF 模擬題列表](/questions/clf)
-
-## 總結
-
-ALB、NLB、CloudFront 的差異，不只在 AWS 考試，也在實務中經常出現。
-
-一開始可以用下面這樣的方式記憶，比較容易判斷。
-
-- Web 應用程式的 HTTP/HTTPS 分配:ALB
-- TCP/UDP 或靜態 IP:NLB
-- 靜態內容傳遞、快取、邊緣傳遞:CloudFront

@@ -1,6 +1,6 @@
 # Differences between IAM users, IAM roles, and IAM policies
 
-## Conclusion
+## Selection at a glance
 
 AWS Identity and Access Management (IAM) is the AWS permission management service.
 
@@ -29,7 +29,7 @@ When in doubt, decide as follows.
 | Security considerations | MFA and access key management are critical | Easier to keep secure because no long-lived keys are needed | The principle of least privilege is critical |
 | Use in this project | For administrator sign-in | AWS Lambda execution role, GitHub Actions role | Granting AWS Lambda Amazon DynamoDB PutItem, Amazon S3 deploy permissions, etc. |
 
-## Explanations for beginners
+## Beginner context
 
 ### IAM user
 
@@ -55,7 +55,7 @@ For example, the inquiry AWS Lambda function is granted only `dynamodb:PutItem`.
 
 Unnecessary `dynamodb:*` or `AdministratorAccess` is not attached.
 
-## Points that appear on the exam
+## Exam guide and decision cues
 
 ### Points commonly asked on CLF-C02
 
@@ -75,7 +75,7 @@ Unnecessary `dynamodb:*` or `AdministratorAccess` is not attached.
 - Scope policies down to the resource level
 - Avoid over-broad permissions that rely heavily on `*`
 
-## When to use each in practice
+## How to choose in practice
 
 ### When to use an IAM user
 
@@ -106,7 +106,7 @@ The IAM roles that appear in this project are as follows.
 
 In policies, scoping Action and Resource is critical.
 
-## Common mistakes
+## Common misconceptions
 
 ### Mistake 1: Routinely using AdministratorAccess on an IAM user
 
@@ -138,6 +138,19 @@ Attaching a policy to a role is what determines what can actually be done.
 
 In practice, scope it down to the target Amazon S3 bucket, Amazon DynamoDB table, and so on.
 
+## Summary
+
+IAM users, IAM roles, and IAM policies are the foundation of AWS security.
+
+An IAM user represents the user, an IAM role is a mechanism for temporarily assuming permissions, and an IAM policy is the content of the permissions.
+
+Being able to explain this distinction also makes it easier to explain the security design of an AWS portfolio.
+
+## Official AWS references
+
+- Service behavior and design: [IAM identity types and credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html) · [IAM role trust and temporary access](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) · [Identity and resource policy evaluation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html)
+- [CLF-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## Related terms
 
 - [AWS IAM](/terms/iam)
@@ -149,11 +162,3 @@ In practice, scope it down to the target Amazon S3 bucket, Amazon DynamoDB table
 ## Related questions
 
 - [CLF practice question list](/questions/clf)
-
-## Summary
-
-IAM users, IAM roles, and IAM policies are the foundation of AWS security.
-
-An IAM user represents the user, an IAM role is a mechanism for temporarily assuming permissions, and an IAM policy is the content of the permissions.
-
-Being able to explain this distinction also makes it easier to explain the security design of an AWS portfolio.
