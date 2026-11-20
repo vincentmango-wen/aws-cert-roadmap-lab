@@ -33,8 +33,12 @@ it("requires a correcting announcement to be explicitly Update", () => {
   expect(run([make(), correction]).itemsByLocale.en.map((value) => value.id)).toEqual(["announcement:first"]);
 });
 
-it("contains the exact approved SAA and feature announcements", () => {
-  expect(announcements.map((value) => value.id).sort()).toEqual(["latest-articles-and-updates", "saa-c03-051-060"]);
+it("contains the exact approved question-bank and feature announcements", () => {
+  expect(announcements.map((value) => value.id).sort()).toEqual(["latest-articles-and-updates", "saa-c03-051-060", "saa-c03-061-068-clf-c02-051-052"]);
+  expect(announcements.find((value) => value.id === "saa-c03-061-068-clf-c02-051-052")).toMatchObject({
+    category: "question-bank", eventKind: "new", date: "2026-11-20", published: true,
+    links: [{ path: "/questions/saa" }, { path: "/questions/clf" }],
+  });
   expect(announcements.find((value) => value.id === "saa-c03-051-060")).toMatchObject({ id: "saa-c03-051-060", category: "question-bank", date: "2026-11-09", published: true, translations: {
     zh: { title: "新增 10 道 SAA-C03 情境題", summary: "新增 10 道 SAA-C03 情境題，提供繁體中文、日文與英文版本，附四個選項、正確答案及逐項解析。" },
     ja: { title: "SAA-C03のシナリオ問題を10問追加", summary: "SAA-C03のシナリオ問題を10問追加しました。日本語・英語・繁体字中国語で、4つの選択肢、正解、各選択肢の解説を確認できます。" },
@@ -139,7 +143,7 @@ it.each(["ja", "en", "zh"] as const)("publishes the complete approved feature an
   const destinations = { ja: ["/", "/updates"], en: ["/en", "/en/updates"], zh: ["/zh", "/zh/updates"] };
   expect(value).toMatchObject({ eventKind: "new", date: "2026-11-13", dateLabel: "announced", changeNotes: { status: "not-applicable" }, title: approved.title, summary: approved.summary });
   expect(value?.links.map((link) => link.href)).toEqual(destinations[locale]);
-  expect(result.diagnostics).toEqual([]);
+  expect(result.diagnostics).toEqual([{ code: "future-date", id: "announcement:saa-c03-061-068-clf-c02-051-052" }]);
 });
 
 it.each(["unpublished", "missing-title", "missing-summary", "empty-label", "sealed-destination"] as const)("omits the feature consistently across locales when %s", (failure) => {

@@ -3256,5 +3256,111 @@
         "url": "https://docs.aws.amazon.com/ja_jp/config/latest/developerguide/evaluate-config.html"
       }
     ]
+  },
+  {
+    "questionId": "clf-051",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "運用担当者は、翌週に AWS の計画メンテナンスがあると聞きました。AWS マネジメントコンソールで、自社アカウントに影響する予定イベントの有無と、AWS が示す影響対象のリソースを確認したいと考えています。どこを確認すべきですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Health Dashboard のアカウントイベント"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Health Dashboard のパブリックなサービス状態"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudWatch のメトリクス画面"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS CloudTrail のイベント履歴"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "アカウントイベントでは、そのアカウントに該当する計画変更を確認できます。イベントを選択すると、AWS が示す影響対象のリソースを確認できます。",
+    "choiceExplanations": {
+      "A": "正解。アカウントイベントでは、そのアカウントに該当する計画変更を確認できます。イベントを選択すると、AWS が示す影響対象のリソースを確認できます。",
+      "B": "パブリックなサービス状態はサービスやリージョン全体の公開情報を提供します。特定のアカウントのリソース一覧は表示しません。",
+      "C": "CloudWatch のメトリクスはリソースの稼働状況の観測に役立ちますが、AWS が通知するアカウント別のメンテナンスと対象リソースを確認する画面ではありません。",
+      "D": "CloudTrail のイベント履歴はアカウント内の API アクティビティの追跡に使えますが、AWS の計画メンテナンスの対象リソース一覧は提供しません。"
+    },
+    "practicalNote": "アカウントイベントでは、そのアカウントに該当する計画変更を確認できます。イベントを選択すると、AWS が示す影響対象のリソースを確認できます。 対象リソースの一覧を使ってメンテナンス対応を計画できます。リージョン全体の公開状況、メトリクス、アカウントの API 履歴はいずれも用途が異なります。\n\nパブリックなサービス状態はサービスやリージョン全体の公開情報を提供します。特定のアカウントのリソース一覧は表示しません。 CloudWatch のメトリクスはリソースの稼働状況の観測に役立ちますが、AWS が通知するアカウント別のメンテナンスと対象リソースを確認する画面ではありません。 CloudTrail のイベント履歴はアカウント内の API アクティビティの追跡に使えますが、AWS の計画メンテナンスの対象リソース一覧は提供しません。",
+    "officialDocs": [
+      {
+        "label": "AWS Health のアカウントイベント",
+        "url": "https://docs.aws.amazon.com/health/latest/ug/aws-health-account-views.html"
+      }
+    ],
+    "relatedServices": [
+      "aws-health"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "planned-maintenance",
+      "account-events"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "clf-052",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "デザインチームはサードパーティーベンダーの SaaS コラボレーションツールを試そうとしています。調達担当者は、公開されている製品を探し、契約条件を確認し、AWS 経由でサブスクライブする必要があります。どのサービスを使うべきですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Cost Explorer"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Service Catalog"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Marketplace"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Support Center"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Marketplace にはサードパーティー製のソフトウェアや SaaS の製品情報とサブスクリプションの選択肢があり、調達担当者は適用される契約条件も確認できます。",
+    "choiceExplanations": {
+      "A": "Cost Explorer は AWS のコストと使用量の分析に使うもので、サードパーティー SaaS の製品検索やサブスクリプションには対応しません。",
+      "B": "Service Catalog は組織が承認済みの IT 製品を管理・配布するためのものです。公開 SaaS 製品を探してベンダーから契約するマーケットプレイスではありません。",
+      "C": "正解。AWS Marketplace にはサードパーティー製のソフトウェアや SaaS の製品情報とサブスクリプションの選択肢があり、調達担当者は適用される契約条件も確認できます。",
+      "D": "Support Center は AWS のサポートケースを管理する場所で、サードパーティー製ソフトウェアの契約プラットフォームではありません。"
+    },
+    "practicalNote": "AWS Marketplace にはサードパーティー製のソフトウェアや SaaS の製品情報とサブスクリプションの選択肢があり、調達担当者は適用される契約条件も確認できます。 購読の前にベンダーの料金、契約条件、利用権を確認し、社内の購買手順にも従います。承認済みの社内製品の配布は外部ベンダーからの購読とは別の目的です。\n\nCost Explorer は AWS のコストと使用量の分析に使うもので、サードパーティー SaaS の製品検索やサブスクリプションには対応しません。 Service Catalog は組織が承認済みの IT 製品を管理・配布するためのものです。公開 SaaS 製品を探してベンダーから契約するマーケットプレイスではありません。 Support Center は AWS のサポートケースを管理する場所で、サードパーティー製ソフトウェアの契約プラットフォームではありません。",
+    "officialDocs": [
+      {
+        "label": "AWS Marketplace の SaaS 製品",
+        "url": "https://docs.aws.amazon.com/marketplace/latest/buyerguide/buyer-saas-products.html"
+      }
+    ],
+    "relatedServices": [
+      "aws-marketplace"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "marketplace",
+      "saas"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
   }
 ]

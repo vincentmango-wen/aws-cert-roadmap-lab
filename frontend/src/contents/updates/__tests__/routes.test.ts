@@ -84,3 +84,21 @@ it.each([
     expect(card).not.toContain("line-clamp");
   }
 });
+
+it.each([
+  ["ja", JaUpdates, "SAA-C03 8問とCLF-C02 2問を追加"],
+  ["en", EnUpdates, "8 new SAA-C03 and 2 new CLF-C02 practice questions"],
+  ["zh", ZhUpdates, "新增 8 題 SAA-C03 與 2 題 CLF-C02 練習題"],
+] as const)("publishes the combined #364 question-bank notice in %s", (locale, Page, title) => {
+  vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-20");
+  const html = renderToStaticMarkup(createElement(Page));
+  const notices = html.match(/<article id="announcement:saa-c03-061-068-clf-c02-051-052"[\s\S]*?<\/article>/g) ?? [];
+  expect(notices).toHaveLength(1);
+  expect(notices[0]).toContain(title);
+  expect(notices[0]).toContain(getDictionary(locale).updates.categories["question-bank"]);
+  expect(notices[0]).toContain('data-event-kind="new"');
+  expect(notices[0]).toContain('<time dateTime="2026-11-20">2026-11-20</time>');
+  for (const exam of ["saa", "clf"]) {
+    expect(notices[0]).toContain(`href="${createLocalizedPath(locale, `/questions/${exam}`)}"`);
+  }
+});

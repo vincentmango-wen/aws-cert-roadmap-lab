@@ -45,4 +45,15 @@ export const announcements: Announcement[] = [{
       }
     }
   ]
+}, {
+  id: "saa-c03-061-068-clf-c02-051-052", eventKind: "new", category: "question-bank", date: "2026-11-20", published: true,
+  translations: {
+    zh: { title: "新增 8 題 SAA-C03 與 2 題 CLF-C02 練習題", summary: "新增 8 題 SAA-C03 情境題與 2 題 CLF-C02 基礎題。每題提供繁體中文、日文與英文版本，附四個選項、正確答案、逐項解析及 AWS 官方參考資料。" },
+    ja: { title: "SAA-C03 8問とCLF-C02 2問を追加", summary: "SAA-C03のシナリオ問題を8問、CLF-C02の基礎問題を2問追加しました。日本語・英語・繁体字中国語で、各問の4つの選択肢、正解、選択肢ごとの解説、AWS公式資料を確認できます。" },
+    en: { title: "8 new SAA-C03 and 2 new CLF-C02 practice questions", summary: "Added eight SAA-C03 scenario questions and two CLF-C02 fundamentals questions. Each is available in Japanese, English, and Traditional Chinese with four choices, the correct answer, explanations for each choice, and official AWS references." },
+  },
+  links: [
+    { path: "/questions/saa", labels: { ja: "SAA-C03の問題を見る", en: "View SAA-C03 questions", zh: "查看 SAA-C03 題庫" } },
+    { path: "/questions/clf", labels: { ja: "CLF-C02の問題を見る", en: "View CLF-C02 questions", zh: "查看 CLF-C02 題庫" } },
+  ],
 }];

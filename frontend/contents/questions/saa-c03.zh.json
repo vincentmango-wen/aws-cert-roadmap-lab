@@ -3943,5 +3943,486 @@
     "published": true,
     "createdAt": "2026-11-09",
     "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-061",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "兩個 AWS 帳戶在同一區域，各有一個使用 10.20.0.0/16 的 VPC。消費端的應用程式只需呼叫供應端 NLB 後方的訂單查詢 API。不得重編任何 VPC 的位址、使用公網，也不得讓消費端取得通往供應端其他資源的網路路由。哪個設計符合需求？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "在兩個 VPC 間建立 VPC Peering，並只加入通往供應端 NLB 子網的路由。"
+      },
+      {
+        "choiceId": "B",
+        "text": "將兩個 VPC 連到同一個 Transit Gateway，並只傳播供應端 NLB 子網的路由。"
+      },
+      {
+        "choiceId": "C",
+        "text": "在消費端 VPC 建立私有 NAT Gateway，再以 VPC Peering 連到供應端的 NLB。"
+      },
+      {
+        "choiceId": "D",
+        "text": "在供應端建立以該 NLB 為後端的 PrivateLink 端點服務，允許消費端建立介面端點並透過它呼叫 API。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "PrivateLink 由消費端本地介面端點連到供應端端點服務，支援重疊 CIDR 的情境，也不必建立跨 VPC 的通用路由。",
+    "choiceExplanations": {
+      "A": "VPC Peering 不接受重疊 CIDR；縮小擬新增的路由範圍不會改變這項限制。",
+      "B": "Transit Gateway 不會為重疊的 VPC CIDR 傳播路由，這個設計也沒有做位址轉換，因此無法達成要求。",
+      "C": "私有 NAT Gateway 可轉譯流量，但這個方案仍依賴兩個 CIDR 重疊的 VPC 建立 Peering，無法成立。",
+      "D": "正確。PrivateLink 由消費端本地介面端點連到供應端端點服務，支援重疊 CIDR 的情境，也不必建立跨 VPC 的通用路由。"
+    },
+    "practicalNote": "PrivateLink 由消費端本地介面端點連到供應端端點服務，支援重疊 CIDR 的情境，也不必建立跨 VPC 的通用路由。 實務上先驗證消費端介面端點與供應端 NLB 的服務連線。把供應端可接受的帳戶與消費端安全群組分開管理，不應因為服務有私有位址就把它視為自動授權。\n\nVPC Peering 不接受重疊 CIDR；縮小擬新增的路由範圍不會改變這項限制。 Transit Gateway 不會為重疊的 VPC CIDR 傳播路由，這個設計也沒有做位址轉換，因此無法達成要求。 私有 NAT Gateway 可轉譯流量，但這個方案仍依賴兩個 CIDR 重疊的 VPC 建立 Peering，無法成立。",
+    "officialDocs": [
+      {
+        "label": "PrivateLink 端點服務",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html"
+      },
+      {
+        "label": "AWS 架構白皮書：PrivateLink 與重疊 CIDR",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html"
+      },
+      {
+        "label": "VPC Peering 限制",
+        "url": "https://docs.aws.amazon.com/vpc/latest/peering/invalid-peering-configurations.html"
+      },
+      {
+        "label": "Transit Gateway VPC 連接限制",
+        "url": "https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html"
+      }
+    ],
+    "relatedServices": [
+      "vpc",
+      "elb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "privatelink",
+      "overlapping-cidr"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-062",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "公司已有可運作的 AWS Site-to-Site VPN。地端應用若直接使用私有 IP，可以正常連到 AWS 中的服務。現在希望地端電腦繼續使用現有的地端 DNS 伺服器，也能查到 Route 53 私有託管區域 apps.example.com 的記錄。該託管區域已與 VPN 可達的 VPC 關聯，記錄不得公開。哪個做法可以讓查詢成功？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "在 VPC 建立 Resolver 傳出端點，將 apps.example.com 查詢轉送到地端 DNS。"
+      },
+      {
+        "choiceId": "B",
+        "text": "在關聯 VPC 建立 Resolver 傳入端點，讓地端 DNS 將該網域的查詢條件式轉送到端點 IP。"
+      },
+      {
+        "choiceId": "C",
+        "text": "讓地端 DNS 將該網域的查詢條件式轉送到 VPC 網段的起始位址加 2。"
+      },
+      {
+        "choiceId": "D",
+        "text": "將相同記錄新增到 Route 53 公有託管區域，讓地端 DNS 依一般方式解析。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "地端 DNS 可透過既有 VPN 將指定網域的查詢轉送至傳入端點的私有 IP，由 VPC Resolver 解析已關聯的私有託管區域。端點安全群組也需允許來自地端 DNS 的 TCP／UDP 53。",
+    "choiceExplanations": {
+      "A": "傳出端點用於把 VPC 端的查詢送往外部 DNS；本題的查詢從地端送入 AWS，方向相反。",
+      "B": "正確。地端 DNS 可透過既有 VPN 將指定網域的查詢轉送至傳入端點的私有 IP，由 VPC Resolver 解析已關聯的私有託管區域。端點安全群組也需允許來自地端 DNS 的 TCP／UDP 53。",
+      "C": "AWS 不支援將地端 DNS 查詢直接轉送到 VPC CIDR + 2 的 Resolver 位址；有 VPN 也不會改變這項限制。",
+      "D": "公有託管區域會公開記錄，即便記錄指向私有 IP，仍不符合不得公開的要求。"
+    },
+    "practicalNote": "地端 DNS 可透過既有 VPN 將指定網域的查詢轉送至傳入端點的私有 IP，由 VPC Resolver 解析已關聯的私有託管區域。端點安全群組也需允許來自地端 DNS 的 TCP／UDP 53。 先用地端 DNS 查詢私有名稱，確認指定網域才會走條件式轉送。解析成功後，也要分別測試應用的連線路徑；DNS 回傳正確私有位址不代表通往應用的路由和安全規則都已正確。\n\n傳出端點用於把 VPC 端的查詢送往外部 DNS；本題的查詢從地端送入 AWS，方向相反。 AWS 不支援將地端 DNS 查詢直接轉送到 VPC CIDR + 2 的 Resolver 位址；有 VPN 也不會改變這項限制。 公有託管區域會公開記錄，即便記錄指向私有 IP，仍不符合不得公開的要求。",
+    "officialDocs": [
+      {
+        "label": "Route 53 VPC Resolver：在 VPC 與地端之間解析 DNS 查詢",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-overview-DSN-queries-to-vpc.html"
+      },
+      {
+        "label": "將傳入 DNS 查詢轉送至 VPC",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html"
+      }
+    ],
+    "relatedServices": [
+      "route53",
+      "vpc"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "hybrid-dns",
+      "resolver"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-063",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "一個 Lambda 訂單處理函式會對 Amazon RDS for MySQL 執行短時間的交易，其中包含寫入。促銷時，大量執行環境同時建立資料庫連線，資料庫很快達到連線數上限，但 CPU 與儲存 I/O 尚有餘裕。團隊不想增加資料庫的連線數上限，也不想以降低 Lambda 並行度來限制吞吐量。哪個做法最能直接解決問題？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "將 Lambda 的資料庫連線改指向 RDS Proxy，讓短交易共用後端連線，並監控工作階段是否頻繁固定連線。"
+      },
+      {
+        "choiceId": "B",
+        "text": "在每個 Lambda 執行環境內建立獨立資料庫連線池，但所有執行環境仍直接連到 RDS 的寫入端點。"
+      },
+      {
+        "choiceId": "C",
+        "text": "新增 RDS 唯讀複本，將短交易平均分散到主資料庫與各唯讀複本，讓各執行個體分攤連線。"
+      },
+      {
+        "choiceId": "D",
+        "text": "啟用 RDS Multi-AZ DB 執行個體部署，讓 Lambda 透過原端點把交易分散至主執行個體與備用執行個體。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "RDS Proxy 維護後端連線池；交易結束後，未被固定的資料庫連線可供其他用戶端重用。若工作階段狀態使連線固定（pinning），重用效果會降低，因此應監控實際工作負載。",
+    "choiceExplanations": {
+      "A": "正確。RDS Proxy 維護後端連線池；交易結束後，未被固定的資料庫連線可供其他用戶端重用。若工作階段狀態使連線固定（pinning），重用效果會降低，因此應監控實際工作負載。",
+      "B": "各執行環境的池彼此獨立。雖然能在單一環境內重用連線，無法在尖峰時讓不同執行環境共用後端連線。",
+      "C": "唯讀複本可分攤可獨立執行的讀取，但不能接收本題的寫入交易，因此不能把這些交易分散給複本。",
+      "D": "Multi-AZ DB 執行個體部署的備用執行個體用於容錯移轉，不提供應用程式分攤讀寫交易。"
+    },
+    "practicalNote": "RDS Proxy 維護後端連線池；交易結束後，未被固定的資料庫連線可供其他用戶端重用。若工作階段狀態使連線固定（pinning），重用效果會降低，因此應監控實際工作負載。 採用 Proxy 後仍應觀察後端連線用量與工作階段固定連線的情況，並用尖峰負載驗證效果。此方案改善連線管理，不會替寫入增加 CPU 或 I/O 容量，也不保證同時執行的交易沒有等待。\n\n各執行環境的池彼此獨立。雖然能在單一環境內重用連線，無法在尖峰時讓不同執行環境共用後端連線。 唯讀複本可分攤可獨立執行的讀取，但不能接收本題的寫入交易，因此不能把這些交易分散給複本。 Multi-AZ DB 執行個體部署的備用執行個體用於容錯移轉，不提供應用程式分攤讀寫交易。",
+    "officialDocs": [
+      {
+        "label": "RDS Proxy 連線管理",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-connections.html"
+      },
+      {
+        "label": "避免 RDS Proxy 工作階段固定連線",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-pinning.html"
+      },
+      {
+        "label": "RDS Multi-AZ 部署",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "rds-proxy",
+      "connection-pooling"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-064",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "一家設計公司要將地端 NAS 上已經存在的 NFS 共用資料夾封存到 Amazon S3。首次需搬動完整資料，切換前每天還要重跑以傳輸新增或變更的檔案。既有程式應繼續寫入原 NFS 共用資料夾，團隊不想維護自製比對或搬移腳本，且需要查看傳輸與驗證結果。哪個做法符合需求？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "部署 S3 File Gateway，建立指向 S3 的新 NFS 共用資料夾，讓既有程式繼續寫入原 NAS 並等待 File Gateway 自動封存。"
+      },
+      {
+        "choiceId": "B",
+        "text": "啟用 S3 Replication，把現有地端 NFS 共用資料夾指定為來源，將資料複寫到封存儲存貯體。"
+      },
+      {
+        "choiceId": "C",
+        "text": "部署可存取地端 NFS 的 DataSync agent，設定 NFS 來源與 S3 目的地，再排程傳輸工作並檢查報告。"
+      },
+      {
+        "choiceId": "D",
+        "text": "建立以 S3 為儲存後端的 AWS Transfer Family SFTP 伺服器，讓它定期從原 NFS 共用資料夾取檔。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "DataSync 支援以地端 NFS 當來源、S3 當目的地，能排程工作、使用僅傳輸變更的模式，並保留傳輸與驗證結果，不必修改原應用的寫入位置。",
+    "choiceExplanations": {
+      "A": "File Gateway 會處理寫入它自己提供的共用資料夾的檔案，不會自行掃描及搬移原 NAS 上的舊檔或變更。",
+      "B": "S3 Replication 從 S3 儲存貯體複寫物件，不能直接把地端 NFS 共用資料夾當成來源。",
+      "C": "正確。DataSync 支援以地端 NFS 當來源、S3 當目的地，能排程工作、使用僅傳輸變更的模式，並保留傳輸與驗證結果，不必修改原應用的寫入位置。",
+      "D": "SFTP 伺服器能接收用戶端上傳，但不會自行從地端 NFS 共用資料夾擷取、比對或排程搬移檔案。"
+    },
+    "practicalNote": "DataSync 支援以地端 NFS 當來源、S3 當目的地，能排程工作、使用僅傳輸變更的模式，並保留傳輸與驗證結果，不必修改原應用的寫入位置。 先選小範圍的資料試跑，檢查 DataSync 工作報告與必要的檔案驗證結果，再安排完整搬移與後續排程。搬移工作完成不代表舊系統已切換，最後仍應確認原共用資料夾在切換窗口內的變更已同步。\n\nFile Gateway 會處理寫入它自己提供的共用資料夾的檔案，不會自行掃描及搬移原 NAS 上的舊檔或變更。 S3 Replication 從 S3 儲存貯體複寫物件，不能直接把地端 NFS 共用資料夾當成來源。 SFTP 伺服器能接收用戶端上傳，但不會自行從地端 NFS 共用資料夾擷取、比對或排程搬移檔案。",
+    "officialDocs": [
+      {
+        "label": "設定 DataSync 的 NFS 來源",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html"
+      },
+      {
+        "label": "DataSync 工作選項與驗證",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/configure-metadata.html"
+      },
+      {
+        "label": "排程 DataSync 工作",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/task-scheduling.html"
+      },
+      {
+        "label": "DataSync 工作報告",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/creating-task-report.html"
+      }
+    ],
+    "relatedServices": [
+      "datasync",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "nfs",
+      "migration"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-065",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "企業要將內部 Windows 應用程式的共享資料夾移至 AWS。應用程式只能透過原生 SMB 存取檔案，使用者要以現有 Microsoft Active Directory 帳號登入，並保留 Windows 檔案與資料夾的 NTFS 存取控制。團隊希望採用受管的 Windows 檔案系統，不必自行維護檔案伺服器。應選擇哪個方案？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "建立 Amazon EFS 檔案系統，讓應用程式直接掛載共享目錄。"
+      },
+      {
+        "choiceId": "B",
+        "text": "建立 Amazon FSx for Windows File Server，並加入現有的 AD 網域。"
+      },
+      {
+        "choiceId": "C",
+        "text": "建立 Amazon FSx for Lustre，讓用戶端直接存取共享檔案。"
+      },
+      {
+        "choiceId": "D",
+        "text": "建立 Amazon S3 File Gateway，讓用戶端透過 SMB 存取物件。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "FSx for Windows File Server 由 AWS 管理 Windows 檔案伺服器，原生支援 SMB、AD 整合及 Windows 存取控制。",
+    "choiceExplanations": {
+      "A": "Amazon EFS 提供 NFS 檔案存取，不是題目需要的原生 Windows SMB 檔案系統。",
+      "B": "正確。FSx for Windows File Server 由 AWS 管理 Windows 檔案伺服器，原生支援 SMB、AD 整合及 Windows 存取控制。",
+      "C": "FSx for Lustre 提供 Lustre 檔案系統，不提供題目要求的原生 SMB 共享。",
+      "D": "S3 File Gateway 雖可提供 SMB 共享與 AD 驗證，但底層是 S3 物件儲存，不是題目要求的受管 Windows 檔案系統。"
+    },
+    "practicalNote": "FSx for Windows File Server 由 AWS 管理 Windows 檔案伺服器，原生支援 SMB、AD 整合及 Windows 存取控制。 環境移轉前應驗證網域與檔案系統間的連線、名稱解析與授權設定，也要以實際使用者抽查檔案和資料夾權限。加入網域能提供身分整合，但不能取代遷移時對個別 ACL 的驗證。\n\nAmazon EFS 提供 NFS 檔案存取，不是題目需要的原生 Windows SMB 檔案系統。 FSx for Lustre 提供 Lustre 檔案系統，不提供題目要求的原生 SMB 共享。 S3 File Gateway 雖可提供 SMB 共享與 AD 驗證，但底層是 S3 物件儲存，不是題目要求的受管 Windows 檔案系統。",
+    "officialDocs": [
+      {
+        "label": "FSx for Windows File Server",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "FSx 與 Active Directory",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/aws-ad-integration-fsxW.html"
+      },
+      {
+        "label": "S3 File Gateway",
+        "url": "https://docs.aws.amazon.com/filegateway/latest/files3/what-is-file-s3.html"
+      }
+    ],
+    "relatedServices": [
+      "fsx"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "smb",
+      "active-directory"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-066",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "企業將稽核紀錄存放在已啟用 S3 Versioning 與 Object Lock 的一般用途儲存貯體。對每筆稽核紀錄的指定物件版本，都必須設定固定保留期限。在期限屆滿前，即使是帳戶根使用者也不能縮短期限或永久刪除該版本。屆滿後不得因另一個無期限的鎖定而阻擋刪除。哪個方案符合要求？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "對指定物件版本設定 Governance 模式與固定保留期限。"
+      },
+      {
+        "choiceId": "B",
+        "text": "對指定物件版本套用 Legal Hold，並記錄解除鎖定的日期。"
+      },
+      {
+        "choiceId": "C",
+        "text": "對稽核紀錄加上標籤，再以 Lifecycle 規則安排到期作業。"
+      },
+      {
+        "choiceId": "D",
+        "text": "對指定物件版本設定 Compliance 模式與固定保留期限。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Compliance 模式保護設有保留期限的指定版本。期限內，包括帳戶根使用者在內的使用者都不能縮短期限或永久刪除該版本；同一物件鍵仍可建立新版本。",
+    "choiceExplanations": {
+      "A": "獲授權繞過 Governance 保留的主體可依要求縮短期限或刪除該版本，無法滿足不得繞過的要求。",
+      "B": "Legal Hold 本身沒有到期日，且有權限的主體可解除它。外部排程無法替它提供題目要求的不可縮短期限。",
+      "C": "Lifecycle 規則可以安排到期作業，但不會在期限前對特定版本施加不可繞過的保留鎖定。",
+      "D": "正確。Compliance 模式保護設有保留期限的指定版本。期限內，包括帳戶根使用者在內的使用者都不能縮短期限或永久刪除該版本；同一物件鍵仍可建立新版本。"
+    },
+    "practicalNote": "Compliance 模式保護設有保留期限的指定版本。期限內，包括帳戶根使用者在內的使用者都不能縮短期限或永久刪除該版本；同一物件鍵仍可建立新版本。 設定前先確認保留義務與應套用的版本，避免把版本保留誤當成整個物件鍵禁止修改。保留到期只是解除期限造成的阻擋，不代表到期立即刪除；刪除仍有自己的授權與生命週期安排。\n\n獲授權繞過 Governance 保留的主體可依要求縮短期限或刪除該版本，無法滿足不得繞過的要求。 Legal Hold 本身沒有到期日，且有權限的主體可解除它。外部排程無法替它提供題目要求的不可縮短期限。 Lifecycle 規則可以安排到期作業，但不會在期限前對特定版本施加不可繞過的保留鎖定。",
+    "officialDocs": [
+      {
+        "label": "S3 Object Lock：保留期限與模式",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "object-lock",
+      "versioning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-067",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "電商平台在 Amazon DynamoDB 中為每筆訂單存放一筆項目。訂單編號全平台唯一。客服查詢時只持有訂單編號，必須能對基礎資料表呼叫一次 GetItem 精確讀出該筆訂單，不使用次要索引，也不能先查其他欄位。促銷尖峰的寫入來自大量不同訂單，彼此獨立且分布廣泛，沒有單一訂單長時間收到大量寫入；商家、日期及狀態則可能集中。哪個主索引鍵設計最符合需求？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "以商家編號為分割區索引鍵，訂單編號為排序索引鍵。"
+      },
+      {
+        "choiceId": "B",
+        "text": "以訂單日期為分割區索引鍵，訂單編號為排序索引鍵。"
+      },
+      {
+        "choiceId": "C",
+        "text": "以訂單編號為分割區索引鍵，不另設排序索引鍵。"
+      },
+      {
+        "choiceId": "D",
+        "text": "以訂單狀態為分割區索引鍵，訂單編號為排序索引鍵。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "訂單編號已能唯一識別項目，因此可直接作為 GetItem 的鍵。題目中的寫入也分布於大量不同的編號，而非集中在單一熱鍵。",
+    "choiceExplanations": {
+      "A": "GetItem 需要完整的複合主索引鍵，客服沒有商家編號；寫入若集中在少數商家，仍可能形成熱分割區。",
+      "B": "僅靠訂單編號無法提供完整的鍵；同日新增的訂單可能集中到少數日期鍵值。",
+      "C": "正確。訂單編號已能唯一識別項目，因此可直接作為 GetItem 的鍵。題目中的寫入也分布於大量不同的編號，而非集中在單一熱鍵。",
+      "D": "客服不知道訂單狀態，且狀態種類少；即使加上排序索引鍵，寫入仍可能集中到少數分割區鍵值。"
+    },
+    "practicalNote": "訂單編號已能唯一識別項目，因此可直接作為 GetItem 的鍵。題目中的寫入也分布於大量不同的編號，而非集中在單一熱鍵。 從存取模式反推索引鍵，用題目唯一已知的訂單編號完成精確查詢。上線後仍應觀察流量是否集中在個別訂單；索引鍵有大量不同值，不代表任何工作負載下都不會有熱鍵。\n\nGetItem 需要完整的複合主索引鍵，客服沒有商家編號；寫入若集中在少數商家，仍可能形成熱分割區。 僅靠訂單編號無法提供完整的鍵；同日新增的訂單可能集中到少數日期鍵值。 客服不知道訂單狀態，且狀態種類少；即使加上排序索引鍵，寫入仍可能集中到少數分割區鍵值。",
+    "officialDocs": [
+      {
+        "label": "DynamoDB：分散工作負載的分割區索引鍵",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-uniform-load.html"
+      },
+      {
+        "label": "DynamoDB GetItem 完整主索引鍵",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html"
+      }
+    ],
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partition-key",
+      "getitem"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-068",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "分析團隊已用 Amazon Athena 查詢 Amazon S3 中的存取記錄。常見查詢會指定某個 UTC 日期，彙總該日期的所有記錄。團隊可以依每筆事件時間戳記的 UTC 日期整理記錄，不受抵達時間影響。目前使用 Hive 型的 Athena 外部資料表，尚未依日期分割；每個 UTC 日期的資料可整理到對應的 S3 路徑。團隊要繼續使用 Athena，並讓 SQL 查詢能略過其他日期的資料。哪項調整最合適？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "依事件時間戳記的 UTC 日期建立並登錄每日分割區，在 WHERE 子句篩選日期分割區欄位。"
+      },
+      {
+        "choiceId": "B",
+        "text": "依 UTC 年份建立年度分割區，並在查詢中只以每筆記錄的時間戳記篩選。"
+      },
+      {
+        "choiceId": "C",
+        "text": "依來源應用程式建立分割區，並在查詢中只以每筆記錄的時間戳記篩選。"
+      },
+      {
+        "choiceId": "D",
+        "text": "保留未分割的資料表，並在時間篩選後用 LIMIT 限制回傳結果。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "在資料表登錄日期分割區並直接篩選分割區欄位後，Athena 可以略過不相符的日期分割區。此題查的是整天，且 UTC 日期與分割區對齊，因此只篩選日期分割區已足夠；若查詢更短的時段，還要篩選事件的時間戳記。",
+    "choiceExplanations": {
+      "A": "正確。在資料表登錄日期分割區並直接篩選分割區欄位後，Athena 可以略過不相符的日期分割區。此題查的是整天，且 UTC 日期與分割區對齊，因此只篩選日期分割區已足夠；若查詢更短的時段，還要篩選事件的時間戳記。",
+      "B": "年度分割區無法隔離單日；查詢若僅篩選記錄時間，也沒有明確指定年份分割區。",
+      "C": "題目指定的是日期，不是來源。依來源分割無法讓查詢按日期略過其他天的資料。",
+      "D": "LIMIT 限制回傳筆數，不能指定要掃描的日期分割區，也不是減少當日完整彙總所需掃描量的方法。"
+    },
+    "practicalNote": "在資料表登錄日期分割區並直接篩選分割區欄位後，Athena 可以略過不相符的日期分割區。此題查的是整天，且 UTC 日期與分割區對齊，因此只篩選日期分割區已足夠；若查詢更短的時段，還要篩選事件的時間戳記。 分割區要和資料實際儲存路徑一致，並讓資料表能辨認新分割區。測試時比較同一個日期查詢調整前後掃描的資料量；不要把回傳筆數當成掃描量，也不要把 Hive 分割區欄位的做法直接套用到 Iceberg 隱藏分割。\n\n年度分割區無法隔離單日；查詢若僅篩選記錄時間，也沒有明確指定年份分割區。 題目指定的是日期，不是來源。依來源分割無法讓查詢按日期略過其他天的資料。 LIMIT 限制回傳筆數，不能指定要掃描的日期分割區，也不是減少當日完整彙總所需掃描量的方法。",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena：分割資料",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/partitions.html"
+      },
+      {
+        "label": "Amazon Athena：時間戳記與分割區",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/data-types-timestamps.html"
+      }
+    ],
+    "relatedServices": [
+      "athena",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partitioning",
+      "query-pruning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
   }
 ]
