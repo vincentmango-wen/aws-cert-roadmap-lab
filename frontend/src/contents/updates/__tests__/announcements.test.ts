@@ -96,13 +96,15 @@ it("never links originals to omitted future or unpublished corrections", () => {
   expect(run([make(), future, hidden]).itemsByLocale.ja).toMatchObject([{ id: "announcement:first", corrections: [] }]);
 });
 
-it("sorts mixed items consistently and previews exactly the first three", () => {
+it("sorts mixed items consistently and previews at most the first five", () => {
   const translation = { id: "z", slug: "sample", title: "title", summary: "summary", published: true, noIndex: false, bodyPresent: true, publishedAt: "2026-11-09" };
   const article: ArticleCandidate = { kind: "blog", id: "z", slug: "sample", translations: { ja: translation, en: translation, zh: translation } };
   const result = aggregateUpdates({ articles: [article], announcements: [make("z"), make("a"), make("new", "2026-11-10")], today: "2026-11-12", isPublicPath: () => true });
   for (const items of Object.values(result.itemsByLocale)) {
     expect(items.map((i) => i.id)).toEqual(["announcement:new", "announcement:a", "announcement:z", "blog:z"]);
-    expect(selectHomeUpdates(items)).toEqual(items.slice(0, 3));
+    expect(selectHomeUpdates(items)).toEqual(items);
+    const six = [...items, { ...items[0], id: "announcement:fifth" }, { ...items[0], id: "announcement:sixth" }];
+    expect(selectHomeUpdates(six)).toEqual(six.slice(0, 5));
     expect(selectHomeUpdates(items.slice(0, 1))).toEqual(items.slice(0, 1));
   }
   expect(selectHomeUpdates([])).toEqual([]);
