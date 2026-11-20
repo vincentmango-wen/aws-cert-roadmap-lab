@@ -3244,5 +3244,111 @@
     "published": true,
     "createdAt": "2026-06-07",
     "updatedAt": "2026-06-18"
+  },
+  {
+    "questionId": "clf-051",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "An operations colleague heard that AWS will perform planned maintenance next week. In the AWS console, they want to see whether an event is scheduled for their own account and which resources AWS lists as affected. Where should they look?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Health Dashboard account events"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Health Dashboard public service health"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudWatch metrics"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS CloudTrail event history"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Account events show applicable scheduled changes. Opening an event shows the resources AWS identifies as affected.",
+    "choiceExplanations": {
+      "A": "Correct. Account events show applicable scheduled changes. Opening an event shows the resources AWS identifies as affected.",
+      "B": "Public service health shows public information about services or Regions, not resources in a particular account.",
+      "C": "CloudWatch metrics help track resource performance but do not list AWS account maintenance events and their affected resources.",
+      "D": "CloudTrail event history helps investigate account API activity, not the AWS planned maintenance resource list in this scenario."
+    },
+    "practicalNote": "Account events show applicable scheduled changes. Opening an event shows the resources AWS identifies as affected. If the event lists affected resources, use it to identify environments that need scheduling or notification. Public health provides regional context, while performance monitoring and API history answer different questions.\n\nPublic service health shows public information about services or Regions, not resources in a particular account. CloudWatch metrics help track resource performance but do not list AWS account maintenance events and their affected resources. CloudTrail event history helps investigate account API activity, not the AWS planned maintenance resource list in this scenario.",
+    "officialDocs": [
+      {
+        "label": "AWS Health account events",
+        "url": "https://docs.aws.amazon.com/health/latest/ug/aws-health-account-views.html"
+      }
+    ],
+    "relatedServices": [
+      "aws-health"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "planned-maintenance",
+      "account-events"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "clf-052",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "A design team wants to try a third-party SaaS collaboration tool. Procurement needs to search public vendor listings, review subscription terms, and subscribe through AWS. Which service should it use?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Cost Explorer"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Service Catalog"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Marketplace"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Support Center"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Marketplace lists third-party software and SaaS and lets buyers review terms and subscribe.",
+    "choiceExplanations": {
+      "A": "Cost Explorer analyzes AWS costs and usage; it does not list or subscribe to third-party SaaS.",
+      "B": "Service Catalog distributes organization-approved IT products, not public vendor SaaS subscriptions.",
+      "C": "Correct. AWS Marketplace lists third-party software and SaaS and lets buyers review terms and subscribe.",
+      "D": "Support Center manages AWS support cases, not third-party software subscriptions."
+    },
+    "practicalNote": "AWS Marketplace lists third-party software and SaaS and lets buyers review terms and subscribe. Before subscribing, compare the vendor listing’s pricing, applicable terms, and usage permissions; follow internal procurement rules. Distributing approved internal products is a separate need from subscribing to an external listing.\n\nCost Explorer analyzes AWS costs and usage; it does not list or subscribe to third-party SaaS. Service Catalog distributes organization-approved IT products, not public vendor SaaS subscriptions. Support Center manages AWS support cases, not third-party software subscriptions.",
+    "officialDocs": [
+      {
+        "label": "AWS Marketplace SaaS products",
+        "url": "https://docs.aws.amazon.com/marketplace/latest/buyerguide/buyer-saas-products.html"
+      }
+    ],
+    "relatedServices": [
+      "aws-marketplace"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "marketplace",
+      "saas"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
   }
 ]

@@ -3248,5 +3248,111 @@
         "url": "https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config.html"
       }
     ]
+  },
+  {
+    "questionId": "clf-051",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "營運同事聽說 AWS 下週將進行計畫性維護。他想在 AWS 主控台確認：是否有會影響自己帳戶的排程事件，以及 AWS 列出的受影響資源。應該到哪裡查看？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Health Dashboard 的帳戶事件"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Health Dashboard 的公開服務狀態"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon CloudWatch 的指標頁面"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS CloudTrail 的事件歷史記錄"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "帳戶事件可查看適用於該帳戶的計畫性變更；選取事件可查看 AWS 列出的受影響資源。",
+    "choiceExplanations": {
+      "A": "正確。帳戶事件可查看適用於該帳戶的計畫性變更；選取事件可查看 AWS 列出的受影響資源。",
+      "B": "公開服務狀態提供整體服務或區域的公開資訊，不會列出某個帳戶的資源清單。",
+      "C": "CloudWatch 指標可以協助觀察資源表現，但不是查看 AWS 發布的帳戶維護事件與資源清單的地方。",
+      "D": "CloudTrail 事件歷史記錄可用於追查帳戶中的 API 活動，但不提供題目要求的 AWS 計畫性維護資源清單。"
+    },
+    "practicalNote": "帳戶事件可查看適用於該帳戶的計畫性變更；選取事件可查看 AWS 列出的受影響資源。 若事件提供受影響資源，維護前可用清單確認哪些環境需要排程或通知。公開服務狀態可提供區域背景，但無法替代帳戶視角；監控指標與 API 歷史則適合回答另外兩類問題。\n\n公開服務狀態提供整體服務或區域的公開資訊，不會列出某個帳戶的資源清單。 CloudWatch 指標可以協助觀察資源表現，但不是查看 AWS 發布的帳戶維護事件與資源清單的地方。 CloudTrail 事件歷史記錄可用於追查帳戶中的 API 活動，但不提供題目要求的 AWS 計畫性維護資源清單。",
+    "officialDocs": [
+      {
+        "label": "在 AWS Health Dashboard 查看帳戶事件",
+        "url": "https://docs.aws.amazon.com/health/latest/ug/aws-health-account-views.html"
+      }
+    ],
+    "relatedServices": [
+      "aws-health"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "planned-maintenance",
+      "account-events"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "clf-052",
+    "exam": "CLF-C02",
+    "category": "Billing, Pricing, and Support",
+    "domain": "Billing, Pricing, and Support",
+    "difficulty": "easy",
+    "question": "設計團隊想試用第三方廠商提供的 SaaS 協作工具。採購同事需要搜尋廠商的公開商品、查看訂閱條款，並經由 AWS 訂閱。應使用哪項服務？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "AWS Cost Explorer"
+      },
+      {
+        "choiceId": "B",
+        "text": "AWS Service Catalog"
+      },
+      {
+        "choiceId": "C",
+        "text": "AWS Marketplace"
+      },
+      {
+        "choiceId": "D",
+        "text": "AWS Support Center"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "AWS Marketplace 提供第三方軟體與 SaaS 的商品資訊和訂閱選項，採購同事可在此查閱適用條款。",
+    "choiceExplanations": {
+      "A": "Cost Explorer 用於分析 AWS 費用與用量，不提供第三方 SaaS 商品目錄或訂閱功能。",
+      "B": "Service Catalog 讓組織管理並分發已核准的 IT 產品，不是搜尋第三方公開 SaaS 並從廠商訂閱的採購市場。",
+      "C": "正確。AWS Marketplace 提供第三方軟體與 SaaS 的商品資訊和訂閱選項，採購同事可在此查閱適用條款。",
+      "D": "Support Center 用於管理 AWS 支援案件，不是第三方軟體的訂閱平台。"
+    },
+    "practicalNote": "AWS Marketplace 提供第三方軟體與 SaaS 的商品資訊和訂閱選項，採購同事可在此查閱適用條款。 採購前可比對廠商商品頁的計費方式、合約條件與使用權限，組織內仍應遵守自己的採購流程。若是分發公司已核准的 IT 範本而非對外訂閱，才是另一種服務情境。\n\nCost Explorer 用於分析 AWS 費用與用量，不提供第三方 SaaS 商品目錄或訂閱功能。 Service Catalog 讓組織管理並分發已核准的 IT 產品，不是搜尋第三方公開 SaaS 並從廠商訂閱的採購市場。 Support Center 用於管理 AWS 支援案件，不是第三方軟體的訂閱平台。",
+    "officialDocs": [
+      {
+        "label": "AWS Marketplace 買家指南：SaaS 商品",
+        "url": "https://docs.aws.amazon.com/marketplace/latest/buyerguide/buyer-saas-products.html"
+      }
+    ],
+    "relatedServices": [
+      "aws-marketplace"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "marketplace",
+      "saas"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
   }
 ]

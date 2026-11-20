@@ -3943,5 +3943,486 @@
     "published": true,
     "createdAt": "2026-11-09",
     "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-061",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "同じ AWS リージョンにある 2 つの AWS アカウントが、それぞれ 10.20.0.0/16 の VPC を使用しています。利用側のアプリケーションは、提供側の NLB の背後にある注文照会 API だけを呼び出します。どちらの VPC のアドレスも変更せず、パブリックインターネットも使わず、利用側に提供側の他のリソースへのネットワークルートを与えない設計はどれですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "VPC ピアリング接続を作成し、提供側の NLB が配置されたサブネットへのルートだけを追加する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "両 VPC を同じ Transit Gateway に接続し、提供側の NLB が配置されたサブネットへのルートだけを伝播する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "利用側 VPC にプライベート NAT Gateway を作成し、VPC ピアリング経由で提供側の NLB に接続する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "提供側の NLB を使って PrivateLink エンドポイントサービスを作成し、利用側にインターフェイスエンドポイントの作成を許可して、そこから API を呼び出す。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "PrivateLink は利用側 VPC 内のインターフェイスエンドポイントから提供側のサービスに接続します。CIDR が重複していても、VPC 間の汎用的なルートを作らずに利用できます。",
+    "choiceExplanations": {
+      "A": "VPC ピアリングは CIDR が重複する VPC 間では作成できません。追加するルートを絞っても、この制約は変わりません。",
+      "B": "Transit Gateway は、CIDR が重複する VPC のルートを伝播しません。この案にはアドレス変換もありません。",
+      "C": "プライベート NAT Gateway はアドレスを変換できますが、この案は作成できない VPC ピアリング接続に依存しています。",
+      "D": "正解。PrivateLink は利用側 VPC 内のインターフェイスエンドポイントから提供側のサービスに接続します。CIDR が重複していても、VPC 間の汎用的なルートを作らずに利用できます。"
+    },
+    "practicalNote": "PrivateLink は利用側 VPC 内のインターフェイスエンドポイントから提供側のサービスに接続します。CIDR が重複していても、VPC 間の汎用的なルートを作らずに利用できます。 コンシューマー側の接続テストに加え、サービス提供側で許可するプリンシパルとコンシューマー側のセキュリティグループを確認します。プライベート接続そのものが利用者の認可を代替するわけではありません。\n\nVPC ピアリングは CIDR が重複する VPC 間では作成できません。追加するルートを絞っても、この制約は変わりません。 Transit Gateway は、CIDR が重複する VPC のルートを伝播しません。この案にはアドレス変換もありません。 プライベート NAT Gateway はアドレスを変換できますが、この案は作成できない VPC ピアリング接続に依存しています。",
+    "officialDocs": [
+      {
+        "label": "PrivateLink エンドポイントサービス",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html"
+      },
+      {
+        "label": "PrivateLink と重複 CIDR",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html"
+      },
+      {
+        "label": "VPC ピアリングの制限",
+        "url": "https://docs.aws.amazon.com/vpc/latest/peering/invalid-peering-configurations.html"
+      },
+      {
+        "label": "Transit Gateway の VPC 接続制限",
+        "url": "https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html"
+      }
+    ],
+    "relatedServices": [
+      "vpc",
+      "elb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "privatelink",
+      "overlapping-cidr"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-062",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "企業は稼働中の AWS Site-to-Site VPN を利用しており、オンプレミスのアプリケーションはプライベート IP を指定すれば AWS 上のサービスに接続できます。オンプレミスの端末で既存の DNS サーバーを引き続き使いながら、Route 53 のプライベートホストゾーン apps.example.com のレコードを引けるようにしたいと考えています。このゾーンは VPN で到達できる VPC に関連付け済みで、レコードを公開してはなりません。どの方法で名前解決できますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "VPC に Resolver のアウトバウンドエンドポイントを作成し、apps.example.com のクエリをオンプレミス DNS に転送する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "関連付け先の VPC に Resolver のインバウンドエンドポイントを作成し、オンプレミス DNS から対象ドメインのクエリをエンドポイントの IP に条件付き転送する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "オンプレミス DNS から対象ドメインのクエリを VPC の CIDR ブロックの先頭アドレスに 2 を加えた IP に条件付き転送する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "同じレコードを Route 53 のパブリックホストゾーンに登録し、オンプレミス DNS で通常どおり名前解決する。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "既存 VPN 経由でインバウンドエンドポイントのプライベート IP にクエリを転送すると、Resolver が関連付け済みのプライベートホストゾーンを解決します。エンドポイントのセキュリティグループでは、オンプレミス DNS からの TCP と UDP の 53 番ポートを許可します。",
+    "choiceExplanations": {
+      "A": "アウトバウンドエンドポイントは、VPC から外部の DNS にクエリを送るためのものです。今回のクエリはオンプレミスから AWS に入るため、向きが逆です。",
+      "B": "正解。既存 VPN 経由でインバウンドエンドポイントのプライベート IP にクエリを転送すると、Resolver が関連付け済みのプライベートホストゾーンを解決します。エンドポイントのセキュリティグループでは、オンプレミス DNS からの TCP と UDP の 53 番ポートを許可します。",
+      "C": "VPN 経由であっても、オンプレミスから VPC の CIDR 先頭アドレス + 2 の Resolver に直接クエリを転送する構成はサポートされません。",
+      "D": "パブリックホストゾーンのレコードは、指している先がプライベート IP であっても公開されます。"
+    },
+    "practicalNote": "既存 VPN 経由でインバウンドエンドポイントのプライベート IP にクエリを転送すると、Resolver が関連付け済みのプライベートホストゾーンを解決します。エンドポイントのセキュリティグループでは、オンプレミス DNS からの TCP と UDP の 53 番ポートを許可します。 オンプレミス側の DNS から対象のプライベート名を解決して確認します。DNS の応答が正しくてもアプリケーションの到達性は別なので、ルートとセキュリティ設定を確認します。\n\nアウトバウンドエンドポイントは、VPC から外部の DNS にクエリを送るためのものです。今回のクエリはオンプレミスから AWS に入るため、向きが逆です。 VPN 経由であっても、オンプレミスから VPC の CIDR 先頭アドレス + 2 の Resolver に直接クエリを転送する構成はサポートされません。 パブリックホストゾーンのレコードは、指している先がプライベート IP であっても公開されます。",
+    "officialDocs": [
+      {
+        "label": "ハイブリッド DNS の名前解決",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-overview-DSN-queries-to-vpc.html"
+      },
+      {
+        "label": "インバウンド DNS クエリの転送",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html"
+      }
+    ],
+    "relatedServices": [
+      "route53",
+      "vpc"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "hybrid-dns",
+      "resolver"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-063",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "注文処理用の Lambda 関数は Amazon RDS for MySQL に対して、書き込みを含む短時間のトランザクションを実行します。セール時は多数の実行環境が同時に接続を作成し、CPU とストレージ I/O には余裕があるのに接続数が上限に達します。接続数の上限を増やさず、Lambda の同時実行数を減らして処理量も落としたくありません。どの方法が最も直接的に問題を解決しますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Lambda の接続先を RDS Proxy に変更し、短時間のトランザクションでバックエンド接続を共有する。セッションのピン留めが多発していないかも監視する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "Lambda の実行環境ごとに個別の接続プールを作成し、いずれの実行環境も RDS の書き込みエンドポイントに直接接続する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "RDS のリードレプリカを追加し、短時間のトランザクションをプライマリと各レプリカに均等に振り分けて接続を分散する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "RDS のマルチ AZ DB インスタンス配置を有効にし、既存のエンドポイントでトランザクションをプライマリとスタンバイに分散する。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "RDS Proxy はバックエンド接続をプールします。ピン留めされていない接続はトランザクションの終了後に別のクライアントで再利用できます。セッション状態によりピン留めが発生すると再利用の効果が下がるため、実際の負荷で監視します。",
+    "choiceExplanations": {
+      "A": "正解。RDS Proxy はバックエンド接続をプールします。ピン留めされていない接続はトランザクションの終了後に別のクライアントで再利用できます。セッション状態によりピン留めが発生すると再利用の効果が下がるため、実際の負荷で監視します。",
+      "B": "プールは実行環境ごとに独立しています。同じ実行環境内で再利用できても、負荷のピーク時に異なる実行環境でバックエンド接続を共有できません。",
+      "C": "リードレプリカは独立した読み取り処理を分担できますが、今回の書き込みを含むトランザクションは受け付けられません。",
+      "D": "マルチ AZ DB インスタンス配置のスタンバイはフェイルオーバー用であり、アプリケーションの読み書きを分担しません。"
+    },
+    "practicalNote": "RDS Proxy はバックエンド接続をプールします。ピン留めされていない接続はトランザクションの終了後に別のクライアントで再利用できます。セッション状態によりピン留めが発生すると再利用の効果が下がるため、実際の負荷で監視します。 導入後は本番に近い負荷で、バックエンド接続数とピン留めの状況を観測します。接続管理を改善しても、CPU やストレージの負荷を解消したり、待ち時間がなくなったりするわけではありません。\n\nプールは実行環境ごとに独立しています。同じ実行環境内で再利用できても、負荷のピーク時に異なる実行環境でバックエンド接続を共有できません。 リードレプリカは独立した読み取り処理を分担できますが、今回の書き込みを含むトランザクションは受け付けられません。 マルチ AZ DB インスタンス配置のスタンバイはフェイルオーバー用であり、アプリケーションの読み書きを分担しません。",
+    "officialDocs": [
+      {
+        "label": "RDS Proxy の接続に関する考慮事項",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-connections.html"
+      },
+      {
+        "label": "RDS Proxy のピン留めの回避",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-pinning.html"
+      },
+      {
+        "label": "RDS マルチ AZ 配置",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "rds-proxy",
+      "connection-pooling"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-064",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "設計会社はオンプレミスの NAS の NFS 共有に保存されているファイルを Amazon S3 にアーカイブしたいと考えています。初回に全件を移し、切り替えまでは追加・変更されたファイルを毎日転送する必要があります。既存のアプリケーションは引き続き元の NFS 共有に書き込み、独自の差分確認・転送スクリプトは保守せず、転送と検証の結果を確認したいと考えています。どの方法が要件を満たしますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 File Gateway をデプロイし、S3 を使う新しい NFS 共有を作成する。アプリケーションは元の NAS に書き込み続け、ゲートウェイによる自動アーカイブを待つ。"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Replication を有効化し、オンプレミスの既存 NFS 共有をソースに指定して、アーカイブ先の S3 バケットに複製する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "オンプレミスの NFS 共有を読み取れる DataSync エージェントをデプロイし、ソースを NFS、転送先を S3 に設定する。タスクをスケジュールし、レポートを確認する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 をストレージに使う AWS Transfer Family の SFTP サーバーを作成し、元の NFS 共有から定期的にファイルを取り込ませる。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "DataSync はオンプレミスの NFS から S3 への転送、タスクの定期実行、変更分だけの転送、転送と検証の結果の確認に対応します。既存の書き込み先を変える必要はありません。",
+    "choiceExplanations": {
+      "A": "File Gateway は自身が提供する共有に書き込まれたファイルを処理します。元の NAS の既存ファイルや変更を自動でスキャンして転送するわけではありません。",
+      "B": "S3 Replication は S3 バケットのオブジェクトを複製します。オンプレミスの NFS 共有を直接ソースにできません。",
+      "C": "正解。DataSync はオンプレミスの NFS から S3 への転送、タスクの定期実行、変更分だけの転送、転送と検証の結果の確認に対応します。既存の書き込み先を変える必要はありません。",
+      "D": "SFTP サーバーはクライアントからのアップロードを受け付けますが、オンプレミスの NFS 共有から自動でファイルを取得し、差分を確認して定期転送するわけではありません。"
+    },
+    "practicalNote": "DataSync はオンプレミスの NFS から S3 への転送、タスクの定期実行、変更分だけの転送、転送と検証の結果の確認に対応します。既存の書き込み先を変える必要はありません。 最初に少量で試し、タスクレポートと検証結果を確認します。切り替え時は旧共有の更新が取り込まれたかを別途確かめ、転送タスクの成功と切り替えの成功を区別します。\n\nFile Gateway は自身が提供する共有に書き込まれたファイルを処理します。元の NAS の既存ファイルや変更を自動でスキャンして転送するわけではありません。 S3 Replication は S3 バケットのオブジェクトを複製します。オンプレミスの NFS 共有を直接ソースにできません。 SFTP サーバーはクライアントからのアップロードを受け付けますが、オンプレミスの NFS 共有から自動でファイルを取得し、差分を確認して定期転送するわけではありません。",
+    "officialDocs": [
+      {
+        "label": "DataSync の NFS ロケーション",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html"
+      },
+      {
+        "label": "DataSync のタスクと検証オプション",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/configure-metadata.html"
+      },
+      {
+        "label": "DataSync タスクのスケジュール",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/task-scheduling.html"
+      },
+      {
+        "label": "DataSync のタスクレポート",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/creating-task-report.html"
+      }
+    ],
+    "relatedServices": [
+      "datasync",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "nfs",
+      "migration"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-065",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "企業は社内の Windows アプリケーションの共有フォルダを AWS に移行します。アプリケーションはネイティブの SMB でしかファイルにアクセスできません。利用者には既存の Microsoft Active Directory アカウントを使わせ、Windows のファイルやフォルダに設定した NTFS アクセス制御を維持します。自社でファイルサーバーを運用せず、マネージドな Windows ファイルシステムを利用するには、どの方法が適切ですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon EFS ファイルシステムを作成し、アプリケーションから共有ディレクトリを直接マウントする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon FSx for Windows File Server を作成し、既存の AD ドメインに参加させる。"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon FSx for Lustre を作成し、クライアントから共有ファイルに直接アクセスさせる。"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3 File Gateway を作成し、クライアントから SMB 経由でオブジェクトにアクセスさせる。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "FSx for Windows File Server は AWS が Windows ファイルサーバーを管理し、ネイティブの SMB、AD 連携、Windows のアクセス制御をサポートします。",
+    "choiceExplanations": {
+      "A": "Amazon EFS が提供するファイルアクセスは NFS であり、要件にあるネイティブの Windows SMB ではありません。",
+      "B": "正解。FSx for Windows File Server は AWS が Windows ファイルサーバーを管理し、ネイティブの SMB、AD 連携、Windows のアクセス制御をサポートします。",
+      "C": "FSx for Lustre が提供するのは Lustre ファイルシステムであり、要件どおりのネイティブ SMB 共有ではありません。",
+      "D": "S3 File Gateway は SMB 共有と AD 認証をサポートしますが、バックエンドは S3 オブジェクトストレージであり、要件にあるマネージドな Windows ファイルシステムではありません。"
+    },
+    "practicalNote": "FSx for Windows File Server は AWS が Windows ファイルサーバーを管理し、ネイティブの SMB、AD 連携、Windows のアクセス制御をサポートします。 ドメインとファイルシステム間の通信や名前解決を確認し、テストユーザーでファイルの権限を検証します。ドメインへの参加だけでは移行後の個別の権限が正しいと分かりません。\n\nAmazon EFS が提供するファイルアクセスは NFS であり、要件にあるネイティブの Windows SMB ではありません。 FSx for Lustre が提供するのは Lustre ファイルシステムであり、要件どおりのネイティブ SMB 共有ではありません。 S3 File Gateway は SMB 共有と AD 認証をサポートしますが、バックエンドは S3 オブジェクトストレージであり、要件にあるマネージドな Windows ファイルシステムではありません。",
+    "officialDocs": [
+      {
+        "label": "FSx for Windows File Server",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "FSx と Active Directory",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/aws-ad-integration-fsxW.html"
+      },
+      {
+        "label": "S3 File Gateway",
+        "url": "https://docs.aws.amazon.com/filegateway/latest/files3/what-is-file-s3.html"
+      }
+    ],
+    "relatedServices": [
+      "fsx"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "smb",
+      "active-directory"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-066",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "企業は監査記録を S3 バージョニングと S3 Object Lock が有効な汎用バケットに保存しています。対象となる各オブジェクトバージョンに有効期限の決まった保持期間を設定し、期限までは AWS アカウントのルートユーザーでも期間を短縮したり、そのバージョンを完全に削除したりできないようにします。期限が過ぎた後は、別の無期限ロックによって削除が妨げられてはなりません。どの方法が要件を満たしますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "対象のオブジェクトバージョンにガバナンスモードと固定の保持期限を設定する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "対象のオブジェクトバージョンにリーガルホールドを適用し、解除予定日を記録する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "監査記録にタグを付け、ライフサイクルルールで期限切れ処理を設定する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "対象のオブジェクトバージョンにコンプライアンスモードと固定の保持期限を設定する。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "コンプライアンスモードでは、期限が設定された対象バージョンが保護されます。期限まではルートユーザーでも期間を短縮したり完全に削除したりできません。同じオブジェクトキーに新しいバージョンを作ることはできます。",
+    "choiceExplanations": {
+      "A": "ガバナンスモードでは、保持設定をバイパスする権限を持つプリンシパルは、所定の方法で期間を短縮したり対象バージョンを削除したりできます。",
+      "B": "リーガルホールド自体には有効期限がなく、権限を持つプリンシパルが解除できます。別途解除日を管理しても、短縮できない保持期限にはなりません。",
+      "C": "ライフサイクルルールは期限切れ処理を設定できますが、期限まで特定のバージョンにバイパスできない保持設定を適用するものではありません。",
+      "D": "正解。コンプライアンスモードでは、期限が設定された対象バージョンが保護されます。期限まではルートユーザーでも期間を短縮したり完全に削除したりできません。同じオブジェクトキーに新しいバージョンを作ることはできます。"
+    },
+    "practicalNote": "コンプライアンスモードでは、期限が設定された対象バージョンが保護されます。期限まではルートユーザーでも期間を短縮したり完全に削除したりできません。同じオブジェクトキーに新しいバージョンを作ることはできます。 保護対象のバージョンと必要な保持期間を事前に確認します。期限を迎えても自動的に削除されるわけではなく、ライフサイクル設定や削除操作の権限は別に管理します。\n\nガバナンスモードでは、保持設定をバイパスする権限を持つプリンシパルは、所定の方法で期間を短縮したり対象バージョンを削除したりできます。 リーガルホールド自体には有効期限がなく、権限を持つプリンシパルが解除できます。別途解除日を管理しても、短縮できない保持期限にはなりません。 ライフサイクルルールは期限切れ処理を設定できますが、期限まで特定のバージョンにバイパスできない保持設定を適用するものではありません。",
+    "officialDocs": [
+      {
+        "label": "S3 Object Lock の保持モード",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "object-lock",
+      "versioning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-067",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "EC サイトは Amazon DynamoDB に注文ごとに 1 項目を保存しており、注文番号はサイト全体で一意です。サポート担当者が知っているのは注文番号だけです。セカンダリインデックスを使わず、別の値を事前に調べることもなく、ベーステーブルへの 1 回の GetItem で対象項目を正確に取得する必要があります。セールのピーク時は多数の異なる注文に独立して書き込みが発生し、1 件の注文に大量の書き込みが続くことはありません。一方、販売者、日付、注文ステータスには偏りが生じることがあります。どのプライマリキー設計が最も適切ですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "販売者 ID をパーティションキー、注文番号をソートキーにする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "注文日をパーティションキー、注文番号をソートキーにする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "注文番号をパーティションキーとし、ソートキーは設けない。"
+      },
+      {
+        "choiceId": "D",
+        "text": "注文ステータスをパーティションキー、注文番号をソートキーにする。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "注文番号だけで項目を一意に指定できるため、そのまま GetItem のキーにできます。このケースでは書き込みも多数の異なる注文番号に分散し、単一のホットキーには集中しません。",
+    "choiceExplanations": {
+      "A": "GetItem には複合プライマリキーの両方の値が必要ですが、担当者は販売者 ID を知りません。少数の販売者に書き込みが偏れば、ホットパーティションも発生し得ます。",
+      "B": "注文番号だけでは複合プライマリキーがそろいません。同じ日の注文は少数の日付キーに集中し得ます。",
+      "C": "正解。注文番号だけで項目を一意に指定できるため、そのまま GetItem のキーにできます。このケースでは書き込みも多数の異なる注文番号に分散し、単一のホットキーには集中しません。",
+      "D": "担当者は注文ステータスを知らず、ステータスの種類も少数です。ソートキーを追加しても、少数のパーティションキー値に書き込みが集中し得ます。"
+    },
+    "practicalNote": "注文番号だけで項目を一意に指定できるため、そのまま GetItem のキーにできます。このケースでは書き込みも多数の異なる注文番号に分散し、単一のホットキーには集中しません。 まずアクセスパターンを確認し、参照時に分かる注文 ID をキーにします。キーの種類が多くても将来特定の注文にアクセスが集中する可能性があるため、本番の負荷分布を監視します。\n\nGetItem には複合プライマリキーの両方の値が必要ですが、担当者は販売者 ID を知りません。少数の販売者に書き込みが偏れば、ホットパーティションも発生し得ます。 注文番号だけでは複合プライマリキーがそろいません。同じ日の注文は少数の日付キーに集中し得ます。 担当者は注文ステータスを知らず、ステータスの種類も少数です。ソートキーを追加しても、少数のパーティションキー値に書き込みが集中し得ます。",
+    "officialDocs": [
+      {
+        "label": "DynamoDB の分散を考慮したキー設計",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-uniform-load.html"
+      },
+      {
+        "label": "DynamoDB GetItem のキー指定",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html"
+      }
+    ],
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partition-key",
+      "getitem"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-068",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "分析チームは Amazon Athena で Amazon S3 のアクセスログをクエリしています。ログは毎日届き、一般的なクエリでは特定の UTC 日付の全件を集計します。対象の日付は受信日ではなく、各ログレコードのタイムスタンプで決まります。既存の外部テーブルは Hive 形式でパーティション分割されておらず、今後も同じテーブル形式と Athena を使用します。クエリで他の日付のデータをスキャンしないためには、どの変更が最も適切ですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "各レコードのイベント時刻の UTC 日付で日ごとのパーティションを作成して登録し、WHERE 句で日付のパーティション列を絞り込む。"
+      },
+      {
+        "choiceId": "B",
+        "text": "UTC 年で年ごとのパーティションを作成し、クエリでは各レコードのタイムスタンプだけを絞り込む。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ログを生成したアプリケーションでパーティションを作成し、クエリでは各レコードのタイムスタンプだけを絞り込む。"
+      },
+      {
+        "choiceId": "D",
+        "text": "パーティションのないテーブルを維持し、タイムスタンプで絞り込んだ後、LIMIT で返される行数を制限する。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "日付ごとのパーティションをテーブルに登録し、パーティション列を直接絞り込むと、Athena は他の日付のパーティションをスキャン対象から除外できます。この設問は UTC 日付と配置が一致する一日全体を対象とします。時間単位などの短い範囲ではイベントのタイムスタンプでも絞り込みます。",
+    "choiceExplanations": {
+      "A": "正解。日付ごとのパーティションをテーブルに登録し、パーティション列を直接絞り込むと、Athena は他の日付のパーティションをスキャン対象から除外できます。この設問は UTC 日付と配置が一致する一日全体を対象とします。時間単位などの短い範囲ではイベントのタイムスタンプでも絞り込みます。",
+      "B": "年単位のパーティションでは特定の 1 日だけを切り出せません。Hive 形式ではタイムスタンプ列だけを絞り込んでも、年のパーティション列は指定されません。",
+      "C": "アプリケーションで分けても、クエリの条件は日付です。日付で他の日のパーティションをスキャン対象から外せる構成ではありません。",
+      "D": "LIMIT は結果行数を制限するもので、スキャン対象の日付パーティションを指定しません。その日の全件を集計するためのスキャン量を減らす方法にはなりません。"
+    },
+    "practicalNote": "日付ごとのパーティションをテーブルに登録し、パーティション列を直接絞り込むと、Athena は他の日付のパーティションをスキャン対象から除外できます。この設問は UTC 日付と配置が一致する一日全体を対象とします。時間単位などの短い範囲ではイベントのタイムスタンプでも絞り込みます。 S3 のパスと日付をそろえ、テーブルから新しいパーティションを参照できるようにします。返却行数ではなくスキャン量を測り、この Hive の例を Iceberg の隠しパーティションと混同しません。\n\n年単位のパーティションでは特定の 1 日だけを切り出せません。Hive 形式ではタイムスタンプ列だけを絞り込んでも、年のパーティション列は指定されません。 アプリケーションで分けても、クエリの条件は日付です。日付で他の日のパーティションをスキャン対象から外せる構成ではありません。 LIMIT は結果行数を制限するもので、スキャン対象の日付パーティションを指定しません。その日の全件を集計するためのスキャン量を減らす方法にはなりません。",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena のデータパーティション",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/partitions.html"
+      },
+      {
+        "label": "Athena のタイムスタンプとパーティション",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/data-types-timestamps.html"
+      }
+    ],
+    "relatedServices": [
+      "athena",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partitioning",
+      "query-pruning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
   }
 ]

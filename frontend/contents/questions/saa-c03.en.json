@@ -3943,5 +3943,486 @@
     "published": true,
     "createdAt": "2026-11-09",
     "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-061",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "Two AWS accounts in the same Region each have a VPC using 10.20.0.0/16. An application in the consumer VPC needs only the order lookup API behind the provider’s NLB. Neither VPC may be renumbered, traffic must not use the public internet, and the consumer must not gain routes to other provider resources. What meets these requirements?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Peer the VPCs and add routes only to the provider’s NLB subnets."
+      },
+      {
+        "choiceId": "B",
+        "text": "Attach both VPCs to the same Transit Gateway and propagate only the provider’s NLB subnet routes."
+      },
+      {
+        "choiceId": "C",
+        "text": "Create a private NAT gateway in the consumer VPC and use VPC peering to reach the provider’s NLB."
+      },
+      {
+        "choiceId": "D",
+        "text": "Create a PrivateLink endpoint service backed by the provider’s NLB and allow the consumer to call the API through an interface endpoint."
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "PrivateLink connects a local interface endpoint to the provider’s service without general inter-VPC routing and supports overlapping CIDRs.",
+    "choiceExplanations": {
+      "A": "VPC peering rejects overlapping CIDRs. Narrowing the proposed routes does not remove that restriction.",
+      "B": "Transit Gateway does not propagate routes for overlapping VPC CIDRs in this setup, and the proposal does not translate addresses.",
+      "C": "A private NAT gateway can translate addresses, but this proposal still depends on peering two overlapping VPCs, which is not supported.",
+      "D": "Correct. PrivateLink connects a local interface endpoint to the provider’s service without general inter-VPC routing and supports overlapping CIDRs."
+    },
+    "practicalNote": "PrivateLink connects a local interface endpoint to the provider’s service without general inter-VPC routing and supports overlapping CIDRs. In practice, test the connection from the consumer interface endpoint to the provider service. Review which principals the provider allows and which clients the endpoint security group permits; private addressing does not replace authorization.\n\nVPC peering rejects overlapping CIDRs. Narrowing the proposed routes does not remove that restriction. Transit Gateway does not propagate routes for overlapping VPC CIDRs in this setup, and the proposal does not translate addresses. A private NAT gateway can translate addresses, but this proposal still depends on peering two overlapping VPCs, which is not supported.",
+    "officialDocs": [
+      {
+        "label": "PrivateLink endpoint services",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html"
+      },
+      {
+        "label": "AWS PrivateLink and overlapping CIDRs",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html"
+      },
+      {
+        "label": "VPC peering limitations",
+        "url": "https://docs.aws.amazon.com/vpc/latest/peering/invalid-peering-configurations.html"
+      },
+      {
+        "label": "Transit Gateway VPC attachment restrictions",
+        "url": "https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html"
+      }
+    ],
+    "relatedServices": [
+      "vpc",
+      "elb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "privatelink",
+      "overlapping-cidr"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-062",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "A company already has a working AWS Site-to-Site VPN. On-premises applications can reach AWS services by private IP. The company wants computers to keep using its on-premises DNS server and resolve records in the Route 53 private hosted zone apps.example.com. The zone is associated with a VPC reachable by the VPN, and its records must stay private. What should the company do?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create a Resolver outbound endpoint in the VPC and forward queries for apps.example.com to on-premises DNS."
+      },
+      {
+        "choiceId": "B",
+        "text": "Create a Resolver inbound endpoint in the associated VPC and have on-premises DNS conditionally forward queries for the domain to the endpoint IPs."
+      },
+      {
+        "choiceId": "C",
+        "text": "Have on-premises DNS conditionally forward queries for the domain to the VPC base address plus two."
+      },
+      {
+        "choiceId": "D",
+        "text": "Add identical records to a Route 53 public hosted zone and let on-premises DNS resolve them normally."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "On-premises DNS can forward the zone’s queries to the inbound endpoint’s private IPs over the VPN. VPC Resolver uses the associated private zone. Allow TCP and UDP port 53 from the on-premises resolvers in the endpoint’s security group.",
+    "choiceExplanations": {
+      "A": "Outbound endpoints send VPC queries to an external DNS resolver; the queries in this scenario travel in the opposite direction.",
+      "B": "Correct. On-premises DNS can forward the zone’s queries to the inbound endpoint’s private IPs over the VPN. VPC Resolver uses the associated private zone. Allow TCP and UDP port 53 from the on-premises resolvers in the endpoint’s security group.",
+      "C": "AWS does not support forwarding on-premises queries directly to a VPC CIDR plus two Resolver address, even over the VPN.",
+      "D": "A public hosted zone exposes its records even if the record values are private IP addresses."
+    },
+    "practicalNote": "On-premises DNS can forward the zone’s queries to the inbound endpoint’s private IPs over the VPN. VPC Resolver uses the associated private zone. Allow TCP and UDP port 53 from the on-premises resolvers in the endpoint’s security group. Verify the zone from the on-premises resolver, then test application connectivity separately. A correct private DNS answer does not by itself prove that routes or security rules for the application are correct.\n\nOutbound endpoints send VPC queries to an external DNS resolver; the queries in this scenario travel in the opposite direction. AWS does not support forwarding on-premises queries directly to a VPC CIDR plus two Resolver address, even over the VPN. A public hosted zone exposes its records even if the record values are private IP addresses.",
+    "officialDocs": [
+      {
+        "label": "Hybrid DNS resolution",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-overview-DSN-queries-to-vpc.html"
+      },
+      {
+        "label": "Forward inbound DNS queries",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html"
+      }
+    ],
+    "relatedServices": [
+      "route53",
+      "vpc"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "hybrid-dns",
+      "resolver"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-063",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "A Lambda order processor runs short transactions, including writes, against Amazon RDS for MySQL. During a sale, many execution environments open connections at once. The database hits its connection limit despite having spare CPU and storage I/O capacity. The team will not raise the database connection limit or reduce Lambda concurrency to limit throughput. What most directly addresses the problem?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Point Lambda’s database connections at RDS Proxy so short transactions can share backend connections, and monitor session pinning."
+      },
+      {
+        "choiceId": "B",
+        "text": "Create a separate connection pool in each Lambda execution environment, keeping all pools connected directly to the RDS writer endpoint."
+      },
+      {
+        "choiceId": "C",
+        "text": "Add RDS read replicas and spread the short transactions across the primary database and the replicas."
+      },
+      {
+        "choiceId": "D",
+        "text": "Deploy an RDS Multi-AZ DB instance and use the original endpoint to distribute the transactions between primary and standby instances."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "RDS Proxy pools database connections. When a transaction ends, unpinned connections can be reused by other clients. Session state can cause pinning and reduce reuse, so monitor the actual workload.",
+    "choiceExplanations": {
+      "A": "Correct. RDS Proxy pools database connections. When a transaction ends, unpinned connections can be reused by other clients. Session state can cause pinning and reduce reuse, so monitor the actual workload.",
+      "B": "Pools in separate execution environments cannot share backend connections with each other during a burst.",
+      "C": "Read replicas can handle independent reads, but they cannot take the write transactions described here.",
+      "D": "The standby in a Multi-AZ DB instance deployment is for failover and does not serve application read or write traffic."
+    },
+    "practicalNote": "RDS Proxy pools database connections. When a transaction ends, unpinned connections can be reused by other clients. Session state can cause pinning and reduce reuse, so monitor the actual workload. After adding the proxy, measure backend connection usage and pinning under a realistic burst. Connection reuse addresses connection pressure, not CPU or I/O demand, and does not guarantee transactions will never wait.\n\nPools in separate execution environments cannot share backend connections with each other during a burst. Read replicas can handle independent reads, but they cannot take the write transactions described here. The standby in a Multi-AZ DB instance deployment is for failover and does not serve application read or write traffic.",
+    "officialDocs": [
+      {
+        "label": "RDS Proxy connection considerations",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-connections.html"
+      },
+      {
+        "label": "Avoiding RDS Proxy pinning",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-pinning.html"
+      },
+      {
+        "label": "RDS Multi-AZ deployments",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "rds-proxy",
+      "connection-pooling"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-064",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "A design company needs to archive files already on its on-premises NAS NFS share to Amazon S3. After the initial full transfer, it needs daily runs to transfer new or changed files until cutover. Existing applications must continue writing to the original NFS share. The team needs transfer and verification results without maintaining its own comparison or transfer scripts. What meets these requirements?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Deploy S3 File Gateway and create a new NFS share backed by S3. Keep writing to the existing NAS and wait for the gateway to archive the data automatically."
+      },
+      {
+        "choiceId": "B",
+        "text": "Enable S3 Replication and specify the existing on-premises NFS share as the source for the archive bucket."
+      },
+      {
+        "choiceId": "C",
+        "text": "Deploy a DataSync agent that can access the on-premises NFS share, configure NFS and S3 locations, then schedule the transfer task and review its reports."
+      },
+      {
+        "choiceId": "D",
+        "text": "Create an AWS Transfer Family SFTP server backed by S3 and have the server pull files periodically from the existing NFS share."
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "DataSync supports on-premises NFS sources and S3 destinations, scheduled changed-file transfers, and transfer and verification reporting. The applications can keep writing to the original share.",
+    "choiceExplanations": {
+      "A": "File Gateway handles files written through its own share; it does not automatically scan the original NAS for existing or changed files.",
+      "B": "S3 Replication copies objects from an S3 bucket, not directly from an on-premises NFS share.",
+      "C": "Correct. DataSync supports on-premises NFS sources and S3 destinations, scheduled changed-file transfers, and transfer and verification reporting. The applications can keep writing to the original share.",
+      "D": "An SFTP server accepts client uploads; it does not itself pull files from an on-premises NFS share, compare them, or schedule transfers."
+    },
+    "practicalNote": "DataSync supports on-premises NFS sources and S3 destinations, scheduled changed-file transfers, and transfer and verification reporting. The applications can keep writing to the original share. Pilot the transfer on a small share or subset and review the task report and verification results. A successful task does not by itself prove cutover is complete; check that changes from the final cutover window have reached S3.\n\nFile Gateway handles files written through its own share; it does not automatically scan the original NAS for existing or changed files. S3 Replication copies objects from an S3 bucket, not directly from an on-premises NFS share. An SFTP server accepts client uploads; it does not itself pull files from an on-premises NFS share, compare them, or schedule transfers.",
+    "officialDocs": [
+      {
+        "label": "Configure DataSync NFS locations",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html"
+      },
+      {
+        "label": "DataSync task and verification options",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/configure-metadata.html"
+      },
+      {
+        "label": "Schedule DataSync tasks",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/task-scheduling.html"
+      },
+      {
+        "label": "DataSync task reporting",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/creating-task-report.html"
+      }
+    ],
+    "relatedServices": [
+      "datasync",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "nfs",
+      "migration"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-065",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "A company is moving a share used by an internal Windows application to AWS. The application requires native SMB; users must authenticate with existing Microsoft Active Directory accounts, and Windows file and folder NTFS access controls must be preserved. The team wants a managed Windows file system without maintaining file servers. Which solution should it choose?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create an Amazon EFS file system and mount the shared directory directly from the application."
+      },
+      {
+        "choiceId": "B",
+        "text": "Create Amazon FSx for Windows File Server and join its file system to the existing AD domain."
+      },
+      {
+        "choiceId": "C",
+        "text": "Create Amazon FSx for Lustre and let clients access the shared files directly."
+      },
+      {
+        "choiceId": "D",
+        "text": "Create Amazon S3 File Gateway and let clients access S3 objects through SMB."
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "FSx for Windows File Server is managed by AWS and natively supports SMB, AD integration, and Windows access controls.",
+    "choiceExplanations": {
+      "A": "Amazon EFS provides NFS file access rather than the native Windows SMB file system required here.",
+      "B": "Correct. FSx for Windows File Server is managed by AWS and natively supports SMB, AD integration, and Windows access controls.",
+      "C": "FSx for Lustre provides a Lustre file system, not native SMB shares.",
+      "D": "S3 File Gateway supports SMB and AD authentication, but its backing store is S3 objects, not the managed Windows file system required here."
+    },
+    "practicalNote": "FSx for Windows File Server is managed by AWS and natively supports SMB, AD integration, and Windows access controls. Test network and DNS connectivity to the domain, then sample file and directory permissions using real test users. Domain integration supports authentication; it does not by itself verify that migration preserved individual access controls.\n\nAmazon EFS provides NFS file access rather than the native Windows SMB file system required here. FSx for Lustre provides a Lustre file system, not native SMB shares. S3 File Gateway supports SMB and AD authentication, but its backing store is S3 objects, not the managed Windows file system required here.",
+    "officialDocs": [
+      {
+        "label": "FSx for Windows File Server",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "FSx and Active Directory",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/aws-ad-integration-fsxW.html"
+      },
+      {
+        "label": "S3 File Gateway",
+        "url": "https://docs.aws.amazon.com/filegateway/latest/files3/what-is-file-s3.html"
+      }
+    ],
+    "relatedServices": [
+      "fsx"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "smb",
+      "active-directory"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-066",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "A company keeps audit records in a general purpose S3 bucket with Versioning and Object Lock enabled. Each designated object version requires fixed retention. Before it expires, even the account root user must not be able to shorten retention or permanently delete the version. Afterward, a separate indefinite lock must not prevent deletion. Which approach meets these requirements?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Set a fixed retention period in Governance mode on the designated version."
+      },
+      {
+        "choiceId": "B",
+        "text": "Apply a Legal Hold to the designated version and document when it should be released."
+      },
+      {
+        "choiceId": "C",
+        "text": "Tag the audit records and schedule expiration with an S3 Lifecycle rule."
+      },
+      {
+        "choiceId": "D",
+        "text": "Set a fixed retention period in Compliance mode on the designated version."
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "Compliance mode protects the designated version through its fixed retention date. Even the account root user cannot shorten it or permanently delete that version while it is protected. New versions of the same key are still possible.",
+    "choiceExplanations": {
+      "A": "A principal permitted to bypass Governance retention can shorten or remove retention or delete the version with the appropriate request.",
+      "B": "Legal Hold does not expire automatically, and a permitted principal can remove it. An external schedule is not the immutable fixed period required here.",
+      "C": "Lifecycle can schedule expiration, but does not establish an unbypassable retention lock on a specific version.",
+      "D": "Correct. Compliance mode protects the designated version through its fixed retention date. Even the account root user cannot shorten it or permanently delete that version while it is protected. New versions of the same key are still possible."
+    },
+    "practicalNote": "Compliance mode protects the designated version through its fixed retention date. Even the account root user cannot shorten it or permanently delete that version while it is protected. New versions of the same key are still possible. Confirm the retention obligation and target version before applying the lock. A version lock does not make the object key immutable. Expiration removes that retention barrier; it does not delete the object automatically or grant permission to delete it.\n\nA principal permitted to bypass Governance retention can shorten or remove retention or delete the version with the appropriate request. Legal Hold does not expire automatically, and a permitted principal can remove it. An external schedule is not the immutable fixed period required here. Lifecycle can schedule expiration, but does not establish an unbypassable retention lock on a specific version.",
+    "officialDocs": [
+      {
+        "label": "S3 Object Lock: retention modes",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "object-lock",
+      "versioning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-067",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "An e-commerce platform stores one DynamoDB item per order, with order IDs unique across the platform. Support agents have only the order ID and must retrieve an exact order with one GetItem call on the base table, without a secondary index or lookup for another attribute. Sale traffic writes to many distinct orders, with no single order receiving sustained high write volume; merchants, dates, and statuses may be concentrated. Which primary key meets the requirements?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Use merchant ID as the partition key and order ID as the sort key."
+      },
+      {
+        "choiceId": "B",
+        "text": "Use order date as the partition key and order ID as the sort key."
+      },
+      {
+        "choiceId": "C",
+        "text": "Use order ID as the partition key, with no sort key."
+      },
+      {
+        "choiceId": "D",
+        "text": "Use order status as the partition key and order ID as the sort key."
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Order ID uniquely identifies an item and is sufficient for GetItem. In this workload, writes are spread across many order IDs rather than concentrating on a single hot key.",
+    "choiceExplanations": {
+      "A": "GetItem needs the complete composite key, but the agent does not have the merchant ID. Writes to a few merchants can also be concentrated.",
+      "B": "Order ID alone is not the full key, and many orders can share the same date partition key value.",
+      "C": "Correct. Order ID uniquely identifies an item and is sufficient for GetItem. In this workload, writes are spread across many order IDs rather than concentrating on a single hot key.",
+      "D": "The agent does not know the order status, and there are few statuses. A sort key does not prevent writes from concentrating across a few partition key values."
+    },
+    "practicalNote": "Order ID uniquely identifies an item and is sufficient for GetItem. In this workload, writes are spread across many order IDs rather than concentrating on a single hot key. Start from the access pattern: the only lookup field is the order ID. Still monitor whether requests later concentrate on individual orders. A high number of distinct key values does not prevent a hot key under a different workload.\n\nGetItem needs the complete composite key, but the agent does not have the merchant ID. Writes to a few merchants can also be concentrated. Order ID alone is not the full key, and many orders can share the same date partition key value. The agent does not know the order status, and there are few statuses. A sort key does not prevent writes from concentrating across a few partition key values.",
+    "officialDocs": [
+      {
+        "label": "DynamoDB uniform partition key load",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-uniform-load.html"
+      },
+      {
+        "label": "DynamoDB GetItem key reference",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html"
+      }
+    ],
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partition-key",
+      "getitem"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-068",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "An analytics team uses Amazon Athena to query access logs in Amazon S3. Common queries aggregate all records for one specified UTC day. The team can place each record under the UTC date of its event timestamp, regardless of arrival time. The team uses an unpartitioned Hive-style Athena external table and can place each UTC day’s data in its own S3 path. It wants to keep Athena and skip data for other dates in SQL queries. What should it do?",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Create and register daily partitions by UTC event date, and filter on the date partition column in the WHERE clause."
+      },
+      {
+        "choiceId": "B",
+        "text": "Create yearly partitions by UTC year and filter only on per-record timestamps."
+      },
+      {
+        "choiceId": "C",
+        "text": "Partition by source application and filter only on per-record timestamps."
+      },
+      {
+        "choiceId": "D",
+        "text": "Keep the table unpartitioned and add LIMIT after filtering by time."
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Filtering the registered date partition column lets Athena skip other dates. For this whole-day query, aligned UTC partitions suffice; for a narrower interval, also filter the event timestamp.",
+    "choiceExplanations": {
+      "A": "Correct. Filtering the registered date partition column lets Athena skip other dates. For this whole-day query, aligned UTC partitions suffice; for a narrower interval, also filter the event timestamp.",
+      "B": "Yearly partitions do not isolate a day, and the proposed filter does not specify the year partition key.",
+      "C": "Partitioning by source does not let a date filter exclude other days.",
+      "D": "LIMIT caps the returned rows; it does not select a date partition or reduce the data needed for the requested complete aggregation."
+    },
+    "practicalNote": "Filtering the registered date partition column lets Athena skip other dates. For this whole-day query, aligned UTC partitions suffice; for a narrower interval, also filter the event timestamp. Keep partitions aligned with S3 paths and make sure the table recognizes new partitions. Compare bytes scanned for the same query before and after the change. Do not confuse rows returned with data scanned, or assume Hive partition predicates work the same way as Iceberg hidden partitioning.\n\nYearly partitions do not isolate a day, and the proposed filter does not specify the year partition key. Partitioning by source does not let a date filter exclude other days. LIMIT caps the returned rows; it does not select a date partition or reduce the data needed for the requested complete aggregation.",
+    "officialDocs": [
+      {
+        "label": "Partition data in Amazon Athena",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/partitions.html"
+      },
+      {
+        "label": "Athena timestamp and partition guidance",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/data-types-timestamps.html"
+      }
+    ],
+    "relatedServices": [
+      "athena",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partitioning",
+      "query-pruning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
   }
 ]
