@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
 import { filterValidOfficialDocs } from "@/lib/official-doc";
 import { formatSlugLabel } from "@/lib/format-slug-label";
+import { splitQuestionStem } from "./question-stem";
 import {
   questionPlayerLabelsByLocale,
   type QuestionPlayerLabels,
@@ -42,6 +43,8 @@ type QuestionPlayerProps = {
   resolvedTerms: ResolvedLink[];
   resolvedComparisons: ResolvedLink[];
 };
+
+const questionBodyTypography = "text-sm leading-7 sm:text-base";
 
 const LOCALE_PREFIX: Record<QuestionPlayerLocale, "" | "/en" | "/zh"> = {
   ja: "",
@@ -113,6 +116,7 @@ export function QuestionPlayer({
   const isCorrect = selectedChoiceId === question.correctChoiceId;
 
   const difficultyLabel = resolvedLabels.difficulty[question.difficulty];
+  const stemParagraphs = splitQuestionStem(question.questionId, locale, question.question);
 
   const examListPath = getExamListPath(question.exam, locale);
   const examLabel = getExamLabel(question.exam, resolvedLabels);
@@ -215,8 +219,10 @@ export function QuestionPlayer({
         <p className="mb-2 text-sm font-semibold text-slate-500">
           {question.questionId.toUpperCase()}
         </p>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-          {question.question}
+        <h1 className={`space-y-4 font-bold wrap-anywhere text-slate-950 ${questionBodyTypography}`}>
+          {stemParagraphs.length === 1 ? stemParagraphs[0] : stemParagraphs.map((paragraph, index) => (
+            <span className="block" key={index}>{paragraph}</span>
+          ))}
         </h1>
       </header>
 
@@ -240,7 +246,7 @@ export function QuestionPlayer({
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-300 text-sm font-bold">
                     {choice.choiceId}
                   </span>
-                  <span className="text-sm leading-7 text-slate-900 sm:text-base">
+                  <span className={`text-slate-900 ${questionBodyTypography}`}>
                     {choice.text}
                   </span>
                 </span>
