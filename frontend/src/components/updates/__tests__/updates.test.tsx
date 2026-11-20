@@ -87,38 +87,41 @@ it("uses the approved Traditional Chinese introduction and empty state", () => {
   expect(html).toContain("依文章發布或更新日期與公告日期，查看最近的學習內容、題庫與網站功能消息。文章清單顯示目前版本，並非完整修訂歷史。");
   expect(html).toContain("目前尚無可顯示的內容或公告");
 });
-it("uses a mobile single-column and desktop three-column home preview", () => {
-  const html = renderToStaticMarkup(<UpdatesSection items={[item]} locale="zh" />);
-  expect(html).toContain("grid-cols-1"); expect(html).toContain("lg:grid-cols-3");
-  expect(html).toContain('href="/zh/updates"');
-});
-it.each([["ja", JaHome], ["en", EnHome], ["zh", ZhHome]] as const)("places exactly the first three after Blog before Portfolio in %s", (locale, Home) => {
-  const html = renderToStaticMarkup(<Home />);
-  const updates = html.indexOf('id="updates-heading"');
+it.each(["ja", "en", "zh"] as const)("shows wide stacked cards and localized links in %s", (locale) => {
   const prefix = locale === "ja" ? "" : `/${locale}`;
-  const blog = html.indexOf(`href="${prefix}/blog/aws-free-tier-portfolio"`);
-  expect(blog).toBeGreaterThan(-1);
-  expect(updates).toBeGreaterThan(blog);
-  expect(html.indexOf("Portfolio Architecture")).toBeGreaterThan(updates);
-  expect([...html.matchAll(/data-update-id="([^"]+)"/g)].map((match) => match[1])).toEqual(["announcement:one", "announcement:two", "announcement:three"]);
+  const html = renderToStaticMarkup(<UpdatesSection items={[item]} locale={locale} />);
+  expect(html).toContain("grid-cols-1");
+  expect(html).not.toMatch(/\b(?:sm|md|lg|xl|2xl):grid-cols-[2-9]/);
+  const views = html.indexOf(`href="${prefix}/updates"`);
+  expect(views).toBeGreaterThan(html.indexOf("</article>"));
+  expect(html.indexOf(`href="${prefix}/blog"`)).toBeGreaterThan(views);
+  const empty = renderToStaticMarkup(<UpdatesSection items={[]} locale={locale} />);
+  expect(empty).toContain(getDictionary(locale).updates.empty);
+  expect(empty).not.toContain("<article");
 });
 
 it.each([
   ["ja", JaHome, "学習カテゴリ"],
   ["en", EnHome, "Learn AWS by connecting concepts to architecture"],
   ["zh", ZhHome, "學習分類"],
-] as const)("places articles and updates immediately after Hero before learning categories in %s", (locale, Home, learningHeading) => {
+] as const)("places only the first five updates after the hero in %s", (locale, Home, learningHeading) => {
   const html = renderToStaticMarkup(<Home />);
   const sections = html.match(/<section\b[^>]*>[\s\S]*?<\/section>/g) ?? [];
   const prefix = locale === "ja" ? "" : `/${locale}`;
-  expect(sections).toHaveLength(6);
+  expect(sections).toHaveLength(5);
   expect(sections[0]).toContain("<h1");
+  expect(sections[1]).toContain('id="updates-heading"');
   expect(sections[1]).toContain(`href="${prefix}/blog"`);
+  expect(sections[1]).toContain(`href="${prefix}/updates"`);
   expect(sections[1]).toContain(`href="${prefix}/blog/aws-free-tier-portfolio"`);
-  expect([...sections[1].matchAll(/data-article-id="([^"]+)"/g)].map((match) => match[1])).toEqual(["blog:blog-002", "blog:blog-008", "blog:blog-015"]);
-  for (const id of ["002", "008", "015"]) expect(sections[1]).toContain(`${locale} complete note ${id}`);
-  expect(sections[2]).toContain('id="updates-heading"');
-  expect(sections[3]).toContain(learningHeading);
-  expect(sections[4]).toContain("Cloud Practitioner");
-  expect(sections[5]).toContain("Portfolio Architecture");
+  expect(sections[1]).toContain(`${locale} complete note 002`);
+  expect(sections[1]).toContain(`${locale} summary 002`);
+  expect(sections[1]).toContain("<time");
+  expect([...html.matchAll(/data-update-id="([^"]+)"/g)].map((match) => match[1])).toEqual([
+    "announcement:one", "announcement:two", "announcement:three", "announcement:four", "blog:blog-002",
+  ]);
+  expect(html).not.toContain("data-article-id=");
+  expect(sections[2]).toContain(learningHeading);
+  expect(sections[3]).toContain("Cloud Practitioner");
+  expect(sections[4]).toContain("Portfolio Architecture");
 });

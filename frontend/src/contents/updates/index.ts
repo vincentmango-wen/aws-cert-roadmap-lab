@@ -23,7 +23,7 @@ export function isPublicUpdatesPath(target: string, locale: Locale, articles?: A
   });
 }
 export function selectHomeUpdates(items: UpdateItem[]): UpdateItem[] {
-  return items.slice(0, 3);
+  return items.slice(0, 5);
 }
 
 export function selectLatestArticles(items: UpdateItem[]): UpdateItem[] {

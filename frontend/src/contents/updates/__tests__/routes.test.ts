@@ -30,7 +30,7 @@ it.each([
   expect([...html.matchAll(/data-date-kind="effective"[^>]*>[\s\S]*?<time dateTime="([^"]+)"/g)].map((match) => match[1])).toEqual(items.map((item) => item.date));
   expect([...html.matchAll(/data-date-kind="published"[^>]*>[\s\S]*?<time dateTime="([^"]+)"/g)].map((match) => match[1])).toEqual(items.filter((item) => item.eventKind === "update" && item.publishedAt).map((item) => item.publishedAt));
   expect(html).toContain(getDictionary(locale).updates.title);
-  expect(ids(renderToStaticMarkup(createElement(Home)))).toEqual(items.slice(0, 3).map((item) => item.id));
+  expect(ids(renderToStaticMarkup(createElement(Home)))).toEqual(items.slice(0, 5).map((item) => item.id));
   expect(metadata.title).toBe(getDictionary(locale).updates.title);
   expect(metadata.description).toBe(getDictionary(locale).updates.introduction);
   expect(metadata.alternates?.canonical).toMatch(new RegExp(`${route}$`));
@@ -63,7 +63,7 @@ it.each([
   expect(feature).toBeDefined();
   if (!feature) return;
   const escapeText = (value: string) => renderToStaticMarkup(createElement("span", null, value)).slice(6, -7);
-  for (const [Component, count] of [[Page, 53], [Home, 3]] as const) {
+  for (const [Component, count] of [[Page, 53], [Home, 5]] as const) {
     const html = renderToStaticMarkup(createElement(Component));
     expect(ids(html)).toHaveLength(count);
     expect(ids(html).slice(0, 3)).toEqual(["announcement:latest-articles-and-updates", "announcement:saa-c03-051-060", "architecture:arc-007"]);
