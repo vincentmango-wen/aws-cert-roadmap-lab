@@ -15,8 +15,8 @@ const cases = [
   ["clf-shared-responsibility-model", "2026-08-02"],
   ["clf-aws-global-infrastructure", "2026-08-20"],
   ["clf-aws-pricing-basics", "2026-11-09"],
-  ["clf-iam-basics", "2026-08-20"],
-  ["clf-monitoring-cloudwatch-basics", "2026-08-02"],
+  ["clf-iam-basics", "2026-11-21"],
+  ["clf-monitoring-cloudwatch-basics", "2026-11-21"],
   ["saa-multi-az-high-availability", "2026-08-20"],
   ["saa-vpc-public-private-subnet", "2026-08-02"],
   ["saa-s3-cloudfront-oac-design", "2026-08-20"],
@@ -35,7 +35,7 @@ const cases = [
 ] as const;
 
 describe.each(["en", "zh", "ja"] as const)("%s approved blog indexing", (locale) => {
-  it.each(cases)("allows indexing of %s without changing recorded dates", (slug, updatedAt) => {
+  it.each(cases)("allows indexing of %s with its recorded publication and revision dates", (slug, updatedAt) => {
     const loaded = loadBlogContent(locale, slug);
     expect(loaded?.frontmatter.noIndex).toBe(false);
     const input = createBlogDetailMetadataInput(locale, slug);

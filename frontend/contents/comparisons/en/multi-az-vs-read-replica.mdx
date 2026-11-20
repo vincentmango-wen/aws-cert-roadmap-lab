@@ -1,6 +1,6 @@
 # Differences between RDS Multi-AZ and Read Replica
 
-## Bottom line
+## Selection at a glance
 
 RDS Multi-AZ and Read Replica both involve copying a database.
 
@@ -25,7 +25,7 @@ This distinction matters a lot on AWS exams.
 | Exam keywords | high availability, failover, standby | read scaling, read-heavy workload |
 | Cost | Adds the cost of the standby | Adds the cost of each replica |
 
-## Beginner-friendly explanation
+## Beginner context
 
 Multi-AZ is the mechanism that prepares the database for a failure on the main DB.
 
@@ -48,7 +48,7 @@ Read Replica
 
 The application can route writes to the Primary DB and reads to the Read Replica.
 
-## Exam points
+## Exam guide and decision cues
 
 ### Cases where Multi-AZ is the likely answer
 
@@ -104,7 +104,7 @@ Primary DB
 
 That said, the cost also goes up, so this combination is not used in an indie MVP by default.
 
-## Common misunderstandings
+## Common misconceptions
 
 ### Misunderstanding 1: treating Read Replica as the first answer for fault tolerance
 
@@ -124,6 +124,20 @@ This project does not use RDS in the MVP.
 
 The reason is that the fixed cost ramps up quickly, and if the only need is to store inquiry submissions, Amazon DynamoDB is enough.
 
+## Summary
+
+The clearest way to remember RDS Multi-AZ and Read Replica is by purpose.
+
+- Multi-AZ: fault tolerance and high availability
+- Read Replica: better read performance
+
+On the exam, when "high availability" appears in the question, suspect Multi-AZ; when "read-heavy workload" appears, suspect Read Replica.
+
+## Official AWS references
+
+- Service behavior and design: [RDS Multi-AZ deployment types and failover](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html) · [RDS read replica behavior and use cases](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html) · [Multi-AZ DB instance standby semantics](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html)
+- [CLF-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## Related terms
 
 - [Amazon RDS](/terms/rds)
@@ -134,12 +148,3 @@ The reason is that the fixed cost ramps up quickly, and if the only need is to s
 ## Related questions
 
 - [CLF practice questions](/questions/clf)
-
-## Summary
-
-The clearest way to remember RDS Multi-AZ and Read Replica is by purpose.
-
-- Multi-AZ: fault tolerance and high availability
-- Read Replica: better read performance
-
-On the exam, when "high availability" appears in the question, suspect Multi-AZ; when "read-heavy workload" appears, suspect Read Replica.

@@ -56,4 +56,12 @@ export const announcements: Announcement[] = [{
     { path: "/questions/saa", labels: { ja: "SAA-C03の問題を見る", en: "View SAA-C03 questions", zh: "查看 SAA-C03 題庫" } },
     { path: "/questions/clf", labels: { ja: "CLF-C02の問題を見る", en: "View CLF-C02 questions", zh: "查看 CLF-C02 題庫" } },
   ],
+}, {
+  id: "aif-c01-001-030", eventKind: "new", category: "question-bank", date: "2026-11-21", published: true,
+  translations: {
+    zh: { title: "推出首批 30 題 AIF-C01 練習題", summary: "AWS Certified AI Practitioner 練習題庫首批收錄 30 道原創題，涵蓋五個考試領域。每題提供繁體中文、日文與英文，附逐項解析及 AWS 官方參考資料。" },
+    ja: { title: "AIF-C01の練習問題30問を初公開", summary: "AWS Certified AI Practitionerの5分野をカバーするオリジナルの練習問題を30問公開しました。日本語・英語・繁体字中国語で、選択肢ごとの解説とAWS公式資料を確認できます。" },
+    en: { title: "First 30 AIF-C01 practice questions", summary: "The AWS Certified AI Practitioner practice bank opens with 30 original questions across all five exam domains. Each is available in Traditional Chinese, Japanese, and English with explanations for each choice and official AWS references." },
+  },
+  links: [{ path: "/questions/aif", labels: { ja: "AIF-C01の問題を見る", en: "View AIF-C01 questions", zh: "查看 AIF-C01 題庫" } }],
 }];

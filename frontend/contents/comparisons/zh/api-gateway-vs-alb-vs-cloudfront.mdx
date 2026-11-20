@@ -1,6 +1,6 @@
 # API Gateway、ALB、CloudFront 的差異
 
-## 結論
+## 選擇重點
 
 Amazon API Gateway、Application Load Balancer (ALB)、Amazon CloudFront 都可以作為接收外部請求的入口。
 
@@ -63,7 +63,7 @@ S3
 
 常用於靜態網站與圖片傳遞。
 
-## 考試常考重點
+## 考綱與判斷重點
 
 ### API Gateway 容易成為正解的情境
 
@@ -88,7 +88,7 @@ S3
 - 想減少對來源的存取次數。
 - 想將 HTTPS 傳遞與快取一併運用。
 
-## 實務中的使用區分
+## 實務選型
 
 ### 無伺服器聯絡 API
 
@@ -150,7 +150,7 @@ Lambda
 
 不過 MVP 階段為了避免架構過於複雜，先採用 CloudFront 負責靜態網站、API 直接走 API Gateway URL 的設計就已足夠。
 
-## 常見的混淆
+## 常見誤解
 
 ### 混淆 1:把 API Gateway 與 ALB 視為同一種 API 入口
 
@@ -170,6 +170,21 @@ API 的建立、認證、階段管理、API 金鑰管理等領域屬於 API Gate
 
 API Gateway 是 API 的入口。
 
+## 總結
+
+把 API Gateway、ALB、CloudFront 依用途區分，會比較容易記住。
+
+- API Gateway:API 的入口。
+- ALB:Web 應用的負載平衡。
+- CloudFront:內容的高速傳遞。
+
+本專案同時採用 CloudFront 與 API Gateway，這項比較在說明作品集時也是重要的著力點。
+
+## AWS 官方參考
+
+- 服務行為與設計: [API Gateway REST 與 HTTP API 功能比較](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html) · [ALB HTTP 路由與接聽規則](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-rules.html) · [CloudFront 快取鍵行為](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html)
+- [CLF-C02 考試指南](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 相關用語
 
 - [Amazon API Gateway](/terms/api-gateway)
@@ -181,16 +196,6 @@ API Gateway 是 API 的入口。
 ## 相關題目
 
 - [CLF 模擬題列表](/questions/clf)
-
-## 整理
-
-把 API Gateway、ALB、CloudFront 依用途區分，會比較容易記住。
-
-- API Gateway:API 的入口。
-- ALB:Web 應用的負載平衡。
-- CloudFront:內容的高速傳遞。
-
-本專案同時採用 CloudFront 與 API Gateway，這項比較在說明作品集時也是重要的著力點。
 
 ## 更正說明
 

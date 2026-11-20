@@ -16,7 +16,7 @@ targetKeywords:
 author: "AWS Cert Roadmap Lab"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-20"
+updatedAt: "2026-11-21"
 ---
 
 # IAM Basics for AWS Cloud Practitioner
@@ -29,9 +29,9 @@ IAM controls "who" can do "what" on "which resources". Beginners should first un
 
 ## IAM User
 
-An IAM user is an identity that represents a person or an application that operates AWS. As a basic rule, you should not use the root user for daily work. Use IAM users instead.
+An IAM user is an identity in an AWS account that can have long-lived credentials, such as a password or access keys. For everyday human access, avoid the root user and prefer federation through an identity provider, for example with IAM Identity Center, to assume an IAM role using temporary credentials.
 
-However, issuing long-term access keys creates a risk of leakage. Delete unused access keys and enable MFA.
+Use long-lived credentials only when a specific use case cannot use temporary credentials. If required, enforce least privilege, enable MFA where available, and remove unused access keys.
 
 ## IAM Group
 
@@ -39,7 +39,7 @@ An IAM group lets you manage permissions for multiple users together. In persona
 
 ## IAM Role
 
-An IAM role is a way to assume permissions temporarily. It is often used when you need to give permissions to AWS services.
+An IAM role is an identity that can be assumed temporarily. For workloads accessing AWS, prefer IAM roles with temporary credentials instead of keeping long-lived access keys in code.
 
 For example, when Lambda writes to DynamoDB, you attach DynamoDB PutItem permissions to the Lambda execution role. When you deploy to AWS from GitHub Actions, you can also use a setup that assumes an IAM role via OIDC.
 
@@ -58,7 +58,7 @@ Least privilege means granting only the permissions required for the task. On th
 - Do not use the root user for daily work
 - Enable MFA
 - Define permissions with IAM policies
-- Use IAM roles for AWS services and temporary credentials
+- Prefer federation and temporary credentials for people, and IAM roles with temporary credentials for workloads
 - The principle of least privilege is essential
 
 ## Related Terms
@@ -71,3 +71,11 @@ Least privilege means granting only the permissions required for the task. On th
 
 - [Differences between IAM users, IAM roles, and IAM policies](/comparisons/iam-user-vs-role-vs-policy)
 - [Secure AWS deployment with GitHub OIDC](/blog/github-actions-oidc-deploy)
+
+## Corrections
+
+### 2026-11-21
+
+- Corrected the everyday access recommendation: prefer federation and temporary credentials for people rather than defaulting to IAM users, and IAM roles for workloads. Reserve long-lived credentials for cases that cannot use temporary credentials.
+
+Reference: [AWS IAM security best practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).

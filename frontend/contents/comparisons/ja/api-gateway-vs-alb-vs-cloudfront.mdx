@@ -27,7 +27,7 @@ updatedAt: "2026-11-09"
 
 # API Gateway・ALB・CloudFrontの違い
 
-## 結論
+## 選択のポイント
 
 API Gateway、ALB、CloudFrontは、どれも外部からのリクエストを受ける入口になります。
 
@@ -90,7 +90,7 @@ S3
 
 静的サイトや画像配信でよく使います。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
 ### API Gatewayが正解になりやすいケース
 
@@ -177,7 +177,7 @@ Lambda
 
 ただし、MVPでは構成を複雑にしないため、まずは静的サイト配信はCloudFront、APIはAPI Gateway URLを利用する構成でも十分です。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：API GatewayとALBを同じAPI入口として覚える
 
@@ -197,6 +197,21 @@ APIの作成・認証・ステージ管理・APIキー管理などはAPI Gateway
 
 API GatewayはAPI用の入口として使います。
 
+## まとめ
+
+API Gateway、ALB、CloudFrontは、目的で分けると理解しやすいです。
+
+- API Gateway：APIの入口
+- ALB：Webアプリの負荷分散
+- CloudFront：コンテンツの高速配信
+
+このプロジェクトでは、CloudFrontとAPI Gatewayを使うため、ポートフォリオ説明でも重要な比較です。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [API Gateway の REST API と HTTP API の機能比較](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html) · [ALB の HTTP ルーティングとリスナールール](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-rules.html) · [CloudFront のキャッシュキー](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon API Gateway](/terms/api-gateway)
@@ -208,16 +223,6 @@ API GatewayはAPI用の入口として使います。
 ## 関連問題
 
 - [CLF模擬問題一覧](/questions/clf)
-
-## まとめ
-
-API Gateway、ALB、CloudFrontは、目的で分けると理解しやすいです。
-
-- API Gateway：APIの入口
-- ALB：Webアプリの負荷分散
-- CloudFront：コンテンツの高速配信
-
-このプロジェクトでは、CloudFrontとAPI Gatewayを使うため、ポートフォリオ説明でも重要な比較です。
 
 ## 訂正内容
 

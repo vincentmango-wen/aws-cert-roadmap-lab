@@ -122,9 +122,9 @@ it.each(["terms", "questions"])("%s comparison associations resolve, including l
 const computeSlug = "aws-compute-ec2-lambda-ecs";
 const computeLabels = { ja: "コンピューティング", en: "Compute", zh: "運算" };
 const computeSections = {
-  ja: ["まず、何を実行するか", "比較表", "試験でよく問われるポイント", "実務での使い分け", "よくある誤解", "まとめ", "AWS公式リファレンス"],
-  en: ["Start with what you need to run", "Comparison table", "What the exams often test", "How to choose in practice", "Common misconceptions", "Summary", "Official AWS references"],
-  zh: ["先看你要跑的是什麼", "比較表", "考試常出的重點", "實務上的使用區分", "常見的誤解", "總結", "AWS 官方參考"],
+  ja: ["選択のポイント", "比較表", "試験ガイドと判断のポイント", "実務での使い分け", "よくある誤解", "まとめ", "AWS公式リファレンス"],
+  en: ["Selection at a glance", "Comparison table", "Exam guide and decision cues", "How to choose in practice", "Common misconceptions", "Summary", "Official AWS references"],
+  zh: ["選擇重點", "比較表", "考綱與判斷重點", "實務選型", "常見誤解", "總結", "AWS 官方參考"],
 };
 
 describe("EC2, Lambda and ECS comparison", () => {

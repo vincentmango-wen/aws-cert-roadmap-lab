@@ -1,6 +1,6 @@
 # CloudWatch、CloudTrail、AWS Config 的差異
 
-## 結論
+## 選擇重點
 
 Amazon CloudWatch、AWS CloudTrail、AWS Config 是 AWS 維運中很容易被混淆的服務。
 
@@ -30,7 +30,7 @@ Amazon CloudWatch、AWS CloudTrail、AWS Config 是 AWS 維運中很容易被混
 | 合規確認 | 部分支援 | 操作軌跡 | 擅長以規則評估 |
 | 在本專案中的用途 | AWS Lambda 日誌、Amazon API Gateway 指標、Amazon CloudFront 確認 | 視需要用於確認可疑操作 | 未來設定檢查的候選 |
 
-## 初學者向解說
+## 入門說明
 
 ### Amazon CloudWatch
 
@@ -56,7 +56,7 @@ AWS Config 是記錄 AWS 資源的設定狀態與變更歷史，並依規則進�
 
 在 MVP 階段並非必要，但未來在強化安全性時可納入考量。
 
-## 考試會問到的重點
+## 考綱與判斷重點
 
 ### CLF-C02 常問的重點
 
@@ -76,7 +76,7 @@ AWS Config 是記錄 AWS 資源的設定狀態與變更歷史，並依規則進�
 - AWS CloudTrail 在安全調查與稽核中相當重要
 - AWS Config Rules 可偵測設定違規
 
-## 實務上的使用區分
+## 實務選型
 
 ### 選擇 Amazon CloudWatch 的情境
 
@@ -134,6 +134,19 @@ Amazon CloudWatch Logs 即使在 MVP 階段也是必要的。
 
 不過，AWS Config 或更細緻的監控功能，應視成本與管理負擔分階段導入。
 
+## 總結
+
+Amazon CloudWatch、AWS CloudTrail、AWS Config 在 AWS 維運中各自扮演不同角色。
+
+Amazon CloudWatch 負責狀態監控，AWS CloudTrail 負責操作歷史，AWS Config 負責設定管理。
+
+能說明這個差異，就能更清楚地說明 AWS 工作負載的維運、監控與安全設計。
+
+## AWS 官方參考
+
+- 服務行為與設計: [CloudWatch 指標與指標資料](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html) · [CloudTrail 管理事件與資料事件](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-concepts.html) · [AWS Config 資源評估](https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config.html)
+- [CLF-C02 考試指南](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 相關用語
 
 - [Amazon CloudWatch](/terms/cloudwatch)
@@ -142,14 +155,6 @@ Amazon CloudWatch Logs 即使在 MVP 階段也是必要的。
 - [AWS IAM](/terms/iam)
 - [AWS Budgets](/terms/aws-budgets)
 
-## 相關練習題
+## 相關題目
 
 - [CLF 模擬題列表](/questions/clf)
-
-## 總結
-
-Amazon CloudWatch、AWS CloudTrail、AWS Config 在 AWS 維運中各自扮演不同角色。
-
-Amazon CloudWatch 負責狀態監控，AWS CloudTrail 負責操作歷史，AWS Config 負責設定管理。
-
-能說明這個差異，就能更清楚地說明 AWS 工作負載的維運、監控與安全設計。

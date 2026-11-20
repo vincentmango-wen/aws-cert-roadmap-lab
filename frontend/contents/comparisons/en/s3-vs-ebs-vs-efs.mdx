@@ -1,6 +1,6 @@
 # Differences between S3, EBS, and EFS
 
-## Conclusion
+## Selection at a glance
 
 Amazon S3, Amazon EBS, and Amazon EFS are all AWS storage services, but the situations in which they are used differ significantly.
 
@@ -18,7 +18,7 @@ When in doubt, use the following rules of thumb.
 - You want to use it as a disk for an EC2 instance: EBS
 - You want to share the same files from multiple EC2 instances: EFS
 
-## Comparison Table
+## Comparison table
 
 | Item | S3 | EBS | EFS |
 |---|---|---|---|
@@ -33,7 +33,7 @@ When in doubt, use the following rules of thumb.
 | Representative exam keywords | Object, bucket, durability, storage class | EC2, block, volume, snapshot | NFS, shared files, multiple EC2 |
 | Use in this project | Storing static site files | Not used in MVP | Not used in MVP |
 
-## Beginner-Friendly Explanation
+## Beginner context
 
 ### Amazon S3
 
@@ -59,9 +59,9 @@ It is used in cases such as having multiple web servers reference the same uploa
 
 Unlike S3, EFS can be mounted and used as a file system, which is its defining feature.
 
-## Points That Often Appear in the Exams
+## Exam guide and decision cues
 
-### Points likely to appear on CLF-C02
+### CLF-C02 study cues
 
 - S3 is object storage
 - EBS is block storage attached to EC2
@@ -70,7 +70,7 @@ Unlike S3, EFS can be mounted and used as a file system, which is its defining f
 - EBS can be backed up using snapshots
 - EFS is used for file sharing on Linux systems
 
-### Points likely to appear on SAA-C03
+### SAA-C03 study cues
 
 - The standard pattern for delivering static content is S3 + CloudFront
 - Use EBS for persistent disks on EC2
@@ -79,7 +79,7 @@ Unlike S3, EFS can be mounted and used as a file system, which is its defining f
 - EBS is tied to an AZ, so it cannot be attached as-is to an EC2 instance in a different AZ
 - EFS can be accessed from multiple AZs, which makes it suitable for shared use cases
 
-## Practical Use Cases
+## How to choose in practice
 
 ### When to choose S3
 
@@ -108,7 +108,7 @@ The MVP for this project does not use EC2, so EBS is not used either.
 
 The MVP for this project does not use a multi-EC2 configuration, so EFS is not used either.
 
-## Common Mistakes
+## Common misconceptions
 
 ### Mistake 1: Thinking that S3 can be used as a disk for EC2
 
@@ -138,18 +138,6 @@ This kind of memorization leads to confusion on the exam.
 
 Organize them with these three words.
 
-## Related Terms
-
-- [Amazon S3](/terms/s3)
-- [Amazon EBS](/terms/ebs)
-- [Amazon EFS](/terms/efs)
-- [Amazon CloudFront](/terms/cloudfront)
-- [Amazon EC2](/terms/ec2)
-
-## Related Questions
-
-- [CLF Practice Questions](/questions/clf)
-
 ## Summary
 
 S3, EBS, and EFS are the fundamentals of AWS storage.
@@ -157,3 +145,20 @@ S3, EBS, and EFS are the fundamentals of AWS storage.
 First, remember them with the following sentence.
 
 S3 is for file storage, EBS is the disk for EC2, and EFS is a shared file system for multiple EC2 instances.
+
+## Official AWS references
+
+- Service behavior and design: [S3 objects, buckets and storage classes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html) · [EBS volumes and attachment scope](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volumes.html) · [EFS mount targets and shared file systems](https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html)
+- [CLF-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
+## Related terms
+
+- [Amazon S3](/terms/s3)
+- [Amazon EBS](/terms/ebs)
+- [Amazon EFS](/terms/efs)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon EC2](/terms/ec2)
+
+## Related questions
+
+- [CLF Practice Questions](/questions/clf)

@@ -16,7 +16,7 @@ targetKeywords:
 author: "AWS Cert Roadmap Lab"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-20"
+updatedAt: "2026-11-21"
 ---
 
 # IAMの基本をCloud Practitioner向けに整理する
@@ -35,7 +35,7 @@ IAMを理解する近道は、IDと権限を分けて考えることです。IAM
 
 IAMユーザーは、AWSアカウントの中で個人や特定の用途を識別するためのIDです。パスワードやアクセスキーのような長期認証情報を持てるため、不要になったアクセスを止めたり、操作の主体を追跡したりできます。ただし、現在のAWSの推奨では、人間の通常アクセスはIAMユーザーではなくフェデレーションと一時的な認証情報を優先します。
 
-IAMユーザーは、フェデレーションでは対応できない特定用途や、学習・検証で仕組みを理解する場面に限定して考えるのが安全です。使う場合も、パスワードやアクセスキーを共有せず、MFA、最小権限、不要なアクセスキーの削除を徹底します。現在の推奨事項は[AWS IAM のセキュリティベストプラクティス](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)と[AWS IAM Identity Centerとは](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)で確認し、試験では「rootユーザーの日常利用を避ける」「MFAを有効化する」「長期認証情報より一時認証情報を優先する」という基本を押さえます。
+学習ではIAMユーザーの仕組みも押さえますが、実運用で長期認証情報を使うのは、一時的な認証情報では対応できない特定の用途に限ります。使う場合も、パスワードやアクセスキーを共有せず、MFA、最小権限、不要なアクセスキーの削除を徹底します。現在の推奨事項は[AWS IAM のセキュリティベストプラクティス](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)と[AWS IAM Identity Centerとは](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)で確認し、試験では「rootユーザーの日常利用を避ける」「MFAを有効化する」「長期認証情報より一時認証情報を優先する」という基本を押さえます。
 
 ## IAMグループ: IAMユーザーをまとめる入れ物
 
@@ -118,3 +118,11 @@ IAMの問題では、最初に「操作する主体は人か、AWSサービス�
 - [IAM](/terms/iam)
 - [AWS Lambda](/terms/lambda)
 - [Amazon DynamoDB](/terms/dynamodb)
+
+## 訂正内容
+
+### 2026-11-21
+
+- 英語版・繁体字中国語版の日常アクセスの推奨を訂正し、日本語版でも長期認証情報を例外に限定することを明記しました。人にはフェデレーションと一時的な認証情報、ワークロードにはIAMロールと一時的な認証情報を優先します。
+
+参考：[AWS IAM のセキュリティベストプラクティス](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)。
