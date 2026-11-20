@@ -345,5 +345,34 @@
     "publishedAt": "2026-11-09",
     "updatedAt": "2026-11-09",
     "locale": "ja"
+  },
+  {
+    "architectureId": "arc-012",
+    "slug": "aws-backup-cross-account-ebs-restore",
+    "title": "AWS Backup のクロスアカウント復旧：隔離環境で EBS のデータを検証",
+    "description": "東京リージョンで本番 EBS のバックアップを別アカウントへコピーし、隔離環境でデータとアプリを検証します。",
+    "category": "High Availability",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "aws-backup",
+      "ebs",
+      "ec2",
+      "organizations",
+      "kms"
+    ],
+    "tags": [
+      "AWS Backup",
+      "Amazon EBS",
+      "Recovery Testing"
+    ],
+    "diagramPath": "/images/architectures/aws-backup-cross-account-ebs-restore.svg",
+    "mermaid": false,
+    "published": true,
+    "publishedAt": "2026-11-20",
+    "updatedAt": "2026-11-20",
+    "locale": "ja"
   }
 ]

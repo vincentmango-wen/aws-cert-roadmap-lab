@@ -345,5 +345,34 @@
     "publishedAt": "2026-11-09",
     "updatedAt": "2026-11-09",
     "locale": "en"
+  },
+  {
+    "architectureId": "arc-012",
+    "slug": "aws-backup-cross-account-ebs-restore",
+    "title": "AWS Backup cross-account recovery: validate EBS data in isolation",
+    "description": "Copy a production EBS backup to another account in Tokyo, restore it in isolation, and validate the data and application.",
+    "category": "High Availability",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "aws-backup",
+      "ebs",
+      "ec2",
+      "organizations",
+      "kms"
+    ],
+    "tags": [
+      "AWS Backup",
+      "Amazon EBS",
+      "Recovery Testing"
+    ],
+    "diagramPath": "/images/architectures/aws-backup-cross-account-ebs-restore.svg",
+    "mermaid": false,
+    "published": true,
+    "publishedAt": "2026-11-20",
+    "updatedAt": "2026-11-20",
+    "locale": "en"
   }
 ]

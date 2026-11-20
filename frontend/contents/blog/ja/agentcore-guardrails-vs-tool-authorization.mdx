@@ -1,0 +1,54 @@
+---
+postId: "blog-027"
+slug: "agentcore-guardrails-vs-tool-authorization"
+title: "AgentCore のツール認可と Guardrails：照会の可否と表示の可否は別"
+description: "架空の注文照会を通じて、ツール認可と応答フィルタリングの役割を区別します。"
+category: "AI・機械学習"
+tags:
+  - "Amazon Bedrock"
+  - "AgentCore"
+  - "AIF-C01"
+targetKeywords:
+  - "AgentCore Policy"
+  - "Amazon Bedrock Guardrails"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-11-20"
+updatedAt: "2026-11-20"
+---
+
+# AgentCore のツール認可と Guardrails：照会の可否と表示の可否は別
+
+## 同じサポート担当、異なる二つのチェック
+
+東京リージョン（`ap-northeast-1`）の架空の通販サイトにログインした利用者を支援するエージェントを想定します。使えるのは読み取り専用の `getOrderStatus(orderId)` だけで、注文変更、返金、メール送信はできません。モデルが指定した注文は照会候補であり、認可ではありません。サービスは検証済みの認証情報から顧客 ID を取得し、注文システムの正規データで所有者を確認します。モデルが指定した `customerId` や、Gateway で共有される IAM サービス ID を顧客本人の証明にしてはいけません。
+
+| チェック | 判断すること | 拒否された場合 |
+| --- | --- | --- |
+| 呼び出し前：ツール認可 | この顧客にこの注文を照会する権限があるか | 照会ツールを実行しない |
+| 応答前：コンテンツのフィルタリング | 結果のどの項目を表示できるか | この例ではツールの応答全体を止める |
+
+## ケース 1：他人の注文は照会できない
+
+顧客 A が顧客 B の注文を照会します。この設計ではツールを実行する前に本人と注文の所有者を照合し、一致しなければ呼び出しを拒否します。先にデータを取得してから隠すわけではありません。AgentCore Policy は、AgentCore Gateway がツールリクエストを許可する前にポリシーを評価できます。所有者の判定にツール引数以外の情報が必要なら、信頼できるサービスから取得するか、バックエンドで検査を強制します。モデルの自己申告を信頼条件にしてはいけません。
+
+## ケース 2：自分の注文は照会できるが、メールアドレスは表示しない
+
+顧客 A が自分の注文を照会すると認可を通過し、読み取り専用ツールが実行されますが、結果には誤ってメールアドレスが含まれています。AgentCore Gateway のポリシーが Guardrails でメールアドレスを検出し、`suppressOutput` の条件を満たすと、Gateway はツールの応答全体を呼び出し元に返しません。メールアドレスだけを隠して配送状況を返す処理ではありません。エージェントは結果を表示できないと伝えます。ツールの実行は取り消されません。
+
+アプリは別途 Amazon Bedrock Guardrails を使って応答中の個人情報をマスクできますが、それは Gateway が応答全体を止める処理とは異なります。検出は完全ではなく、最小権限、取得元で不要な項目を除くこと、生の結果をログに記録しないことの代わりにはなりません。
+
+## AIF-C01 の学習ポイント
+
+「ツールを呼び出せるか」は認可、「どの内容を表示できるか」は出力の保護です。責任ある AI とセキュリティガバナンスの考え方を結び付ける例であり、AgentCore の製品詳細が試験に必ず出るという意味ではありません。
+
+AIF-C01 公式試験ガイドの 5.1 には Policy in AgentCore と Amazon Bedrock Guardrails が挙げられていますが、この例の `suppressOutput` 構文が必ず出題されるわけではありません。
+
+## 公式参考資料
+
+- [Policy in Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html)
+- [Policy conditions in AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-conditions.html)
+- [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)
+- [AWS Certified AI Practitioner (AIF-C01)](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html)
+- [Guardrails in AgentCore policies](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-guardrails-in-policies.html)
+- [AIF-C01 Task Statement 5.1](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01-domain5.html#ai-practitioner-01-domain5-task5-1)

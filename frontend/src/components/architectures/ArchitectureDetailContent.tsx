@@ -40,6 +40,7 @@ const horizontalDiagramWidths: Readonly<Record<string, number>> = {
   "ecs-fargate-web-app": 1000,
   "private-subnet-vpc-endpoint": 1000,
   "three-tier-vpc": 1000,
+  "aws-backup-cross-account-ebs-restore": 1200,
 };
 
 function formatServiceName(service: string): string {

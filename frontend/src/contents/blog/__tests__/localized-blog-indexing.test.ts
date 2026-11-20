@@ -57,10 +57,15 @@ describe.each(["en", "zh", "ja"] as const)("%s approved blog indexing", (locale)
   });
 });
 
-it("retains 78 unique localized blog URLs and restrictions on other content", () => {
+it("retains 78 existing and three new unique localized blog URLs and restrictions on other content", () => {
   const entries = sitemap().filter((entry) => new URL(entry.url).pathname.includes("/blog/"));
-  expect(entries).toHaveLength(78);
-  expect(new Set(entries.map((entry) => entry.url)).size).toBe(78);
+  const slug = "agentcore-guardrails-vs-tool-authorization";
+  const newPaths = [`/blog/${slug}`, `/en/blog/${slug}`, `/zh/blog/${slug}`];
+  const paths = entries.map((entry) => new URL(entry.url).pathname);
+  expect(paths.filter((pathname) => pathname.endsWith(`/${slug}`)).sort()).toEqual(newPaths.sort());
+  expect(paths.filter((pathname) => !newPaths.includes(pathname))).toHaveLength(78);
+  expect(entries).toHaveLength(81);
+  expect(new Set(entries.map((entry) => entry.url)).size).toBe(81);
   expect(createPageMetadata({ title: "Private", description: "Private", path: "/en/private", noIndex: true }).robots)
     .toMatchObject({ index: false, follow: true });
   expect(createPageMetadata(createBlogDetailMetadataInput("zh", "not-a-real-article")).robots)

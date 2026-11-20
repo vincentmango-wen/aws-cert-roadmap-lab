@@ -104,3 +104,15 @@ describe.runIf(LOCALIZED_ROUTES_PUBLISHED)("sitemap localized detail URLs (en/zh
     expect(urls).toContain(`${SITE_URL}/zh/roadmap`);
   });
 });
+
+it("lists only the gated canonical URLs for the compute comparison", () => {
+  const slug = "aws-compute-ec2-lambda-ecs";
+  const baseUrl = `${SITE_URL}/comparisons/${slug}`;
+  const expected = LOCALIZED_ROUTES_PUBLISHED
+    ? [baseUrl, `${SITE_URL}/en/comparisons/${slug}`, `${SITE_URL}/zh/comparisons/${slug}`]
+    : [baseUrl];
+  const urls = sitemap().map(({ url }) => url);
+  expect(urls.filter((url) => url.endsWith(`/comparisons/${slug}`)).sort()).toEqual(expected.sort());
+  expect(urls).not.toContain(`${SITE_URL}/ja/comparisons/${slug}`);
+  expect(urls.some((url) => url.endsWith("/comparisons/ec2-vs-lambda-vs-ecs"))).toBe(false);
+});
