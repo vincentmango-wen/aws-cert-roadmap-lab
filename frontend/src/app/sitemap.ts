@@ -87,6 +87,11 @@ function getStaticRoutes(): SitemapRouteInput[] {
       changeFrequency: "weekly",
     },
     {
+      pathname: "/questions/aif",
+      priority: 0.8,
+      changeFrequency: "weekly",
+    },
+    {
       pathname: "/questions/saa",
       priority: 0.8,
       changeFrequency: "weekly",
@@ -157,16 +162,16 @@ function getTermRoutes(): SitemapRouteInput[] {
 }
 
 /**
- * Read CLF and SAA questions from the Japanese JSON source of truth and return inputs for localized URL
- * generation. The original design covered 50 CLF + 30 SAA questions (80 questions x 3 locales = 240
- * URLs). createLocalizedSitemapItems adds locale prefixes even before dedicated en/zh JSON exists,
- * consistent with P5-E6's empty-array .en.json/.zh.json scaffold strategy.
+ * Read the exam registries from the Japanese source of truth. Locale parity tests guard
+ * matching published detail IDs in Japanese, English and Traditional Chinese.
  */
 function getQuestionRoutes(): SitemapRouteInput[] {
   const clfQuestions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.ja.json");
   const saaQuestions = readRequiredJsonArray<QuestionContent>("questions/saa-c03.ja.json");
 
-  return [...clfQuestions, ...saaQuestions]
+  const aifQuestions = readRequiredJsonArray<QuestionContent>("questions/aif-c01.ja.json");
+
+  return [...clfQuestions, ...saaQuestions, ...aifQuestions]
     .filter((question) => question.published !== false)
     .filter((question) => isNonEmptyString(question.questionId))
     .map((question) => ({

@@ -10,6 +10,7 @@ import {
   getAdjacentQuestionIds,
   getPublishedQuestionByIdLocale,
   getQuestionStaticParams,
+  getQuestionCategoryDisplayLabel,
 } from "../../../questions/question-detail-data";
 
 type PageProps = {
@@ -63,6 +64,7 @@ export default async function EnglishQuestionDetailPage({
       locale={LOCALE}
       labels={questionPlayerLabelsByLocale[LOCALE]}
       question={question}
+      categoryLabel={getQuestionCategoryDisplayLabel(LOCALE, question)}
       previousQuestionId={previousQuestionId ?? undefined}
       nextQuestionId={nextQuestionId ?? undefined}
       resolvedServices={resolvedServices}

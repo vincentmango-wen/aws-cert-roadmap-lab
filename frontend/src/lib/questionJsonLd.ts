@@ -24,6 +24,7 @@ import type { ChoiceId, ExamCode, Question } from "@/types/question";
 const examLabelByExam: Record<ExamCode, string> = {
   "CLF-C02": "AWS Certified Cloud Practitioner (CLF-C02)",
   "SAA-C03": "AWS Certified Solutions Architect – Associate (SAA-C03)",
+  "AIF-C01": "AWS Certified AI Practitioner (AIF-C01)",
 };
 
 function createQuestionDetailUrl(

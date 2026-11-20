@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { getDictionary } from "../../i18n/dictionaries";
 import { createLocalizedPath, type Locale } from "../../i18n/locales";
 import {
-  QUESTION_CATEGORIES,
+  LEGACY_QUESTION_CATEGORIES,
   QUESTION_DIFFICULTIES,
   formatRelatedServices,
 } from "../../lib/questions";
@@ -28,11 +28,13 @@ type DifficultyFilter = "all" | QuestionDifficulty;
 type QuestionListClientProps = {
   questions: Question[];
   locale: Locale;
+  categories?: readonly QuestionCategory[];
 };
 
 export function QuestionListClient({
   questions,
   locale,
+  categories = LEGACY_QUESTION_CATEGORIES,
 }: QuestionListClientProps) {
   const labels = getDictionary(locale).questions;
   const [selectedCategory, setSelectedCategory] =
@@ -93,7 +95,7 @@ export function QuestionListClient({
               className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             >
               <option value="all">{labels.allCategoriesLabel}</option>
-              {QUESTION_CATEGORIES.map((category) => (
+              {categories.map((category) => (
                 <option key={category} value={category}>
                   {labels.categoryLabels[category]}
                 </option>

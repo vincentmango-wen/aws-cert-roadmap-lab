@@ -15,7 +15,7 @@
  * absent until submission.
  * 3. The output contains details but not details open: static HTML starts collapsed, avoiding cloaking.
  *
- * Coverage: six clf/saa x ja/en/zh files, 100 questions x 3 locales = 300 renders.
+ * Coverage: every question in CLF, SAA, and AIF in all three locales.
  */
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -29,6 +29,9 @@ import clfZh from "../../../../contents/questions/clf-c02.zh.json";
 import saaEn from "../../../../contents/questions/saa-c03.en.json";
 import saaJa from "../../../../contents/questions/saa-c03.ja.json";
 import saaZh from "../../../../contents/questions/saa-c03.zh.json";
+import aifEn from "../../../../contents/questions/aif-c01.en.json";
+import aifJa from "../../../../contents/questions/aif-c01.ja.json";
+import aifZh from "../../../../contents/questions/aif-c01.zh.json";
 import { QuestionPlayer } from "../QuestionPlayer";
 import {
   questionPlayerLabelsByLocale,
@@ -41,9 +44,9 @@ type LocaleEntry = {
 };
 
 const ENTRIES: LocaleEntry[] = [
-  { locale: "ja", questions: [...clfJa, ...saaJa] as Question[] },
-  { locale: "en", questions: [...clfEn, ...saaEn] as Question[] },
-  { locale: "zh", questions: [...clfZh, ...saaZh] as Question[] },
+  { locale: "ja", questions: [...clfJa, ...saaJa, ...aifJa] as Question[] },
+  { locale: "en", questions: [...clfEn, ...saaEn, ...aifEn] as Question[] },
+  { locale: "zh", questions: [...clfZh, ...saaZh, ...aifZh] as Question[] },
 ];
 
 /**
@@ -87,6 +90,15 @@ const RENDERED: { locale: QuestionPlayerLocale; question: Question; html: string
   );
 
 describe("QuestionPlayer initial-render HTML (equivalent to SSG output)", () => {
+  it("uses the same-language AIF exam path for breadcrumbs and return navigation", () => {
+    const aif = RENDERED.filter(({ question }) => question.exam === "AIF-C01");
+    expect(aif).toHaveLength(90);
+    for (const { locale, html } of aif) {
+      const path = locale === "ja" ? "/questions/aif" : `/${locale}/questions/aif`;
+      expect(html.match(new RegExp(`href="${path}"`, "g"))).toHaveLength(2);
+    }
+  });
+
   it("invariant(1): initial HTML contains all explanation content", () => {
     const violations: string[] = [];
 

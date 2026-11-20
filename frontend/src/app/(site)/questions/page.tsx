@@ -1,3 +1,5 @@
+import { AifQuestionCard } from "./aif-page-data";
+import { getPublishedAifQuestionsByLocale } from "./question-detail-data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import rawClfQuestions from "../../../../contents/questions/clf-c02.ja.json";
@@ -17,7 +19,7 @@ export const metadata: Metadata = createPageMetadata(pageSeo.questions);
 
 const clfQuestions = getPublishedQuestions(rawClfQuestions as Question[]);
 const saaQuestions = getPublishedQuestions(rawSaaQuestions as Question[]);
-const questions = [...clfQuestions, ...saaQuestions];
+const questions = [...clfQuestions, ...saaQuestions, ...getPublishedAifQuestionsByLocale("ja")];
 
 const categorySummaries = getQuestionCategorySummaries(questions);
 const difficultySummaries = getQuestionDifficultySummaries(questions);
@@ -37,7 +39,7 @@ export default function QuestionsPage() {
         <p className="mt-5 max-w-3xl text-base leading-8 text-slate-200 md:text-lg">
           AWS Cloud PractitionerとSolutions Architect
           Associateの理解度を確認できる問題集です。CLF-C02でAWSの基礎を固め、
-          SAA-C03でセキュリティ・可用性・性能・コスト最適化の設計判断を学びましょう。
+          SAA-C03でアーキテクチャ設計を、AIF-C01でAI・機械学習と生成AIの基礎を確認できます。
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -62,7 +64,7 @@ export default function QuestionsPage() {
         </div>
       </section>
 
-      <section className="mt-10 grid gap-5 md:grid-cols-2">
+      <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -118,6 +120,7 @@ export default function QuestionsPage() {
             SAA問題を解き始める
           </Link>
         </article>
+        <AifQuestionCard locale="ja" />
       </section>
 
       <section className="mt-12">

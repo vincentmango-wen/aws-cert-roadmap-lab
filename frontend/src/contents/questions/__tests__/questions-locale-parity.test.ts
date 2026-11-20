@@ -18,6 +18,9 @@ import clfZh from "../../../../contents/questions/clf-c02.zh.json";
 import saaEn from "../../../../contents/questions/saa-c03.en.json";
 import saaJa from "../../../../contents/questions/saa-c03.ja.json";
 import saaZh from "../../../../contents/questions/saa-c03.zh.json";
+import aifEn from "../../../../contents/questions/aif-c01.en.json";
+import aifJa from "../../../../contents/questions/aif-c01.ja.json";
+import aifZh from "../../../../contents/questions/aif-c01.zh.json";
 import type { Question } from "../../../types/question";
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -59,6 +62,13 @@ const DATASETS: ExamDataset[] = [
     ja: saaJa as Question[],
     en: saaEn as Question[],
     zh: saaZh as Question[],
+  },
+  {
+    name: "AIF-C01",
+    baselineIds: Array.from({ length: 30 }, (_, index) => `aif-c01-${String(index + 1).padStart(3, "0")}`),
+    ja: aifJa as Question[],
+    en: aifEn as Question[],
+    zh: aifZh as Question[],
   },
 ];
 

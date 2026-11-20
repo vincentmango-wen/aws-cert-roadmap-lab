@@ -32,6 +32,11 @@ export const QUESTION_CATEGORY_DESCRIPTIONS: Record<QuestionCategory, string> = 
     "CloudFront、キャッシュ、読み取りスケーリング、非同期処理など、性能を高める設計を確認します。",
   "Cost-Optimized Architectures":
     "S3ライフサイクル、Spot、Savings Plans、VPC Endpoint、ログ保持など、コストを抑える設計を確認します。",
+  "Fundamentals of AI and ML": "AIと機械学習の基礎を確認します。",
+  "Fundamentals of GenAI": "生成AIの基礎を確認します。",
+  "Applications of Foundation Models": "基盤モデルの活用を確認します。",
+  "Guidelines for Responsible AI": "責任あるAIの指針を確認します。",
+  "Security, Compliance, and Governance for AI Solutions": "AIソリューションのセキュリティ、コンプライアンス、ガバナンスを確認します。",
 };
 
 /**
@@ -42,7 +47,7 @@ export const QUESTION_CATEGORY_DESCRIPTIONS: Record<QuestionCategory, string> = 
 export const QUESTION_DIFFICULTY_LABELS: Record<QuestionDifficulty, string> =
   getDictionary("ja").questions.difficultyLabels;
 
-export const QUESTION_CATEGORIES: QuestionCategory[] = [
+export const LEGACY_QUESTION_CATEGORIES: QuestionCategory[] = [
   "Cloud Concepts",
   "Security and Compliance",
   "Cloud Technology and Services",
@@ -52,6 +57,16 @@ export const QUESTION_CATEGORIES: QuestionCategory[] = [
   "High-Performing Architectures",
   "Cost-Optimized Architectures",
 ];
+
+export const AIF_QUESTION_CATEGORIES: QuestionCategory[] = [
+  "Fundamentals of AI and ML",
+  "Fundamentals of GenAI",
+  "Applications of Foundation Models",
+  "Guidelines for Responsible AI",
+  "Security, Compliance, and Governance for AI Solutions",
+];
+
+export const QUESTION_CATEGORIES = [...LEGACY_QUESTION_CATEGORIES, ...AIF_QUESTION_CATEGORIES];
 
 export const QUESTION_DIFFICULTIES: QuestionDifficulty[] = [
   "easy",

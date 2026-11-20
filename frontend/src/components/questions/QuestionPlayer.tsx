@@ -33,6 +33,7 @@ type QuestionPlayerProps = {
    */
   labels?: QuestionPlayerLabels;
   question: Question;
+  categoryLabel?: string;
   previousQuestionId?: string;
   nextQuestionId?: string;
   // The questions/[questionId]/page.tsx server component must resolve and pass every resolved* property.
@@ -64,6 +65,7 @@ function getExamListPath(
   exam: Question["exam"],
   locale: QuestionPlayerLocale,
 ): string {
+  if (exam === "AIF-C01") return localizePath(locale, "/questions/aif");
   if (exam === "SAA-C03") {
     return localizePath(locale, "/questions/saa");
   }
@@ -74,6 +76,7 @@ function getExamLabel(
   exam: Question["exam"],
   labels: QuestionPlayerLabels,
 ): string {
+  if (exam === "AIF-C01") return labels.aifLabel;
   return exam === "SAA-C03" ? labels.saaLabel : labels.clfLabel;
 }
 
@@ -81,6 +84,7 @@ export function QuestionPlayer({
   locale = "ja",
   labels,
   question,
+  categoryLabel,
   previousQuestionId,
   nextQuestionId,
   resolvedServices,
@@ -201,7 +205,7 @@ export function QuestionPlayer({
             {question.exam}
           </span>
           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-            {question.category}
+            {categoryLabel ?? question.category}
           </span>
           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
             {resolvedLabels.difficultyLabel}：{difficultyLabel}
