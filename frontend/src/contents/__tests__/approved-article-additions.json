@@ -16,6 +16,10 @@
     {
       "id": "cmp-014",
       "slug": "step-functions-standard-vs-express"
+    },
+    {
+      "id": "cmp-015",
+      "slug": "aws-compute-ec2-lambda-ecs"
     }
   ]
 }

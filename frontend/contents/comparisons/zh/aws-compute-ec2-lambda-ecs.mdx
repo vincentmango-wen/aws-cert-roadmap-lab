@@ -1,0 +1,54 @@
+# EC2、Lambda 與 ECS 怎麼選？
+
+## 先看你要跑的是什麼
+
+- **要控制作業系統：先看 Amazon EC2。** 例如舊版內部系統需要安裝主機代理程式、調整系統設定。EC2 提供虛擬機器，你可以選作業系統和執行個體類型，也要負責客體作業系統的更新與維護。
+- **有事件才跑一小段程式：先看 AWS Lambda 的預設模式。** 例如每次有圖片上傳到 S3，就產生縮圖。工作由事件觸發，處理完就結束，不必為了等下一張圖而維持一台虛擬機器。
+- **已經容器化，而且要持續對外服務：先看 Amazon ECS。** 例如有一個要隨時接單的容器化 API。ECS 服務會維持設定的任務數量；如果不想管理底層主機，可以選 AWS Fargate。如果容器需要你掌控底層主機，再考慮 ECS 搭配自行管理的 EC2。
+
+## 比較表
+
+| 需求 | 從哪裡開始 | 你要管什麼、怎麼擴縮 | 主要計費項目 |
+| --- | --- | --- | --- |
+| 舊系統要安裝主機代理程式 | EC2 | 管理作業系統和應用程式。需要增加容量時，可透過 EC2 Auto Scaling 增加執行個體。 | 執行個體運行用量，另計所用的儲存與網路等資源。 |
+| 偶爾收到圖片，幾秒內可處理完 | Lambda Event Functions（按需） | 管理函數程式與設定，不管理主機。並行執行隨事件需求增加，仍受擴展速率與並行配額限制。 | 主要看請求次數與執行時間，執行時間費用也受配置記憶體影響。 |
+| 需要長時間維持 API 可用 | ECS 搭配 Fargate | 管理容器映像和任務設定，不維護主機。可用 ECS Service Auto Scaling 按負載調整任務數量。 | 依任務配置的 vCPU、記憶體、符合計費條件的暫存空間及使用時間計費；若改用 ECS 搭配 EC2，則按底層資源計費。 |
+
+## 考試常出的重點
+
+以下是依 CLF-C02 與 SAA-C03 官方考綱整理的判斷線索：
+
+- **CLF-C02：先分辨運算方式。** 題目要求自訂客體作業系統或安裝主機代理程式，優先看 EC2；短事件觸發函數、不想管理主機，先看 Lambda；要部署並管理一組容器，先看 ECS，而不是把 Fargate 當成編排服務。
+- **SAA-C03：找出能排除選項的限制。** 若指定容器化、需維持多個任務，而且不想維護主機，先看 ECS 搭配 Fargate；若容器需要主機層級的控制，改看 ECS 搭配自行管理的 EC2。若題目問擴縮，先分辨要增減的是 EC2 執行個體、ECS 任務，還是 Lambda 的並行執行。
+
+## 實務上的使用區分
+
+- **舊系統搬上雲端：** 系統需要自訂客體作業系統、安裝代理程式，卻沒有容器化需求，就先用 EC2。把修補、容量規劃及故障處理算進維運成本。
+- **電商圖片上傳後產生縮圖：** 偶爾收到圖片、每次幾秒能處理完時，先用按需 Lambda Event Functions。估算時除了請求數與單次執行時間，也要看尖峰並行量，不必為了等下一張圖而留一台 EC2。
+- **容器化訂單 API 要隨時接單：** 先用 ECS 搭配 Fargate 維持需要的任務數，再視負載設定自動擴縮。估算成本時把離峰仍須保留的任務算進去；如果容器必須控制底層主機，再評估 ECS 搭配自行管理的 EC2。
+
+## 常見的誤解
+
+### ECS 和 EC2 是互斥選項
+
+ECS 負責編排容器任務，EC2 或 Fargate 提供執行任務的運算資源，因此可以同時使用 ECS 和 EC2。選 Fargate 並不代表不用管應用程式：你仍要設定任務需要的資源、服務要維持的任務數等。
+
+### 用容器映像就一定要選 ECS
+
+Lambda Event Functions 也可以用容器映像部署。映像是打包方式，不會把函數變成常駐服務。若工作由事件觸發且可在時限內完成，可以評估 Lambda；若要持續監聽連線並維持多個容器副本，再評估 ECS。
+
+### 兩種 Managed Instances 都一樣
+
+**ECS Managed Instances** 讓 ECS 在由 AWS 管理的 EC2 上執行容器任務，費用包含 EC2 與 ECS Managed Instances 管理費。**Lambda Managed Instances** 保留 Lambda 的函數與事件模型，在你帳戶中由 Lambda 管理的 EC2 上執行；費用包含請求、EC2 與管理費，不像按需 Event Functions 那樣逐次按執行時間收取運算費。評估執行時間時，要分清楚函數模式與呼叫方式；若由其他服務同步呼叫，也要核對呼叫端的等待上限。
+
+## 總結
+
+要掌控客體作業系統，從 **EC2** 開始；要在收到事件時才執行短工作，從按需 **Lambda Event Functions** 開始；要維持常駐容器服務，從 **ECS** 開始，再決定由誰管理底層運算資源。比較成本前，先確認工作多久跑一次、閒置時必須保留多少容量，以及團隊願意維護多少主機。
+
+## AWS 官方參考
+
+- 考綱：[CLF-C02 雲端技術與服務](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02-domain3.html)・[SAA-C03 高效能架構設計](https://docs.aws.amazon.com/pdfs/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.pdf)
+- [Amazon EC2 概念](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html)・[EC2 按需定價](https://aws.amazon.com/ec2/pricing/on-demand/)
+- [Lambda 函數擴展](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html)・[部署容器映像](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html)・[Event Functions 執行時間與呼叫方式](https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/)・[Lambda 定價](https://aws.amazon.com/lambda/pricing/)
+- [Lambda Managed Instances 執行環境](https://docs.aws.amazon.com/lambda/latest/dg/lambda-managed-instances-execution-environment.html)
+- [ECS 運算選項](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-configuration.html#capacity)・[ECS 服務自動擴縮](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html)・[ECS 定價](https://aws.amazon.com/ecs/pricing/)

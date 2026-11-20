@@ -393,5 +393,32 @@
     "publishedAt": "2026-11-09",
     "updatedAt": "2026-11-09",
     "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-015",
+    "slug": "aws-compute-ec2-lambda-ecs",
+    "title": "How to choose between EC2, Lambda, and ECS",
+    "description": "Compare EC2, Lambda, and ECS for a legacy system that needs OS control, short event-driven processing, and an always-on container service.",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "ec2",
+      "lambda",
+      "ecs"
+    ],
+    "tags": [
+      "compute",
+      "ec2",
+      "lambda",
+      "ecs"
+    ],
+    "priority": "medium",
+    "published": true,
+    "publishedAt": "2026-11-20",
+    "locale": "en"
   }
 ]

@@ -393,5 +393,32 @@
     "publishedAt": "2026-11-09",
     "updatedAt": "2026-11-09",
     "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-015",
+    "slug": "aws-compute-ec2-lambda-ecs",
+    "title": "EC2、Lambda 與 ECS 怎麼選？",
+    "description": "用需要掌控作業系統的舊系統、短時間事件處理與常駐容器服務，說明 EC2、Lambda 與 ECS 的選擇方式。",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "ec2",
+      "lambda",
+      "ecs"
+    ],
+    "tags": [
+      "compute",
+      "ec2",
+      "lambda",
+      "ecs"
+    ],
+    "priority": "medium",
+    "published": true,
+    "publishedAt": "2026-11-20",
+    "locale": "zh"
   }
 ]

@@ -162,7 +162,7 @@ export const priorityLabelsByLocale: Record<
 
 /**
  * Localized comparison category labels. Keys cover the fixed English categories Storage, Database,
- * Networking, Security, Monitoring, Integration and MachineLearning in comparisons.{ja,en,zh}.json.
+ * Networking, Security, Monitoring, Integration, Compute and MachineLearning in comparisons.{ja,en,zh}.json.
  * Generate anchors such as #storage with category.toLowerCase(); shared English keys keep URLs stable
  * across locales (design section 4-4). MachineLearning was added for ACR-001 (Bedrock vs SageMaker) to
  * cover AI/ML comparisons outside the existing categories.
@@ -174,7 +174,8 @@ export type ComparisonCategory =
   | "Security"
   | "Monitoring"
   | "Integration"
-  | "MachineLearning";
+  | "MachineLearning"
+  | "Compute";
 
 export const categoryLabelsByLocale: Record<
   ComparisonLocale,
@@ -188,6 +189,7 @@ export const categoryLabelsByLocale: Record<
     Monitoring: "監視",
     Integration: "統合",
     MachineLearning: "AI/機械学習",
+    Compute: "コンピューティング",
   },
   en: {
     Storage: "Storage",
@@ -197,6 +199,7 @@ export const categoryLabelsByLocale: Record<
     Monitoring: "Monitoring",
     Integration: "Integration",
     MachineLearning: "AI / Machine Learning",
+    Compute: "Compute",
   },
   zh: {
     Storage: "儲存",
@@ -206,6 +209,7 @@ export const categoryLabelsByLocale: Record<
     Monitoring: "監控",
     Integration: "整合",
     MachineLearning: "AI / 機器學習",
+    Compute: "運算",
   },
 };
 

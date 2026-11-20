@@ -4,7 +4,9 @@ import { describe, expect, it } from "vitest";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import type { Root, RootContent } from "mdast";
+import matter from "gray-matter";
 import {
+  formatCategoryLabel,
   getComparisonBySlug,
   getComparisonStaticParams,
 } from "../../../app/(site)/comparisons/comparison-detail-data";
@@ -115,4 +117,45 @@ it.each(["terms", "questions"])("%s comparison associations resolve, including l
     }));
   });
   expect(errors).toEqual([]);
+});
+
+const computeSlug = "aws-compute-ec2-lambda-ecs";
+const computeLabels = { ja: "コンピューティング", en: "Compute", zh: "運算" };
+const computeSections = {
+  ja: ["まず、何を実行するか", "比較表", "試験でよく問われるポイント", "実務での使い分け", "よくある誤解", "まとめ", "AWS公式リファレンス"],
+  en: ["Start with what you need to run", "Comparison table", "What the exams often test", "How to choose in practice", "Common misconceptions", "Summary", "Official AWS references"],
+  zh: ["先看你要跑的是什麼", "比較表", "考試常出的重點", "實務上的使用區分", "常見的誤解", "總結", "AWS 官方參考"],
+};
+
+describe("EC2, Lambda and ECS comparison", () => {
+  it.each(locales)("registers one %s page with its actual localized source and category", (locale) => {
+    const article = getComparisonBySlug(locale, computeSlug);
+    expect(article).toMatchObject({
+      comparisonId: "cmp-015", slug: computeSlug, category: "Compute", level: "beginner",
+      examScopes: ["CLF-C02", "SAA-C03"], services: ["ec2", "lambda", "ecs"],
+      tags: ["compute", "ec2", "lambda", "ecs"], priority: "medium", locale, published: true,
+    });
+    expect(formatCategoryLabel(locale, "Compute")).toBe(computeLabels[locale]);
+    expect(getComparisonStaticParams(locale).filter(({ comparisonSlug }) => comparisonSlug === computeSlug)).toHaveLength(1);
+
+    const input = fs.readFileSync(path.join(contentRoot, "comparisons", locale, computeSlug + ".mdx"), "utf8");
+    const source = matter(input);
+    expect(source.content.trimStart().split("\n")[0]).toBe(`# ${article?.title}`);
+    if (locale === "ja") {
+      expect(source.data).toMatchObject({
+        comparisonId: "cmp-015", slug: computeSlug, title: article?.title, description: article?.description,
+      });
+    } else {
+      expect(source.data).toEqual({});
+    }
+    expect(article?.content).not.toMatch(/^# /m);
+    expect([...article!.content.matchAll(/^## (.+)$/gm)].map((entry) => entry[1])).toEqual(computeSections[locale]);
+    expect(article?.publishedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(article?.updatedAt).toBeUndefined();
+
+    const zhInput = fs.readFileSync(path.join(contentRoot, "comparisons", "zh", computeSlug + ".mdx"), "utf8");
+    const sources = markdownHrefs(matter(zhInput).content);
+    expect(sources).toHaveLength(12);
+    expect(markdownHrefs(source.content)).toEqual(sources);
+  });
 });

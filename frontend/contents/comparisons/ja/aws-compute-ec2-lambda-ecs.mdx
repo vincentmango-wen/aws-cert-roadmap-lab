@@ -1,0 +1,61 @@
+---
+comparisonId: "cmp-015"
+slug: "aws-compute-ec2-lambda-ecs"
+title: "EC2・Lambda・ECSの選び方"
+description: "OSを管理する既存システム、短時間のイベント処理、常時稼働するコンテナサービスを例に、AWSのコンピューティングサービスを比較します。"
+---
+
+# EC2・Lambda・ECSの選び方
+
+## まず、何を実行するか
+
+- **OSを自分で設定・管理するなら、まずAmazon EC2を検討します。** たとえば、既存の社内システムでホスト用エージェントのインストールやシステム設定の変更が必要な場合です。EC2は仮想マシンを提供します。OSとインスタンスタイプを選べる一方、ゲストOSの更新や保守は利用者が担います。
+- **イベントが起きたときだけ短い処理を実行するなら、まずAWS Lambdaのデフォルトの実行方式を検討します。** たとえば、S3へ画像がアップロードされるたびにサムネイルを作成する処理です。処理はイベントで始まり、完了すれば終了します。次の画像を待つ間、仮想マシンを稼働させておく必要はありません。
+- **すでにコンテナ化していて、常にリクエストを受け付けるなら、まずAmazon ECSを検討します。** たとえば、いつでも注文を受け付けるコンテナ化済みのAPIです。ECSサービスは設定されたタスク数を維持します。実行基盤のホストを運用したくなければAWS Fargateを、ホストまで制御する必要があれば自己管理のEC2上で動かすECSを検討します。
+
+## 比較表
+
+| 要件 | 最初の候補 | 管理する範囲とスケーリング | 主な課金項目 |
+| --- | --- | --- | --- |
+| 既存システムにホスト用エージェントを入れる | EC2 | OSとアプリケーションを管理します。容量を増やすには、EC2 Auto Scalingでインスタンスを追加できます。 | インスタンスの稼働時間に加え、使用したストレージやネットワーク等のリソース。 |
+| 画像はたまに届き、処理は数秒で終わる | オンデマンドのLambda Event Functions | ホストではなく関数のコードと設定を管理します。同時実行数はイベントの需要に応じて増えますが、スケーリングレートと同時実行クォータの制限を受けます。 | 主にリクエスト数と実行時間。実行時間に対する料金は設定メモリにも依存します。 |
+| APIを常時利用可能にする | ECSとFargate | コンテナイメージとタスク設定を管理し、ホストの保守は不要です。ECS Service Auto Scalingで負荷に応じてタスク数を調整できます。 | タスクに割り当てたvCPU、メモリ、課金対象の一時ストレージと使用時間。ECSをEC2上で動かす場合は基盤リソースに対して課金されます。 |
+
+## 試験でよく問われるポイント
+
+CLF-C02とSAA-C03の公式試験ガイドに基づく判断の手がかりです。
+
+- **CLF-C02：まず実行方式を区別します。** ゲストOSのカスタマイズやホスト用エージェントのインストールが必要ならEC2、イベントを契機に短い処理を実行しホスト管理を避けるならLambdaを検討します。複数のコンテナをデプロイ・管理するならECSであり、Fargate自体はオーケストレーションサービスではありません。
+- **SAA-C03：候補を除外できる条件を探します。** コンテナ化されていて複数のタスクを維持する必要があり、ホストを保守したくないならECSとFargateが候補です。ホストレベルの制御が必要なら、自己管理のEC2を使うECSを検討します。スケーリングの設問では、増減させる対象がEC2インスタンス、ECSタスク、Lambdaの同時実行数のどれかを確認します。
+
+## 実務での使い分け
+
+- **既存システムのクラウド移行：** ゲストOSをカスタマイズしてホスト用エージェントを入れる必要があり、コンテナ化が不要なら、EC2から検討します。パッチ適用、容量計画、障害対応も運用コストに含めます。
+- **ECサイトにアップロードされた画像のサムネイル作成：** 画像はたまに届き、各処理が数秒で完了するなら、オンデマンドのLambda Event Functionsから検討します。見積もりではリクエスト数や1回の実行時間のほか、ピーク時の同時実行数も確認します。次の画像を待つためにEC2を稼働させる必要はありません。
+- **コンテナ化された注文APIの常時提供：** ECSとFargateで必要なタスク数を維持し、負荷を見て自動スケーリングを設定します。コスト見積もりには閑散時にも維持するタスクを含めます。コンテナがホストを制御する必要があるなら、自己管理のEC2を使うECSも検討します。
+
+## よくある誤解
+
+### ECSとEC2はどちらか一方しか使えない
+
+ECSはコンテナタスクをオーケストレーションし、EC2やFargateはタスクを実行するコンピューティングリソースを提供します。ECSとEC2は併用できます。Fargateを選んでもアプリケーション管理は残ります。タスクに必要なリソースや、サービスで維持するタスク数は自分で設定します。
+
+### コンテナイメージならECSを選ぶ必要がある
+
+Lambda Event Functionsもコンテナイメージでデプロイできます。イメージはパッケージ形式であり、関数を常時稼働するサービスに変えるものではありません。イベントを契機に動作し、適用されるタイムアウト以内に完了できるならLambda、継続的に接続を待ち受けて複数のコンテナを維持するならECSを検討します。
+
+### 2つのManaged Instancesは同じ仕組みである
+
+**ECS Managed Instances**では、AWSが管理するEC2上でECSのコンテナタスクを実行します。費用にはEC2とECS Managed Instancesの管理料金が含まれます。**Lambda Managed Instances**はLambdaの関数・イベントモデルを維持し、利用者のアカウント内にあるLambda管理のEC2で実行します。費用はリクエスト、EC2、管理料金で構成され、オンデマンドのEvent Functionsのように呼び出しごとの実行時間でコンピューティング料金が決まる方式とは異なります。実行時間を評価するときは関数の実行方式と呼び出し方法を区別し、他サービスが同期的に呼び出す場合は、呼び出し元が待機できる上限も確認します。
+
+## まとめ
+
+ゲストOSを制御するなら**EC2**、イベント発生時だけ短い処理を実行するなら**オンデマンドのLambda Event Functions**、常時稼働するコンテナサービスなら**ECS**から検討します。ECSを選んだ後に、実行基盤を誰が管理するかを決めます。料金の比較前に、処理の頻度、アイドル時にも確保すべき容量、チームがどこまでホストを保守できるかを確認しましょう。
+
+## AWS公式リファレンス
+
+- 試験ガイド：[CLF-C02 クラウドテクノロジーとサービス](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02-domain3.html)・[SAA-C03 高パフォーマンスアーキテクチャの設計](https://docs.aws.amazon.com/pdfs/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.pdf)
+- [Amazon EC2の概念](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html)・[EC2オンデマンド料金](https://aws.amazon.com/ec2/pricing/on-demand/)
+- [Lambda関数のスケーリング](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html)・[コンテナイメージのデプロイ](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html)・[Event Functionsの実行時間と呼び出し方式](https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/)・[Lambda料金](https://aws.amazon.com/lambda/pricing/)
+- [Lambda Managed Instancesの実行環境](https://docs.aws.amazon.com/lambda/latest/dg/lambda-managed-instances-execution-environment.html)
+- [ECSのコンピューティングオプション](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-configuration.html#capacity)・[ECS Service Auto Scaling](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html)・[ECS料金](https://aws.amazon.com/ecs/pricing/)

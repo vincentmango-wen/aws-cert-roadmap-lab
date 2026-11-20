@@ -393,5 +393,32 @@
     "publishedAt": "2026-11-09",
     "updatedAt": "2026-11-09",
     "locale": "ja"
+  },
+  {
+    "comparisonId": "cmp-015",
+    "slug": "aws-compute-ec2-lambda-ecs",
+    "title": "EC2・Lambda・ECSの選び方",
+    "description": "OSを管理する既存システム、短時間のイベント処理、常時稼働するコンテナサービスを例に、AWSのコンピューティングサービスを比較します。",
+    "category": "Compute",
+    "level": "beginner",
+    "examScopes": [
+      "CLF-C02",
+      "SAA-C03"
+    ],
+    "services": [
+      "ec2",
+      "lambda",
+      "ecs"
+    ],
+    "tags": [
+      "compute",
+      "ec2",
+      "lambda",
+      "ecs"
+    ],
+    "priority": "medium",
+    "published": true,
+    "publishedAt": "2026-11-20",
+    "locale": "ja"
   }
 ]
