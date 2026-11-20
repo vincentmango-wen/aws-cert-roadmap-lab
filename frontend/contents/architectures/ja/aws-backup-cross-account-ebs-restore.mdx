@@ -1,0 +1,32 @@
+# AWS Backup のクロスアカウント復旧：隔離環境で EBS のデータを検証
+
+## バックアップの作成ではなく復旧を検証する
+
+本番 EC2 にアプリのデータを保存した暗号化 Amazon EBS データボリュームがあるとします。本番アカウントとバックアップアカウントは同じ AWS Organizations 組織に属し、どちらも東京リージョン（`ap-northeast-1`）の通常の AWS Backup ボールトを使います。目的はアカウントの分離と復旧訓練です。リージョンをまたぐ災害対策ではなく、実際にデプロイした構成でもありません。
+
+## 本番ボリュームから隔離テストまで
+
+1. **A → B：バックアップ。** AWS Backup で本番 EBS をバックアップし、ソースボールトに復旧ポイントを作成します。
+2. **B → C：コピー。** クロスアカウントコピーはバックアップアカウントの宛先ボールトに復旧ポイントを作成します。コピー完了後、宛先側で復旧ポイントを確認し、選択します。ソース側の復旧ポイントを別アカウントへ直接復元する手順ではありません。
+3. **C → D：復元。** バックアップアカウントでコピー済みの復旧ポイントから新しい EBS ボリュームを作成します。隔離テスト用 EC2 にアタッチするため、同じアベイラビリティーゾーンを指定します。本番にはアタッチせず、元のボリュームも上書きしません。
+4. **D → E：検証。** 新しいボリュームをアタッチしてマウントできること、既知のテストファイルやチェックサムが一致すること、テストアプリが期待するレコードを読み取れることを確認します。結果と時刻を記録し、訓練後は一時リソースをルールに従って削除し、復旧ポイントと証跡を残します。
+
+## アカウント、権限、暗号化
+
+AWS Organizations の管理アカウントから、AWS Backup の設定でクロスアカウントバックアップを有効にします。宛先ボールトのリソースポリシーでは、承認したソースアカウントの `backup:CopyIntoBackupVault` に限定し、ジョブロールにはバックアップ、コピー、復元に必要な権限を別途付与します。暗号化 EBS の例では、ソースに宛先へ使用を許可できるカスタマーマネージド AWS KMS キーを使い、宛先ボールトにも独自のカスタマーマネージドキーを使います。ソースのバックアップは EBS の暗号化設定を引き継ぎ、コピーは宛先ボールトのキーで再暗号化されます。ポリシー変更も共有もできないソースの AWS マネージドキーでは、この例のコピーはできません。復元ロールにも必要なキー権限が要ります。キーの許可とボールトポリシーは別です。
+
+## ジョブ成功だけでは復旧目標は達成できない
+
+許容するデータ損失（RPO）と復旧時間（RTO）を先に定め、測定結果を目標と比較します。 模擬障害時刻、宛先で利用でき検証済みの復旧ポイントが表すデータ時刻、訓練開始からテストアプリの検証完了までを記録します。実測したデータの差は障害時刻と復旧可能なデータ時刻との差であり、コピー完了時刻との差ではありません。実測した復旧時間は訓練で定義した中断・計測開始からアプリ検証までであり、AWS の復元ジョブだけの所要時間ではありません。復旧ポイントが古すぎる、チェックサムが合わない、アプリで読めない場合はジョブが完了していても不合格です。
+
+AWS Backup Restore Testing を使う場合は、宛先ボールトの対象時間帯から最新またはランダムの復旧ポイントを選び、追加のアプリ検証と後片付けを確認します。EBS 復元先 AZ を上書き指定しない場合、サービスがランダムな AZ を推定することがあります。
+
+## 公式参考資料
+
+- [Cross-account backup copies](https://docs.aws.amazon.com/aws-backup/latest/devguide/create-cross-account-backup.html)
+- [Backup encryption](https://docs.aws.amazon.com/aws-backup/latest/devguide/encryption.html)
+- [Feature availability by Region](https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html)
+- [Restore an Amazon EBS volume](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-ebs.html)
+- [AWS Backup Restore Testing](https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing.html)
+- [Restore Testing inferred metadata](https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing-inferred-metadata.html)
+- [Recovery objective definitions](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel13-bp01.html)

@@ -480,4 +480,17 @@ export const blogPosts: BlogPostMeta[] = [
   "publishedAt": "2026-11-09",
   "updatedAt": "2026-11-09"
 },
+  {
+    postId: "blog-027",
+    slug: "agentcore-guardrails-vs-tool-authorization",
+    title: "AgentCore のツール認可と Guardrails：照会の可否と表示の可否は別",
+    description: "架空の注文照会を通じて、ツール認可と応答フィルタリングの役割を区別します。",
+    category: "AI・機械学習",
+    tags: ["Amazon Bedrock", "AgentCore", "AIF-C01"],
+    targetKeywords: ["AgentCore Policy", "Amazon Bedrock Guardrails"],
+    author: "AWS Cert Roadmap Lab",
+    published: true,
+    publishedAt: "2026-11-20",
+    updatedAt: "2026-11-20",
+  },
 ];

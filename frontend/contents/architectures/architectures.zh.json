@@ -345,5 +345,34 @@
     "publishedAt": "2026-11-09",
     "updatedAt": "2026-11-09",
     "locale": "zh"
+  },
+  {
+    "architectureId": "arc-012",
+    "slug": "aws-backup-cross-account-ebs-restore",
+    "title": "AWS Backup 跨帳戶備份與還原：在隔離環境驗證 EBS 資料",
+    "description": "在東京區域把正式 EBS 的備份複製到另一帳戶，還原成獨立磁碟，再驗證資料和應用。",
+    "category": "High Availability",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "AWS Backup",
+      "Amazon EBS",
+      "ec2",
+      "AWS Organizations",
+      "AWS KMS"
+    ],
+    "tags": [
+      "AWS Backup",
+      "Amazon EBS",
+      "Recovery Testing"
+    ],
+    "diagramPath": "/images/architectures/aws-backup-cross-account-ebs-restore.svg",
+    "mermaid": false,
+    "published": true,
+    "publishedAt": "2026-11-20",
+    "updatedAt": "2026-11-20",
+    "locale": "zh"
   }
 ]
