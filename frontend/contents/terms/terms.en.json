@@ -1911,9 +1911,9 @@
       "Separate the task role and the execution role",
       "Do not include secrets in container images"
     ],
-    "updatedAt": "2026-06-07",
+    "updatedAt": "2026-11-21",
     "locale": "en",
-    "practicalNote": "AWS Fargate is a \"serverless\" compute engine for running containers on Amazon ECS and Amazon EKS. With traditional ECS / EKS, users had to launch and manage EC2 instances as container hosts, but with Fargate, users no longer need to be aware of the EC2 instances that run the containers. When you specify vCPU, memory, and network settings in the task definition (or Pod definition), AWS automatically provisions the capacity and launches the containers. OS patching, host management, and capacity reservation become unnecessary, significantly reducing the operational burden.\n\nThe main differences between Fargate and the EC2 launch type lie in the billing model and the scope of management. The EC2 launch type charges per instance per unit of time, and idle capacity is also billed. Fargate charges per task based on vCPU, memory, and execution time, so charges are incurred only for what is needed per container. The cost tends to be lower than the EC2 launch type when resource utilization is high, and higher when it is low. SAA-C03 asks about which Fargate is suited for among patterns such as \"always-on API\", \"short-running batch\", and \"irregular processing\", and how to choose between Fargate and the EC2 launch type.\n\nTypical use cases include serverless container execution for web APIs, short-running batch jobs triggered by CI/CD pipelines, machine learning inference container execution, and one-off execution of third-party images (OSS tools). The differentiation from Lambda lies in the constraints: Lambda has a maximum execution time of 15 minutes and per-function limits, while Fargate's strength is its ability to handle long-running processes and arbitrary container images. In the exam context, CLF-C02 asks questions such as \"which service runs containers without managing EC2?\" and tests whether you confuse the relationships among ECS / EKS / Fargate.",
+    "practicalNote": "AWS Fargate is a \"serverless\" compute engine for running containers on Amazon ECS and Amazon EKS. With traditional ECS / EKS, users had to launch and manage EC2 instances as container hosts, but with Fargate, users no longer need to be aware of the EC2 instances that run the containers. When you specify vCPU, memory, and network settings in the task definition (or Pod definition), AWS automatically provisions the capacity and launches the containers. OS patching, host management, and capacity reservation become unnecessary, significantly reducing the operational burden.\n\nThe main differences between Fargate and the EC2 launch type lie in the billing model and the scope of management. The EC2 launch type charges per instance per unit of time, and idle capacity is also billed. Fargate charges per task based on vCPU, memory, and execution time, so charges are incurred only for what is needed per container. The cost tends to be lower than the EC2 launch type when resource utilization is high, and higher when it is low. SAA-C03 asks about which Fargate is suited for among patterns such as \"always-on API\", \"short-running batch\", and \"irregular processing\", and how to choose between Fargate and the EC2 launch type.\n\nTypical use cases include serverless container execution for web APIs, short-running batch jobs triggered by CI/CD pipelines, machine learning inference container execution, and one-off execution of third-party images (OSS tools). Unlike event-driven Lambda functions with a per-invocation timeout, Fargate runs container tasks or pods and can suit continuously running services and longer container jobs. Choose based on the workload rather than a blanket Lambda duration. In the exam context, CLF-C02 asks questions such as \"which service runs containers without managing EC2?\" and tests whether you confuse the relationships among ECS / EKS / Fargate.\n\nCorrection (2026-11-21): On 2026-11-19, AWS announced that on-demand Lambda Event Functions in commercial Regions support a configurable timeout of up to 30 minutes per invocation. This is not the default or a universal Lambda limit. Lambda Managed Instances limits depend on the invocation method; callers, integrations, or event sources may impose shorter limits. See the official AWS announcement and technical article below.",
     "officialDocs": [
       {
         "label": "AWS Fargate (AWS Official)",
@@ -1922,6 +1922,14 @@
       {
         "label": "AWS Fargate (Amazon ECS Developer Guide / AWS Official Documentation)",
         "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/AWS_Fargate.html"
+      },
+      {
+        "label": "AWS announcement: timeout increase for on-demand Lambda Event Functions",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog: Lambda timeouts and invocation constraints",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },
@@ -2421,9 +2429,9 @@
       "Restrict the execution role to only the required DynamoDB tables",
       "Do not output personal or secret information in logs"
     ],
-    "updatedAt": "2026-06-01",
+    "updatedAt": "2026-11-21",
     "locale": "en",
-    "practicalNote": "AWS Lambda is a serverless compute service that runs code without the need to provision or manage servers. Users register the function code they want to run, along with the runtime, memory, timeout, and other settings, and AWS automatically provisions and scales the execution environment. The code is triggered by events such as HTTP requests from API Gateway, S3 object creation, DynamoDB Streams, EventBridge schedules, and SQS message reception.\n\nPricing is based on a combination of the number of requests and the execution time multiplied by the allocated memory. Because no resources run during idle periods, no charges accrue when there are no requests. The free tier provides one million requests and 400,000 GB-seconds of execution time per month.\n\nMajor use cases include serverless APIs combined with API Gateway, data processing that responds to S3 or DynamoDB events, scheduled jobs triggered by EventBridge, and use as a single step within a Step Functions workflow. Supported runtimes include managed runtimes for Python, Node.js, Java, Go, .NET, and Ruby, with additional support for custom runtimes and container images. Each request has an execution time limit of up to 15 minutes, and constraints exist on deployment package size and the size of the ephemeral storage (/tmp). For long-running batch processing or large file processing, alternative services such as AWS Batch, ECS, or combinations with Step Functions become candidates.",
+    "practicalNote": "AWS Lambda is a serverless compute service that runs code without the need to provision or manage servers. Users register the function code they want to run, along with the runtime, memory, timeout, and other settings, and AWS automatically provisions and scales the execution environment. The code is triggered by events such as HTTP requests from API Gateway, S3 object creation, DynamoDB Streams, EventBridge schedules, and SQS message reception.\n\nPricing is based on a combination of the number of requests and the execution time multiplied by the allocated memory. Because no resources run during idle periods, no charges accrue when there are no requests. The free tier provides one million requests and 400,000 GB-seconds of execution time per month.\n\nMajor use cases include serverless APIs combined with API Gateway, data processing that responds to S3 or DynamoDB events, scheduled jobs triggered by EventBridge, and use as a single step within a Step Functions workflow. Supported runtimes include managed runtimes for Python, Node.js, Java, Go, .NET, and Ruby, with additional support for custom runtimes and container images. Function configuration includes an invocation timeout, and deployment packages and temporary storage (/tmp) have separate limits. If a batch or large-file workload exceeds the applicable constraints, consider AWS Batch, ECS, or dividing the work into steps with Step Functions.\n\nCorrection (2026-11-21): On 2026-11-19, AWS announced that on-demand Lambda Event Functions in commercial Regions support a configurable timeout of up to 30 minutes per invocation. This is not the default or a universal Lambda limit. Lambda Managed Instances limits depend on the invocation method; callers, integrations, or event sources may impose shorter limits. See the official AWS announcement and technical article below.",
     "officialDocs": [
       {
         "label": "What is AWS Lambda (AWS Official Documentation)",
@@ -2432,6 +2440,14 @@
       {
         "label": "AWS Lambda (AWS Official)",
         "url": "https://aws.amazon.com/jp/lambda/"
+      },
+      {
+        "label": "AWS announcement: timeout increase for on-demand Lambda Event Functions",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog: Lambda timeouts and invocation constraints",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },

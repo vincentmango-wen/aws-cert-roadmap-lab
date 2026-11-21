@@ -1229,7 +1229,7 @@
       "C": "Incorrect. There is no need to purchase physical servers.",
       "D": "Incorrect. It is not a service for mailing invoices."
     },
-    "practicalNote": "AWS Lambda is a serverless compute service that lets you run code without provisioning or managing servers. You deploy code as functions, which are triggered automatically by events such as a request to Amazon API Gateway, a file upload to Amazon S3, a message arriving on Amazon SQS, or a scheduled event from Amazon EventBridge. Billing is based on the execution time actually used in milliseconds (about 0.0000002 USD per request), so for small workloads with few requests or event-driven processing, the cost can be significantly lower than Amazon EC2.\n\nA key characteristic is that the maximum execution time is limited to 15 minutes. Long-running processing (such as batch jobs or video transcoding) is not a good fit, and in that case Amazon EC2 or Amazon ECS with AWS Fargate becomes the choice. Supported runtimes officially include Node.js, Python, Java, Go, Ruby, and .NET. You can also run any language using a custom runtime. The default concurrent execution limit is set per AWS Region, and cold-start latency can occur when traffic increases rapidly.\n\nOn CLF-C02, this content is asked as a question that requests which option lets you run code without managing servers, or which is a correct characteristic of Lambda. Understanding the concept of serverless itself (no infrastructure management, event-driven, per-millisecond billing, and an execution time limit) is important. Common distractors include Amazon EC2 (where you need to manage servers) and Amazon ECS (where you need to manage containers).",
+    "practicalNote": "AWS Lambda is a serverless compute service that lets you run code without provisioning or managing servers. You deploy code as functions, which are triggered automatically by events such as a request to Amazon API Gateway, a file upload to Amazon S3, a message arriving on Amazon SQS, or a scheduled event from Amazon EventBridge. Billing is based on the execution time actually used in milliseconds (about 0.0000002 USD per request), so for small workloads with few requests or event-driven processing, the cost can be significantly lower than Amazon EC2.\n\nA key characteristic is the per-invocation timeout. If processing exceeds the applicable limit or needs a continuously running process, consider alternatives such as Amazon EC2 or Amazon ECS with AWS Fargate. Supported runtimes officially include Node.js, Python, Java, Go, Ruby, and .NET. You can also run any language using a custom runtime. The default concurrent execution limit is set per AWS Region, and cold-start latency can occur when traffic increases rapidly.\n\nOn CLF-C02, this content is asked as a question that requests which option lets you run code without managing servers, or which is a correct characteristic of Lambda. Understanding the concept of serverless itself (no infrastructure management, event-driven, per-millisecond billing, and an execution time limit) is important. Common distractors include Amazon EC2 (where you need to manage servers) and Amazon ECS (where you need to manage containers).\n\nCorrection (2026-11-21): On 2026-11-19, AWS announced that on-demand Lambda Event Functions in commercial Regions support a configurable timeout of up to 30 minutes per invocation. This is not the default or a universal Lambda limit. Lambda Managed Instances limits depend on the invocation method; callers, integrations, or event sources may impose shorter limits. See the official AWS announcement and technical article below.",
     "officialDocs": [
       {
         "label": "AWS Lambda (AWS official)",
@@ -1238,6 +1238,14 @@
       {
         "label": "What is AWS Lambda (AWS official documentation)",
         "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS announcement: timeout increase for on-demand Lambda Event Functions",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog: Lambda timeouts and invocation constraints",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ],
     "relatedServices": [
@@ -1257,7 +1265,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-18"
+    "updatedAt": "2026-11-21"
   },
   {
     "questionId": "clf-020",
@@ -2260,7 +2268,7 @@
       "C": "Incorrect. Route 53 is a DNS service, not a code execution service.",
       "D": "Correct. Lambda is a serverless service that runs code in response to events."
     },
-    "practicalNote": "AWS Lambda is a serverless compute service that runs code without requiring server management. You register code as a Lambda function and it runs automatically in response to various events, such as requests through API Gateway, object creation in Amazon S3, Amazon DynamoDB Streams, scheduled events from Amazon EventBridge, and messages from Amazon SQS. You are charged only for the execution time in milliseconds and the number of requests, and there is no cost while the function is idle.\n\nOn the exam, the typical question asks which event-driven compute service runs code without server management. Distractors include EC2 (virtual servers), EFS (shared file storage), and Route 53 (DNS). EC2 requires server management such as starting and stopping instances and applying patches, so it is not serverless. EFS and Route 53 are not compute services in the first place.\n\nIn practice, Lambda is widely used for API backends, scheduled batch jobs, image processing triggered by file uploads, log transformation, and Slack notifications and other lightweight processing. Long-running processing (the default limit is 15 minutes), heavy computation, and workloads that require large amounts of memory are not a good fit for Lambda, and you would instead consider Amazon ECS, AWS Fargate, or Amazon EC2. CLF-C02 focuses on what serverless means and the role of Lambda. Keywords such as usage-based billing, low operational overhead, and event-driven execution appear repeatedly.",
+    "practicalNote": "AWS Lambda is a serverless compute service that runs code without requiring server management. You register code as a Lambda function and it runs automatically in response to various events, such as requests through API Gateway, object creation in Amazon S3, Amazon DynamoDB Streams, scheduled events from Amazon EventBridge, and messages from Amazon SQS. You are charged only for the execution time in milliseconds and the number of requests, and there is no cost while the function is idle.\n\nOn the exam, the typical question asks which event-driven compute service runs code without server management. Distractors include EC2 (virtual servers), EFS (shared file storage), and Route 53 (DNS). EC2 requires server management such as starting and stopping instances and applying patches, so it is not serverless. EFS and Route 53 are not compute services in the first place.\n\nIn practice, Lambda is widely used for API backends, scheduled batch jobs, image processing triggered by file uploads, log transformation, and Slack notifications and other lightweight processing. If a workload exceeds its applicable Lambda timeout or needs more memory or compute than the chosen Lambda configuration supports, evaluate Amazon ECS with AWS Fargate or Amazon EC2. CLF-C02 focuses on what serverless means and the role of Lambda. Keywords such as usage-based billing, low operational overhead, and event-driven execution appear repeatedly.\n\nCorrection (2026-11-21): On 2026-11-19, AWS announced that on-demand Lambda Event Functions in commercial Regions support a configurable timeout of up to 30 minutes per invocation. This is not the default or a universal Lambda limit. Lambda Managed Instances limits depend on the invocation method; callers, integrations, or event sources may impose shorter limits. See the official AWS announcement and technical article below.",
     "officialDocs": [
       {
         "label": "What is AWS Lambda? (AWS official documentation)",
@@ -2269,6 +2277,14 @@
       {
         "label": "AWS Lambda (AWS official)",
         "url": "https://aws.amazon.com/lambda/"
+      },
+      {
+        "label": "AWS announcement: timeout increase for on-demand Lambda Event Functions",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog: Lambda timeouts and invocation constraints",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ],
     "relatedServices": [
@@ -2286,7 +2302,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-19"
+    "updatedAt": "2026-11-21"
   },
   {
     "questionId": "clf-036",
