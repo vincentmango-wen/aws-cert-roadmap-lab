@@ -1911,9 +1911,9 @@
       "區分任務角色與執行角色",
       "勿在容器映像中包含機密資訊"
     ],
-    "updatedAt": "2026-06-07",
+    "updatedAt": "2026-11-21",
     "locale": "zh",
-    "practicalNote": "AWS Fargate 是在 Amazon ECS 與 Amazon EKS 上執行容器時的「無伺服器」運算引擎。傳統的 ECS / EKS 需要啟動 EC2 執行個體並作為容器主機管理,而使用 Fargate 則無須使用者意識到執行容器的 EC2 執行個體。在任務定義(或 Pod 定義)中指定 vCPU、記憶體、網路設定後,AWS 端就會自動佈建容量並啟動容器。OS 修補、主機管理、容量保留皆變得不必要,可大幅減少運維工作量。\n\nFargate 與 EC2 啟動類型的主要差異在於計費模式與管理範圍。EC2 啟動類型以執行個體為單位按時間計費,閒置容量部分也是計費對象。Fargate 則以任務為單位按 vCPU、記憶體、執行時間計費,因此以容器為單位僅按需計費,當資源使用率高時可能比 EC2 啟動類型便宜,反之則較貴。SAA-C03 會考在「持續運作 API」、「短時間批次」、「不定期處理」哪種模式下 Fargate 較合適,以及應如何在 Fargate 與 EC2 啟動類型之間做選擇。\n\n代表性使用情境包括 Web API 的無伺服器容器執行、由 CI/CD 管線啟動的短時間批次工作、機器學習的推論容器執行、第三方映像(OSS 工具)的單次執行等。與 Lambda 的區分上,Lambda 有最長執行時間 15 分鐘與函式單位的限制,而 Fargate 則可處理長時間處理或任意容器映像,這是其優勢。在考試方面,CLF-C02 會以「無須管理 EC2 即可執行容器的服務」形式出題,並考察是否能正確認識 ECS / EKS / Fargate 之間的關係。",
+    "practicalNote": "AWS Fargate 是在 Amazon ECS 與 Amazon EKS 上執行容器時的「無伺服器」運算引擎。傳統的 ECS / EKS 需要啟動 EC2 執行個體並作為容器主機管理,而使用 Fargate 則無須使用者意識到執行容器的 EC2 執行個體。在任務定義(或 Pod 定義)中指定 vCPU、記憶體、網路設定後,AWS 端就會自動佈建容量並啟動容器。OS 修補、主機管理、容量保留皆變得不必要,可大幅減少運維工作量。\n\nFargate 與 EC2 啟動類型的主要差異在於計費模式與管理範圍。EC2 啟動類型以執行個體為單位按時間計費,閒置容量部分也是計費對象。Fargate 則以任務為單位按 vCPU、記憶體、執行時間計費,因此以容器為單位僅按需計費,當資源使用率高時可能比 EC2 啟動類型便宜,反之則較貴。SAA-C03 會考在「持續運作 API」、「短時間批次」、「不定期處理」哪種模式下 Fargate 較合適,以及應如何在 Fargate 與 EC2 啟動類型之間做選擇。\n\n代表性使用情境包括 Web API 的無伺服器容器執行、由 CI/CD 管線啟動的短時間批次工作、機器學習的推論容器執行、第三方映像(OSS 工具)的單次執行等。事件驅動的 Lambda 函式有單次呼叫逾時限制，而 Fargate 執行容器任務或 Pod，適合評估需要持續運作的服務或耗時較長的容器工作。應依工作需求選擇，不要用單一數字概括 Lambda 的上限。在考試方面,CLF-C02 會以「無須管理 EC2 即可執行容器的服務」形式出題,並考察是否能正確認識 ECS / EKS / Fargate 之間的關係。\n\n更正說明（2026-11-21）：AWS 於 2026-11-19 宣布，商業區域的隨需 Lambda Event Functions 可設定最多 30 分鐘的單次呼叫逾時；這不是預設值，也不適用於所有 Lambda 執行模式。Lambda Managed Instances 的限制依呼叫方式而異；呼叫端、整合服務或事件來源也可能有更短的限制。請參考下方 AWS 官方公告與技術說明。",
     "officialDocs": [
       {
         "label": "AWS Fargate (AWS 官方)",
@@ -1922,6 +1922,14 @@
       {
         "label": "AWS Fargate (Amazon ECS 開發者指南 / AWS 官方文件)",
         "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/AWS_Fargate.html"
+      },
+      {
+        "label": "AWS Lambda 更新公告：隨需 Event Functions 逾時延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda 函式逾時與各呼叫方式限制",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },
@@ -2421,9 +2429,9 @@
       "執行角色僅授予必要的 DynamoDB 資料表權限",
       "勿在日誌中輸出個資或機密資訊"
     ],
-    "updatedAt": "2026-06-01",
+    "updatedAt": "2026-11-21",
     "locale": "zh",
-    "practicalNote": "AWS Lambda 是無需佈建與管理伺服器即可執行程式碼的無伺服器運算服務。使用者只需註冊欲執行的函式程式碼、執行環境(Runtime)、記憶體與逾時等設定,AWS 端會自動確保並擴展執行基礎建設。程式碼會以事件(來自 API Gateway 的 HTTP 請求、S3 的物件建立、DynamoDB Streams、EventBridge 排程、SQS 訊息接收等)作為觸發來啟動。\n\n費用以「請求數」與「執行時間 × 配置記憶體量」的組合計費。閒置時資源不會啟動,因此無請求的時段不會產生費用。免費使用額度為每月 100 萬請求與 40 萬 GB 秒的執行時間。\n\n主要使用案例包含與 API Gateway 結合的無伺服器 API、回應 S3 或 DynamoDB 事件的資料處理、EventBridge 排程的定期作業、作為 Step Functions 工作流程中的單一步驟使用等。支援的 Runtime 除了 Python、Node.js、Java、Go、.NET、Ruby 的託管 Runtime 外,也支援自訂 Runtime 與容器映像。\n\n執行時間上限為單一請求最多 15 分鐘,部署套件大小、暫存儲存體(/tmp)大小等均有限制,因此長時間批次處理或巨大檔案處理需選擇其他服務(如 AWS Batch、ECS、Step Functions 的組合等)。",
+    "practicalNote": "AWS Lambda 是無需佈建與管理伺服器即可執行程式碼的無伺服器運算服務。使用者只需註冊欲執行的函式程式碼、執行環境(Runtime)、記憶體與逾時等設定,AWS 端會自動確保並擴展執行基礎建設。程式碼會以事件(來自 API Gateway 的 HTTP 請求、S3 的物件建立、DynamoDB Streams、EventBridge 排程、SQS 訊息接收等)作為觸發來啟動。\n\n費用以「請求數」與「執行時間 × 配置記憶體量」的組合計費。閒置時資源不會啟動,因此無請求的時段不會產生費用。免費使用額度為每月 100 萬請求與 40 萬 GB 秒的執行時間。\n\n主要使用案例包含與 API Gateway 結合的無伺服器 API、回應 S3 或 DynamoDB 事件的資料處理、EventBridge 排程的定期作業、作為 Step Functions 工作流程中的單一步驟使用等。支援的 Runtime 除了 Python、Node.js、Java、Go、.NET、Ruby 的託管 Runtime 外,也支援自訂 Runtime 與容器映像。\n\n函式設定包含單次呼叫逾時，部署套件和暫存空間（/tmp）也各有上限。若批次或大型檔案作業超過適用限制，可評估 AWS Batch、Amazon ECS，或以 Step Functions 分段處理。\n\n更正說明（2026-11-21）：AWS 於 2026-11-19 宣布，商業區域的隨需 Lambda Event Functions 可設定最多 30 分鐘的單次呼叫逾時；這不是預設值，也不適用於所有 Lambda 執行模式。Lambda Managed Instances 的限制依呼叫方式而異；呼叫端、整合服務或事件來源也可能有更短的限制。請參考下方 AWS 官方公告與技術說明。",
     "officialDocs": [
       {
         "label": "什麼是 AWS Lambda (AWS 官方文件)",
@@ -2432,6 +2440,14 @@
       {
         "label": "AWS Lambda (AWS 官方)",
         "url": "https://aws.amazon.com/jp/lambda/"
+      },
+      {
+        "label": "AWS Lambda 更新公告：隨需 Event Functions 逾時延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda 函式逾時與各呼叫方式限制",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },

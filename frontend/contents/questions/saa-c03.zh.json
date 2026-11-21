@@ -2849,7 +2849,7 @@
     "explanation": "AWS Step Functions 會將工作流程的各步驟定義為狀態,並以執行歷程加以視覺化。由於可對各狀態宣告式地設定 Retry(附退避的重試)與 Catch(錯誤時的分歧),因此易於追蹤在何處失敗,以及進行部分的重新執行。",
     "choiceExplanations": {
       "A": "正解。可從執行歷程的圖表找出失敗的狀態,並藉由 Retry / Catch 宣告式地撰寫暫時性故障的自動回復與失敗時的補償處理。",
-      "B": "整合為 1 個函式後,容易觸及執行時間的上限(最長 15 分鐘),失敗時也必須從頭重來,對於在哪個步驟失敗的可視性亦無改善。",
+      "B": "只將流程整合成一個 Lambda 函式，不會自動提供逐步重試，也無法顯示究竟在哪個步驟失敗。若沒有管理工作流程狀態或檢查點，重試可能重複已完成的步驟。延長單次呼叫逾時不會解決這些流程要求。 更正說明（2026-11-21）：AWS 於 2026-11-19 宣布，商業區域的隨需 Lambda Event Functions 可設定最多 30 分鐘的單次呼叫逾時；這不是預設值，也不適用於所有 Lambda 執行模式。Lambda Managed Instances 的限制依呼叫方式而異；呼叫端、整合服務或事件來源也可能有更短的限制。請參考下方 AWS 官方公告與技術說明。",
       "C": "以 SQS 串連雖可達成鬆散耦合,但無法保有整個工作流程進行到哪裡的狀態,分歧、平行執行、以步驟為單位的重新執行也都必須自行實作。",
       "D": "EventBridge 負責事件的傳遞,並不進行工作流程的狀態管理或以步驟為單位的重試控制。即使留下失敗的記錄,重新執行的控制仍須自製。"
     },
@@ -2874,7 +2874,7 @@
     ],
     "published": true,
     "createdAt": "2026-07-31",
-    "updatedAt": "2026-07-31",
+    "updatedAt": "2026-11-21",
     "practicalNote": "AWS Step Functions 為將多個服務呼叫定義為「狀態機」,並由服務端管理其執行狀態的協調服務。狀態包含 Task(呼叫 Lambda 或其他服務)、Choice(條件分歧)、Parallel(平行執行)、Map(對陣列的反覆)、Wait(等待)、Fail / Succeed 等,並以名為 Amazon States Language 的 JSON 基礎定義描述。由於各 Task 皆可宣告式地撰寫 Retry(依錯誤種類的重試次數、間隔、退避率)與 Catch(錯誤時的遷移目標狀態),可將重試處理與復原處理自應用程式碼中分離。\n\n「Lambda 函式直接呼叫下一個 Lambda 函式」的函式鏈結,在小規模時尚可運作,但步驟一多便會迅速難以掌控。由於整體進行狀況並未儲存於任何地方,難以確定失敗地點,從中途重新開始的機制也必須自製。呼叫端的 Lambda 在等待被呼叫端完成期間仍持續計費,亦屬浪費。改用 Step Functions 後,每次執行皆會留下歷程,可於主控台的圖表一眼確定失敗的狀態,替換輸入後的重新執行也相當容易。工作流程類型有 Standard(最長 1 年、每次執行的嚴謹歷程、依狀態遷移計費)與 Express(最長 5 分鐘、高吞吐量、依執行時間與記憶體計費)兩種,長時間的業務工作流程選擇 Standard,大量的短時間事件處理則選擇 Express。\n\nSAA-C03 中,「希望依序執行多步驟的處理」「希望追蹤在哪個步驟失敗」「希望內建重試與錯誤處理」等需求下,Step Functions 即為正解。誤答則排列出整合為 Lambda、以 SQS 串連、以 EventBridge 串連等。SQS 與 EventBridge 的職責為「鬆散耦合的訊息傳遞」而不進行工作流程的狀態管理,此區別即為判斷的決定關鍵。",
     "officialDocs": [
       {
@@ -2888,6 +2888,14 @@
       {
         "label": "Error handling in Step Functions workflows(AWS Step Functions Developer Guide / English)",
         "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html"
+      },
+      {
+        "label": "AWS Lambda 更新公告：隨需 Event Functions 逾時延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda 函式逾時與各呼叫方式限制",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },

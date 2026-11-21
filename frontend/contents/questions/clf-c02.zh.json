@@ -1233,7 +1233,7 @@
       "C": "錯誤。無須購買實體伺服器。",
       "D": "錯誤。並非郵寄帳單的服務。"
     },
-    "practicalNote": "AWS Lambda 是完全無須調度與管理伺服器即可執行程式碼的無伺服器架構運算服務。以函式為單位部署,並以事件（傳送至 API Gateway 的請求、檔案上傳至 S3、訊息到達 SQS、CloudWatch Events 的排程等）作為觸發條件自動啟動。由於依實際使用的毫秒數計費（每次請求約 0.0000002 USD),於請求數較少的小規模工作負載或事件驅動處理,將遠較 EC2 便宜。\n\n主要特徵包括最大執行時間限制為 15 分鐘。並不適合長時間處理（批次或影片轉換等),此類情況的選項則為 EC2 或 ECS/Fargate。所支援的執行階段官方提供 Node.js／Python／Java／Go／Ruby／.NET 系列,使用自訂執行階段亦能執行任意語言。同時執行數的預設上限以區域為單位,對於急遽的流量增加可能產生因冷啟動而起的延遲。\n\nCLF-C02 中,會以「無須管理伺服器即可執行程式碼者為何」「Lambda 的特徵中何者正確」的形式出題。掌握無伺服器架構此一概念本身的理解（無須管理基礎設施、事件驅動、毫秒計費、有執行時間上限）相當重要。誤答經常並列 EC2（需管理伺服器）／ECS（需管理容器）。",
+    "practicalNote": "AWS Lambda 是完全無須調度與管理伺服器即可執行程式碼的無伺服器架構運算服務。以函式為單位部署,並以事件（傳送至 API Gateway 的請求、檔案上傳至 S3、訊息到達 SQS、CloudWatch Events 的排程等）作為觸發條件自動啟動。由於依實際使用的毫秒數計費（每次請求約 0.0000002 USD),於請求數較少的小規模工作負載或事件驅動處理,將遠較 EC2 便宜。\n\nLambda 的特徵之一是每次呼叫有逾時限制。若作業會超過適用的逾時上限，或需要持續執行，可評估 Amazon EC2 或 Amazon ECS 搭配 AWS Fargate。所支援的執行階段官方提供 Node.js／Python／Java／Go／Ruby／.NET 系列,使用自訂執行階段亦能執行任意語言。同時執行數的預設上限以區域為單位,對於急遽的流量增加可能產生因冷啟動而起的延遲。\n\nCLF-C02 中,會以「無須管理伺服器即可執行程式碼者為何」「Lambda 的特徵中何者正確」的形式出題。掌握無伺服器架構此一概念本身的理解（無須管理基礎設施、事件驅動、毫秒計費、有執行時間上限）相當重要。誤答經常並列 EC2（需管理伺服器）／ECS（需管理容器）。\n\n更正說明（2026-11-21）：AWS 於 2026-11-19 宣布，商業區域的隨需 Lambda Event Functions 可設定最多 30 分鐘的單次呼叫逾時；這不是預設值，也不適用於所有 Lambda 執行模式。Lambda Managed Instances 的限制依呼叫方式而異；呼叫端、整合服務或事件來源也可能有更短的限制。請參考下方 AWS 官方公告與技術說明。",
     "officialDocs": [
       {
         "label": "AWS Lambda（AWS 官方）",
@@ -1242,6 +1242,14 @@
       {
         "label": "什麼是 AWS Lambda（AWS 官方文件）",
         "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+      },
+      {
+        "label": "AWS Lambda 更新公告：隨需 Event Functions 逾時延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda 函式逾時與各呼叫方式限制",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ],
     "relatedServices": [
@@ -1261,7 +1269,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-01",
-    "updatedAt": "2026-06-18"
+    "updatedAt": "2026-11-21"
   },
   {
     "questionId": "clf-020",
@@ -2264,7 +2272,7 @@
       "C": "Route 53 是 DNS 服務，並非程式碼執行服務。",
       "D": "正解。Lambda 是以事件驅動執行程式碼的無伺服器架構服務。"
     },
-    "practicalNote": "AWS Lambda 是不需管理伺服器即可執行程式碼的無伺服器運算服務。將程式碼註冊為 Lambda 函式後，會以 API Gateway 的請求、S3 的物件建立、DynamoDB streams、EventBridge 的排程、SQS 的訊息等各種事件作為觸發來源自動執行。僅依執行時間（毫秒單位）與請求次數計費，等待中的時間不會產生成本。\n\n在考試情境中，會以「無需管理伺服器即可執行程式碼、以事件驅動的運算服務為何」的形式出題。誤答則並列 EC2（虛擬伺服器）、EFS（共享檔案儲存）、Route 53（DNS）等。EC2 需要進行執行個體的啟動、停止、修補套用等伺服器管理，並非無伺服器架構。EFS 與 Route 53 本身並非運算服務。\n\n實務上，Lambda 被廣泛運用於 API 後端、定期批次、檔案上傳時的影像處理、日誌加工、Slack 通知等輕量處理。對於長時間處理（預設上限 15 分鐘）、繁重的計算、需要大量記憶體的處理，Lambda 並不合適，需考慮 ECS／Fargate／EC2 等其他選項。在 CLF-C02 中，會以詢問「什麼是無伺服器架構」「Lambda 的角色為何」的題目為主，並反覆出現依使用量計費、低運作負擔、事件驅動等關鍵字。",
+    "practicalNote": "AWS Lambda 是不需管理伺服器即可執行程式碼的無伺服器運算服務。將程式碼註冊為 Lambda 函式後，會以 API Gateway 的請求、S3 的物件建立、DynamoDB streams、EventBridge 的排程、SQS 的訊息等各種事件作為觸發來源自動執行。僅依執行時間（毫秒單位）與請求次數計費，等待中的時間不會產生成本。\n\n在考試情境中，會以「無需管理伺服器即可執行程式碼、以事件驅動的運算服務為何」的形式出題。誤答則並列 EC2（虛擬伺服器）、EFS（共享檔案儲存）、Route 53（DNS）等。EC2 需要進行執行個體的啟動、停止、修補套用等伺服器管理，並非無伺服器架構。EFS 與 Route 53 本身並非運算服務。\n\n實務上，Lambda 被廣泛運用於 API 後端、定期批次、檔案上傳時的影像處理、日誌加工、Slack 通知等輕量處理。若作業會超過適用的 Lambda 逾時限制，或需要超出所選設定的運算能力或記憶體，可評估 Amazon ECS 搭配 AWS Fargate，或 Amazon EC2。在 CLF-C02 中，會以詢問「什麼是無伺服器架構」「Lambda 的角色為何」的題目為主，並反覆出現依使用量計費、低運作負擔、事件驅動等關鍵字。\n\n更正說明（2026-11-21）：AWS 於 2026-11-19 宣布，商業區域的隨需 Lambda Event Functions 可設定最多 30 分鐘的單次呼叫逾時；這不是預設值，也不適用於所有 Lambda 執行模式。Lambda Managed Instances 的限制依呼叫方式而異；呼叫端、整合服務或事件來源也可能有更短的限制。請參考下方 AWS 官方公告與技術說明。",
     "officialDocs": [
       {
         "label": "什麼是 AWS Lambda（AWS 官方文件）",
@@ -2273,6 +2281,14 @@
       {
         "label": "AWS Lambda（AWS 官方）",
         "url": "https://aws.amazon.com/lambda/"
+      },
+      {
+        "label": "AWS Lambda 更新公告：隨需 Event Functions 逾時延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda 函式逾時與各呼叫方式限制",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ],
     "relatedServices": [
@@ -2290,7 +2306,7 @@
     ],
     "published": true,
     "createdAt": "2026-06-07",
-    "updatedAt": "2026-06-19"
+    "updatedAt": "2026-11-21"
   },
   {
     "questionId": "clf-036",
