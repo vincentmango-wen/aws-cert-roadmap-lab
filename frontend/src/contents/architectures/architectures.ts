@@ -1,13 +1,10 @@
 /**
- * architectures.ts (compat re-export)
- *
- * P5-042 で SSoT を `frontend/contents/architectures/architectures.ja.json` に移行した後の互換層。
- * 既存の `@/contents/architectures/architectures` import を維持するために、ja JSON を読み直して
- * 同じ `publishedArchitectures` 配列を export する。
- *
- * - 多言語化前のコンポーネント (termGuards / 一覧 / internalLinks 等) は ja 配列のみで動作する
- * - locale 別データが必要な場合は `src/app/(site)/architectures/architecture-detail-data.ts` の
- *   `getArchitectures(locale)` / `getPublishedArchitectures(locale)` を使う
+ * Compatibility re-export after P5-042 moved the source of truth to
+ * frontend/contents/architectures/architectures.ja.json. Reload Japanese JSON and export the same
+ * publishedArchitectures array to preserve @/contents/architectures/architectures imports. Older
+ * components (termGuards, lists, internalLinks) use only the Japanese array. For localized data, use
+ * getArchitectures(locale) / getPublishedArchitectures(locale) from
+ * src/app/(site)/architectures/architecture-detail-data.ts.
  */
 import architecturesJaData from "../../../contents/architectures/architectures.ja.json";
 import type { ArchitectureMeta } from "../../types/architecture";
@@ -19,7 +16,7 @@ export const publishedArchitectures = architectures.filter(
   (architecture) => architecture.published,
 );
 
-// 既存 import 経路の互換維持 — 型・ラベルは src/types/architecture.ts に移設して re-export
+// Preserve existing import paths: re-export types and labels moved to src/types/architecture.ts.
 export type {
   ArchitectureMeta,
   Architecture,

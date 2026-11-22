@@ -1,247 +1,247 @@
-# Phase 2 一次体験記事 骨子（ACR-011 / #321）
+# Phase 2 Firsthand Experience Article Outlines (ACR-011 / #321)
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 文書名 | Phase 2 一次体験記事 骨子 |
-| 対象チケット | #321 [ACR-011] E-E-A-T 底上げ |
-| 作成日 | 2026-08-02 |
-| 目的 | 運営者の一次体験に基づく記事 2 本の見出し構成と、各セクションに書くべき事実を定義する |
-| 状態 | 骨子のみ。本文は未着手 |
+| Document name | Phase 2 Firsthand Experience Article Outlines |
+| Target ticket | #321 [ACR-011] Improve E-E-A-T |
+| Created | 2026-08-02 |
+| Purpose | Define the heading structure for two articles based on the operator's firsthand experience and the facts to include in each section |
+| Status | Outlines only. Body text has not been started |
 
 ---
 
-## 2. この文書の位置づけと制約
+## 2. Role and Constraints of This Document
 
-この文書は **見出し構成と「そこに何を書くか」の指示だけ** を定義する。本文は書かない。
+This document defines **only the heading structure and instructions for what to write under each heading**. It does not write the article bodies.
 
-### 2.1 なぜ AI が本文を書かないのか
+### 2.1 Why AI Does Not Write the Body Text
 
-本記事 2 本の価値は、運営者本人にしか書けない一次情報（実際の受験日、実際のスコア、実際の請求額、実際に詰まった箇所）にある。AI がこれを推測や一般論で埋めた場合、次の 2 点で致命的な問題になる。
+The value of these two articles lies in firsthand information only the operator can provide: actual exam dates, actual scores, actual billing amounts, and actual difficulties encountered. Filling these in with AI guesses or generalities would cause two critical problems.
 
-1. 事実でない経歴・体験の記載は Google AdSense のポリシー違反にあたる
-2. 運営者個人の信用問題になる
+1. Describing fictional credentials or experiences violates Google AdSense policies.
+2. It becomes a matter of the operator's personal credibility.
 
-したがって、**一人称の記述・体験・感想・数値の実測値は、すべて運営者が書く。**
+Therefore, **all first-person accounts, experiences, impressions, and measured figures must be written by the operator.**
 
-### 2.2 なぜ MDX を作らないのか
+### 2.2 Why No MDX Files Are Created
 
-`frontend/src/contents/blog/__tests__/blog-locale-parity.test.ts` の invariant により、
+The invariants in `frontend/src/contents/blog/__tests__/blog-locale-parity.test.ts` require:
 
-- (R) registry の slug 集合 = `contents/blog/ja/` の slug 集合
-- (1) `ja` / `en` / `zh` の slug 集合が完全一致
+- (R) The registry slug set = the slug set in `contents/blog/ja/`.
+- (1) The `ja` / `en` / `zh` slug sets match exactly.
 
-が要求される。未完成の記事を `ja` に置くと、同時に `en` / `zh` の空翻訳ファイルを作る必要が生じ、封印方針中の `en` / `zh` に低品質ファイルを積むことになる。
+Placing an unfinished article in `ja` would require empty translation files in `en` / `zh` at the same time, accumulating low-quality files in `en` / `zh` while those locales are subject to the sealing policy.
 
-本文が書き上がった段階で、翻訳込みの別チケットとして投入する。
+Once the body text is complete, introduce it through a separate ticket that includes translations.
 
-### 2.3 執筆時に守るルール
+### 2.3 Writing Rules
 
-- `docs/seo/content-policy.md` §5 の禁止表現リストに従う。特に、合格を保証する表現と、実際の試験問題を掲載しているかのように読める表現は使わない（具体的な禁止語は `content-policy.md` を参照）
-- 試験問題そのもの（設問文・選択肢・出題テーマの具体）は書かない。AWS 認定試験の NDA に抵触する
-- 書いてよいのは「学習期間」「使った教材」「当日の会場・受付の流れ」「スコアレポートの読み方」「自分が弱かった分野の一般的な名称」まで
-- 料金・請求額は、スクリーンショットではなく数値と内訳のテキストで書く。アカウントIDやバケット名などの識別子は伏せる
+- Follow the prohibited expression list in §5 of `docs/seo/content-policy.md`. In particular, do not use wording that guarantees passing or suggests that actual exam questions are published (see `content-policy.md` for specific prohibited terms).
+- Do not describe exam questions themselves: question text, choices, or specific tested topics. Doing so breaches the AWS certification exam NDA.
+- Permitted topics are limited to the study period, learning resources used, the venue and check-in process on exam day, how to read the score report, and general names of areas in which the author was weak.
+- Describe fees and billing amounts as text containing figures and breakdowns, not screenshots. Conceal identifiers such as account IDs and bucket names.
 
-### 2.4 プレースホルダ規約
+### 2.4 Placeholder Convention
 
-本文執筆時に運営者が埋める箇所は、二重波括弧で囲んだ記入マーカーで示している。マーカーの正式な書式はチケット #321 の「プレースホルダ規約」に定義されている。
+Fields the operator must fill in when writing the body are marked with double-brace input markers. The formal marker format is defined in the "Placeholder convention" section of ticket #321.
 
-`master` マージ前に、このマーカーがリポジトリ全体で 0 件になっている必要がある（#321 の「プレースホルダの解消（master マージ前ゲート）」を参照）。この節の説明文自体にはマーカーを含めていないため、grep の結果に残るものはすべて未記入箇所である。
-
----
-
-## 3. 記事 A: AWS 認定試験の受験記
-
-### 3.1 メタデータ案
-
-| 項目 | 値 |
-|---|---|
-| slug 案 | `{{FUMI_INPUT: 受験した試験に合わせた slug（例: clf-c02-exam-report）}}` |
-| category | CLF対策 または SAA対策（受験した試験に合わせる） |
-| targetKeywords 案 | `{{FUMI_INPUT: 試験名}} 受験記` / `{{FUMI_INPUT: 試験名}} 勉強時間` / `{{FUMI_INPUT: 試験名}} 当日 流れ` |
-| 想定文字数 | 2,500〜3,500 字（6,000 バイト以上） |
-
-### 3.2 見出し構成と記入指示
-
-#### H1: `{{FUMI_INPUT: 試験名}}を受験した記録`
-
-冒頭 2〜3 文で「いつ受験したか」「結果はどうだったか」「この記事で何が分かるか」を書く。読者が最初の 3 行で読む価値を判断できるようにする。
-
-#### H2: 受験の前提
-
-読者が自分と条件を比較できるようにするための情報。箇条書きで書く。
-
-- 受験日: `{{FUMI_INPUT: 受験日（YYYY-MM-DD）}}`
-- 受験形式: `{{FUMI_INPUT: テストセンター受験 / オンライン受験（ピアソンVUE か PSI か）}}`
-- 受験時点の AWS 経験: `{{FUMI_INPUT: 実務での AWS 利用経験の有無と範囲。無い場合は「無し」と書く}}`
-- IT 実務経験: `{{FUMI_INPUT: 職種と年数}}`
-- 保有していた他資格: `{{FUMI_INPUT: 受験時点で持っていた資格。無ければ「無し」}}`
-
-#### H2: 学習期間と学習量
-
-- 学習開始日と受験日、合計の学習期間: `{{FUMI_INPUT: 開始日と期間}}`
-- 1 日あたりの平均学習時間と、合計の学習時間: `{{FUMI_INPUT: 実測またはおおよその時間}}`
-- 学習ペースの実際（毎日やったのか、週末だけだったのか）: `{{FUMI_INPUT: 実際のペース}}`
-
-数字が正確に思い出せない場合は「おおよそ」と明記して概算を書く。捏造した精密な数値より、正直な概算のほうが信頼される。
-
-#### H2: 使った教材
-
-使った教材を表にする。列は「教材名」「形式」「費用」「使った期間」「所感」。
-
-- `{{FUMI_INPUT: 実際に使った教材の一覧。書籍名・動画講座名・公式トレーニング名など}}`
-- 費用は実際に払った金額を書く。無料のものは「無料」と書く
-- **使っていない教材を「使った」と書かない。** アフィリエイト目的と読まれると E-E-A-T を毀損する
-- 本サイトの模擬問題を使った場合はそれも書いてよいが、他教材と同列に扱い、過度に持ち上げない
-
-#### H2: 申し込みから当日までの流れ
-
-手順として書く。ここは他の受験者にとって再現性のある情報になる。
-
-1. 申し込み方法: `{{FUMI_INPUT: AWS 認定アカウントからの申し込み手順で、実際に迷った点}}`
-2. 試験日時の選び方: `{{FUMI_INPUT: 空き状況、予約変更の可否について実際に確認したこと}}`
-3. 当日の持ち物と本人確認: `{{FUMI_INPUT: 実際に提示した本人確認書類の種類と枚数}}`
-4. 会場での受付から着席まで: `{{FUMI_INPUT: 実際の流れ。所要時間、ロッカー、私物の扱いなど}}`
-
-オンライン受験の場合は、部屋の事前チェック、机の上の片付け、チェックイン手順を書く。
-
-#### H2: 試験中に感じたこと
-
-**設問の内容は書かない。** 書くのは以下に限る。
-
-- 時間配分: `{{FUMI_INPUT: 全問回答までにかかった時間、見直しに使った時間}}`
-- 問題文の分量に対する体感: `{{FUMI_INPUT: 想定より長かった/短かった等}}`
-- フラグ機能や見直しの使い方: `{{FUMI_INPUT: 実際にどう使ったか}}`
-
-#### H2: 結果とスコアレポートの読み方
-
-- 合否と総合スコア: `{{FUMI_INPUT: 合否とスコア。公開したくない場合は「合格」のみでもよい}}`
-- 結果が出るまでの時間: `{{FUMI_INPUT: 試験終了から結果通知までの実際の時間}}`
-- スコアレポートの構成について、一般論として説明する。分野別に「十分な能力」「要再学習」のような評価が出ること、分野ごとの正答数そのものは出ないことなど、AWS 公式が公開している仕様の範囲で書く
-
-#### H2: 弱かった分野と、次にどう埋めるか
-
-- 分野別評価で弱かった領域: `{{FUMI_INPUT: 試験ガイドの出題分野名で書く}}`
-- なぜ弱かったかの自己分析: `{{FUMI_INPUT: 学習配分・理解不足の実感}}`
-- 次にやること: `{{FUMI_INPUT: 具体的な学習計画}}`
-
-#### H2: これから受ける人へ
-
-一般論に流れないよう、自分の実体験から言えることだけを 3〜5 点書く。合格を保証する断定や「これだけやれば受かる」といった効果保証の表現は書かない。
-
-#### H2: 関連リンク
-
-- 本サイトの該当試験のロードマップページ
-- 該当試験の模擬問題ページ
-- AWS 公式の試験ガイド（外部リンク）
+Before merging into `master`, there must be zero such markers across the repository (see #321, "Resolving placeholders (pre-master-merge gate)"). This explanatory section itself contains no markers, so all remaining grep results represent unfilled fields.
 
 ---
 
-## 4. 記事 B: このサイトを AWS で作った記録
+## 3. Article A: AWS Certification Exam Experience
 
-### 4.1 メタデータ案
+### 3.1 Proposed Metadata
 
-| 項目 | 値 |
+| Item | Value |
 |---|---|
-| slug 案 | `building-this-site-on-aws` |
-| category | AWS無料枠・ポートフォリオ |
-| targetKeywords 案 | `S3 CloudFront 静的サイト 実例` / `AWS 個人開発 月額` / `Next.js 静的エクスポート S3` |
-| 想定文字数 | 3,000〜4,000 字（6,000 バイト以上） |
+| Proposed slug | `{{FUMI_INPUT: Slug matching the exam taken (e.g. clf-c02-exam-report)}}` |
+| category | CLF対策 or SAA対策 (original Japanese category values; match the exam taken) |
+| Proposed targetKeywords | `{{FUMI_INPUT: Exam name}} 受験記` / `{{FUMI_INPUT: Exam name}} 勉強時間` / `{{FUMI_INPUT: Exam name}} 当日 流れ` (Japanese search keyword specimens) |
+| Expected length | 2,500–3,500 characters (at least 6,000 bytes) |
 
-### 4.2 一次資料
+### 3.2 Heading Structure and Input Instructions
 
-本文執筆時に参照できる、このリポジトリ内の実在資料。
+#### H1: My Experience Taking `{{FUMI_INPUT: Exam name}}`
 
-- `docs/operations/deploy-failure-runbook.md` — デプロイ失敗時の対応手順
-- `docs/operations/mvp-operation-runbook.md` — MVP の運用手順
-- `.github/workflows/deploy-frontend.yml` — 実際のデプロイパイプライン定義
-- `.github/workflows/ci.yml` — CI の定義
+In the opening 2–3 sentences, state when the exam was taken, what the result was, and what readers will learn from the article. Let readers judge its value within the first 3 lines.
 
-これらはリポジトリに commit 済みで、第三者が検証できる形で公開されているため、記事の裏付けとしてリンクする価値がある。
+#### H2: Exam Background
 
-**未 commit の資料について**: CloudFront の URL rewrite 対応（2026-06-28 の AdSense 落選の主因だった「拡張子なしURLが全て404」の修正）に関する `infra/cloudfront/url-rewrite.js` と
-`docs/operations/cloudfront-url-rewrite-setup.md` は、作業マシン上には存在するが**リポジトリには commit されていない**（issue #306 の「infra commit」に該当）。
-記事でこの件に触れる場合は、先にこれらを commit して検証可能にしてから参照すること。commit 前にリンクを書くと読者が 404 を踏む。
+Provide information that lets readers compare their circumstances with the author's. Use bullet points.
 
-### 4.3 見出し構成と記入指示
+- Exam date: `{{FUMI_INPUT: Exam date (YYYY-MM-DD)}}`
+- Exam format: `{{FUMI_INPUT: Test center / Online exam (Pearson VUE or PSI)}}`
+- AWS experience at the time of the exam: `{{FUMI_INPUT: Whether and how extensively AWS had been used professionally. Write "None" if there was no experience}}`
+- Professional IT experience: `{{FUMI_INPUT: Role and number of years}}`
+- Other certifications held: `{{FUMI_INPUT: Certifications held at the time of the exam. Write "None" if there were none}}`
 
-#### H1: このサイトを AWS で作った記録
+#### H2: Study Period and Study Volume
 
-冒頭で「何を作ったか」「どの構成か」「実際にいくらかかっているか」を 3 行で示す。
+- Study start date, exam date, and total study period: `{{FUMI_INPUT: Start date and duration}}`
+- Average daily study time and total study time: `{{FUMI_INPUT: Measured or approximate hours}}`
+- Actual study schedule (daily or weekends only): `{{FUMI_INPUT: Actual schedule}}`
 
-#### H2: 構成の全体像
+If exact figures cannot be recalled, explicitly label them as approximate and provide estimates. Honest estimates are more trustworthy than fabricated precise figures.
 
-構成図または構成表を置く。すでにサイト内の architectures ページで図解している場合はそれにリンクする。
+#### H2: Learning Resources Used
 
-- 使用サービス一覧と、それぞれの役割: Amazon S3 / Amazon CloudFront / AWS Lambda / Amazon API Gateway / Amazon DynamoDB / Amazon CloudWatch / AWS Certificate Manager / Amazon Route 53
-- フレームワーク: Next.js の静的エクスポート（`output: "export"`）
+List the resources used in a table with columns for resource name, format, cost, period of use, and impressions.
+
+- `{{FUMI_INPUT: List of resources actually used, such as book titles, video courses, and official training names}}`
+- State the amount actually paid. Label free resources as "Free".
+- **Do not claim to have used resources that were not used.** If this reads as affiliate promotion, it damages E-E-A-T.
+- If this site's practice questions were used, they may also be listed, but treat them on the same footing as other resources and do not overpraise them.
+
+#### H2: From Registration to Exam Day
+
+Write this as a sequence of steps. This section provides reproducible information for other exam candidates.
+
+1. Registration method: `{{FUMI_INPUT: Points that actually caused confusion when registering through the AWS Certification account}}`
+2. Choosing the exam date and time: `{{FUMI_INPUT: What was actually checked regarding availability and whether rescheduling was possible}}`
+3. What to bring and identity verification: `{{FUMI_INPUT: Types and number of identification documents actually presented}}`
+4. From venue check-in to taking a seat: `{{FUMI_INPUT: Actual process, including time required, lockers, and handling of personal belongings}}`
+
+For an online exam, describe the advance room check, clearing the desk, and check-in procedure.
+
+#### H2: Impressions During the Exam
+
+**Do not describe question content.** Limit the discussion to the following.
+
+- Time allocation: `{{FUMI_INPUT: Time needed to answer all questions and time spent reviewing}}`
+- Perceived question length: `{{FUMI_INPUT: Whether questions felt longer or shorter than expected, etc.}}`
+- Use of flags and review features: `{{FUMI_INPUT: How these were actually used}}`
+
+#### H2: Results and How to Read the Score Report
+
+- Pass/fail result and overall score: `{{FUMI_INPUT: Result and score. If the score should remain private, "Passed" alone is acceptable}}`
+- Time until results arrived: `{{FUMI_INPUT: Actual time between the exam ending and the result notification}}`
+- Explain the score report's structure in general terms. Stay within specifications AWS has publicly disclosed, such as domain ratings like "Meets Competencies" and "Needs Improvement", and the fact that the actual number of correct answers per domain is not shown.
+
+#### H2: Weak Areas and How to Address Them Next
+
+- Areas rated weak by domain: `{{FUMI_INPUT: Use domain names from the exam guide}}`
+- Self-analysis of why they were weak: `{{FUMI_INPUT: Reflections on study allocation and insufficient understanding}}`
+- Next steps: `{{FUMI_INPUT: Concrete study plan}}`
+
+#### H2: Advice for Future Candidates
+
+Avoid generalities. Write only 3–5 points supported by personal experience. Do not make categorical passing guarantees or effectiveness guarantees such as "do only this and you will pass".
+
+#### H2: Related Links
+
+- This site's roadmap page for the relevant exam
+- The practice question page for that exam
+- The official AWS exam guide (external link)
+
+---
+
+## 4. Article B: How This Site Was Built on AWS
+
+### 4.1 Proposed Metadata
+
+| Item | Value |
+|---|---|
+| Proposed slug | `building-this-site-on-aws` |
+| category | AWS無料枠・ポートフォリオ (original Japanese category value) |
+| Proposed targetKeywords | `S3 CloudFront 静的サイト 実例` / `AWS 個人開発 月額` / `Next.js 静的エクスポート S3` (Japanese search keyword specimens) |
+| Expected length | 3,000–4,000 characters (at least 6,000 bytes) |
+
+### 4.2 Primary Sources
+
+Existing materials in this repository that can be referenced when writing the body.
+
+- `docs/operations/deploy-failure-runbook.md`: Deployment failure response procedures
+- `docs/operations/mvp-operation-runbook.md`: MVP operating procedures
+- `.github/workflows/deploy-frontend.yml`: Actual deployment pipeline definition
+- `.github/workflows/ci.yml`: CI definition
+
+These are committed to the repository and publicly available in a form third parties can verify, making them valuable links to support the article.
+
+**Uncommitted materials**: The CloudFront URL rewrite fix (for all extensionless URLs returning 404, the main cause of the 2026-06-28 AdSense rejection), `infra/cloudfront/url-rewrite.js` and
+`docs/operations/cloudfront-url-rewrite-setup.md`, exists on the working machine but **has not been committed to the repository** (the "infra commit" in issue #306).
+If mentioning this issue in the article, commit those files first so they can be verified, then reference them. Links written before the commit will lead readers to 404 pages.
+
+### 4.3 Heading Structure and Input Instructions
+
+#### H1: How This Site Was Built on AWS
+
+Open with 3 lines stating what was built, which architecture it uses, and how much it actually costs.
+
+#### H2: Architecture Overview
+
+Include an architecture diagram or table. If the site's architectures page already illustrates it, link there.
+
+- Services used and their roles: Amazon S3 / Amazon CloudFront / AWS Lambda / Amazon API Gateway / Amazon DynamoDB / Amazon CloudWatch / AWS Certificate Manager / Amazon Route 53
+- Framework: Next.js static export (`output: "export"`)
 - CI/CD: GitHub Actions + OIDC
 
-ここは事実の記述なので、AI が下書きしても捏造にはならない。ただし実際の構成と一致していることを必ず確認する。
+Because this section describes facts, an AI draft would not constitute fabrication. However, always verify that it matches the actual architecture.
 
-#### H2: なぜこの構成を選んだか
+#### H2: Why This Architecture Was Chosen
 
-判断の記録として書く。他の選択肢を検討したなら、それも書く。
+Write this as a record of decisions. If other options were considered, include them.
 
-- なぜ EC2 ではなく S3 + CloudFront か: `{{FUMI_INPUT: 実際の判断理由}}`
-- なぜ Amplify や Vercel ではなく素の AWS 構成か: `{{FUMI_INPUT: 実際の判断理由。学習目的が理由ならそう書く}}`
-- なぜ DynamoDB か: `{{FUMI_INPUT: 実際の判断理由}}`
+- Why S3 + CloudFront rather than EC2: `{{FUMI_INPUT: Actual reasons for the decision}}`
+- Why a direct AWS setup rather than Amplify or Vercel: `{{FUMI_INPUT: Actual reasons for the decision. If learning was the reason, say so}}`
+- Why DynamoDB: `{{FUMI_INPUT: Actual reasons for the decision}}`
 
-#### H2: 実際の月額請求
+#### H2: Actual Monthly Bill
 
-**この記事の中核。** ここが実測値でないと記事の価値が消える。
+**The core of this article.** Without measured figures, the article loses its value.
 
-- 対象月: `{{FUMI_INPUT: 請求を確認した年月}}`
-- 総額: `{{FUMI_INPUT: 実際の請求総額（USD）}}`
-- サービス別の内訳: `{{FUMI_INPUT: Cost Explorer のサービス別内訳。金額が 0.01 USD 未満のものは「0.01 USD 未満」と書く}}`
-- 同月のアクセス数またはページビュー: `{{FUMI_INPUT: 金額と対応づけられる規模の指標}}`
+- Billing month: `{{FUMI_INPUT: Year and month for which billing was checked}}`
+- Total: `{{FUMI_INPUT: Actual total bill (USD)}}`
+- Breakdown by service: `{{FUMI_INPUT: Cost Explorer breakdown by service. For amounts below 0.01 USD, write "Less than 0.01 USD"}}`
+- Visits or page views in the same month: `{{FUMI_INPUT: A scale metric that can be related to the amount}}`
 
-注意点として、以下を必ず添える。
+Always include the following caveats.
 
-- 単価は改定されるため、同じ構成でも将来同額になるとは限らない
-- 無料利用枠の適用状況によって金額が変わる
-- アクセス数が増えれば CloudFront の転送量課金が増える
+- Unit prices change, so the same architecture may not cost the same in the future.
+- Amounts vary with Free Tier eligibility and usage.
+- More traffic increases CloudFront data transfer charges.
 
-#### H2: 詰まった箇所と解決までの経緯
+#### H2: Difficulties Encountered and How They Were Resolved
 
-**ここも一次体験。** 1 件につき「症状 → 調べたこと → 原因 → 対処」の 4 段で書く。
+**This is also firsthand experience.** For each case, use 4 stages: symptoms → investigation → cause → remedy.
 
-- 事例 1: `{{FUMI_INPUT: 実際に詰まった事象。CloudFront の URL rewrite 対応（拡張子なしURLが全て404だった件）を書く場合は、先に infra/cloudfront/ と docs/operations/cloudfront-url-rewrite-setup.md を commit してから参照すること}}`
-- 事例 2: `{{FUMI_INPUT: 実際に詰まった事象（例: OIDC の信頼ポリシー、ACM 証明書のリージョン、キャッシュ無効化のタイミングなど）}}`
-- 事例 3: `{{FUMI_INPUT: 実際に詰まった事象}}`
+- Case 1: `{{FUMI_INPUT: An actual difficulty encountered. If describing the CloudFront URL rewrite fix (all extensionless URLs returning 404), first commit infra/cloudfront/ and docs/operations/cloudfront-url-rewrite-setup.md before referencing them}}`
+- Case 2: `{{FUMI_INPUT: An actual difficulty encountered (e.g. OIDC trust policy, ACM certificate region, or cache invalidation timing)}}`
+- Case 3: `{{FUMI_INPUT: An actual difficulty encountered}}`
 
-「一般によくあるハマりどころ」を推測で書き足さない。実際に踏んでいない罠を書くと、記事全体の信頼性が落ちる。
+Do not add guessed "common pitfalls". Describing traps the author never encountered undermines the credibility of the entire article.
 
-#### H2: 運用してみて変えたこと
+#### H2: Changes Made After Operating the Site
 
-- 公開後に構成や運用を変えた点: `{{FUMI_INPUT: 実際に変更したこととその理由}}`
-- 変えなかったが検討した点: `{{FUMI_INPUT: 検討して見送ったこととその理由}}`
+- Architecture or operational changes after launch: `{{FUMI_INPUT: Actual changes and their reasons}}`
+- Changes considered but not made: `{{FUMI_INPUT: What was considered but deferred, and why}}`
 
-#### H2: これから同じ構成を作る人へ
+#### H2: Advice for Others Building the Same Architecture
 
-- 先に設定しておくべきもの（AWS Budgets など）
-- 削除し忘れると課金が続くリソースの確認方法
-- このリポジトリのどこを見れば実装が追えるか
+- What to configure first (such as AWS Budgets)
+- How to identify resources that keep incurring charges if not deleted
+- Where in this repository to look to follow the implementation
 
-#### H2: 関連リンク
+#### H2: Related Links
 
-- 本サイトの該当する architectures ページ
-- 関連するブログ記事（`s3-cloudfront-static-site`、`github-actions-oidc-deploy`、`aws-budgets-cost-guardrail`）
-- GitHub リポジトリ
+- The relevant architectures page on this site
+- Related blog articles (`s3-cloudfront-static-site`, `github-actions-oidc-deploy`, `aws-budgets-cost-guardrail`)
+- GitHub repository
 
 ---
 
-## 5. 投入時のチェックリスト
+## 5. Publication Checklist
 
-本文完成後、MDX 化する際に確認する。
+Check these items when converting the completed body text into MDX.
 
-- [ ] 記入マーカーが 1 件も残っていない（#321 の master マージ前ゲートの grep が 0 件）
-- [ ] `ja` / `en` / `zh` の 3 言語分の MDX を作成した
-- [ ] 3 言語で `postId` / `publishedAt` / `updatedAt` / `published` が一致している
-- [ ] `frontend/src/contents/blog/blogPosts.ts` に registry エントリを追加した
-- [ ] 各 MDX の先頭 H1 が frontmatter の `title` と一致している
-- [ ] `docs/seo/content-policy.md` §13 の禁止表現 grep が 0 件
-- [ ] 試験問題の内容・設問・選択肢を書いていない
-- [ ] 金額を書いた箇所に、確認した年月と「単価は改定される」旨を添えた
-- [ ] `npm run lint` / `npm run typecheck` / `npm test` / `npm run build` が通る
+- [ ] No input markers remain (the grep for #321's pre-master-merge gate returns zero matches).
+- [ ] MDX files have been created in all 3 languages: `ja` / `en` / `zh`.
+- [ ] `postId` / `publishedAt` / `updatedAt` / `published` match across all 3 languages.
+- [ ] A registry entry has been added to `frontend/src/contents/blog/blogPosts.ts`.
+- [ ] Each MDX file's first H1 matches the frontmatter `title`.
+- [ ] The prohibited expression grep in §13 of `docs/seo/content-policy.md` returns zero matches.
+- [ ] No exam question content, question text, or choices are included.
+- [ ] Every stated amount includes the year and month it was checked and a note that unit prices may change.
+- [ ] `npm run lint` / `npm run typecheck` / `npm test` / `npm run build` pass.

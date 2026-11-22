@@ -1,9 +1,13 @@
+import rawAifQuestionsJa from "../../../../contents/questions/aif-c01.ja.json";
+import rawAifQuestionsEn from "../../../../contents/questions/aif-c01.en.json";
+import rawAifQuestionsZh from "../../../../contents/questions/aif-c01.zh.json";
 import rawClfQuestionsJa from "../../../../contents/questions/clf-c02.ja.json";
 import rawClfQuestionsEn from "../../../../contents/questions/clf-c02.en.json";
 import rawClfQuestionsZh from "../../../../contents/questions/clf-c02.zh.json";
 import rawSaaQuestionsJa from "../../../../contents/questions/saa-c03.ja.json";
 import rawSaaQuestionsEn from "../../../../contents/questions/saa-c03.en.json";
 import rawSaaQuestionsZh from "../../../../contents/questions/saa-c03.zh.json";
+import { getDictionary } from "@/i18n/dictionaries";
 import type { Question } from "@/types/question";
 import type { PageMetadataInput } from "@/lib/seo";
 import {
@@ -19,33 +23,35 @@ export type QuestionStaticParams = {
 };
 
 /**
- * QuestionPlayer UI 文言の型。client component 側 SSoT として
- * components/questions/question-player-labels.ts に切り出し済 (P5 R1 Minor-1/Minor-2)。
- * 後方互換性のためここで re-export する。
+ * QuestionPlayer UI-label type. Moved to components/questions/question-player-labels.ts as the
+ * client-safe source of truth (P5 R1 Minor-1/Minor-2). Re-exported here for backward compatibility.
  */
 export type QuestionPlayerLabels = QuestionPlayerLabelsSource;
 
 /**
- * QuestionPlayer UI 文言辞書 (SSoT は components/questions/question-player-labels.ts)。
- * 後方互換性のためここで re-export する。
+ * QuestionPlayer UI dictionary. The source of truth is components/questions/question-player-labels.ts;
+ * re-export here for backward compatibility.
  */
 export const questionPlayerLabelsByLocale = questionPlayerLabelsByLocaleSource;
 
 const questionsByLocale: Record<
   QuestionDetailLocale,
-  { clf: Question[]; saa: Question[] }
+  { clf: Question[]; saa: Question[]; aif: Question[] }
 > = {
   ja: {
     clf: rawClfQuestionsJa as Question[],
     saa: rawSaaQuestionsJa as Question[],
+    aif: rawAifQuestionsJa as Question[],
   },
   en: {
     clf: rawClfQuestionsEn as Question[],
     saa: rawSaaQuestionsEn as Question[],
+    aif: rawAifQuestionsEn as Question[],
   },
   zh: {
     clf: rawClfQuestionsZh as Question[],
     saa: rawSaaQuestionsZh as Question[],
+    aif: rawAifQuestionsZh as Question[],
   },
 };
 
@@ -67,6 +73,7 @@ export function getQuestionsByLocale(
   return [
     ...questionsByLocale[locale].clf,
     ...questionsByLocale[locale].saa,
+    ...questionsByLocale[locale].aif,
   ];
 }
 
@@ -90,6 +97,10 @@ export function getPublishedSaaQuestionsByLocale(
   return getSaaQuestionsByLocale(locale).filter(
     (question) => question.published,
   );
+}
+
+export function getPublishedAifQuestionsByLocale(locale: QuestionDetailLocale): Question[] {
+  return questionsByLocale[locale].aif.filter((question) => question.published);
 }
 
 export function getPublishedQuestionByIdLocale(
@@ -116,7 +127,9 @@ export function getAdjacentQuestionIds(
   previousQuestionId: string | null;
   nextQuestionId: string | null;
 } {
-  const publishedQuestions = getPublishedQuestionsByLocale(locale);
+  const allPublished = getPublishedQuestionsByLocale(locale);
+  const isAif = allPublished.find((question) => question.questionId === questionId)?.exam === "AIF-C01";
+  const publishedQuestions = allPublished.filter((question) => (question.exam === "AIF-C01") === isAif);
   const currentIndex = publishedQuestions.findIndex(
     (question) => question.questionId === questionId,
   );
@@ -172,6 +185,10 @@ export function createSaaQuestionsListPath(
   return createLocalizedQuestionPath(locale, "/questions/saa");
 }
 
+export function createAifQuestionsListPath(locale: QuestionDetailLocale): `/${string}` {
+  return createLocalizedQuestionPath(locale, "/questions/aif");
+}
+
 export function createQuestionDetailPath(
   locale: QuestionDetailLocale,
   questionId: string,
@@ -185,6 +202,12 @@ function truncateDescription(text: string, maxLength: number): string {
   }
 
   return `${text.slice(0, maxLength - 1)}…`;
+}
+
+export function getQuestionCategoryDisplayLabel(locale: QuestionDetailLocale, question: Question): string {
+  return question.exam === "AIF-C01"
+    ? getDictionary(locale).questions.categoryLabels[question.category]
+    : question.category;
 }
 
 export function createQuestionDetailMetadataInput(
@@ -221,11 +244,13 @@ export function createQuestionDetailMetadataInput(
     };
   }
 
+  const categoryLabel = getQuestionCategoryDisplayLabel(locale, question);
+
   if (locale === "en") {
     return {
       title: `${question.questionId.toUpperCase()} | ${question.exam} practice question`,
       description: truncateDescription(
-        `An AWS practice question in the ${question.category} domain. ${question.question}`,
+        `An AWS practice question in the ${categoryLabel} domain. ${question.question}`,
         120,
       ),
       path: createQuestionDetailPath(locale, question.questionId),
@@ -239,6 +264,7 @@ export function createQuestionDetailMetadataInput(
         ...(question.tags ?? []),
       ],
       modifiedTime: question.updatedAt,
+      enableLanguageAlternates: question.exam === "AIF-C01",
     };
   }
 
@@ -246,7 +272,7 @@ export function createQuestionDetailMetadataInput(
     return {
       title: `${question.questionId.toUpperCase()} | ${question.exam} 模擬題`,
       description: truncateDescription(
-        `${question.category}領域的 AWS 模擬題。${question.question}`,
+        `${categoryLabel}領域的 AWS 模擬題。${question.question}`,
         120,
       ),
       path: createQuestionDetailPath(locale, question.questionId),
@@ -260,13 +286,14 @@ export function createQuestionDetailMetadataInput(
         ...(question.tags ?? []),
       ],
       modifiedTime: question.updatedAt,
+      enableLanguageAlternates: question.exam === "AIF-C01",
     };
   }
 
   return {
     title: `${question.questionId.toUpperCase()} | ${question.exam}模擬問題`,
     description: truncateDescription(
-      `${question.category}分野のAWS模擬問題です。${question.question}`,
+      `${categoryLabel}分野のAWS模擬問題です。${question.question}`,
       120,
     ),
     path: createQuestionDetailPath(locale, question.questionId),
@@ -280,5 +307,6 @@ export function createQuestionDetailMetadataInput(
       ...(question.tags ?? []),
     ],
     modifiedTime: question.updatedAt,
+    enableLanguageAlternates: question.exam === "AIF-C01",
   };
 }

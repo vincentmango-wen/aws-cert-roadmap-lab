@@ -1,6 +1,17 @@
 import type { UiDictionary } from "./ja";
 
 export const zhDictionary: UiDictionary = {
+  updates: {
+    title: "最新內容與公告",
+    introduction: "依文章發布或更新日期與公告日期，查看最近的學習內容、題庫與網站功能消息。文章清單顯示目前版本，並非完整修訂歷史。",
+    empty: "目前尚無可顯示的內容或公告", viewAll: "查看所有內容與公告",
+    original: "原始公告", correction: "更正公告",
+    categories: { blog: "部落格", architecture: "架構圖", comparison: "服務比較", "question-bank": "題庫公告", feature: "功能公告" },
+    dates: { published: "發布", updated: "更新", announced: "公告" },
+    events: { new: "New", update: "Update" },
+    eventDescriptions: { new: "首次發布", update: "內容更新" },
+    notes: "更正與更新說明", missingNotes: "此版本未附更新說明。",
+  },
   site: {
     name: "AWS 認證學習路線圖實驗室",
     shortName: "AWS Cert Roadmap Lab",
@@ -25,6 +36,7 @@ export const zhDictionary: UiDictionary = {
     questions: "模擬題",
     architectures: "架構圖",
     blog: "部落格",
+    updates: "最新內容與公告",
     roadmap: "學習路線圖",
     contact: "聯絡我們",
     about: "關於本站",
@@ -53,7 +65,7 @@ export const zhDictionary: UiDictionary = {
       },
       siteInfo: {
         title: "網站資訊",
-        linkKeys: ["about", "contact", "privacy", "disclaimer"],
+        linkKeys: ["updates", "about", "contact", "privacy", "disclaimer"],
       },
       portfolio: {
         title: "作品集",
@@ -184,7 +196,7 @@ export const zhDictionary: UiDictionary = {
     noNextQuestion: "沒有下一題",
     examDumpDisclaimer: "本網站所有題目皆為原創，並非實際考試題目（試題傾印）。",
     difficultyLabel: "難度",
-    // 網域名稱引用自 AWS 官方繁體中文考試指南
+    // Domain names follow the official AWS Traditional Chinese exam guides
     //（AWS Certified Cloud Practitioner CLF-C02 /
     //  AWS Certified Solutions Architect - Associate SAA-C03）。
     categoryLabels: {
@@ -196,6 +208,11 @@ export const zhDictionary: UiDictionary = {
       "Resilient Architectures": "設計彈性架構",
       "High-Performing Architectures": "設計高效能架構",
       "Cost-Optimized Architectures": "設計成本最佳化架構",
+      "Fundamentals of AI and ML": "AI 與機器學習基礎",
+      "Fundamentals of GenAI": "生成式 AI 基礎",
+      "Applications of Foundation Models": "基礎模型的應用",
+      "Guidelines for Responsible AI": "負責任 AI 的指引",
+      "Security, Compliance, and Governance for AI Solutions": "AI 解決方案的安全性、合規與治理",
     },
     allCategoriesLabel: "所有分類",
     allDifficultiesLabel: "所有難度",
@@ -207,5 +224,14 @@ export const zhDictionary: UiDictionary = {
     viewQuestionLabel: "查看題目 →",
     emptyStateTitle: "沒有符合條件的題目。",
     emptyStateDescription: "請變更分類或難度條件。",
+    paginationNavAriaLabel: "分頁",
+    paginationPreviousLabel: "上一頁",
+    paginationNextLabel: "下一頁",
+    paginationGoToPageAriaLabelPrefix: "前往第 ",
+    paginationGoToPageAriaLabelSuffix: " 頁",
+    paginationRangeBefore: "顯示第 ",
+    paginationRangeBetweenStartEnd: "–",
+    paginationRangeBetweenEndTotal: " 項，共 ",
+    paginationRangeAfter: " 項",
   },
 };

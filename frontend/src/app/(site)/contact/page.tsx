@@ -122,12 +122,7 @@ export default function ContactPage(): ReactElement {
         </p>
       </section>
 
-      {/*
-        代替連絡手段は X の DM 案内を採用している（issue #321 の選択肢 B）。
-        メールアドレスを静的 HTML に直書きすると収集ボットに確実に拾われ、以後変更しづらいため。
-        専用エイリアス（contact@aws-cert-roadmap-lab.com 等）に移行する場合は、
-        ドメインのメール受信設定（SES 受信 or 転送）を先に用意してから文面を差し替えること。
-      */}
+      {/* Use X direct messages as the alternative contact channel (issue #321, option B). Hardcoding email in static HTML exposes it to harvesters and makes later changes difficult. Before switching to a dedicated alias such as contact@aws-cert-roadmap-lab.com, configure domain email reception (SES or forwarding), then update the wording. */}
       <section className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6">
         <h2 className="text-xl font-bold text-slate-900">
           フォームが送信できない場合

@@ -5,6 +5,7 @@ export type NavigationKey =
   | "questions"
   | "architectures"
   | "blog"
+  | "updates"
   | "roadmap"
   | "contact"
   | "about"
@@ -33,11 +34,9 @@ export type TermLevelKey = "beginner" | "intermediate" | "advanced";
 export type QuestionDifficultyKey = "easy" | "normal" | "hard";
 
 /**
- * 模擬問題のカテゴリキー。
- *
- * 値は AWS 公式試験ガイドのドメイン名に対応する識別子であり、
- * `types/question.ts` の `QuestionCategory` と同一集合であることが
- * `lib/questions.ts` の `QUESTION_CATEGORY_LABELS` の型注釈で担保される。
+ * Practice-question category keys identify domain names from official AWS exam guides. The
+ * QUESTION_CATEGORY_LABELS type annotation in lib/questions.ts ensures this set matches QuestionCategory
+ * in types/question.ts.
  */
 export type QuestionCategoryKey =
   | "Cloud Concepts"
@@ -47,7 +46,12 @@ export type QuestionCategoryKey =
   | "Secure Architectures"
   | "Resilient Architectures"
   | "High-Performing Architectures"
-  | "Cost-Optimized Architectures";
+  | "Cost-Optimized Architectures"
+  | "Fundamentals of AI and ML"
+  | "Fundamentals of GenAI"
+  | "Applications of Foundation Models"
+  | "Guidelines for Responsible AI"
+  | "Security, Compliance, and Governance for AI Solutions";
 
 export type QuestionsDictionary = {
   breadcrumbHome: string;
@@ -76,7 +80,7 @@ export type QuestionsDictionary = {
   noPreviousQuestion: string;
   noNextQuestion: string;
   examDumpDisclaimer: string;
-  // 一覧ページ（フィルタ / カード / 空状態）で使う文言
+  // Labels for list-page filters, cards and empty states.
   difficultyLabel: string;
   categoryLabels: Record<QuestionCategoryKey, string>;
   allCategoriesLabel: string;
@@ -89,9 +93,27 @@ export type QuestionsDictionary = {
   viewQuestionLabel: string;
   emptyStateTitle: string;
   emptyStateDescription: string;
+  paginationNavAriaLabel: string;
+  paginationPreviousLabel: string;
+  paginationNextLabel: string;
+  paginationGoToPageAriaLabelPrefix: string;
+  paginationGoToPageAriaLabelSuffix: string;
+  paginationRangeBefore: string;
+  paginationRangeBetweenStartEnd: string;
+  paginationRangeBetweenEndTotal: string;
+  paginationRangeAfter: string;
 };
 
 export type UiDictionary = {
+  updates: {
+    title: string; introduction: string; empty: string; viewAll: string;
+    original: string; correction: string;
+    categories: Record<"blog" | "architecture" | "comparison" | "question-bank" | "feature", string>;
+    dates: Record<"published" | "updated" | "announced", string>;
+    events: Record<"new" | "update", string>;
+    eventDescriptions: Record<"new" | "update", string>;
+    notes: string; missingNotes: string;
+  };
   site: {
     name: string;
     shortName: string;
@@ -198,6 +220,17 @@ export type UiDictionary = {
 };
 
 export const jaDictionary: UiDictionary = {
+  updates: {
+    title: "最新コンテンツとお知らせ",
+    introduction: "記事の公開日・更新日とお知らせの日付から、最近の学習コンテンツ、問題集、サイト機能の情報を確認できます。記事一覧には現在の版を表示しており、すべての改訂履歴ではありません。",
+    empty: "現在表示できるコンテンツやお知らせはありません", viewAll: "すべてのコンテンツとお知らせを見る",
+    original: "元のお知らせ", correction: "訂正のお知らせ",
+    categories: { blog: "ブログ", architecture: "構成図", comparison: "サービス比較", "question-bank": "問題集のお知らせ", feature: "機能のお知らせ" },
+    dates: { published: "公開", updated: "更新", announced: "お知らせ" },
+    events: { new: "New", update: "Update" },
+    eventDescriptions: { new: "初回公開", update: "内容の更新" },
+    notes: "更新・訂正内容", missingNotes: "この版には更新内容が記録されていません。",
+  },
   site: {
     name: "AWS資格ロードマップラボ",
     shortName: "AWS Cert Roadmap Lab",
@@ -222,6 +255,7 @@ export const jaDictionary: UiDictionary = {
     questions: "模擬問題",
     architectures: "構成図",
     blog: "ブログ",
+    updates: "最新コンテンツとお知らせ",
     roadmap: "ロードマップ",
     contact: "問い合わせ",
     about: "運営者情報",
@@ -250,7 +284,7 @@ export const jaDictionary: UiDictionary = {
       },
       siteInfo: {
         title: "サイト情報",
-        linkKeys: ["about", "contact", "privacy", "disclaimer"],
+        linkKeys: ["updates", "about", "contact", "privacy", "disclaimer"],
       },
       portfolio: {
         title: "ポートフォリオ",
@@ -392,6 +426,11 @@ export const jaDictionary: UiDictionary = {
       "Resilient Architectures": "耐障害性のあるアーキテクチャ",
       "High-Performing Architectures": "高性能なアーキテクチャ",
       "Cost-Optimized Architectures": "コスト最適化されたアーキテクチャ",
+      "Fundamentals of AI and ML": "AIと機械学習の基礎",
+      "Fundamentals of GenAI": "生成AIの基礎",
+      "Applications of Foundation Models": "基盤モデルの活用",
+      "Guidelines for Responsible AI": "責任あるAIの指針",
+      "Security, Compliance, and Governance for AI Solutions": "AIソリューションのセキュリティ、コンプライアンス、ガバナンス",
     },
     allCategoriesLabel: "すべてのカテゴリ",
     allDifficultiesLabel: "すべての難易度",
@@ -403,5 +442,14 @@ export const jaDictionary: UiDictionary = {
     viewQuestionLabel: "問題を見る →",
     emptyStateTitle: "条件に一致する問題がありません。",
     emptyStateDescription: "カテゴリまたは難易度の条件を変更してください。",
+    paginationNavAriaLabel: "ページ送り",
+    paginationPreviousLabel: "前へ",
+    paginationNextLabel: "次へ",
+    paginationGoToPageAriaLabelPrefix: "ページ ",
+    paginationGoToPageAriaLabelSuffix: "",
+    paginationRangeBefore: "",
+    paginationRangeBetweenStartEnd: "〜",
+    paginationRangeBetweenEndTotal: "問を表示中（全",
+    paginationRangeAfter: "問）",
   },
 };

@@ -6,41 +6,22 @@ This architecture deploys EC2 instances across multiple Availability Zones, dist
 
 It is a foundational pattern for production-grade web applications and appears frequently on the SAA exam.
 
-The production MVP of this project prioritizes low cost and does not adopt this pattern, but it is a critical architecture for demonstrating AWS design skills in interviews.
-
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User]
-    R53[Route 53]
-    ACM[ACM]
-    ALB[Application Load Balancer]
-    ASG[Auto Scaling Group]
-    EC2A[EC2 App AZ-a]
-    EC2C[EC2 App AZ-c]
-    RDSA[(RDS Primary AZ-a)]
-    RDSC[(RDS Standby AZ-c)]
-    CW[CloudWatch]
-    SNS[SNS optional]
-    IAM[IAM Role]
+AZ-A / AZ-B in the diagram are illustrative names for different Availability Zones. The database is a Multi-AZ DB instance deployment with one standby, not a Multi-AZ DB cluster.
 
-    User -->|DNS resolution| R53
-    R53 --> ALB
-    ACM -.TLS certificate.-> ALB
-    User -->|HTTPS| ALB
-    ALB --> EC2A
-    ALB --> EC2C
-    ASG -.maintain and scale.-> EC2A
-    ASG -.maintain and scale.-> EC2C
-    EC2A -->|DB connection| RDSA
-    EC2C -->|DB connection| RDSA
-    RDSA -.synchronous replication.-> RDSC
-    CW -.metrics monitoring.-> ASG
-    CW -.alarm notification.-> SNS
-    IAM -.EC2 permissions.-> EC2A
-    IAM -.EC2 permissions.-> EC2C
-```
+| Relationship | Path and meaning |
+|---|---|
+| DNS | The user resolves the ALB name through Route 53; Route 53 does not proxy HTTP |
+| TLS | Associate the ACM certificate with the ALB HTTPS listener |
+| Requests | User → ALB → EC2 in AZ-A / AZ-B; configure ALB health checks |
+| Capacity | One ASG maintains and scales EC2 instances across both AZs |
+| DB connections | Both EC2 instances → RDS Primary; do not send reads to the standby |
+| Replication and recovery | Primary → synchronous standby in another AZ; automatic failover on DB failure |
+| Monitoring | CloudWatch metric-based scaling configuration → ASG; optional alarms → SNS notifications |
+| Permissions | IAM roles control both EC2 instances' access to AWS services |
+
+Place the ALB and the EC2 / RDS resources across both AZs in one VPC. Use public subnets for the ALB and private subnets for EC2 and RDS, allowing the required ALB → EC2 → RDS ports through security groups. This is a design example, not a claim that the project's MVP has deployed it.
 
 ## What This Architecture Achieves
 
@@ -142,10 +123,23 @@ During incidents, check in this order: ALB target health, Auto Scaling activity,
 
 - [Multi-AZ vs Read Replica](/en/comparisons/multi-az-vs-read-replica)
 - [ALB vs NLB vs CloudFront](/en/comparisons/alb-vs-nlb-vs-cloudfront)
-- [EC2 vs Lambda vs ECS](/en/comparisons/ec2-vs-lambda-vs-ecs)
 
 ## Summary
 
 ALB + Auto Scaling + RDS Multi-AZ is the representative architecture for availability-focused web applications.
 
 This project does not use it for the production MVP, but it is essential for SAA preparation and for explaining AWS design skills.
+
+## Corrections
+
+### 2026-11-19
+
+Integrated Route 53 DNS resolution and ACM certificate association into the main diagram. DNS returns the ALB IP addresses, and the user connects directly to the ALB over HTTPS. The certificate is configured on the ALB HTTPS listener; requests do not pass through ACM.
+
+Sources: [Route 53 alias records](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html), [ALB TLS certificates](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html).
+
+### 2026-11-17
+
+Corrected the line that appeared to connect the right-hand EC2 instance to the standby: both EC2 instances connect to the primary. Clarified one ASG spanning both AZs, DNS versus HTTPS, TLS certificate association, synchronous replication, and failover. The no-read standby restriction applies to a Multi-AZ DB instance deployment with one standby.
+
+Sources: [RDS Multi-AZ DB instances](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html), [Route 53 DNS routing to ELB](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html).

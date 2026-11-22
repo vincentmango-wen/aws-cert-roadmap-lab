@@ -139,7 +139,7 @@ function isActivePath(pathname: string, href: string): boolean {
   return contentPathname === href || contentPathname.startsWith(`${href}/`);
 }
 
-export function Header(): ReactElement {
+export function Header({ blogLocales }: { blogLocales: Record<string, readonly Locale[]> }): ReactElement {
   const pathname = usePathname();
   const currentPathname = pathname ?? "/";
   const currentLocale = getLocaleFromPathname(currentPathname);
@@ -197,8 +197,8 @@ export function Header(): ReactElement {
             })}
           </nav>
 
-          {/* ACR-012 (#322): 封印中は ja 面から en/zh への内部リンクを 0 件にする */}
-          {LOCALIZED_ROUTES_PUBLISHED ? <LanguageSwitcher /> : null}
+          {/* ACR-012 (#322): no internal links from Japanese pages to en/zh while sealed. */}
+          {LOCALIZED_ROUTES_PUBLISHED ? <LanguageSwitcher blogLocales={blogLocales} /> : null}
         </div>
 
         <button
@@ -265,13 +265,10 @@ export function Header(): ReactElement {
             );
           })}
 
-          {/*
-            ACR-012 (#322): ラッパー div ごとガードする。
-            div を残すと区切り線だけがドロワー最下部に孤立して描画される。
-          */}
+          {/* ACR-012 (#322): guard the wrapper div too; retaining it would leave an isolated divider at the bottom of the drawer. */}
           {LOCALIZED_ROUTES_PUBLISHED ? (
             <div className="mt-2 border-t border-slate-200 pt-3">
-              <LanguageSwitcher onNavigate={closeMenu} />
+              <LanguageSwitcher blogLocales={blogLocales} onNavigate={closeMenu} />
             </div>
           ) : null}
         </nav>

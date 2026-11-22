@@ -20,12 +20,12 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-06-07"
+updatedAt: "2026-06-21"
 ---
 
 # RDS Multi-AZ・Read Replicaの違い
 
-## 結論
+## 選択のポイント
 
 RDS Multi-AZとRead Replicaは、どちらもデータベースの複製に関係します。
 
@@ -73,7 +73,7 @@ Read Replica
 
 アプリケーションは、書き込みをPrimary DBへ、読み取りをRead Replicaへ分けられます。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
 ### Multi-AZが正解になりやすいケース
 
@@ -129,7 +129,7 @@ Primary DB
 
 ただし、コストも増えるため、個人開発MVPでは基本的に使いません。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：Read Replicaを障害対策の第一候補にする
 
@@ -149,6 +149,20 @@ Read Replicaは読み取り性能向上が主目的です。
 
 理由は、固定費が発生しやすく、問い合わせ保存だけならDynamoDBで足りるためです。
 
+## まとめ
+
+RDS Multi-AZとRead Replicaは、目的で覚えるのが一番です。
+
+- Multi-AZ：障害対策・高可用性
+- Read Replica：読み取り性能向上
+
+試験では「高可用性」と書かれていたらMulti-AZ、「読み取り負荷」と書かれていたらRead Replicaを疑います。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [RDS マルチ AZ の配置方式とフェイルオーバー](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html) · [RDS リードレプリカの動作と用途](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html) · [マルチ AZ DB インスタンスのスタンバイ動作](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon RDS](/terms/rds)
@@ -159,12 +173,3 @@ Read Replicaは読み取り性能向上が主目的です。
 ## 関連問題
 
 - [CLF模擬問題一覧](/questions/clf)
-
-## まとめ
-
-RDS Multi-AZとRead Replicaは、目的で覚えるのが一番です。
-
-- Multi-AZ：障害対策・高可用性
-- Read Replica：読み取り性能向上
-
-試験では「高可用性」と書かれていたらMulti-AZ、「読み取り負荷」と書かれていたらRead Replicaを疑います。

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title description">
+<style>text{font-family:system-ui,"Noto Sans CJK TC",sans-serif;fill:#17293A}</style>
+<title id="title">AWS Backup cross-account recovery: validate EBS data in isolation</title><desc id="description">Copy a production EBS backup to another account in Tokyo, restore it in isolation, and validate the data and application. Production EBS → Source vault → Destination vault → New EBS volume → Data and app validation</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#25374A"/></marker></defs>
+<rect x="1" y="1" width="1198" height="298" rx="18" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="28" y="38" font-size="19" font-weight="700">Tokyo Region  ap-northeast-1  ·  One AWS Organizations organization</text>
+<rect x="15" y="58" width="434" height="223" rx="16" fill="#EFF6FF" stroke="#7AA5CF"/>
+<rect x="502" y="58" width="683" height="223" rx="16" fill="#F0FDF4" stroke="#7CA891"/>
+<text x="28" y="86" font-weight="700">Production account</text><text x="520" y="86" font-weight="700">Backup account</text>
+<rect id="isolated-test" x="739" y="104" width="431" height="160" rx="14" fill="none" stroke="#5D786E" stroke-dasharray="7 5"/>
+<text x="755" y="252" font-size="13" font-weight="700">Isolated test environment</text>
+<text id="source-kms" x="28" y="263" font-size="13" font-weight="700">Source KMS customer managed key</text>
+<text id="destination-kms" x="520" y="263" font-size="11" font-weight="700">Destination KMS customer managed key</text>
+<g id="A"><rect x="28" y="154" width="177" height="76" rx="13" fill="#DCEBFF" stroke="#516477"/><text x="116" y="181" text-anchor="middle" font-size="16" font-weight="700">A · Production EBS</text><text x="116" y="207" text-anchor="middle" font-size="13">Encrypted data volume</text></g>
+<g id="B"><rect x="260" y="154" width="177" height="76" rx="13" fill="#EDE3FA" stroke="#516477"/><text x="348" y="181" text-anchor="middle" font-size="16" font-weight="700">B · Source vault</text><text x="348" y="207" text-anchor="middle" font-size="13">Source recovery point</text></g>
+<g id="C"><rect x="520" y="154" width="177" height="76" rx="13" fill="#EDE3FA" stroke="#516477"/><text x="608" y="181" text-anchor="middle" font-size="16" font-weight="700">C · Destination vault</text><text x="608" y="207" text-anchor="middle" font-size="13">Copied recovery point</text></g>
+<g id="D"><rect x="754" y="154" width="177" height="76" rx="13" fill="#FFF1CF" stroke="#516477"/><text x="842" y="181" text-anchor="middle" font-size="16" font-weight="700">D · New EBS volume</text><text x="842" y="207" text-anchor="middle" font-size="13">Same AZ as test EC2</text></g>
+<g id="E"><rect x="988" y="154" width="177" height="76" rx="13" fill="#D9F4E3" stroke="#516477"/><text x="1076" y="181" text-anchor="middle" font-size="16" font-weight="700">E · Validate recovery</text><text x="1076" y="207" text-anchor="middle" font-size="13">Checksum and app read</text></g>
+<g data-step="backup"><path d="M 205 190 H 257" fill="none" stroke="#25374A" stroke-width="2" marker-end="url(#arrow)"/><path d="M 231 185 V 142" stroke="#526778" stroke-dasharray="3 3"/><rect x="152" y="114" width="158" height="25" rx="7" fill="#FFFFFF" stroke="#9BA9B7"/><text x="231" y="132" text-anchor="middle" font-size="12" font-weight="700">Back up</text></g>
+<g data-step="copy"><path d="M 437 190 H 517" fill="none" stroke="#25374A" stroke-width="2" marker-end="url(#arrow)"/><path d="M 477 185 V 142" stroke="#526778" stroke-dasharray="3 3"/><rect x="398" y="114" width="158" height="25" rx="7" fill="#FFFFFF" stroke="#9BA9B7"/><text x="477" y="132" text-anchor="middle" font-size="12" font-weight="700">Cross-account copy</text></g>
+<g data-step="restore"><path d="M 697 190 H 751" fill="none" stroke="#25374A" stroke-width="2" marker-end="url(#arrow)"/><path d="M 724 185 V 142" stroke="#526778" stroke-dasharray="3 3"/><rect x="645" y="114" width="158" height="25" rx="7" fill="#FFFFFF" stroke="#9BA9B7"/><text x="724" y="132" text-anchor="middle" font-size="12" font-weight="700">Restore</text></g>
+<g data-step="validate"><path d="M 931 190 H 985" fill="none" stroke="#25374A" stroke-width="2" marker-end="url(#arrow)"/><path d="M 958 185 V 142" stroke="#526778" stroke-dasharray="3 3"/><rect x="879" y="114" width="158" height="25" rx="7" fill="#FFFFFF" stroke="#9BA9B7"/><text x="958" y="132" text-anchor="middle" font-size="12" font-weight="700">Validate</text></g>
+</svg>

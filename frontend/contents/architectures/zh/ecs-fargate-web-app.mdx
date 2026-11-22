@@ -10,32 +10,15 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者]
-    DNS[Route 53]
-    ACM[AWS Certificate Manager]
-    ALB[Application Load Balancer]
-    VPC[VPC]
-    PublicSubnet[Public Subnets]
-    PrivateSubnet[Private Subnets]
-    ECS[Amazon ECS Service]
-    Task[Fargate Tasks]
-    ECR[(Amazon ECR)]
-    CW[CloudWatch Logs]
-    IAM[IAM Task Role]
+實線是讀者的請求路徑。DNS 解析、憑證關聯、任務放置、拉取映像與送出日誌都是另外的作業。
 
-    User -->|HTTPS| DNS
-    DNS --> ALB
-    ACM -.-> ALB
-    ALB --> PublicSubnet
-    PublicSubnet --> PrivateSubnet
-    PrivateSubnet --> ECS
-    ECS --> Task
-    Task -->|Pull Image| ECR
-    Task -->|Logs| CW
-    IAM -.-> Task
-```
+| 項目 | 運作方式 |
+|---|---|
+| DNS 與 TLS | Route 53 的別名記錄將自訂網域解析至公開 ALB。瀏覽器直接連到關聯 ACM 憑證的 ALB HTTPS 監聽器，HTTPS 請求不經 Route 53 或 ACM 轉送。 |
+| 請求路徑 | 一個面向網際網路的 ALB 跨兩個可用區的公開子網。目標類型為 `ip` 的目標群組把請求送往兩個私有子網的健康 Fargate 任務 IP。任務安全群組允許 ALB 安全群組連入應用程式連接埠。 |
+| 任務放置與運作狀態檢查 | ECS 服務維持期望的任務數量，管理放置與註冊；ALB 檢查目標狀態。ECS 服務本身不轉送讀者請求。 |
+| 啟動與日誌 | Fargate 使用任務執行角色從私有 ECR 拉取映像，再使用 `awslogs` 驅動程式送出日誌。私有任務需要 NAT 等網路路徑；若不走網際網路，需有 ECR 和 S3 所需的 VPC 端點，並為 `awslogs` 設定 CloudWatch Logs 端點。 |
+| 應用程式的權限 | 獨立的任務角色只授予應用程式所需的 AWS API 權限。 |
 
 ## 此架構可達成的事項
 
@@ -65,10 +48,10 @@ flowchart TD
 1. 使用者透過 HTTPS 存取自訂網域。
 2. Route 53 將名稱解析至 ALB。
 3. ALB 接收請求。
-4. ALB 透過目標群組將請求轉發至 ECS Fargate 任務。
+4. ALB 透過 IP 目標群組將請求轉送至 ECS Fargate 任務。
 5. Fargate 任務上的容器處理請求。
 6. 將容器日誌輸出至 CloudWatch Logs。
-7. 部署時自 ECR 取得容器映像檔。
+7. 任務啟動時，Fargate 使用任務執行角色從 ECR 拉取容器映像。
 
 ## 設計重點
 
@@ -129,7 +112,6 @@ ALB 健康檢查失敗的任務會被切離,因此應在應用程式端準備適
 
 ## 相關比較
 
-- [EC2 / Lambda / ECS 的差異](/zh/comparisons/ec2-vs-lambda-vs-ecs)
 - [ALB / NLB / CloudFront 的差異](/zh/comparisons/alb-vs-nlb-vs-cloudfront)
 
 ## 在本專案中的角色
@@ -137,3 +119,11 @@ ALB 健康檢查失敗的任務會被切離,因此應在應用程式端準備適
 ECS Fargate 是無需伺服器管理即可執行容器化 Web 應用程式的有力選項。
 
 不過,以靜態網站為主的個人 MVP 容易產生較高的固定成本,因此本專案將其視為學習用的架構參考,本體公開仍優先採用 S3 + CloudFront。
+
+## 更正說明
+
+### 2026-11-19
+
+將 DNS 解析、憑證關聯和 ECS 任務放置與讀者的 HTTPS 路徑分開。ALB 使用 IP 目標群組連到兩個私有子網的 Fargate 任務。拉取映像與送出容器日誌使用任務執行角色，不是應用程式的任務角色。
+
+依據：[Amazon ECS Fargate networking](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-networking.html) · [IAM roles for ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-iam-role-overview.html) · [ECR endpoints](https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html) · [Route 53 alias for an ELB load balancer](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html) · [ALB certificates](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html)

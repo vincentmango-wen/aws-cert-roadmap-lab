@@ -1,8 +1,6 @@
 /**
- * ComparisonsListClient.tsx
- *
- * 一覧ページ本体 (locale 引数で全文言切替). server component として動作する
- * (interactivity 不要 / 既存 ja 一覧と同じ静的 layout).
+ * List-page body with all labels selected by locale. Runs as a server component: no interactivity is
+ * needed, and the layout matches the static Japanese list.
  */
 import Link from "next/link";
 import {
@@ -16,8 +14,8 @@ import { isExistingTerm } from "@/lib/termGuards";
 import type { Comparison } from "@/types/comparison";
 
 /**
- * comparison.category (string) を locale 別ラベルに変換する.
- * ComparisonCategory に含まれない値はそのまま返す (将来の category 追加時の防御).
+ * Convert comparison.category to a localized label. Preserve unknown ComparisonCategory values as a
+ * defensive fallback for future categories.
  */
 function getCategoryLabel(
   categoryLabels: Record<ComparisonCategory, string>,

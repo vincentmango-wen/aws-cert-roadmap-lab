@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import type { Locale } from "../locales";
 import { createLocalizedPath, defaultLocale, locales } from "../locales";
-import { isPublishedLocale } from "../release-gate";
+import { LOCALIZED_ROUTES_PUBLISHED, isPublishedLocale } from "../release-gate";
 
 export type SitemapItem = MetadataRoute.Sitemap[number];
 
@@ -89,14 +89,10 @@ export function toSitemapLastModified(value?: string | Date): Date {
 }
 
 /**
- * sitemap 封印の choke point（ACR-012 / #322）。
- *
- * `createLocalizedSitemapItems()` は `<loc>` の生成と `<xhtml:link>`（alternates）の
- * 生成の両方でこの戻り値を使うため、ここで en/zh を落とすと URL と hreflang が同時に消える。
- *
- * 空フォールバックを `[...locales]` にしてはいけない（封印下で en/zh が復活する）。
- * 逆に空配列を返すと sitemap が空洞化して 2026-06-28 の「ほぼ全 URL が 404」に戻るため、
- * 必ず `[defaultLocale]` を返す。
+ * Central sitemap sealing filter (ACR-012 / #322). createLocalizedSitemapItems uses this result for both
+ * loc and xhtml:link alternates, so excluding en/zh removes URLs and hreflang together. Never fall back
+ * to [...locales], which would restore sealed locales. Never return an empty array, which would empty
+ * the sitemap and risk repeating the 2026-06-28 incident. Always fall back to [defaultLocale].
  */
 function resolveAvailableLocales(availableLocales?: readonly Locale[]): Locale[] {
   const requestedLocales =
@@ -115,16 +111,26 @@ export function createAlternateLanguageUrls(
 ): Record<string, string> {
   const normalizedPathname = normalizeSitemapPathname(pathname);
   const resolvedLocales = resolveAvailableLocales(availableLocales);
-
-  return resolvedLocales.reduce<Record<string, string>>((languageUrls, locale) => {
+  const languageUrls = resolvedLocales.reduce<Record<string, string>>((urls, locale) => {
     const hreflang = hreflangByLocale[locale];
     const localizedPathname = createLocalizedPath(locale, normalizedPathname);
 
     return {
-      ...languageUrls,
+      ...urls,
       [hreflang]: createSitemapAbsoluteUrl(localizedPathname),
     };
   }, {});
+
+  if (!LOCALIZED_ROUTES_PUBLISHED) {
+    return languageUrls;
+  }
+
+  return {
+    ...languageUrls,
+    "x-default": createSitemapAbsoluteUrl(
+      createLocalizedPath(defaultLocale, normalizedPathname),
+    ),
+  };
 }
 
 export function createLocalizedSitemapItems(

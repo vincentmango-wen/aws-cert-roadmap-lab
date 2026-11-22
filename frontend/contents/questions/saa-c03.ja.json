@@ -2849,7 +2849,7 @@
     "explanation": "AWS Step Functionsはワークフローの各ステップを状態として定義し、実行履歴として可視化します。ステートごとにRetry（バックオフ付き再試行）とCatch（エラー時の分岐）を宣言的に設定できるため、どこで失敗したかの追跡と部分的な再実行が容易になります。",
     "choiceExplanations": {
       "A": "正解です。実行履歴のグラフから失敗ステートを特定でき、Retry / Catch により一時的な障害の自動回復と失敗時の補償処理を宣言的に書けます。",
-      "B": "1つの関数に統合すると、実行時間の上限（最大15分）に抵触しやすくなり、失敗時は先頭からのやり直しになります。どのステップで失敗したかの可視化も改善しません。",
+      "B": "一つの Lambda 関数にまとめるだけでは、ステップごとの再試行や、どこで失敗したかの可視化は得られません。ワークフローの状態やチェックポイントを管理しないと、再試行で完了済みの処理を繰り返すことがあります。呼び出しのタイムアウトを延ばしても、これらの要件は変わりません。\n\n訂正内容（2026-11-21）：AWS は 2026-11-19 に、商用リージョンのオンデマンド Lambda Event Functions で、1 回の呼び出しのタイムアウトを最大 30 分に設定できると発表しました。これは既定値でも、すべての Lambda 実行方式に共通する上限でもありません。Lambda Managed Instances の上限は呼び出し方式で異なり、呼び出し元、連携サービス、イベントソースにより短い制限が適用される場合があります。下記の AWS 公式発表と技術解説を参照してください。",
       "C": "SQSで連結すれば疎結合にはなりますが、ワークフロー全体としてどこまで進んだかという状態は持てず、分岐や並列実行、ステップ単位の再実行も自前で実装することになります。",
       "D": "EventBridgeはイベントの配信を担うサービスで、ワークフローの状態管理やステップ単位のリトライ制御は行いません。失敗の記録は残っても、再実行の制御は自作が必要です。"
     },
@@ -2874,7 +2874,7 @@
     ],
     "published": true,
     "createdAt": "2026-07-31",
-    "updatedAt": "2026-07-31",
+    "updatedAt": "2026-11-21",
     "practicalNote": "AWS Step Functions は、複数のサービス呼び出しを「ステートマシン」として定義し、その実行状態をサービス側が管理してくれるオーケストレーションサービスである。ステートには Task（Lambda や他サービスの呼び出し）、Choice（条件分岐）、Parallel（並列実行）、Map（配列に対する反復）、Wait（待機）、Fail / Succeed などがあり、Amazon States Language という JSON ベースの定義で記述する。各 Task には Retry（エラー種別ごとの再試行回数・間隔・バックオフ率）と Catch（エラー時の遷移先ステート）を宣言的に書けるため、リトライ処理やロールバック処理をアプリケーションコードから切り離せる。\n\n「Lambda 関数が次の Lambda 関数を直接呼ぶ」という関数チェーンは、小規模なうちは動くが、ステップが増えると急速に扱いづらくなる。全体の進行状況がどこにも保存されないため失敗地点の特定が難しく、途中から再開する仕組みも自作になる。呼び出し元の Lambda は呼び出し先の完了を待つ間も課金され続けるという無駄もある。Step Functions に移すと、実行ごとに履歴が残りコンソールのグラフで失敗ステートを一目で特定でき、入力を差し替えた再実行も容易になる。ワークフロータイプには Standard（最長 1 年、実行ごとの厳密な履歴、状態遷移課金）と Express（最長 5 分、高スループット、実行時間とメモリ課金）の 2 種類があり、長時間の業務ワークフローは Standard、大量の短時間イベント処理は Express を選ぶ。\n\nSAA-C03 では「複数ステップの処理を順序立てて実行したい」「どのステップで失敗したか追跡したい」「リトライやエラー処理を組み込みたい」といった要件で Step Functions が正解になる。誤答には Lambda への統合、SQS による連結、EventBridge による連鎖が並ぶ。SQS や EventBridge は「疎結合なメッセージ配信」が役割であってワークフローの状態管理は行わない、という区別が判断の決め手になる。",
     "officialDocs": [
       {
@@ -2888,6 +2888,14 @@
       {
         "label": "Step Functions ワークフローでのエラー処理（AWS Step Functions デベロッパーガイド）",
         "url": "https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/concepts-error-handling.html"
+      },
+      {
+        "label": "AWS Lambda の更新発表：オンデマンド Event Functions のタイムアウト延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda のタイムアウトと呼び出し方式の制約",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },
@@ -3371,5 +3379,1058 @@
         "url": "https://aws.amazon.com/jp/aws-cost-management/aws-cost-explorer/"
       }
     ]
+  },
+  {
+    "questionId": "saa-051",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "アカウント A の Step Functions Standard ワークフローが、callback task でアカウント B の人による承認サービスを待機する。承認者は権限を持つ申請だけを判断でき、task token をブラウザーの URL やログに露出させてはならない。どの設計が要件を満たすか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "B の IAM ロールで SendTaskSuccess を直接呼び出し、完全な task token を承認リンクとしてメールで送る。"
+      },
+      {
+        "choiceId": "B",
+        "text": "A のバックエンドで token を保管するが、B のログイン済みユーザーなら任意の申請 ID で callback を送信できるようにする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "A のバックエンドで token を保管し、B の承認者と申請の権限を検証してから A のロールで callback を送信する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "B の IAM ロールで SendTaskSuccess を直接呼び出し、露出を防ぐため token を B の暗号化データベースに保存する。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Task token はワークフローと同じアカウントのプリンシパルから送信する必要がある。A の管理されたバックエンドで token の保管、申請単位の認可、callback を実行すれば、アカウントと機密性の要件を満たせる。",
+    "choiceExplanations": {
+      "A": "不正解。B のプリンシパルは callback の同一アカウント要件を満たさず、リンクへの token 埋め込みも漏えいリスクを増やす。",
+      "B": "不正解。認証は申請単位の認可を代替しない。別のログイン済みユーザーが権限のない申請を承認できてしまう。",
+      "C": "正解。バックエンドは対象申請の操作権限を確認して A のロールで送信する。フロントエンドには token を含まない申請 ID だけを渡せばよい。",
+      "D": "不正解。暗号化保存は token を保護するが、B のプリンシパルが同一アカウント制約を回避することはできない。"
+    },
+    "practicalNote": "承認者に表示する申請 ID と Step Functions task token は分離する。バックエンドは承認要求を受けると、本人確認、申請の所属や操作権限、現在の状態を検証してから、保護された token を取得して callback を送信する。承認と却下は監査可能なイベントとして記録するが、生の token はログに残さない。\n\nクロスアカウント承認でも B のプリンシパルで直接 token を送る必要はない。A の管理されたバックエンド、または適切な信頼ポリシーで利用する A のロールを使える。本問は前者を選ぶ。期限切れや完了済みの token は新たな承認資格にはならない。重複要求も状態を確認して安全に扱い、リンクを持つだけで承認できる構成にしない。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "iam"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "iam"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-052",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "同じアカウントとリージョンで、Lambda の event source mapping がカスタマーマネージド KMS キーで暗号化された SQS キューを読み取る。実行ロールには対象キューの受信、削除、属性取得に必要な権限がある。key policy は IAM policy による権限委任を有効にしており、他の拒否はない。エラーはロールの kms:Decrypt 不足を示している。最小権限に沿った修正はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "実行ロールに対象キーの kms:Decrypt を追加し、既存の SQS コンシューマー権限を維持する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "実行ロールに対象キーの kms:Encrypt を追加し、既存の SQS コンシューマー権限を維持する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "実行ロールに対象キーの kms:GenerateDataKey を追加し、既存の SQS コンシューマー権限を維持する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "関数のリソースポリシーで SQS に lambda:InvokeFunction を許可し、実行ロールの権限は変更しない。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "暗号化 SQS を消費する Lambda の実行ロールには kms:Decrypt が必要である。本問では key policy や他のポリシーによる阻害を除外しているため、指定キーの復号権限を補えばよい。",
+    "choiceExplanations": {
+      "A": "正解。指定キーの Decrypt はエラーの原因に対応し、すべてのキーやキー管理操作への権限拡大を避けられる。",
+      "B": "不正解。Encrypt は Decrypt を付与しないため、暗号化メッセージを読めるようにはならない。",
+      "C": "不正解。GenerateDataKey は不足している Decrypt とは異なり、これだけ追加しても復号拒否が残る。",
+      "D": "不正解。Lambda は event source mapping で SQS をポーリングする。関数の呼び出し権限を増やしても KMS の復号拒否は解消しない。"
+    },
+    "practicalNote": "暗号化キューの診断では SQS アクセスと KMS アクセスを分けて確認する。メッセージを受信する権限があっても、暗号化キーを利用する権限があるとは限らない。エラーのアクション、リソース、プリンシパルを確認して不足権限を特定すると、管理者ポリシーを追加するより検証しやすく、最小権限も維持できる。\n\n本問は key policy が IAM 委任を許可していると明記し、キーのポリシー自体が未認可のケースと区別している。実環境ではキーの状態、適用ポリシー、ローテーション中のメッセージ要件も確認する。修正後は実際の暗号化メッセージで受信から削除まで検証し、コンシューマーの復号権限とプロデューサーのデータキー生成権限を混同しない。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — kms",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "kms"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-053",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "hard",
+    "question": "ある IAM ロールは、同一アカウントの SQS 権限をアイデンティティポリシーからのみ取得する。リソースポリシーによる付与、SCP、その他の制限はない。アイデンティティポリシーは ReceiveMessage と DeleteMessage を Allow するが、対象キューの DeleteMessage を Explicit Deny する。permissions boundary は ReceiveMessage、DeleteMessage、SendMessage を Allow する。対象キューでの有効な権限はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "3 操作すべて。アイデンティティポリシーと boundary にある Allow の和集合が有効な権限になる。"
+      },
+      {
+        "choiceId": "B",
+        "text": "ReceiveMessage と DeleteMessage。boundary の Allow がアイデンティティポリシーの Deny を上書きする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ReceiveMessage と SendMessage。boundary がアイデンティティポリシーにない SendMessage を付与する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "ReceiveMessage のみ。DeleteMessage は明示的に拒否され、SendMessage にはアイデンティティポリシーの付与がない。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "本問ではアイデンティティポリシーと boundary の共通部分が有効な Allow となり、明示的 Deny が優先される。Boundary は上限であり、単独では SendMessage を付与しない。",
+    "choiceExplanations": {
+      "A": "不正解。ここで Allow は和集合にならず、明示的 Deny も引き続き優先される。",
+      "B": "不正解。Boundary の Allow は、適用される明示的 Deny を上書きできない。",
+      "C": "不正解。Boundary 自体は権限を付与しないため、そこに SendMessage があるだけでは送信できない。",
+      "D": "正解。ReceiveMessage は双方で許可される。DeleteMessage の明示的拒否は優先され、SendMessage にはアイデンティティポリシーの Allow がない。"
+    },
+    "practicalNote": "IAM の評価では、まずプリンシパル、アクション、リソースに適用されるポリシーを識別し、明示的拒否を確認する。permissions boundary はアイデンティティポリシーが付与できる最大権限を制限するもので、独立した権限の付与元ではない。したがって boundary にアクションを追加しても、それだけでロールが呼び出せるようにはならない。\n\n本問ではリソースポリシーの直接付与や他のポリシー種別を除外し、共通部分と明示的拒否の効果を単独で判断できるようにしている。実際の診断でもこの前提を保持し、すべてのリソースポリシーやロールセッションを同じ式に単純化しない。変更後は必要な操作と禁止すべき操作の両方を検証し、正常系だけの確認で越権を見逃さないようにする。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — iam",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — boundary",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html"
+      }
+    ],
+    "relatedServices": [
+      "iam",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "iam",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-054",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "Lambda が SQS Standard キューから 10 件を一括受信し、9 件は成功、1 件は一時的エラーで失敗した。失敗したメッセージを再試行用に残しつつ、このバッチの失敗で成功した 9 件まで再送されることを避けたい。最適な設定とコードの動作はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "visibility timeout を長くし、1 件でも失敗したら引き続き例外を送出する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "ReportBatchItemFailures を有効にし、個別にエラーを捕捉して失敗 ID だけを列挙する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ReportBatchItemFailures を有効にするが、1 件でも失敗したら引き続き例外を送出する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "ReportBatchItemFailures を無効にし、各メッセージのエラーを捕捉してバッチ成功を示す空の応答を返す。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Partial batch response は mapping の設定と関数の応答の両方が必要である。失敗した ID のみを返すことで、Lambda はそのメッセージを再試行用に残し、今回成功したメッセージを削除できる。",
+    "choiceExplanations": {
+      "A": "不正解。可視性タイムアウトの延長は再び見える時刻を変えるだけで、バッチ例外による成功分の再試行は残る。",
+      "B": "正解。メッセージ単位のエラーを捕捉し batchItemFailures を返すと、再試行が必要なメッセージを識別できる。",
+      "C": "不正解。関数が例外を送出するとバッチ全体が失敗扱いになるため、設定だけでは不十分である。",
+      "D": "不正解。全体成功を返すと失敗分まで処理済みとなり、再試行の機会を保持できない。"
+    },
+    "practicalNote": "Partial batch response は同一バッチ内の成功と失敗を区別する。ReportBatchItemFailures の有効化後も、正しい応答構造を使用し、itemIdentifier には messageId を指定する必要がある。アプリケーション独自の注文番号で代用したり、最後にバッチ全体の例外を送出したりしてはならない。\n\nこの機能で SQS の少なくとも 1 回の配信特性がなくなるわけではなく、業務処理には依然として冪等性が必要である。意図的に 1 件を失敗させ、再試行 ID、削除数、最古メッセージの経過時間を確認する。FIFO では順序を保ち、最初の失敗後の未処理メッセージもドキュメントに従って扱う必要があるが、本問は Standard キューに限定している。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — batch",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-055",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "hard",
+    "question": "SQS Standard は同じ注文の支払いイベントを再配信する可能性がある。Lambda は支払い API 成功後、完了記録を書く前に停止する可能性もある。支払い事業者は同じ業務冪等キーによる安全な再試行を支援し、その保持期間は全再試行期間を含む。二重請求を避け、中断後も復旧できる最適な設計はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "DynamoDB で注文の有無を確認し、なければ支払って、最後に通常の PutItem で完了を記録する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "注文キーで処理状態を条件付き書き込みし、支払いには同じ冪等キーを使い、状態と事業者の結果から復旧する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "支払い前に永続的な完了マーカーを条件付き書き込みし、以後の同じ注文は結果を確認せず常にスキップする。"
+      },
+      {
+        "choiceId": "D",
+        "text": "FIFO に変更して重複排除 ID を設定し、業務処理状態と支払い API の冪等キーを削除する。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "条件付き書き込みで同じ注文の競合処理を制御し、事業者の冪等キーで外部支払い結果の不確実性を扱う。復旧可能な状態管理により、中断後の永久停止や未払いも避けられる。",
+    "choiceExplanations": {
+      "A": "不正解。読み取り後の書き込みには競合があり、支払い成功後に停止すると再試行で再請求する可能性も残る。",
+      "B": "正解。原子的な条件付き書き込み、復旧可能な状態、事業者の冪等性を組み合わせることで、並行処理と支払い後の中断に対応できる。",
+      "C": "不正解。完了記録の後、支払い前に停止すると、以後は永久にスキップされ未払いになる。",
+      "D": "不正解。FIFO の重複排除は外部支払いの業務冪等性を代替せず、支払い後の中断の空白も解消しない。"
+    },
+    "practicalNote": "冪等キーは注文の特定の支払いなど、安定した業務操作から決める。Lambda の呼び出しごとにランダムなキーを生成してはならない。DynamoDB の条件付き書き込みは同じ作業の同時取得を防げるが、データベース書き込みと外部支払い API は 1 つの原子トランザクションではない。重複排除記録だけで支払いが厳密に 1 回と断定することはできない。\n\n処理中と完了を区別し、中断作業にはリースや状態復旧を用意する。同じ事業者冪等キーで結果を確認または再試行し、保存期間は再配信や手動再実行の期間を含める。事業者が必要な保証を提供しない場合は照合や補償も必要になる。本問は事業者の対応と保持期間を明示しているため、この組み合わせを選択できる。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — sqs",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — idem",
+        "url": "https://docs.aws.amazon.com/powertools/python/latest/utilities/idempotency/"
+      },
+      {
+        "label": "AWS 公式ドキュメント — condition",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs",
+      "dynamodb"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-056",
+    "exam": "SAA-C03",
+    "category": "Resilient Architectures",
+    "domain": "Design Resilient Architectures",
+    "difficulty": "normal",
+    "question": "申請プロセスは人による承認を最長 48 時間待ち、承認後は直ちに続行し、期限切れでは是正処理に進む。待機中に Lambda を動かし続けたり、承認データを定期的にポーリングしたりしたくない。どの設計が最適か？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Express workflow の callback task を使用し、task timeout を 48 時間にする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "通常の Lambda を 1 回呼び出し、承認または 48 時間の期限まで実行し続ける。"
+      },
+      {
+        "choiceId": "C",
+        "text": "Standard workflow の callback task を使用し、48 時間の timeout とタイムアウトエラー処理を設定する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "Standard workflow の Wait state で必ず 48 時間待ち、その後は承認済みとみなす。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "Standard workflow は長時間の callback 待機に対応する。承認サービスが token を返すと続行でき、task timeout により承認のなかった申請を明確な是正経路へ進められる。",
+    "choiceExplanations": {
+      "A": "不正解。Express の最大実行時間は 5 分で、waitForTaskToken 統合パターンにも対応しない。",
+      "B": "不正解。通常の Lambda の単一呼び出しは 48 時間実行できず、待機中に実行を続けない要件にも反する。",
+      "C": "正解。Callback によって待機状態を Standard workflow に保持し、timeout で未承認を区別できる。",
+      "D": "不正解。固定 Wait は承認時に早期終了せず、時間切れを承認とみなすこともできない。"
+    },
+    "practicalNote": "人の承認を待つ時間と業務処理を実行する時間は異なる。ワークフローが待機状態を保持し、承認画面やバックエンドがイベント発生時に結果を送ればよい。計算用の関数を動かし続けたり、ボタンが押されたかデータベースを繰り返し調べたりする必要はない。期限切れ時には通知、却下、再申請などの処置を定義する。\n\nワークフロー全体の制限時間には、必要な待機と後続処理を含める。heartbeat も設定する場合は定期的な送信元を確保し、承認者が回答する前に意図せず期限切れにならないようにする。重複承認、期限切れ token、期限後の遅延回答も安全に処理し、閉じた申請が再び進行しない設計にする。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — callback",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-057",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "SQS Standard の単一 event source mapping が標準モード、batch size 1 で Lambda を呼び出す。各 invocation は下流リクエストを最大 1 件だけ同時実行し、その完了を待ってから返る。他の下流呼び出し元はない。下流の上限は同時 20 リクエスト、関数の reserved concurrency は 50、アカウント容量は十分である。キューのバッファを維持しつつ mapping 単位で負荷を直接制限する変更はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "mapping の maximum concurrency を 20 にし、他の設定を維持する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "mapping の batch size を 20 にし、他の並行設定はデフォルトのままにする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "mapping の batching window を 20 秒にし、他の並行設定はデフォルトのままにする。"
+      },
+      {
+        "choiceId": "D",
+        "text": "キューの visibility timeout を 20 秒にし、他の並行設定はデフォルトのままにする。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "Maximum concurrency はこの mapping による同時関数呼び出し数を制限する。1 invocation に未完了の下流リクエストが最大 1 件という条件なので、20 invocation は最大 20 リクエストに対応する。",
+    "choiceExplanations": {
+      "A": "正解。mapping の上限 20 を reserved concurrency 50 が下回らないため、この送信元を制限しつつ余剰をキューに保持できる。",
+      "B": "不正解。Batch size は 1 回の呼び出しに含めるレコード数であり、同時呼び出し数の上限ではない。",
+      "C": "不正解。Batching window はバッチ収集の待機時間であり、並行数の上限ではない。",
+      "D": "不正解。Visibility timeout は受信後のメッセージ非表示期間であり、下流リクエストの並行上限ではない。"
+    },
+    "practicalNote": "下流保護では関数の並行数を実際の下流負荷に換算する必要がある。本問は batch size、各 invocation の同時リクエスト数、完了時点を固定しているため、maximum concurrency から直接上限を導ける。1 回で複数 API を並行呼び出しする場合や、関数が返った後も下流処理が続く場合には同じ単純な推論はできない。\n\nこの設定は event source mapping に作用し、他の送信元やアプリケーションを自動的には制限しない。複数の SQS mapping が関数を共有する場合は、上限の合計と reserved concurrency の関係を確認する。標準モードと provisioned mode では制御方法が異なる。並行数を下げた後も最古メッセージの経過時間と滞留を監視し、処理期限を満たすスループットを確保する。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — scale",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-scaling.html"
+      }
+    ],
+    "relatedServices": [
+      "lambda",
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "lambda",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-058",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "Step Functions の 3 つの Lambda ステップで同じ 2 MiB の JSON 文書を順次処理する。データを切り捨てることはできず、256 KiB 未満にも圧縮できない。どのステップも state データ内で全文を参照する必要はない。最適な設計はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "JSON 全体を Base64 エンコードして各 state の入力と出力に含める。"
+      },
+      {
+        "choiceId": "B",
+        "text": "各 Lambda のメモリを増やし、引き続き JSON 全体を各 state 間で渡す。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ワークフローを Express に変更し、引き続き JSON 全体を各 state 間で渡す。"
+      },
+      {
+        "choiceId": "D",
+        "text": "文書を S3 に保存し、state はオブジェクト参照を渡して Lambda が読み書きする。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "大きなデータを S3 に置いて小さな参照を渡せば、state payload の上限を回避できる。各ステップは必要なメタデータと次の文書参照だけを返す。",
+    "choiceExplanations": {
+      "A": "不正解。Base64 は通常サイズを増やすため、2 MiB の文書を state payload の制限内に縮める方法にはならない。",
+      "B": "不正解。Lambda メモリと Step Functions state payload は別の制限であり、前者を増やしても後者は変わらない。",
+      "C": "不正解。Express にしても、この 2 MiB 文書を state payload として直接渡せるようにはならない。",
+      "D": "正解。全文は S3 に保持し、ワークフローは小さな位置情報を渡すため、後続ステップが全文を state に入れずに取得できる。"
+    },
+    "practicalNote": "大きな文書の保存とフロー制御は分離できる。ワークフローに必要なのは、文書の場所、所属する業務作業、処理の成否などである。内容を使う Lambda が S3 から取得し、出力も小さな参照に保つ。S3 から読んだ全文を関数の結果として返すと、後続 state で同じ payload 問題が再発する。\n\n参照は想定したバージョンを識別できるものにし、同じ key の上書きによって再試行が別の内容を読まないようにする。オブジェクト権限、必要な復号権限、保持期間、失敗後の削除も計画する。関数に任意の bucket を読む権限を与えず、作業に必要なパスへ制限し、入力参照がその作業の認可範囲にあることを検証する。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — large",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/sfn-best-practices.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions",
+      "s3",
+      "lambda"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-059",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "月 1,000 万回のデータ変換フローがあり、1 回約 3 秒で完了する。全ステップは冪等な再試行が可能で、.sync や callback は使わない。負荷試験では Step Functions の両タイプがスループットと可観測性の要件を満たした。同一リージョンの現行料金と実測使用量から、必要なログを含む月額関連費用は Standard が 600 米ドル、非同期 Express が 180 米ドルと見積もられた。要件が変わらない場合、コスト目標に最も合う選択はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "すべての短いフローでは必ず Express より安いため、Standard を維持する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "非同期 Express に変更し、各業務動作が 1 回のみ実行される保証があるため冪等処理を削除する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "非同期 Express に変更して冪等処理を維持し、実際の時間、メモリ、ログに基づきコストを継続検証する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "月 100 万回を超えるフローには Express が対応しないため、Standard を維持する。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "本問では機能と性能の適合性が確認され、同じ範囲で Express のコストが低い。非同期 Express には引き続き冪等性が必要で、この見積もりをすべてのフローへ一般化はできない。",
+    "choiceExplanations": {
+      "A": "不正解。Standard は状態遷移、Express は実行数、時間、メモリなどで課金されるため、短さだけで Standard が必ず安いとはいえない。",
+      "B": "不正解。非同期 Express は少なくとも 1 回の実行モデルであり、冪等性を削除すると重複処理の危険がある。",
+      "C": "正解。機能適合性と同範囲の費用比較が Express を支持し、冪等性とコスト監視の維持が前提を守る。",
+      "D": "不正解。月 100 万回という一律の禁止条件はなく、問題文でもスループットを満たすと確認されている。"
+    },
+    "practicalNote": "タイプ別のコストは同じワークロードと対象範囲で比較する。状態遷移や実行使用量に加え、検索、監査、調査に必要なログと周辺サービスの費用も含める。本問の金額はシナリオ上の見積もりであり、AWS の固定価格ではない。負荷や保持要件が変われば再計算する必要がある。\n\n低コストでも機能要件を満たすことが前提になる。長時間待機、callback、同期サービス統合などによって Express が適さない場合があり、非同期実行では業務効果の重複も扱う必要がある。本問はそれらの条件を明示しているため見積もりに基づいて選べる。「高流量」「短時間」という単語だけで全ケースの最適解を決めてはならない。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — type",
+        "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html"
+      }
+    ],
+    "relatedServices": [
+      "step-functions"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "step-functions"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-060",
+    "exam": "SAA-C03",
+    "category": "Cost-Optimized Architectures",
+    "domain": "Design Cost-Optimized Architectures",
+    "difficulty": "normal",
+    "question": "自作 SQS コンシューマーがメッセージの少ない時間帯にも WaitTimeSeconds 0 で ReceiveMessage を繰り返し、大量の空応答が発生している。空ポーリングを減らしつつ、メッセージ到着時は速やかに取得したい。リクエストは最大 20 秒待機してよい。最適な変更はどれか？",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "WaitTimeSeconds は 0 のまま、visibility timeout を 20 秒にする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "WaitTimeSeconds を 20 にし、HTTP response timeout を 20 秒より長くする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "WaitTimeSeconds は 0 のまま、メッセージの DelaySeconds を 20 秒にする。"
+      },
+      {
+        "choiceId": "D",
+        "text": "WaitTimeSeconds を 20 にし、HTTP response timeout を 1 秒にする。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "Long polling は待機中に利用可能なメッセージを取得し、空応答を減らせる。HTTP response timeout は待機時間より長くし、クライアントが正常な待機を途中で切断しないようにする。",
+    "choiceExplanations": {
+      "A": "不正解。Visibility timeout は受信後の非表示期間であり、ReceiveMessage がメッセージを待つ時間を延ばさない。",
+      "B": "正解。20 秒の long polling は許容待機時間に合い、長い HTTP timeout により正常なポーリングが早期終了しない。",
+      "C": "不正解。DelaySeconds は初回の可視化を遅らせるもので、空ポーリングを改善せず処理を遅延させる。",
+      "D": "不正解。HTTP timeout がポーリング待機より短いため、正常な待機中にもエラーや余計な再試行が起こり得る。"
+    },
+    "practicalNote": "Long polling の 20 秒は最大待機時間であり、すべてのメッセージを必ず 20 秒遅延させるわけではない。メッセージが利用可能になれば早く応答でき、低トラフィック時には即座に空で返る要求を大量に繰り返さずに済む。空受信数と実際の遅延を観測してサービス目標を満たすか確認する。\n\nポーリング待機、HTTP timeout、visibility timeout、メッセージ遅延は別の段階を制御し、代用できない。HTTP 層は待機全体を許容し、可視性タイムアウトは処理と再試行の要件に合わせる。本問は自作コンシューマーであり、Lambda が管理するポーリングの調整ではない。複数キューを処理する場合は、空キューを待つ単一ワーカーが他のキューを塞がない設計も必要になる。",
+    "officialDocs": [
+      {
+        "label": "AWS 公式ドキュメント — poll",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html"
+      },
+      {
+        "label": "AWS 公式ドキュメント — pollsetup",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/best-practices-setting-up-long-polling.html"
+      }
+    ],
+    "relatedServices": [
+      "sqs"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "serverless",
+      "sqs"
+    ],
+    "published": true,
+    "createdAt": "2026-11-09",
+    "updatedAt": "2026-11-09"
+  },
+  {
+    "questionId": "saa-061",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "同じ AWS リージョンにある 2 つの AWS アカウントが、それぞれ 10.20.0.0/16 の VPC を使用しています。利用側のアプリケーションは、提供側の NLB の背後にある注文照会 API だけを呼び出します。どちらの VPC のアドレスも変更せず、パブリックインターネットも使わず、利用側に提供側の他のリソースへのネットワークルートを与えない設計はどれですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "VPC ピアリング接続を作成し、提供側の NLB が配置されたサブネットへのルートだけを追加する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "両 VPC を同じ Transit Gateway に接続し、提供側の NLB が配置されたサブネットへのルートだけを伝播する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "利用側 VPC にプライベート NAT Gateway を作成し、VPC ピアリング経由で提供側の NLB に接続する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "提供側の NLB を使って PrivateLink エンドポイントサービスを作成し、利用側にインターフェイスエンドポイントの作成を許可して、そこから API を呼び出す。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "PrivateLink は利用側 VPC 内のインターフェイスエンドポイントから提供側のサービスに接続します。CIDR が重複していても、VPC 間の汎用的なルートを作らずに利用できます。",
+    "choiceExplanations": {
+      "A": "VPC ピアリングは CIDR が重複する VPC 間では作成できません。追加するルートを絞っても、この制約は変わりません。",
+      "B": "Transit Gateway は、CIDR が重複する VPC のルートを伝播しません。この案にはアドレス変換もありません。",
+      "C": "プライベート NAT Gateway はアドレスを変換できますが、この案は作成できない VPC ピアリング接続に依存しています。",
+      "D": "正解。PrivateLink は利用側 VPC 内のインターフェイスエンドポイントから提供側のサービスに接続します。CIDR が重複していても、VPC 間の汎用的なルートを作らずに利用できます。"
+    },
+    "practicalNote": "PrivateLink は利用側 VPC 内のインターフェイスエンドポイントから提供側のサービスに接続します。CIDR が重複していても、VPC 間の汎用的なルートを作らずに利用できます。 コンシューマー側の接続テストに加え、サービス提供側で許可するプリンシパルとコンシューマー側のセキュリティグループを確認します。プライベート接続そのものが利用者の認可を代替するわけではありません。\n\nVPC ピアリングは CIDR が重複する VPC 間では作成できません。追加するルートを絞っても、この制約は変わりません。 Transit Gateway は、CIDR が重複する VPC のルートを伝播しません。この案にはアドレス変換もありません。 プライベート NAT Gateway はアドレスを変換できますが、この案は作成できない VPC ピアリング接続に依存しています。",
+    "officialDocs": [
+      {
+        "label": "PrivateLink エンドポイントサービス",
+        "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html"
+      },
+      {
+        "label": "PrivateLink と重複 CIDR",
+        "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html"
+      },
+      {
+        "label": "VPC ピアリングの制限",
+        "url": "https://docs.aws.amazon.com/vpc/latest/peering/invalid-peering-configurations.html"
+      },
+      {
+        "label": "Transit Gateway の VPC 接続制限",
+        "url": "https://docs.aws.amazon.com/vpc/latest/tgw/tgw-vpc-attachments.html"
+      }
+    ],
+    "relatedServices": [
+      "vpc",
+      "elb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "privatelink",
+      "overlapping-cidr"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-062",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "企業は稼働中の AWS Site-to-Site VPN を利用しており、オンプレミスのアプリケーションはプライベート IP を指定すれば AWS 上のサービスに接続できます。オンプレミスの端末で既存の DNS サーバーを引き続き使いながら、Route 53 のプライベートホストゾーン apps.example.com のレコードを引けるようにしたいと考えています。このゾーンは VPN で到達できる VPC に関連付け済みで、レコードを公開してはなりません。どの方法で名前解決できますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "VPC に Resolver のアウトバウンドエンドポイントを作成し、apps.example.com のクエリをオンプレミス DNS に転送する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "関連付け先の VPC に Resolver のインバウンドエンドポイントを作成し、オンプレミス DNS から対象ドメインのクエリをエンドポイントの IP に条件付き転送する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "オンプレミス DNS から対象ドメインのクエリを VPC の CIDR ブロックの先頭アドレスに 2 を加えた IP に条件付き転送する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "同じレコードを Route 53 のパブリックホストゾーンに登録し、オンプレミス DNS で通常どおり名前解決する。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "既存 VPN 経由でインバウンドエンドポイントのプライベート IP にクエリを転送すると、Resolver が関連付け済みのプライベートホストゾーンを解決します。エンドポイントのセキュリティグループでは、オンプレミス DNS からの TCP と UDP の 53 番ポートを許可します。",
+    "choiceExplanations": {
+      "A": "アウトバウンドエンドポイントは、VPC から外部の DNS にクエリを送るためのものです。今回のクエリはオンプレミスから AWS に入るため、向きが逆です。",
+      "B": "正解。既存 VPN 経由でインバウンドエンドポイントのプライベート IP にクエリを転送すると、Resolver が関連付け済みのプライベートホストゾーンを解決します。エンドポイントのセキュリティグループでは、オンプレミス DNS からの TCP と UDP の 53 番ポートを許可します。",
+      "C": "VPN 経由であっても、オンプレミスから VPC の CIDR 先頭アドレス + 2 の Resolver に直接クエリを転送する構成はサポートされません。",
+      "D": "パブリックホストゾーンのレコードは、指している先がプライベート IP であっても公開されます。"
+    },
+    "practicalNote": "既存 VPN 経由でインバウンドエンドポイントのプライベート IP にクエリを転送すると、Resolver が関連付け済みのプライベートホストゾーンを解決します。エンドポイントのセキュリティグループでは、オンプレミス DNS からの TCP と UDP の 53 番ポートを許可します。 オンプレミス側の DNS から対象のプライベート名を解決して確認します。DNS の応答が正しくてもアプリケーションの到達性は別なので、ルートとセキュリティ設定を確認します。\n\nアウトバウンドエンドポイントは、VPC から外部の DNS にクエリを送るためのものです。今回のクエリはオンプレミスから AWS に入るため、向きが逆です。 VPN 経由であっても、オンプレミスから VPC の CIDR 先頭アドレス + 2 の Resolver に直接クエリを転送する構成はサポートされません。 パブリックホストゾーンのレコードは、指している先がプライベート IP であっても公開されます。",
+    "officialDocs": [
+      {
+        "label": "ハイブリッド DNS の名前解決",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-overview-DSN-queries-to-vpc.html"
+      },
+      {
+        "label": "インバウンド DNS クエリの転送",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html"
+      }
+    ],
+    "relatedServices": [
+      "route53",
+      "vpc"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "hybrid-dns",
+      "resolver"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-063",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "注文処理用の Lambda 関数は Amazon RDS for MySQL に対して、書き込みを含む短時間のトランザクションを実行します。セール時は多数の実行環境が同時に接続を作成し、CPU とストレージ I/O には余裕があるのに接続数が上限に達します。接続数の上限を増やさず、Lambda の同時実行数を減らして処理量も落としたくありません。どの方法が最も直接的に問題を解決しますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Lambda の接続先を RDS Proxy に変更し、短時間のトランザクションでバックエンド接続を共有する。セッションのピン留めが多発していないかも監視する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "Lambda の実行環境ごとに個別の接続プールを作成し、いずれの実行環境も RDS の書き込みエンドポイントに直接接続する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "RDS のリードレプリカを追加し、短時間のトランザクションをプライマリと各レプリカに均等に振り分けて接続を分散する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "RDS のマルチ AZ DB インスタンス配置を有効にし、既存のエンドポイントでトランザクションをプライマリとスタンバイに分散する。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "RDS Proxy はバックエンド接続をプールします。ピン留めされていない接続はトランザクションの終了後に別のクライアントで再利用できます。セッション状態によりピン留めが発生すると再利用の効果が下がるため、実際の負荷で監視します。",
+    "choiceExplanations": {
+      "A": "正解。RDS Proxy はバックエンド接続をプールします。ピン留めされていない接続はトランザクションの終了後に別のクライアントで再利用できます。セッション状態によりピン留めが発生すると再利用の効果が下がるため、実際の負荷で監視します。",
+      "B": "プールは実行環境ごとに独立しています。同じ実行環境内で再利用できても、負荷のピーク時に異なる実行環境でバックエンド接続を共有できません。",
+      "C": "リードレプリカは独立した読み取り処理を分担できますが、今回の書き込みを含むトランザクションは受け付けられません。",
+      "D": "マルチ AZ DB インスタンス配置のスタンバイはフェイルオーバー用であり、アプリケーションの読み書きを分担しません。"
+    },
+    "practicalNote": "RDS Proxy はバックエンド接続をプールします。ピン留めされていない接続はトランザクションの終了後に別のクライアントで再利用できます。セッション状態によりピン留めが発生すると再利用の効果が下がるため、実際の負荷で監視します。 導入後は本番に近い負荷で、バックエンド接続数とピン留めの状況を観測します。接続管理を改善しても、CPU やストレージの負荷を解消したり、待ち時間がなくなったりするわけではありません。\n\nプールは実行環境ごとに独立しています。同じ実行環境内で再利用できても、負荷のピーク時に異なる実行環境でバックエンド接続を共有できません。 リードレプリカは独立した読み取り処理を分担できますが、今回の書き込みを含むトランザクションは受け付けられません。 マルチ AZ DB インスタンス配置のスタンバイはフェイルオーバー用であり、アプリケーションの読み書きを分担しません。",
+    "officialDocs": [
+      {
+        "label": "RDS Proxy の接続に関する考慮事項",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-connections.html"
+      },
+      {
+        "label": "RDS Proxy のピン留めの回避",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-pinning.html"
+      },
+      {
+        "label": "RDS マルチ AZ 配置",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html"
+      }
+    ],
+    "relatedServices": [
+      "rds",
+      "lambda"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "rds-proxy",
+      "connection-pooling"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-064",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "設計会社はオンプレミスの NAS の NFS 共有に保存されているファイルを Amazon S3 にアーカイブしたいと考えています。初回に全件を移し、切り替えまでは追加・変更されたファイルを毎日転送する必要があります。既存のアプリケーションは引き続き元の NFS 共有に書き込み、独自の差分確認・転送スクリプトは保守せず、転送と検証の結果を確認したいと考えています。どの方法が要件を満たしますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "S3 File Gateway をデプロイし、S3 を使う新しい NFS 共有を作成する。アプリケーションは元の NAS に書き込み続け、ゲートウェイによる自動アーカイブを待つ。"
+      },
+      {
+        "choiceId": "B",
+        "text": "S3 Replication を有効化し、オンプレミスの既存 NFS 共有をソースに指定して、アーカイブ先の S3 バケットに複製する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "オンプレミスの NFS 共有を読み取れる DataSync エージェントをデプロイし、ソースを NFS、転送先を S3 に設定する。タスクをスケジュールし、レポートを確認する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "S3 をストレージに使う AWS Transfer Family の SFTP サーバーを作成し、元の NFS 共有から定期的にファイルを取り込ませる。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "DataSync はオンプレミスの NFS から S3 への転送、タスクの定期実行、変更分だけの転送、転送と検証の結果の確認に対応します。既存の書き込み先を変える必要はありません。",
+    "choiceExplanations": {
+      "A": "File Gateway は自身が提供する共有に書き込まれたファイルを処理します。元の NAS の既存ファイルや変更を自動でスキャンして転送するわけではありません。",
+      "B": "S3 Replication は S3 バケットのオブジェクトを複製します。オンプレミスの NFS 共有を直接ソースにできません。",
+      "C": "正解。DataSync はオンプレミスの NFS から S3 への転送、タスクの定期実行、変更分だけの転送、転送と検証の結果の確認に対応します。既存の書き込み先を変える必要はありません。",
+      "D": "SFTP サーバーはクライアントからのアップロードを受け付けますが、オンプレミスの NFS 共有から自動でファイルを取得し、差分を確認して定期転送するわけではありません。"
+    },
+    "practicalNote": "DataSync はオンプレミスの NFS から S3 への転送、タスクの定期実行、変更分だけの転送、転送と検証の結果の確認に対応します。既存の書き込み先を変える必要はありません。 最初に少量で試し、タスクレポートと検証結果を確認します。切り替え時は旧共有の更新が取り込まれたかを別途確かめ、転送タスクの成功と切り替えの成功を区別します。\n\nFile Gateway は自身が提供する共有に書き込まれたファイルを処理します。元の NAS の既存ファイルや変更を自動でスキャンして転送するわけではありません。 S3 Replication は S3 バケットのオブジェクトを複製します。オンプレミスの NFS 共有を直接ソースにできません。 SFTP サーバーはクライアントからのアップロードを受け付けますが、オンプレミスの NFS 共有から自動でファイルを取得し、差分を確認して定期転送するわけではありません。",
+    "officialDocs": [
+      {
+        "label": "DataSync の NFS ロケーション",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html"
+      },
+      {
+        "label": "DataSync のタスクと検証オプション",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/configure-metadata.html"
+      },
+      {
+        "label": "DataSync タスクのスケジュール",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/task-scheduling.html"
+      },
+      {
+        "label": "DataSync のタスクレポート",
+        "url": "https://docs.aws.amazon.com/datasync/latest/userguide/creating-task-report.html"
+      }
+    ],
+    "relatedServices": [
+      "datasync",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "nfs",
+      "migration"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-065",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "企業は社内の Windows アプリケーションの共有フォルダを AWS に移行します。アプリケーションはネイティブの SMB でしかファイルにアクセスできません。利用者には既存の Microsoft Active Directory アカウントを使わせ、Windows のファイルやフォルダに設定した NTFS アクセス制御を維持します。自社でファイルサーバーを運用せず、マネージドな Windows ファイルシステムを利用するには、どの方法が適切ですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "Amazon EFS ファイルシステムを作成し、アプリケーションから共有ディレクトリを直接マウントする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "Amazon FSx for Windows File Server を作成し、既存の AD ドメインに参加させる。"
+      },
+      {
+        "choiceId": "C",
+        "text": "Amazon FSx for Lustre を作成し、クライアントから共有ファイルに直接アクセスさせる。"
+      },
+      {
+        "choiceId": "D",
+        "text": "Amazon S3 File Gateway を作成し、クライアントから SMB 経由でオブジェクトにアクセスさせる。"
+      }
+    ],
+    "correctChoiceId": "B",
+    "explanation": "FSx for Windows File Server は AWS が Windows ファイルサーバーを管理し、ネイティブの SMB、AD 連携、Windows のアクセス制御をサポートします。",
+    "choiceExplanations": {
+      "A": "Amazon EFS が提供するファイルアクセスは NFS であり、要件にあるネイティブの Windows SMB ではありません。",
+      "B": "正解。FSx for Windows File Server は AWS が Windows ファイルサーバーを管理し、ネイティブの SMB、AD 連携、Windows のアクセス制御をサポートします。",
+      "C": "FSx for Lustre が提供するのは Lustre ファイルシステムであり、要件どおりのネイティブ SMB 共有ではありません。",
+      "D": "S3 File Gateway は SMB 共有と AD 認証をサポートしますが、バックエンドは S3 オブジェクトストレージであり、要件にあるマネージドな Windows ファイルシステムではありません。"
+    },
+    "practicalNote": "FSx for Windows File Server は AWS が Windows ファイルサーバーを管理し、ネイティブの SMB、AD 連携、Windows のアクセス制御をサポートします。 ドメインとファイルシステム間の通信や名前解決を確認し、テストユーザーでファイルの権限を検証します。ドメインへの参加だけでは移行後の個別の権限が正しいと分かりません。\n\nAmazon EFS が提供するファイルアクセスは NFS であり、要件にあるネイティブの Windows SMB ではありません。 FSx for Lustre が提供するのは Lustre ファイルシステムであり、要件どおりのネイティブ SMB 共有ではありません。 S3 File Gateway は SMB 共有と AD 認証をサポートしますが、バックエンドは S3 オブジェクトストレージであり、要件にあるマネージドな Windows ファイルシステムではありません。",
+    "officialDocs": [
+      {
+        "label": "FSx for Windows File Server",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html"
+      },
+      {
+        "label": "FSx と Active Directory",
+        "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/aws-ad-integration-fsxW.html"
+      },
+      {
+        "label": "S3 File Gateway",
+        "url": "https://docs.aws.amazon.com/filegateway/latest/files3/what-is-file-s3.html"
+      }
+    ],
+    "relatedServices": [
+      "fsx"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "smb",
+      "active-directory"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-066",
+    "exam": "SAA-C03",
+    "category": "Secure Architectures",
+    "domain": "Design Secure Architectures",
+    "difficulty": "normal",
+    "question": "企業は監査記録を S3 バージョニングと S3 Object Lock が有効な汎用バケットに保存しています。対象となる各オブジェクトバージョンに有効期限の決まった保持期間を設定し、期限までは AWS アカウントのルートユーザーでも期間を短縮したり、そのバージョンを完全に削除したりできないようにします。期限が過ぎた後は、別の無期限ロックによって削除が妨げられてはなりません。どの方法が要件を満たしますか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "対象のオブジェクトバージョンにガバナンスモードと固定の保持期限を設定する。"
+      },
+      {
+        "choiceId": "B",
+        "text": "対象のオブジェクトバージョンにリーガルホールドを適用し、解除予定日を記録する。"
+      },
+      {
+        "choiceId": "C",
+        "text": "監査記録にタグを付け、ライフサイクルルールで期限切れ処理を設定する。"
+      },
+      {
+        "choiceId": "D",
+        "text": "対象のオブジェクトバージョンにコンプライアンスモードと固定の保持期限を設定する。"
+      }
+    ],
+    "correctChoiceId": "D",
+    "explanation": "コンプライアンスモードでは、期限が設定された対象バージョンが保護されます。期限まではルートユーザーでも期間を短縮したり完全に削除したりできません。同じオブジェクトキーに新しいバージョンを作ることはできます。",
+    "choiceExplanations": {
+      "A": "ガバナンスモードでは、保持設定をバイパスする権限を持つプリンシパルは、所定の方法で期間を短縮したり対象バージョンを削除したりできます。",
+      "B": "リーガルホールド自体には有効期限がなく、権限を持つプリンシパルが解除できます。別途解除日を管理しても、短縮できない保持期限にはなりません。",
+      "C": "ライフサイクルルールは期限切れ処理を設定できますが、期限まで特定のバージョンにバイパスできない保持設定を適用するものではありません。",
+      "D": "正解。コンプライアンスモードでは、期限が設定された対象バージョンが保護されます。期限まではルートユーザーでも期間を短縮したり完全に削除したりできません。同じオブジェクトキーに新しいバージョンを作ることはできます。"
+    },
+    "practicalNote": "コンプライアンスモードでは、期限が設定された対象バージョンが保護されます。期限まではルートユーザーでも期間を短縮したり完全に削除したりできません。同じオブジェクトキーに新しいバージョンを作ることはできます。 保護対象のバージョンと必要な保持期間を事前に確認します。期限を迎えても自動的に削除されるわけではなく、ライフサイクル設定や削除操作の権限は別に管理します。\n\nガバナンスモードでは、保持設定をバイパスする権限を持つプリンシパルは、所定の方法で期間を短縮したり対象バージョンを削除したりできます。 リーガルホールド自体には有効期限がなく、権限を持つプリンシパルが解除できます。別途解除日を管理しても、短縮できない保持期限にはなりません。 ライフサイクルルールは期限切れ処理を設定できますが、期限まで特定のバージョンにバイパスできない保持設定を適用するものではありません。",
+    "officialDocs": [
+      {
+        "label": "S3 Object Lock の保持モード",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html"
+      }
+    ],
+    "relatedServices": [
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "object-lock",
+      "versioning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-067",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "hard",
+    "question": "EC サイトは Amazon DynamoDB に注文ごとに 1 項目を保存しており、注文番号はサイト全体で一意です。サポート担当者が知っているのは注文番号だけです。セカンダリインデックスを使わず、別の値を事前に調べることもなく、ベーステーブルへの 1 回の GetItem で対象項目を正確に取得する必要があります。セールのピーク時は多数の異なる注文に独立して書き込みが発生し、1 件の注文に大量の書き込みが続くことはありません。一方、販売者、日付、注文ステータスには偏りが生じることがあります。どのプライマリキー設計が最も適切ですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "販売者 ID をパーティションキー、注文番号をソートキーにする。"
+      },
+      {
+        "choiceId": "B",
+        "text": "注文日をパーティションキー、注文番号をソートキーにする。"
+      },
+      {
+        "choiceId": "C",
+        "text": "注文番号をパーティションキーとし、ソートキーは設けない。"
+      },
+      {
+        "choiceId": "D",
+        "text": "注文ステータスをパーティションキー、注文番号をソートキーにする。"
+      }
+    ],
+    "correctChoiceId": "C",
+    "explanation": "注文番号だけで項目を一意に指定できるため、そのまま GetItem のキーにできます。このケースでは書き込みも多数の異なる注文番号に分散し、単一のホットキーには集中しません。",
+    "choiceExplanations": {
+      "A": "GetItem には複合プライマリキーの両方の値が必要ですが、担当者は販売者 ID を知りません。少数の販売者に書き込みが偏れば、ホットパーティションも発生し得ます。",
+      "B": "注文番号だけでは複合プライマリキーがそろいません。同じ日の注文は少数の日付キーに集中し得ます。",
+      "C": "正解。注文番号だけで項目を一意に指定できるため、そのまま GetItem のキーにできます。このケースでは書き込みも多数の異なる注文番号に分散し、単一のホットキーには集中しません。",
+      "D": "担当者は注文ステータスを知らず、ステータスの種類も少数です。ソートキーを追加しても、少数のパーティションキー値に書き込みが集中し得ます。"
+    },
+    "practicalNote": "注文番号だけで項目を一意に指定できるため、そのまま GetItem のキーにできます。このケースでは書き込みも多数の異なる注文番号に分散し、単一のホットキーには集中しません。 まずアクセスパターンを確認し、参照時に分かる注文 ID をキーにします。キーの種類が多くても将来特定の注文にアクセスが集中する可能性があるため、本番の負荷分布を監視します。\n\nGetItem には複合プライマリキーの両方の値が必要ですが、担当者は販売者 ID を知りません。少数の販売者に書き込みが偏れば、ホットパーティションも発生し得ます。 注文番号だけでは複合プライマリキーがそろいません。同じ日の注文は少数の日付キーに集中し得ます。 担当者は注文ステータスを知らず、ステータスの種類も少数です。ソートキーを追加しても、少数のパーティションキー値に書き込みが集中し得ます。",
+    "officialDocs": [
+      {
+        "label": "DynamoDB の分散を考慮したキー設計",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-uniform-load.html"
+      },
+      {
+        "label": "DynamoDB GetItem のキー指定",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html"
+      }
+    ],
+    "relatedServices": [
+      "dynamodb"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partition-key",
+      "getitem"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
+  },
+  {
+    "questionId": "saa-068",
+    "exam": "SAA-C03",
+    "category": "High-Performing Architectures",
+    "domain": "Design High-Performing Architectures",
+    "difficulty": "normal",
+    "question": "分析チームは Amazon Athena で Amazon S3 のアクセスログをクエリしています。ログは毎日届き、一般的なクエリでは特定の UTC 日付の全件を集計します。対象の日付は受信日ではなく、各ログレコードのタイムスタンプで決まります。既存の外部テーブルは Hive 形式でパーティション分割されておらず、今後も同じテーブル形式と Athena を使用します。クエリで他の日付のデータをスキャンしないためには、どの変更が最も適切ですか。",
+    "choices": [
+      {
+        "choiceId": "A",
+        "text": "各レコードのイベント時刻の UTC 日付で日ごとのパーティションを作成して登録し、WHERE 句で日付のパーティション列を絞り込む。"
+      },
+      {
+        "choiceId": "B",
+        "text": "UTC 年で年ごとのパーティションを作成し、クエリでは各レコードのタイムスタンプだけを絞り込む。"
+      },
+      {
+        "choiceId": "C",
+        "text": "ログを生成したアプリケーションでパーティションを作成し、クエリでは各レコードのタイムスタンプだけを絞り込む。"
+      },
+      {
+        "choiceId": "D",
+        "text": "パーティションのないテーブルを維持し、タイムスタンプで絞り込んだ後、LIMIT で返される行数を制限する。"
+      }
+    ],
+    "correctChoiceId": "A",
+    "explanation": "日付ごとのパーティションをテーブルに登録し、パーティション列を直接絞り込むと、Athena は他の日付のパーティションをスキャン対象から除外できます。この設問は UTC 日付と配置が一致する一日全体を対象とします。時間単位などの短い範囲ではイベントのタイムスタンプでも絞り込みます。",
+    "choiceExplanations": {
+      "A": "正解。日付ごとのパーティションをテーブルに登録し、パーティション列を直接絞り込むと、Athena は他の日付のパーティションをスキャン対象から除外できます。この設問は UTC 日付と配置が一致する一日全体を対象とします。時間単位などの短い範囲ではイベントのタイムスタンプでも絞り込みます。",
+      "B": "年単位のパーティションでは特定の 1 日だけを切り出せません。Hive 形式ではタイムスタンプ列だけを絞り込んでも、年のパーティション列は指定されません。",
+      "C": "アプリケーションで分けても、クエリの条件は日付です。日付で他の日のパーティションをスキャン対象から外せる構成ではありません。",
+      "D": "LIMIT は結果行数を制限するもので、スキャン対象の日付パーティションを指定しません。その日の全件を集計するためのスキャン量を減らす方法にはなりません。"
+    },
+    "practicalNote": "日付ごとのパーティションをテーブルに登録し、パーティション列を直接絞り込むと、Athena は他の日付のパーティションをスキャン対象から除外できます。この設問は UTC 日付と配置が一致する一日全体を対象とします。時間単位などの短い範囲ではイベントのタイムスタンプでも絞り込みます。 S3 のパスと日付をそろえ、テーブルから新しいパーティションを参照できるようにします。返却行数ではなくスキャン量を測り、この Hive の例を Iceberg の隠しパーティションと混同しません。\n\n年単位のパーティションでは特定の 1 日だけを切り出せません。Hive 形式ではタイムスタンプ列だけを絞り込んでも、年のパーティション列は指定されません。 アプリケーションで分けても、クエリの条件は日付です。日付で他の日のパーティションをスキャン対象から外せる構成ではありません。 LIMIT は結果行数を制限するもので、スキャン対象の日付パーティションを指定しません。その日の全件を集計するためのスキャン量を減らす方法にはなりません。",
+    "officialDocs": [
+      {
+        "label": "Amazon Athena のデータパーティション",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/partitions.html"
+      },
+      {
+        "label": "Athena のタイムスタンプとパーティション",
+        "url": "https://docs.aws.amazon.com/athena/latest/ug/data-types-timestamps.html"
+      }
+    ],
+    "relatedServices": [
+      "athena",
+      "s3"
+    ],
+    "relatedTerms": [],
+    "relatedComparisons": [],
+    "tags": [
+      "partitioning",
+      "query-pruning"
+    ],
+    "published": true,
+    "createdAt": "2026-11-20",
+    "updatedAt": "2026-11-20"
   }
 ]

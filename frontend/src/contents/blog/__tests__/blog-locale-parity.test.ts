@@ -1,36 +1,25 @@
 /**
- * blog-locale-parity.test.ts
+ * Scaffold-aware invariant tests for design P5-050 section 6. Keep
+ * frontend/contents/blog/{ja,en,zh}/<slug>.mdx synchronized with the src/contents/blog/blogPosts.ts
+ * registry, detecting missing translations, slug drift, metadata inconsistency and missing MDX.
  *
- * 設計書 P5-050 §6 の invariant test (scaffold 対応).
+ * Invariants:
+ * R. Registry slugs equal Japanese MDX slugs (always checked).
+ * 1. All three locale slug sets match when en/zh are nonempty.
+ * 2. postId matches across locales per slug.
+ * 3. Shared publishedAt/updatedAt metadata matches; localized display fields are excluded (see
+ * assertions below).
+ * 4. Every localized MDX file exists.
+ * 5. Required frontmatter fields are present and nonempty.
+ * 6. Leading H1 equals the frontmatter title or is its prefix.
  *
- * `frontend/contents/blog/{ja,en,zh}/<slug>.mdx` と `src/contents/blog/blogPosts.ts`
- * registry が、翻訳追加忘れ・slug ズレ・メタデータ不整合・MDX 消失なしに 3 言語
- * 完全並列で維持されていることを構造的に担保する。
- *
- * 検証 invariant:
- *  (R) registry の slug 集合 = ja MDX の slug 集合 (常時発火 / 25 件)
- *  (1) ja/en/zh MDX の slug 集合が完全一致 (en/zh が空でないときのみ)
- *  (2) 同 slug で postId が ja/en/zh 一致
- *  (3) 同 slug で publishedAt/updatedAt/category/published が ja/en/zh 一致
- *      (title / description / tags / targetKeywords は翻訳対象のため除外)
- *  (4) 全 slug について {ja,en,zh}/<slug>.mdx が fs.existsSync = true
- *  (5) 各 MDX の frontmatter に必須フィールドが存在 (非空)
- *  (6) MDX 先頭 H1 が frontmatter title と一致 or title.startsWith(h1Text)
- *
- * scaffold モード (en/zh いずれかが空配列) は将来 locale 追加直後の中間状態
- * (翻訳追加前) を build 落ちさせない安全弁として残置. (R) と ja 単独 invariant は
- * scaffold モードでも常時発火させる.
+ * Required locales are never skipped; historical identity and approved growth are checked by article-inventory.test.ts.
  */
 import fs from "node:fs";
 import path from "node:path";
 
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import {
-  getBlogPostBySlug,
-  getBlogStaticParams,
-  getPublishedBlogPosts,
-} from "@/app/(site)/blog/blog-detail-data";
 import { blogPosts } from "../blogPosts";
 
 const FRONTEND_ROOT = path.resolve(__dirname, "../../../../");
@@ -161,91 +150,12 @@ const zhSlugs = listSlugs("zh");
 
 const registrySlugs = blogPosts.map((post) => post.slug).sort();
 
-const isScaffoldMode = enSlugs.length === 0 || zhSlugs.length === 0;
 
 describe("blog locale parity", () => {
-  it("locale published=false is enforced even when no fixture currently uses it", async () => {
-    const target = blogPosts.find((post) => post.published);
-    expect(target, "published registry fixture is required").toBeDefined();
-    const slug = target!.slug;
-
-    vi.resetModules();
-    vi.doMock("@/app/(site)/blog/blog-content-loader", async () => {
-      const actual = await vi.importActual<
-        typeof import("@/app/(site)/blog/blog-content-loader")
-      >("@/app/(site)/blog/blog-content-loader");
-
-      return {
-        ...actual,
-        loadBlogContent: (locale: "ja" | "en" | "zh", postSlug: string) => {
-          const loaded = actual.loadBlogContent(locale, postSlug);
-          if (locale !== "en" || postSlug !== slug || !loaded) return loaded;
-          return {
-            ...loaded,
-            frontmatter: { ...loaded.frontmatter, published: false },
-          };
-        },
-      };
-    });
-
-    try {
-      const {
-        getBlogPostBySlug: getPost,
-        getBlogStaticParams: getParams,
-        getPublishedBlogPosts: getPosts,
-      } = await import("@/app/(site)/blog/blog-detail-data");
-
-      expect(getPosts("en").some((post) => post.slug === slug)).toBe(false);
-      expect(getParams("en").some((param) => param.postSlug === slug)).toBe(
-        false,
-      );
-      expect(getPost("en", slug)).toBeNull();
-
-      for (const locale of ["ja", "zh"] as const) {
-        expect(getPosts(locale).some((post) => post.slug === slug)).toBe(true);
-        expect(
-          getParams(locale).some((param) => param.postSlug === slug),
-        ).toBe(true);
-        expect(getPost(locale, slug)).not.toBeNull();
-      }
-    } finally {
-      vi.doUnmock("@/app/(site)/blog/blog-content-loader");
-      vi.resetModules();
-    }
-  });
-
-  it("locale frontmatter published=false excludes only that locale from public blog routes", () => {
-    for (const locale of ["ja", "en", "zh"] as const) {
-      const publishedSlugs = new Set(
-        getPublishedBlogPosts(locale).map((post) => post.slug),
-      );
-      const staticSlugs = new Set(
-        getBlogStaticParams(locale).map((param) => param.postSlug),
-      );
-
-      for (const post of blogPosts) {
-        const frontmatter = loadFrontmatterAndBody(locale, post.slug)?.fm;
-        const shouldBePublished =
-          post.published && frontmatter?.published !== false;
-
-        expect(publishedSlugs.has(post.slug), `${locale}/${post.slug}`).toBe(
-          shouldBePublished,
-        );
-        expect(staticSlugs.has(post.slug), `${locale}/${post.slug}`).toBe(
-          shouldBePublished,
-        );
-        expect(
-          getBlogPostBySlug(locale, post.slug) !== null,
-          `${locale}/${post.slug}`,
-        ).toBe(shouldBePublished);
-      }
-    }
-  });
-
-  it("(R) registry slug set equals ja MDX slug set (25 entries)", () => {
+  it("(R) registry slug set equals ja MDX slug set without duplicates", () => {
     expect(new Set(registrySlugs)).toEqual(new Set(jaSlugs));
-    expect(registrySlugs.length).toBe(25);
-    expect(jaSlugs.length).toBe(25);
+    expect(registrySlugs.length).toBe(new Set(registrySlugs).size);
+    expect(jaSlugs.length).toBeGreaterThan(0);
   });
 
   it("(scaffold) every ja MDX file exists and parses with frontmatter", () => {
@@ -306,7 +216,7 @@ describe("blog locale parity", () => {
     }
   });
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(1) ja/en/zh MDX have the same slug set",
     () => {
       expect(new Set(enSlugs)).toEqual(new Set(jaSlugs));
@@ -314,7 +224,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(2) postId is identical across ja/en/zh per slug",
     () => {
       for (const slug of jaSlugs) {
@@ -330,12 +240,12 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(3) shared metadata fields (publishedAt/updatedAt) are identical across ja/en/zh per slug",
     () => {
-      // published は locale ごとの公開制御に使うため、locale 間で一致させない。
-      // category は ja="AWSサービス解説" / en="AWS Services" / zh="AWS 服務解說" のように
-      // locale 別に翻訳されるため、title/description/tags と同様に除外する。
+      // Publication is locale-specific; blog-publication.test.ts covers visibility behavior.
+      // Category labels are translated per locale (for example, AWS Services in English),
+      // so exclude them just like title, description and tags.
       const SHARED_FIELDS: Array<keyof ParsedFrontmatter> = [
         "publishedAt",
         "updatedAt",
@@ -363,7 +273,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(4) every {ja,en,zh}/<slug>.mdx exists on disk",
     () => {
       for (const slug of jaSlugs) {
@@ -378,7 +288,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(5) every {ja,en,zh} MDX frontmatter has required non-empty fields",
     () => {
       const required: Array<keyof ParsedFrontmatter> = [
@@ -415,7 +325,7 @@ describe("blog locale parity", () => {
     },
   );
 
-  it.skipIf(isScaffoldMode)(
+  it(
     "(6) MDX H1 matches frontmatter title in every locale",
     () => {
       for (const slug of jaSlugs) {

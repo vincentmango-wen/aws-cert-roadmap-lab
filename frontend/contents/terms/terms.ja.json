@@ -1347,9 +1347,7 @@
       "ebs",
       "vpc"
     ],
-    "comparisonSlugs": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "comparisonSlugs": [],
     "architectureSlugs": [
       "three-tier-vpc",
       "high-availability-web-app"
@@ -1489,9 +1487,7 @@
       "cloudwatch",
       "iam"
     ],
-    "comparisonSlugs": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "comparisonSlugs": [],
     "architectureSlugs": [
       "ecs-fargate-web-app"
     ],
@@ -1915,9 +1911,9 @@
       "タスクロールと実行ロールを分ける",
       "コンテナイメージに秘密情報を含めない"
     ],
-    "updatedAt": "2026-06-07",
+    "updatedAt": "2026-11-21",
     "locale": "ja",
-    "practicalNote": "AWS Fargate は、Amazon ECS および Amazon EKS でコンテナを実行する際の「サーバーレス」\nコンピュートエンジンである。従来の ECS / EKS では EC2 インスタンスを起動してコンテナ\nホストとして管理する必要があったが、Fargate を使うとコンテナを動かす EC2 インスタンスを\nユーザーが意識する必要がなくなる。タスク定義（または Pod 定義）で vCPU・メモリ・\nネットワーク設定を指定すると、AWS 側が自動でキャパシティをプロビジョニングしてコンテナを\n起動する。OS パッチ適用・ホスト管理・キャパシティ確保が不要になり、運用負荷を大幅に\n削減できる。\n\nFargate と EC2 起動タイプの主な違いは、課金モデルと管理範囲である。EC2 起動タイプは\nインスタンスごとの時間課金で、空きキャパシティの分も課金対象になる。Fargate はタスク\nごとに vCPU・メモリ・実行時間で課金されるため、コンテナ単位で必要な分だけ課金され、\nリソース利用率が高ければ EC2 起動タイプより安く、低ければ高くなる傾向がある。SAA-C03\nでは「常時稼働 API」「短時間バッチ」「不定期な処理」のどのパターンで Fargate が向くか、\nEC2 起動タイプとどちらを選ぶかの判断が問われる。\n\n代表的なユースケースは、Web API のサーバーレスコンテナ実行、CI/CD パイプラインから\n起動する短時間バッチジョブ、機械学習の推論コンテナ実行、サードパーティイメージ\n（OSS ツール）の単発実行などである。Lambda との使い分けは、Lambda は最大実行時間\n15 分・関数単位の制約があるのに対し、Fargate は長時間処理や任意のコンテナイメージを\n扱える点が強みになる。試験文脈では、CLF-C02 で「EC2 を管理せずにコンテナを実行する\nサービスはどれか」という形で出題され、ECS / EKS / Fargate の関係を取り違えないかが\n問われる。",
+    "practicalNote": "AWS Fargate は、Amazon ECS および Amazon EKS でコンテナを実行する際の「サーバーレス」\nコンピュートエンジンである。従来の ECS / EKS では EC2 インスタンスを起動してコンテナ\nホストとして管理する必要があったが、Fargate を使うとコンテナを動かす EC2 インスタンスを\nユーザーが意識する必要がなくなる。タスク定義（または Pod 定義）で vCPU・メモリ・\nネットワーク設定を指定すると、AWS 側が自動でキャパシティをプロビジョニングしてコンテナを\n起動する。OS パッチ適用・ホスト管理・キャパシティ確保が不要になり、運用負荷を大幅に\n削減できる。\n\nFargate と EC2 起動タイプの主な違いは、課金モデルと管理範囲である。EC2 起動タイプは\nインスタンスごとの時間課金で、空きキャパシティの分も課金対象になる。Fargate はタスク\nごとに vCPU・メモリ・実行時間で課金されるため、コンテナ単位で必要な分だけ課金され、\nリソース利用率が高ければ EC2 起動タイプより安く、低ければ高くなる傾向がある。SAA-C03\nでは「常時稼働 API」「短時間バッチ」「不定期な処理」のどのパターンで Fargate が向くか、\nEC2 起動タイプとどちらを選ぶかの判断が問われる。\n\n代表的なユースケースは、Web API のサーバーレスコンテナ実行、CI/CD パイプラインから\n起動する短時間バッチジョブ、機械学習の推論コンテナ実行、サードパーティイメージ\n（OSS ツール）の単発実行などである。イベント駆動の Lambda 関数には呼び出しごとのタイムアウトがある一方、Fargate はコンテナのタスクや Pod を実行し、常時稼働するサービスや時間がかかるコンテナジョブにも適しています。Lambda に一律の時間上限を想定せず、処理要件で選びます。試験文脈では、CLF-C02 で「EC2 を管理せずにコンテナを実行する\nサービスはどれか」という形で出題され、ECS / EKS / Fargate の関係を取り違えないかが\n問われる。\n\n訂正内容（2026-11-21）：AWS は 2026-11-19 に、商用リージョンのオンデマンド Lambda Event Functions で、1 回の呼び出しのタイムアウトを最大 30 分に設定できると発表しました。これは既定値でも、すべての Lambda 実行方式に共通する上限でもありません。Lambda Managed Instances の上限は呼び出し方式で異なり、呼び出し元、連携サービス、イベントソースにより短い制限が適用される場合があります。下記の AWS 公式発表と技術解説を参照してください。",
     "officialDocs": [
       {
         "label": "AWS Fargate（AWS公式）",
@@ -1926,6 +1922,14 @@
       {
         "label": "AWS Fargate（Amazon ECS 開発者ガイド / AWS公式ドキュメント）",
         "url": "https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/AWS_Fargate.html"
+      },
+      {
+        "label": "AWS Lambda の更新発表：オンデマンド Event Functions のタイムアウト延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda のタイムアウトと呼び出し方式の制約",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },
@@ -2408,9 +2412,7 @@
       "eventbridge",
       "cloudwatch"
     ],
-    "comparisonSlugs": [
-      "ec2-vs-lambda-vs-ecs"
-    ],
+    "comparisonSlugs": [],
     "architectureSlugs": [
       "serverless-api-basic",
       "eventbridge-lambda-batch"
@@ -2427,9 +2429,9 @@
       "実行ロールは必要なDynamoDBテーブルだけに絞る",
       "ログに個人情報や秘密情報を出さない"
     ],
-    "updatedAt": "2026-06-01",
+    "updatedAt": "2026-11-21",
     "locale": "ja",
-    "practicalNote": "AWS Lambda は、サーバーをプロビジョニング・管理することなくコードを実行できる\nサーバーレスコンピューティングサービスである。利用者は実行したい関数コードと\n実行環境（ランタイム）、メモリ・タイムアウトなどの設定を登録するだけで、AWS 側が\n実行基盤を自動で確保・スケールする。コードはイベント（API Gateway からの HTTP\nリクエスト、S3 のオブジェクト作成、DynamoDB Streams、EventBridge スケジュール、\nSQS メッセージ受信など）をトリガーとして起動する。\n\n料金は「リクエスト数」と「実行時間 × 割り当てメモリ量」の組み合わせで課金される。\nアイドル時はリソースが起動しないため、リクエストが無い時間帯の料金は発生しない。\n無料利用枠として、毎月 100 万リクエストと 40 万 GB 秒の実行時間が用意されている。\n\n主要なユースケースは、API Gateway と組み合わせたサーバーレス API、S3 や DynamoDB\nイベントに応答するデータ処理、EventBridge スケジュールによる定期ジョブ、Step\nFunctions によるワークフローの 1 ステップとしての利用などである。サポートされる\nランタイムは Python・Node.js・Java・Go・.NET・Ruby のマネージドランタイムに加え、\nカスタムランタイム・コンテナイメージにも対応する。実行時間の上限は 1 リクエストあたり\n最大 15 分、デプロイパッケージサイズや一時ストレージ（/tmp）のサイズなどに制約がある\nため、長時間バッチや巨大ファイル処理には別サービス（AWS Batch、ECS、Step Functions\nの組み合わせなど）が選択肢となる。",
+    "practicalNote": "AWS Lambda は、サーバーをプロビジョニング・管理することなくコードを実行できる\nサーバーレスコンピューティングサービスである。利用者は実行したい関数コードと\n実行環境（ランタイム）、メモリ・タイムアウトなどの設定を登録するだけで、AWS 側が\n実行基盤を自動で確保・スケールする。コードはイベント（API Gateway からの HTTP\nリクエスト、S3 のオブジェクト作成、DynamoDB Streams、EventBridge スケジュール、\nSQS メッセージ受信など）をトリガーとして起動する。\n\n料金は「リクエスト数」と「実行時間 × 割り当てメモリ量」の組み合わせで課金される。\nアイドル時はリソースが起動しないため、リクエストが無い時間帯の料金は発生しない。\n無料利用枠として、毎月 100 万リクエストと 40 万 GB 秒の実行時間が用意されている。\n\n主要なユースケースは、API Gateway と組み合わせたサーバーレス API、S3 や DynamoDB\nイベントに応答するデータ処理、EventBridge スケジュールによる定期ジョブ、Step\nFunctions によるワークフローの 1 ステップとしての利用などである。サポートされる\nランタイムは Python・Node.js・Java・Go・.NET・Ruby のマネージドランタイムに加え、\nカスタムランタイム・コンテナイメージにも対応する。関数の設定には呼び出しごとのタイムアウトがあり、デプロイパッケージと一時ストレージ（/tmp）には別の制限があります。処理が適用条件を超える場合は、AWS Batch、ECS、または Step Functions で処理を分割する方法を検討します。\n\n訂正内容（2026-11-21）：AWS は 2026-11-19 に、商用リージョンのオンデマンド Lambda Event Functions で、1 回の呼び出しのタイムアウトを最大 30 分に設定できると発表しました。これは既定値でも、すべての Lambda 実行方式に共通する上限でもありません。Lambda Managed Instances の上限は呼び出し方式で異なり、呼び出し元、連携サービス、イベントソースにより短い制限が適用される場合があります。下記の AWS 公式発表と技術解説を参照してください。",
     "officialDocs": [
       {
         "label": "AWS Lambda とは（AWS公式ドキュメント）",
@@ -2438,6 +2440,14 @@
       {
         "label": "AWS Lambda（AWS公式）",
         "url": "https://aws.amazon.com/jp/lambda/"
+      },
+      {
+        "label": "AWS Lambda の更新発表：オンデマンド Event Functions のタイムアウト延長",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog：Lambda のタイムアウトと呼び出し方式の制約",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ]
   },
@@ -3054,9 +3064,9 @@
       "キュー操作権限を送信・受信で分ける",
       "メッセージに秘密情報を直接入れない"
     ],
-    "updatedAt": "2026-06-01",
+    "updatedAt": "2026-11-09",
     "locale": "ja",
-    "practicalNote": "Amazon SQS は、AWS のフルマネージドなメッセージキューサービスである。メッセージを\nキューに送信する側（プロデューサー）と受信する側（コンシューマー）を分離することで、\n処理を非同期化し、システム全体の疎結合化を実現する。送信側はコンシューマーの稼働\n状況を意識せずメッセージを送れ、受信側は自身のペースでメッセージを取り出して処理\nできるため、瞬間的な負荷変動に対する緩衝（バッファ）として機能する。SQS には\nStandard Queue と FIFO Queue の 2 種類があり、Standard は順序保証なし・少なくとも\n1 回配信、FIFO は順序保証あり・正確に 1 回処理を提供する。\n\n実務では、注文処理の非同期化、Lambda への処理分散、障害時のリトライバッファ、\nECS タスク間のジョブ受け渡しなどに利用される。可視性タイムアウト（Visibility\nTimeout）は SQS の重要概念で、コンシューマーがメッセージを取り出してから処理完了\n（delete）するまでの間、そのメッセージを他のコンシューマーから見えなくする時間である。\n処理がタイムアウト内に完了しなければメッセージは再び可視化され、別のコンシューマー\nが取り出せる。これにより少なくとも 1 回の処理が保証される代わりに、コンシューマー\n側で冪等性（idempotency）を担保する必要がある。\n\n料金はリクエスト数（API 呼び出し回数）に応じた従量課金で、データ転送量は別途課金\nされる。デッドレターキュー（DLQ）を設定することで、規定回数を超えて処理に失敗した\nメッセージを別キューに退避し、後続調査に回せる。CLF-C02 では「SQS = メッセージ\nキューによる疎結合化」という基本概念と、Standard / FIFO の使い分け、可視性タイム\nアウトが頻出論点となる。",
+    "practicalNote": "Amazon SQS は、AWS のフルマネージドなメッセージキューサービスである。メッセージを\nキューに送信する側（プロデューサー）と受信する側（コンシューマー）を分離することで、\n処理を非同期化し、システム全体の疎結合化を実現する。送信側はコンシューマーの稼働\n状況を意識せずメッセージを送れ、受信側は自身のペースでメッセージを取り出して処理\nできるため、瞬間的な負荷変動に対する緩衝（バッファ）として機能する。SQS には\nStandard Queue と FIFO Queue の 2 種類があり、SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。\n\n実務では、注文処理の非同期化、Lambda への処理分散、障害時のリトライバッファ、\nECS タスク間のジョブ受け渡しなどに利用される。可視性タイムアウト（Visibility\nTimeout）は SQS の重要概念で、コンシューマーがメッセージを取り出してから処理完了\n（delete）するまでの間、そのメッセージを他のコンシューマーから見えなくする時間である。\n処理がタイムアウト内に完了しなければメッセージは再び可視化され、別のコンシューマー\nが取り出せる。これにより少なくとも 1 回の処理が保証される代わりに、コンシューマー\n側で冪等性（idempotency）を担保する必要がある。\n\n料金はリクエスト数（API 呼び出し回数）に応じた従量課金で、データ転送量は別途課金\nされる。デッドレターキュー（DLQ）を設定することで、規定回数を超えて処理に失敗した\nメッセージを別キューに退避し、後続調査に回せる。CLF-C02 では「SQS = メッセージ\nキューによる疎結合化」という基本概念と、Standard / FIFO の使い分け、可視性タイム\nアウトが頻出論点となる。\n\n公式資料確認：2026-11-09",
     "officialDocs": [
       {
         "label": "Amazon Simple Queue Service とは（AWS公式ドキュメント）",
@@ -3065,6 +3075,14 @@
       {
         "label": "Amazon SQS（AWS公式）",
         "url": "https://aws.amazon.com/jp/sqs/"
+      },
+      {
+        "label": "AWS official documentation (sqs; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      },
+      {
+        "label": "AWS official documentation (fifo; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html"
       }
     ]
   },
@@ -3241,9 +3259,9 @@
       "セキュリティ警告を確認する",
       "公開設定や権限過多の指摘を放置しない"
     ],
-    "updatedAt": "2026-06-07",
+    "updatedAt": "2026-11-09",
     "locale": "ja",
-    "practicalNote": "AWS Trusted Advisor は、AWS 環境を「コスト最適化」「セキュリティ」「耐障害性」\n「パフォーマンス」「サービスクォータ」の 5 つのカテゴリでチェックし、ベスト\nプラクティスに沿った改善提案を行うサービスである。チェックは AWS があらかじめ\n用意した項目に基づいて自動実行され、結果はマネジメントコンソールでカテゴリ別に\n確認できる。代表的なチェック項目には、IAM ルートユーザーの MFA 有効化、S3 バケットの\nパブリックアクセス、未使用の EC2 Elastic IP、低稼働率の EC2 インスタンス、サービス\nクォータの使用状況などがある。\n\n利用できるチェック項目数はサポートプランによって異なる。Basic Support と Developer\nSupport では、セキュリティカテゴリと耐障害性カテゴリの選択された項目（MFA on root\naccount、S3 バケット権限、EBS/RDS パブリックスナップショット、セキュリティグループの\nポート開放状況など）とサービスクォータカテゴリの全項目が利用できる。Business Support\n以上で全カテゴリ・全項目（最新の項目数は公式ドキュメント参照）が利用可能になり、\nAPI による自動取得や週次の改善レポート送信なども提供される。試験文脈では「サポート\nプランによりチェック範囲が異なる」点が繰り返し問われるため、Basic / Developer は\n一部のセキュリティ・耐障害性チェックと全サービスクォータチェック、Business 以上は\n全項目という対応関係を押さえておく。\n\n実務では、Trusted Advisor の「コスト最適化」カテゴリで未使用リソース（停止 EC2 に\n付随する EBS、未使用 Elastic IP、低稼働 RDS）を洗い出してコスト削減に繋げる運用、\n「セキュリティ」カテゴリで IAM・S3・セキュリティグループの設定不備を継続監視する\n運用が典型的である。AWS Config Rules や AWS Security Hub と役割が一部重なるが、\nTrusted Advisor は「AWS のベストプラクティスに対する評価」を提供する点が固有の\n価値である。",
+    "practicalNote": "Trusted AdvisorはAWS環境について、コスト、セキュリティ、性能、耐障害性などの改善を提案します。すべての提案を自動で実施するサービスではありません。チェック範囲はサポートプランに依存するため、運用で特定のチェックを前提にする前に利用権限を確認します。\n\n2026-11-09確認時点では、Basic SupportはService Limitsの全チェックとSecurity・Fault Toleranceの一部のチェックを利用できます。Basicではチェックの自動更新は利用できません。現行文書は、全チェックとTrusted Advisor APIへのアクセス対象としてBusiness Support+、Enterprise Support、Unified Operationsを挙げています。Basic/DeveloperとBusiness以上を分ける旧説明は歴史的な分類であり、現在の利用権限表としては使えません。\n\nDeveloper、Business、Enterprise On-Rampは2027-01-01に終了予定ですが、AWS GovCloud (US)では引き続き利用できます。既存顧客はアカウント固有の移行条件を確認してください。提案をもとに未使用リソースや設定上のリスクを調査し、影響を確認してから変更します。チェック件数や提供範囲は変わるため、実運用の判断では公式プラン文書を確認します。",
     "officialDocs": [
       {
         "label": "AWS Trusted Advisor（AWS公式ドキュメント）",
@@ -3252,6 +3270,14 @@
       {
         "label": "AWS Trusted Advisor（AWS公式）",
         "url": "https://aws.amazon.com/jp/premiumsupport/technology/trusted-advisor/"
+      },
+      {
+        "label": "AWS official documentation (ta; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html"
+      },
+      {
+        "label": "AWS official documentation (support; checked 2026-11-09)",
+        "url": "https://docs.aws.amazon.com/awssupport/latest/user/support-plans-eos.html"
       }
     ]
   },

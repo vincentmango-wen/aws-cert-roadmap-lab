@@ -1,7 +1,5 @@
 /**
- * ComparisonDetailContent.tsx
- *
- * locale 別の比較記事詳細ページ本体. ja/en/zh いずれの route からも薄いラッパーで呼ばれる.
+ * Localized comparison-detail page body, called through thin wrappers from ja/en/zh routes.
  */
 import Link from "next/link";
 import {

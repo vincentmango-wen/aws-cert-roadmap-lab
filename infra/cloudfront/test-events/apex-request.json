@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "context": {
+    "distributionDomainName": "d25a018o7xkwid.cloudfront.net",
+    "distributionId": "EHIV14NX361T7",
+    "eventType": "viewer-request",
+    "functionName": "aws-cert-url-rewrite",
+    "requestId": "search-console-remediation"
+  },
+  "viewer": {
+    "ip": "203.0.113.10"
+  },
+  "request": {
+    "method": "GET",
+    "uri": "/blog/example",
+    "querystring": {
+      "ref": {
+        "value": "search"
+      }
+    },
+    "headers": {
+      "host": {
+        "value": "aws-cert-roadmap-lab.com"
+      }
+    },
+    "cookies": {}
+  }
+}

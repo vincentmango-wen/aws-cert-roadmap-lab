@@ -1,51 +1,51 @@
 # MVP Operation Runbook
 
-## 1. 文書情報
+## 1. Document information
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 文書名 | MVP Operation Runbook |
-| 対象プロダクト | AWS Cert Roadmap Lab |
-| 対象環境 | production |
-| 対象ブランチ | master |
-| 対象フェーズ | Phase 3：CI/CD・運用監視 |
-| 作成目的 | MVP公開後の確認手順、障害対応手順、課金確認手順を明文化する |
+| Document name | MVP Operation Runbook |
+| Product | AWS Cert Roadmap Lab |
+| Environment | production |
+| Branch | master |
+| Phase | Phase 3: CI/CD and operational monitoring |
+| Purpose | Document post-MVP-launch checks, incident response, and cost-review procedures. |
 
 ---
 
-## 2. このRunbookの目的
+## 2. Purpose of this runbook
 
-このRunbookは、AWS Cert Roadmap Lab のMVP運用で問題が発生したときに、確認順序を迷わないための手順書である。
+This runbook provides a clear investigation sequence when problems occur during MVP operation of AWS Cert Roadmap Lab.
 
-対象とする主な問題は以下である。
+The main problems covered are:
 
-- サイトが表示されない
-- 一部ページが404になる
-- 問い合わせフォームが送信できない
-- Lambdaでエラーが発生する
-- DynamoDBに問い合わせが保存されない
-- GitHub Actionsのデプロイが失敗する
-- AWS費用が急増する
-- アクセスキー漏えいが疑われる
-- スパム投稿が急増する
+- The site does not load
+- Some pages return 404
+- Contact form submissions fail
+- Lambda errors occur
+- Contact submissions are not saved to DynamoDB
+- GitHub Actions deployment fails
+- AWS costs spike
+- Access-key exposure is suspected
+- Spam submissions spike
 
 ---
 
-## 3. MVP運用方針
+## 3. MVP operational policy
 
-MVPでは、大規模な監視基盤は作らない。
+Do not build a large monitoring platform for the MVP.
 
-以下を中心に運用する。
+Focus operations on:
 
 - AWS Budgets
 - Cost Explorer
 - CloudWatch Logs
 - CloudWatch Metrics
 - GitHub Actions Logs
-- DynamoDB item確認
-- 手動死活確認
+- Checking DynamoDB items
+- Manual availability checks
 
-MVPでは以下は導入しない。
+Do not introduce the following in the MVP:
 
 - CloudWatch Synthetics
 - X-Ray
@@ -53,98 +53,98 @@ MVPでは以下は導入しない。
 - GuardDuty
 - Security Hub
 - Datadog
-- Slack通知
-- SNS通知
-- 外形監視サービス
+- Slack notifications
+- SNS notifications
+- External synthetic monitoring services
 
-理由は、個人開発MVPではコストと運用負荷を増やさず、まず公開状態を安定させることを優先するためである。
+For an individually developed MVP, the priority is stable publication without adding cost or operational overhead.
 
 ---
 
-## 4. 重要度分類
+## 4. Severity classification
 
-| 重要度 | 内容 | 対応目安 |
+| Severity | Description | Response target |
 |---|---|---|
-| Critical | サイト全体停止、課金急増、認証情報漏えい疑い | すぐ対応する |
-| High | 問い合わせAPI停止、Lambda連続エラー、DynamoDB保存失敗 | 当日中に対応する |
-| Medium | 一部ページ404、GitHub Actions失敗、4xx増加 | 1〜2日以内に対応する |
-| Low | 軽微な表示崩れ、誤字、軽い警告ログ | 通常タスクとして対応する |
+| Critical | Entire site down, cost spike, or suspected credential exposure | Respond immediately |
+| High | Contact API down, repeated Lambda errors, or DynamoDB persistence failures | Respond the same day |
+| Medium | Some pages return 404, GitHub Actions failure, or increased 4xx responses | Respond within 1–2 days |
+| Low | Minor layout issues, typos, or minor warning logs | Handle as routine tasks |
 
 ---
 
-## 5. 日次確認チェックリスト
+## 5. Daily checklist
 
-開発初期とMVP公開直後は、課金事故を防ぐため毎日確認する。
+Check daily during early development and immediately after MVP launch to prevent unexpected charges.
 
-| 確認対象 | 確認内容 | 期待状態 |
+| Target | Check | Expected state |
 |---|---|---|
-| Billing Dashboard | 当月費用 | 予算内 |
-| Budgets通知 | メール通知 | 超過通知なし |
-| GitHub Actions | 直近Workflow | success |
-| CloudFront URL | トップページ表示 | 正常表示 |
-| /contact | 問い合わせフォーム | 表示できる |
-| DynamoDB | テスト送信結果 | 保存される |
-| CloudWatch Logs | ERRORログ | 連続発生なし |
+| Billing Dashboard | Current-month costs | Within budget |
+| Budgets notifications | Email notifications | No over-budget alerts |
+| GitHub Actions | Latest workflow | success |
+| CloudFront URL | Home page rendering | Renders normally |
+| /contact | Contact form | Accessible |
+| DynamoDB | Test submission result | Saved |
+| CloudWatch Logs | ERROR logs | No repeated errors |
 
 ---
 
-## 6. 週次確認チェックリスト
+## 6. Weekly checklist
 
-MVP公開後は、週1回確認する。
+Check once a week after MVP launch.
 
-| 確認対象 | 確認内容 | 期待状態 |
+| Target | Check | Expected state |
 |---|---|---|
-| Cost Explorer | サービス別費用 | 想定内 |
-| CloudWatch Logs | ERRORログ | 連続発生なし |
-| Lambda Metrics | Errors / Duration | Errorsが増えていない |
-| API Gateway Metrics | 4xx / 5xx / Count | 異常増加なし |
-| DynamoDB | ItemCount | 不自然な急増なし |
-| S3 | オブジェクト数・容量 | 不要ファイルなし |
-| GitHub Actions | 失敗Workflow | 未解決の失敗なし |
+| Cost Explorer | Costs by service | Within expectations |
+| CloudWatch Logs | ERROR logs | No repeated errors |
+| Lambda Metrics | Errors / Duration | Errors are not increasing |
+| API Gateway Metrics | 4xx / 5xx / Count | No abnormal increase |
+| DynamoDB | ItemCount | No unexplained spike |
+| S3 | Object count and size | No unnecessary files |
+| GitHub Actions | Failed workflows | No unresolved failures |
 
 ---
 
-## 7. 月次確認チェックリスト
+## 7. Monthly checklist
 
-月末または月初に確認する。
+Check at the end or beginning of each month.
 
-| 確認対象 | 確認内容 | 期待状態 |
+| Target | Check | Expected state |
 |---|---|---|
-| AWS総費用 | 月額予算内か | 予算内 |
-| 無料枠利用状況 | 超過傾向 | なし |
-| 不要リソース | EC2 / RDS / NAT Gateway / ALB | 作成されていない |
-| CloudWatch Logs | 保存期間 | 14〜30日 |
-| S3 | 容量 | 不自然な増加なし |
-| コンテンツ | 記事・用語・問題の更新 | 更新状況を記録 |
+| Total AWS costs | Monthly budget compliance | Within budget |
+| Free Tier usage | Trend toward exceeding limits | None |
+| Unnecessary resources | EC2 / RDS / NAT Gateway / ALB | Not created |
+| CloudWatch Logs | Retention period | 14–30 days |
+| S3 | Storage size | No unexplained increase |
+| Content | Article, glossary, and question updates | Update status recorded |
 
 ---
 
-## 8. INC-001 サイトが表示されない
+## 8. INC-001 Site does not load
 
-### 重要度
+### Severity
 
 Critical
 
-### 症状
+### Symptoms
 
-- CloudFront URLを開いてもサイトが表示されない
-- 403 Forbidden が表示される
-- 404 Not Found が表示される
-- 5xx エラーが表示される
-- CSSやJSが読み込まれず画面が崩れる
+- The site does not load at the CloudFront URL
+- 403 Forbidden is displayed
+- 404 Not Found is displayed
+- A 5xx error is displayed
+- CSS or JS does not load and the layout breaks
 
-### 確認順序
+### Investigation order
 
-1. CloudFront URLにアクセスする
-2. 表示されたHTTPステータスを確認する
+1. Open the CloudFront URL.
+2. Check the HTTP status returned.
    - 403
    - 404
    - 500
    - 502
    - 503
    - 504
-3. GitHub Actionsの直近Deploy Frontend Workflowを確認する
-4. GitHub Actionsの以下ステップを確認する
+3. Check the latest Deploy Frontend workflow in GitHub Actions.
+4. Check these GitHub Actions steps:
    - Install dependencies
    - Lint
    - Type check
@@ -152,299 +152,299 @@ Critical
    - Configure AWS credentials
    - S3 sync
    - CloudFront Invalidation
-5. S3バケットに `index.html` が存在するか確認する
-6. S3バケットに `_next/` 配下の静的ファイルが存在するか確認する
-7. CloudFront Distribution の Status が `Enabled` であることを確認する
-8. CloudFront の Origin が正しいS3バケットを向いているか確認する
-9. CloudFront の Default root object が `index.html` であることを確認する
-10. S3 Bucket Policy で CloudFront Distribution からの `s3:GetObject` が許可されているか確認する
-11. S3 Public Access Block が有効であることを確認する
-12. 直近の変更を確認し、必要なら `git revert` を検討する
+5. Verify that the S3 bucket contains `index.html`.
+6. Verify that the S3 bucket contains static files under `_next/`.
+7. Verify that the CloudFront distribution is `Enabled`.
+8. Verify that the CloudFront origin points to the correct S3 bucket.
+9. Verify that the CloudFront default root object is `index.html`.
+10. Verify that the S3 bucket policy permits `s3:GetObject` from the CloudFront distribution.
+11. Verify that S3 Block Public Access is enabled.
+12. Review recent changes and consider `git revert` if necessary.
 
-### よくある原因と対応
+### Common causes and responses
 
-| 原因 | 対応 |
+| Cause | Response |
 |---|---|
-| S3にビルド成果物がない | GitHub Actionsを再実行する |
-| `index.html` がない | `npm run build` の結果を確認する |
-| Bucket Policyミス | CloudFront Distribution IDとSourceArnを確認する |
-| OAC設定ミス | CloudFront Origin Access Controlを確認する |
-| CloudFront Invalidation未実行 | Invalidation履歴を確認する |
-| build失敗のまま反映 | GitHub ActionsのBuildステップを確認する |
-| CSS / JSが404 | S3 sync対象に静的ファイルが含まれているか確認する |
+| No build output in S3 | Rerun GitHub Actions. |
+| Missing `index.html` | Check the `npm run build` result. |
+| Incorrect bucket policy | Check the CloudFront distribution ID and SourceArn. |
+| Incorrect OAC configuration | Check CloudFront Origin Access Control. |
+| CloudFront invalidation not run | Check invalidation history. |
+| Publication proceeded despite a failed build | Check the GitHub Actions Build step. |
+| CSS / JS returns 404 | Verify static files are included in the S3 sync source. |
 
-### 復旧判断
+### Recovery decision
 
-| 状況 | 復旧方法 |
+| Situation | Recovery approach |
 |---|---|
-| デプロイ失敗 | GitHub Actionsを修正して再実行 |
-| 直近コード変更が原因 | `git revert` で戻す |
-| S3ファイル不足 | 再デプロイ |
-| Bucket Policyミス | ポリシーを修正 |
-| CloudFront設定ミス | Origin / OAC / Default root object を修正 |
+| Deployment failure | Fix and rerun GitHub Actions. |
+| Caused by a recent code change | Roll back with `git revert`. |
+| Missing S3 files | Redeploy. |
+| Incorrect bucket policy | Fix the policy. |
+| Incorrect CloudFront configuration | Fix Origin / OAC / Default root object. |
 
 ---
 
-## 9. INC-002 一部ページが404になる
+## 9. INC-002 Some pages return 404
 
-### 重要度
+### Severity
 
 Medium
 
-### 症状
+### Symptoms
 
-- トップページは表示される
-- `/terms` や `/questions` は表示される
-- `/terms/s3` などの詳細ページだけ404になる
+- The home page loads
+- `/terms` and `/questions` load
+- Only detail pages such as `/terms/s3` return 404
 
-### 確認順序
+### Investigation order
 
-1. 対象URLを確認する
-2. ローカルで同じURLが表示できるか確認する
-3. `npm run build` が成功するか確認する
-4. Next.js static exportで対象ページが生成されているか確認する
-5. `out/` 配下に該当HTMLがあるか確認する
-6. S3に該当HTMLがアップロードされているか確認する
-7. CloudFront Invalidationが実行されているか確認する
-8. 動的ルートの場合、`generateStaticParams` が定義されているか確認する
+1. Check the affected URL.
+2. Verify whether the same URL works locally.
+3. Verify that `npm run build` succeeds.
+4. Verify that Next.js static export generates the target page.
+5. Check for its HTML under `out/`.
+6. Check that the HTML was uploaded to S3.
+7. Check that CloudFront invalidation ran.
+8. For dynamic routes, check for `generateStaticParams`.
 
-### よくある原因と対応
+### Common causes and responses
 
-| 原因 | 対応 |
+| Cause | Response |
 |---|---|
-| static exportで詳細ページが生成されていない | `generateStaticParams` を確認する |
-| S3に対象HTMLがない | 再デプロイ |
-| CloudFrontキャッシュが古い | Invalidationを確認する |
-| slug不一致 | JSON / MDXのslugとURLを確認する |
-| ファイル名不一致 | `contents/` 配下のファイル名を確認する |
+| Static export does not generate detail pages | Check `generateStaticParams`. |
+| Target HTML missing from S3 | Redeploy. |
+| Stale CloudFront cache | Check invalidation. |
+| Slug mismatch | Compare JSON / MDX slugs with the URL. |
+| Filename mismatch | Check filenames under `contents/`. |
 
 ---
 
-## 10. INC-003 問い合わせフォーム送信失敗
+## 10. INC-003 Contact form submission fails
 
-### 重要度
+### Severity
 
 High
 
-### 症状
+### Symptoms
 
-- `/contact` は表示される
-- 送信するとエラーになる
-- CORSエラーが表示される
-- 400 / 500 が返る
-- DynamoDBに保存されない
+- `/contact` loads
+- Submission produces an error
+- A CORS error appears
+- The response is 400 / 500
+- Data is not saved to DynamoDB
 
-### 確認順序
+### Investigation order
 
-1. ブラウザの開発者ツールを開く
-2. Networkタブで `POST /contact` のHTTPステータスを確認する
-3. ConsoleタブでCORSエラーの有無を確認する
-4. API Gateway Metricsで以下を確認する
+1. Open browser developer tools.
+2. Check the HTTP status of `POST /contact` in the Network tab.
+3. Check the Console tab for CORS errors.
+4. Check the following API Gateway metrics:
    - Count
    - 4xx
    - 5xx
    - Latency
-5. Lambda Metricsで以下を確認する
+5. Check the following Lambda metrics:
    - Invocations
    - Errors
    - Duration
    - Throttles
-6. CloudWatch Logsで対象リクエストのERRORを確認する
-7. DynamoDB `ContactsTableProd` にitemが保存されているか確認する
-8. Lambda環境変数を確認する
+6. Find ERROR logs for the request in CloudWatch Logs.
+7. Verify whether an item was saved to DynamoDB `ContactsTableProd`.
+8. Check Lambda environment variables:
    - `CONTACTS_TABLE_NAME`
    - `ALLOWED_ORIGINS`
    - `LOG_LEVEL`
    - `ENV`
-9. Lambda実行ロールに `dynamodb:PutItem` があるか確認する
-10. API GatewayのCORS設定を確認する
-11. フロントエンドの `NEXT_PUBLIC_API_BASE_URL` を確認する
+9. Verify the Lambda execution role has `dynamodb:PutItem`.
+10. Check API Gateway CORS settings.
+11. Check frontend `NEXT_PUBLIC_API_BASE_URL`.
 
-### HTTPステータス別の見方
+### Interpreting HTTP status codes
 
-| ステータス | 主な原因 | 確認場所 |
+| Status | Common causes | Where to check |
 |---|---|---|
-| 400 | 入力値エラー、不正JSON | Lambda Logs |
-| 403 | CORS、権限、Origin不一致 | API Gateway / Lambda response header |
-| 404 | API URL間違い | フロント環境変数 |
-| 500 | Lambda例外、DynamoDBエラー | CloudWatch Logs |
-| 502 | Lambdaレスポンス形式不正 | CloudWatch Logs |
+| 400 | Invalid input or malformed JSON | Lambda Logs |
+| 403 | CORS, permissions, or origin mismatch | API Gateway / Lambda response headers |
+| 404 | Incorrect API URL | Frontend environment variables |
+| 500 | Lambda exception or DynamoDB error | CloudWatch Logs |
+| 502 | Invalid Lambda response format | CloudWatch Logs |
 | 504 | Lambda timeout | Lambda Metrics |
 
-### よくある原因と対応
+### Common causes and responses
 
-| 原因 | 対応 |
+| Cause | Response |
 |---|---|
-| CORS設定ミス | `ALLOWED_ORIGINS` とAPI Gateway CORSを確認 |
-| API Gateway URL間違い | `NEXT_PUBLIC_API_BASE_URL` を確認 |
-| Lambda環境変数ミス | `CONTACTS_TABLE_NAME` を確認 |
-| IAM権限不足 | Lambda Roleの `dynamodb:PutItem` を確認 |
-| DynamoDBテーブル名違い | 実テーブル名と環境変数を合わせる |
-| バリデーションエラー | 入力値とレスポンスdetailsを確認 |
-| honeypotに値が入っている | フロントのhidden項目を確認 |
+| Incorrect CORS configuration | Check `ALLOWED_ORIGINS` and API Gateway CORS. |
+| Incorrect API Gateway URL | Check `NEXT_PUBLIC_API_BASE_URL`. |
+| Incorrect Lambda environment variable | Check `CONTACTS_TABLE_NAME`. |
+| Insufficient IAM permissions | Check the Lambda role's `dynamodb:PutItem`. |
+| DynamoDB table-name mismatch | Align the environment variable with the actual table name. |
+| Validation error | Check input and response details. |
+| Honeypot contains a value | Check the frontend hidden field. |
 
 ---
 
-## 11. INC-004 Lambdaエラー発生
+## 11. INC-004 Lambda errors
 
-### 重要度
+### Severity
 
 High
 
-### 症状
+### Symptoms
 
-- Lambda MetricsのErrorsが増えている
-- API Gatewayで5xxが出ている
-- CloudWatch LogsにERRORが出ている
+- Errors increase in Lambda Metrics
+- API Gateway returns 5xx
+- ERROR entries appear in CloudWatch Logs
 
-### 確認順序
+### Investigation order
 
-1. Lambdaコンソールを開く
-2. `contact-submit-prod` を選択する
-3. MonitorタブでErrorsとDurationを確認する
-4. CloudWatch Logsを開く
-5. 直近のERRORログを確認する
-6. requestIdで該当リクエストを追跡する
-7. DynamoDB PutItemエラーか、JSONパースエラーか、予期しない例外かを分類する
-8. Lambda環境変数を確認する
-9. Lambda timeoutが3〜5秒に設定されているか確認する
-10. 直近のLambdaコード変更を確認する
+1. Open the Lambda console.
+2. Select `contact-submit-prod`.
+3. Check Errors and Duration in the Monitor tab.
+4. Open CloudWatch Logs.
+5. Inspect recent ERROR logs.
+6. Trace the request by requestId.
+7. Classify it as a DynamoDB PutItem error, JSON parsing error, or unexpected exception.
+8. Check Lambda environment variables.
+9. Verify the Lambda timeout is set to 3–5 seconds.
+10. Review recent Lambda code changes.
 
-### 確認するログ
+### Logs to inspect
 
-| ログ | 意味 |
+| Log | Meaning |
 |---|---|
-| `INFO contact saved` | 保存成功 |
-| `WARN validation error` | 入力値エラー |
-| `WARN honeypot detected` | スパム疑い |
-| `ERROR dynamodb put_item failed` | DynamoDB保存失敗 |
-| `ERROR unexpected error` | 想定外エラー |
+| `INFO contact saved` | Saved successfully |
+| `WARN validation error` | Invalid input |
+| `WARN honeypot detected` | Suspected spam |
+| `ERROR dynamodb put_item failed` | DynamoDB persistence failed |
+| `ERROR unexpected error` | Unexpected error |
 
-### 出力してはいけないログ
+### Information that must not be logged
 
-- メールアドレス全文
-- 問い合わせ本文全文
-- Authorizationヘッダー
+- Complete email addresses
+- Complete contact messages
+- Authorization headers
 - JWT
-- AWSアクセスキー
-- APIキー
+- AWS access keys
+- API keys
 
 ---
 
-## 12. INC-005 DynamoDB保存失敗
+## 12. INC-005 DynamoDB persistence fails
 
-### 重要度
+### Severity
 
 High
 
-### 症状
+### Symptoms
 
-- Lambdaは呼び出されている
-- APIは500を返す
-- DynamoDBにitemが保存されない
+- Lambda is invoked
+- The API returns 500
+- No item is saved to DynamoDB
 
-### 確認順序
+### Investigation order
 
-1. CloudWatch Logsで `dynamodb put_item failed` を確認する
-2. Lambda環境変数 `CONTACTS_TABLE_NAME` を確認する
-3. DynamoDBに `ContactsTableProd` が存在するか確認する
-4. DynamoDBテーブルのRegionが `ap-northeast-1` であることを確認する
-5. Lambda実行ロールの権限を確認する
-6. IAM Policyに以下があるか確認する
+1. Find `dynamodb put_item failed` in CloudWatch Logs.
+2. Check the Lambda environment variable `CONTACTS_TABLE_NAME`.
+3. Verify DynamoDB `ContactsTableProd` exists.
+4. Verify the DynamoDB table is in `ap-northeast-1`.
+5. Check Lambda execution-role permissions.
+6. Verify the IAM policy includes:
    - Action: `dynamodb:PutItem`
    - Resource: `arn:aws:dynamodb:ap-northeast-1:<account-id>:table/ContactsTableProd`
-7. DynamoDB MetricsでThrottledRequestsを確認する
-8. 大量スパム投稿が発生していないか確認する
+7. Check ThrottledRequests in DynamoDB Metrics.
+8. Check for a large volume of spam submissions.
 
-### よくある原因と対応
+### Common causes and responses
 
-| 原因 | 対応 |
+| Cause | Response |
 |---|---|
-| テーブル名違い | Lambda環境変数を修正 |
-| Region違い | LambdaとDynamoDBのRegionを確認 |
-| IAM権限不足 | `dynamodb:PutItem` を付与 |
-| テーブル未作成 | `ContactsTableProd` を作成 |
-| スロットリング | 書き込み急増の原因を確認 |
+| Incorrect table name | Fix the Lambda environment variable. |
+| Region mismatch | Check Lambda and DynamoDB regions. |
+| Insufficient IAM permissions | Grant `dynamodb:PutItem`. |
+| Table not created | Create `ContactsTableProd`. |
+| Throttling | Investigate the write spike. |
 
 ---
 
-## 13. INC-006 デプロイ失敗
+## 13. INC-006 Deployment failure
 
-### 重要度
+### Severity
 
 Medium
 
-### 症状
+### Symptoms
 
-- GitHub Actionsがfailureになる
-- S3 syncが失敗する
-- CloudFront Invalidationが失敗する
-- OIDC認証に失敗する
+- GitHub Actions reports failure
+- S3 sync fails
+- CloudFront invalidation fails
+- OIDC authentication fails
 
-### 確認順序
+### Investigation order
 
-1. GitHub Actionsの失敗Workflowを開く
-2. 失敗したステップを確認する
-3. エラーメッセージ全文を読む
-4. ローカルで同じコマンドを実行する
-5. 依存関係エラーなら `package-lock.json` と `package.json` を確認する
-6. Lintエラーなら該当ファイルを修正する
-7. TypeScriptエラーなら型定義を修正する
-8. BuildエラーならNext.jsのエラー箇所を確認する
-9. AWS認証エラーならOIDC Trust Policyを確認する
-10. S3エラーならバケット名とIAM Policyを確認する
-11. CloudFrontエラーならDistribution IDとIAM Policyを確認する
+1. Open the failed GitHub Actions workflow.
+2. Identify the failed step.
+3. Read the full error message.
+4. Run the same command locally.
+5. For dependency errors, check `package-lock.json` and `package.json`.
+6. For lint errors, fix the affected files.
+7. For TypeScript errors, fix type definitions.
+8. For build errors, inspect the Next.js error location.
+9. For AWS authentication errors, check the OIDC trust policy.
+10. For S3 errors, check the bucket name and IAM policy.
+11. For CloudFront errors, check the distribution ID and IAM policy.
 
-### ステップ別の確認ポイント
+### Checks by failed step
 
-| 失敗ステップ | 確認すること |
+| Failed step | Check |
 |---|---|
 | Install dependencies | lock file、Node.js version |
-| Lint | ESLintエラー箇所 |
-| Type check | TypeScript型エラー |
-| Build | Next.js buildエラー |
+| Lint | ESLint error locations |
+| Type check | TypeScript type errors |
+| Build | Next.js build errors |
 | Configure AWS credentials | OIDC Provider、Trust Policy、Role ARN |
-| S3 sync | Bucket名、s3権限 |
-| CloudFront Invalidation | Distribution ID、cloudfront権限 |
+| S3 sync | Bucket name and S3 permissions |
+| CloudFront Invalidation | Distribution ID and CloudFront permissions |
 
-### masterブランチ運用の注意
+### Notes on the master branch
 
-このリポジトリでは本番ブランチを `master` とする。
+This repository uses `master` as its production branch.
 
-GitHub Actionsのトリガー、OIDC Trust Policy、ブランチ保護ルールでは `main` ではなく `master` を使う。
+Use `master`, not `main`, in GitHub Actions triggers, the OIDC trust policy, and branch protection rules.
 
 ---
 
-## 14. INC-007 AWS費用急増
+## 14. INC-007 AWS cost spike
 
-### 重要度
+### Severity
 
 Critical
 
-### 症状
+### Symptoms
 
-- AWS Budgetsから通知が来た
-- Billing Dashboardの当月費用が増えている
-- Cost Explorerで想定外サービスが表示される
+- An AWS Budgets notification arrives
+- Current-month costs increase in Billing Dashboard
+- Unexpected services appear in Cost Explorer
 
-### 確認順序
+### Investigation order
 
-1. Budgets通知メールの内容を確認する
-2. Billing Dashboardを開く
-3. Cost ExplorerでService別に確認する
-4. Cost ExplorerでRegion別に確認する
-5. 想定外サービスがないか確認する
-6. CloudWatch Logsの保存量を確認する
-7. CloudFrontの転送量を確認する
-8. API Gatewayのリクエスト数を確認する
-9. DynamoDBの書き込み数を確認する
-10. CloudTrailで不審な操作がないか確認する
-11. アクセスキー漏えいが疑われる場合は、該当キーを無効化する
-12. 原因を月次メモに記録する
+1. Read the Budgets notification email.
+2. Open Billing Dashboard.
+3. Review costs by Service in Cost Explorer.
+4. Review costs by Region in Cost Explorer.
+5. Check for unexpected services.
+6. Check CloudWatch Logs storage volume.
+7. Check CloudFront data transfer.
+8. Check API Gateway request count.
+9. Check DynamoDB write count.
+10. Check CloudTrail for suspicious operations.
+11. If access-key exposure is suspected, disable the affected key.
+12. Record the cause in the monthly notes.
 
-### 即確認すべきサービス
+### Services to investigate immediately
 
-MVPでは以下のサービスに費用が出ていたら要確認。
+Investigate any MVP costs for the following services.
 
 - EC2
 - RDS
@@ -458,47 +458,47 @@ MVPでは以下のサービスに費用が出ていたら要確認。
 - API Gateway
 - DynamoDB
 
-### よくある原因と対応
+### Common causes and responses
 
-| 原因 | 対応 |
+| Cause | Response |
 |---|---|
-| NAT Gatewayを作成した | 不要なら削除 |
-| EC2を停止し忘れた | 不要なら停止または削除 |
-| RDSを作成した | MVPでは使わないため削除判断 |
-| CloudWatch Logsが増えた | 保存期間とログ出力量を確認 |
-| CloudFront転送量が増えた | Bot、画像サイズ、アクセス急増を確認 |
-| API Gateway Count急増 | スパム投稿を確認 |
-| DynamoDB書き込み急増 | スパム投稿を確認 |
+| A NAT Gateway was created | Delete it if unnecessary. |
+| An EC2 instance was left running | Stop or delete it if unnecessary. |
+| RDS was created | Consider deletion because the MVP does not use it. |
+| CloudWatch Logs volume increased | Check retention and log output volume. |
+| CloudFront data transfer increased | Check bots, image sizes, and traffic spikes. |
+| API Gateway Count spiked | Check for spam submissions. |
+| DynamoDB writes spiked | Check for spam submissions. |
 
 ---
 
-## 15. INC-008 アクセスキー漏えい疑い
+## 15. INC-008 Suspected access-key exposure
 
-### 重要度
+### Severity
 
 Critical
 
-### 症状
+### Symptoms
 
-- GitHubにアクセスキーをpushした可能性がある
-- AWSから不審な操作通知がある
-- Cost Explorerで想定外のサービス利用がある
-- CloudTrailに見覚えのない操作がある
+- An access key may have been pushed to GitHub
+- AWS reports suspicious operations
+- Cost Explorer shows unexpected service usage
+- CloudTrail shows unfamiliar operations
 
-### 対応順序
+### Response order
 
-1. 該当IAMアクセスキーをすぐ無効化する
-2. GitHub Secretsを確認する
-3. GitHubリポジトリに `.env` や認証情報が含まれていないか確認する
-4. CloudTrailで不審操作を確認する
-5. Cost Explorerで想定外サービスを確認する
-6. 不要リソースを確認する
-7. 新しいアクセスキーが必要な場合は、最小権限で再発行する
-8. GitHub ActionsはOIDC方式を優先する
-9. 再発防止として `.gitignore` を確認する
-10. READMEやdocsに秘密情報が含まれていないか確認する
+1. Disable the affected IAM access key immediately.
+2. Check GitHub Secrets.
+3. Check the GitHub repository for `.env` files or credentials.
+4. Check CloudTrail for suspicious operations.
+5. Check Cost Explorer for unexpected services.
+6. Check for unnecessary resources.
+7. If a new access key is needed, reissue it with least privilege.
+8. Prefer OIDC for GitHub Actions.
+9. Check `.gitignore` to prevent recurrence.
+10. Check README and docs for secrets.
 
-### 確認対象
+### Items to check
 
 - `.env`
 - `.env.local`
@@ -514,132 +514,132 @@ Critical
 
 ---
 
-## 16. INC-009 スパム投稿急増
+## 16. INC-009 Spam submission spike
 
-### 重要度
+### Severity
 
 High
 
-### 症状
+### Symptoms
 
-- DynamoDBのItemCountが急増する
-- API Gateway Countが急増する
-- Lambda Invocationsが急増する
-- honeypot検知ログが増える
-- 同じような問い合わせが大量に保存される
+- DynamoDB ItemCount spikes
+- API Gateway Count spikes
+- Lambda Invocations spike
+- Honeypot detection logs increase
+- Large numbers of similar contact submissions are saved
 
-### 確認順序
+### Investigation order
 
-1. API Gateway MetricsでCountを確認する
-2. Lambda MetricsでInvocationsを確認する
-3. DynamoDB MetricsでItemCountを確認する
-4. CloudWatch Logsで `honeypot detected` を確認する
-5. 保存された問い合わせの傾向を確認する
-6. テストデータとスパムデータを分類する
-7. 不要なスパムデータを削除する
-8. API Gatewayのレート制限を検討する
-9. reCAPTCHA導入を検討する
-10. スパムが継続する場合はWAF導入を検討する
+1. Check Count in API Gateway Metrics.
+2. Check Invocations in Lambda Metrics.
+3. Check ItemCount in DynamoDB Metrics.
+4. Find `honeypot detected` in CloudWatch Logs.
+5. Review patterns in saved submissions.
+6. Distinguish test data from spam.
+7. Delete unnecessary spam data.
+8. Consider API Gateway rate limiting.
+9. Consider introducing reCAPTCHA.
+10. If spam continues, consider WAF.
 
-### MVPでの対策
+### MVP controls
 
 - honeypot
-- 文字数制限
-- Lambda側バリデーション
-- CORS制限
-- CloudWatch Logs確認
-- AWS Budgets確認
+- Input-length limits
+- Lambda-side validation
+- CORS restrictions
+- CloudWatch Logs checks
+- AWS Budgets checks
 
-### MVP後に検討する対策
+### Controls to consider after the MVP
 
 - API Gateway throttling
 - reCAPTCHA
 - WAF
-- IP制限
+- IP restrictions
 - CloudWatch Alarm
 
 ---
 
-## 17. サイト表示確認Runbook
+## 17. Site rendering runbook
 
-### 実行タイミング
+### When to run
 
-- デプロイ後
-- 週次確認
-- ポートフォリオ提出前
-- サイト表示不具合時
+- After deployment
+- During weekly checks
+- Before submitting the portfolio
+- When site rendering is faulty
 
-### 確認順序
+### Verification order
 
-1. CloudFront URLへアクセスする
-2. トップページを確認する
-3. `/terms` を確認する
-4. `/questions` を確認する
-5. `/architectures` を確認する
-6. `/blog` を確認する
-7. `/contact` を確認する
-8. CSSが適用されているか確認する
-9. 画像が表示されているか確認する
-10. 404ページを確認する
-11. 問題があればGitHub Actions、CloudFront、S3を確認する
+1. Open the CloudFront URL.
+2. Check the home page.
+3. Check `/terms`.
+4. Check `/questions`.
+5. Check `/architectures`.
+6. Check `/blog`.
+7. Check `/contact`.
+8. Verify CSS is applied.
+9. Verify images render.
+10. Check the 404 page.
+11. If there is a problem, check GitHub Actions, CloudFront, and S3.
 
 ---
 
-## 18. 問い合わせAPI確認Runbook
+## 18. Contact API verification runbook
 
-### 実行タイミング
+### When to run
 
-- API変更後
-- フロントエンド変更後
-- デプロイ後
-- 週次確認
-- 問い合わせ失敗時
+- After API changes
+- After frontend changes
+- After deployment
+- During weekly checks
+- When contact submissions fail
 
-### 確認順序
+### Verification order
 
-1. CloudFront URLから `/contact` を開く
-2. テスト問い合わせを送信する
-3. 送信完了メッセージを確認する
-4. DynamoDB `ContactsTableProd` を確認する
-5. CloudWatch Logsで `contact saved` を確認する
-6. API Gateway Metricsで5xxが増えていないか確認する
-7. Lambda MetricsでErrorsが増えていないか確認する
-8. テストデータを削除するか、`status` を `test` に変更する
+1. Open `/contact` through the CloudFront URL.
+2. Submit a test inquiry.
+3. Verify the submission-complete message.
+4. Check DynamoDB `ContactsTableProd`.
+5. Find `contact saved` in CloudWatch Logs.
+6. Verify 5xx responses have not increased in API Gateway Metrics.
+7. Verify Errors have not increased in Lambda Metrics.
+8. Delete test data or set its `status` to `test`.
 
-### テスト入力例
+### Example test input
 
-| 項目 | 値 |
+| Field | Value |
 |---|---|
 | name | Test User |
 | email | test@example.com |
 | subject | Operation check |
 | message | This is a test contact from operation runbook. |
 | sourcePage | /contact |
-| honeypot | 空文字 |
+| honeypot | Empty string |
 
 ---
 
-## 19. 課金確認Runbook
+## 19. Cost verification runbook
 
-### 実行タイミング
+### When to run
 
-- 毎日
-- Budgets通知受信時
-- 月次確認
-- AWSリソース作成後
+- Daily
+- When a Budgets notification arrives
+- During monthly checks
+- After creating AWS resources
 
-### 確認順序
+### Verification order
 
-1. Billing Dashboardを開く
-2. 当月費用を確認する
-3. Cost Explorerを開く
-4. Service別に費用を確認する
-5. Region別に費用を確認する
-6. 想定外サービスがないか確認する
-7. 不要リソースを削除する
-8. 月次メモに記録する
+1. Open Billing Dashboard.
+2. Check current-month costs.
+3. Open Cost Explorer.
+4. Review costs by Service.
+5. Review costs by Region.
+6. Check for unexpected services.
+7. Delete unnecessary resources.
+8. Record the results in monthly notes.
 
-### MVPで費用が出ても想定内のサービス
+### Services with expected MVP costs
 
 - S3
 - CloudFront
@@ -649,7 +649,7 @@ High
 - CloudWatch Logs
 - AWS Budgets
 
-### MVPで費用が出たら要確認のサービス
+### Services whose MVP costs require investigation
 
 - EC2
 - RDS
@@ -663,56 +663,56 @@ High
 
 ---
 
-## 20. GitHub Actions確認Runbook
+## 20. GitHub Actions verification runbook
 
-### 実行タイミング
+### When to run
 
-- push後
-- pull request作成後
-- デプロイ失敗時
-- サイト表示不具合時
+- After pushing
+- After creating a pull request
+- When deployment fails
+- When site rendering is faulty
 
-### 確認順序
+### Verification order
 
-1. GitHubリポジトリを開く
-2. Actionsタブを開く
-3. 直近のWorkflowを確認する
-4. `CI` が成功しているか確認する
-5. `Deploy Frontend` が成功しているか確認する
-6. 失敗している場合は失敗ステップを開く
-7. エラーメッセージ全文を確認する
-8. ローカルで同じコマンドを実行する
-9. AWS認証エラーならOIDC Trust Policyを確認する
-10. S3 / CloudFrontエラーならIAM PolicyとGitHub Variablesを確認する
-
----
-
-## 21. ロールバック方針
-
-### 方針
-
-MVPでは複雑なBlue/Green Deployは使わない。
-
-問題がある変更を本番に反映した場合は、Gitで直前の安定版に戻す。
-
-### 確認順序
-
-1. 直近のmerge commitを確認する
-2. 問題の原因となったcommitを特定する
-3. `git revert` で取り消す
-4. 修正commitを `master` に反映する
-5. GitHub ActionsのDeploy Frontend成功を確認する
-6. CloudFront URLで復旧を確認する
-
-### 注意
-
-`git reset --hard` や `git push --force` は使わない。
+1. Open the GitHub repository.
+2. Open the Actions tab.
+3. Check the latest workflow.
+4. Verify `CI` succeeded.
+5. Verify `Deploy Frontend` succeeded.
+6. If it failed, open the failed step.
+7. Read the full error message.
+8. Run the same command locally.
+9. For AWS authentication errors, check the OIDC trust policy.
+10. For S3 / CloudFront errors, check the IAM policy and GitHub Variables.
 
 ---
 
-## 22. 記録フォーマット
+## 21. Rollback policy
 
-障害や異常を確認したら、以下の形式で記録する。
+### Policy
+
+The MVP does not use complex blue/green deployments.
+
+If a problematic change reaches production, use Git to restore the previous stable version.
+
+### Verification order
+
+1. Review recent merge commits.
+2. Identify the commit causing the problem.
+3. Undo it with `git revert`.
+4. Apply the fix commit to `master`.
+5. Verify GitHub Actions Deploy Frontend succeeds.
+6. Verify recovery at the CloudFront URL.
+
+### Caution
+
+Do not use `git reset --hard` or `git push --force`.
+
+---
+
+## 22. Record format
+
+When an incident or anomaly is found, record it using the following format.
 
 ```text
 Date:

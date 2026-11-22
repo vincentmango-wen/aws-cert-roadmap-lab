@@ -1,6 +1,6 @@
 # IAM 使用者、IAM 角色、IAM 政策的差異
 
-## 結論
+## 選擇重點
 
 AWS Identity and Access Management (IAM) 是 AWS 的權限管理服務。
 
@@ -29,7 +29,7 @@ IAM 使用者、IAM 角色、IAM 政策的職責各自不同。
 | 安全考量 | MFA 與存取金鑰管理至關重要 | 無需長期金鑰，較易於確保安全 | 最小權限原則至關重要 |
 | 在本專案中的用途 | 管理者登入用 | AWS Lambda 執行角色、GitHub Actions 角色 | 授予 AWS Lambda 對 Amazon DynamoDB PutItem、Amazon S3 部署等權限 |
 
-## 初學者向解說
+## 入門說明
 
 ### IAM 使用者
 
@@ -55,7 +55,7 @@ IAM 政策是以 JSON 定義對哪個資源允許哪些操作的設定。
 
 不會附加不必要的 `dynamodb:*` 或 `AdministratorAccess`。
 
-## 考試會問到的重點
+## 考綱與判斷重點
 
 ### CLF-C02 常問的重點
 
@@ -75,7 +75,7 @@ IAM 政策是以 JSON 定義對哪個資源允許哪些操作的設定。
 - 以資源為單位收斂政策
 - 避免大量使用 `*` 所造成的過大權限
 
-## 實務上的使用區分
+## 實務選型
 
 ### 使用 IAM 使用者的情境
 
@@ -106,7 +106,7 @@ IAM 政策是以 JSON 定義對哪個資源允許哪些操作的設定。
 
 在政策中，收斂 Action 與 Resource 至關重要。
 
-## 常見的錯誤
+## 常見誤解
 
 ### 錯誤 1:對 IAM 使用者常態使用 AdministratorAccess
 
@@ -138,6 +138,19 @@ IAM 政策是權限的內容。
 
 實務上，應收斂至對應的 Amazon S3 儲存貯體或 Amazon DynamoDB 資料表等對象。
 
+## 總結
+
+IAM 使用者、IAM 角色、IAM 政策是 AWS 安全的基礎。
+
+IAM 使用者是使用者本身，IAM 角色是暫時承接權限的機制，IAM 政策則是權限的內容。
+
+只要能說明這項差異，就更容易說明 AWS 作品集中的安全設計。
+
+## AWS 官方參考
+
+- 服務行為與設計: [IAM 身分類型與憑證](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html) · [IAM 角色信任與暫時存取](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) · [身分型與資源型政策評估](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html)
+- [CLF-C02 考試指南](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 相關用語
 
 - [AWS IAM](/terms/iam)
@@ -149,11 +162,3 @@ IAM 政策是權限的內容。
 ## 相關題目
 
 - [CLF 模擬題目一覽](/questions/clf)
-
-## 總結
-
-IAM 使用者、IAM 角色、IAM 政策是 AWS 安全的基礎。
-
-IAM 使用者是使用者本身，IAM 角色是暫時承接權限的機制，IAM 政策則是權限的內容。
-
-只要能說明這項差異，就更容易說明 AWS 作品集中的安全設計。

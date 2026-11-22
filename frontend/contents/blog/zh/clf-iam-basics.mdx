@@ -15,9 +15,8 @@ targetKeywords:
   - "Cloud Practitioner IAM"
 author: "AWS 認證學習路線實驗室"
 published: true
-noIndex: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-06-07"
+updatedAt: "2026-11-21"
 ---
 
 # 為 Cloud Practitioner 整理 IAM 的基礎概念
@@ -30,9 +29,9 @@ IAM 管理的是「誰」「對什麼」「能做什麼」這三件事。初學�
 
 ## IAM User
 
-IAM User 是代表操作 AWS 的人或應用程式的身分。日常作業中不使用 root 使用者,而是改用 IAM User,這是基本原則。
+IAM User 是 AWS 帳戶內可持有密碼或存取金鑰等長期憑證的身分。人員日常存取 AWS 時，不使用 root 使用者，而是優先透過 IAM Identity Center 等方式進行身分聯邦，使用短期憑證承接 IAM Role。
 
-不過,一旦發行長期 Access Key,就會產生外洩風險。沒用到的 Access Key 要刪除,並設定 MFA。
+只有在短期憑證無法滿足特定需求時，才考慮使用長期憑證。若必須使用，請落實最小權限、在可用時啟用 MFA，並移除不用的存取金鑰。
 
 ## IAM Group
 
@@ -40,7 +39,7 @@ IAM Group 是把多個使用者集中管理權限的機制。個人開發較少�
 
 ## IAM Role
 
-IAM Role 是用來暫時承接權限的機制,常用於把權限授予 AWS 服務的情境。
+IAM Role 是可暫時承接的身分。工作負載存取 AWS 時，應優先使用 IAM Role 取得短期憑證，不要在程式碼中放入長期存取金鑰。
 
 例如 Lambda 要寫入 DynamoDB 時,會在 Lambda 執行角色(Execution Role)上授予 DynamoDB PutItem 權限。從 GitHub Actions 部署到 AWS 時,也可以採用透過 OIDC 承接 IAM Role 的架構。
 
@@ -59,7 +58,7 @@ IAM Policy 是用 JSON 定義「允許」或「拒絕」哪些操作的設定,�
 - root 使用者不用於日常作業
 - 啟用 MFA
 - 用 IAM Policy 定義權限
-- IAM Role 用於 AWS 服務或臨時憑證
+- 人員優先使用身分聯邦及短期憑證；工作負載優先使用 IAM Role 及短期憑證
 - 最小權限原則非常重要
 
 ## 相關名詞
@@ -72,3 +71,11 @@ IAM Policy 是用 JSON 定義「允許」或「拒絕」哪些操作的設定,�
 
 - [IAM User、IAM Role、IAM Policy 的差異](/comparisons/iam-user-vs-role-vs-policy)
 - [用 GitHub OIDC 安全地部署 AWS](/blog/github-actions-oidc-deploy)
+
+## 更正說明
+
+### 2026-11-21
+
+- 更正人員日常存取 AWS 的建議：優先使用身分聯邦及短期憑證，而非預設選用 IAM User；工作負載優先使用 IAM Role，長期憑證僅用於無法使用短期憑證的例外。
+
+參考：[AWS IAM 安全最佳實務](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)。

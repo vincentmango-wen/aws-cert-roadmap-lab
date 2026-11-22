@@ -1,505 +1,505 @@
-# AWS資格学習サイト 要件定義書
+# AWS Certification Learning Site: Requirements Definition
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 文書名 | AWS資格学習サイト 要件定義書 |
-| 対象プロダクト | AWS資格ロードマップラボ |
-| 作成目的 | AWS資格学習・ポートフォリオ・収益化を目的としたWeb学習サイトの要件を定義する |
-| 対象フェーズ | MVP開発 〜 SAA対策機能拡張 〜 収益化準備 |
-| 想定読者 | 開発者本人、ポートフォリオ閲覧者、採用担当者、面接官 |
+| Document name | AWS Certification Learning Site: Requirements Definition |
+| Target product | AWS Cert Roadmap Lab |
+| Purpose | Define requirements for a web learning site supporting AWS certification study, a portfolio, and monetization |
+| Target phases | MVP development through SAA preparation feature expansion and monetization preparation |
+| Intended readers | The developer, portfolio viewers, recruiters, and interviewers |
 
 ---
 
-## 2. プロダクト概要
+## 2. Product Overview
 
-## 2.1 プロダクト名
+## 2.1 Product Name
 
-**AWS資格ロードマップラボ**
+**AWS Cert Roadmap Lab**
 
-## 2.2 概要
+## 2.2 Overview
 
-AWS Cloud Practitioner および AWS Solutions Architect Associate の学習者向けに、AWSサービスの基礎知識、用語解説、サービス比較、模擬問題、AWS構成図、実践的な設計パターンを提供するWeb学習サイトである。
+A web learning site providing AWS service fundamentals, terminology explanations, service comparisons, practice questions, AWS architecture diagrams, and practical design patterns for AWS Cloud Practitioner and AWS Solutions Architect Associate learners.
 
-本プロダクトは、単なる資格学習サイトではなく、開発者本人のAWS学習成果をアウトプット化し、AWS上で実際に構築・公開することで、転職活動・ポートフォリオ・将来的な広告収益化に活用することを目的とする。
+Rather than simply a certification study site, this product aims to turn the developer's AWS learning into tangible output. Building and publishing it on AWS supports job hunting, portfolio presentation, and future advertising revenue.
 
-## 2.3 開発方針
+## 2.3 Development Policy
 
-- AWS無料枠を活用し、運用コストを極力ゼロに抑える
-- 常時起動サーバーを使わず、サーバーレス中心で構築する
-- Cloud Practitioner の学習内容をMVPとして反映する
-- SAA学習に合わせて、構成図・設計パターン・AWSアーキテクチャ解説を拡張する
-- SEO記事・模擬問題・比較コンテンツを増やし、将来的な広告収益化を目指す
-- GitHub README、構成図、設計意図を整備し、ポートフォリオとして説明可能な状態にする
-
----
-
-## 3. 背景と目的
-
-## 3.1 背景
-
-開発者は現在、AWS Cloud Practitioner の資格取得を目指して学習しており、その後 AWS Solutions Architect Associate の受験も予定している。
-
-資格学習を単なる暗記で終わらせるのではなく、学習内容をWebサイトとして整理・公開することで、以下を同時に実現する。
-
-- AWS資格学習の定着
-- AWSサービスの実装経験
-- クラウド設計力の可視化
-- 転職・案件獲得時のポートフォリオ化
-- SEOメディアとしての将来的な収益化
-
-## 3.2 目的
-
-本プロダクトの目的は以下である。
-
-1. AWS Cloud Practitioner / SAA の学習内容を体系的に整理する
-2. 初学者がAWSサービスの違いを理解しやすいコンテンツを提供する
-3. 模擬問題によって資格試験対策を支援する
-4. AWS構成図によって、資格知識と実務設計を結びつける
-5. AWS上にサーバーレス構成でWebアプリを構築し、ポートフォリオとして提示する
-6. 将来的に広告収益・教材販売・学習アプリ化へ拡張できる土台を作る
+- Use the AWS Free Tier and keep operating costs as close to zero as possible
+- Build primarily with serverless services, without always-on servers
+- Reflect Cloud Practitioner study material in the MVP
+- Expand architecture diagrams, design patterns, and AWS architecture explanations alongside SAA study
+- Increase SEO articles, practice questions, and comparison content with future advertising revenue in mind
+- Prepare the GitHub README, architecture diagrams, and design rationale so the project can be explained as a portfolio
 
 ---
 
-## 4. 対象ユーザー
+## 3. Background and Objectives
 
-## 4.1 メインユーザー
+## 3.1 Background
 
-| ユーザー | 説明 |
+The developer is currently studying for AWS Cloud Practitioner and also plans to take AWS Solutions Architect Associate afterward.
+
+Rather than ending certification study at memorization, organize and publish the material as a website to achieve the following simultaneously.
+
+- Reinforce AWS certification learning
+- Gain AWS service implementation experience
+- Make cloud design skills visible
+- Create a portfolio for job changes and client work
+- Establish future monetization as an SEO content site
+
+## 3.2 Objectives
+
+This product has the following objectives.
+
+1. Systematically organize AWS Cloud Practitioner / SAA study material
+2. Provide content that helps beginners understand differences between AWS services
+3. Support certification exam preparation through practice questions
+4. Connect certification knowledge to practical design through AWS architecture diagrams
+5. Build a serverless web application on AWS and present it as a portfolio
+6. Establish a foundation for future advertising revenue, learning-material sales, and a learning application
+
+---
+
+## 4. Target Users
+
+## 4.1 Primary Users
+
+| User | Description |
 |---|---|
-| AWS初学者 | AWS Cloud Practitioner の学習を始めた人 |
-| SAA受験予定者 | Solutions Architect Associate の基礎設計パターンを学びたい人 |
-| 未経験エンジニア志望者 | AWSを使ったポートフォリオ作成を検討している人 |
-| クラウド学習者 | AWSサービスの違いを整理したい人 |
+| AWS beginners | People who have started studying AWS Cloud Practitioner |
+| Prospective SAA candidates | People who want to learn basic Solutions Architect Associate design patterns |
+| Aspiring engineers without experience | People considering building an AWS portfolio |
+| Cloud learners | People who want to clarify differences between AWS services |
 
-## 4.2 サブユーザー
+## 4.2 Secondary Users
 
-| ユーザー | 説明 |
+| User | Description |
 |---|---|
-| 採用担当者 | 開発者のAWS理解・設計力・実装力を確認する人 |
-| 面接官 | ポートフォリオの技術選定・設計意図を確認する人 |
-| 将来の教材購入者 | 有料PDF・note記事・問題集に関心を持つ人 |
+| Recruiters | People assessing the developer's AWS understanding, design skills, and implementation skills |
+| Interviewers | People reviewing the portfolio's technology choices and design rationale |
+| Future learning-material buyers | People interested in paid PDFs, note articles, and question collections |
 
 ---
 
-## 5. 業務要件
+## 5. Business Requirements
 
-## 5.1 学習支援要件
+## 5.1 Learning Support Requirements
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| BIZ-001 | AWS初学者が主要サービスの概要を理解できること | 高 |
-| BIZ-002 | Cloud Practitioner の試験範囲に関係する用語を確認できること | 高 |
-| BIZ-003 | SAAで問われる基本的なAWS構成パターンを学べること | 高 |
-| BIZ-004 | 似ているAWSサービスの違いを比較できること | 高 |
-| BIZ-005 | 模擬問題を通じて理解度を確認できること | 高 |
-| BIZ-006 | 試験対策だけでなく、実務での使いどころも理解できること | 中 |
+| BIZ-001 | AWS beginners must be able to understand an overview of key services | High |
+| BIZ-002 | Users must be able to look up terminology related to Cloud Practitioner exam coverage | High |
+| BIZ-003 | Users must be able to learn basic AWS architecture patterns tested in SAA | High |
+| BIZ-004 | Users must be able to compare differences between similar AWS services | High |
+| BIZ-005 | Users must be able to check their understanding through practice questions | High |
+| BIZ-006 | Users must be able to understand practical uses as well as exam preparation points | Medium |
 
-## 5.2 ポートフォリオ要件
+## 5.2 Portfolio Requirements
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| BIZ-007 | AWS上で公開されているWebサイトであること | 高 |
-| BIZ-008 | 使用AWSサービスと設計意図を説明できること | 高 |
-| BIZ-009 | GitHub READMEに構成図・機能・技術選定理由を記載すること | 高 |
-| BIZ-010 | サーバーレス構成で低コスト運用していることを説明できること | 高 |
-| BIZ-011 | セキュリティ・コスト・運用監視に配慮した設計であること | 高 |
+| BIZ-007 | The website must be published on AWS | High |
+| BIZ-008 | The AWS services used and their design rationale must be explainable | High |
+| BIZ-009 | The GitHub README must include architecture diagrams, features, and reasons for technology choices | High |
+| BIZ-010 | It must be possible to explain low-cost operation through a serverless architecture | High |
+| BIZ-011 | The design must account for security, cost, and operational monitoring | High |
 
-## 5.3 収益化要件
+## 5.3 Monetization Requirements
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| BIZ-012 | SEO流入を狙える記事コンテンツを掲載できること | 中 |
-| BIZ-013 | Google AdSenseの審査に必要な基本ページを用意できること | 中 |
-| BIZ-014 | 将来的に有料教材やnote記事へ誘導できること | 中 |
-| BIZ-015 | 広告掲載を想定したレイアウトにできること | 低 |
-| BIZ-016 | 将来的にログイン・学習履歴・有料機能へ拡張できること | 低 |
+| BIZ-012 | It must be possible to publish articles targeting SEO traffic | Medium |
+| BIZ-013 | It must be possible to provide basic pages required for Google AdSense review | Medium |
+| BIZ-014 | It must be possible to direct users to paid learning materials and note articles in the future | Medium |
+| BIZ-015 | The layout must be able to accommodate advertisements | Low |
+| BIZ-016 | It must be possible to extend the product with login, learning history, and paid features in the future | Low |
 
 ---
 
-## 6. システム化範囲
+## 6. System Scope
 
-## 6.1 MVPで実装する範囲
+## 6.1 MVP Implementation Scope
 
-MVPでは、以下を実装対象とする。
+The MVP includes the following.
 
-| 区分 | 実装内容 |
+| Category | Implementation |
 |---|---|
-| フロントエンド | トップページ、用語集、比較ページ、模擬問題、構成図ページ、ブログ、問い合わせ |
-| コンテンツ | CLF用語集、CLF模擬問題、AWSサービス比較、SAA構成図、SEO記事 |
-| インフラ | S3、CloudFront、Lambda、API Gateway、DynamoDB、CloudWatch、IAM |
-| 運用 | GitHub README、AWS構成図、コスト管理、ログ確認 |
-| 収益化準備 | 運営者情報、プライバシーポリシー、問い合わせページ |
+| Frontend | Home page, glossary, comparison pages, practice questions, architecture pages, blog, contact |
+| Content | CLF glossary, CLF practice questions, AWS service comparisons, SAA architecture diagrams, SEO articles |
+| Infrastructure | S3, CloudFront, Lambda, API Gateway, DynamoDB, CloudWatch, IAM |
+| Operations | GitHub README, AWS architecture diagram, cost management, log inspection |
+| Monetization preparation | Site operator information, privacy policy, contact page |
 
-## 6.2 MVPで実装しない範囲
+## 6.2 Outside MVP Implementation Scope
 
-MVPでは以下を実装しない。
+The MVP does not include the following.
 
-| 区分 | 実装しない内容 | 理由 |
+| Category | Excluded functionality | Reason |
 |---|---|---|
-| 認証 | ユーザー登録・ログイン | 初期開発コスト削減のため |
-| 決済 | Stripe等の課金機能 | 収益化前段階では不要なため |
-| AI | AI解説生成 | APIコスト発生を避けるため |
-| 学習履歴 | ユーザー別の正答率保存 | Cognito導入後に実装するため |
-| 管理画面 | 問題・記事の管理画面 | 初期はMarkdown/JSON管理で十分なため |
-| メール配信 | 毎日1問メール通知 | EventBridge/SES導入はPhase 2以降に回すため |
+| Authentication | User registration and login | Reduce initial development cost |
+| Payments | Billing features such as Stripe | Unnecessary before monetization |
+| AI | AI-generated explanations | Avoid API costs |
+| Learning history | Saved per-user accuracy rates | Implement after introducing Cognito |
+| Administration interface | Question and article management interface | Markdown/JSON management is sufficient initially |
+| Email delivery | Daily question email notifications | Defer EventBridge/SES introduction to Phase 2 or later |
 
 ---
 
-## 7. 機能要件
+## 7. Functional Requirements
 
-## 7.1 トップページ機能
+## 7.1 Home Page
 
-### 概要
+### Overview
 
-サイトの目的、対象ユーザー、主要コンテンツへの導線を表示する。
+Display the site's purpose, target users, and navigation paths to main content.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-001 | サイト概要表示 | AWS資格学習サイトであることを説明する | 高 |
-| F-002 | 主要コンテンツ導線 | 用語集、模擬問題、比較、構成図、ブログへのリンクを表示する | 高 |
-| F-003 | 学習ロードマップ表示 | CLFからSAAまでの学習順序を表示する | 中 |
-| F-004 | 最新記事表示 | 最新ブログ記事を一覧表示する | 中 |
-| F-005 | 人気コンテンツ表示 | よく読まれる記事や問題への導線を表示する | 低 |
+| F-001 | Site overview | Explain that this is an AWS certification learning site | High |
+| F-002 | Main content navigation | Display links to the glossary, practice questions, comparisons, architecture diagrams, and blog | High |
+| F-003 | Learning roadmap | Display the learning sequence from CLF to SAA | Medium |
+| F-004 | Latest articles | List the latest blog articles | Medium |
+| F-005 | Popular content | Display paths to frequently read articles and questions | Low |
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- ユーザーがサイトの目的を3秒以内に理解できる
-- 用語集、模擬問題、比較ページへ1クリックで移動できる
-- モバイル表示でも主要導線が分かりやすい
+- Users can understand the site's purpose within 3 seconds
+- The glossary, practice questions, and comparison pages are accessible in 1 click
+- Main navigation paths are clear on mobile too
 
 ---
 
-## 7.2 AWS用語集機能
+## 7.2 AWS Glossary
 
-### 概要
+### Overview
 
-AWSサービスの概要、用途、試験ポイント、関連サービスを一覧・詳細で確認できる機能。
+Provide list and detail views of AWS service overviews, uses, exam points, and related services.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-006 | 用語一覧表示 | AWSサービスを一覧表示する | 高 |
-| F-007 | カテゴリ表示 | Compute、Storage、Database等で分類表示する | 高 |
-| F-008 | 用語詳細表示 | サービス概要、用途、試験ポイントを表示する | 高 |
-| F-009 | 関連サービス表示 | 似ているサービスや関連サービスを表示する | 中 |
-| F-010 | 検索機能 | サービス名・キーワードで検索できる | 中 |
-| F-011 | 難易度表示 | beginner / intermediate などを表示する | 低 |
+| F-006 | Terminology listing | List AWS services | High |
+| F-007 | Categories | Display categories such as Compute, Storage, and Database | High |
+| F-008 | Terminology detail | Display the service overview, uses, and exam points | High |
+| F-009 | Related services | Display similar and related services | Medium |
+| F-010 | Search | Search by service name or keyword | Medium |
+| F-011 | Difficulty | Display beginner / intermediate and similar levels | Low |
 
-### 表示項目
+### Display Fields
 
-| 項目 | 内容 |
+| Field | Details |
 |---|---|
-| サービス名 | 例：Amazon S3 |
-| 略称 | 例：S3 |
-| カテゴリ | Storage、Compute、Database等 |
-| 概要 | 初学者向けの短い説明 |
-| 主な用途 | 具体的な利用シーン |
-| 試験ポイント | CLF/SAAで問われやすい観点 |
-| 類似サービス | 比較対象となるサービス |
-| 注意点 | 課金・設計・セキュリティ上の注意 |
+| Service name | Example: Amazon S3 |
+| Abbreviation | Example: S3 |
+| Category | Storage, Compute, Database, etc. |
+| Overview | Short explanation for beginners |
+| Main uses | Specific use cases |
+| Exam points | Topics frequently tested in CLF/SAA |
+| Similar services | Services to compare |
+| Considerations | Billing, design, and security considerations |
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- 最低30件以上のAWSサービスを掲載する
-- 各サービスに概要・用途・試験ポイントが記載されている
-- スマートフォンでも読みやすいレイアウトである
+- Publish at least 30 AWS services
+- Each service includes an overview, uses, and exam points
+- The layout is readable on smartphones
 
 ---
 
-## 7.3 サービス比較機能
+## 7.3 Service Comparisons
 
-### 概要
+### Overview
 
-試験で混同しやすいAWSサービスの違いを比較表と解説で確認できる機能。
+Use comparison tables and explanations to clarify differences between AWS services easily confused on exams.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-012 | 比較記事一覧 | サービス比較記事を一覧表示する | 高 |
-| F-013 | 比較詳細表示 | 複数サービスの違いを表形式で表示する | 高 |
-| F-014 | 試験ポイント表示 | 資格試験で問われやすい違いを表示する | 高 |
-| F-015 | 実務での使い分け表示 | 実際の利用シーンごとの選び方を表示する | 中 |
-| F-016 | 関連問題表示 | 比較内容に関連する模擬問題を表示する | 低 |
+| F-012 | Comparison article listing | List service comparison articles | High |
+| F-013 | Comparison detail | Display differences between multiple services in tables | High |
+| F-014 | Exam points | Display differences frequently tested in certification exams | High |
+| F-015 | Practical selection guidance | Display how to choose services for actual use cases | Medium |
+| F-016 | Related questions | Display practice questions related to the comparison | Low |
 
-### 初期比較対象
+### Initial Comparisons
 
-| ID | 比較テーマ | 優先度 |
+| ID | Comparison topic | Priority |
 |---|---|---|
-| CMP-001 | S3 / EBS / EFS の違い | 高 |
-| CMP-002 | RDS / DynamoDB の違い | 高 |
-| CMP-003 | SNS / SQS / EventBridge の違い | 高 |
-| CMP-004 | IAMユーザー / IAMロール / IAMポリシー の違い | 高 |
-| CMP-005 | CloudWatch / CloudTrail / AWS Config の違い | 高 |
-| CMP-006 | ALB / NLB / CloudFront の違い | 中 |
-| CMP-007 | Multi-AZ / Read Replica の違い | 中 |
-| CMP-008 | Security Group / NACL の違い | 中 |
+| CMP-001 | Differences between S3 / EBS / EFS | High |
+| CMP-002 | Differences between RDS / DynamoDB | High |
+| CMP-003 | Differences between SNS / SQS / EventBridge | High |
+| CMP-004 | Differences between IAM users / IAM roles / IAM policies | High |
+| CMP-005 | Differences between CloudWatch / CloudTrail / AWS Config | High |
+| CMP-006 | Differences between ALB / NLB / CloudFront | Medium |
+| CMP-007 | Differences between Multi-AZ / Read Replica | Medium |
+| CMP-008 | Differences between Security Group / NACL | Medium |
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- 最低5本以上の比較記事が存在する
-- 各比較記事に「結論」「比較表」「試験ポイント」「実務での使い分け」が含まれる
-- 初学者が違いを理解しやすい文章である
+- At least 5 comparison articles exist
+- Each comparison article includes a conclusion, comparison table, exam points, and practical selection guidance
+- The writing makes the differences easy for beginners to understand
 
 ---
 
-## 7.4 模擬問題機能
+## 7.4 Practice Questions
 
-### 概要
+### Overview
 
-AWS Cloud Practitioner向けの模擬問題を解き、正解・解説を確認できる機能。
+Let users answer AWS Cloud Practitioner practice questions and review correct answers and explanations.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-017 | 問題一覧表示 | 模擬問題を一覧表示する | 高 |
-| F-018 | 問題詳細表示 | 問題文と選択肢を表示する | 高 |
-| F-019 | 回答選択 | ユーザーが選択肢を選べる | 高 |
-| F-020 | 正誤判定 | 回答後に正解・不正解を表示する | 高 |
-| F-021 | 解説表示 | 正解理由と不正解選択肢の理由を表示する | 高 |
-| F-022 | カテゴリ表示 | Cloud Concepts、Security等の分野を表示する | 中 |
-| F-023 | 難易度表示 | easy / normal / hard を表示する | 低 |
+| F-017 | Question listing | List practice questions | High |
+| F-018 | Question detail | Display question text and choices | High |
+| F-019 | Answer selection | Let users select a choice | High |
+| F-020 | Correctness feedback | Show correct/incorrect feedback after an answer | High |
+| F-021 | Explanation | Explain why the correct answer is correct and why other choices are incorrect | High |
+| F-022 | Categories | Display domains such as Cloud Concepts and Security | Medium |
+| F-023 | Difficulty | Display easy / normal / hard | Low |
 
-### 初期問題数
+### Initial Question Counts
 
-| 試験区分 | 問題数 |
+| Exam | Question count |
 |---|---:|
-| Cloud Practitioner | 30問 |
-| SAA | MVPでは対象外。Phase 2以降に追加 |
+| Cloud Practitioner | 30 questions |
+| SAA | Outside MVP scope. Add in Phase 2 or later |
 
-### 問題データ項目
+### Question Data Fields
 
-| 項目 | 内容 |
+| Field | Details |
 |---|---|
-| 問題ID | 一意のID |
-| 試験区分 | CLF-C02 / SAA-C03 など |
-| カテゴリ | 出題分野 |
-| 問題文 | 問題本文 |
-| 選択肢 | 4択を基本とする |
-| 正解 | 正解番号 |
-| 解説 | 正解理由 |
-| 関連サービス | 対象AWSサービス |
-| 難易度 | easy / normal / hard |
+| Question ID | Unique ID |
+| Exam | CLF-C02 / SAA-C03, etc. |
+| Category | Exam domain |
+| Question text | Question body |
+| Choices | Four choices by default |
+| Correct answer | Correct answer number |
+| Explanation | Reason the answer is correct |
+| Related services | Relevant AWS services |
+| Difficulty | easy / normal / hard |
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- Cloud Practitioner向け問題が30問以上ある
-- 各問題に正解と解説がある
-- 回答後に正誤と解説が表示される
-- ログインなしでも利用できる
+- At least 30 Cloud Practitioner questions exist
+- Each question has a correct answer and explanation
+- Correctness feedback and an explanation appear after answering
+- Usable without login
 
 ---
 
-## 7.5 SAA構成図機能
+## 7.5 SAA Architecture Diagrams
 
-### 概要
+### Overview
 
-SAAで問われるAWSアーキテクチャパターンを構成図と解説で学べる機能。
+Teach AWS architecture patterns tested in SAA through diagrams and explanations.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-024 | 構成図一覧表示 | AWS構成図を一覧表示する | 中 |
-| F-025 | 構成図詳細表示 | 構成図と設計意図を表示する | 中 |
-| F-026 | 使用サービス表示 | 構成に含まれるAWSサービスを表示する | 中 |
-| F-027 | 設計ポイント表示 | 可用性、耐障害性、コスト、セキュリティ観点を表示する | 高 |
-| F-028 | 試験ポイント表示 | SAAで問われやすい観点を表示する | 高 |
+| F-024 | Architecture diagram listing | List AWS architecture diagrams | Medium |
+| F-025 | Architecture diagram detail | Display the diagram and design rationale | Medium |
+| F-026 | Services used | Display AWS services included in the architecture | Medium |
+| F-027 | Design points | Display availability, fault tolerance, cost, and security considerations | High |
+| F-028 | Exam points | Display topics frequently tested in SAA | High |
 
-### 初期構成図
+### Initial Architecture Diagrams
 
-| ID | 構成図 | 優先度 |
+| ID | Architecture diagram | Priority |
 |---|---|---|
-| ARC-001 | S3 + CloudFront 静的Webサイト構成 | 高 |
-| ARC-002 | API Gateway + Lambda + DynamoDB サーバーレスAPI構成 | 高 |
-| ARC-003 | VPC内3層Webアプリ構成 | 中 |
-| ARC-004 | ALB + Auto Scaling + RDS Multi-AZ 高可用性構成 | 中 |
-| ARC-005 | EventBridge + Lambda バッチ処理構成 | 中 |
+| ARC-001 | S3 + CloudFront static website architecture | High |
+| ARC-002 | API Gateway + Lambda + DynamoDB serverless API architecture | High |
+| ARC-003 | Three-tier web application architecture within a VPC | Medium |
+| ARC-004 | ALB + Auto Scaling + RDS Multi-AZ highly available architecture | Medium |
+| ARC-005 | EventBridge + Lambda batch-processing architecture | Medium |
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- 最低5つのAWS構成図を掲載する
-- 各構成図に設計意図、使用サービス、試験ポイントが記載されている
-- 図だけでなく、なぜその構成にするのかを説明している
+- Publish at least 5 AWS architecture diagrams
+- Each diagram includes design rationale, services used, and exam points
+- Explain why the architecture was chosen, rather than providing diagrams alone
 
 ---
 
-## 7.6 ブログ記事機能
+## 7.6 Blog Articles
 
-### 概要
+### Overview
 
-SEO流入を目的としたAWS学習記事を掲載する機能。
+Publish AWS learning articles to attract SEO traffic.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-029 | 記事一覧表示 | ブログ記事を一覧表示する | 中 |
-| F-030 | 記事詳細表示 | 記事本文を表示する | 中 |
-| F-031 | カテゴリ表示 | CLF、SAA、無料枠、構成図などで分類する | 中 |
-| F-032 | タグ表示 | AWSサービス名などでタグ付けする | 低 |
-| F-033 | 関連記事表示 | 関連する記事を表示する | 低 |
+| F-029 | Article listing | List blog articles | Medium |
+| F-030 | Article detail | Display the article body | Medium |
+| F-031 | Categories | Categorize by CLF, SAA, Free Tier, architecture diagrams, etc. | Medium |
+| F-032 | Tags | Tag articles with AWS service names and similar terms | Low |
+| F-033 | Related articles | Display related articles | Low |
 
-### 初期記事数
+### Initial Article Count
 
-MVP時点では5本以上、AdSense申請前には20本以上を目標とする。
+Aim for at least 5 articles at MVP release and at least 20 before applying for AdSense.
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- MVP時点で5本以上の記事が存在する
-- 各記事にタイトル、本文、カテゴリ、更新日がある
-- AdSense申請前には運営者情報、問い合わせ、プライバシーポリシーを含める
+- At least 5 articles exist at MVP release
+- Each article has a title, body, category, and update date
+- Include site operator information, contact, and privacy policy pages before applying for AdSense
 
 ---
 
-## 7.7 問い合わせ機能
+## 7.7 Contact
 
-### 概要
+### Overview
 
-ユーザーからの問い合わせ、誤り報告、仕事依頼を受け取るためのフォーム機能。
+Provide a form for receiving user inquiries, error reports, and work requests.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-034 | 問い合わせフォーム表示 | 名前、メール、件名、本文を入力できる | 中 |
-| F-035 | 入力チェック | 必須項目・メール形式を検証する | 高 |
-| F-036 | 問い合わせ送信 | Lambda/API Gateway経由で送信する | 中 |
-| F-037 | DynamoDB保存 | 問い合わせ内容を保存する | 中 |
-| F-038 | 送信完了表示 | 送信完了メッセージを表示する | 高 |
-| F-039 | スパム対策 | 簡易honeypot等を入れる | 低 |
+| F-034 | Contact form | Accept a name, email, subject, and message | Medium |
+| F-035 | Input validation | Validate required fields and email format | High |
+| F-036 | Contact submission | Submit through Lambda/API Gateway | Medium |
+| F-037 | DynamoDB persistence | Save contact submissions | Medium |
+| F-038 | Submission confirmation | Display a submission-complete message | High |
+| F-039 | Spam prevention | Include a simple honeypot or similar measure | Low |
 
-### 入力項目
+### Input Fields
 
-| 項目 | 必須 | 制約 |
+| Field | Required | Constraint |
 |---|---|---|
-| 名前 | 必須 | 100文字以内 |
-| メールアドレス | 必須 | メール形式 |
-| 件名 | 必須 | 150文字以内 |
-| 本文 | 必須 | 2,000文字以内 |
+| Name | Required | Up to 100 characters |
+| Email address | Required | Email format |
+| Subject | Required | Up to 150 characters |
+| Message | Required | Up to 2,000 characters |
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- 必須項目が未入力の場合、エラー表示される
-- メール形式が不正な場合、エラー表示される
-- 正常送信後に完了メッセージが表示される
-- 問い合わせ内容がDynamoDBに保存される
+- Display an error when a required field is missing
+- Display an error when the email format is invalid
+- Display a completion message after successful submission
+- Save contact submissions in DynamoDB
 
 ---
 
-## 7.8 運営者情報・プライバシーポリシー機能
+## 7.8 Site Operator Information and Privacy Policy
 
-### 概要
+### Overview
 
-サイト運営者情報、問い合わせ先、広告・アクセス解析に関する説明を掲載する。
+Publish site operator information, contact details, and explanations of advertising and analytics.
 
-### 機能一覧
+### Feature List
 
-| ID | 機能 | 内容 | 優先度 |
+| ID | Feature | Details | Priority |
 |---|---|---|---|
-| F-040 | 運営者情報表示 | 運営者プロフィール、目的、連絡先を表示する | 中 |
-| F-041 | プライバシーポリシー表示 | 個人情報、Cookie、広告、アクセス解析について記載する | 中 |
-| F-042 | 免責事項表示 | 学習情報の正確性や試験変更に関する免責を記載する | 中 |
+| F-040 | Site operator information | Display the operator's profile, purpose, and contact details | Medium |
+| F-041 | Privacy policy | Describe personal information, cookies, advertising, and analytics | Medium |
+| F-042 | Disclaimer | Include disclaimers about learning-information accuracy and exam changes | Medium |
 
-### 受け入れ条件
+### Acceptance Criteria
 
-- フッターから運営者情報・プライバシーポリシーに遷移できる
-- 問い合わせフォームと整合している
-- 広告掲載・アクセス解析を想定した記述がある
+- Site operator information and the privacy policy are accessible from the footer
+- Content is consistent with the contact form
+- Descriptions account for advertising and analytics
 
 ---
 
-## 8. 非機能要件
+## 8. Nonfunctional Requirements
 
-## 8.1 可用性
+## 8.1 Availability
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| NF-001 | 静的コンテンツはS3 + CloudFrontで配信する | 高 |
-| NF-002 | サイトは基本的に24時間閲覧可能とする | 高 |
-| NF-003 | API障害時でも静的記事・用語集は閲覧可能にする | 中 |
-| NF-004 | 単一障害点を可能な範囲で減らす | 中 |
+| NF-001 | Serve static content through S3 + CloudFront | High |
+| NF-002 | The site should generally be available around the clock | High |
+| NF-003 | Static articles and the glossary remain accessible during API failures | Medium |
+| NF-004 | Reduce single points of failure where feasible | Medium |
 
-## 8.2 性能
+## 8.2 Performance
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| NF-005 | トップページの初回表示は体感3秒以内を目指す | 高 |
-| NF-006 | 画像・構成図は圧縮して配信する | 中 |
-| NF-007 | CloudFrontキャッシュを活用する | 高 |
-| NF-008 | 不要なJavaScriptを増やしすぎない | 中 |
+| NF-005 | Aim for a perceived initial home-page load within 3 seconds | High |
+| NF-006 | Compress images and architecture diagrams for delivery | Medium |
+| NF-007 | Use CloudFront caching | High |
+| NF-008 | Avoid excessive unnecessary JavaScript | Medium |
 
-## 8.3 セキュリティ
+## 8.3 Security
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| NF-009 | S3バケットは原則非公開とし、CloudFront経由で配信する | 高 |
-| NF-010 | IAM権限は最小権限の原則で設定する | 高 |
-| NF-011 | Lambda実行ロールには必要最小限のDynamoDB権限のみ付与する | 高 |
-| NF-012 | 問い合わせフォームには入力バリデーションを実装する | 高 |
-| NF-013 | API Gatewayには必要に応じてレート制限を設定する | 中 |
-| NF-014 | 環境変数やシークレットをGitHubにコミットしない | 高 |
-| NF-015 | HTTPSで配信する | 高 |
+| NF-009 | Keep S3 buckets private by default and serve content through CloudFront | High |
+| NF-010 | Configure IAM permissions according to least privilege | High |
+| NF-011 | Grant the Lambda execution role only the minimum necessary DynamoDB permissions | High |
+| NF-012 | Implement contact-form input validation | High |
+| NF-013 | Configure API Gateway rate limits as needed | Medium |
+| NF-014 | Do not commit environment variables or secrets to GitHub | High |
+| NF-015 | Serve over HTTPS | High |
 
-## 8.4 運用・監視
+## 8.4 Operations and Monitoring
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| NF-016 | Lambdaの実行ログをCloudWatch Logsで確認できる | 高 |
-| NF-017 | エラー発生時にCloudWatch Logsで原因調査できる | 高 |
-| NF-018 | AWS Budgetsで課金アラートを設定する | 高 |
-| NF-019 | CloudWatch Logsの保存期間を設定し、ログ肥大化を防ぐ | 中 |
-| NF-020 | 月1回以上、請求ダッシュボードを確認する | 高 |
+| NF-016 | Lambda execution logs must be inspectable in CloudWatch Logs | High |
+| NF-017 | CloudWatch Logs must support investigating error causes | High |
+| NF-018 | Configure billing alerts with AWS Budgets | High |
+| NF-019 | Configure CloudWatch Logs retention to prevent excessive log growth | Medium |
+| NF-020 | Inspect the billing dashboard at least once a month | High |
 
-## 8.5 コスト
+## 8.5 Cost
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| NF-021 | EC2常時起動を使わない | 高 |
-| NF-022 | RDSをMVPでは使わない | 高 |
-| NF-023 | NAT Gatewayを使わない | 高 |
-| NF-024 | ALBをMVPでは使わない | 高 |
-| NF-025 | サーバーレス中心で小規模アクセス時のコストを最小化する | 高 |
-| NF-026 | 不要なAWSリソースは削除する | 高 |
+| NF-021 | Do not use always-on EC2 instances | High |
+| NF-022 | Do not use RDS in the MVP | High |
+| NF-023 | Do not use NAT Gateway | High |
+| NF-024 | Do not use ALB in the MVP | High |
+| NF-025 | Minimize costs at low traffic volumes with a primarily serverless architecture | High |
+| NF-026 | Delete unnecessary AWS resources | High |
 
-## 8.6 保守性
+## 8.6 Maintainability
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| NF-027 | コンテンツはMarkdownまたはJSONで管理する | 高 |
-| NF-028 | AWSサービス情報は構造化データとして管理する | 高 |
-| NF-029 | 問題データは後から追加しやすい形式にする | 高 |
-| NF-030 | GitHubでソース管理する | 高 |
-| NF-031 | READMEにセットアップ手順を記載する | 高 |
+| NF-027 | Manage content in Markdown or JSON | High |
+| NF-028 | Manage AWS service information as structured data | High |
+| NF-029 | Use a question-data format that makes later additions easy | High |
+| NF-030 | Manage source code in GitHub | High |
+| NF-031 | Include setup instructions in the README | High |
 
 ## 8.7 SEO
 
-| ID | 要件 | 優先度 |
+| ID | Requirement | Priority |
 |---|---|---|
-| NF-032 | 各記事にtitle、descriptionを設定する | 中 |
-| NF-033 | 見出し構造を適切に設定する | 中 |
-| NF-034 | サイトマップを生成する | 中 |
-| NF-035 | robots.txtを設定する | 中 |
-| NF-036 | URLは分かりやすい英数字スラッグにする | 中 |
+| NF-032 | Set a title and description for each article | Medium |
+| NF-033 | Use an appropriate heading structure | Medium |
+| NF-034 | Generate a sitemap | Medium |
+| NF-035 | Configure robots.txt | Medium |
+| NF-036 | Use clear alphanumeric URL slugs | Medium |
 
 ---
 
-## 9. AWS構成要件
+## 9. AWS Architecture Requirements
 
-## 9.1 MVP構成
+## 9.1 MVP Architecture
 
 ```text
-ユーザー
+User
   ↓
 CloudFront
   ↓
-S3 静的サイト
+S3 static site
   ↓
 API Gateway
   ↓
@@ -507,601 +507,601 @@ Lambda
   ↓
 DynamoDB
 
-CloudWatch Logs：ログ監視
-IAM：権限管理
-AWS Budgets：課金監視
+CloudWatch Logs: Log monitoring
+IAM: Permission management
+AWS Budgets: Billing monitoring
 ```
 
-## 9.2 使用AWSサービス
+## 9.2 AWS Services Used
 
-| サービス | 用途 | MVP利用 | 補足 |
+| Service | Purpose | MVP usage | Notes |
 |---|---|---|---|
-| S3 | 静的ファイル配置 | 必須 | フロントエンド成果物を配置 |
-| CloudFront | CDN配信 | 必須 | HTTPS配信・キャッシュ |
-| API Gateway | API公開 | 必須 | 問い合わせ・問題取得APIなど |
-| Lambda | API処理 | 必須 | サーバーレス処理 |
-| DynamoDB | データ保存 | 必須 | 問題、用語、問い合わせ保存 |
-| CloudWatch | ログ監視 | 必須 | Lambdaログ確認 |
-| IAM | 権限管理 | 必須 | 最小権限設計 |
-| AWS Budgets | 課金監視 | 必須 | 課金事故防止 |
-| Route 53 | 独自ドメイン | 任意 | 独自ドメイン利用時 |
-| ACM | SSL証明書 | 任意 | CloudFront HTTPS用 |
-| Cognito | 認証 | 将来 | 学習履歴機能で利用 |
-| EventBridge | 定期実行 | 将来 | 毎日1問配信で利用 |
-| SES | メール通知 | 将来 | 問い合わせ通知・問題配信 |
+| S3 | Store static files | Required | Store frontend build output |
+| CloudFront | CDN delivery | Required | HTTPS delivery and caching |
+| API Gateway | Expose APIs | Required | Contact and question-retrieval APIs, etc. |
+| Lambda | API processing | Required | Serverless processing |
+| DynamoDB | Data storage | Required | Store questions, terminology, and contact submissions |
+| CloudWatch | Log monitoring | Required | Inspect Lambda logs |
+| IAM | Permission management | Required | Least-privilege design |
+| AWS Budgets | Billing monitoring | Required | Prevent unexpected charges |
+| Route 53 | Custom domain | Optional | When using a custom domain |
+| ACM | SSL certificate | Optional | For CloudFront HTTPS |
+| Cognito | Authentication | Future | Used for learning-history functionality |
+| EventBridge | Scheduled execution | Future | Used for daily question delivery |
+| SES | Email notifications | Future | Contact notifications and question delivery |
 
-## 9.3 AWSサービス選定理由
+## 9.3 Reasons for Selecting AWS Services
 
 ### S3 + CloudFront
 
-静的サイトを低コストかつ高速に配信するため。EC2を使わずにWebサイトを公開できるため、無料枠運用とポートフォリオの両方に適している。
+Deliver a static site quickly and at low cost. Publishing a website without EC2 makes this suitable for both Free Tier operation and a portfolio.
 
 ### Lambda + API Gateway
 
-問い合わせ送信や問題取得など、必要な時だけ実行されるAPI処理に適している。常時起動サーバーが不要なため、コストを抑えられる。
+Suitable for API operations performed only when needed, such as contact submission and question retrieval. No always-on server is required, keeping costs low.
 
 ### DynamoDB
 
-用語データ、問題データ、問い合わせデータの保存に利用する。サーバーレス構成と相性が良く、小規模運用ではコストを抑えやすい。
+Used to store terminology, question, and contact data. Works well with a serverless architecture and helps keep small-scale operating costs low.
 
 ### CloudWatch
 
-Lambdaのログ確認、エラー調査、運用監視のために利用する。ポートフォリオとして「運用まで考えている」ことを示せる。
+Used to inspect Lambda logs, investigate errors, and monitor operations. Demonstrates that the portfolio considers operations as well as development.
 
 ### IAM
 
-AWSリソース間のアクセス制御に利用する。最小権限の原則を意識し、セキュリティ設計力を示す。
+Used for access control between AWS resources. Following least privilege demonstrates security design skills.
 
 ---
 
-## 10. データ要件
+## 10. Data Requirements
 
-## 10.1 データ分類
+## 10.1 Data Categories
 
-| データ | 保存場所 | MVP利用 | 内容 |
+| Data | Storage location | MVP usage | Contents |
 |---|---|---|---|
-| AWS用語データ | JSONまたはDynamoDB | 必須 | サービス名、概要、用途、試験ポイント |
-| 模擬問題データ | JSONまたはDynamoDB | 必須 | 問題文、選択肢、正解、解説 |
-| 比較記事データ | Markdown/MDX | 必須 | 比較表、解説、試験ポイント |
-| ブログ記事データ | Markdown/MDX | 必須 | SEO記事本文 |
-| 構成図データ | Markdown/画像/JSON | 必須 | 図、使用サービス、設計意図 |
-| 問い合わせデータ | DynamoDB | 必須 | 名前、メール、件名、本文、送信日時 |
-| 学習履歴データ | DynamoDB | 将来 | ユーザー別正答率、復習対象 |
+| AWS terminology data | JSON or DynamoDB | Required | Service name, overview, uses, exam points |
+| Practice-question data | JSON or DynamoDB | Required | Question text, choices, correct answer, explanation |
+| Comparison article data | Markdown/MDX | Required | Comparison tables, explanations, exam points |
+| Blog article data | Markdown/MDX | Required | SEO article body |
+| Architecture diagram data | Markdown/images/JSON | Required | Diagram, services used, design rationale |
+| Contact data | DynamoDB | Required | Name, email, subject, message, submission timestamp |
+| Learning-history data | DynamoDB | Future | Per-user accuracy rates and review items |
 
-## 10.2 DynamoDBテーブル案
+## 10.2 Proposed DynamoDB Tables
 
 ### TermsTable
 
-AWS用語データを保存する。
+Store AWS terminology data.
 
-| 属性 | 型 | 内容 |
+| Attribute | Type | Contents |
 |---|---|---|
-| termId | string | 用語ID。例：s3 |
-| name | string | サービス名 |
-| category | string | カテゴリ |
-| summary | string | 概要 |
-| useCase | string | 用途 |
-| examPoint | string | 試験ポイント |
-| relatedServices | list | 関連サービス |
-| difficulty | string | 難易度 |
-| updatedAt | string | 更新日時 |
+| termId | string | Term ID. Example: s3 |
+| name | string | Service name |
+| category | string | Category |
+| summary | string | Overview |
+| useCase | string | Uses |
+| examPoint | string | Exam points |
+| relatedServices | list | Related services |
+| difficulty | string | Difficulty |
+| updatedAt | string | Update timestamp |
 
 ### QuestionsTable
 
-模擬問題データを保存する。
+Store practice-question data.
 
-| 属性 | 型 | 内容 |
+| Attribute | Type | Contents |
 |---|---|---|
-| questionId | string | 問題ID |
-| exam | string | 試験区分 |
-| category | string | 出題分野 |
-| question | string | 問題文 |
-| choices | list | 選択肢 |
-| answer | number | 正解番号 |
-| explanation | string | 解説 |
-| relatedServices | list | 関連サービス |
-| difficulty | string | 難易度 |
-| updatedAt | string | 更新日時 |
+| questionId | string | Question ID |
+| exam | string | Exam |
+| category | string | Exam domain |
+| question | string | Question text |
+| choices | list | Choices |
+| answer | number | Correct answer number |
+| explanation | string | Explanation |
+| relatedServices | list | Related services |
+| difficulty | string | Difficulty |
+| updatedAt | string | Update timestamp |
 
 ### ContactsTable
 
-問い合わせデータを保存する。
+Store contact data.
 
-| 属性 | 型 | 内容 |
+| Attribute | Type | Contents |
 |---|---|---|
-| contactId | string | 問い合わせID |
-| name | string | 名前 |
-| email | string | メールアドレス |
-| subject | string | 件名 |
-| message | string | 本文 |
-| createdAt | string | 送信日時 |
-| status | string | 対応状況 |
+| contactId | string | Contact ID |
+| name | string | Name |
+| email | string | Email address |
+| subject | string | Subject |
+| message | string | Message |
+| createdAt | string | Submission timestamp |
+| status | string | Handling status |
 
 ---
 
-## 11. 画面要件
+## 11. Screen Requirements
 
-## 11.1 画面一覧
+## 11.1 Screen List
 
-| 画面ID | 画面名 | 概要 | MVP |
+| Screen ID | Screen name | Description | MVP |
 |---|---|---|---|
-| SCR-001 | トップページ | サイト概要と主要導線 | 対象 |
-| SCR-002 | AWS用語集一覧 | AWSサービス一覧 | 対象 |
-| SCR-003 | AWS用語詳細 | 各サービスの詳細解説 | 対象 |
-| SCR-004 | サービス比較一覧 | 比較記事一覧 | 対象 |
-| SCR-005 | サービス比較詳細 | 比較表と解説 | 対象 |
-| SCR-006 | 模擬問題一覧 | 問題一覧・カテゴリ一覧 | 対象 |
-| SCR-007 | 模擬問題詳細 | 問題回答・解説表示 | 対象 |
-| SCR-008 | 構成図一覧 | AWS構成図一覧 | 対象 |
-| SCR-009 | 構成図詳細 | 構成図と設計意図 | 対象 |
-| SCR-010 | ブログ一覧 | 記事一覧 | 対象 |
-| SCR-011 | ブログ詳細 | 記事本文 | 対象 |
-| SCR-012 | 問い合わせ | 問い合わせフォーム | 対象 |
-| SCR-013 | 運営者情報 | プロフィール・サイト目的 | 対象 |
-| SCR-014 | プライバシーポリシー | 個人情報・広告・Cookie | 対象 |
-| SCR-015 | 学習履歴 | 正答率・復習対象 | 将来 |
-| SCR-016 | ログイン | ユーザー認証 | 将来 |
-| SCR-017 | マイページ | 学習状況表示 | 将来 |
+| SCR-001 | Home page | Site overview and main navigation paths | In scope |
+| SCR-002 | AWS glossary listing | AWS service listing | In scope |
+| SCR-003 | AWS terminology detail | Detailed explanation of each service | In scope |
+| SCR-004 | Service comparison listing | Comparison article listing | In scope |
+| SCR-005 | Service comparison detail | Comparison tables and explanations | In scope |
+| SCR-006 | Practice-question listing | Question and category listings | In scope |
+| SCR-007 | Practice-question detail | Answer questions and display explanations | In scope |
+| SCR-008 | Architecture diagram listing | AWS architecture diagram listing | In scope |
+| SCR-009 | Architecture diagram detail | Diagram and design rationale | In scope |
+| SCR-010 | Blog listing | Article listing | In scope |
+| SCR-011 | Blog detail | Article body | In scope |
+| SCR-012 | Contact | Contact form | In scope |
+| SCR-013 | Site operator information | Profile and site purpose | In scope |
+| SCR-014 | Privacy policy | Personal information, advertising, cookies | In scope |
+| SCR-015 | Learning history | Accuracy rates and review items | Future |
+| SCR-016 | Login | User authentication | Future |
+| SCR-017 | My page | Learning status display | Future |
 
-## 11.2 共通レイアウト要件
+## 11.2 Shared Layout Requirements
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| ヘッダー | ロゴ、用語集、問題、比較、構成図、ブログへのリンク |
-| フッター | 運営者情報、問い合わせ、プライバシーポリシー、GitHubリンク |
-| レスポンシブ | PC・タブレット・スマートフォン対応 |
-| CTA | 模擬問題、用語集、学習ロードマップへの導線 |
-| 広告枠 | 将来のAdSense掲載を想定した余白設計 |
+| Header | Logo and links to the glossary, questions, comparisons, architecture diagrams, and blog |
+| Footer | Site operator information, contact, privacy policy, and GitHub link |
+| Responsive design | Support PCs, tablets, and smartphones |
+| CTA | Paths to practice questions, the glossary, and the learning roadmap |
+| Ad slots | Space allocation anticipating future AdSense placement |
 
 ---
 
-## 12. 外部連携要件
+## 12. External Integration Requirements
 
-## 12.1 MVPで利用する外部連携
+## 12.1 External Integrations Used in the MVP
 
-| 外部サービス | 用途 | MVP利用 |
+| External service | Purpose | MVP usage |
 |---|---|---|
-| GitHub | ソースコード管理 | 必須 |
-| Google Search Console | 検索流入確認 | 収益化準備で利用 |
-| Google Analytics | アクセス解析 | 収益化準備で利用 |
-| Google AdSense | 広告収益 | 収益化準備で利用 |
+| GitHub | Source code management | Required |
+| Google Search Console | Inspect search traffic | Used in monetization preparation |
+| Google Analytics | Traffic analytics | Used in monetization preparation |
+| Google AdSense | Advertising revenue | Used in monetization preparation |
 
-## 12.2 将来的に利用する外部連携
+## 12.2 Future External Integrations
 
-| 外部サービス | 用途 |
+| External service | Purpose |
 |---|---|
-| note | 有料記事販売・導線 |
-| Stripe | 有料教材・月額課金 |
-| Slack | 毎日1問通知 |
-| OpenAI API | AI解説生成 |
+| note | Paid article sales and navigation paths |
+| Stripe | Paid learning materials and monthly subscriptions |
+| Slack | Daily question notifications |
+| OpenAI API | AI-generated explanations |
 
 ---
 
-## 13. 制約条件
+## 13. Constraints
 
-## 13.1 コスト制約
+## 13.1 Cost Constraints
 
-- 開発・初期運用コストは可能な限りゼロに抑える
-- 無料枠を優先して利用する
-- 常時課金が発生しやすい構成は避ける
-- AWS Budgetsを必ず設定する
-- 独自ドメイン費用は任意とする
+- Keep development and initial operating costs as close to zero as possible
+- Prioritize the Free Tier
+- Avoid architectures prone to ongoing charges
+- Always configure AWS Budgets
+- Custom domain costs are optional
 
-## 13.2 技術制約
+## 13.2 Technical Constraints
 
-- MVPではサーバーレス構成を基本とする
-- RDS、EC2常時起動、NAT Gateway、ALBはMVPでは使用しない
-- 初期はコンテンツ更新を手動で行う
-- 管理画面はMVP対象外とする
+- Use a serverless architecture as the MVP baseline
+- Do not use RDS, always-on EC2, NAT Gateway, or ALB in the MVP
+- Update content manually at first
+- An administration interface is outside MVP scope
 
-## 13.3 スケジュール制約
+## 13.3 Schedule Constraints
 
-- 6月末のCloud Practitioner受験前にMVP公開を目指す
-- 8月頃のSAA受験前に構成図・設計パターンを拡充する
-- 収益化準備はSAA受験後に本格化する
+- Aim to publish the MVP before the Cloud Practitioner exam at the end of June
+- Expand architecture diagrams and design patterns before the SAA exam around August
+- Begin full-scale monetization preparation after the SAA exam
 
-## 13.4 品質制約
+## 13.4 Quality Constraints
 
-- AWSサービス情報は公式情報を確認したうえで作成する
-- 記事には更新日を表示する
-- 試験範囲やサービス仕様変更に備え、定期的に見直す
-- 模擬問題は実際の試験問題のコピーではなく、独自作成とする
-
----
-
-## 14. セキュリティ要件
-
-## 14.1 アクセス制御
-
-| ID | 要件 |
-|---|---|
-| SEC-001 | S3バケットは直接公開せず、CloudFront経由で配信する |
-| SEC-002 | IAMロールは最小権限で作成する |
-| SEC-003 | LambdaからDynamoDBへのアクセスは対象テーブルに限定する |
-| SEC-004 | 管理者用AWSアクセスキーはGitHubに保存しない |
-| SEC-005 | GitHub Secretsを利用してCI/CDの認証情報を管理する |
-
-## 14.2 入力値検証
-
-| ID | 要件 |
-|---|---|
-| SEC-006 | 問い合わせフォームの入力値を検証する |
-| SEC-007 | メールアドレス形式を検証する |
-| SEC-008 | 入力文字数に上限を設定する |
-| SEC-009 | HTMLタグやスクリプトの入力を無害化する |
-
-## 14.3 通信
-
-| ID | 要件 |
-|---|---|
-| SEC-010 | サイトはHTTPSで配信する |
-| SEC-011 | APIもHTTPS経由で利用する |
-| SEC-012 | CORS設定を必要最小限にする |
+- Create AWS service information after checking official sources
+- Display update dates on articles
+- Review regularly for changes in exam coverage and service specifications
+- Create original practice questions rather than copying actual exam questions
 
 ---
 
-## 15. コスト管理要件
+## 14. Security Requirements
 
-## 15.1 必須設定
+## 14.1 Access Control
 
-| ID | 要件 |
+| ID | Requirement |
 |---|---|
-| COST-001 | AWS Budgetsを設定する |
-| COST-002 | 予算超過アラートをメール通知する |
-| COST-003 | CloudWatch Logsの保存期間を設定する |
-| COST-004 | 不要なリソースを定期的に削除する |
-| COST-005 | 月次でAWS請求額を確認する |
+| SEC-001 | Do not expose S3 buckets directly; serve through CloudFront |
+| SEC-002 | Create IAM roles with least privilege |
+| SEC-003 | Restrict Lambda access to DynamoDB to the relevant tables |
+| SEC-004 | Do not store administrator AWS access keys in GitHub |
+| SEC-005 | Manage CI/CD credentials with GitHub Secrets |
 
-## 15.2 使用を避けるサービス
+## 14.2 Input Validation
 
-MVPでは以下を原則使用しない。
-
-| サービス | 理由 |
+| ID | Requirement |
 |---|---|
-| EC2常時起動 | 利用時間に応じた課金が発生するため |
-| RDS | 無料枠終了後の固定費リスクがあるため |
-| NAT Gateway | 小規模でも課金が発生しやすいため |
-| ALB | 常時利用料金が発生するため |
-| Elastic IP | 未使用状態で課金リスクがあるため |
+| SEC-006 | Validate contact-form input |
+| SEC-007 | Validate email address format |
+| SEC-008 | Set maximum input lengths |
+| SEC-009 | Sanitize HTML tags and script input |
+
+## 14.3 Communication
+
+| ID | Requirement |
+|---|---|
+| SEC-010 | Serve the site over HTTPS |
+| SEC-011 | Access the API over HTTPS too |
+| SEC-012 | Keep CORS settings to the minimum necessary |
 
 ---
 
-## 16. SEO・収益化要件
+## 15. Cost Management Requirements
 
-## 16.1 SEO要件
+## 15.1 Required Settings
 
-| ID | 要件 |
+| ID | Requirement |
 |---|---|
-| SEO-001 | 各ページに適切なtitleを設定する |
-| SEO-002 | 各ページにdescriptionを設定する |
-| SEO-003 | h1、h2、h3を適切に使う |
-| SEO-004 | 内部リンクを設計する |
-| SEO-005 | サイトマップを作成する |
-| SEO-006 | robots.txtを作成する |
-| SEO-007 | 記事URLは分かりやすいスラッグにする |
-| SEO-008 | 記事に更新日を表示する |
+| COST-001 | Configure AWS Budgets |
+| COST-002 | Send budget-overrun alerts by email |
+| COST-003 | Configure CloudWatch Logs retention |
+| COST-004 | Delete unnecessary resources regularly |
+| COST-005 | Check AWS billing amounts monthly |
 
-## 16.2 AdSense準備要件
+## 15.2 Services to Avoid
 
-| ID | 要件 |
+As a rule, do not use the following in the MVP.
+
+| Service | Reason |
 |---|---|
-| ADS-001 | 独自性のある記事を20本以上用意する |
-| ADS-002 | 運営者情報ページを用意する |
-| ADS-003 | 問い合わせページを用意する |
-| ADS-004 | プライバシーポリシーページを用意する |
-| ADS-005 | コピーコンテンツを避ける |
-| ADS-006 | 広告掲載を想定したレイアウトにする |
-
-## 16.3 収益導線要件
-
-| ID | 要件 |
-|---|---|
-| MON-001 | note有料記事へのリンクを設置できること |
-| MON-002 | PDF教材販売ページへ誘導できること |
-| MON-003 | 将来的な有料会員機能へ拡張できる構成にすること |
+| Always-on EC2 | Charges accrue based on usage duration |
+| RDS | Risk of fixed costs after the Free Tier ends |
+| NAT Gateway | Charges can easily accrue even at small scale |
+| ALB | Ongoing usage charges apply |
+| Elastic IP | Risk of charges while unused |
 
 ---
 
-## 17. 開発環境要件
+## 16. SEO and Monetization Requirements
 
-## 17.1 ローカル環境
+## 16.1 SEO Requirements
 
-| 項目 | 内容 |
+| ID | Requirement |
 |---|---|
-| OS | macOS / Windows 11 いずれも対応可能 |
-| エディタ | VS Code |
-| Node.js | LTS版 |
-| Python | 3.11以上を推奨 |
-| パッケージ管理 | pnpm または npm |
-| バージョン管理 | Git / GitHub |
+| SEO-001 | Set an appropriate title for each page |
+| SEO-002 | Set a description for each page |
+| SEO-003 | Use h1, h2, and h3 appropriately |
+| SEO-004 | Design internal links |
+| SEO-005 | Create a sitemap |
+| SEO-006 | Create robots.txt |
+| SEO-007 | Use clear article URL slugs |
+| SEO-008 | Display update dates on articles |
 
-## 17.2 フロントエンド技術
+## 16.2 AdSense Preparation Requirements
 
-| 技術 | 用途 |
+| ID | Requirement |
 |---|---|
-| Next.js | Webアプリ構築 |
-| TypeScript | 型安全な実装 |
-| Tailwind CSS | UIスタイリング |
-| Markdown/MDX | 記事・解説コンテンツ管理 |
+| ADS-001 | Prepare at least 20 original articles |
+| ADS-002 | Provide a site operator information page |
+| ADS-003 | Provide a contact page |
+| ADS-004 | Provide a privacy policy page |
+| ADS-005 | Avoid copied content |
+| ADS-006 | Use a layout designed for advertising placement |
 
-## 17.3 バックエンド技術
+## 16.3 Monetization Path Requirements
 
-| 技術 | 用途 |
+| ID | Requirement |
 |---|---|
-| AWS Lambda | API処理 |
-| Python | Lambda実装言語 |
-| API Gateway | HTTP API公開 |
-| DynamoDB | データ保存 |
-
-## 17.4 インフラ管理
-
-| 段階 | 方針 |
-|---|---|
-| 初期 | AWSマネジメントコンソールで手動構築 |
-| 中期 | AWS SAM または TerraformでIaC化 |
-| 将来 | GitHub Actionsで自動デプロイ |
+| MON-001 | It must be possible to place links to paid note articles |
+| MON-002 | It must be possible to direct users to PDF learning-material sales pages |
+| MON-003 | Use an architecture that can support future paid membership functionality |
 
 ---
 
-## 18. 開発フェーズ
+## 17. Development Environment Requirements
 
-## Phase 0：設計準備
+## 17.1 Local Environment
 
-### 目的
+| Item | Details |
+|---|---|
+| OS | Both macOS and Windows 11 can be supported |
+| Editor | VS Code |
+| Node.js | LTS release |
+| Python | 3.11 or later recommended |
+| Package management | pnpm or npm |
+| Version control | Git / GitHub |
 
-開発前に必要なドキュメント・構成・リポジトリを整える。
+## 17.2 Frontend Technologies
 
-### 作業
+| Technology | Purpose |
+|---|---|
+| Next.js | Web application development |
+| TypeScript | Type-safe implementation |
+| Tailwind CSS | UI styling |
+| Markdown/MDX | Article and explanatory content management |
 
-- 企画書作成
-- 要件定義書作成
-- 画面一覧作成
-- 画面遷移設計
-- AWS構成図作成
-- データ設計
-- GitHubリポジトリ作成
+## 17.3 Backend Technologies
 
-### 成果物
+| Technology | Purpose |
+|---|---|
+| AWS Lambda | API processing |
+| Python | Lambda implementation language |
+| API Gateway | Expose an HTTP API |
+| DynamoDB | Data storage |
 
-- 企画書
-- 要件定義書
-- 画面一覧・画面遷移図
-- AWS構成図
-- README草案
+## 17.4 Infrastructure Management
+
+| Stage | Policy |
+|---|---|
+| Initial | Build manually in the AWS Management Console |
+| Medium term | Convert to IaC using AWS SAM or Terraform |
+| Future | Automated deployment with GitHub Actions |
 
 ---
 
-## Phase 1：CLF向けMVP公開
+## 18. Development Phases
 
-### 目的
+## Phase 0: Design Preparation
 
-Cloud Practitioner の学習内容を反映した最低限のサイトを公開する。
+### Objective
 
-### 作業
+Prepare the documentation, architecture, and repository needed before development.
 
-- トップページ実装
-- 用語集実装
-- サービス比較ページ実装
-- 模擬問題30問実装
-- ブログ記事5本作成
-- S3 + CloudFront公開
-- GitHub README整備
+### Tasks
 
-### 成果物
+- Create the project proposal
+- Create the requirements definition document
+- Create the screen list
+- Design screen transitions
+- Create the AWS architecture diagram
+- Design the data
+- Create the GitHub repository
 
-- 公開済みWebサイト
-- CLF用語集
-- CLF模擬問題
-- サービス比較記事
+### Deliverables
+
+- Project proposal
+- Requirements definition document
+- Screen list and screen transition diagram
+- AWS architecture diagram
+- README draft
+
+---
+
+## Phase 1: Publish the CLF MVP
+
+### Objective
+
+Publish a minimal site reflecting Cloud Practitioner study material.
+
+### Tasks
+
+- Implement the home page
+- Implement the glossary
+- Implement service comparison pages
+- Implement 30 practice questions
+- Create 5 blog articles
+- Publish with S3 + CloudFront
+- Prepare the GitHub README
+
+### Deliverables
+
+- Published website
+- CLF glossary
+- CLF practice questions
+- Service comparison articles
 - GitHub README
 
 ---
 
-## Phase 2：SAA向け機能追加
+## Phase 2: Add SAA Features
 
-### 目的
+### Objective
 
-Solutions Architect Associate の学習内容を反映し、設計力を示せるコンテンツを追加する。
+Add content reflecting Solutions Architect Associate study material and demonstrating design skills.
 
-### 作業
+### Tasks
 
-- SAA構成図5件作成
-- 構成図詳細ページ実装
-- API Gateway + Lambda導入
-- DynamoDB連携
-- 問い合わせフォーム実装
-- CloudWatch Logs確認
+- Create 5 SAA architecture diagrams
+- Implement architecture diagram detail pages
+- Introduce API Gateway + Lambda
+- Integrate DynamoDB
+- Implement the contact form
+- Inspect CloudWatch Logs
 
-### 成果物
+### Deliverables
 
-- SAA構成図ページ
-- サーバーレスAPI
-- DynamoDB連携
-- 問い合わせ機能
-
----
-
-## Phase 3：収益化準備
-
-### 目的
-
-AdSense申請とSEO流入の準備を行う。
-
-### 作業
-
-- ブログ記事20本以上作成
-- 運営者情報作成
-- プライバシーポリシー作成
-- Google Search Console登録
-- Google Analytics設定
-- サイトマップ作成
-- AdSense申請準備
-
-### 成果物
-
-- SEO記事群
-- 収益化準備済みサイト
-- AdSense申請可能な状態
+- SAA architecture diagram pages
+- Serverless API
+- DynamoDB integration
+- Contact functionality
 
 ---
 
-## Phase 4：学習アプリ化
+## Phase 3: Monetization Preparation
 
-### 目的
+### Objective
 
-ログイン、学習履歴、弱点分析を追加し、学習アプリとして拡張する。
+Prepare for an AdSense application and SEO traffic.
 
-### 作業
+### Tasks
 
-- Cognito認証追加
-- 学習履歴保存
-- 正答率表示
-- 弱点分析
-- 復習機能
-- 毎日1問配信
-- 有料コンテンツ導線追加
+- Create at least 20 blog articles
+- Create site operator information
+- Create a privacy policy
+- Register with Google Search Console
+- Configure Google Analytics
+- Create a sitemap
+- Prepare the AdSense application
 
-### 成果物
+### Deliverables
 
-- 学習管理機能
-- ユーザー別データ保存
-- SaaS化の土台
+- SEO article collection
+- A site ready for monetization
+- Readiness to apply for AdSense
 
 ---
 
-## 19. 受け入れ基準
+## Phase 4: Become a Learning Application
 
-## 19.1 MVP受け入れ基準
+### Objective
 
-MVPは以下を満たした時点で完了とする。
+Add login, learning history, and weakness analysis to extend the product into a learning application.
 
-| ID | 受け入れ基準 |
+### Tasks
+
+- Add Cognito authentication
+- Save learning history
+- Display accuracy rates
+- Analyze weaknesses
+- Add review functionality
+- Deliver one question daily
+- Add paths to paid content
+
+### Deliverables
+
+- Learning-management functionality
+- Per-user data storage
+- Foundation for a SaaS product
+
+---
+
+## 19. Acceptance Criteria
+
+## 19.1 MVP Acceptance Criteria
+
+The MVP is complete when the following criteria are met.
+
+| ID | Acceptance criterion |
 |---|---|
-| AC-001 | サイトがAWS上で公開されている |
-| AC-002 | トップページが表示される |
-| AC-003 | AWS用語集が30件以上ある |
-| AC-004 | サービス比較記事が5本以上ある |
-| AC-005 | CLF模擬問題が30問以上ある |
-| AC-006 | 模擬問題で回答・正誤表示・解説表示ができる |
-| AC-007 | ブログ記事が5本以上ある |
-| AC-008 | GitHub READMEに構成図・技術選定理由が記載されている |
-| AC-009 | AWS Budgetsが設定されている |
-| AC-010 | CloudWatch LogsでLambdaログを確認できる |
+| AC-001 | The site is published on AWS |
+| AC-002 | The home page displays |
+| AC-003 | At least 30 AWS glossary entries exist |
+| AC-004 | At least 5 service comparison articles exist |
+| AC-005 | At least 30 CLF practice questions exist |
+| AC-006 | Practice questions support answering, correctness feedback, and explanation display |
+| AC-007 | At least 5 blog articles exist |
+| AC-008 | The GitHub README includes an architecture diagram and reasons for technology choices |
+| AC-009 | AWS Budgets is configured |
+| AC-010 | Lambda logs can be inspected in CloudWatch Logs |
 
-## 19.2 Phase 2受け入れ基準
+## 19.2 Phase 2 Acceptance Criteria
 
-| ID | 受け入れ基準 |
+| ID | Acceptance criterion |
 |---|---|
-| AC-011 | SAA構成図が5件以上ある |
-| AC-012 | 各構成図に設計意図が記載されている |
-| AC-013 | API Gateway + LambdaによるAPIが動作する |
-| AC-014 | DynamoDBにデータ保存できる |
-| AC-015 | 問い合わせフォームが動作する |
+| AC-011 | At least 5 SAA architecture diagrams exist |
+| AC-012 | Each diagram includes design rationale |
+| AC-013 | The API using API Gateway + Lambda works |
+| AC-014 | Data can be saved in DynamoDB |
+| AC-015 | The contact form works |
 
-## 19.3 収益化準備受け入れ基準
+## 19.3 Monetization Preparation Acceptance Criteria
 
-| ID | 受け入れ基準 |
+| ID | Acceptance criterion |
 |---|---|
-| AC-016 | 記事が20本以上ある |
-| AC-017 | 運営者情報ページがある |
-| AC-018 | プライバシーポリシーページがある |
-| AC-019 | 問い合わせページがある |
-| AC-020 | Google Search Consoleに登録済みである |
-| AC-021 | サイトマップが存在する |
+| AC-016 | At least 20 articles exist |
+| AC-017 | A site operator information page exists |
+| AC-018 | A privacy policy page exists |
+| AC-019 | A contact page exists |
+| AC-020 | Google Search Console registration is complete |
+| AC-021 | A sitemap exists |
 
 ---
 
-## 20. 成功指標
+## 20. Success Metrics
 
-## 20.1 学習成果指標
+## 20.1 Learning Outcome Metrics
 
-| 指標 | 目標 |
+| Metric | Target |
 |---|---:|
-| CLF用語掲載数 | 50件以上 |
-| CLF模擬問題数 | 30問以上 |
-| サービス比較記事数 | 10本以上 |
-| SAA構成図数 | 5件以上 |
-| SAA記事数 | 10本以上 |
+| Published CLF terms | At least 50 |
+| CLF practice questions | At least 30 |
+| Service comparison articles | At least 10 |
+| SAA architecture diagrams | At least 5 |
+| SAA articles | At least 10 |
 
-## 20.2 ポートフォリオ指標
+## 20.2 Portfolio Metrics
 
-| 指標 | 目標 |
+| Metric | Target |
 |---|---|
-| 本番URL | 公開済み |
-| GitHub README | 整備済み |
-| AWS構成図 | 掲載済み |
-| 使用技術説明 | 掲載済み |
-| コスト最適化方針 | 掲載済み |
-| セキュリティ方針 | 掲載済み |
+| Production URL | Published |
+| GitHub README | Complete |
+| AWS architecture diagram | Published |
+| Technology explanations | Published |
+| Cost optimization policy | Published |
+| Security policy | Published |
 
-## 20.3 メディア指標
+## 20.3 Content-Site Metrics
 
-| 指標 | 初期目標 |
+| Metric | Initial target |
 |---|---:|
-| 記事数 | 20本以上 |
-| 月間PV | 1,000PV |
-| 検索流入 | 発生している状態 |
-| AdSense申請 | 完了 |
-| note導線 | 設置済み |
+| Article count | At least 20 |
+| Monthly page views | 1,000 PV |
+| Search traffic | Traffic is arriving |
+| AdSense application | Complete |
+| Path to note | Established |
 
 ---
 
-## 21. リスクと対策
+## 21. Risks and Mitigations
 
-## 21.1 課金リスク
+## 21.1 Billing Risks
 
-| リスク | 対策 |
+| Risk | Mitigation |
 |---|---|
-| AWS無料枠を超過する | AWS Budgetsを設定する |
-| 不要なリソースを放置する | 定期的にリソース確認する |
-| CloudWatch Logsが増え続ける | 保存期間を設定する |
-| NAT Gatewayなど高額サービスを使う | MVPでは使用禁止とする |
+| Exceeding the AWS Free Tier | Configure AWS Budgets |
+| Leaving unnecessary resources running | Inspect resources regularly |
+| CloudWatch Logs keep growing | Configure retention |
+| Using expensive services such as NAT Gateway | Prohibit them in the MVP |
 
-## 21.2 開発遅延リスク
+## 21.2 Development Delay Risks
 
-| リスク | 対策 |
+| Risk | Mitigation |
 |---|---|
-| 機能を増やしすぎて完成しない | MVPスコープを固定する |
-| 認証・決済に時間を取られる | Phase 4以降に回す |
-| コンテンツ作成に時間がかかる | CLF学習内容をそのまま記事化する |
+| Too many features prevent completion | Fix the MVP scope |
+| Authentication and payments consume time | Defer them to Phase 4 or later |
+| Content creation takes time | Turn CLF study material directly into articles |
 
-## 21.3 コンテンツ品質リスク
+## 21.3 Content Quality Risks
 
-| リスク | 対策 |
+| Risk | Mitigation |
 |---|---|
-| AWS情報が古くなる | 更新日を表示し、定期見直しする |
-| 試験範囲とズレる | 公式試験ガイドを確認する |
-| 模擬問題の品質が低い | 解説を重視し、問題数より理解を優先する |
+| AWS information becomes outdated | Display update dates and review regularly |
+| Content diverges from exam coverage | Check official exam guides |
+| Practice-question quality is low | Emphasize explanations and understanding over question count |
 
-## 21.4 収益化リスク
+## 21.4 Monetization Risks
 
-| リスク | 対策 |
+| Risk | Mitigation |
 |---|---|
-| AdSense審査に通らない | 独自記事・運営者情報・問い合わせ・ポリシーを整備する |
-| PVが伸びない | ロングテールSEO記事を継続作成する |
-| 収益が小さい | note有料記事・PDF教材へ展開する |
+| AdSense review is unsuccessful | Prepare original articles, operator information, contact, and policy pages |
+| Page views do not grow | Continue creating long-tail SEO articles |
+| Revenue is low | Expand into paid note articles and PDF learning materials |
 
 ---
 
-## 22. 今後作成する設計書
+## 22. Design Documents to Create Next
 
-本要件定義書の次に、以下の設計書を作成する。
+After this requirements definition document, create the following design documents.
 
-1. 画面一覧・画面遷移設計書
-2. AWS構成図設計書
-3. データ設計書
-4. API設計書
-5. セキュリティ設計書
-6. コスト管理設計書
-7. 開発タスク一覧
-8. GitHub README草案
+1. Screen list and screen transition design
+2. AWS architecture diagram design
+3. Data design
+4. API design
+5. Security design
+6. Cost management design
+7. Development task list
+8. GitHub README draft
 
 ---
 
-## 23. 結論
+## 23. Conclusion
 
-本プロダクトは、AWS Cloud Practitioner と Solutions Architect Associate の資格学習をアウトプット化しながら、AWS実装経験を示せるポートフォリオとして構築するWeb学習サイトである。
+This product is a web learning site built as a portfolio demonstrating AWS implementation experience while turning AWS Cloud Practitioner and Solutions Architect Associate study into tangible output.
 
-MVPでは、用語集、サービス比較、模擬問題、構成図、ブログ記事を中心に実装し、S3、CloudFront、Lambda、API Gateway、DynamoDBを使ったサーバーレス構成で公開する。
+The MVP focuses on the glossary, service comparisons, practice questions, architecture diagrams, and blog articles, and is published with a serverless architecture using S3, CloudFront, Lambda, API Gateway, and DynamoDB.
 
-初期段階ではログイン、決済、AI機能などは実装せず、まずは低コストで公開できる学習メディアとして完成させる。その後、SAA対策コンテンツ、問い合わせ機能、SEO記事、AdSense準備、学習履歴機能へ段階的に拡張する
+Initially, do not implement login, payments, or AI features. First complete the product as a learning content site that can be published at low cost. Then gradually expand it with SAA preparation content, contact functionality, SEO articles, AdSense preparation, and learning-history functionality.

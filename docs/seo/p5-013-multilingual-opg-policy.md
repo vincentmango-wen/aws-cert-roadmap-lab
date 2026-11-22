@@ -1,82 +1,82 @@
-# P5-013 多言語OGP方針決定
+# P5-013 Multilingual OGP Policy Decision
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目     | 内容                                             |
+| Item | Description |
 | ------ | ---------------------------------------------- |
-| タスクID  | P5-013                                         |
-| タスク名   | 多言語OGP方針決定                                     |
-| 対象フェーズ | Phase 5 グローバルSEO・ローカライゼーション                    |
-| 対象サイト  | AWS Cert Roadmap Lab                           |
-| 対象言語   | 日本語 / 英語 / 繁体字中国語                              |
-| 主な利用箇所 | Next.js metadata / Open Graph / SNS共有 / 検索流入導線 |
-| 作成目的   | 英語・中国語ページで使用するOGP画像の最小構成、使用ルール、追加判断基準を決めるため    |
+| Task ID  | P5-013                                         |
+| Task name   | Multilingual OGP Policy Decision                                     |
+| Target phase | Phase 5 Global SEO and Localization                    |
+| Target site  | AWS Cert Roadmap Lab                           |
+| Target languages   | Japanese / English / Traditional Chinese                              |
+| Main uses | Next.js metadata / Open Graph / Social sharing / Search traffic entry points |
+| Purpose   | Decide the minimum OGP image set, usage rules, and criteria for adding images for English and Chinese pages    |
 
 ---
 
-## 2. 前提
+## 2. Assumptions
 
-## 2.1 URL方針
+## 2.1 URL Policy
 
-| 言語     | URL方針      | 例              |
+| Language | URL policy | Example |
 | ------ | ---------- | -------------- |
-| 日本語    | 既存URLを維持する | `/terms/s3`    |
-| 英語     | `/en` を付ける | `/en/terms/s3` |
-| 繁体字中国語 | `/zh` を付ける | `/zh/terms/s3` |
+| Japanese | Retain existing URLs | `/terms/s3`    |
+| English | Add `/en` | `/en/terms/s3` |
+| Traditional Chinese | Add `/zh` | `/zh/terms/s3` |
 
-## 2.2 OGP画像の配置場所
+## 2.2 OGP Image Location
 
-OGP画像は以下に配置する。
+Place OGP images in the following location.
 
 ```text
 frontend/public/images/assets/
 ```
 
-公開URLでは以下のように参照する。
+Reference them through public URLs as follows.
 
 ```text
 /images/assets/{fileName}
 ```
 
-## 2.3 画像形式
+## 2.3 Image Format
 
-| 項目        | 方針                                            |
+| Item | Policy |
 | --------- | --------------------------------------------- |
-| 推奨サイズ     | 1200 x 630 px                                 |
-| 形式        | PNG                                           |
-| 目標ファイルサイズ | 1枚300KB以下                                     |
-| 背景        | AWS学習サイトとして信頼感が出るシンプルな背景                      |
-| 文字        | 各言語の自然な短文                                     |
-| 禁止        | 合格保証、本番問題、exam dump、leaked questions を連想させる表現 |
+| Recommended size     | 1200 x 630 px                                 |
+| Format | PNG                                           |
+| Target file size | At most 300KB per image                                     |
+| Background | A simple background conveying trustworthiness as an AWS learning site                      |
+| Text | Natural short wording in each language                                     |
+| Prohibited | Wording suggesting passing guarantees, actual exam questions, exam dumps, or leaked questions |
 
 ---
 
-## 3. 基本方針
+## 3. Basic Policy
 
-## 3.1 初期実装方針
+## 3.1 Initial Implementation Policy
 
-多言語OGP画像は、初期実装では英語・中国語それぞれ1枚ずつの共通画像のみ作成する。
+For the initial implementation, create only one shared OGP image each for English and Chinese.
 
-理由は以下である。
+The reasons are as follows.
 
-1. Phase 5の主目的は海外流入検証であり、OGP画像の大量作成ではない
-2. 画像数を増やすと作成・翻訳・差し替え確認の作業量が増える
-3. S3保存量とCloudFront転送量を増やさない
-4. 既存の日本語OGP画像を維持し、既存ページへの影響を避ける
-5. P5-014 / P5-015 を小さい実装単位に分けて進める
+1. Phase 5 primarily validates international traffic rather than creating large numbers of OGP images.
+2. More images increase creation, translation, and replacement verification work.
+3. Avoid increasing S3 storage and CloudFront data transfer.
+4. Retain the existing Japanese OGP image and avoid affecting existing pages.
+5. Proceed with P5-014 / P5-015 as small implementation units.
 
-## 3.2 初期実装で作成する画像
+## 3.2 Images Created in the Initial Implementation
 
-初期実装で作成する画像は以下の2枚のみとする。
+Create only the following 2 images in the initial implementation.
 
 ```text
 frontend/public/images/assets/og-image-en.png
 frontend/public/images/assets/og-image-zh.png
 ```
 
-## 3.3 日本語ページの扱い
+## 3.3 Handling Japanese Pages
 
-日本語ページは既存のOGP画像を維持する。
+Retain the existing OGP image for Japanese pages.
 
 ```text
 frontend/public/images/assets/og-image.png
@@ -84,52 +84,52 @@ frontend/public/images/assets/og-image.png
 
 ---
 
-## 4. OGP画像スコープ
+## 4. OGP Image Scope
 
-## 4.1 Must：初期実装対象
+## 4.1 Must: Initial Implementation Scope
 
-| 言語     | 対象URL         | 使用画像                             | 対象範囲     |
+| Language | Target URLs | Image | Scope |
 | ------ | ------------- | -------------------------------- | -------- |
-| 日本語    | `/` 配下の既存ページ  | `/images/assets/og-image.png`    | 既存実装を維持  |
-| 英語     | `/en` 配下の全ページ | `/images/assets/og-image-en.png` | 英語ページ共通  |
-| 繁体字中国語 | `/zh` 配下の全ページ | `/images/assets/og-image-zh.png` | 中国語ページ共通 |
+| Japanese | Existing pages under `/`  | `/images/assets/og-image.png`    | Retain the existing implementation  |
+| English | All pages under `/en` | `/images/assets/og-image-en.png` | Shared by English pages  |
+| Traditional Chinese | All pages under `/zh` | `/images/assets/og-image-zh.png` | Shared by Chinese pages |
 
-## 4.2 Should：流入確認後に追加検討
+## 4.2 Should: Consider Additions After Confirming Traffic
 
-以下は初期実装では作成しない。
+Do not create the following in the initial implementation.
 
-| ページ種別  | 英語画像候補                    | 中国語画像候補                   | 追加判断基準                                    |
+| Page type | English image candidate | Chinese image candidate | Criteria for adding |
 | ------ | ------------------------- | ------------------------- | ----------------------------------------- |
-| 用語集    | `og-terms-en.png`         | `og-terms-zh.png`         | `/en/terms` または `/zh/terms` の表示回数が月100回以上 |
-| サービス比較 | `og-comparisons-en.png`   | `og-comparisons-zh.png`   | 比較ページがSNSまたは外部サイトで共有され始めた場合               |
-| 構成図    | `og-architectures-en.png` | `og-architectures-zh.png` | 構成図ページが海外流入の上位カテゴリになった場合                  |
-| 模擬問題   | `og-questions-en.png`     | `og-questions-zh.png`     | 問題ページの検索表示回数が月100回以上                      |
-| ブログ    | `og-blog-en.png`          | `og-blog-zh.png`          | 英語・中国語ブログ記事が検索流入上位になった場合                  |
+| Glossary | `og-terms-en.png`         | `og-terms-zh.png`         | At least 100 monthly impressions for `/en/terms` or `/zh/terms` |
+| Service comparisons | `og-comparisons-en.png`   | `og-comparisons-zh.png`   | Comparison pages begin to be shared on social media or external sites               |
+| Architecture diagrams | `og-architectures-en.png` | `og-architectures-zh.png` | Architecture diagram pages become a leading category for international traffic                  |
+| Practice questions | `og-questions-en.png`     | `og-questions-zh.png`     | At least 100 monthly search impressions for question pages                      |
+| Blog | `og-blog-en.png`          | `og-blog-zh.png`          | English or Chinese blog articles become leading sources of search traffic                  |
 
-## 4.3 Later：個別ページOGP
+## 4.3 Later: Individual Page OGP
 
-以下はPhase 5初期では作成しない。
+Do not create the following in early Phase 5.
 
-| 対象            | 方針   | 追加判断基準                         |
+| Target | Policy | Criteria for adding |
 | ------------- | ---- | ------------------------------ |
-| 用語詳細ごとの個別OGP  | 作らない | Search Consoleで流入上位10件が判明したら検討 |
-| 比較記事ごとの個別OGP  | 作らない | SNS共有または外部被リンクが確認できた記事のみ検討     |
-| ブログ記事ごとの個別OGP | 作らない | 上位記事10本に絞って検討                  |
-| 構成図ごとの個別OGP   | 作らない | 構成図カテゴリが差別化要素として伸びたら検討         |
+| Individual OGP for each term detail page  | Do not create | Consider after Search Console identifies the top 10 traffic sources |
+| Individual OGP for each comparison article  | Do not create | Consider only articles with confirmed social sharing or external backlinks     |
+| Individual OGP for each blog article | Do not create | Limit consideration to the top 10 articles                  |
+| Individual OGP for each architecture diagram   | Do not create | Consider if the architecture diagram category grows as a differentiator         |
 
 ---
 
-## 5. 使用ルール
+## 5. Usage Rules
 
-## 5.1 英語ページ
+## 5.1 English Pages
 
-`/en` 配下のページは、すべて以下の画像を使用する。
+All pages under `/en` use the following image.
 
 ```text
 /images/assets/og-image-en.png
 ```
 
-対象例：
+Example target pages:
 
 ```text
 /en
@@ -150,15 +150,15 @@ frontend/public/images/assets/og-image.png
 /en/contact
 ```
 
-## 5.2 繁体字中国語ページ
+## 5.2 Traditional Chinese Pages
 
-`/zh` 配下のページは、すべて以下の画像を使用する。
+All pages under `/zh` use the following image.
 
 ```text
 /images/assets/og-image-zh.png
 ```
 
-対象例：
+Example target pages:
 
 ```text
 /zh
@@ -179,15 +179,15 @@ frontend/public/images/assets/og-image.png
 /zh/contact
 ```
 
-## 5.3 日本語ページ
+## 5.3 Japanese Pages
 
-日本語ページは既存の画像を使用する。
+Japanese pages use the existing image.
 
 ```text
 /images/assets/og-image.png
 ```
 
-対象例：
+Example target pages:
 
 ```text
 /
@@ -210,41 +210,41 @@ frontend/public/images/assets/og-image.png
 
 ---
 
-## 6. fallbackルール
+## 6. Fallback Rules
 
-metadata helperでは、以下の優先順位でOGP画像を決定する。
+The metadata helper selects the OGP image in the following priority order.
 
 ```text
-1. customImage が指定されている場合は customImage を使用する
-2. locale が en の場合は /images/assets/og-image-en.png を使用する
-3. locale が zh の場合は /images/assets/og-image-zh.png を使用する
-4. locale が ja の場合は /images/assets/og-image.png を使用する
-5. locale 判定に失敗した場合は /images/assets/og-image.png を使用する
+1. If customImage is specified, use customImage.
+2. If locale is en, use /images/assets/og-image-en.png
+3. If locale is zh, use /images/assets/og-image-zh.png
+4. If locale is ja, use /images/assets/og-image.png
+5. If locale detection fails, use /images/assets/og-image.png
 ```
 
-初期実装では、`pageType` ごとの画像切り替えは行わない。
+Do not switch images by `pageType` in the initial implementation.
 
 ---
 
-## 7. 画像ファイル命名規則
+## 7. Image File Naming Rules
 
-## 7.1 初期実装
+## 7.1 Initial Implementation
 
-| ファイル名             | 用途               |
+| File name | Purpose |
 | ----------------- | ---------------- |
-| `og-image.png`    | 日本語ページ共通。既存画像を維持 |
-| `og-image-en.png` | 英語ページ共通          |
-| `og-image-zh.png` | 繁体字中国語ページ共通      |
+| `og-image.png`    | Shared by Japanese pages. Retain the existing image |
+| `og-image-en.png` | Shared by English pages          |
+| `og-image-zh.png` | Shared by Traditional Chinese pages      |
 
-## 7.2 将来拡張時の命名規則
+## 7.2 Naming Rules for Future Expansion
 
-カテゴリ別OGPを追加する場合は、以下の形式を使う。
+Use the following format when adding category-specific OGP images.
 
 ```text
 og-{pageType}-{locale}.png
 ```
 
-例：
+Examples:
 
 ```text
 og-terms-en.png
@@ -257,39 +257,39 @@ og-architectures-zh.png
 
 ## 7.3 locale
 
-| locale | 内容     |
+| locale | Description |
 | ------ | ------ |
-| en     | 英語     |
-| zh     | 繁体字中国語 |
+| en     | English |
+| zh     | Traditional Chinese |
 
-`ja` は既存画像 `og-image.png` を維持するため、初期の新規作成対象には含めない。
+Because `ja` retains the existing `og-image.png`, it is not included in the initial new image scope.
 
 ---
 
-## 8. 画像内テキスト方針
+## 8. In-Image Text Policy
 
-## 8.1 共通ルール
+## 8.1 Shared Rules
 
-| 項目       | 方針                                                                   |
+| Item | Policy |
 | -------- | -------------------------------------------------------------------- |
-| サイト名     | AWS Cert Roadmap Lab                                                 |
-| AWSサービス名 | Amazon S3、AWS Lambda、Amazon CloudFront など正式名称または一般的な略称を維持            |
-| 文字数      | 短くする                                                                 |
-| 訴求       | 学習価値と実装理解を示す                                                         |
-| 禁止表現     | exam dump / real exam questions / guaranteed pass / leaked questions |
-| 視認性      | スマホのSNSプレビューでも読める文字サイズにする                                            |
+| Site name     | AWS Cert Roadmap Lab                                                 |
+| AWS service names | Retain official names or common abbreviations such as Amazon S3, AWS Lambda, and Amazon CloudFront            |
+| Character count      | Keep short                                                                 |
+| Message       | Show learning value and implementation understanding                                                         |
+| Prohibited expressions     | exam dump / real exam questions / guaranteed pass / leaked questions |
+| Readability      | Use text large enough to read in social previews on smartphones                                            |
 
-## 8.2 英語OGP文言案
+## 8.2 Proposed English OGP Copy
 
-| 項目        | 文言                                                                     |
+| Item | Copy |
 | --------- | ---------------------------------------------------------------------- |
 | Main Copy | Learn AWS Certifications by Building                                   |
 | Sub Copy  | Glossaries, comparisons, practice questions, and architecture diagrams |
 | Site Name | AWS Cert Roadmap Lab                                                   |
 
-## 8.3 繁体字中国語OGP文言案
+## 8.3 Proposed Traditional Chinese OGP Copy (Original Specimens)
 
-| 項目        | 文言                   |
+| Item | Copy |
 | --------- | -------------------- |
 | Main Copy | 用實作理解 AWS 認證學習       |
 | Sub Copy  | 詞彙、比較、練習題與架構圖        |
@@ -297,52 +297,52 @@ og-architectures-zh.png
 
 ---
 
-## 9. metadata実装への引き継ぎ方針
+## 9. Handoff Policy for Metadata Implementation
 
-## 9.1 P5-014でやること
+## 9.1 Work in P5-014
 
-P5-014では、英語OGP画像を1枚だけ作成・設定する。
+In P5-014, create and configure only one English OGP image.
 
 ```text
 frontend/public/images/assets/og-image-en.png
 ```
 
-完了条件は以下。
+The completion criteria are as follows.
 
-* 英語OGP画像が作成されている
-* `/en` 配下のページで `og:image` が `og-image-en.png` を指す
-* `npm run build` が成功する
+* The English OGP image is created.
+* `og:image` points to `og-image-en.png` on pages under `/en`.
+* `npm run build` succeeds.
 
-## 9.2 P5-015でやること
+## 9.2 Work in P5-015
 
-P5-015では、繁体字中国語OGP画像を1枚だけ作成・設定する。
+In P5-015, create and configure only one Traditional Chinese OGP image.
 
 ```text
 frontend/public/images/assets/og-image-zh.png
 ```
 
-完了条件は以下。
+The completion criteria are as follows.
 
-* 中国語OGP画像が作成されている
-* `/zh` 配下のページで `og:image` が `og-image-zh.png` を指す
-* `npm run build` が成功する
+* The Chinese OGP image is created.
+* `og:image` points to `og-image-zh.png` on pages under `/zh`.
+* `npm run build` succeeds.
 
-## 9.3 metadata helper側の期待仕様
+## 9.3 Expected Metadata Helper Specification
 
-metadata helperは、以下の入力からOGP画像を決める。
+The metadata helper selects the OGP image from the following inputs.
 
-| 入力          | 例                  |
+| Input | Example |
 | ----------- | ------------------ |
 | locale      | `ja` / `en` / `zh` |
-| customImage | 個別画像がある場合のみ指定      |
+| customImage | Specify only when an individual image exists      |
 
-初期実装では `pageType` をOGP画像切り替えに使わない。
+Do not use `pageType` to switch OGP images in the initial implementation.
 
 ---
 
 ## 10. OpenGraph locale
 
-OpenGraph locale は以下を使う。
+Use the following OpenGraph locales.
 
 | locale | openGraph.locale |
 | ------ | ---------------- |
@@ -352,68 +352,68 @@ OpenGraph locale は以下を使う。
 
 ---
 
-## 11. 作らない画像
+## 11. Images Not to Create
 
-初期実装では以下を作らない。
+Do not create the following in the initial implementation.
 
-| 作らないもの        | 理由                            |
+| Image not created | Reason |
 | ------------- | ----------------------------- |
-| 用語集カテゴリ別OGP   | 初期流入検証には共通画像で足りる              |
-| 比較ページカテゴリ別OGP | 共有実績が出てから作る                   |
-| 構成図カテゴリ別OGP   | 構成図カテゴリが伸びてから作る               |
-| 模擬問題カテゴリ別OGP  | 初期は共通画像で足りる                   |
-| ブログカテゴリ別OGP   | 上位記事が判明してから作る                 |
-| 記事別OGP        | 作成・保守コストが高い                   |
-| 用語別OGP        | 画像数が増えすぎる                     |
-| `/zh-cn` 用OGP | Phase 5では `/zh` を繁体字寄りで開始するため |
-| 日本語OGP全面刷新    | 既存ページへの影響を避けるため               |
+| Glossary category OGP   | Shared images suffice for initial traffic validation              |
+| Comparison page category OGP | Create after sharing activity is established                   |
+| Architecture diagram category OGP   | Create after the architecture diagram category grows               |
+| Practice question category OGP  | Shared images suffice initially                   |
+| Blog category OGP   | Create after leading articles are identified                 |
+| Per-article OGP        | High creation and maintenance costs                   |
+| Per-term OGP        | Would create too many images                     |
+| OGP for `/zh-cn` | Phase 5 starts `/zh` with a Traditional Chinese orientation |
+| Complete Japanese OGP redesign    | Avoid affecting existing pages               |
 
 ---
 
-## 12. 追加判断基準
+## 12. Criteria for Additions
 
-カテゴリ別OGP画像は、以下の条件を満たした場合に追加を検討する。
+Consider adding category-specific OGP images when the following conditions are met.
 
-| 条件                                      | 判断             |
+| Condition | Decision |
 | --------------------------------------- | -------------- |
-| Search Consoleで英語または中国語ページの表示回数が月100回以上 | カテゴリ別OGPを検討    |
-| SNSまたは外部サイトで特定カテゴリが共有され始めた              | 対象カテゴリのOGPを検討  |
-| 構成図ページが海外流入の上位になった                      | 構成図OGPを優先      |
-| 比較ページが海外流入の上位になった                       | 比較OGPを優先       |
-| ブログ記事単位で外部リンクが増えた                       | 対象記事のみ個別OGPを検討 |
+| English or Chinese pages receive at least 100 monthly impressions in Search Console | Consider category-specific OGP    |
+| A specific category begins to be shared on social media or external sites              | Consider OGP for that category  |
+| Architecture diagram pages become leading sources of international traffic                      | Prioritize architecture diagram OGP      |
+| Comparison pages become leading sources of international traffic                       | Prioritize comparison OGP       |
+| External links to individual blog articles increase                       | Consider individual OGP only for those articles |
 
 ---
 
-## 13. コスト・運用方針
+## 13. Cost and Operations Policy
 
-## 13.1 コスト方針
+## 13.1 Cost Policy
 
-| 項目           | 方針                |
+| Item | Policy |
 | ------------ | ----------------- |
-| 画像数          | 初期は英語1枚、中国語1枚     |
-| 画像サイズ        | 1枚300KB以下         |
-| 配置先          | S3に静的ファイルとして配置    |
-| 配信           | CloudFront経由      |
-| Invalidation | 画像差し替え時は対象パスを限定する |
+| Image count          | Initially one English and one Chinese image     |
+| Image size        | At most 300KB per image         |
+| Storage location          | Store as static files in S3    |
+| Delivery | Through CloudFront      |
+| Invalidation | Limit target paths when replacing images |
 
-## 13.2 運用方針
+## 13.2 Operations Policy
 
-画像差し替え時は、以下の順で確認する。
+When replacing an image, check the following in order.
 
-1. ローカルで画像ファイルの存在を確認する
-2. `npm run build` が成功する
-3. `out/images/assets/` に画像が含まれる
-4. 本番反映後、対象画像URLにアクセスできる
-5. ブラウザのHTML出力で `og:image` を確認する
-6. SNS Card Validator で表示を確認する
+1. Confirm the image file exists locally.
+2. `npm run build` succeeds.
+3. The image is included in `out/images/assets/`.
+4. After production deployment, the target image URL is accessible.
+5. Check `og:image` in the browser's HTML output.
+6. Check the display with an SNS Card Validator.
 
 ---
 
-## 14. 動作確認
+## 14. Verification
 
-このタスクは方針ドキュメント作成のみのため、画像生成やmetadata修正は行わない。
+This task creates only a policy document, so it does not generate images or modify metadata.
 
-確認コマンドは以下。
+Verification commands are as follows.
 
 ```bash
 git status
@@ -426,25 +426,25 @@ git diff
 git status
 ```
 
-期待結果は以下。
+Expected results are as follows.
 
-* `docs/seo/p5-013-multilingual-ogp-policy.md` が追加されている
-* `npm --prefix frontend run typecheck` が成功する
-* `npm --prefix frontend run build` が成功する
-* 既存ページの表示やmetadata実装に変更がない
+* `docs/seo/p5-013-multilingual-ogp-policy.md` is added.
+* `npm --prefix frontend run typecheck` succeeds.
+* `npm --prefix frontend run build` succeeds.
+* Existing page rendering and metadata implementation are unchanged.
 
 ---
 
-## 15. 完了判定
+## 15. Completion Assessment
 
-P5-013 は、以下を満たしたら完了とする。
+P5-013 is complete when the following requirements are met.
 
-* 英語OGP画像の初期作成対象が `og-image-en.png` の1枚に決まっている
-* 中国語OGP画像の初期作成対象が `og-image-zh.png` の1枚に決まっている
-* 日本語ページは既存の `og-image.png` を維持する方針になっている
-* `/en` 配下の全ページで英語共通OGPを使う方針が決まっている
-* `/zh` 配下の全ページで中国語共通OGPを使う方針が決まっている
-* 初期実装で作らない画像が明確になっている
-* カテゴリ別OGP画像の追加判断基準が明確になっている
-* P5-014 / P5-015 で作るべき画像が明確になっている
-* AWSコスト面を考慮し、画像数とファイルサイズの上限方針がある
+* The initial English OGP image scope is limited to `og-image-en.png`.
+* The initial Chinese OGP image scope is limited to `og-image-zh.png`.
+* The policy retains the existing `og-image.png` for Japanese pages.
+* The policy specifies shared English OGP for all pages under `/en`.
+* The policy specifies shared Chinese OGP for all pages under `/zh`.
+* Images not created in the initial implementation are explicit.
+* Criteria for adding category-specific OGP images are explicit.
+* Images to create in P5-014 / P5-015 are explicit.
+* A policy limits image count and file size with AWS costs in mind.

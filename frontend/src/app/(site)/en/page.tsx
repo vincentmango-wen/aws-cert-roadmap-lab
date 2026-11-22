@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo";
-import { getPublishedBlogPosts } from "@/app/(site)/blog/blog-detail-data";
+import { UpdatesSection } from "@/components/updates/UpdatesSection";
+import { getUpdatesInventory, selectHomeUpdates } from "@/contents/updates";
 
 export const metadata: Metadata = createPageMetadata({
   title: "AWS Cert Roadmap Lab",
@@ -27,13 +28,6 @@ type FeatureCard = {
   description: string;
   href: string;
   label: string;
-};
-
-type BlogPreview = {
-  title: string;
-  description: string;
-  href: string;
-  category: string;
 };
 
 type AwsService = {
@@ -72,38 +66,6 @@ const featureCards: FeatureCard[] = [
   },
 ];
 
-const blogPreviews: BlogPreview[] = [
-  {
-    title: "AWS Cloud Practitioner Learning Roadmap",
-    description:
-      "A beginner-friendly learning path for preparing for AWS Cloud Practitioner while building practical AWS knowledge.",
-    href: "/en/blog/aws-cloud-practitioner-roadmap",
-    category: "CLF",
-  },
-  {
-    title: "How to Build an AWS Portfolio with the Free Tier",
-    description:
-      "Learn how to keep AWS costs low while showing practical cloud implementation experience through a portfolio project.",
-    href: "/en/blog/aws-free-tier-portfolio",
-    category: "Portfolio",
-  },
-  {
-    title: "Static Site Hosting with S3 and CloudFront",
-    description:
-      "Understand the basic architecture for serving a static website through CloudFront while keeping the S3 bucket private.",
-    href: "/en/blog/s3-cloudfront-static-site",
-    category: "Serverless",
-  },
-];
-
-const publishedBlogSlugs = new Set(
-  getPublishedBlogPosts("en").map((post) => post.slug),
-);
-const visibleBlogPreviews = blogPreviews.filter((post) => {
-  const slug = post.href.split("/").pop();
-  return slug !== undefined && publishedBlogSlugs.has(slug);
-});
-
 const awsServices: AwsService[] = [
   {
     name: "Amazon S3",
@@ -124,6 +86,7 @@ const awsServices: AwsService[] = [
 ];
 
 export default function EnglishHomePage() {
+  const inventory = getUpdatesInventory().itemsByLocale.en;
   return (
     <div className="space-y-20">
       <section className="rounded-3xl bg-slate-950 px-6 py-16 text-white shadow-sm sm:px-10 lg:px-16">
@@ -195,6 +158,8 @@ export default function EnglishHomePage() {
           </div>
         </div>
       </section>
+
+      <UpdatesSection items={selectHomeUpdates(inventory)} locale="en" />
 
       <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
         <div className="space-y-3">
@@ -279,55 +244,6 @@ export default function EnglishHomePage() {
               View architecture diagrams
             </Link>
           </article>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-3">
-            <p className="text-sm font-bold uppercase tracking-wider text-sky-700">
-              Latest Articles
-            </p>
-            <h2 className="text-3xl font-bold text-slate-950">
-              AWS learning articles
-            </h2>
-            <p className="max-w-3xl leading-7 text-slate-600">
-              Articles about AWS certification, serverless architecture, the AWS
-              Free Tier, and portfolio development will be added step by step.
-            </p>
-          </div>
-
-          <Link
-            href="/en/blog"
-            className="text-sm font-bold text-sky-700 hover:text-sky-900"
-          >
-            View all articles →
-          </Link>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {visibleBlogPreviews.map((post) => (
-            <article
-              key={post.href}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">
-                {post.category}
-              </span>
-              <h3 className="mt-4 text-lg font-bold leading-7 text-slate-950">
-                {post.title}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {post.description}
-              </p>
-              <Link
-                href={post.href}
-                className="mt-5 inline-flex text-sm font-bold text-sky-700 hover:text-sky-900"
-              >
-                Read article →
-              </Link>
-            </article>
-          ))}
         </div>
       </section>
 

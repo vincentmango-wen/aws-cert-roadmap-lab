@@ -1,0 +1,32 @@
+# AWS Backup cross-account recovery: validate EBS data in isolation
+
+## Prove recovery, not just backup creation
+
+Suppose a production EC2 instance has an encrypted Amazon EBS data volume for an application. The production and backup accounts belong to the same AWS Organizations organization and use ordinary AWS Backup vaults in the Tokyo Region (`ap-northeast-1`). This is an account-isolation and recovery drill, not cross-Region disaster recovery or a deployed environment.
+
+## From production volume to isolated test
+
+1. **A → B: Back up.** AWS Backup backs up the production EBS volume and creates a recovery point in the source vault.
+2. **B → C: Copy.** The cross-account copy job creates a recovery point in the destination vault in the backup account. After the copy finishes, confirm that the destination account can list and select the recovery point. Do not restore the source-vault recovery point directly into the other account.
+3. **C → D: Restore.** In the backup account, restore the copied recovery point to a new EBS volume. Choose the same Availability Zone as the isolated test EC2 instance so it can attach the volume. Do not attach it to production or overwrite the source volume.
+4. **D → E: Validate.** Confirm that the volume can attach and mount, check a known test file or checksum, and verify that the test application can read an expected record. Retain the results and timestamps. Clean up temporary test resources under the drill procedure without removing recovery points or evidence.
+
+## Accounts, permissions, and encryption
+
+From the AWS Organizations management account, enable cross-account backup in AWS Backup Settings. Limit the destination vault's resource policy to allowing the approved source account to call `backup:CopyIntoBackupVault`; give job roles only the permissions they need to back up, copy, or restore. For this encrypted EBS example, use a source customer managed AWS KMS key that can be shared with the destination account, and a separate customer managed key for the destination vault. The source backup inherits EBS encryption; the copy is re-encrypted with the destination vault key. An AWS managed source key has an immutable policy and cannot be shared for this scenario. The restore role needs applicable KMS permissions too; key permissions and the vault policy are separate.
+
+## A successful restore job is not a recovery objective
+
+Set acceptable data loss (RPO) and acceptable recovery time (RTO) before the drill, then compare the measurements with those targets. Record the simulated disruption time, the data timestamp represented by the verified recovery point available in the destination account, and how long it took to verify the test application. Measure actual data loss as the interval between the recoverable data timestamp and the disruption, not the copy completion time. Measure actual recovery time from the drill's defined disruption or recovery-clock start through verified application recovery, not just AWS restore-job completion. An overly old recovery point, checksum mismatch, or failed application read still fails the drill even if AWS reports job completion.
+
+If you use AWS Backup Restore Testing, select the latest or a random eligible recovery point from a defined window in the destination vault, perform application validation and confirm cleanup. Inferred EBS restore metadata can pick a random Availability Zone unless you override it.
+
+## Official references
+
+- [Cross-account backup copies](https://docs.aws.amazon.com/aws-backup/latest/devguide/create-cross-account-backup.html)
+- [Backup encryption](https://docs.aws.amazon.com/aws-backup/latest/devguide/encryption.html)
+- [Feature availability by Region](https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html)
+- [Restore an Amazon EBS volume](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-ebs.html)
+- [AWS Backup Restore Testing](https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing.html)
+- [Restore Testing inferred metadata](https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing-inferred-metadata.html)
+- [Recovery objective definitions](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel13-bp01.html)

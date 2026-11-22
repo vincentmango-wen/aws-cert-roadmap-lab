@@ -1,143 +1,143 @@
-# AWS資格学習サイト 企画書
+# AWS Certification Learning Site: Project Proposal
 
-## 1. 企画名
+## 1. Project Name
 
-**AWS資格ロードマップラボ**
+**AWS Cert Roadmap Lab**
 
-AWS Cloud Practitioner / AWS Solutions Architect Associate を学ぶ初学者向けに、AWSサービスの基礎、試験対策、構成図、用語比較、実践的なサーバーレス構成を学べるWeb学習サイトを開発する。
-
----
-
-## 2. 企画の目的
-
-本企画の目的は、以下の3つである。
-
-1. **AWS資格学習のアウトプット化**
-   - AWS Cloud Practitioner の学習内容を整理し、用語集・模擬問題・比較表としてコンテンツ化する。
-   - その後、Solutions Architect Associate の学習に合わせて、設計パターン・構成図・可用性・耐障害性・コスト最適化のコンテンツを追加する。
-
-2. **AWS実装経験を示せるポートフォリオ作成**
-   - S3、CloudFront、Lambda、API Gateway、DynamoDB、Cognito、CloudWatch、IAM などを使い、サーバーレス型のWebアプリとして構築する。
-   - 単なる静的サイトではなく、AWS設計意図・コスト最適化・セキュリティ設計まで説明できる作品にする。
-
-3. **広告収益・教材販売につながるメディア化**
-   - AWS初心者向け記事、資格対策記事、模擬問題、構成図解説を継続的に追加し、検索流入を狙う。
-   - 将来的にGoogle AdSense、note有料記事、PDF教材、模擬問題集販売につなげる。
+Develop a web-based learning site for beginners studying AWS Cloud Practitioner / AWS Solutions Architect Associate, covering AWS service fundamentals, exam preparation, architecture diagrams, terminology comparisons, and practical serverless architectures.
 
 ---
 
-## 3. 背景
+## 2. Project Objectives
 
-現在、AWS Cloud Practitioner の資格勉強を進めており、6月末の受験を予定している。その後、8月頃に AWS Solutions Architect Associate の受験を予定している。
+This project has three objectives.
 
-資格学習を単なるインプットで終わらせるのではなく、以下のように実践へ変換する。
+1. **Turn AWS certification study into tangible output**
+   - Organize AWS Cloud Practitioner study material into a glossary, practice questions, and comparison tables.
+   - Subsequently, add content on design patterns, architecture diagrams, availability, fault tolerance, and cost optimization alongside Solutions Architect Associate study.
 
-- 学んだAWSサービスを記事化する
-- 試験で出る比較ポイントを表にする
-- SAAで問われる構成パターンを図解する
-- 実際にAWS上でサーバーレスアプリとして公開する
-- GitHub README とポートフォリオサイトで設計意図を説明する
+2. **Create a portfolio demonstrating AWS implementation experience**
+   - Build a serverless web application using S3, CloudFront, Lambda, API Gateway, DynamoDB, Cognito, CloudWatch, IAM, and other services.
+   - Go beyond a simple static site to create a project whose AWS design rationale, cost optimization, and security design can be explained.
 
-これにより、資格取得と同時に「AWSを使って設計・実装・公開した経験」を示せる状態を作る。
-
----
-
-## 4. 解決したい課題
-
-### 4.1 学習者側の課題
-
-AWS初学者には以下の課題がある。
-
-- AWSサービスの数が多く、違いが分かりにくい
-- S3 / EBS / EFS、RDS / DynamoDB、CloudFront / Global Accelerator などの比較が難しい
-- 資格試験で問われるポイントと実務で使うポイントの違いが分かりにくい
-- 模擬問題を解いても、なぜその選択肢が正解なのか理解しづらい
-- 構成図を見ても、各サービスの役割が分かりにくい
-
-### 4.2 自分自身の課題
-
-開発者本人としては、以下の課題がある。
-
-- AWS資格学習を実務スキルとして証明したい
-- ポートフォリオとして面接で説明できるAWS作品が必要
-- コストを極力ゼロに抑えたい
-- 将来的に広告収益化できるWeb資産を作りたい
-- AIプロダクトPMを目指すうえで、クラウド基盤への理解を示したい
+3. **Develop a content site that can lead to advertising revenue and learning-material sales**
+   - Continually add introductory AWS articles, certification-preparation articles, practice questions, and architecture explanations to attract search traffic.
+   - Eventually connect this to Google AdSense, paid note articles, PDF learning materials, and practice-question collections for sale.
 
 ---
 
-## 5. プロダクトコンセプト
+## 3. Background
 
-**「AWS資格学習を、図解・比較・問題演習で実務理解に変える学習サイト」**
+I am currently studying for AWS Cloud Practitioner and plan to take the exam at the end of June. After that, I plan to take AWS Solutions Architect Associate around August.
 
-単なる暗記サイトではなく、以下の特徴を持つ。
+Rather than ending certification study at knowledge acquisition, turn it into practice as follows.
 
-- 初学者向けにやさしく説明する
-- サービス比較を重視する
-- 試験対策と実務設計の両方を扱う
-- AWS構成図を多く使う
-- 実際にAWS上で動くサーバーレスアプリとして構築する
-- サイト自体がポートフォリオになる
+- Write articles about the AWS services learned
+- Tabulate comparison points that appear on exams
+- Illustrate architecture patterns tested in SAA
+- Publish an actual serverless application on AWS
+- Explain the design rationale in the GitHub README and portfolio site
 
----
-
-## 6. 想定ユーザー
-
-### 6.1 メインターゲット
-
-- AWS Cloud Practitioner を勉強中の初学者
-- AWS Solutions Architect Associate をこれから受ける人
-- 未経験からクラウドエンジニア・Webエンジニアを目指す人
-- AWSサービスの違いを整理したい人
-
-### 6.2 サブターゲット
-
-- エンジニア転職用のポートフォリオを作りたい人
-- AWS無料枠でWebアプリを作りたい人
-- サーバーレス構成を学びたい人
-- AIアプリ開発にAWSを使いたい初学者
+This creates evidence of experience designing, implementing, and publishing with AWS while earning certifications.
 
 ---
 
-## 7. 提供価値
+## 4. Problems to Solve
 
-### 7.1 ユーザーへの価値
+### 4.1 Learner Problems
 
-- AWSサービスの違いが分かる
-- 資格試験で問われるポイントが分かる
-- 模擬問題で理解度を確認できる
-- 構成図でAWS設計をイメージできる
-- 初学者がつまずきやすい課金リスクを理解できる
+AWS beginners face the following problems.
 
-### 7.2 開発者本人への価値
+- There are many AWS services, and their differences are hard to understand
+- Comparisons such as S3 / EBS / EFS, RDS / DynamoDB, and CloudFront / Global Accelerator are difficult
+- It is difficult to distinguish exam-focused points from practical usage considerations
+- Even after solving practice questions, understanding why a choice is correct can be difficult
+- Architecture diagrams do not always make each service's role clear
 
-- AWS資格学習のアウトプットになる
-- ポートフォリオとして提示できる
-- AWS設計力を説明できる
-- SEO記事資産を作れる
-- 広告収益化の土台になる
-- AIプロダクトPM志望として、クラウド理解を示せる
+### 4.2 My Own Problems
+
+As the developer, I face the following problems.
+
+- I want to demonstrate AWS certification study as practical skills
+- I need an AWS portfolio project I can explain in interviews
+- I want to keep costs as close to zero as possible
+- I want to build a web asset that can generate advertising revenue in the future
+- As an aspiring AI product PM, I want to demonstrate an understanding of cloud infrastructure
 
 ---
 
-## 8. 主要機能
+## 5. Product Concept
 
-## 8.1 MVP機能
+**“A learning site that turns AWS certification study into practical understanding through diagrams, comparisons, and practice questions.”**
 
-初期リリースでは、以下の機能に絞る。
+Rather than a simple memorization site, it will have the following characteristics.
 
-### 1. AWS用語集
+- Explain topics in an approachable way for beginners
+- Emphasize service comparisons
+- Cover both exam preparation and practical design
+- Use many AWS architecture diagrams
+- Be built as a serverless application actually running on AWS
+- Serve as a portfolio project itself
 
-AWSサービスごとに以下を整理する。
+---
 
-- サービス名
-- 分類
-- 何に使うか
-- 試験で問われるポイント
-- 似ているサービスとの違い
-- 初学者向け一言説明
+## 6. Intended Users
 
-対象例：
+### 6.1 Primary Audience
+
+- Beginners studying for AWS Cloud Practitioner
+- People preparing to take AWS Solutions Architect Associate
+- People aiming to become cloud engineers or web engineers without prior experience
+- People who want to clarify differences between AWS services
+
+### 6.2 Secondary Audience
+
+- People building a portfolio to transition into an engineering career
+- People who want to build web applications within the AWS Free Tier
+- People who want to learn serverless architectures
+- Beginners who want to use AWS for AI application development
+
+---
+
+## 7. Value Proposition
+
+### 7.1 Value for Users
+
+- Understand differences between AWS services
+- Understand points tested on certification exams
+- Check understanding with practice questions
+- Visualize AWS design through architecture diagrams
+- Understand billing risks that commonly trip up beginners
+
+### 7.2 Value for the Developer
+
+- Produce tangible output from AWS certification study
+- Present the project in a portfolio
+- Explain AWS design skills
+- Build a collection of SEO articles
+- Establish a foundation for advertising revenue
+- Demonstrate cloud understanding as an aspiring AI product PM
+
+---
+
+## 8. Main Features
+
+## 8.1 MVP Features
+
+Limit the initial release to the following features.
+
+### 1. AWS Glossary
+
+Organize the following for each AWS service.
+
+- Service name
+- Category
+- What it is used for
+- Points tested on exams
+- Differences from similar services
+- A one-sentence explanation for beginners
+
+Example services:
 
 - IAM
 - S3
@@ -154,133 +154,133 @@ AWSサービスごとに以下を整理する。
 - SNS
 - EventBridge
 
-### 2. サービス比較ページ
+### 2. Service Comparison Pages
 
-試験で混同しやすいサービスを比較する。
+Compare services that are easily confused on exams.
 
-例：
+Examples:
 
-- S3 / EBS / EFS の違い
-- RDS / DynamoDB の違い
-- SNS / SQS / EventBridge の違い
-- ALB / NLB / CloudFront の違い
-- IAMユーザー / IAMロール / IAMポリシー の違い
-- CloudWatch / CloudTrail / AWS Config の違い
+- Differences between S3 / EBS / EFS
+- Differences between RDS / DynamoDB
+- Differences between SNS / SQS / EventBridge
+- Differences between ALB / NLB / CloudFront
+- Differences between IAM users / IAM roles / IAM policies
+- Differences between CloudWatch / CloudTrail / AWS Config
 
-### 3. 模擬問題ページ
+### 3. Practice Question Pages
 
-Cloud Practitioner 向けの問題を掲載する。
+Publish questions for Cloud Practitioner.
 
-初期は30問程度から開始する。
+Start with approximately 30 questions.
 
-問題データ項目：
+Question data fields:
 
-- 問題文
-- 選択肢
-- 正解
-- 解説
-- 関連サービス
-- 難易度
-- 出題分野
+- Question text
+- Choices
+- Correct answer
+- Explanation
+- Related services
+- Difficulty
+- Exam domain
 
-### 4. SAA構成図ページ
+### 4. SAA Architecture Diagram Pages
 
-SAA対策として、基本構成を図解する。
+Illustrate basic architectures for SAA preparation.
 
-初期構成例：
+Initial architecture examples:
 
-- 静的Webサイト構成
-- サーバーレスAPI構成
-- 3層Webアプリ構成
-- 高可用性Webアプリ構成
-- バッチ処理構成
+- Static website architecture
+- Serverless API architecture
+- Three-tier web application architecture
+- Highly available web application architecture
+- Batch-processing architecture
 
-### 5. ブログ記事ページ
+### 5. Blog Article Pages
 
-SEO流入を狙う記事を掲載する。
+Publish articles aimed at attracting SEO traffic.
 
-初期記事例：
+Initial article examples:
 
-- AWS Cloud Practitionerとは？
-- AWS無料枠でポートフォリオを作る方法
-- S3とCloudFrontで静的サイトを公開する方法
-- Lambdaとは？初心者向けに解説
-- SAAでよく出るAWS構成パターン
+- What is AWS Cloud Practitioner?
+- How to build a portfolio within the AWS Free Tier
+- How to publish a static site with S3 and CloudFront
+- What is Lambda? An explanation for beginners
+- AWS architecture patterns frequently seen in SAA
 
-### 6. 問い合わせフォーム
+### 6. Contact Form
 
-ポートフォリオとしての実用性を出すため、問い合わせフォームを設置する。
+Add a contact form to demonstrate practical portfolio functionality.
 
-入力項目：
+Input fields:
 
-- 名前
-- メールアドレス
-- 件名
-- 本文
+- Name
+- Email address
+- Subject
+- Message
 
-送信後は、Lambda経由でメール通知またはDynamoDB保存を行う。
-
----
-
-## 8.2 将来的な拡張機能
-
-### 1. ログイン機能
-
-Cognitoを使い、ユーザー登録・ログインを実装する。
-
-### 2. 学習履歴保存
-
-DynamoDBに以下を保存する。
-
-- 解いた問題
-- 正答率
-- 間違えた問題
-- 復習対象
-
-### 3. 弱点分析
-
-問題カテゴリごとの正答率を出す。
-
-例：
-
-- セキュリティ：70%
-- ネットワーク：45%
-- ストレージ：80%
-- コスト最適化：60%
-
-### 4. 毎日1問配信
-
-EventBridgeとLambdaを使い、毎日1問をメールまたはSlackに配信する。
-
-### 5. AI解説機能
-
-将来的に、ユーザーが間違えた問題に対して、AIが補足解説を生成する機能を追加する。
-
-ただし、初期段階ではAPIコストを避けるため、AI機能は実装しない。
+After submission, use Lambda to send an email notification or save the data in DynamoDB.
 
 ---
 
-## 9. AWSアーキテクチャ方針
+## 8.2 Future Extensions
 
-## 9.1 基本方針
+### 1. Login Functionality
 
-- コストを極力ゼロに近づける
-- 常時起動サーバーを使わない
-- サーバーレス中心で構成する
-- 無料枠を活用する
-- AWS資格試験で学ぶ主要サービスを実装に使う
-- 面接で説明しやすい構成にする
+Implement user registration and login with Cognito.
+
+### 2. Saved Learning History
+
+Store the following in DynamoDB.
+
+- Questions answered
+- Accuracy rate
+- Incorrectly answered questions
+- Items to review
+
+### 3. Weakness Analysis
+
+Calculate accuracy rates by question category.
+
+Examples:
+
+- Security: 70%
+- Networking: 45%
+- Storage: 80%
+- Cost optimization: 60%
+
+### 4. Daily Question Delivery
+
+Use EventBridge and Lambda to deliver one question per day by email or Slack.
+
+### 5. AI Explanation Feature
+
+In the future, add a feature that generates supplementary AI explanations for questions the user answered incorrectly.
+
+However, do not implement AI features initially, to avoid API costs.
 
 ---
 
-## 9.2 MVP構成
+## 9. AWS Architecture Policy
+
+## 9.1 Basic Policy
+
+- Keep costs as close to zero as possible
+- Do not use always-on servers
+- Build primarily with serverless services
+- Use the Free Tier
+- Implement with key services covered in AWS certification study
+- Choose an architecture that is easy to explain in interviews
+
+---
+
+## 9.2 MVP Architecture
 
 ```text
-ユーザー
+User
   ↓
 CloudFront
   ↓
-S3 静的Webサイト
+S3 static website
   ↓
 API Gateway
   ↓
@@ -289,26 +289,26 @@ Lambda
 DynamoDB
 ```
 
-### 使用サービス
+### Services Used
 
-| サービス | 用途 | 学習効果 |
+| Service | Purpose | Learning benefit |
 |---|---|---|
-| S3 | 静的ファイル配置 | オブジェクトストレージ理解 |
-| CloudFront | CDN配信 | キャッシュ・高速配信理解 |
-| Lambda | API処理 | サーバーレス理解 |
-| API Gateway | HTTP API公開 | API設計理解 |
-| DynamoDB | 問題・用語データ保存 | NoSQL理解 |
-| CloudWatch | ログ監視 | 運用監視理解 |
-| IAM | 権限管理 | セキュリティ設計理解 |
-| Route 53 | 独自ドメイン利用時 | DNS理解 |
-| ACM | HTTPS証明書 | TLS/証明書理解 |
+| S3 | Store static files | Understand object storage |
+| CloudFront | CDN delivery | Understand caching and fast delivery |
+| Lambda | API processing | Understand serverless computing |
+| API Gateway | Expose an HTTP API | Understand API design |
+| DynamoDB | Store question and terminology data | Understand NoSQL |
+| CloudWatch | Log monitoring | Understand operational monitoring |
+| IAM | Permission management | Understand security design |
+| Route 53 | When using a custom domain | Understand DNS |
+| ACM | HTTPS certificates | Understand TLS/certificates |
 
 ---
 
-## 9.3 拡張構成
+## 9.3 Extended Architecture
 
 ```text
-ユーザー
+User
   ↓
 CloudFront
   ↓
@@ -320,180 +320,180 @@ Lambda
   ↓
 DynamoDB
 
-Cognito：ログイン
-EventBridge：毎日問題配信
-SES：メール通知
-CloudWatch：ログ監視
-AWS Budgets：課金アラート
+Cognito: Login
+EventBridge: Daily question delivery
+SES: Email notifications
+CloudWatch: Log monitoring
+AWS Budgets: Billing alerts
 ```
 
 ---
 
-## 10. 技術スタック
+## 10. Technology Stack
 
-## 10.1 フロントエンド
+## 10.1 Frontend
 
-候補：
+Candidates:
 
 - Next.js
 - TypeScript
 - Tailwind CSS
 - Markdown / MDX
 
-理由：
+Reasons:
 
-- ポートフォリオとして見栄えを作りやすい
-- 記事コンテンツと相性が良い
-- SEO対応しやすい
-- TypeScriptの学習にもなる
+- Easy to create an attractive portfolio presentation
+- Works well with article content
+- Straightforward SEO support
+- Also provides TypeScript practice
 
-## 10.2 バックエンド
+## 10.2 Backend
 
-候補：
+Candidates:
 
 - AWS Lambda
 - API Gateway
-- Node.js または Python
+- Node.js or Python
 
-Pythonを使う場合：
+If using Python:
 
-- 既存の学習経験を活かせる
-- 将来的なAI機能追加と相性が良い
+- Can build on existing learning experience
+- Works well with future AI feature additions
 
-Node.jsを使う場合：
+If using Node.js:
 
-- Next.jsとの統一感がある
-- フロントエンドと型管理しやすい
+- Consistent with Next.js
+- Easier to manage types with the frontend
 
-初期方針としては、**LambdaはPythonで実装**する。
+The initial policy is to **implement Lambda in Python**.
 
-## 10.3 データベース
+## 10.3 Database
 
 - DynamoDB
 
-保存対象：
+Data to store:
 
-- 用語データ
-- 模擬問題データ
-- 問い合わせデータ
-- 将来的な学習履歴
+- Terminology data
+- Practice-question data
+- Contact data
+- Future learning history
 
-## 10.4 インフラ管理
+## 10.4 Infrastructure Management
 
-初期：
+Initially:
 
-- AWSマネジメントコンソールで手動構築
+- Build manually in the AWS Management Console
 
-中期：
+In the medium term:
 
-- AWS SAM または Terraform によるIaC化
+- Convert to IaC using AWS SAM or Terraform
 
-SAA受験前までには、構成をコード化できるとポートフォリオ価値が上がる。
+Codifying the architecture before taking SAA would improve its portfolio value.
 
 ---
 
-## 11. コスト方針
+## 11. Cost Policy
 
-## 11.1 基本方針
+## 11.1 Basic Policy
 
-本プロダクトは、開発・運用コストを可能な限りゼロに抑える。
+Keep development and operating costs for this product as close to zero as possible.
 
-そのため、以下の方針を採用する。
+To do so, adopt the following policies.
 
-- EC2常時起動は使わない
-- RDSは使わない
-- NAT Gatewayは使わない
-- ALBは使わない
-- Lambda、S3、CloudFront、DynamoDB中心で構成する
-- CloudWatch Logsの保存期間を短く設定する
-- AWS Budgetsでアラートを設定する
-- 不要なリソースは即削除する
+- Do not use always-on EC2 instances
+- Do not use RDS
+- Do not use NAT Gateway
+- Do not use ALB
+- Build primarily with Lambda, S3, CloudFront, and DynamoDB
+- Set a short retention period for CloudWatch Logs
+- Configure AWS Budgets alerts
+- Delete unnecessary resources immediately
 
-## 11.2 課金事故を避ける対象
+## 11.2 Areas Requiring Care to Avoid Unexpected Charges
 
-特に注意するサービス：
+Services requiring particular attention:
 
 - NAT Gateway
 - RDS
 - EC2
 - Elastic IP
 - ALB
-- 大量のCloudWatch Logs
-- 大容量S3保存
-- 高頻度Lambda実行
+- Large volumes of CloudWatch Logs
+- Large S3 storage volumes
+- High-frequency Lambda invocations
 
-## 11.3 無料運用の考え方
+## 11.3 Approach to Free Operation
 
-完全な永続ゼロ円を保証するのではなく、以下を目標とする。
+Rather than guaranteeing permanently zero cost, aim for the following.
 
-- 初期開発中は無料枠内に収める
-- アクセスが少ない段階では実質ゼロ円に近づける
-- アクセス増加後は広告収益でAWS利用料を相殺する
-- 料金体系変更に備えて、定期的にAWS請求ダッシュボードを確認する
-
----
-
-## 12. マネタイズ方針
-
-## 12.1 第1段階：Google AdSense
-
-ブログ記事・用語集・比較記事・模擬問題ページに広告枠を設置する。
-
-想定広告掲載ページ：
-
-- AWS用語集
-- サービス比較記事
-- 資格対策記事
-- 模擬問題ページ
-- 構成図解説ページ
-
-## 12.2 第2段階：note有料記事への誘導
-
-無料サイトで集客し、より深い内容をnote有料記事に誘導する。
-
-有料記事例：
-
-- AWS Cloud Practitioner 合格ロードマップ
-- SAA頻出構成パターンまとめ
-- AWS無料枠ポートフォリオ構築手順
-- 未経験者向けAWSポートフォリオ設計書テンプレート
-
-## 12.3 第3段階：PDF教材販売
-
-一定量のコンテンツが蓄積したら、PDF教材化する。
-
-商品例：
-
-- CLF用語集PDF
-- SAA構成図PDF
-- AWSサービス比較表PDF
-- 模擬問題100問PDF
-
-## 12.4 第4段階：小規模SaaS化
-
-ログイン機能・学習履歴・弱点分析を追加し、月額課金に拡張する。
-
-無料版：
-
-- 用語集
-- 一部模擬問題
-- 一部構成図
-
-有料版：
-
-- 全模擬問題
-- 学習履歴保存
-- 弱点分析
-- 復習機能
-- PDFダウンロード
+- Stay within the Free Tier during initial development
+- Keep costs effectively close to zero while traffic is low
+- Offset AWS costs with advertising revenue after traffic increases
+- Regularly inspect the AWS billing dashboard in case pricing structures change
 
 ---
 
-## 13. SEO方針
+## 12. Monetization Policy
 
-## 13.1 狙うキーワード
+## 12.1 Stage 1: Google AdSense
 
-初期に狙うキーワード：
+Place advertising slots on blog articles, glossary pages, comparison articles, and practice-question pages.
+
+Expected advertising pages:
+
+- AWS glossary
+- Service comparison articles
+- Certification-preparation articles
+- Practice-question pages
+- Architecture explanation pages
+
+## 12.2 Stage 2: Refer Readers to Paid note Articles
+
+Attract visitors with the free site and direct them to paid note articles for deeper material.
+
+Paid article examples:
+
+- A roadmap to passing AWS Cloud Practitioner
+- A summary of frequently tested SAA architecture patterns
+- Steps to build an AWS Free Tier portfolio
+- An AWS portfolio design-document template for beginners
+
+## 12.3 Stage 3: Sell PDF Learning Materials
+
+Once enough content has accumulated, package it as PDF learning materials.
+
+Product examples:
+
+- CLF glossary PDF
+- SAA architecture diagram PDF
+- AWS service comparison table PDF
+- A PDF with 100 practice questions
+
+## 12.4 Stage 4: Become a Small SaaS Product
+
+Add login, learning history, and weakness analysis, and extend the product to monthly subscriptions.
+
+Free version:
+
+- Glossary
+- Selected practice questions
+- Selected architecture diagrams
+
+Paid version:
+
+- All practice questions
+- Saved learning history
+- Weakness analysis
+- Review functionality
+- PDF downloads
+
+---
+
+## 13. SEO Policy
+
+## 13.1 Target Keywords
+
+Initial target keywords (Japanese search-query specimens retained):
 
 - AWS Cloud Practitioner 勉強方法
 - AWS Cloud Practitioner 初心者
@@ -506,351 +506,353 @@ SAA受験前までには、構成をコード化できるとポートフォリ�
 - S3 EBS EFS 違い
 - IAM ロール ユーザー 違い
 
-## 13.2 記事方針
+## 13.2 Article Policy
 
-単なる用語解説ではなく、以下の構成にする。
+Rather than merely defining terms, use the following structure.
 
-1. 結論
-2. 初心者向け説明
-3. 試験で問われるポイント
-4. 実務での使いどころ
-5. 似ているサービスとの違い
-6. よくある間違い
-7. まとめ
+1. Conclusion
+2. Explanation for beginners
+3. Points tested on exams
+4. Practical use cases
+5. Differences from similar services
+6. Common mistakes
+7. Summary
 
-## 13.3 差別化ポイント
+## 13.3 Differentiation
 
-既存のAWS解説サイトとの差別化は以下で行う。
+Differentiate the site from existing AWS explanation sites as follows.
 
-- 初学者目線で説明する
-- 資格対策と実装経験をつなげる
-- 図解を多く使う
-- 無料枠で作れるポートフォリオという文脈を入れる
-- 開発者本人の学習ログとしてリアルに発信する
-
----
-
-## 14. ポートフォリオとしての見せ方
-
-## 14.1 GitHub READMEに書く内容
-
-- サービス概要
-- 開発背景
-- 使用技術
-- AWS構成図
-- 機能一覧
-- 画面キャプチャ
-- インフラ構成
-- セキュリティ設計
-- コスト最適化の工夫
-- 今後の拡張予定
-
-## 14.2 面接で説明するポイント
-
-面接では以下を説明する。
-
-- なぜこのプロダクトを作ったか
-- なぜサーバーレス構成にしたか
-- なぜRDSではなくDynamoDBを使ったか
-- なぜEC2を使わなかったか
-- CloudFrontを使う理由
-- IAM権限設計で注意した点
-- コストを抑えるために行った工夫
-- 今後CognitoやEventBridgeをどう追加するか
-
-## 14.3 強いアピール文
-
-> AWS資格学習をアウトプット化するため、Cloud Practitioner / SAA 学習者向けのWeb学習サイトを開発しました。インフラはS3、CloudFront、Lambda、API Gateway、DynamoDBを使ったサーバーレス構成にし、常時起動サーバーを使わずコストを抑える設計にしています。資格で学ぶAWSサービスを実際に使い、設計意図・セキュリティ・コスト最適化まで説明できるポートフォリオとして構築しました。
+- Explain from a beginner's perspective
+- Connect exam preparation to implementation experience
+- Use many diagrams
+- Include the context of building a portfolio within the Free Tier
+- Publish authentic accounts of the developer's own learning journey
 
 ---
 
-## 15. 開発スコープ
+## 14. Portfolio Presentation
 
-## 15.1 MVPスコープ
+## 14.1 Contents of the GitHub README
 
-初期リリースで作るもの：
+- Service overview
+- Development background
+- Technologies used
+- AWS architecture diagram
+- Feature list
+- Screenshots
+- Infrastructure architecture
+- Security design
+- Cost optimization measures
+- Planned future extensions
 
-- トップページ
-- AWS用語集一覧
-- AWS用語詳細ページ
-- サービス比較ページ
-- 模擬問題30問
-- SAA構成図5件
-- ブログ記事5本
-- 問い合わせフォーム
+## 14.2 Points to Explain in Interviews
+
+Explain the following in interviews.
+
+- Why I built this product
+- Why I chose a serverless architecture
+- Why I used DynamoDB rather than RDS
+- Why I did not use EC2
+- Why I use CloudFront
+- Considerations in IAM permission design
+- Measures taken to keep costs low
+- How I would add Cognito and EventBridge in the future
+
+## 14.3 Strong Portfolio Statement
+
+> I developed a web-based learning site for Cloud Practitioner / SAA learners to turn AWS certification study into tangible output. Its infrastructure uses a serverless architecture with S3, CloudFront, Lambda, API Gateway, and DynamoDB, keeping costs low without always-on servers. I built it as a portfolio project that uses the AWS services covered in certification study in practice and lets me explain the design rationale, security, and cost optimization.
+
+---
+
+## 15. Development Scope
+
+## 15.1 MVP Scope
+
+Build the following for the initial release:
+
+- Home page
+- AWS glossary listing
+- AWS terminology detail pages
+- Service comparison pages
+- 30 practice questions
+- 5 SAA architecture diagrams
+- 5 blog articles
+- Contact form
 - GitHub README
-- AWS構成図
+- AWS architecture diagram
 
-## 15.2 MVPでは作らないもの
+## 15.2 What Not to Build in the MVP
 
-初期段階では以下を作らない。
+Do not build the following initially.
 
-- ログイン機能
-- 決済機能
-- AI解説機能
-- 学習履歴保存
-- 管理画面
-- 大量の模擬問題
-- 本格的なメール配信
+- Login functionality
+- Payment functionality
+- AI explanation functionality
+- Saved learning history
+- Administration interface
+- Large numbers of practice questions
+- Full-fledged email delivery
 
-理由：
+Reasons:
 
-- 初期開発コストを抑えるため
-- AWS利用料を抑えるため
-- まず公開実績を作るため
-- 資格学習と並行して無理なく進めるため
-
----
-
-## 16. 開発ロードマップ
-
-## Phase 0：企画・設計
-
-期間：着手直後
-
-作業：
-
-- 企画書作成
-- 要件定義
-- 画面一覧作成
-- AWS構成図作成
-- データ設計
-- GitHubリポジトリ作成
-
-成果物：
-
-- 企画書
-- 要件定義書
-- AWS構成図
-- 画面一覧
-- README草案
+- Keep initial development costs low
+- Keep AWS costs low
+- Establish a published project first
+- Make manageable progress alongside certification study
 
 ---
 
-## Phase 1：Cloud Practitioner受験前MVP
+## 16. Development Roadmap
 
-期間：6月末まで
+## Phase 0: Planning and Design
 
-目的：
+Timing: Immediately after starting
 
-Cloud Practitioner の学習内容をコンテンツ化し、最低限公開できるサイトを作る。
+Tasks:
 
-作業：
+- Create the project proposal
+- Define requirements
+- Create the screen list
+- Create the AWS architecture diagram
+- Design the data
+- Create the GitHub repository
 
-- トップページ作成
-- AWS用語集作成
-- CLF模擬問題30問作成
-- サービス比較記事作成
-- S3 + CloudFrontで公開
-- GitHub README整備
+Deliverables:
 
-成果物：
-
-- 公開済みWebサイト
-- CLF向けコンテンツ
-- 静的ホスティング構成
-
----
-
-## Phase 2：SAA対策機能追加
-
-期間：7月〜8月
-
-目的：
-
-Solutions Architect Associate の学習内容を反映し、構成図・設計パターンを追加する。
-
-作業：
-
-- SAA構成図ページ追加
-- 3層Webアプリ構成解説
-- 高可用性構成解説
-- サーバーレス構成解説
-- API Gateway + Lambda追加
-- DynamoDB連携追加
-- CloudWatchログ監視追加
-
-成果物：
-
-- SAA向け設計コンテンツ
-- サーバーレスAPI
-- DynamoDB連携
-- AWS設計力を示せるREADME
+- Project proposal
+- Requirements definition document
+- AWS architecture diagram
+- Screen list
+- README draft
 
 ---
 
-## Phase 3：収益化準備
+## Phase 1: MVP Before the Cloud Practitioner Exam
 
-期間：SAA受験後
+Timing: By the end of June
 
-目的：
+Objective:
 
-SEO記事を増やし、広告審査に出せる状態にする。
+Turn Cloud Practitioner study material into content and create a minimally publishable site.
 
-作業：
+Tasks:
 
-- ブログ記事20本以上作成
-- プライバシーポリシー作成
-- お問い合わせページ整備
-- 運営者情報作成
-- サイトマップ作成
-- Google Search Console登録
-- Google Analytics設定
-- AdSense申請
+- Create the home page
+- Create the AWS glossary
+- Create 30 CLF practice questions
+- Create service comparison articles
+- Publish with S3 + CloudFront
+- Prepare the GitHub README
 
-成果物：
+Deliverables:
 
-- 広告申請可能なメディア
-- SEO流入の土台
-- 収益化導線
+- Published website
+- CLF content
+- Static hosting architecture
 
 ---
 
-## Phase 4：学習アプリ化
+## Phase 2: Add SAA Preparation Features
 
-期間：中長期
+Timing: July–August
 
-目的：
+Objective:
 
-単なる情報サイトから、学習管理アプリへ拡張する。
+Reflect Solutions Architect Associate study material by adding architecture diagrams and design patterns.
 
-作業：
+Tasks:
 
-- Cognitoログイン追加
-- 学習履歴保存
-- 正答率表示
-- 弱点分析
-- 復習機能
-- 毎日1問通知
-- 有料コンテンツ導線
+- Add SAA architecture diagram pages
+- Explain three-tier web application architectures
+- Explain highly available architectures
+- Explain serverless architectures
+- Add API Gateway + Lambda
+- Add DynamoDB integration
+- Add CloudWatch log monitoring
 
-成果物：
+Deliverables:
 
-- 学習管理アプリ
-- SaaS化の土台
-- 有料化可能なプロダクト
-
----
-
-## 17. 成功指標
-
-## 17.1 ポートフォリオ指標
-
-- GitHub READMEが整備されている
-- AWS構成図を掲載している
-- 本番URLが公開されている
-- 使用AWSサービスを説明できる
-- コスト最適化方針を説明できる
-- セキュリティ設計を説明できる
-
-## 17.2 学習指標
-
-- CLF用語集50件以上
-- CLF模擬問題30問以上
-- サービス比較記事10本以上
-- SAA構成図5件以上
-- SAA対策記事10本以上
-
-## 17.3 メディア指標
-
-- ブログ記事20本以上
-- Google Search Console登録完了
-- 月間PV 1,000以上
-- AdSense申請完了
-- 検索流入の発生
+- SAA design content
+- Serverless API
+- DynamoDB integration
+- A README demonstrating AWS design skills
 
 ---
 
-## 18. リスクと対策
+## Phase 3: Prepare for Monetization
 
-## 18.1 AWS課金リスク
+Timing: After taking the SAA exam
 
-リスク：
+Objective:
 
-- 設定ミスで想定外の課金が発生する
+Expand SEO articles and prepare the site for advertising review.
 
-対策：
+Tasks:
 
-- AWS Budgetsを設定する
-- Billing Alertを設定する
-- NAT Gateway、RDS、ALBを使わない
-- CloudWatch Logsの保存期間を短くする
-- 毎日請求ダッシュボードを確認する
+- Create at least 20 blog articles
+- Create a privacy policy
+- Prepare the contact page
+- Create site operator information
+- Create a sitemap
+- Register with Google Search Console
+- Configure Google Analytics
+- Apply for AdSense
 
----
+Deliverables:
 
-## 18.2 コンテンツ品質リスク
-
-リスク：
-
-- 情報が古くなる
-- 試験範囲とズレる
-- 間違った解説を掲載する
-
-対策：
-
-- AWS公式資料を確認する
-- 記事更新日を表示する
-- 誤り報告フォームを設置する
-- 資格受験後に内容を見直す
+- A content site ready for an advertising application
+- A foundation for SEO traffic
+- Paths toward monetization
 
 ---
 
-## 18.3 AdSense審査リスク
+## Phase 4: Become a Learning Application
 
-リスク：
+Timing: Medium to long term
 
-- コンテンツ不足で審査に通らない
+Objective:
 
-対策：
+Extend the site from an information resource into a learning-management application.
 
-- 独自記事を20本以上用意する
-- 問い合わせページを用意する
-- プライバシーポリシーを用意する
-- コピーコンテンツを避ける
-- 自分の学習体験・図解・比較を入れる
+Tasks:
 
----
+- Add Cognito login
+- Save learning history
+- Display accuracy rates
+- Analyze weaknesses
+- Add review functionality
+- Send daily question notifications
+- Add paths to paid content
 
-## 18.4 開発スコープ肥大化リスク
+Deliverables:
 
-リスク：
-
-- ログイン、AI、決済などを入れすぎて完成しない
-
-対策：
-
-- MVPでは静的サイト中心にする
-- まず公開URLを作る
-- 収益化やログインは後回しにする
-- 資格学習スケジュールに合わせて段階開発する
+- Learning-management application
+- Foundation for a SaaS product
+- A product suitable for paid offerings
 
 ---
 
-## 19. 初期画面一覧
+## 17. Success Metrics
 
-| 画面 | 概要 | 優先度 |
+## 17.1 Portfolio Metrics
+
+- The GitHub README is complete
+- An AWS architecture diagram is published
+- A production URL is publicly available
+- The AWS services used can be explained
+- The cost optimization policy can be explained
+- The security design can be explained
+
+## 17.2 Learning Metrics
+
+- At least 50 CLF glossary entries
+- At least 30 CLF practice questions
+- At least 10 service comparison articles
+- At least 5 SAA architecture diagrams
+- At least 10 SAA preparation articles
+
+## 17.3 Content-Site Metrics
+
+- At least 20 blog articles
+- Google Search Console registration complete
+- At least 1,000 monthly page views
+- AdSense application complete
+- Search traffic is arriving
+
+---
+
+## 18. Risks and Mitigations
+
+## 18.1 AWS Billing Risk
+
+Risk:
+
+- Misconfiguration leads to unexpected charges
+
+Mitigations:
+
+- Configure AWS Budgets
+- Configure Billing Alerts
+- Do not use NAT Gateway, RDS, or ALB
+- Set a short CloudWatch Logs retention period
+- Check the billing dashboard daily
+
+---
+
+## 18.2 Content Quality Risk
+
+Risks:
+
+- Information becomes outdated
+- Content diverges from exam coverage
+- Incorrect explanations are published
+
+Mitigations:
+
+- Consult official AWS documentation
+- Display article update dates
+- Provide an error-reporting form
+- Review content after taking certification exams
+
+---
+
+## 18.3 AdSense Review Risk
+
+Risk:
+
+- Insufficient content prevents approval
+
+Mitigations:
+
+- Prepare at least 20 original articles
+- Provide a contact page
+- Provide a privacy policy
+- Avoid copied content
+- Include personal learning experiences, diagrams, and comparisons
+
+---
+
+## 18.4 Development Scope Creep Risk
+
+Risk:
+
+- Adding too much login, AI, and payment functionality prevents completion
+
+Mitigations:
+
+- Keep the MVP primarily a static site
+- Establish a public URL first
+- Defer monetization and login
+- Develop in stages aligned with the certification study schedule
+
+---
+
+## 19. Initial Screen List
+
+| Screen | Description | Priority |
 |---|---|---|
-| トップページ | サイト概要・主要導線 | 高 |
-| AWS用語集一覧 | サービス一覧表示 | 高 |
-| AWS用語詳細 | 各サービスの解説 | 高 |
-| サービス比較一覧 | 比較記事一覧 | 高 |
-| サービス比較詳細 | 似たサービスの違いを解説 | 高 |
-| 模擬問題一覧 | 問題カテゴリ一覧 | 高 |
-| 模擬問題詳細 | 問題・選択肢・解説 | 高 |
-| 構成図一覧 | SAA向け構成図一覧 | 中 |
-| 構成図詳細 | 構成図と設計意図 | 中 |
-| ブログ一覧 | SEO記事一覧 | 中 |
-| ブログ詳細 | 記事本文 | 中 |
-| 問い合わせ | 問い合わせフォーム | 中 |
-| 運営者情報 | サイト運営者情報 | 中 |
-| プライバシーポリシー | 広告審査・法務対応 | 中 |
+| Home page | Site overview and main navigation paths | High |
+| AWS glossary listing | List services | High |
+| AWS terminology detail | Explain each service | High |
+| Service comparison listing | List comparison articles | High |
+| Service comparison detail | Explain differences between similar services | High |
+| Practice-question listing | List question categories | High |
+| Practice-question detail | Question, choices, and explanation | High |
+| Architecture diagram listing | List SAA architecture diagrams | Medium |
+| Architecture diagram detail | Diagram and design rationale | Medium |
+| Blog listing | List SEO articles | Medium |
+| Blog detail | Article body | Medium |
+| Contact | Contact form | Medium |
+| Site operator information | Information about the site operator | Medium |
+| Privacy policy | Advertising review and legal compliance | Medium |
 
 ---
 
-## 20. データ設計概要
+## 20. Data Design Overview
 
-## 20.1 AWS用語データ
+## 20.1 AWS Terminology Data
+
+Japanese website-content specimen:
 
 ```json
 {
@@ -865,7 +867,9 @@ SEO記事を増やし、広告審査に出せる状態にする。
 }
 ```
 
-## 20.2 模擬問題データ
+## 20.2 Practice-Question Data
+
+Japanese website-content specimen:
 
 ```json
 {
@@ -886,7 +890,9 @@ SEO記事を増やし、広告審査に出せる状態にする。
 }
 ```
 
-## 20.3 構成図データ
+## 20.3 Architecture Diagram Data
+
+Japanese website-content specimen:
 
 ```json
 {
@@ -901,47 +907,46 @@ SEO記事を増やし、広告審査に出せる状態にする。
 
 ---
 
-## 21. 初期コンテンツ案
+## 21. Initial Content Ideas
 
-## 21.1 CLF向け記事
+## 21.1 CLF Articles
 
-1. AWS Cloud Practitionerとは？初心者向けに解説
-2. AWSのグローバルインフラとは？リージョンとAZの違い
-3. IAMとは？ユーザー・ロール・ポリシーの違い
-4. S3とは？初心者向けに使い方を解説
-5. EC2とは？仮想サーバーの基本を解説
-6. Lambdaとは？サーバーレスを初心者向けに解説
-7. RDSとDynamoDBの違い
-8. CloudFrontとは？CDNの基本
-9. CloudWatchとCloudTrailの違い
-10. AWS無料枠で注意すべき課金ポイント
+1. What is AWS Cloud Practitioner? An explanation for beginners
+2. What is AWS global infrastructure? The difference between Regions and AZs
+3. What is IAM? Differences between users, roles, and policies
+4. What is S3? A beginner's guide to using it
+5. What is EC2? Virtual server fundamentals
+6. What is Lambda? Serverless explained for beginners
+7. Differences between RDS and DynamoDB
+8. What is CloudFront? CDN fundamentals
+9. Differences between CloudWatch and CloudTrail
+10. Billing considerations for the AWS Free Tier
 
-## 21.2 SAA向け記事
+## 21.2 SAA Articles
 
-1. SAAでよく出る高可用性構成
-2. 3層Webアプリ構成をAWSで作るなら？
-3. S3 + CloudFront 静的サイト構成
-4. API Gateway + Lambda + DynamoDB 構成
-5. VPCのパブリックサブネットとプライベートサブネット
-6. Auto ScalingとELBの基本
-7. RDS Multi-AZとRead Replicaの違い
-8. SQSとSNSとEventBridgeの使い分け
-9. コスト最適化で避けたいAWS構成
-10. 障害に強いAWS設計の考え方
+1. Highly available architectures frequently tested in SAA
+2. How would you build a three-tier web application on AWS?
+3. S3 + CloudFront static site architecture
+4. API Gateway + Lambda + DynamoDB architecture
+5. VPC public subnets and private subnets
+6. Auto Scaling and ELB fundamentals
+7. Differences between RDS Multi-AZ and Read Replicas
+8. When to use SQS, SNS, and EventBridge
+9. AWS architectures to avoid when optimizing costs
+10. Principles for fault-tolerant AWS design
 
 ---
 
-## 22. この企画の結論
+## 22. Project Conclusion
 
-本企画は、AWS資格学習、ポートフォリオ制作、SEOメディア運営、将来的な収益化を同時に狙えるプロダクトである。
+This product can simultaneously support AWS certification study, portfolio creation, SEO content-site operation, and future monetization.
 
-特に、現在の学習スケジュールと相性が良い。
+It is particularly well aligned with the current study schedule.
 
-- 6月末のCloud Practitioner受験までに、基礎用語・模擬問題・比較記事を作る
-- 8月頃のSAA受験までに、構成図・設計パターン・サーバーレスAPIを追加する
-- 受験後にSEO記事を増やし、広告収益化へ進める
+- Create basic terminology, practice questions, and comparison articles before the Cloud Practitioner exam at the end of June
+- Add architecture diagrams, design patterns, and a serverless API before the SAA exam around August
+- Increase SEO articles after the exams and move toward advertising revenue
 
-最初から大きなSaaSを作るのではなく、まずは**AWS上で公開された学習メディア**として完成させる。その後、ログイン、学習履歴、弱点分析、AI解説、有料教材へ段階的に拡張する。
+Rather than building a large SaaS product from the start, first complete it as **a learning content site published on AWS**. Then gradually extend it with login, learning history, weakness analysis, AI explanations, and paid learning materials.
 
-この進め方であれば、コストを抑えながら、資格学習と転職ポートフォリオの両方に使える実用的な作品になる。
-
+This approach produces a practical project useful for both certification study and a career-change portfolio while keeping costs low.

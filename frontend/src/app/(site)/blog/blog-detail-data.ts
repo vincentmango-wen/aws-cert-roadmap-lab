@@ -1,21 +1,17 @@
 /**
- * blog-detail-data.ts
- *
- * locale 別のブログ記事メタ + ヘルパー集約 (SSoT).
- * architectures の architecture-detail-data.ts と命名・配置を 1:1 で揃え、
- * 3 言語ページが同じ shape で薄いラッパーを書ける形にする。
- *
- * - registry (`@/contents/blog/blogPosts`) で 25 件の共通メタ (postId / slug /
- *   publishedAt / category 等) を保持する。
- * - locale 別の表示用 title / description / tags / targetKeywords は、
- *   `loadBlogContent(locale, slug)` で MDX frontmatter から取得し、registry を
- *   上書きする (ja: 必ず存在 / en/zh: 翻訳追加までは registry 値が表示される).
+ * Localized blog metadata and helpers (single source of truth). Match architecture-detail-data.ts naming
+ * and placement so all three locale pages use thin wrappers of the same shape. The
+ * @/contents/blog/blogPosts registry stores shared metadata for 25 posts (postId, slug, publishedAt,
+ * category, etc.). loadBlogContent(locale, slug) reads localized title, description, tags and
+ * targetKeywords from MDX frontmatter to override registry values. Japanese MDX must exist; en/zh use
+ * registry values until translated.
  */
 import type { PageMetadataInput } from "@/lib/seo";
 import type { BlogPostMeta } from "@/types/blog";
 import { blogPosts } from "@/contents/blog/blogPosts";
 import {
   createLocalizedPath,
+  locales,
   type Locale,
   type Pathname,
 } from "@/i18n/locales";
@@ -105,58 +101,45 @@ export const blogDetailLabelsByLocale: Record<Locale, BlogDetailLabels> = {
 };
 
 /**
- * locale 別の公開ブログ記事メタを返す。
- *
- * - registry の `published: false` は全 locale 共通で非公開にする。
- * - locale MDX の `published: false` は、その locale のみ非公開にする。
- * - frontmatter の `published` 未指定、または MDX 不在は公開扱いにする。
- * - 各記事の MDX frontmatter から locale 別の title / description / tags /
- *   targetKeywords / noIndex を取得する。
- * - locale が en/zh で MDX が存在しないときは、registry の値 (ja 由来) が
- *   そのまま表示される (scaffold モード / Phase 2 翻訳追加で自動的に
- *   locale 値に切り替わる)。
+ * Return localized published-blog metadata. Starting with the registry's 25 posts, read MDX frontmatter
+ * with loadBlogContent(locale, slug) and override title, description, tags, targetKeywords and noIndex.
+ * Missing en/zh MDX retains Japanese registry values in scaffold mode, automatically switching to
+ * localized values as Phase 2 translations arrive.
  */
 export function getPublishedBlogPosts(locale: Locale): BlogPostMeta[] {
-  const posts: BlogPostMeta[] = [];
+  return blogPosts
+    .filter((post) => post.published)
+    .flatMap((post) => {
+      const loaded = loadBlogContent(locale, post.slug);
 
-  for (const post of blogPosts) {
-    if (!post.published) {
-      continue;
-    }
+      if (!loaded) {
+        return [post];
+      }
+      if (!loaded.frontmatter.published) return [];
 
-    const loaded = loadBlogContent(locale, post.slug);
-    if (loaded?.frontmatter.published === false) {
-      continue;
-    }
+      const { frontmatter } = loaded;
 
-    if (!loaded) {
-      posts.push(post);
-      continue;
-    }
-
-    const { frontmatter } = loaded;
-    posts.push({
-      ...post,
-      title: frontmatter.title || post.title,
-      description: frontmatter.description || post.description,
-      category: frontmatter.category || post.category,
-      tags: frontmatter.tags.length > 0 ? frontmatter.tags : post.tags,
-      targetKeywords:
-        frontmatter.targetKeywords.length > 0
-          ? frontmatter.targetKeywords
-          : post.targetKeywords,
-      noIndex: frontmatter.noIndex,
-    });
-  }
-
-  return posts.sort((firstPost, secondPost) =>
-    secondPost.publishedAt.localeCompare(firstPost.publishedAt),
-  );
+      return [{
+        ...post,
+        title: frontmatter.title || post.title,
+        description: frontmatter.description || post.description,
+        category: frontmatter.category || post.category,
+        tags: frontmatter.tags.length > 0 ? frontmatter.tags : post.tags,
+        targetKeywords:
+          frontmatter.targetKeywords.length > 0
+            ? frontmatter.targetKeywords
+            : post.targetKeywords,
+        noIndex: frontmatter.noIndex,
+      } satisfies BlogPostMeta];
+    })
+    .sort((firstPost, secondPost) =>
+      secondPost.publishedAt.localeCompare(firstPost.publishedAt),
+    );
 }
 
 /**
- * locale 別の単一記事 (メタ + 本文 MDX) を取得する。
- * 本文 MDX が存在しなければ null を返す (build を落とさないフォールバック)。
+ * Get a localized article (metadata and MDX body). Return null if MDX is unavailable so the build does
+ * not fail.
  */
 export function getBlogPostBySlug(
   locale: Locale,
@@ -176,8 +159,8 @@ export function getBlogPostBySlug(
 
   const loaded = loadBlogContent(locale, slug);
 
-  // ja MDX は必ず存在することを前提に、なければ ja MDX にフォールバックする。
-  // en/zh で翻訳前は ja MDX 本文を表示する (scaffold モード救済)。
+  // Fall back to Japanese MDX, which is expected to exist.
+  // Until en/zh translations exist, display the Japanese body as a scaffold-mode fallback.
   const fallback =
     loaded === null && locale !== "ja"
       ? loadBlogContent("ja", slug)
@@ -190,11 +173,28 @@ export function getBlogPostBySlug(
 }
 
 export function getBlogStaticParams(locale: Locale): BlogStaticParams[] {
-  // architectures / comparisons と同じく、locale 別の公開記事一覧経由で
-  // 静的パラメータを生成する。en/zh で MDX が無くても、`getPublishedBlogPosts`
-  // が registry の 25 件を返すため、同じ slug 集合が全 locale で生成される
-  // (scaffold モード救済 / Phase 2 翻訳追加で自動的に locale 値に切り替わる).
+  // As with architectures and comparisons, generate static parameters from
+  // the localized published-post list. Even without en/zh MDX, getPublishedBlogPosts
+  // returns the registry's 25 posts, generating the same slug set for every locale.
+  // This scaffold fallback switches automatically to localized content as Phase 2 translations arrive.
   return getPublishedBlogPosts(locale).map((post) => ({ postSlug: post.slug }));
+}
+
+/** Server-built navigation data; never send MDX or filesystem imports to the client. */
+export function getBlogPublishedLocaleMap(): Record<string, Locale[]> {
+  const result: Record<string, Locale[]> = {};
+  for (const locale of locales) {
+    for (const post of getPublishedBlogPosts(locale)) {
+      (result[post.slug] ??= []).push(locale);
+    }
+  }
+  return result;
+}
+
+export function getBlogIndexableLocales(slug: string): Locale[] {
+  return locales.filter((locale) =>
+    getPublishedBlogPosts(locale).some((post) => post.slug === slug && !post.noIndex),
+  );
 }
 
 export function createBlogPostPath(locale: Locale, slug: string): Pathname {
@@ -226,5 +226,7 @@ export function createBlogDetailMetadataInput(
     publishedTime: post.publishedAt,
     modifiedTime: post.updatedAt,
     noIndex: post.noIndex,
+    enableLanguageAlternates: !post.noIndex,
+    availableLocales: getBlogIndexableLocales(post.slug),
   };
 }

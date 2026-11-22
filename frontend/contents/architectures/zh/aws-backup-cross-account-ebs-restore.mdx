@@ -1,0 +1,32 @@
+# AWS Backup 跨帳戶備份與還原：在隔離環境驗證 EBS 資料
+
+## 要驗證的是能不能復原
+
+假設正式環境的 EC2 有一顆存放應用資料的加密 Amazon EBS 資料磁碟。正式帳戶與備份帳戶屬於同一個 AWS Organizations 組織，兩者都使用東京區域（`ap-northeast-1`）的普通 AWS Backup vault。這是跨帳戶隔離與復原演練，不是跨區域災難復原，也不代表已有資源部署。
+
+## 從正式磁碟到隔離測試
+
+1. **A → B：備份。** AWS Backup 建立正式 EBS 磁碟的備份，產生來源 vault 中的復原點。
+2. **B → C：複製。** 跨帳戶複製工作建立備份帳戶目的 vault 的復原點；等複製完成，確認目的端能列出並選取該復原點。不是拿來源 vault 的復原點直接還原到另一帳戶。
+3. **C → D：還原。** 在備份帳戶選擇複製後的復原點，將快照還原成新的 EBS 磁碟。指定與隔離測試 EC2 相同的可用區，才能掛接；不要接回正式主機或覆寫來源磁碟。
+4. **D → E：驗證。** 確認新磁碟可掛接並掛載，用已知測試檔、雜湊或校驗和檢查資料，讓測試應用成功讀取預期紀錄，保留驗證結果與時間。完成後依規則清理暫時測試資源，保留復原點和證據。
+
+## 帳戶、權限與加密
+
+先由 AWS Organizations 管理帳戶在 AWS Backup 的設定中啟用跨帳戶備份。目的 vault 的資源政策只允許核准的來源帳戶執行 `backup:CopyIntoBackupVault`，作業角色另需必要的備份、複製或還原權限。這是加密 EBS 的例子：來源用可授權給目的帳戶的客戶管理 AWS KMS 金鑰，目的 vault 也用自己的客戶管理金鑰。加密 EBS 的來源備份承襲磁碟加密；目的複本按目的 vault 金鑰重新加密。AWS 管理金鑰的政策不可修改，不能拿無法共享的來源金鑰直接完成此情境。還原角色也要有必要的 KMS 使用權；金鑰權限與 vault 政策不是同一件事。
+
+## 成功狀態不等於達到復原目標
+
+先訂定可接受的資料遺失量（RPO）與復原時間（RTO），再把實測結果與目標比較。 記錄模擬事件時間、目的帳戶可用且驗證過的復原點所代表的資料時間，以及演練啟動到測試應用通過驗證的時間。實測的資料落差是事件時間與可復原資料時間之差，不是複製完成時間；實測的復原耗時是從演練定義的中斷／起算點到應用通過驗證，不只算 AWS 還原工作的耗時。若復原點過舊、檔案校驗不符或應用無法讀取，即使 AWS 工作顯示完成，演練仍不算通過。
+
+若使用 AWS Backup Restore Testing，自目的 vault 的合格時間範圍選取最近或隨機的復原點，依演練續接應用驗證並確認清理；不覆寫 EBS 還原的可用區設定時，服務可能推斷隨機可用區。
+
+## 官方參考資料
+
+- [Cross-account backup copies](https://docs.aws.amazon.com/aws-backup/latest/devguide/create-cross-account-backup.html)
+- [Backup encryption](https://docs.aws.amazon.com/aws-backup/latest/devguide/encryption.html)
+- [Feature availability by Region](https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html)
+- [Restore an Amazon EBS volume](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-ebs.html)
+- [AWS Backup Restore Testing](https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing.html)
+- [Restore Testing inferred metadata](https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing-inferred-metadata.html)
+- [Recovery objective definitions](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel13-bp01.html)

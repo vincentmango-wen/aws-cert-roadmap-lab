@@ -1,75 +1,75 @@
-AWS資格学習サイト 開発タスク一覧
+AWS Certification Learning Site Development Task List
 
-1. 文書情報
+1. Document Information
 
 |   |   |
 |---|---|
-|項目|内容|
-|文書名|AWS資格学習サイト 開発タスク一覧|
-|対象プロダクト|AWS資格ロードマップラボ|
-|目的|これまで作成した設計書を、実装可能なタスク単位に分解する|
-|対象フェーズ|Phase 0 〜 Phase 4|
-|優先実装範囲|MVP：静的学習サイト + 問い合わせAPI + AWS公開 + CI/CD|
-|作成日|2026-05-30|
+|Item|Description|
+|Document name|AWS Certification Learning Site Development Task List|
+|Target product|AWS Certification Roadmap Lab|
+|Purpose|Break the existing design documents down into implementable tasks|
+|Target phases|Phase 0 through Phase 4|
+|Priority implementation scope|MVP: Static learning site + contact API + AWS hosting + CI/CD|
+|Created|2026-05-30|
 
   
 
-2. 本タスク一覧の目的
+2. Purpose of This Task List
 
-本書は、AWS資格学習サイト「AWS資格ロードマップラボ」を実装するための開発タスク一覧である。
+This document lists the development tasks for implementing the AWS certification learning site, AWS Certification Roadmap Lab.
 
-これまで作成した以下の設計書をもとに、実際に開発・構築できる単位までタスクを分解する。
+Based on the following existing design documents, it breaks tasks down into units that can actually be developed and provisioned.
 
-- 企画書
-- 要件定義書
-- 画面一覧・画面遷移設計書
-- AWS構成図設計書
-- データ設計書
-- API設計書
-- セキュリティ設計書
-- コスト管理設計書
-- インフラ構築手順書
-- Lambda実装設計書
-- CI/CD設計書
-- 運用監視設計書
+- Project proposal
+- Requirements definition
+- Screen inventory and navigation design
+- AWS architecture diagram design
+- Data design
+- API design
+- Security design
+- Cost management design
+- Infrastructure setup procedure
+- Lambda implementation design
+- CI/CD design
+- Operations and monitoring design
 
-MVPでは、作りすぎないことを重視する。
+Avoiding overbuilding is a priority for the MVP.
 
-MVPで作るものは以下に限定する。
+The MVP is limited to the following.
 
-AWS資格学習サイトの静的ページ
+Static pages for the AWS certification learning site
 
-AWS用語集
+AWS glossary
 
-CLF-C02模擬問題
+CLF-C02 practice questions
 
-AWSサービス比較記事
+AWS service comparison articles
 
-AWS構成図解説
+AWS architecture diagram explanations
 
-ブログ記事
+Blog articles
 
-問い合わせフォーム
+Contact form
 
-API Gateway + Lambda + DynamoDB 問い合わせAPI
+API Gateway + Lambda + DynamoDB contact API
 
-S3 + CloudFront + OAC 公開構成
+S3 + CloudFront + OAC hosting architecture
 
-GitHub ActionsによるS3デプロイ
+S3 deployment with GitHub Actions
 
-AWS Budgets / CloudWatch Logs 運用監視
+AWS Budgets / CloudWatch Logs operations and monitoring
 
-MVPでは、以下は作らない。
+The MVP does not include the following.
 
-ログイン機能
+Login functionality
 
-ユーザー別学習履歴
+Per-user learning history
 
-正答率保存
+Saved accuracy rates
 
-復習機能
+Review functionality
 
-毎日1問通知
+Daily question notifications
 
 Cognito
 
@@ -85,29 +85,29 @@ NAT Gateway
 
 ALB
 
-AI自動解説
+AI-generated explanations
 
-有料会員機能
+Paid membership features
 
   
 
-3. フェーズ定義
+3. Phase Definitions
 
-3.1 フェーズ一覧
+3.1 Phase List
 
 |   |   |   |   |
 |---|---|---|---|
-|Phase|名称|目的|完了基準|
-|Phase 0|開発準備|リポジトリ、技術構成、設計書を整える|開発開始できる状態|
-|Phase 1|静的サイトMVP|学習サイトとして最低限閲覧できる状態にする|ローカルで主要ページ表示|
-|Phase 2|AWS公開・問い合わせAPI|AWS上で公開し、問い合わせ保存できる状態にする|CloudFront公開 + POST /contact成功|
-|Phase 3|CI/CD・運用監視|自動デプロイと最低限の運用監視を整える|main pushで自動公開|
-|Phase 4|収益化準備|SEO記事・AdSense準備・独自ドメイン検討|収益化申請可能な品質|
-|Phase 5|学習アプリ化|ログイン・学習履歴・復習機能を追加|ユーザー別学習管理が可能|
+|Phase|Name|Purpose|Completion criteria|
+|Phase 0|Development preparation|Set up the repository, technology architecture, and design documents|Ready to begin development|
+|Phase 1|Static site MVP|Provide a minimally browsable learning site|Main pages display locally|
+|Phase 2|AWS hosting and contact API|Host on AWS and enable contact submission storage|CloudFront hosting + successful POST /contact|
+|Phase 3|CI/CD and operations monitoring|Set up automatic deployment and minimal operations monitoring|Automatic publication on main push|
+|Phase 4|Monetization preparation|Prepare SEO articles and AdSense; consider a custom domain|Quality sufficient to apply for monetization|
+|Phase 5|Learning application|Add login, learning history, and review features|Per-user learning management available|
 
-3.2 MVP対象範囲
+3.2 MVP Scope
 
-MVP対象は以下までとする。
+The MVP covers the following phases.
 
 Phase 0
 
@@ -117,92 +117,92 @@ Phase 2
 
 Phase 3
 
-Phase 4以降は、MVP公開後に進める。
+Proceed with Phase 4 onward after the MVP release.
 
   
 
-4. 優先度定義
+4. Priority Definitions
 
 |   |   |
 |---|---|
-|優先度|意味|
-|Must|MVP完成に必須|
-|Should|MVP品質を上げるために重要|
-|Could|余裕があれば実装|
-|Later|Phase 4以降で実装|
+|Priority|Meaning|
+|Must|Required to complete the MVP|
+|Should|Important for improving MVP quality|
+|Could|Implement if time permits|
+|Later|Implement from Phase 4 onward|
 
   
 
-5. 見積もり単位
+5. Estimation Units
 
-5.1 見積もり表記
+5.1 Estimate Notation
 
 |   |   |
 |---|---|
-|表記|目安|
-|XS|30分〜1時間|
-|S|1〜2時間|
-|M|半日|
-|L|1日|
-|XL|2日以上|
+|Notation|Guideline|
+|XS|30 minutes–1 hour|
+|S|1–2 hours|
+|M|Half a day|
+|L|1 day|
+|XL|2 days or more|
 
-5.2 注意
+5.2 Notes
 
-見積もりは個人開発・学習込みの目安である。
+Estimates are guidelines for individual development, including learning time.
 
-AWS設定やNext.jsのエラー対応により、実際には増える可能性がある。
-
-  
-
-Phase 0：開発準備
-
-6. Phase 0 目的
-
-開発を始める前に、リポジトリ、技術構成、ディレクトリ、基本設定、設計ドキュメントを整える。
+Actual time may increase due to AWS configuration or Next.js troubleshooting.
 
   
 
-7. Phase 0 タスク一覧
+Phase 0: Development Preparation
+
+6. Phase 0 Purpose
+
+Before starting development, prepare the repository, technology architecture, directories, basic settings, and design documentation.
+
+  
+
+7. Phase 0 Task List
 
 |   |   |   |   |   |   |
 |---|---|---|---|---|---|
-|ID|タスク|優先度|見積|依存|完了条件|
-|P0-001|GitHubリポジトリ作成|Must|XS|なし|GitHub上にリポジトリがある|
-|P0-002|README初期作成|Must|S|P0-001|プロジェクト概要が記載されている|
-|P0-003|ディレクトリ構成作成|Must|S|P0-001|frontend / backend / docs / infra がある|
-|P0-004|.gitignore作成|Must|XS|P0-001|.env / node_modules / .next / out が除外されている|
-|P0-005|設計書格納ディレクトリ作成|Should|XS|P0-003|docs/designs がある|
-|P0-006|技術スタック確定|Must|S|なし|Next.js / TypeScript / AWS構成が確定|
-|P0-007|ローカルNode.js環境確認|Must|XS|なし|node / npm または pnpm が使える|
-|P0-008|AWSアカウント確認|Must|XS|なし|AWS Management Consoleへログインできる|
-|P0-009|AWS root MFA設定|Must|S|P0-008|rootユーザーにMFA設定済み|
-|P0-010|AWS Budgets初期設定|Must|S|P0-008|月額Budget通知が設定済み|
+|ID|Task|Priority|Estimate|Dependencies|Completion criteria|
+|P0-001|Create GitHub repository|Must|XS|None|Repository exists on GitHub|
+|P0-002|Create initial README|Must|S|P0-001|Project overview is documented|
+|P0-003|Create directory structure|Must|S|P0-001|frontend / backend / docs / infra exist|
+|P0-004|Create .gitignore|Must|XS|P0-001|.env / node_modules / .next / out are excluded|
+|P0-005|Create design document directory|Should|XS|P0-003|docs/designs exists|
+|P0-006|Finalize technology stack|Must|S|None|Next.js / TypeScript / AWS architecture finalized|
+|P0-007|Check local Node.js environment|Must|XS|None|node / npm or pnpm is available|
+|P0-008|Check AWS account|Must|XS|None|AWS Management Console login works|
+|P0-009|Configure AWS root MFA|Must|S|P0-008|MFA configured for root user|
+|P0-010|Configure initial AWS Budgets|Must|S|P0-008|Monthly Budget notifications configured|
 
   
 
-8. Phase 0 詳細タスク
+8. Phase 0 Detailed Tasks
 
-P0-001 GitHubリポジトリ作成
+P0-001 Create GitHub Repository
 
-内容
+Description
 
-GitHubにプロジェクト用リポジトリを作成する。
+Create a GitHub repository for the project.
 
-推奨リポジトリ名
+Recommended repository name
 
 aws-cert-roadmap-lab
 
-完了条件
+Completion criteria
 
-- GitHub上にリポジトリが存在する
-- localにcloneできる
-- mainブランチが存在する
+- The repository exists on GitHub.
+- It can be cloned locally.
+- The main branch exists.
 
   
 
-P0-003 ディレクトリ構成作成
+P0-003 Create Directory Structure
 
-推奨構成
+Recommended structure
 
 aws-cert-roadmap-lab/
 
@@ -228,20 +228,20 @@ aws-cert-roadmap-lab/
 
 └── README.md
 
-完了条件
+Completion criteria
 
-- 上記ディレクトリが作成済み
-- 空ディレクトリには .gitkeep を配置
+- The directories above have been created.
+- Empty directories contain .gitkeep.
 
   
 
-P0-004 .gitignore作成
+P0-004 Create .gitignore
 
-内容
+Description
 
-秘密情報・ビルド成果物・依存関係をGit管理から除外する。
+Exclude secrets, build artifacts, and dependencies from Git tracking.
 
-設定例
+Example configuration
 
 .env
 
@@ -273,71 +273,71 @@ __pycache__/
 
 aws-credentials.json
 
-完了条件
+Completion criteria
 
-- .env がGit管理対象外
-- node_modules がGit管理対象外
-- out がGit管理対象外
-
-  
-
-Phase 1：静的サイトMVP
-
-9. Phase 1 目的
-
-ローカル環境でAWS資格学習サイトとして最低限使える静的サイトを作る。
-
-この段階ではAWS公開は必須ではない。
+- .env is excluded from Git tracking.
+- node_modules is excluded from Git tracking.
+- out is excluded from Git tracking.
 
   
 
-10. Phase 1 タスク一覧
+Phase 1: Static Site MVP
+
+9. Phase 1 Purpose
+
+Build a static site that is minimally usable as an AWS certification learning site in the local environment.
+
+AWS hosting is not mandatory at this stage.
+
+  
+
+10. Phase 1 Task List
 
 |   |   |   |   |   |   |
 |---|---|---|---|---|---|
-|ID|タスク|優先度|見積|依存|完了条件|
-|P1-001|Next.jsプロジェクト作成|Must|M|P0|frontendが起動する|
-|P1-002|TypeScript / ESLint設定|Must|S|P1-001|lint / typecheckが動く|
-|P1-003|Tailwind CSS設定|Should|S|P1-001|スタイルが適用される|
-|P1-004|静的export設定|Must|S|P1-001|out/ が生成される|
-|P1-005|共通レイアウト作成|Must|M|P1-001|Header / Footer / Mainがある|
-|P1-006|トップページ作成|Must|M|P1-005|/ が表示される|
-|P1-007|学習ロードマップページ作成|Must|M|P1-005|/roadmap が表示される|
-|P1-008|AWS用語集一覧ページ作成|Must|L|P1-010|/terms が表示される|
-|P1-009|AWS用語詳細ページ作成|Must|L|P1-010|/terms/{termId} が表示される|
-|P1-010|AWS用語JSON作成|Must|L|なし|30件以上の用語がある|
-|P1-011|模擬問題一覧ページ作成|Must|L|P1-013|/questions が表示される|
-|P1-012|模擬問題詳細・回答UI作成|Must|XL|P1-013|選択肢・正誤・解説が表示される|
-|P1-013|CLF-C02模擬問題JSON作成|Must|XL|なし|30問以上の問題がある|
-|P1-014|サービス比較一覧ページ作成|Should|M|P1-015|/comparisons が表示される|
-|P1-015|サービス比較MDX作成|Should|L|なし|5本以上の比較記事がある|
-|P1-016|構成図一覧ページ作成|Should|M|P1-017|/architectures が表示される|
-|P1-017|構成図解説MDX作成|Should|L|なし|5本以上の構成図記事がある|
-|P1-018|ブログ一覧ページ作成|Should|M|P1-019|/blog が表示される|
-|P1-019|ブログ記事MDX作成|Should|L|なし|5本以上の記事がある|
-|P1-020|問い合わせページUI作成|Must|M|P1-005|/contact が表示される|
-|P1-021|運営者情報ページ作成|Must|S|P1-005|/about が表示される|
-|P1-022|プライバシーポリシー作成|Must|S|P1-005|/privacy が表示される|
-|P1-023|免責事項ページ作成|Must|S|P1-005|/disclaimer が表示される|
-|P1-024|404ページ作成|Should|S|P1-005|404ページが表示される|
-|P1-025|SEOメタデータ設定|Should|M|各ページ|title / descriptionが設定済み|
-|P1-026|sitemap生成設定|Should|M|各ページ|sitemap.xmlが生成される|
-|P1-027|robots.txt作成|Should|XS|なし|robots.txtがある|
-|P1-028|レスポンシブ対応|Must|M|各ページ|スマホ表示で崩れない|
-|P1-029|ローカル表示確認|Must|M|P1全体|主要ページが表示される|
-|P1-030|静的build確認|Must|S|P1全体|npm run build が成功する|
+|ID|Task|Priority|Estimate|Dependencies|Completion criteria|
+|P1-001|Create Next.js project|Must|M|P0|frontend starts|
+|P1-002|Configure TypeScript / ESLint|Must|S|P1-001|lint / typecheck work|
+|P1-003|Configure Tailwind CSS|Should|S|P1-001|Styles are applied|
+|P1-004|Configure static export|Must|S|P1-001|out/ is generated|
+|P1-005|Create shared layout|Must|M|P1-001|Header / Footer / Main exist|
+|P1-006|Create home page|Must|M|P1-005|/ displays|
+|P1-007|Create learning roadmap page|Must|M|P1-005|/roadmap displays|
+|P1-008|Create AWS glossary listing page|Must|L|P1-010|/terms displays|
+|P1-009|Create AWS term detail page|Must|L|P1-010|/terms/{termId} displays|
+|P1-010|Create AWS terms JSON|Must|L|None|At least 30 terms exist|
+|P1-011|Create practice question listing page|Must|L|P1-013|/questions displays|
+|P1-012|Create practice question detail and answer UI|Must|XL|P1-013|Choices, correctness, and explanations display|
+|P1-013|Create CLF-C02 practice questions JSON|Must|XL|None|At least 30 questions exist|
+|P1-014|Create service comparison listing page|Should|M|P1-015|/comparisons displays|
+|P1-015|Create service comparison MDX|Should|L|None|At least 5 comparison articles exist|
+|P1-016|Create architecture diagram listing page|Should|M|P1-017|/architectures displays|
+|P1-017|Create architecture explanation MDX|Should|L|None|At least 5 architecture diagram articles exist|
+|P1-018|Create blog listing page|Should|M|P1-019|/blog displays|
+|P1-019|Create blog article MDX|Should|L|None|At least 5 articles exist|
+|P1-020|Create contact page UI|Must|M|P1-005|/contact displays|
+|P1-021|Create operator information page|Must|S|P1-005|/about displays|
+|P1-022|Create privacy policy|Must|S|P1-005|/privacy displays|
+|P1-023|Create disclaimer page|Must|S|P1-005|/disclaimer displays|
+|P1-024|Create 404 page|Should|S|P1-005|404 page displays|
+|P1-025|Configure SEO metadata|Should|M|Each page|title / description configured|
+|P1-026|Configure sitemap generation|Should|M|Each page|sitemap.xml is generated|
+|P1-027|Create robots.txt|Should|XS|None|robots.txt exists|
+|P1-028|Implement responsive layout|Must|M|Each page|Layout remains intact on mobile|
+|P1-029|Verify local display|Must|M|All P1 tasks|Main pages display|
+|P1-030|Verify static build|Must|S|All P1 tasks|npm run build succeeds|
 
   
 
-11. Phase 1 主要タスク詳細
+11. Phase 1 Key Task Details
 
-P1-001 Next.jsプロジェクト作成
+P1-001 Create Next.js Project
 
-内容
+Description
 
-frontend配下にNext.jsプロジェクトを作成する。
+Create a Next.js project under frontend.
 
-推奨
+Recommendations
 
 Next.js
 
@@ -349,20 +349,20 @@ Tailwind CSS
 
 Static Export
 
-完了条件
+Completion criteria
 
-- frontend で npm run dev が成功する
-- ブラウザでトップページが表示される
+- npm run dev succeeds in frontend.
+- The home page displays in the browser.
 
   
 
-P1-004 静的export設定
+P1-004 Configure Static Export
 
-内容
+Description
 
-S3 + CloudFrontで配信できるよう、Next.jsを静的出力にする。
+Configure Next.js static output for delivery through S3 + CloudFront.
 
-設定例
+Example configuration
 
 const nextConfig = {
 
@@ -380,22 +380,22 @@ const nextConfig = {
 
 export default nextConfig;
 
-完了条件
+Completion criteria
 
-- npm run build で out/ が生成される
-- out/index.html が存在する
+- npm run build generates out/.
+- out/index.html exists.
 
   
 
-P1-010 AWS用語JSON作成
+P1-010 Create AWS Terms JSON
 
-内容
+Description
 
-AWS Cloud Practitioner / SAA学習に使うAWS用語データを作成する。
+Create AWS terminology data for AWS Cloud Practitioner / SAA study.
 
-初期作成対象
+Initial content targets
 
-最低30件。
+At least 30 terms.
 
 IAM
 
@@ -457,544 +457,544 @@ CloudFormation
 
 Cognito
 
-完了条件
+Completion criteria
 
-- frontend/contents/terms/terms.json がある
-- 30件以上の用語がある
-- termIdが重複していない
-- 用語一覧・詳細ページで表示できる
+- frontend/contents/terms/terms.json exists.
+- At least 30 terms exist.
+- termId values are unique.
+- Terms display on listing and detail pages.
 
   
 
-P1-013 CLF-C02模擬問題JSON作成
+P1-013 Create CLF-C02 Practice Questions JSON
 
-内容
+Description
 
-AWS Cloud Practitioner向けの模擬問題をJSONで作成する。
+Create AWS Cloud Practitioner practice questions in JSON.
 
-初期問題数
+Initial question count
 
-30問
+30 questions
 
-カテゴリ配分案
+Proposed category distribution
 
 |   |   |
 |---|---|
-|カテゴリ|問題数|
+|Category|Question count|
 |Cloud Concepts|8|
 |Security and Compliance|8|
 |Cloud Technology and Services|9|
 |Billing, Pricing, and Support|5|
 
-完了条件
+Completion criteria
 
-- frontend/contents/questions/clf-c02.json がある
-- 30問以上ある
-- 各問題に4択がある
-- 正解と解説がある
-- 模擬問題画面で回答できる
+- frontend/contents/questions/clf-c02.json exists.
+- At least 30 questions exist.
+- Each question has four choices.
+- Answers and explanations are provided.
+- Questions can be answered on the practice question screen.
 
   
 
-P1-020 問い合わせページUI作成
+P1-020 Create Contact Page UI
 
-内容
+Description
 
-問い合わせフォームのUIを作成する。
+Create the contact form UI.
 
-フィールド
+Fields
 
 |   |   |
 |---|---|
-|項目|必須|
-|名前|必須|
-|メールアドレス|必須|
-|件名|必須|
-|本文|必須|
+|Field|Required|
+|Name|Required|
+|Email address|Required|
+|Subject|Required|
+|Message|Required|
 |honeypot|hidden|
 
-MVP段階
+MVP stage
 
-この段階ではAPI接続前でもよい。
+An API connection is not yet required at this stage.
 
-完了条件
+Completion criteria
 
-- /contact が表示される
-- 入力フォームがある
-- フロント側バリデーションがある
-- 送信ボタンがある
-- honeypot項目がある
-
-  
-
-Phase 2：AWS公開・問い合わせAPI
-
-12. Phase 2 目的
-
-AWS上にサイトを公開し、問い合わせフォームの送信内容をDynamoDBに保存できるようにする。
+- /contact displays.
+- An input form exists.
+- Frontend validation exists.
+- A submit button exists.
+- A honeypot field exists.
 
   
 
-13. Phase 2 タスク一覧
+Phase 2: AWS Hosting and Contact API
+
+12. Phase 2 Purpose
+
+Host the site on AWS and enable contact form submissions to be saved in DynamoDB.
+
+  
+
+13. Phase 2 Task List
 
 |   |   |   |   |   |   |
 |---|---|---|---|---|---|
-|ID|タスク|優先度|見積|依存|完了条件|
-|P2-001|S3バケット作成|Must|S|P0-010|バケット作成済み|
-|P2-002|S3 Public Access Block確認|Must|XS|P2-001|全ブロックON|
-|P2-003|フロントビルド成果物をS3アップロード|Must|S|P1-030, P2-001|S3にindex.htmlがある|
-|P2-004|CloudFront Distribution作成|Must|M|P2-001|Distribution作成済み|
-|P2-005|CloudFront OAC設定|Must|M|P2-004|OAC設定済み|
-|P2-006|S3 Bucket Policy設定|Must|S|P2-005|CloudFrontのみ許可|
-|P2-007|CloudFront表示確認|Must|M|P2-006|CloudFront URLで表示|
-|P2-008|S3直接アクセス拒否確認|Must|S|P2-006|Access Deniedになる|
-|P2-009|CloudFrontエラーページ設定|Should|S|P2-004|404が適切に表示|
-|P2-010|DynamoDB ContactsTable作成|Must|S|P0-010|ContactsTableProd作成済み|
-|P2-011|Lambda実行ロール作成|Must|M|P2-010|PutItem権限のみ|
-|P2-012|contact-submit Lambda作成|Must|M|P2-011|Lambda作成済み|
-|P2-013|Lambda環境変数設定|Must|XS|P2-012|CONTACTS_TABLE_NAME等設定済み|
-|P2-014|Lambdaコード実装|Must|L|P2-012|POST処理が実装済み|
-|P2-015|Lambda単体テスト|Must|M|P2-014|正常・異常系テスト成功|
-|P2-016|API Gateway HTTP API作成|Must|M|P2-014|API作成済み|
-|P2-017|POST /contact Route作成|Must|S|P2-016|Route作成済み|
-|P2-018|API GatewayとLambda統合|Must|S|P2-017|Lambda呼び出し成功|
-|P2-019|CORS設定|Must|S|P2-018|CloudFront Origin許可|
-|P2-020|curlで問い合わせAPI確認|Must|M|P2-019|201レスポンス|
-|P2-021|DynamoDB保存確認|Must|S|P2-020|item保存確認|
-|P2-022|CloudWatch Logs確認|Must|S|P2-020|ログ出力確認|
-|P2-023|CloudWatch Logs保存期間設定|Must|XS|P2-022|14〜30日設定|
-|P2-024|フロント問い合わせフォームとAPI接続|Must|M|P2-020|画面から送信可能|
-|P2-025|CloudFront上から問い合わせ送信確認|Must|M|P2-024|本番URLから保存成功|
-|P2-026|API異常系テスト|Must|M|P2-024|400/405等が返る|
-|P2-027|honeypot動作確認|Should|S|P2-024|スパム保存されない|
-|P2-028|課金確認|Must|S|P2全体|想定外課金なし|
+|ID|Task|Priority|Estimate|Dependencies|Completion criteria|
+|P2-001|Create S3 bucket|Must|S|P0-010|Bucket created|
+|P2-002|Check S3 Public Access Block|Must|XS|P2-001|All blocks ON|
+|P2-003|Upload frontend build artifacts to S3|Must|S|P1-030, P2-001|index.html exists in S3|
+|P2-004|Create CloudFront Distribution|Must|M|P2-001|Distribution created|
+|P2-005|Configure CloudFront OAC|Must|M|P2-004|OAC configured|
+|P2-006|Configure S3 Bucket Policy|Must|S|P2-005|Only CloudFront allowed|
+|P2-007|Check CloudFront display|Must|M|P2-006|Site displays at CloudFront URL|
+|P2-008|Verify direct S3 access rejection|Must|S|P2-006|Access Denied returned|
+|P2-009|Configure CloudFront error pages|Should|S|P2-004|404 displays correctly|
+|P2-010|Create DynamoDB ContactsTable|Must|S|P0-010|ContactsTableProd created|
+|P2-011|Create Lambda execution role|Must|M|P2-010|PutItem permission only|
+|P2-012|Create contact-submit Lambda|Must|M|P2-011|Lambda created|
+|P2-013|Configure Lambda environment variables|Must|XS|P2-012|CONTACTS_TABLE_NAME and other variables configured|
+|P2-014|Implement Lambda code|Must|L|P2-012|POST processing implemented|
+|P2-015|Unit-test Lambda|Must|M|P2-014|Success and failure scenario tests pass|
+|P2-016|Create API Gateway HTTP API|Must|M|P2-014|API created|
+|P2-017|Create POST /contact Route|Must|S|P2-016|Route created|
+|P2-018|Integrate API Gateway with Lambda|Must|S|P2-017|Lambda invocation succeeds|
+|P2-019|Configure CORS|Must|S|P2-018|CloudFront Origin allowed|
+|P2-020|Check contact API with curl|Must|M|P2-019|201 response|
+|P2-021|Verify DynamoDB storage|Must|S|P2-020|Item storage verified|
+|P2-022|Check CloudWatch Logs|Must|S|P2-020|Log output verified|
+|P2-023|Set CloudWatch Logs retention|Must|XS|P2-022|14–30 days configured|
+|P2-024|Connect frontend contact form to API|Must|M|P2-020|Submission available from the screen|
+|P2-025|Verify contact submission through CloudFront|Must|M|P2-024|Storage succeeds from production URL|
+|P2-026|Test API failure scenarios|Must|M|P2-024|400/405 and similar responses returned|
+|P2-027|Verify honeypot behavior|Should|S|P2-024|Spam is not saved|
+|P2-028|Review billing|Must|S|All P2 tasks|No unexpected charges|
 
   
 
-14. Phase 2 主要タスク詳細
+14. Phase 2 Key Task Details
 
-P2-001 S3バケット作成
+P2-001 Create S3 Bucket
 
-内容
+Description
 
-静的サイトファイル配置用のS3バケットを作成する。
+Create an S3 bucket for static site files.
 
-完了条件
+Completion criteria
 
-- S3バケットが存在する
-- Regionはap-northeast-1
-- Public Access Blockが有効
-- 静的Webホスティングは使わない
-
-  
-
-P2-004 CloudFront Distribution作成
-
-内容
-
-S3をOriginにしたCloudFront Distributionを作成する。
-
-完了条件
-
-- Distributionが作成済み
-- Default root objectが index.html
-- Viewer protocol policyが Redirect HTTP to HTTPS
-- OAC利用前提になっている
+- The S3 bucket exists.
+- Region is ap-northeast-1.
+- Public Access Block is enabled.
+- Static website hosting is not used.
 
   
 
-P2-014 Lambdaコード実装
+P2-004 Create CloudFront Distribution
 
-内容
+Description
 
-POST /contact 用のLambdaをPythonで実装する。
+Create a CloudFront Distribution with S3 as its Origin.
 
-必須処理
+Completion criteria
 
-JSONパース
+- The Distribution is created.
+- Default root object is index.html.
+- Viewer protocol policy is Redirect HTTP to HTTPS.
+- The configuration is designed to use OAC.
 
-honeypot確認
+  
 
-入力値検証
+P2-014 Implement Lambda Code
 
-contactId生成
+Description
 
-createdAt生成
+Implement the POST /contact Lambda in Python.
+
+Required processing
+
+Parse JSON
+
+Check honeypot
+
+Validate input
+
+Generate contactId
+
+Generate createdAt
 
 DynamoDB PutItem
 
-成功レスポンス返却
+Return success response
 
-エラーレスポンス返却
+Return error response
 
-CloudWatch Logs出力
+Output CloudWatch Logs
 
-完了条件
+Completion criteria
 
-- 正常データでDynamoDB保存できる
-- 不正JSONで400を返す
-- 入力値エラーで400を返す
-- honeypot入力時は保存しない
-- email全文とmessage全文をログに出さない
-
-  
-
-P2-024 フロント問い合わせフォームとAPI接続
-
-内容
-
-問い合わせフォームからAPI Gatewayの POST /contact を呼び出す。
-
-完了条件
-
-- フォーム入力後にAPIへPOSTされる
-- 送信中はボタンがdisabledになる
-- 成功時に完了メッセージが表示される
-- エラー時に項目別エラーが表示される
-- CloudFront上から正常送信できる
+- Valid data can be saved in DynamoDB.
+- Invalid JSON returns 400.
+- Input validation errors return 400.
+- Data is not saved when the honeypot is filled.
+- Full email and message values are not logged.
 
   
 
-Phase 3：CI/CD・運用監視
+P2-024 Connect Frontend Contact Form to API
 
-15. Phase 3 目的
+Description
 
-手動デプロイから脱却し、GitHub Actionsでフロントエンドを自動デプロイできるようにする。
+Call API Gateway POST /contact from the contact form.
 
-あわせて、最低限の運用監視を整える。
+Completion criteria
+
+- Form input is POSTed to the API.
+- The button is disabled during submission.
+- A completion message displays on success.
+- Field-specific errors display on failure.
+- Submission succeeds from CloudFront.
 
   
 
-16. Phase 3 タスク一覧
+Phase 3: CI/CD and Operations Monitoring
+
+15. Phase 3 Purpose
+
+Move away from manual deployment and enable automatic frontend deployment with GitHub Actions.
+
+Also establish minimal operations monitoring.
+
+  
+
+16. Phase 3 Task List
 
 |   |   |   |   |   |   |
 |---|---|---|---|---|---|
-|ID|タスク|優先度|見積|依存|完了条件|
-|P3-001|GitHub Actions CI作成|Must|M|P1|PR時にCI実行|
-|P3-002|lint script整備|Must|S|P3-001|lintが通る|
-|P3-003|typecheck script整備|Must|S|P3-001|typecheckが通る|
-|P3-004|build script整備|Must|S|P3-001|buildが通る|
-|P3-005|GitHub Actions用IAM Role作成|Must|M|P2|Role作成済み|
-|P3-006|GitHub OIDC Provider設定|Should|M|P3-005|OIDCでAssumeRole可能|
-|P3-007|GitHub Actions用IAM Policy作成|Must|M|P3-005|S3/CloudFront最小権限|
-|P3-008|GitHub Secrets / Variables設定|Must|S|P3-005|必要値が設定済み|
-|P3-009|deploy-frontend workflow作成|Must|L|P3-008|main pushでデプロイ|
-|P3-010|S3 sync動作確認|Must|M|P3-009|S3へ反映|
-|P3-011|CloudFront Invalidation動作確認|Must|M|P3-009|最新表示確認|
-|P3-012|GitHub Actionsログ確認|Must|S|P3-009|成功ログ確認|
-|P3-013|デプロイ失敗時のRunbook作成|Should|S|P3-009|docsに記載済み|
-|P3-014|CloudWatch Logs保存期間確認|Must|XS|P2-023|Never expireではない|
-|P3-015|Lambda Metrics確認|Must|S|P2-012|Errors/Duration確認可能|
-|P3-016|API Gateway Metrics確認|Must|S|P2-016|4xx/5xx確認可能|
-|P3-017|DynamoDB Metrics確認|Should|S|P2-010|書き込み・ItemCount確認可能|
-|P3-018|Cost Explorer確認|Must|S|P2|サービス別費用確認|
-|P3-019|運用Runbook作成|Should|M|運用監視設計|障害時確認順序がある|
-|P3-020|READMEにAWS構成・CI/CD追記|Must|M|P3|README更新済み|
+|ID|Task|Priority|Estimate|Dependencies|Completion criteria|
+|P3-001|Create GitHub Actions CI|Must|M|P1|CI runs on PRs|
+|P3-002|Prepare lint script|Must|S|P3-001|lint passes|
+|P3-003|Prepare typecheck script|Must|S|P3-001|typecheck passes|
+|P3-004|Prepare build script|Must|S|P3-001|build passes|
+|P3-005|Create IAM Role for GitHub Actions|Must|M|P2|Role created|
+|P3-006|Configure GitHub OIDC Provider|Should|M|P3-005|AssumeRole possible through OIDC|
+|P3-007|Create IAM Policy for GitHub Actions|Must|M|P3-005|Least-privilege S3/CloudFront access|
+|P3-008|Configure GitHub Secrets / Variables|Must|S|P3-005|Required values configured|
+|P3-009|Create deploy-frontend workflow|Must|L|P3-008|Deployment on main push|
+|P3-010|Verify S3 sync|Must|M|P3-009|Changes reflected in S3|
+|P3-011|Verify CloudFront Invalidation|Must|M|P3-009|Latest content display verified|
+|P3-012|Check GitHub Actions logs|Must|S|P3-009|Success logs verified|
+|P3-013|Create deployment failure runbook|Should|S|P3-009|Documented in docs|
+|P3-014|Check CloudWatch Logs retention|Must|XS|P2-023|Not set to Never expire|
+|P3-015|Check Lambda Metrics|Must|S|P2-012|Errors/Duration can be reviewed|
+|P3-016|Check API Gateway Metrics|Must|S|P2-016|4xx/5xx can be reviewed|
+|P3-017|Check DynamoDB Metrics|Should|S|P2-010|Writes and ItemCount can be reviewed|
+|P3-018|Review Cost Explorer|Must|S|P2|Costs by service reviewed|
+|P3-019|Create operations runbook|Should|M|Operations and monitoring design|Incident investigation order documented|
+|P3-020|Add AWS architecture and CI/CD to README|Must|M|P3|README updated|
 
   
 
-17. Phase 3 主要タスク詳細
+17. Phase 3 Key Task Details
 
-P3-001 GitHub Actions CI作成
+P3-001 Create GitHub Actions CI
 
-内容
+Description
 
-Pull Request時にlint、typecheck、buildを実行する。
+Run lint, typecheck, and build on Pull Requests.
 
-完了条件
+Completion criteria
 
-- .github/workflows/ci.yml がある
-- PR作成時にWorkflowが起動する
-- lint / typecheck / buildが成功する
-
-  
-
-P3-009 deploy-frontend workflow作成
-
-内容
-
-mainブランチ更新時にS3 + CloudFrontへ自動デプロイする。
-
-完了条件
-
-- .github/workflows/deploy-frontend.yml がある
-- main pushでWorkflowが起動する
-- npm run build が成功する
-- aws s3 sync ./out s3://... --delete が成功する
-- cloudfront create-invalidation が成功する
+- .github/workflows/ci.yml exists.
+- The workflow starts when a PR is created.
+- lint / typecheck / build succeed.
 
   
 
-P3-020 READMEにAWS構成・CI/CD追記
+P3-009 Create deploy-frontend Workflow
 
-内容
+Description
 
-GitHub READMEにポートフォリオ説明用の情報を記載する。
+Automatically deploy to S3 + CloudFront when the main branch is updated.
 
-記載項目
+Completion criteria
 
-プロダクト概要
+- .github/workflows/deploy-frontend.yml exists.
+- The workflow starts on main push.
+- npm run build succeeds.
+- aws s3 sync ./out s3://... --delete succeeds.
+- cloudfront create-invalidation succeeds.
 
-技術スタック
+  
 
-AWS構成
+P3-020 Add AWS Architecture and CI/CD to README
 
-画面一覧
+Description
 
-主要機能
+Add portfolio explanation information to the GitHub README.
+
+Items to include
+
+Product overview
+
+Technology stack
+
+AWS architecture
+
+Screen inventory
+
+Main features
 
 CI/CD
 
-セキュリティ設計
+Security design
 
-コスト最適化
+Cost optimization
 
-今後の拡張予定
+Planned future extensions
 
-完了条件
+Completion criteria
 
-- READMEを読めば何を作ったか分かる
-- AWS構成が説明されている
-- CI/CDが説明されている
-- コスト最適化が説明されている
-
-  
-
-Phase 4：収益化準備
-
-18. Phase 4 目的
-
-AdSenseやSEO流入を見据え、コンテンツ品質とサイト信頼性を高める。
-
-このPhaseはMVP公開後に実施する。
+- The README explains what was built.
+- The AWS architecture is explained.
+- CI/CD is explained.
+- Cost optimization is explained.
 
   
 
-19. Phase 4 タスク一覧
+Phase 4: Monetization Preparation
+
+18. Phase 4 Purpose
+
+Improve content quality and site credibility in preparation for AdSense and SEO traffic.
+
+Carry out this phase after the MVP release.
+
+  
+
+19. Phase 4 Task List
 
 |   |   |   |   |   |   |
 |---|---|---|---|---|---|
-|ID|タスク|優先度|見積|依存|完了条件|
-|P4-001|独自ドメイン取得検討|Should|S|MVP公開|導入判断済み|
-|P4-002|Route 53 Hosted Zone作成|Could|M|P4-001|DNS管理開始|
-|P4-003|ACM証明書作成|Could|M|P4-002|us-east-1でIssued|
-|P4-004|CloudFront独自ドメイン設定|Could|M|P4-003|独自ドメイン表示|
-|P4-005|Google Search Console登録|Should|S|P4-004任意|所有権確認済み|
-|P4-006|sitemap.xml送信|Should|S|P4-005|sitemap送信済み|
-|P4-007|Google Analytics導入|Should|M|P4-005|計測開始|
-|P4-008|プライバシーポリシー更新|Must|S|P4-007|Analytics/AdSense記載|
-|P4-009|ブログ記事20本作成|Should|XL|P1-019|20本以上公開|
-|P4-010|AWS用語50件化|Should|L|P1-010|50件以上|
-|P4-011|CLF問題50問化|Should|XL|P1-013|50問以上|
-|P4-012|SAA問題30問作成|Could|XL|P1-013|SAA問題がある|
-|P4-013|サービス比較10本化|Should|XL|P1-015|10本以上|
-|P4-014|構成図10本化|Should|XL|P1-017|10本以上|
-|P4-015|AdSense申請準備|Could|M|P4-008, P4-009|申請準備完了|
-|P4-016|AdSense審査コード設置|Could|S|P4-015|コード設置済み|
-|P4-017|note / X導線設置|Should|S|MVP公開|外部導線がある|
-|P4-018|OGP画像整備|Should|M|各記事|主要ページにOGPあり|
-|P4-019|SEO内部リンク整備|Should|M|コンテンツ|関連リンクがある|
-|P4-020|Search Consoleエラー確認|Should|S|P4-005|エラー確認済み|
+|ID|Task|Priority|Estimate|Dependencies|Completion criteria|
+|P4-001|Consider acquiring a custom domain|Should|S|MVP release|Adoption decision made|
+|P4-002|Create Route 53 Hosted Zone|Could|M|P4-001|DNS management started|
+|P4-003|Create ACM certificate|Could|M|P4-002|Issued in us-east-1|
+|P4-004|Configure CloudFront custom domain|Could|M|P4-003|Site displays on custom domain|
+|P4-005|Register with Google Search Console|Should|S|P4-004 optional|Ownership verified|
+|P4-006|Submit sitemap.xml|Should|S|P4-005|Sitemap submitted|
+|P4-007|Introduce Google Analytics|Should|M|P4-005|Measurement started|
+|P4-008|Update privacy policy|Must|S|P4-007|Analytics/AdSense documented|
+|P4-009|Create 20 blog articles|Should|XL|P1-019|At least 20 published|
+|P4-010|Expand AWS glossary to 50 terms|Should|L|P1-010|At least 50 terms|
+|P4-011|Expand CLF questions to 50|Should|XL|P1-013|At least 50 questions|
+|P4-012|Create 30 SAA questions|Could|XL|P1-013|SAA questions exist|
+|P4-013|Expand service comparisons to 10|Should|XL|P1-015|At least 10 articles|
+|P4-014|Expand architecture diagrams to 10|Should|XL|P1-017|At least 10 articles|
+|P4-015|Prepare AdSense application|Could|M|P4-008, P4-009|Application preparation complete|
+|P4-016|Install AdSense review code|Could|S|P4-015|Code installed|
+|P4-017|Add note / X links|Should|S|MVP release|External navigation links exist|
+|P4-018|Prepare OGP images|Should|M|Each article|Main pages have OGP images|
+|P4-019|Improve internal SEO links|Should|M|Content|Related links exist|
+|P4-020|Check Search Console errors|Should|S|P4-005|Errors reviewed|
 
   
 
-Phase 5：学習アプリ化
+Phase 5: Learning Application
 
-20. Phase 5 目的
+20. Phase 5 Purpose
 
-単なる静的学習サイトから、ユーザー別に学習履歴・正答率・復習問題を管理できる学習アプリへ拡張する。
+Expand the static learning site into a learning application that manages each user's learning history, accuracy rate, and review questions.
 
   
 
-21. Phase 5 タスク一覧
+21. Phase 5 Task List
 
 |   |   |   |   |   |   |
 |---|---|---|---|---|---|
-|ID|タスク|優先度|見積|依存|完了条件|
-|P5-001|Cognito導入設計|Later|L|MVP|認証方針確定|
-|P5-002|Cognito User Pool作成|Later|M|P5-001|User Pool作成済み|
-|P5-003|ログイン画面作成|Later|L|P5-002|ログイン可能|
-|P5-004|新規登録画面作成|Later|L|P5-002|登録可能|
-|P5-005|認証状態管理|Later|L|P5-002|ログイン状態判定可能|
-|P5-006|UserProfileTable作成|Later|M|P5-002|プロフィール保存可能|
-|P5-007|UserAnswersTable作成|Later|M|P5-002|回答履歴保存可能|
-|P5-008|UserProgressTable作成|Later|M|P5-002|進捗保存可能|
-|P5-009|POST /answers API実装|Later|XL|P5-007|回答履歴保存可能|
-|P5-010|GET /progress API実装|Later|L|P5-008|進捗取得可能|
-|P5-011|マイページ作成|Later|XL|P5-010|正答率表示可能|
-|P5-012|復習問題機能作成|Later|XL|P5-009|不正解問題を復習可能|
-|P5-013|弱点カテゴリ分析|Later|L|P5-010|苦手分野表示|
-|P5-014|毎日1問機能設計|Later|M|P5|方針確定|
-|P5-015|EventBridge設定|Later|M|P5-014|定期実行可能|
-|P5-016|SES通知検討|Later|L|P5-014|メール通知方針確定|
-|P5-017|通知停止設定|Later|M|P5-016|ユーザーが停止可能|
-|P5-018|認証付きAPI監視|Later|M|P5|4xx/5xx監視可能|
-|P5-019|退会・データ削除方針作成|Later|M|P5|方針文書化|
-|P5-020|有料機能検討|Later|XL|利用者増加後|方針確定|
+|ID|Task|Priority|Estimate|Dependencies|Completion criteria|
+|P5-001|Design Cognito adoption|Later|L|MVP|Authentication policy finalized|
+|P5-002|Create Cognito User Pool|Later|M|P5-001|User Pool created|
+|P5-003|Create login screen|Later|L|P5-002|Login available|
+|P5-004|Create registration screen|Later|L|P5-002|Registration available|
+|P5-005|Manage authentication state|Later|L|P5-002|Login state can be determined|
+|P5-006|Create UserProfileTable|Later|M|P5-002|Profiles can be saved|
+|P5-007|Create UserAnswersTable|Later|M|P5-002|Answer history can be saved|
+|P5-008|Create UserProgressTable|Later|M|P5-002|Progress can be saved|
+|P5-009|Implement POST /answers API|Later|XL|P5-007|Answer history can be saved|
+|P5-010|Implement GET /progress API|Later|L|P5-008|Progress can be retrieved|
+|P5-011|Create user dashboard|Later|XL|P5-010|Accuracy rate can be displayed|
+|P5-012|Create review question feature|Later|XL|P5-009|Incorrectly answered questions can be reviewed|
+|P5-013|Analyze weak categories|Later|L|P5-010|Weak areas displayed|
+|P5-014|Design daily question feature|Later|M|P5|Policy finalized|
+|P5-015|Configure EventBridge|Later|M|P5-014|Scheduled execution available|
+|P5-016|Consider SES notifications|Later|L|P5-014|Email notification policy finalized|
+|P5-017|Configure notification opt-out|Later|M|P5-016|Users can disable notifications|
+|P5-018|Monitor authenticated APIs|Later|M|P5|4xx/5xx monitoring available|
+|P5-019|Create account closure and data deletion policy|Later|M|P5|Policy documented|
+|P5-020|Consider paid features|Later|XL|After user growth|Policy finalized|
 
   
 
-横断タスク
+Cross-Cutting Tasks
 
-22. テスト関連タスク
+22. Testing Tasks
 
 |   |   |   |   |   |
 |---|---|---|---|---|
-|ID|タスク|優先度|見積|対象|
-|T-001|フロント主要画面表示テスト|Must|M|Phase 1|
-|T-002|スマホ表示確認|Must|M|Phase 1|
-|T-003|模擬問題回答テスト|Must|M|Phase 1|
-|T-004|問い合わせフォーム正常系テスト|Must|M|Phase 2|
-|T-005|問い合わせフォーム異常系テスト|Must|M|Phase 2|
-|T-006|honeypotテスト|Should|S|Phase 2|
-|T-007|API Gateway CORSテスト|Must|S|Phase 2|
-|T-008|Lambdaログ確認テスト|Must|S|Phase 2|
-|T-009|DynamoDB保存確認テスト|Must|S|Phase 2|
-|T-010|GitHub Actionsデプロイテスト|Must|M|Phase 3|
-|T-011|S3直接アクセス拒否テスト|Must|S|Phase 2|
-|T-012|CloudFront表示テスト|Must|S|Phase 2|
+|ID|Task|Priority|Estimate|Target|
+|T-001|Test main frontend screen display|Must|M|Phase 1|
+|T-002|Check mobile display|Must|M|Phase 1|
+|T-003|Test practice question answers|Must|M|Phase 1|
+|T-004|Test contact form success scenarios|Must|M|Phase 2|
+|T-005|Test contact form failure scenarios|Must|M|Phase 2|
+|T-006|Test honeypot|Should|S|Phase 2|
+|T-007|Test API Gateway CORS|Must|S|Phase 2|
+|T-008|Test Lambda log output|Must|S|Phase 2|
+|T-009|Test DynamoDB storage|Must|S|Phase 2|
+|T-010|Test GitHub Actions deployment|Must|M|Phase 3|
+|T-011|Test rejection of direct S3 access|Must|S|Phase 2|
+|T-012|Test CloudFront display|Must|S|Phase 2|
 
   
 
-23. セキュリティ関連タスク
+23. Security Tasks
 
 |   |   |   |   |   |
 |---|---|---|---|---|
-|ID|タスク|優先度|見積|完了条件|
-|SEC-001|root MFA確認|Must|XS|MFA有効|
-|SEC-002|rootアクセスキーなし確認|Must|XS|root keyなし|
-|SEC-003|S3 Public Access Block確認|Must|XS|全ブロックON|
-|SEC-004|CloudFront OAC確認|Must|S|OAC設定済み|
-|SEC-005|Bucket Policy確認|Must|S|CloudFrontのみ許可|
-|SEC-006|Lambda IAM最小権限確認|Must|S|PutItemのみ|
-|SEC-007|GitHub Secrets確認|Must|S|秘密情報のみ格納|
-|SEC-008|.env未コミット確認|Must|XS|Git管理外|
-|SEC-009|CloudWatch Logs個人情報確認|Must|S|email/message全文なし|
-|SEC-010|CORS本番Origin限定|Must|S|CloudFront/独自ドメインのみ|
-|SEC-011|GitHub OIDC移行|Should|M|長期キー不要|
-|SEC-012|不要IAM権限削除|Should|S|AdministratorAccessなし|
+|ID|Task|Priority|Estimate|Completion criteria|
+|SEC-001|Check root MFA|Must|XS|MFA enabled|
+|SEC-002|Verify no root access key|Must|XS|No root key|
+|SEC-003|Check S3 Public Access Block|Must|XS|All blocks ON|
+|SEC-004|Check CloudFront OAC|Must|S|OAC configured|
+|SEC-005|Check Bucket Policy|Must|S|Only CloudFront allowed|
+|SEC-006|Verify Lambda IAM least privilege|Must|S|PutItem only|
+|SEC-007|Check GitHub Secrets|Must|S|Only secret information stored|
+|SEC-008|Verify .env is not committed|Must|XS|Excluded from Git tracking|
+|SEC-009|Check CloudWatch Logs for personal information|Must|S|No full email/message values|
+|SEC-010|Restrict CORS to production Origins|Must|S|CloudFront/custom domain only|
+|SEC-011|Migrate to GitHub OIDC|Should|M|Long-term keys unnecessary|
+|SEC-012|Remove unnecessary IAM permissions|Should|S|No AdministratorAccess|
 
   
 
-24. コスト関連タスク
+24. Cost Tasks
 
 |   |   |   |   |   |
 |---|---|---|---|---|
-|ID|タスク|優先度|見積|完了条件|
-|COST-001|AWS Budgets作成|Must|S|予算通知設定済み|
-|COST-002|Cost Explorer確認|Must|S|サービス別費用確認済み|
-|COST-003|EC2未使用確認|Must|XS|EC2なし|
-|COST-004|RDS未使用確認|Must|XS|RDSなし|
-|COST-005|NAT Gateway未使用確認|Must|XS|NATなし|
-|COST-006|ALB未使用確認|Must|XS|ALBなし|
-|COST-007|CloudWatch Logs保存期間設定|Must|XS|14〜30日|
-|COST-008|S3大容量ファイル確認|Should|S|動画・巨大画像なし|
-|COST-009|CloudFront転送量確認|Should|S|急増なし|
-|COST-010|不要リソース削除|Must|M|不要リソースなし|
+|ID|Task|Priority|Estimate|Completion criteria|
+|COST-001|Create AWS Budgets|Must|S|Budget notifications configured|
+|COST-002|Review Cost Explorer|Must|S|Costs by service reviewed|
+|COST-003|Verify EC2 is unused|Must|XS|No EC2|
+|COST-004|Verify RDS is unused|Must|XS|No RDS|
+|COST-005|Verify NAT Gateway is unused|Must|XS|No NAT|
+|COST-006|Verify ALB is unused|Must|XS|No ALB|
+|COST-007|Set CloudWatch Logs retention|Must|XS|14–30 days|
+|COST-008|Check for large S3 files|Should|S|No videos or oversized images|
+|COST-009|Check CloudFront transfer volume|Should|S|No sudden increase|
+|COST-010|Delete unnecessary resources|Must|M|No unnecessary resources|
 
   
 
-25. ドキュメント関連タスク
+25. Documentation Tasks
 
 |   |   |   |   |   |
 |---|---|---|---|---|
-|ID|タスク|優先度|見積|完了条件|
-|DOC-001|README草案作成|Must|M|概要が分かる|
-|DOC-002|AWS構成説明追加|Must|M|構成が説明済み|
-|DOC-003|セキュリティ説明追加|Should|S|最小権限/OAC等を説明|
-|DOC-004|コスト最適化説明追加|Should|S|EC2/RDS未使用理由を説明|
-|DOC-005|CI/CD説明追加|Should|S|GitHub Actions説明済み|
-|DOC-006|画面スクリーンショット追加|Should|M|READMEに画像あり|
-|DOC-007|運用Runbook作成|Should|M|障害対応手順あり|
-|DOC-008|ポートフォリオ説明文作成|Must|M|面接用説明がある|
-|DOC-009|今後の拡張予定作成|Should|S|Phase 4/5が記載済み|
-|DOC-010|学習ログ記事作成|Could|L|note/X用記事あり|
+|ID|Task|Priority|Estimate|Completion criteria|
+|DOC-001|Create README draft|Must|M|Overview is clear|
+|DOC-002|Add AWS architecture explanation|Must|M|Architecture explained|
+|DOC-003|Add security explanation|Should|S|Least privilege, OAC, etc. explained|
+|DOC-004|Add cost optimization explanation|Should|S|Reasons for not using EC2/RDS explained|
+|DOC-005|Add CI/CD explanation|Should|S|GitHub Actions explained|
+|DOC-006|Add screen screenshots|Should|M|README contains images|
+|DOC-007|Create operations runbook|Should|M|Incident-response procedures exist|
+|DOC-008|Create portfolio explanation|Must|M|Interview explanation available|
+|DOC-009|Document planned extensions|Should|S|Phase 4/5 documented|
+|DOC-010|Create learning log article|Could|L|Article for note/X available|
 
   
 
-MVPリリース判定
+MVP Release Decision
 
-26. MVPリリース必須条件
+26. Mandatory MVP Release Conditions
 
-MVPは以下を満たしたらリリース可能とする。
+The MVP is releasable when the following conditions are met.
 
 |   |   |   |
 |---|---|---|
-|ID|条件|必須|
-|MVP-001|トップページが表示できる|必須|
-|MVP-002|AWS用語集が表示できる|必須|
-|MVP-003|AWS用語詳細が表示できる|必須|
-|MVP-004|CLF模擬問題が30問以上ある|必須|
-|MVP-005|模擬問題に回答できる|必須|
-|MVP-006|サービス比較記事が5本以上ある|推奨|
-|MVP-007|構成図解説が5本以上ある|推奨|
-|MVP-008|ブログ記事が5本以上ある|推奨|
-|MVP-009|問い合わせページがある|必須|
-|MVP-010|問い合わせAPIが動く|必須|
-|MVP-011|DynamoDBに問い合わせが保存される|必須|
-|MVP-012|CloudFrontで公開されている|必須|
-|MVP-013|S3直接アクセスが拒否される|必須|
-|MVP-014|AWS Budgetsが設定済み|必須|
-|MVP-015|CloudWatch Logs保存期間が設定済み|必須|
-|MVP-016|GitHub Actionsで自動デプロイできる|推奨|
-|MVP-017|READMEが整備されている|必須|
-|MVP-018|.envやAWSキーがGitHubにない|必須|
-|MVP-019|EC2/RDS/NAT Gateway/ALBを使っていない|必須|
-|MVP-020|スマホで大きく崩れない|必須|
+|ID|Condition|Requirement|
+|MVP-001|Home page displays|Required|
+|MVP-002|AWS glossary displays|Required|
+|MVP-003|AWS term details display|Required|
+|MVP-004|At least 30 CLF practice questions exist|Required|
+|MVP-005|Practice questions can be answered|Required|
+|MVP-006|At least 5 service comparison articles exist|Recommended|
+|MVP-007|At least 5 architecture diagram explanations exist|Recommended|
+|MVP-008|At least 5 blog articles exist|Recommended|
+|MVP-009|Contact page exists|Required|
+|MVP-010|Contact API works|Required|
+|MVP-011|Contact submissions are saved in DynamoDB|Required|
+|MVP-012|Site is published through CloudFront|Required|
+|MVP-013|Direct S3 access is rejected|Required|
+|MVP-014|AWS Budgets is configured|Required|
+|MVP-015|CloudWatch Logs retention is configured|Required|
+|MVP-016|Automatic deployment with GitHub Actions works|Recommended|
+|MVP-017|README is maintained|Required|
+|MVP-018|No .env or AWS keys on GitHub|Required|
+|MVP-019|EC2/RDS/NAT Gateway/ALB are not used|Required|
+|MVP-020|No major layout breakage on mobile|Required|
 
   
 
-27. MVP後回し条件
+27. Items That Can Be Deferred Beyond the MVP
 
-以下はMVP時点でなくてもよい。
+The following are not needed at the MVP stage.
 
 |   |   |
 |---|---|
-|項目|理由|
-|独自ドメイン|CloudFront URLで公開可能|
-|AdSense|コンテンツ不足の可能性がある|
-|Google Analytics|MVP公開後でよい|
-|Search Console|MVP公開後でよい|
-|Cognito|ログイン不要|
-|学習履歴|MVPでは静的問題で十分|
-|SAA問題100問|8月受験前に拡張でよい|
-|WAF|初期アクセスでは過剰|
-|reCAPTCHA|honeypotで様子見|
-|SAM自動デプロイ|Phase 2以降でよい|
+|Item|Reason|
+|Custom domain|The site can be published at the CloudFront URL|
+|AdSense|There may be insufficient content|
+|Google Analytics|Can be added after MVP release|
+|Search Console|Can be added after MVP release|
+|Cognito|Login is unnecessary|
+|Learning history|Static questions are sufficient for the MVP|
+|100 SAA questions|Can be expanded before the August exam|
+|WAF|Excessive for initial traffic|
+|reCAPTCHA|Observe results with honeypot first|
+|Automatic SAM deployment|Can wait until Phase 2 onward|
 
   
 
-推奨実装順序
+Recommended Implementation Order
 
-28. 最短ルート
+28. Shortest Route
 
-最短でポートフォリオとして見せられる順番は以下。
+The shortest route to a presentable portfolio is as follows.
 
-1. GitHubリポジトリ作成
+1. Create GitHub repository.
 
-2. Next.js静的サイト作成
+2. Create Next.js static site.
 
-3. トップ / 用語集 / 問題 / 問い合わせページ作成
+3. Create home / glossary / questions / contact pages.
 
-4. AWS用語30件作成
+4. Create 30 AWS terms.
 
-5. CLF問題30問作成
+5. Create 30 CLF questions.
 
-6. S3 + CloudFrontで公開
+6. Publish with S3 + CloudFront.
 
-7. DynamoDB + Lambda + API Gatewayで問い合わせAPI作成
+7. Create contact API with DynamoDB + Lambda + API Gateway.
 
-8. フロント問い合わせフォームと接続
+8. Connect the frontend contact form.
 
-9. GitHub Actionsで自動デプロイ
+9. Automate deployment with GitHub Actions.
 
-10. README整備
+10. Prepare README.
 
-11. note / Xで制作過程を発信
+11. Share the development process on note / X.
 
-12. 学習効果が高い順番
+12. Order for Maximum Learning Value
 
-AWS資格学習とポートフォリオ価値を両立するなら、以下の順番がよい。
+To combine AWS certification study with portfolio value, use the following order.
 
 1. AWS Budgets
 
@@ -1004,7 +1004,7 @@ AWS資格学習とポートフォリオ価値を両立するなら、以下の�
 
 4. OAC / Bucket Policy
 
-5. IAM最小権限
+5. IAM least privilege
 
 6. DynamoDB
 
@@ -1020,150 +1020,150 @@ AWS資格学習とポートフォリオ価値を両立するなら、以下の�
 
 12. Cost Explorer
 
-この順番は、Cloud PractitionerとSAAの学習範囲にも直結する。
+This order also directly aligns with the Cloud Practitioner and SAA study scope.
 
   
 
-30. 2週間MVPスケジュール案
+30. Proposed Two-Week MVP Schedule
 
-Week 1：ローカルMVP作成
-
-|   |   |
-|---|---|
-|Day|タスク|
-|Day 1|GitHub作成、Next.js初期化、ディレクトリ整理|
-|Day 2|レイアウト、トップ、ロードマップ、運営者ページ作成|
-|Day 3|AWS用語JSON 30件、用語一覧・詳細ページ作成|
-|Day 4|CLF問題JSON 30問、問題一覧・回答UI作成|
-|Day 5|問い合わせページ、プライバシー、免責事項作成|
-|Day 6|比較記事・構成図・ブログを最低限追加|
-|Day 7|レスポンシブ、SEOメタ、build確認|
-
-Week 2：AWS公開・API・CI/CD
+Week 1: Build the Local MVP
 
 |   |   |
 |---|---|
-|Day|タスク|
-|Day 8|AWS Budgets、S3、CloudFront、OAC設定|
-|Day 9|S3アップロード、CloudFront表示確認、S3直接アクセス拒否確認|
-|Day 10|DynamoDB、Lambda Role、Lambda作成|
-|Day 11|API Gateway、CORS、curlテスト、DynamoDB保存確認|
-|Day 12|フロント問い合わせフォーム接続、CloudFront上でテスト|
-|Day 13|GitHub Actions CI/CD設定、main pushデプロイ確認|
-|Day 14|README整備、スクショ追加、最終確認、発信用記事作成|
+|Day|Tasks|
+|Day 1|Create GitHub repository, initialize Next.js, organize directories|
+|Day 2|Create layout, home, roadmap, and operator information pages|
+|Day 3|Create JSON for 30 AWS terms and term listing/detail pages|
+|Day 4|Create JSON for 30 CLF questions and question listing/answer UI|
+|Day 5|Create contact page, privacy policy, and disclaimer|
+|Day 6|Add minimal comparison articles, architecture diagrams, and blog articles|
+|Day 7|Check responsive layout, SEO metadata, and build|
+
+Week 2: AWS Hosting, API, and CI/CD
+
+|   |   |
+|---|---|
+|Day|Tasks|
+|Day 8|Configure AWS Budgets, S3, CloudFront, and OAC|
+|Day 9|Upload to S3, check CloudFront display, verify direct S3 access rejection|
+|Day 10|Create DynamoDB, Lambda Role, and Lambda|
+|Day 11|Configure API Gateway and CORS, test with curl, verify DynamoDB storage|
+|Day 12|Connect frontend contact form and test through CloudFront|
+|Day 13|Configure GitHub Actions CI/CD and verify deployment on main push|
+|Day 14|Prepare README, add screenshots, perform final checks, write an article to share|
 
   
 
-31. リスク一覧
+31. Risk List
 
 |   |   |   |
 |---|---|---|
-|リスク|影響|対策|
-|Next.js静的exportで詰まる|S3公開が遅れる|動的機能を使わず静的ページ中心にする|
-|AWS設定で詰まる|公開が遅れる|まず手動構築、後でIaC化|
-|CORSで詰まる|問い合わせ送信できない|API GatewayとLambda両方のヘッダー確認|
-|OAC/Bucket Policyで詰まる|CloudFront表示不可|SourceArnとDistribution IDを確認|
-|GitHub Actions OIDCで詰まる|自動デプロイ不可|最初はアクセスキー方式も許容、後でOIDC化|
-|コンテンツ作成に時間がかかる|MVP遅延|最初は30用語・30問・5記事に絞る|
-|課金事故|金銭負担|Budgets、EC2/RDS/NAT Gateway未使用確認|
-|scope拡大|完成しない|MVPではログイン・学習履歴を作らない|
+|Risk|Impact|Mitigation|
+|Difficulties with Next.js static export|Delayed S3 publication|Focus on static pages without dynamic features|
+|Difficulties with AWS configuration|Delayed publication|Build manually first, migrate to IaC later|
+|CORS difficulties|Contact submissions fail|Check headers in both API Gateway and Lambda|
+|OAC/Bucket Policy difficulties|CloudFront cannot display site|Check SourceArn and Distribution ID|
+|GitHub Actions OIDC difficulties|Automatic deployment unavailable|Allow access keys initially, migrate to OIDC later|
+|Time-consuming content creation|MVP delay|Initially limit content to 30 terms, 30 questions, and 5 articles|
+|Billing incident|Financial burden|Budgets and verification that EC2/RDS/NAT Gateway are unused|
+|Scope expansion|Failure to complete|Do not build login or learning history in the MVP|
 
   
 
-32. 完了後のポートフォリオ訴求ポイント
+32. Portfolio Highlights After Completion
 
-MVP完成後、以下をアピールできる。
+After completing the MVP, highlight the following.
 
-32.1 AWS設計力
+32.1 AWS Design Skills
 
-S3 + CloudFront + OACで静的サイトを安全に配信。
+Secure static site delivery with S3 + CloudFront + OAC.
 
-API Gateway + Lambda + DynamoDBで問い合わせAPIを実装。
+Contact API implemented with API Gateway + Lambda + DynamoDB.
 
-IAM最小権限、CloudWatch Logs、AWS Budgetsまで考慮。
+Consideration of IAM least privilege, CloudWatch Logs, and AWS Budgets.
 
-32.2 コスト最適化
+32.2 Cost Optimization
 
-EC2、RDS、NAT Gateway、ALBを使わず、静的配信とサーバーレス構成で低コスト化。
+Reduce cost through static delivery and serverless architecture without EC2, RDS, NAT Gateway, or ALB.
 
-AWS BudgetsとCloudWatch Logs保存期間設定で課金事故を防止。
+Prevent billing incidents with AWS Budgets and CloudWatch Logs retention settings.
 
-32.3 セキュリティ
+32.3 Security
 
-S3を直接公開せずCloudFront OAC経由で配信。
+Deliver through CloudFront OAC without exposing S3 directly.
 
-Lambda IAM RoleはDynamoDB PutItemのみに制限。
+Restrict the Lambda IAM Role to DynamoDB PutItem only.
 
-問い合わせ本文やメールアドレス全文をログに出さない。
+Do not log contact message bodies or full email addresses.
 
 32.4 CI/CD
 
-GitHub Actionsでlint/typecheck/buildを実行し、main pushでS3 + CloudFrontへ自動デプロイ。
+Run lint/typecheck/build in GitHub Actions and automatically deploy to S3 + CloudFront on main push.
 
-OIDC方式により長期AWSアクセスキーを使わない構成を目指す。
+Aim for an OIDC-based architecture that does not use long-term AWS access keys.
 
-32.5 学習・発信との相性
+32.5 Alignment with Learning and Sharing
 
-AWS資格学習そのものをプロダクト化しており、Cloud Practitioner/SAAの知識を実装に落とし込んだポートフォリオとして説明できる。
-
-  
-
-33. 次に作成する関連ドキュメント
-
-本タスク一覧の次に、以下を作成する。
-
-1. GitHub README草案
-2. MVP実装スケジュール詳細版
-3. 初期コンテンツ作成テンプレート
-4. テスト設計書
-5. リリース手順書
-6. ポートフォリオ提出用説明資料
-7. note記事用の開発ストーリー草案
+By turning AWS certification study itself into a product, the project can be presented as a portfolio that applies Cloud Practitioner/SAA knowledge in implementation.
 
   
 
-8. 結論
+33. Related Documents to Create Next
 
-本プロダクトのMVP開発では、最初から大きな学習アプリを作らない。
+Create the following after this task list.
 
-まずは以下を完成させる。
+1. GitHub README draft
+2. Detailed MVP implementation schedule
+3. Initial content creation templates
+4. Test design
+5. Release procedure
+6. Explanatory materials for portfolio submission
+7. Development story draft for a note article
 
-AWS資格学習サイト
+  
 
-AWS用語集
+8. Conclusion
 
-CLF-C02模擬問題
+Do not build a large learning application from the outset in this product's MVP development.
 
-AWSサービス比較
+First, complete the following.
 
-AWS構成図解説
+AWS certification learning site
 
-問い合わせフォーム
+AWS glossary
 
-AWS公開
+CLF-C02 practice questions
 
-サーバーレス問い合わせAPI
+AWS service comparisons
+
+AWS architecture diagram explanations
+
+Contact form
+
+AWS hosting
+
+Serverless contact API
 
 CI/CD
 
-最低限の運用監視
+Minimal operations monitoring
 
-README整備
+README preparation
 
-これだけで、AWS Cloud PractitionerとSAAの学習内容を十分にポートフォリオ化できる。
+These alone are sufficient to turn AWS Cloud Practitioner and SAA study content into a portfolio.
 
-特に評価されやすいポイントは以下である。
+The following points are especially likely to be valued.
 
 - S3 + CloudFront + OAC
 - API Gateway + Lambda + DynamoDB
-- IAM最小権限
+- IAM least privilege
 - AWS Budgets
 - CloudWatch Logs
 - GitHub Actions CI/CD
-- コスト最適化
-- セキュリティ設計
-- SEO/広告収益化を見据えたコンテンツ設計
+- Cost optimization
+- Security design
+- Content design with SEO and advertising monetization in mind
 
-開発は、2週間MVPを目安に進める。
+Aim to develop the MVP in two weeks.
 
-MVP公開後、独自ドメイン、AdSense、SAA問題追加、Cognitoによる学習履歴機能へ段階的に拡張する。
+After the MVP release, incrementally expand with a custom domain, AdSense, additional SAA questions, and Cognito-based learning history features.

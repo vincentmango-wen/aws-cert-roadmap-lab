@@ -1,9 +1,7 @@
 /**
- * MarkdownContent.tsx
- *
- * comparisons 詳細ページ用の軽量 Markdown / MDX renderer.
- * 旧 frontend/src/app/(site)/comparisons/[comparisonSlug]/page.tsx 内の同名コンポーネントから
- * ロジック変更なしで切り出した (P5-034 で 3 ルートから共通利用するため).
+ * Lightweight Markdown/MDX renderer for comparison detail pages. Extracted without logic changes from
+ * the component of the same name in frontend/src/app/(site)/comparisons/[comparisonSlug]/page.tsx so
+ * three routes can share it in P5-034.
  */
 import { Fragment, type ReactElement, type ReactNode } from "react";
 import Link from "next/link";

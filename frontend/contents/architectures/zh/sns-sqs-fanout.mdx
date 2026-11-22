@@ -2,7 +2,7 @@
 
 ## 概要
 
-此架構是一種事件驅動架構，透過 Amazon SNS 接收單一事件，並同時將該事件遞送到多個 Amazon SQS 佇列。
+此架構是一種事件驅動架構，透過 Amazon SNS 接收單一事件，並將該事件分別遞送至各個已訂閱的 Amazon SQS 佇列。
 
 舉例來說，當訂單建立時，可能會希望同時觸發多個處理流程，例如「寄送通知郵件」「更新庫存」「儲存分析用日誌」等。
 
@@ -10,40 +10,24 @@
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    App[應用程式]
-    Topic[Amazon SNS Topic]
-    QueueA[(SQS Queue A<br/>通知處理)]
-    QueueB[(SQS Queue B<br/>庫存更新)]
-    QueueC[(SQS Queue C<br/>分析日誌)]
-    LambdaA[Lambda A]
-    LambdaB[Lambda B]
-    LambdaC[Lambda C]
-    CW[CloudWatch Logs]
-    IAM[IAM Policy]
+### 流程與權限
 
-    App -->|Publish Event| Topic
-    Topic --> QueueA
-    Topic --> QueueB
-    Topic --> QueueC
-    QueueA --> LambdaA
-    QueueB --> LambdaB
-    QueueC --> LambdaC
-    LambdaA --> CW
-    LambdaB --> CW
-    LambdaC --> CW
-    IAM -.-> Topic
-    IAM -.-> QueueA
-    IAM -.-> QueueB
-    IAM -.-> QueueC
-```
+Lambda 事件來源映射會輪詢 SQS，並同步呼叫工作函式。業務流程是非同步處理，不代表使用 Lambda 的非同步呼叫模式。
+
+| 步驟／主體 | 行為／權限 |
+|---|---|
+| 發佈端 → SNS | 授予目標主題的 `sns:Publish` 權限。 |
+| SNS → 各佇列 | 建立各訂閱及佇列資源政策，允許 SNS 服務執行 `sqs:SendMessage`，並以 `aws:SourceArn` 限制來源主題 ARN。 |
+| 獨立消費端 | 通知、庫存與分析各有佇列、事件來源映射及工作函式；不保證同時執行。各佇列分別設定 DLQ，並非 SNS 訂閱的 DLQ。 |
+| 消費端執行角色 | 對所屬佇列授予 `sqs:ReceiveMessage`、`sqs:DeleteMessage` 與 `sqs:GetQueueAttributes`。 |
+| 日誌與處理結果 | 各工作函式須具備 CloudWatch Logs 寫入權限。應用程式所需的儲存權限另行授予；SQS 權限不包含 DynamoDB 寫入。 |
+| 來源佇列 → DLQ | 須設定來源佇列的 redrive policy 與 DLQ。`maxReceiveCount` 計算訊息被接收的次數，不是應用程式失敗次數。 |
 
 ## 此架構能夠實現的目標
 
 | 項目 | 內容 |
 |---|---|
-| 同時遞送至多個處理流程 | 可將單一事件分支到多個處理 |
+| 分別遞送至多個處理流程 | 可將單一事件分支到多個處理 |
 | 鬆耦合 | 發佈端不需要了解各處理的細節 |
 | 獨立擴展 | 可為每個處理分別配置 SQS 佇列與 Lambda |
 | 故障隔離 | 即使某個處理失敗，也不易影響其他處理 |
@@ -64,7 +48,7 @@ flowchart TD
 1. 應用程式向 SNS Topic 發佈（Publish）事件。
 2. SNS 依據訂閱設定，將訊息遞送至多個 SQS 佇列。
 3. 各 SQS 佇列保存待處理的訊息。
-4. 各 Lambda 從自己負責的佇列接收訊息。
+4. 各 Lambda 事件來源映射輪詢所屬佇列，再同步呼叫工作函式。
 5. 各 Lambda 分別執行通知、庫存更新、分析日誌儲存等工作。
 6. 各處理將日誌輸出到 CloudWatch Logs。
 
@@ -127,3 +111,11 @@ SNS、SQS、Lambda 都採用按使用量計費。即使不準備常駐伺服器�
 SNS + SQS 的扇出架構，是將單一事件安全地分支到多個處理的代表性模式。
 
 在 SAA 考試中，若題目出現「希望將同一個事件遞送到多個系統」「希望分別隔離各處理的失敗」等條件時，就可將此架構列為候選方案。
+
+## 更正說明
+
+### 2026-11-18
+
+- 釐清扇出後各消費端獨立執行、SQS 輪詢，以及發佈端、佇列資源政策與消費端的不同權限。靜態圖與表格保留三組消費端、日誌及各佇列的 DLQ 設定。
+
+依據：[Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) / [SNS → SQS](https://docs.aws.amazon.com/sns/latest/dg/subscribe-sqs-queue-to-sns-topic.html).

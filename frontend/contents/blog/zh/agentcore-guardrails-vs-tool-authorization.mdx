@@ -1,0 +1,54 @@
+---
+postId: "blog-027"
+slug: "agentcore-guardrails-vs-tool-authorization"
+title: "AgentCore 工具授權與 Guardrails：先判斷能不能查，再判斷能不能顯示"
+description: "用兩個虛構訂單案例區分工具授權、回覆過濾，以及各自的責任。"
+category: "AI 與機器學習"
+tags:
+  - "Amazon Bedrock"
+  - "AgentCore"
+  - "AIF-C01"
+targetKeywords:
+  - "AgentCore Policy"
+  - "Amazon Bedrock Guardrails"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-11-20"
+updatedAt: "2026-11-20"
+---
+
+# AgentCore 工具授權與 Guardrails：先判斷能不能查，再判斷能不能顯示
+
+## 同一位客服助理，兩道不同的關卡
+
+以東京區域（`ap-northeast-1`）的虛構商店為例。假設你登入商店，客服助理只有唯讀的 `getOrderStatus(orderId)`，不能改單、退款或寄信。助理可以建議查哪筆訂單，但建議不是授權。服務端從驗證過的身分取得顧客 ID，並用訂單系統的權威資料核對擁有者；不能相信模型填入的 `customerId`，也不能把 Gateway 共用的 IAM 服務身分當成顧客身分。
+
+| 關卡 | 要回答的問題 | 拒絕時發生什麼 |
+| --- | --- | --- |
+| 呼叫前：工具授權 | 這位顧客可以查這筆訂單嗎？ | 不執行查詢工具 |
+| 回覆前：內容過濾 | 查到的資料可以顯示哪些？ | 此例攔下整個工具結果 |
+
+## 案例一：別人的訂單被拒絕
+
+顧客 A 要求查顧客 B 的訂單。這個設計在查詢工具執行前核對身分與訂單歸屬，確認不是同一人後拒絕呼叫；客服不必先查到資料再遮住。AgentCore Policy 可在 AgentCore Gateway 放行其工具請求前評估規則。若規則需要工具參數以外的歸屬資料，應由可信服務提供或由後端強制檢查，不要把模型宣稱的擁有者寫成信任條件。
+
+## 案例二：自己的訂單查得到，但電子郵件不顯示
+
+顧客 A 查自己的訂單，授權通過，唯讀工具已執行，但結果誤帶電子郵件。若 AgentCore Gateway 的政策使用 Guardrails 偵測出電子郵件，且 `suppressOutput` 條件成立，Gateway 就不把整個工具回覆交給呼叫端，而不是遮掉電子郵件後繼續傳送狀態。助理只能說目前無法顯示查詢結果。工具已執行，不會回滾。
+
+應用程式另可使用 Amazon Bedrock Guardrails 在回覆中遮罩個資；這和 Gateway 的整筆抑制不同。偵測不能保證找出所有敏感資訊，也無法取代最小權限、從來源移除不必要欄位，或避免將原始結果寫入日誌。
+
+## AIF-C01 學習重點
+
+看到「能不能呼叫工具」就先想授權；看到「哪些內容可以顯示」就先想輸出防護。這是用來連結負責任 AI 與安全治理概念的情境，不代表考試必考 AgentCore 的產品細節。
+
+AIF-C01 官方考綱 5.1 列出 Policy in AgentCore 與 Amazon Bedrock Guardrails；這個例子不代表考試一定會考 `suppressOutput` 語法。
+
+## 官方參考資料
+
+- [Policy in Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html)
+- [Policy conditions in AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-conditions.html)
+- [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)
+- [AWS Certified AI Practitioner (AIF-C01)](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html)
+- [Guardrails in AgentCore policies](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-guardrails-in-policies.html)
+- [AIF-C01 Task Statement 5.1](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01-domain5.html#ai-practitioner-01-domain5-task5-1)

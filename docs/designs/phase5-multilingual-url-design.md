@@ -1,106 +1,106 @@
-# Phase 5 多言語URL設計書
+# Phase 5 Multilingual URL Design
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Description |
 |---|---|
-| 文書名 | Phase 5 多言語URL設計書 |
-| 対象プロダクト | AWS Cert Roadmap Lab / AWS資格ロードマップラボ |
-| 対象フェーズ | Phase 5 グローバルSEO・ローカライゼーション |
-| 対象タスク | P5-002 多言語URL設計 |
-| 目的 | 日本語・英語・中国語ページのURLルールを定義し、後続のi18n実装、metadata、hreflang、sitemap実装の前提を固定する |
-| 作成日 | 2026-06-11 |
+| Document name | Phase 5 Multilingual URL Design |
+| Target product | AWS Cert Roadmap Lab / AWS Certification Roadmap Lab |
+| Target phase | Phase 5 Global SEO and Localization |
+| Target task | P5-002 Multilingual URL design |
+| Purpose | Define URL rules for Japanese, English, and Chinese pages and establish assumptions for subsequent i18n, metadata, hreflang, and sitemap implementation |
+| Created | 2026-06-11 |
 
 ---
 
-## 2. 背景
+## 2. Background
 
-Phase 5では、既存の日本語AWS資格学習サイトを、英語・中国語にも展開する。
+Phase 5 expands the existing Japanese AWS certification learning site into English and Chinese.
 
-目的は単なる翻訳ではなく、英語圏・中国語圏からの検索流入を検証し、AWS資格学習サイトとしてグローバルSEOの土台を作ることである。
+The objective is not simply translation, but validating search traffic from English- and Chinese-speaking audiences and establishing a global SEO foundation for an AWS certification learning site.
 
-既存サイトは日本語URLで公開済みのため、日本語URLは変更しない。
+Because the existing site is already published at Japanese URLs, do not change those URLs.
 
 ---
 
-## 3. 基本方針
+## 3. Basic Policy
 
-| 方針 | 内容 |
+| Policy | Description |
 |---|---|
-| 日本語URLは既存維持 | 既存インデックス、内部リンク、Search Console評価を壊さない |
-| 英語は `/en` 配下 | 英語ページはすべて `/en` から始める |
-| 中国語は `/zh` 配下 | 初期は繁体字寄りの中国語として `/zh` を使う |
-| slugは原則共通 | `s3`、`rds-vs-dynamodb` などのIDは言語間で共通にする |
-| 自動リダイレクトしない | IPやブラウザ言語による強制リダイレクトは行わない |
-| 言語切替は同一コンテンツIDで行う | `/terms/s3`、`/en/terms/s3`、`/zh/terms/s3` を相互に切り替える |
-| 静的生成を維持 | S3 + CloudFrontで配信できる静的URLにする |
-| 将来拡張を考慮 | 将来 `/zh-cn`、`/zh-tw` を追加できる設計にする |
+| Retain existing Japanese URLs | Preserve existing indexing, internal links, and Search Console standing |
+| English under `/en` | All English pages start with `/en` |
+| Chinese under `/zh` | Initially use `/zh` for Chinese oriented toward Traditional Chinese |
+| Share slugs by default | Share IDs such as `s3` and `rds-vs-dynamodb` across languages |
+| No automatic redirects | Do not force redirects based on IP or browser language |
+| Switch languages using the same content ID | Switch among `/terms/s3`, `/en/terms/s3`, and `/zh/terms/s3` |
+| Retain static generation | Use static URLs that can be delivered with S3 + CloudFront |
+| Consider future expansion | Design to allow `/zh-cn` and `/zh-tw` to be added later |
 
 ---
 
-## 4. locale定義方針
+## 4. Locale Definition Policy
 
-### 4.1 初期対応locale
+### 4.1 Initially Supported Locales
 
-| locale | URL prefix | 表示言語 | 用途 |
+| locale | URL prefix | Display language | Purpose |
 |---|---|---|---|
-| `ja` | なし | 日本語 | 既存ページ |
-| `en` | `/en` | English | 英語圏SEO |
-| `zh` | `/zh` | 繁体字寄り中国語 | 台湾・香港・繁体字圏の初期検証 |
+| `ja` | None | Japanese | Existing pages |
+| `en` | `/en` | English | English-language SEO |
+| `zh` | `/zh` | Primarily Traditional Chinese | Initial validation in Taiwan, Hong Kong, and Traditional Chinese-speaking audiences |
 
-### 4.2 将来追加候補
+### 4.2 Candidates for Future Addition
 
-| locale | URL prefix | 用途 |
+| locale | URL prefix | Purpose |
 |---|---|---|
-| `zh-tw` | `/zh-tw` | 台湾向け繁体字に分離する場合 |
-| `zh-cn` | `/zh-cn` | 中国大陸向け簡体字に分離する場合 |
-| `ko` | `/ko` | 韓国語対応する場合 |
+| `zh-tw` | `/zh-tw` | If separating Traditional Chinese for Taiwan |
+| `zh-cn` | `/zh-cn` | If separating Simplified Chinese for mainland China |
+| `ko` | `/ko` | If supporting Korean |
 
-### 4.3 初期で `/zh` を使う理由
+### 4.3 Reasons for Initially Using `/zh`
 
-初期段階では、中国語圏の流入検証を小さく始める。
+Start validating traffic from Chinese-speaking audiences on a small scale.
 
-そのため、最初から `/zh-tw` と `/zh-cn` に分けない。
+Therefore, do not split into `/zh-tw` and `/zh-cn` from the beginning.
 
-理由は以下である。
+The reasons are as follows.
 
-1. 翻訳・表記管理の工数を抑える
-2. Search Consoleで中国語圏流入の有無を先に確認する
-3. 簡体字版を作る前に、繁体字コンテンツの反応を見る
-4. 後から `/zh-cn` を追加しても、`/zh` を繁体字代表URLとして維持できる
+1. Reduce translation and terminology management effort.
+2. First check Search Console for traffic from Chinese-speaking audiences.
+3. Assess the response to Traditional Chinese content before creating a Simplified Chinese version.
+4. Even if `/zh-cn` is added later, `/zh` can remain the representative Traditional Chinese URL.
 
 ---
 
-## 5. URL全体ルール
+## 5. Overall URL Rules
 
-### 5.1 基本形
+### 5.1 Basic Form
 
-| 言語 | トップURL | URL例 |
+| Language | Home URL | Example URL |
 |---|---|---|
-| 日本語 | `/` | `/terms/s3` |
-| 英語 | `/en` | `/en/terms/s3` |
-| 中国語 | `/zh` | `/zh/terms/s3` |
+| Japanese | `/` | `/terms/s3` |
+| English | `/en` | `/en/terms/s3` |
+| Chinese | `/zh` | `/zh/terms/s3` |
 
-### 5.2 末尾スラッシュ
+### 5.2 Trailing Slashes
 
-アプリ内リンクでは末尾スラッシュなしを基本表記にする。
+Use URLs without trailing slashes as the standard form for links within the app.
 
 ```text
 OK: /en/terms/s3
 NG: /en/terms/s3/
 ```
 
-ただし、Next.js static exportの出力は以下のようなディレクトリ構造になる可能性がある。
+However, Next.js static export output may use a directory structure such as the following.
 
 ```text
 out/en/terms/s3/index.html
 ```
 
-ブラウザ上のURL表記は末尾スラッシュなしに統一する。
+Standardize browser URLs without trailing slashes.
 
-### 5.3 大文字小文字
+### 5.3 Letter Case
 
-URLはすべて小文字にする。
+Use lowercase for all URLs.
 
 ```text
 OK: /en/terms/api-gateway
@@ -108,9 +108,9 @@ NG: /en/terms/API-Gateway
 NG: /en/terms/ApiGateway
 ```
 
-### 5.4 slug文字種
+### 5.4 Slug Characters
 
-slugは以下のみ許可する。
+Allow only the following in slugs.
 
 ```text
 a-z
@@ -118,7 +118,7 @@ a-z
 -
 ```
 
-許可例：
+Allowed examples:
 
 ```text
 s3
@@ -128,7 +128,7 @@ static-site-s3-cloudfront
 aws-free-tier-portfolio
 ```
 
-禁止例：
+Prohibited examples:
 
 ```text
 S3
@@ -139,43 +139,43 @@ s3-vs-ebs-vs-efs?
 
 ---
 
-## 6. ページ種別別URL設計
+## 6. URL Design by Page Type
 
-### 6.1 トップページ
+### 6.1 Home Page
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/` |
-| 英語 | `/en` |
-| 中国語 | `/zh` |
+| Japanese | `/` |
+| English | `/en` |
+| Chinese | `/zh` |
 
-### 6.2 学習ロードマップ
+### 6.2 Learning Roadmap
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/roadmap` |
-| 英語 | `/en/roadmap` |
-| 中国語 | `/zh/roadmap` |
+| Japanese | `/roadmap` |
+| English | `/en/roadmap` |
+| Chinese | `/zh/roadmap` |
 
-### 6.3 AWS用語集一覧
+### 6.3 AWS Glossary Index
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/terms` |
-| 英語 | `/en/terms` |
-| 中国語 | `/zh/terms` |
+| Japanese | `/terms` |
+| English | `/en/terms` |
+| Chinese | `/zh/terms` |
 
-### 6.4 AWS用語詳細
+### 6.4 AWS Term Detail
 
-| 言語 | URL例 |
+| Language | Example URL |
 |---|---|
-| 日本語 | `/terms/s3` |
-| 英語 | `/en/terms/s3` |
-| 中国語 | `/zh/terms/s3` |
+| Japanese | `/terms/s3` |
+| English | `/en/terms/s3` |
+| Chinese | `/zh/terms/s3` |
 
-#### slugルール
+#### Slug Rules
 
-用語詳細のslugは `termId` を使う。
+Use `termId` as the slug for term detail pages.
 
 ```text
 s3
@@ -186,7 +186,7 @@ api-gateway
 dynamodb
 ```
 
-言語ごとにslugを翻訳しない。
+Do not translate slugs by language (the Chinese URL below is a prohibited example).
 
 ```text
 OK: /en/terms/cloudfront
@@ -194,33 +194,33 @@ OK: /zh/terms/cloudfront
 NG: /zh/terms/雲端前端
 ```
 
-### 6.5 模擬問題トップ
+### 6.5 Practice Questions Home
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/questions` |
-| 英語 | `/en/questions` |
-| 中国語 | `/zh/questions` |
+| Japanese | `/questions` |
+| English | `/en/questions` |
+| Chinese | `/zh/questions` |
 
-### 6.6 CLF模擬問題一覧
+### 6.6 CLF Practice Question Index
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/questions/clf` |
-| 英語 | `/en/questions/clf` |
-| 中国語 | `/zh/questions/clf` |
+| Japanese | `/questions/clf` |
+| English | `/en/questions/clf` |
+| Chinese | `/zh/questions/clf` |
 
-### 6.7 模擬問題詳細
+### 6.7 Practice Question Detail
 
-| 言語 | URL例 |
+| Language | Example URL |
 |---|---|
-| 日本語 | `/questions/clf-001` |
-| 英語 | `/en/questions/clf-001` |
-| 中国語 | `/zh/questions/clf-001` |
+| Japanese | `/questions/clf-001` |
+| English | `/en/questions/clf-001` |
+| Chinese | `/zh/questions/clf-001` |
 
-#### slugルール
+#### Slug Rules
 
-問題IDは言語間で共通にする。
+Share question IDs across languages.
 
 ```text
 clf-001
@@ -228,27 +228,27 @@ clf-002
 saa-001
 ```
 
-問題文は翻訳しても、問題IDは変更しない。
+Do not change question IDs when translating question text.
 
-### 6.8 サービス比較一覧
+### 6.8 Service Comparison Index
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/comparisons` |
-| 英語 | `/en/comparisons` |
-| 中国語 | `/zh/comparisons` |
+| Japanese | `/comparisons` |
+| English | `/en/comparisons` |
+| Chinese | `/zh/comparisons` |
 
-### 6.9 サービス比較詳細
+### 6.9 Service Comparison Detail
 
-| 言語 | URL例 |
+| Language | Example URL |
 |---|---|
-| 日本語 | `/comparisons/s3-vs-ebs-vs-efs` |
-| 英語 | `/en/comparisons/s3-vs-ebs-vs-efs` |
-| 中国語 | `/zh/comparisons/s3-vs-ebs-vs-efs` |
+| Japanese | `/comparisons/s3-vs-ebs-vs-efs` |
+| English | `/en/comparisons/s3-vs-ebs-vs-efs` |
+| Chinese | `/zh/comparisons/s3-vs-ebs-vs-efs` |
 
-#### slugルール
+#### Slug Rules
 
-比較記事slugは英語ベースのまま共通利用する。
+Keep comparison article slugs English-based and share them across languages.
 
 ```text
 s3-vs-ebs-vs-efs
@@ -258,25 +258,25 @@ iam-user-vs-role-vs-policy
 cloudwatch-vs-cloudtrail-vs-config
 ```
 
-### 6.10 構成図一覧
+### 6.10 Architecture Diagram Index
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/architectures` |
-| 英語 | `/en/architectures` |
-| 中国語 | `/zh/architectures` |
+| Japanese | `/architectures` |
+| English | `/en/architectures` |
+| Chinese | `/zh/architectures` |
 
-### 6.11 構成図詳細
+### 6.11 Architecture Diagram Detail
 
-| 言語 | URL例 |
+| Language | Example URL |
 |---|---|
-| 日本語 | `/architectures/static-site-s3-cloudfront` |
-| 英語 | `/en/architectures/static-site-s3-cloudfront` |
-| 中国語 | `/zh/architectures/static-site-s3-cloudfront` |
+| Japanese | `/architectures/static-site-s3-cloudfront` |
+| English | `/en/architectures/static-site-s3-cloudfront` |
+| Chinese | `/zh/architectures/static-site-s3-cloudfront` |
 
-#### slugルール
+#### Slug Rules
 
-構成図slugは英語ベースのまま共通利用する。
+Keep architecture diagram slugs English-based and share them across languages.
 
 ```text
 static-site-s3-cloudfront
@@ -286,126 +286,126 @@ high-availability-web-app
 eventbridge-lambda-batch
 ```
 
-### 6.12 ブログ一覧
+### 6.12 Blog Index
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/blog` |
-| 英語 | `/en/blog` |
-| 中国語 | `/zh/blog` |
+| Japanese | `/blog` |
+| English | `/en/blog` |
+| Chinese | `/zh/blog` |
 
-### 6.13 ブログ詳細
+### 6.13 Blog Detail
 
-| 言語 | URL例 |
+| Language | Example URL |
 |---|---|
-| 日本語 | `/blog/aws-free-tier-portfolio` |
-| 英語 | `/en/blog/aws-free-tier-portfolio` |
-| 中国語 | `/zh/blog/aws-free-tier-portfolio` |
+| Japanese | `/blog/aws-free-tier-portfolio` |
+| English | `/en/blog/aws-free-tier-portfolio` |
+| Chinese | `/zh/blog/aws-free-tier-portfolio` |
 
-#### slugルール
+#### Slug Rules
 
-初期はブログslugも言語間で共通にする。
+Initially share blog slugs across languages as well.
 
-理由は以下である。
+The reasons are as follows.
 
-1. 同一コンテンツIDで言語切替しやすい
-2. sitemap生成が単純になる
-3. 内部リンク管理が楽になる
-4. 日本語URLも既に英語slug中心で設計されている
+1. The same content ID makes language switching easy.
+2. Sitemap generation is simplified.
+3. Internal links become easier to manage.
+4. Japanese URLs are already designed primarily with English slugs.
 
-将来、英語SEO専用記事を追加する場合は、英語専用slugを許可する。
+Allow English-only slugs if articles specifically targeting English SEO are added in the future.
 
-例：
+Example:
 
 ```text
 /en/blog/aws-cloud-practitioner-study-guide
 ```
 
-ただし、その場合は日本語・中国語に対応ページがない単独記事として扱う。
+However, treat these as standalone articles without corresponding Japanese or Chinese pages.
 
-### 6.14 問い合わせ
+### 6.14 Contact
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/contact` |
-| 英語 | `/en/contact` |
-| 中国語 | `/zh/contact` |
+| Japanese | `/contact` |
+| English | `/en/contact` |
+| Chinese | `/zh/contact` |
 
-### 6.15 運営者情報
+### 6.15 About the Operator
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/about` |
-| 英語 | `/en/about` |
-| 中国語 | `/zh/about` |
+| Japanese | `/about` |
+| English | `/en/about` |
+| Chinese | `/zh/about` |
 
-### 6.16 プライバシーポリシー
+### 6.16 Privacy Policy
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/privacy` |
-| 英語 | `/en/privacy` |
-| 中国語 | `/zh/privacy` |
+| Japanese | `/privacy` |
+| English | `/en/privacy` |
+| Chinese | `/zh/privacy` |
 
-### 6.17 免責事項
+### 6.17 Disclaimer
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/disclaimer` |
-| 英語 | `/en/disclaimer` |
-| 中国語 | `/zh/disclaimer` |
+| Japanese | `/disclaimer` |
+| English | `/en/disclaimer` |
+| Chinese | `/zh/disclaimer` |
 
-### 6.18 GitHub誘導ページ
+### 6.18 GitHub Navigation Page
 
-| 言語 | URL |
+| Language | URL |
 |---|---|
-| 日本語 | `/github` |
-| 英語 | `/en/github` |
-| 中国語 | `/zh/github` |
+| Japanese | `/github` |
+| English | `/en/github` |
+| Chinese | `/zh/github` |
 
-GitHub誘導ページは任意ページである。
+The GitHub navigation page is optional.
 
 ---
 
-## 7. 多言語化対象外URL
+## 7. URLs Outside Multilingual Scope
 
-### 7.1 初期では多言語化しないURL
+### 7.1 URLs Not Initially Made Multilingual
 
-以下はPhase 5初期では作らない。
+Do not create the following in early Phase 5.
 
-| URL | 理由 |
+| URL | Reason |
 |---|---|
-| `/login` | Phase 6以降の学習アプリ化対象 |
-| `/signup` | Phase 6以降の学習アプリ化対象 |
-| `/mypage` | 認証が必要 |
-| `/mypage/progress` | 認証が必要 |
-| `/mypage/review` | 認証が必要 |
-| `/pricing` | 有料化前のため不要 |
-| `/materials` | 教材販売前のため不要 |
+| `/login` | In scope for conversion to a learning app in Phase 6 or later |
+| `/signup` | In scope for conversion to a learning app in Phase 6 or later |
+| `/mypage` | Requires authentication |
+| `/mypage/progress` | Requires authentication |
+| `/mypage/review` | Requires authentication |
+| `/pricing` | Unnecessary before monetization |
+| `/materials` | Unnecessary before selling learning materials |
 
-### 7.2 404ページ
+### 7.2 404 Page
 
-404ページは多言語化する。
+Localize the 404 page.
 
-ただしURLは固定ルートを作らず、Next.jsの `not-found.tsx` または各locale配下の404表示で対応する。
+However, do not create a fixed URL route; use Next.js `not-found.tsx` or a 404 display under each locale.
 
-想定表示：
+Planned display (localized user-facing text):
 
-| 言語 | 表示 |
+| Language | Display |
 |---|---|
-| 日本語 | ページが見つかりません |
-| 英語 | Page not found |
-| 中国語 | 找不到頁面 |
+| Japanese | ページが見つかりません |
+| English | Page not found |
+| Chinese | 找不到頁面 |
 
 ---
 
-## 8. 言語切替URLルール
+## 8. Language Switching URL Rules
 
-### 8.1 同一コンテンツが存在する場合
+### 8.1 When the Same Content Exists
 
-現在ページと同じslugで言語prefixだけを切り替える。
+Keep the current page's slug and change only the language prefix.
 
-例：
+Example:
 
 ```text
 /terms/s3
@@ -413,31 +413,31 @@ GitHub誘導ページは任意ページである。
 /zh/terms/s3
 ```
 
-### 8.2 翻訳ページが存在しない場合
+### 8.2 When a Translated Page Does Not Exist
 
-翻訳ページがまだ存在しない場合は、該当言語の一覧ページへ遷移する。
+If a translated page does not yet exist, navigate to the index page in the selected language.
 
-例：
+Example:
 
 ```text
-現在: /blog/aws-free-tier-portfolio
-英語版記事なし: /en/blog
-中国語版記事なし: /zh/blog
+Current: /blog/aws-free-tier-portfolio
+No English article: /en/blog
+No Chinese article: /zh/blog
 ```
 
-### 8.3 トップページの切替
+### 8.3 Switching Home Pages
 
-| 現在 | 日本語 | 英語 | 中国語 |
+| Current | Japanese | English | Chinese |
 |---|---|---|---|
 | `/` | `/` | `/en` | `/zh` |
 | `/en` | `/` | `/en` | `/zh` |
 | `/zh` | `/` | `/en` | `/zh` |
 
-### 8.4 言語切替でクエリパラメータは引き継がない
+### 8.4 Do Not Carry Query Parameters Across Language Switches
 
-検索・フィルター条件は言語ごとに文言が異なるため、初期実装ではクエリパラメータを引き継がない。
+Because search and filter wording differs by language, do not carry query parameters over in the initial implementation.
 
-例：
+Example:
 
 ```text
 /terms?category=Storage
@@ -446,29 +446,29 @@ GitHub誘導ページは任意ページである。
 
 ---
 
-## 9. canonical設計方針
+## 9. canonical Design Policy
 
-### 9.1 基本方針
+### 9.1 Basic Policy
 
-各言語ページは、それぞれ自分自身をcanonicalにする。
+Each language page uses itself as its canonical.
 
-| ページ | canonical |
+| Page | canonical |
 |---|---|
 | `/terms/s3` | `https://www.aws-cert-roadmap-lab.com/terms/s3` |
 | `/en/terms/s3` | `https://www.aws-cert-roadmap-lab.com/en/terms/s3` |
 | `/zh/terms/s3` | `https://www.aws-cert-roadmap-lab.com/zh/terms/s3` |
 
-### 9.2 理由
+### 9.2 Rationale
 
-日本語・英語・中国語は翻訳関係にあるが、検索エンジン上は別言語の別ページとして扱う。
+Although the Japanese, English, and Chinese versions are translations, search engines treat them as separate pages in different languages.
 
-そのため、英語ページのcanonicalを日本語ページに向けない。
+Therefore, do not point an English page's canonical to a Japanese page.
 
 ---
 
-## 10. hreflang設計方針
+## 10. hreflang Design Policy
 
-### 10.1 対応言語
+### 10.1 Supported Languages
 
 | locale | hreflang |
 |---|---|
@@ -477,9 +477,9 @@ GitHub誘導ページは任意ページである。
 | `zh` | `zh-Hant` |
 | default | `x-default` |
 
-### 10.2 出力例
+### 10.2 Output Example
 
-対象コンテンツ：
+Target content:
 
 ```text
 /terms/s3
@@ -487,7 +487,7 @@ GitHub誘導ページは任意ページである。
 /zh/terms/s3
 ```
 
-出力する対応関係：
+Mappings to emit:
 
 ```html
 <link rel="alternate" hreflang="ja" href="https://www.aws-cert-roadmap-lab.com/terms/s3" />
@@ -496,25 +496,25 @@ GitHub誘導ページは任意ページである。
 <link rel="alternate" hreflang="x-default" href="https://www.aws-cert-roadmap-lab.com/" />
 ```
 
-### 10.3 x-default方針
+### 10.3 x-default Policy
 
-初期は `x-default` を日本語トップページ `/` にする。
+Initially point `x-default` to the Japanese home page `/`.
 
-理由は以下である。
+The reasons are as follows.
 
-1. 既存サイトの主言語が日本語である
-2. 日本語URLが既存の基準URLである
-3. IPベース自動リダイレクトを使わないため、トップからユーザーが言語を選べる
+1. Japanese is the existing site's primary language.
+2. The Japanese URL is the existing reference URL.
+3. Because IP-based automatic redirects are not used, users can select a language from the home page.
 
-将来的に言語選択専用ページを作る場合は、`x-default` をそのページに変更する。
+If a dedicated language selection page is created in the future, change `x-default` to that page.
 
 ---
 
-## 11. sitemap設計方針
+## 11. Sitemap Design Policy
 
-### 11.1 sitemapに含めるURL
+### 11.1 URLs Included in the Sitemap
 
-Phase 5では、以下をsitemapに含める。
+Include the following in the sitemap in Phase 5.
 
 ```text
 /
@@ -558,7 +558,7 @@ Phase 5では、以下をsitemapに含める。
 /zh/disclaimer
 ```
 
-### 11.2 sitemapに含めないURL
+### 11.2 URLs Excluded from the Sitemap
 
 ```text
 /login
@@ -570,43 +570,43 @@ Phase 5では、以下をsitemapに含める。
 /materials
 ```
 
-### 11.3 sitemap生成時の注意
+### 11.3 Sitemap Generation Notes
 
-翻訳データが未作成のURLはsitemapに含めない。
+Do not include URLs whose translation data has not yet been created in the sitemap.
 
-例：
+Example:
 
 ```text
 /en/blog/aws-free-tier-portfolio
 ```
 
-この英語記事が未作成なら、sitemapに出さない。
+If this English article has not yet been created, do not emit it in the sitemap.
 
 ---
 
-## 12. 内部リンク設計方針
+## 12. Internal Link Design Policy
 
-### 12.1 同一言語内リンクを優先
+### 12.1 Prioritize Links Within the Same Language
 
-英語ページ内の内部リンクは英語URLへ遷移する。
+Internal links on English pages navigate to English URLs.
 
 ```text
 OK: /en/terms/s3 → /en/comparisons/s3-vs-ebs-vs-efs
 NG: /en/terms/s3 → /comparisons/s3-vs-ebs-vs-efs
 ```
 
-中国語ページ内の内部リンクは中国語URLへ遷移する。
+Internal links on Chinese pages navigate to Chinese URLs.
 
 ```text
 OK: /zh/terms/s3 → /zh/comparisons/s3-vs-ebs-vs-efs
 NG: /zh/terms/s3 → /comparisons/s3-vs-ebs-vs-efs
 ```
 
-### 12.2 翻訳ページがない場合
+### 12.2 When No Translated Page Exists
 
-翻訳ページがない場合は、同一言語の一覧ページへ戻す。
+If no translated page exists, return to the index page in the same language.
 
-例：
+Example:
 
 ```text
 /en/terms/s3 → /en/comparisons
@@ -615,11 +615,11 @@ NG: /zh/terms/s3 → /comparisons/s3-vs-ebs-vs-efs
 
 ---
 
-## 13. 実装時のルーティング候補
+## 13. Routing Options for Implementation
 
-### 13.1 推奨ルーティング構成
+### 13.1 Recommended Routing Structure
 
-Next.js App Routerでは、以下のようにlocale別セグメントを作る。
+Create locale-specific segments in Next.js App Router as follows.
 
 ```text
 frontend/src/app/
@@ -660,23 +660,23 @@ frontend/src/app/
     └── disclaimer/
 ```
 
-### 13.2 将来の代替案
+### 13.2 Future Alternative
 
-将来的に実装量が増えた場合は、以下の動的localeルートへ移行する。
+If implementation volume grows in the future, migrate to the following dynamic locale route.
 
 ```text
 frontend/src/app/[locale]/
 ```
 
-ただし、日本語URLにprefixを付けない要件があるため、初期実装では明示的に `/en` `/zh` を持つ構成の方が理解しやすい。
+However, because Japanese URLs must not have a prefix, an explicit `/en` and `/zh` structure is easier to understand for the initial implementation.
 
 ---
 
-## 14. Search Console設計方針
+## 14. Search Console Design Policy
 
-### 14.1 URLプレフィックス確認対象
+### 14.1 URL Prefixes to Check
 
-Search Consoleでは、以下を確認対象にする。
+Check the following in Search Console.
 
 ```text
 https://www.aws-cert-roadmap-lab.com/
@@ -684,45 +684,45 @@ https://www.aws-cert-roadmap-lab.com/en/
 https://www.aws-cert-roadmap-lab.com/zh/
 ```
 
-ドメインプロパティで管理している場合でも、URL検査では `/en` `/zh` のインデックス状況を個別確認する。
+Even when using a domain property, separately check the indexing status of `/en` and `/zh` through URL inspection.
 
-### 14.2 確認観点
+### 14.2 Verification Points
 
-| 項目 | 確認内容 |
+| Item | Check |
 |---|---|
-| インデックス | `/en` `/zh` がインデックス対象になっているか |
-| sitemap | sitemapに多言語URLが含まれているか |
-| 重複 | canonicalが誤って日本語URLに向いていないか |
-| hreflang | 言語別ページの対応関係が正しいか |
-| noindex | 多言語ページに誤ってnoindexが付いていないか |
+| Indexing | Are `/en` and `/zh` eligible for indexing? |
+| sitemap | Does the sitemap include multilingual URLs? |
+| Duplicates | Does canonical incorrectly point to a Japanese URL? |
+| hreflang | Are mappings between language pages correct? |
+| noindex | Has noindex been mistakenly added to multilingual pages? |
 
 ---
 
-## 15. 受け入れ条件
+## 15. Acceptance Criteria
 
-P5-002の完了条件は以下とする。
+The completion criteria for P5-002 are as follows.
 
-- 日本語URLを既存維持する方針が明記されている
-- 英語URLは `/en` 配下と定義されている
-- 中国語URLは `/zh` 配下と定義されている
-- 主要ページの日本語・英語・中国語URL対応表がある
-- 詳細ページのslug共通化ルールが定義されている
-- 多言語化しないURLが明記されている
-- 言語切替URLルールが定義されている
-- canonical方針が定義されている
-- hreflang方針が定義されている
-- sitemap対象URL方針が定義されている
-- 後続タスクP5-003、P5-004、P5-007、P5-009、P5-011に渡せる状態である
+- The policy to retain existing Japanese URLs is explicit.
+- English URLs are defined under `/en`.
+- Chinese URLs are defined under `/zh`.
+- A mapping table exists for Japanese, English, and Chinese URLs of major pages.
+- Rules for shared detail-page slugs are defined.
+- URLs not made multilingual are explicit.
+- Language switching URL rules are defined.
+- The canonical policy is defined.
+- The hreflang policy is defined.
+- The policy for URLs included in the sitemap is defined.
+- The design is ready for handoff to subsequent tasks P5-003, P5-004, P5-007, P5-009, and P5-011.
 
 ---
 
-## 16. 後続タスクへの引き渡し
+## 16. Handoff to Subsequent Tasks
 
-| 後続タスク | 引き渡す内容 |
+| Subsequent task | Handoff details |
 |---|---|
-| P5-003 i18nディレクトリ設計 | locale、URL prefix、slug共通化ルール |
-| P5-004 locale定義実装 | `ja` `en` `zh` のlocale仕様 |
-| P5-006 言語切替UI実装 | 同一slugでの言語切替ルール |
-| P5-007 多言語ルーティング基盤作成 | `/en` `/zh` 配下のページ構成 |
-| P5-009 canonical / hreflang 設計 | canonical、hreflang、x-default方針 |
-| P5-011 多言語sitemap生成対応 | sitemap対象URLと除外URL |
+| P5-003 i18n directory design | Locale, URL prefix, and shared slug rules |
+| P5-004 Locale definition implementation | Locale specifications for `ja`, `en`, and `zh` |
+| P5-006 Language switcher UI implementation | Rules for switching languages with the same slug |
+| P5-007 Multilingual routing foundation creation | Page structure under `/en` and `/zh` |
+| P5-009 canonical / hreflang design | canonical, hreflang, and x-default policies |
+| P5-011 Multilingual sitemap generation support | URLs included in and excluded from the sitemap |

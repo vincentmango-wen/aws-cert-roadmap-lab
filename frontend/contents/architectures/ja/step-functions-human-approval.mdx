@@ -1,0 +1,67 @@
+# Step Functions Standard：注文の人手による承認フロー
+
+対象は最大48時間待てる注文承認で、Standardのcallback patternを使います。架空の設計例で、デプロイ済みリソースは含みません。
+
+## 要件と役割
+
+注文を受けたら在庫を仮確保し、権限のある担当者に承認を求めます。承認後に注文を確定し、拒否・期限切れなら確保分を解放します。確保、確定、補償はそれぞれorderIdと操作バージョンで冪等にし、再実行で在庫を二重に減らしたり戻したりしないようにします。
+
+Standardは長い待機と.waitForTaskTokenに対応します。Expressはこのcallback patternに対応しません。48時間の待機中、Lambdaを動かし続ける必要はありません。[統合パターン](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+図のAは認証済みの注文入口、Bは在庫確保、Cは承認待ち、Dは保護された承認画面とbroker、Eは回答の判定です。Fは注文確定、Gは拒否、Hは期限切れ、Iは補償失敗後の手動対応を表します。三言語で文字IDを揃え、色だけでなく分岐ラベルで条件を読み取れるようにしています。
+
+## 承認、拒否、期限切れ
+
+| 条件 | 動作 | 残す証拠 |
+|---|---|---|
+| 権限のある人が期限内に承認 | brokerがapproved=trueを返し、注文確定 | 承認者、注文バージョン、時刻、確定結果 |
+| 権限のある人が拒否 | approved=falseを返し、確保分を解放 | 拒否理由と補償結果 |
+| Cの48時間待機が終了 | States.TimeoutをCatchし、確保分を解放 | 期限切れイベントと補償結果 |
+| 確定・補償の結果が不明 | 照合、回数を限定した再試行、必要ならIへ | 元の操作キー、試行履歴、手動対応結果 |
+
+業務上の拒否はシステム障害ではありません。この例はSendTaskSuccessで真偽値の判断を返し、Choiceで分岐します。brokerの技術的な失敗はSendTaskFailureと別のCatchで扱い、利用者による拒否と混同しません。[callback API](https://docs.aws.amazon.com/step-functions/latest/apireference/API_SendTaskSuccess.html)
+
+## 待機状態の中心部分
+
+次はJSONPathのASL断片です。Reserve、Decision、ReleaseReservation、HandleFailureなどの残りの状態と実ARNが必要で、そのままデプロイできません。入力にはorderIdを含めます。dispatcherは今回のtokenを保存し、tokenを含まない承認通知を送ります。
+
+```json
+{
+  "WaitForApproval": {
+    "Type": "Task",
+    "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+    "Parameters": {
+      "FunctionName": "REPLACE_APPROVAL_DISPATCHER_ARN",
+      "Payload": {
+        "orderId.$": "$.orderId",
+        "taskToken.$": "$$.Task.Token"
+      }
+    },
+    "TimeoutSeconds": 172800,
+    "ResultPath": "$.approval",
+    "Catch": [
+      { "ErrorEquals": ["States.Timeout"], "ResultPath": "$.error", "Next": "ReleaseReservation" },
+      { "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "HandleFailure" }
+    ],
+    "Next": "Decision"
+  }
+}
+```
+
+Decisionは$.approval.approvedがtrueのときだけConfirmOrderへ進み、それ以外は検証・拒否処理に進みます。workflow全体の期限は承認待ちより長くし、補償時間を確保します。実行全体のtimeoutは、このTaskのCatchでは捕捉できません。期限切れイベント、通知、照合手順を別に用意します。[エラー処理](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
+
+## callbackの安全性とIAM境界
+
+承認リンクには推測困難なrequest IDだけを含めます。ログイン後、バックエンドが担当者、テナント、注文、バージョン、期限を確認してから保護された保存先のtokenを取得します。URL、メール、通常ログにtokenを出さず、execution historyとtoken保存先を読めるロールも制限します。条件付き更新で最初の有効な判断を受け付け、二重クリックには保存済み結果を返します。期限切れ・終了済みtokenを自動的に新しい承認成功へ置き換えてはいけません。
+
+tokenを返すAWS principalはworkflowと同じアカウントに属する必要があります。別アカウントの承認アプリは、workflow側の検証brokerを呼ぶか、信頼関係を絞った同アカウントのロールを引き受けます。外部principalにAllowを追加するだけでは直接callbackできません。[アカウントの制約](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
+
+workflow roleは指定dispatcher・在庫関数だけを呼び、dispatcherは指定承認テーブルと通知先だけに書き込みます。brokerは必要なtoken記録とcallback操作に限定します。SendTaskSuccess/Failureにはリソース単位のARN制限がなく、Resource "*"が必要です。そのためActionを絞り、broker roleを分離し、tokenアクセスを制御します。このAllowが特定execution ARNだけに限定されていると説明してはいけません。permissions boundary自体は許可を付与せず、明示的Denyは引き続き有効です。[サービス認可表](https://docs.aws.amazon.com/service-authorization/latest/reference/list_stepfunctions.html)
+
+判断の永続化とcallbackの送達は別の段階です。確認できるまで送達はpendingとし、一時的な失敗は同じ判断と現在のtokenで再試行します。二重クリックには保存済み判断と送達状況を返し、ワークフローの成功を推測して返しません。callbackの応答を失った場合は、成功を報告したり新しいtokenを発行したりする前にexecutionの状態を照合します。brokerには、指定の承認テーブルと必要なレコードに対するGetItemと条件付きUpdateItemを許可し、判断と送達状況を保存できるようにします。
+
+## 補償と確認
+
+在庫を解放する前に、実際に確保済みでまだ解放していないことを確認し、元の操作キーを使います。注文確定が失敗した場合は、本当に未確定か照合してから在庫を戻します。補償失敗は未解決状態と通知を残し、人が照合します。workflowの失敗で過去の副作用が自動的にロールバックされるわけではありません。
+
+承認、拒否、48時間経過、同時回答、古いリンク、誤ったテナント、callback成功後の応答喪失、補償失敗、実行全体のtimeoutを演習します。図は論理設計であり、これらの実行試験はAWS上では行っていません。

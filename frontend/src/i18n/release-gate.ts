@@ -1,28 +1,39 @@
 import { defaultLocale, locales, type Locale } from "./locales";
 
 /**
- * en / zh の公開制御（ACR-012 / #322）。
+ * Publication flag for en/zh (introduced in #322; publication policy updated in #334).
+ * false: remove en/zh URLs from the sitemap, add noindex to those pages and hide LanguageSwitcher.
+ * true: publish ja/en/zh and enable LanguageSwitcher and localized sitemaps.
  *
- * 現在は AdSense 再申請を見送り、3 言語での開発を優先するため公開中。
- * `false` にすると ja のみが公開対象となり、言語スイッチャーを隠し、
- * en/zh の sitemap・robots・hreflang を封印する。必要になれば再度切り替えられる。
+ * Publication preconditions (#334):
+ * 1. Regression-check the Footer localized in #319.
+ * 2. Proofread Traditional Chinese wording on /zh/privacy.
+ * 3. Generate /en/roadmap and /zh/roadmap from #305.
+ * 4. Use createLocaleAwareRobots() on the six pages bypassing createPageMetadata (en/contact,
+ * en/privacy, zh/contact, zh/privacy, zh/disclaimer and the zh homepage). Verify index/follow in
+ * generated HTML when published.
+ * 5. Use the sitemap as the hreflang source of truth, emitting self/reciprocal references and x-default
+ * pointing to Japanese. Japanese-only routes emit only the Japanese URL and x-default.
+ * 6. Check LanguageSwitcher on desktop and mobile. Duplicate HTML hreflang implementation and
+ * openGraph.alternateLocale are not search-publication prerequisites.
  *
- * 既知の多言語課題は #319（共通フッター翻訳）、#305（roadmap ページ）などで追跡する。
- * これらは開発プレビューで言語を切り替えるためのブロッカーにはしない。
+ * AdSense reapplication and crawl waiting periods are outside this release's conditions; #323 remains
+ * CLOSED.
  *
- * `: boolean` の明示注釈は必須。`= false` だけだと型が `false` リテラルに narrow され、
- * `if (LOCALIZED_ROUTES_PUBLISHED)` 分岐が到達不能扱いになって lint / typecheck が不安定になる。
+ * Keep the explicit : boolean annotation. A bare = false narrows the type to the false literal, making
+ * LOCALIZED_ROUTES_PUBLISHED branches appear unreachable and destabilizing lint/typecheck. Import
+ * nothing except ./locales: Header.tsx uses use client, so node:fs or other server imports would break
+ * its bundle.
  *
- * このファイルは `./locales` 以外を import しないこと。
- * `Header.tsx` は `"use client"` のため、`node:fs` 等が混ざるとクライアントバンドルが壊れる。
- *
- * NOTE: `scripts/verify-locale-seal.mjs` が
- * `/LOCALIZED_ROUTES_PUBLISHED\s*:\s*boolean\s*=\s*(true|false)/` でこの定数を読み取る。
- * リネームするとビルド時検査が例外で落ちる（黙って無効化されないための仕掛け）。
+ * NOTE: scripts/verify-locale-seal.mjs reads this constant with
+ * /LOCALIZED_ROUTES_PUBLISHED\s*:\s*boolean\s*=\s*(true|false)/. Renaming it causes build validation to
+ * throw rather than silently disabling the check.
  */
 export const LOCALIZED_ROUTES_PUBLISHED: boolean = true;
 
-/** 現在公開対象の locale の集合。 */
+/**
+ * Locales currently eligible for publication to Google; only ja while sealed.
+ */
 export const publishedLocales: readonly Locale[] = LOCALIZED_ROUTES_PUBLISHED
   ? locales
   : [defaultLocale];
@@ -32,10 +43,9 @@ export function isPublishedLocale(locale: Locale): boolean {
 }
 
 /**
- * 封印時に locale prefix 配下の pathname かを判定する。
- *
- * `pathname.startsWith("/en")` の前方一致は `/entertainment` `/environment` のような
- * ja パスを誤検知して ja 面を巻き添えで noindex にするため、必ずセグメント境界で判定する。
+ * Check whether a pathname is under a sealed locale prefix. Always match segment boundaries:
+ * startsWith("/en") would also match Japanese paths such as /entertainment or /environment and
+ * incorrectly noindex them.
  */
 export function isSealedPathname(pathname: string): boolean {
   if (LOCALIZED_ROUTES_PUBLISHED) {

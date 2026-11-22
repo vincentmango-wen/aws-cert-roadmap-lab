@@ -1,0 +1,74 @@
+name: AIDD CI
+
+on:
+  pull_request:
+    branches: [main, master, dev]
+    paths:
+      - "tools/aidd/**"
+      - "docs/aidd/task.json"
+      - ".github/workflows/aidd-ci.yml"
+  push:
+    branches: [master]
+    paths:
+      - "tools/aidd/**"
+      - "docs/aidd/task.json"
+      - ".github/workflows/aidd-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  aidd:
+    name: AIDD configuration and fixtures
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - name: Check source syntax
+        run: |
+          node --check tools/aidd/cli.mjs
+          node --check tools/aidd/pilot.mjs
+      - name: Check pilot configuration
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
+          const text = value => typeof value === 'string' && value.trim().length > 0;
+          const strings = value => Array.isArray(value) && value.length > 0 && value.every(text);
+          const profile = read('tools/aidd/profile.json');
+          const contract = read('docs/aidd/task.json');
+          assert.equal(profile.node, process.versions.node, 'Profile and CI Node versions must match');
+          assert.ok(text(profile.npm), 'profile.npm is required');
+          assert.ok(strings(profile.protected), 'profile.protected must contain paths');
+          assert.ok(strings(profile.generated), 'profile.generated must contain paths');
+          assert.ok(Array.isArray(profile.checks) && profile.checks.length > 0, 'profile.checks is required');
+          const ids = new Set();
+          for (const check of profile.checks) {
+            assert.ok(text(check.id) && /^[a-z0-9-]+$/.test(check.id), 'Invalid check ID');
+            assert.ok(!ids.has(check.id), 'Duplicate check ID');
+            ids.add(check.id);
+            assert.ok(text(check.cwd) && strings(check.args), 'Check cwd and args are required');
+            assert.ok(Number.isFinite(check.timeoutMs) && check.timeoutMs > 0, 'Invalid check timeout');
+            assert.ok(check.report === undefined || check.report === 'vitest', 'Unknown report format');
+          }
+          assert.ok(text(contract.id) && text(contract.goal), 'Contract identity and goal are required');
+          assert.equal(contract.maxRepairs, 3, 'Pilot repair limit must remain three');
+          assert.ok(strings(contract.allowed), 'Contract allowed paths are required');
+          assert.ok(strings(contract.humanAcceptance), 'Human acceptance must be explicit');
+          console.log('Pilot configuration is valid; no profile commands were executed.');
+          NODE
+      - name: Run dependency-free Harness fixtures
+        run: node --test tools/aidd/pilot.test.mjs

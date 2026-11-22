@@ -1,6 +1,6 @@
 # Differences between Bedrock and SageMaker
 
-## Bottom line
+## Selection at a glance
 
 Amazon Bedrock and Amazon SageMaker are both AWS services for generative AI and machine learning.
 
@@ -33,7 +33,7 @@ When in doubt, use this quick test:
 | Signature features | Knowledge Bases (RAG), Guardrails, Agents | JumpStart, Studio, Pipelines, Model Registry |
 | Use in this project | Target of the AI-chapter dogfooding content | Not used directly in the MVP |
 
-## Beginner-friendly explanation
+## Beginner context
 
 ### Amazon Bedrock
 
@@ -51,14 +51,14 @@ It covers the full machine learning lifecycle: a Jupyter-based notebook environm
 
 Use SageMaker when you need to train a model from scratch on your own data, or when you need to solve a specialized task that existing foundation models cannot handle well.
 
-## Exam points to remember
+## Exam guide and decision cues
 
 ### Points that often show up in AIF-C01
 
 - Bedrock is centered on calling models through a managed API, while SageMaker is a platform for building, training, and deploying models
 - Bedrock is serverless and requires no infrastructure management
 - SageMaker involves selecting and managing training/inference instances
-- Bedrock Guardrails often comes up in the context of Responsible AI
+- Use Bedrock Guardrails as an example when studying responsible AI safeguards
 - Amazon Bedrock Knowledge Bases is presented as the feature that implements RAG (Retrieval-Augmented Generation)
 - SageMaker JumpStart lets you quickly get started with pretrained models and solution templates
 - Understanding how to evaluate foundation models (accuracy, cost, latency, modality) is tested
@@ -95,7 +95,7 @@ Examples:
 - Developing a custom image classification model
 - Building a recommendation engine
 
-## Common misunderstandings
+## Common misconceptions
 
 ### Misunderstanding 1: Bedrock and SageMaker are completely separate
 
@@ -121,6 +121,19 @@ Bedrock is not always the best fit for generative AI use cases.
 
 If you need large-scale pretraining on proprietary data or want to experiment with a custom architecture, building on SageMaker may be more appropriate.
 
+## Summary
+
+The difference between Bedrock and SageMaker becomes easier to sort out when framed as "calling a foundation model through an API" versus "building and training a model from scratch."
+
+Bedrock is a managed generative AI foundation model API, and SageMaker is a fully managed machine learning development platform.
+
+AIF-C01 tests your understanding of how these two services differ, along with related concepts such as Responsible AI and RAG.
+
+## Official AWS references
+
+- Service behavior and design: [Bedrock foundation-model inference API](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-invoke.html) · [Bedrock Guardrails configuration](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) · [SageMaker model training](https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html) · [SageMaker deployment and inference](https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html)
+- [AIF-C01 exam guide](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html)
+
 ## Related terms
 
 - [AWS IAM](/terms/iam)
@@ -131,11 +144,3 @@ If you need large-scale pretraining on proprietary data or want to experiment wi
 ## Related questions
 
 - [Browse practice questions](/questions)
-
-## Summary
-
-The difference between Bedrock and SageMaker becomes easier to sort out when framed as "calling a foundation model through an API" versus "building and training a model from scratch."
-
-Bedrock is a managed generative AI foundation model API, and SageMaker is a fully managed machine learning development platform.
-
-AIF-C01 tests your understanding of how these two services differ, along with related concepts such as Responsible AI and RAG.

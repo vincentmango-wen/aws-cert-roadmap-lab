@@ -22,12 +22,12 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-16"
-updatedAt: "2026-06-16"
+updatedAt: "2026-11-09"
 ---
 
 # Route 53・CloudFront・Global Acceleratorの違い
 
-## 結論
+## 選択のポイント
 
 Route 53、CloudFront、Global Acceleratorは、AWSマネジメントコンソールの「リージョン」欄に「Global」と表示される、リージョンに縛られないサービスです。
 
@@ -39,7 +39,7 @@ Route 53、CloudFront、Global Acceleratorは、AWSマネジメントコンソ�
 - 静的・動的コンテンツをエッジでキャッシュして高速配信するならCloudFront
 - TCP/UDPのパケットを静的IP経由でAWSバックボーンに乗せて高速化するならGlobal Accelerator
 
-迷ったら、「静的IPがあるか」「キャッシュするか」「DNSを解決するか」の3軸で切り分けると判断しやすくなります。
+迷ったら、「必要なプロトコルと静的IPの選択肢は何か」「キャッシュするか」「DNSを解決するか」の3軸で切り分けると判断しやすくなります。
 
 ## 比較表
 
@@ -49,7 +49,7 @@ Route 53、CloudFront、Global Acceleratorは、AWSマネジメントコンソ�
 | 分類 | DNS | CDN | ネットワーク高速化 |
 | 主なレイヤー | DNS層 | エッジ配信（HTTP/HTTPS） | L3/L4（TCP/UDP） |
 | 主な目的 | 名前をIPに変換する | コンテンツをキャッシュ配信する | パケットを最短経路で運ぶ |
-| 静的IP | 持たない（DNS名で運用） | 持たない（DNS名で運用） | 持つ（IPv4静的IPを2個） |
+| 静的IP | 持たない（DNS名で運用） | 標準ではなし。Anycast Static IPsを追加可能 | 持つ（IPv4静的IPを2個） |
 | キャッシュ | しない | する（デフォルトTTL 24時間） | しない（経路最適化のみ） |
 | 対応プロトコル | DNSクエリ | HTTP / HTTPS | TCP / UDP |
 | 代表的な用途 | ドメイン登録、DNSルーティング、ヘルスチェック | 画像・動画・JS/CSSの高速配信 | ゲーム、VoIP、固定IPが必要なアプリ |
@@ -78,11 +78,11 @@ S3静的サイトや画像配信と相性が良く、このプロジェクトの
 
 Global Acceleratorは、TCP/UDPのトラフィックをAWSバックボーン経由で最適化し、静的なAnycast IPを提供するサービスです。
 
-CloudFrontとの違いは、HTTP/HTTPSに限定されないことと、静的IPを持つことです。コンテンツをキャッシュするのではなく、パケットそのものを最短経路に乗せて高速化します。
+Global AcceleratorはHTTP/HTTPS以外のTCP/UDPにも対応し、静的IPを提供します。CloudFrontにも追加機能のAnycast Static IPsがあるため、主な違いはネットワーク高速化とHTTP/HTTPSコンテンツ配信の役割です。
 
 固定IPが必要なゲームやVoIP、IPホワイトリストを要求される金融系などで候補になります。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
 ### Route 53が正解になりやすいケース
 
@@ -107,7 +107,7 @@ CloudFrontとの違いは、HTTP/HTTPSに限定されないことと、静的IP�
 - ゲームやVoIPなどリアルタイム性が重要
 - リージョン障害時のフェイルオーバーを数秒以内で行いたい
 
-### Route 53のルーティングポリシー（CLF-C02頻出）
+### Route 53のルーティングポリシー（CLF-C02 の学習ポイント）
 
 | 問題文のキーワード | 正解 |
 |---|---|
@@ -151,17 +151,17 @@ HTTPでは扱えないプロトコルや、固定IPをクライアントへ配�
 
 ### グローバル配信と固定IPを混同しないために
 
-「グローバルに配信」だけならCloudFront、「グローバルな静的IP」が条件に入ればGlobal Acceleratorです。問題文の「何をしてほしいか」を主語に置き換えると、3軸のどれにチェックが立つかで判断できます。
+HTTP/HTTPSのコンテンツ配信・キャッシュはCloudFront、TCP/UDPのネットワーク高速化はGlobal Acceleratorです。CloudFrontにも追加機能のAnycast Static IPsがあるため、静的IPの有無だけでは選べません。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：3つとも「グローバルだから同じ」と覚える
 
 3つはリージョンに縛られない点では共通ですが、Route 53はDNS層、CloudFrontはCDN層、Global AcceleratorはL3/L4層と、働く階層がそれぞれ違います。
 
-### 間違い2：CloudFrontに静的IPがあると思う
+### 間違い2：CloudFrontの静的IPが標準で付くと思う
 
-CloudFrontは静的IPを持たず、DNS名で運用します。静的IPが条件に入っていればGlobal Acceleratorを検討します。
+CloudFrontは通常DNS名で利用し、専用のAnycast Static IPsは追加機能です。CloudFrontサポートエンジニアリングの承認と、すべてのエッジロケーションを使う料金クラスが必要です。2026-11-09確認時点では、AWS提供IPv4アドレスは1 IP・1時間あたり0.005米ドルで、通常のCloudFront利用料金も別途発生します。有効化前に公式の前提条件と料金を確認してください。
 
 ### 間違い3：Global AcceleratorをCDNとして覚える
 
@@ -170,6 +170,23 @@ Global Acceleratorはコンテンツをキャッシュしません。パケッ�
 ### 間違い4：Global Acceleratorのコスト感を「使った分だけ」と思う
 
 CloudFrontやRoute 53が従量課金中心なのに対し、Global Acceleratorはアクセラレータを作成しただけで固定費が発生します。「コスト最適化で停止候補はどれか」を問われたときに見落としやすいポイントです。
+
+## まとめ
+
+Route 53、CloudFront、Global Acceleratorは、どれも「グローバル」と表示されるため混同しがちですが、役割の階層はきれいに分かれています。
+
+次の3軸で覚えると判断しやすくなります。
+
+- DNS解決（名前 → IP）：Route 53
+- コンテンツのキャッシュ配信：CloudFront
+- 静的IP・TCP/UDPの経路最適化：Global Accelerator
+
+「グローバル」という単語に引っ張られず、「必要なプロトコルと静的IPの選択肢は何か」「キャッシュするか」「DNSを解決するか」で切り分けると、3サービスの取り違えを防げます。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [Route 53 DNS のルーティングポリシー](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html) · [CloudFront のキャッシュキー](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html) · [Global Accelerator の Anycast IP とエンドポイント](https://docs.aws.amazon.com/global-accelerator/latest/dg/introduction-components.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
 
 ## 関連用語
 
@@ -182,14 +199,10 @@ CloudFrontやRoute 53が従量課金中心なのに対し、Global Accelerator�
 
 - [CLF模擬問題一覧](/questions/clf)
 
-## まとめ
+## 訂正内容
 
-Route 53、CloudFront、Global Acceleratorは、どれも「グローバル」と表示されるため混同しがちですが、役割の階層はきれいに分かれています。
+### 2026-11-09
 
-次の3軸で覚えると判断しやすくなります。
+- 「CloudFront には静的 IP がない」という説明を訂正し、オプションの Anycast Static IPs の申請、設定、料金条件を追記しました。静的 IP の有無だけではサービスを選べません。
 
-- DNS解決（名前 → IP）：Route 53
-- コンテンツのキャッシュ配信：CloudFront
-- 静的IP・TCP/UDPの経路最適化：Global Accelerator
-
-「グローバル」という単語に引っ張られず、「静的IPがあるか」「キャッシュするか」「DNSを解決するか」で切り分けると、3サービスの取り違えを防げます。
+参照資料：[CloudFront Anycast Static IPs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/request-static-ips.html) / [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/pay-as-you-go/).
