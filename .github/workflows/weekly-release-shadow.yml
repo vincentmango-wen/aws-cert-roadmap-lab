@@ -1,0 +1,57 @@
+name: Weekly release shadow (manual, read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      master_sha:
+        description: Expected full SHA of master
+        required: true
+        type: string
+      dev_sha:
+        description: Expected full SHA of dev
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Require the trusted repository default branch
+        run: |
+          test "$GITHUB_REPOSITORY" = "vincentmango-wen/aws-cert-roadmap-lab"
+          test "$GITHUB_REF" = "refs/heads/master"
+          test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
+      - name: Check out the trusted workflow revision with complete history
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up pinned Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.13.0
+      - name: Check reporting contracts and exact pinned refs
+        env:
+          SHADOW_PREFLIGHT: "1"
+        run: |
+          node --test scripts/release/__tests__/*.test.mjs
+          node scripts/release/weekly-shadow.mjs
+      - name: Check the trusted workflow source and static export
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_SITE_URL: https://www.aws-cert-roadmap-lab.com
+        run: |
+          npm ci
+          npm run lint
+          npm run typecheck
+          env -u NEXT_PUBLIC_SITE_URL npm test -- --maxWorkers=2
+          npm run build
+          npm run check:html-lang
+          npm run check:locale-seal
+      - name: Report only after rechecking unchanged live refs
+        run: node scripts/release/weekly-shadow.mjs
