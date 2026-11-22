@@ -34,7 +34,7 @@ it("requires a correcting announcement to be explicitly Update", () => {
 });
 
 it("contains the exact approved question-bank and feature announcements", () => {
-  expect(announcements.map((value) => value.id).sort()).toEqual(["aif-c01-001-030", "latest-articles-and-updates", "saa-c03-051-060", "saa-c03-061-068-clf-c02-051-052"]);
+  expect(announcements.map((value) => value.id).sort()).toEqual(["aif-c01-001-030", "lambda-event-functions-timeout-correction", "latest-articles-and-updates", "saa-c03-051-060", "saa-c03-061-068-clf-c02-051-052"]);
   expect(announcements.find((value) => value.id === "saa-c03-061-068-clf-c02-051-052")).toMatchObject({
     category: "question-bank", eventKind: "new", date: "2026-11-20", published: true,
     links: [{ path: "/questions/saa" }, { path: "/questions/clf" }],
@@ -145,7 +145,7 @@ it.each(["ja", "en", "zh"] as const)("publishes the complete approved feature an
   const destinations = { ja: ["/", "/updates"], en: ["/en", "/en/updates"], zh: ["/zh", "/zh/updates"] };
   expect(value).toMatchObject({ eventKind: "new", date: "2026-11-13", dateLabel: "announced", changeNotes: { status: "not-applicable" }, title: approved.title, summary: approved.summary });
   expect(value?.links.map((link) => link.href)).toEqual(destinations[locale]);
-  expect(result.diagnostics).toEqual([{ code: "future-date", id: "announcement:saa-c03-061-068-clf-c02-051-052" }, { code: "future-date", id: "announcement:aif-c01-001-030" }]);
+  expect(result.diagnostics).toEqual([{ code: "future-date", id: "announcement:saa-c03-061-068-clf-c02-051-052" }, { code: "future-date", id: "announcement:aif-c01-001-030" }, { code: "future-date", id: "announcement:lambda-event-functions-timeout-correction" }]);
 });
 
 it.each(["unpublished", "missing-title", "missing-summary", "empty-label", "sealed-destination"] as const)("omits the feature consistently across locales when %s", (failure) => {

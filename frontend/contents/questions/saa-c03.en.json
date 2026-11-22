@@ -2849,7 +2849,7 @@
     "explanation": "AWS Step Functions defines each step of a workflow as a state and visualizes it as execution history. Because you can declaratively configure Retry (retries with backoff) and Catch (branching on error) per state, tracing where a failure occurred and re-running parts of the workflow become easy.",
     "choiceExplanations": {
       "A": "Correct. You can identify the failed state from the execution history graph, and Retry / Catch let you declaratively write automatic recovery from transient failures and compensating actions on failure.",
-      "B": "Incorrect. Consolidating into a single function makes it easy to hit the execution time limit (15 minutes maximum), and a failure means starting over from the beginning. It also does not improve visibility into which step failed.",
+      "B": "Incorrect. A single Lambda function does not by itself provide step-level retries or visibility into which step failed. Without workflow state or checkpoints, a retry can repeat work already completed. A longer invocation timeout does not change those workflow requirements.\n\nCorrection (2026-11-21): On 2026-11-19, AWS announced that on-demand Lambda Event Functions in commercial Regions support a configurable timeout of up to 30 minutes per invocation. This is not the default or a universal Lambda limit. Lambda Managed Instances limits depend on the invocation method; callers, integrations, or event sources may impose shorter limits. See the official AWS announcement and technical article below.",
       "C": "Incorrect. Chaining with SQS does provide loose coupling, but the workflow as a whole has no state for how far it has progressed, and branching, parallel execution, and per-step re-runs must all be implemented yourself.",
       "D": "Incorrect. EventBridge is responsible for delivering events; it does not manage workflow state or control retries at the step level. Even if failures are recorded, controlling re-runs must be built yourself."
     },
@@ -2866,6 +2866,14 @@
       {
         "label": "Error handling in Step Functions workflows (AWS Step Functions Developer Guide)",
         "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html"
+      },
+      {
+        "label": "AWS announcement: timeout increase for on-demand Lambda Event Functions",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-lambda-30-minute-ondemand-event-functions/"
+      },
+      {
+        "label": "AWS Compute Blog: Lambda timeouts and invocation constraints",
+        "url": "https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/"
       }
     ],
     "relatedServices": [
@@ -2889,7 +2897,7 @@
     ],
     "published": true,
     "createdAt": "2026-07-31",
-    "updatedAt": "2026-07-31"
+    "updatedAt": "2026-11-21"
   },
   {
     "questionId": "saa-044",

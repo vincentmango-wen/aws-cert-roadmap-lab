@@ -64,4 +64,28 @@ export const announcements: Announcement[] = [{
     en: { title: "First 30 AIF-C01 practice questions", summary: "The AWS Certified AI Practitioner practice bank opens with 30 original questions across all five exam domains. Each is available in Traditional Chinese, Japanese, and English with explanations for each choice and official AWS references." },
   },
   links: [{ path: "/questions/aif", labels: { ja: "AIF-C01の問題を見る", en: "View AIF-C01 questions", zh: "查看 AIF-C01 題庫" } }],
+}, {
+  id: "lambda-event-functions-timeout-correction", eventKind: "update", category: "question-bank", date: "2026-11-22", published: true,
+  translations: {
+    zh: {
+      title: "更正題庫與用語集的 Lambda 逾時說明",
+      summary: "已更正 CLF-C02 的 clf-019、clf-035、SAA-C03 的 saa-043，以及用語集的 Lambda 與 Fargate 條目。題幹、選項與正解未變更。",
+      updateNotes: [{ type: "paragraph", children: [{ type: "text", value: "2026-11-21 更正：AWS 於 2026-11-19 公告，商業區域的隨需 Lambda Event Functions 單次呼叫逾時可設定至 30 分鐘。這不是預設值或所有執行模式的共同上限；實際限制須視呼叫方式、整合服務和事件來源而定。" }] }],
+    },
+    ja: {
+      title: "問題集と用語集の Lambda タイムアウトの説明を訂正",
+      summary: "CLF-C02 の clf-019、clf-035、SAA-C03 の saa-043、および用語集の Lambda と Fargate を訂正しました。問題文、選択肢、正解に変更はありません。",
+      updateNotes: [{ type: "paragraph", children: [{ type: "text", value: "2026-11-21 訂正：AWS は 2026-11-19 に、商用リージョンのオンデマンド Lambda Event Functions で、1 回の呼び出しのタイムアウトを最大 30 分に設定できると発表しました。既定値やすべての実行方式に共通の上限ではなく、実際の制限は呼び出し方式、連携サービス、イベントソースによって異なります。" }] }],
+    },
+    en: {
+      title: "Lambda timeout correction in practice questions and the glossary",
+      summary: "Corrected CLF-C02 questions clf-019 and clf-035, SAA-C03 question saa-043, and the Lambda and Fargate glossary entries. Question stems, choices, and correct answers are unchanged.",
+      updateNotes: [{ type: "paragraph", children: [{ type: "text", value: "2026-11-21 correction: AWS announced on 2026-11-19 that on-demand Lambda Event Functions in commercial Regions support a configurable timeout of up to 30 minutes per invocation. This is not the default or a limit shared by every execution mode; the applicable limit depends on the invocation method, integration, and event source." }] }],
+    },
+  },
+  links: [
+    { path: "/questions/clf", labels: { zh: "查看 CLF-C02 題庫", ja: "CLF-C02の問題を見る", en: "View CLF-C02 questions" } },
+    { path: "/questions/saa", labels: { zh: "查看 SAA-C03 題庫", ja: "SAA-C03の問題を見る", en: "View SAA-C03 questions" } },
+    { path: "/terms", labels: { zh: "查看 AWS 用語集", ja: "AWS用語集を見る", en: "View the AWS glossary" } },
+  ],
 }];
