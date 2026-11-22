@@ -1,23 +1,16 @@
 import type { ReactNode } from "react";
 
 /**
- * コンテンツルート専用 layout（route group: (site)）。
- * AdSense スクリプトをここで注入することで、root layout 配下の 404 画面には
- * adsbygoogle.js を読み込まない構造を実現する。
+ * Layout for content routes only (the (site) route group). Inject AdSense here rather than in the root
+ * layout so 404 pages do not load adsbygoogle.js. This follows the AdSense policy against placing ad
+ * code on content-free screens.
  *
- * Google AdSense ポリシー準拠:
- * 「コンテンツを含まない画面（404 等）に広告コードを配置してはならない」
- * 対処: root layout から AdSense を除き、コンテンツルートのみで注入。
+ * Static export turns next/script into preload links and a runtime queue rather than an actual script
+ * element, which the AdSense review crawler cannot detect. Emit a plain async script tag instead.
  *
- * next/script は static export 下で実 <script src="..."> タグを生成せず
- * <link rel="preload"> + ランタイム queue になるため、AdSense 審査クローラが
- * スクリプトを検出できない。そのため next/script を使わず素の
- * <script async src="..."> タグを直接書いて確実に出力する。
- *
- * <head> wrapper は使わない: JSX で <head> を return すると、Next.js の
- * static export 時に body 内に空 <head></head> が残留し HTML5 仕様違反
- * （<head> は <html> 直下のみ可）になる。React 19 は async script を
- * document <head> へ自動 hoist するため、Fragment 直下に置くだけで十分。
+ * Do not return a head wrapper: Next.js static export leaves an empty head inside body, violating HTML5
+ * placement rules. React 19 automatically hoists async scripts into the document head, so a Fragment is
+ * sufficient.
  */
 
 const ADSENSE_CLIENT_ID_PREFIX = "ca-pub-";

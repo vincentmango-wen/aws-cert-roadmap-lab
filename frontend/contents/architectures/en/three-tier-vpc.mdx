@@ -14,42 +14,15 @@ We do not use this pattern in this project's MVP, but it is a foundational archi
 
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User]
-    IGW[Internet Gateway]
-    ALB[Application Load Balancer]
-    PublicSubnetA[Public Subnet AZ-a]
-    PublicSubnetC[Public Subnet AZ-c]
-    PrivateSubnetA[Private Subnet App AZ-a]
-    PrivateSubnetC[Private Subnet App AZ-c]
-    DBSubnetA[Private DB Subnet AZ-a]
-    DBSubnetC[Private DB Subnet AZ-c]
-    EC2A[EC2 App AZ-a]
-    EC2C[EC2 App AZ-c]
-    DBA[(RDS Primary)]
-    DBC[(RDS Standby)]
-    NAT[NAT Gateway optional]
-    CW[CloudWatch]
+Public, private application and private database subnets are placement boundaries, not forwarding hops. Both private applications use the same database endpoint.
 
-    User -->|HTTPS| IGW
-    IGW --> ALB
-    ALB --> PublicSubnetA
-    ALB --> PublicSubnetC
-    PublicSubnetA --> EC2A
-    PublicSubnetC --> EC2C
-    EC2A --> PrivateSubnetA
-    EC2C --> PrivateSubnetC
-    EC2A -->|DB connection| DBA
-    EC2C -->|DB connection| DBA
-    DBA --> DBSubnetA
-    DBC --> DBSubnetC
-    DBA -.synchronous replication.-> DBC
-    EC2A -->|when outbound is needed| NAT
-    EC2C -->|when outbound is needed| NAT
-    EC2A -.logs.-> CW
-    EC2C -.logs.-> CW
-```
+| Area | How it works |
+|---|---|
+| Ingress | The VPC internet gateway provides public connectivity to one internet-facing ALB across two public subnets. The ALB forwards to healthy EC2 targets in the two private application subnets. |
+| Database access | Both EC2 applications connect using the RDS DB endpoint (DNS name), which points to the current primary. Allow the database port from the app security group only. The DB subnet group spans the two AZs. |
+| Single-standby replication | The primary synchronously replicates to the single standby in the other AZ. The standby is not a read target. After failover, RDS updates the endpoint’s DNS record; applications reconnect using the same endpoint. |
+| Optional public IPv4 egress | Outbound internet traffic, if needed, is separate from ingress and database access. With zonal public NAT, route each app subnet through a NAT gateway in the same AZ and the internet gateway; a regional public NAT gateway is an alternative that does not require a NAT-hosting public subnet. |
+| Monitoring | CloudWatch monitors ALB, EC2 and RDS metrics or logs where configured. Monitoring is not a step in the reader’s request path. |
 
 ## What You Can Achieve
 
@@ -66,7 +39,7 @@ flowchart TD
 | Service | Role |
 |---|---|
 | Amazon VPC | Network boundary for the entire application |
-| Public Subnet | Placement for resources that need external connectivity such as ALB and NAT Gateway |
+| Public Subnet | Placement for the internet-facing ALB and, if used in this example, zonal public NAT gateways |
 | Private Subnet | Placement for application servers |
 | Database Subnet | Non-public subnet that hosts Amazon RDS |
 | Application Load Balancer | Distributes HTTPS requests across the application tier |
@@ -80,10 +53,10 @@ flowchart TD
 1. The user accesses the website over HTTPS
 2. ALB receives the request through the Internet Gateway
 3. ALB forwards the request to EC2 instances inside the Private Subnet
-4. The EC2 application connects to RDS Primary
-5. When RDS Multi-AZ is enabled, the primary synchronously replicates to the standby
+4. Both EC2 applications connect through the RDS DB endpoint to the current primary
+5. In this single-standby RDS Multi-AZ DB instance example, the primary synchronously replicates to the standby
 6. EC2 and RDS metrics are observed through CloudWatch
-7. Only when outbound traffic is needed (for example, fetching external packages), the Private Subnet egresses via NAT Gateway
+7. For optional public IPv4 egress, such as fetching external packages, the private application subnets can use a public NAT gateway
 
 ## Design Considerations
 
@@ -122,7 +95,7 @@ Using SSM Session Manager reduces the need for SSH bastion hosts.
 - Place the database in a Private Subnet — never expose it directly to the internet
 - Security Groups are stateful, NACLs are stateless
 - RDS Multi-AZ improves availability; Read Replicas improve read performance
-- A NAT Gateway is required when a Private Subnet needs outbound internet access
+- A public NAT gateway is one option for public IPv4 egress from private subnets; it is not on the visitor or database path
 - Consider VPC Endpoints when you want private connectivity to S3 or DynamoDB
 
 ## Caveats
@@ -154,3 +127,11 @@ Using SSM Session Manager reduces the need for SSH bastion hosts.
 The three-tier web app architecture inside a VPC is the canonical pattern for understanding AWS network design.
 
 We do not adopt it in this project's main build because of cost, but it is an extremely important architecture for SAA preparation and for explaining your AWS skills in interviews.
+
+## Corrections
+
+### 2026-11-19
+
+Showed one dual-AZ ALB and clarified that both EC2 applications connect to the current RDS primary via the database endpoint. The single standby does not serve reads; the dashed line is synchronous replication. Separated monitoring and optional public IPv4 egress from the request path.
+
+References: [Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html) · [RDS Multi-AZ DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html) · [RDS failover](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.Failover.html) · [Zonal NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-basics.html) · [Regional NAT](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html)

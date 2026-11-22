@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -eu
+
+printf 'CALL' >> "$SWEEP_CURL_LOG"
+for argument in "$@"; do
+  printf '\t%s' "$argument" >> "$SWEEP_CURL_LOG"
+done
+printf '\n' >> "$SWEEP_CURL_LOG"
+
+for argument in "$@"; do
+  case "$argument" in
+    *sitemap.xml)
+      printf '<urlset><url><loc>https://www.aws-cert-roadmap-lab.com/</loc></url></urlset>\n'
+      exit 0
+      ;;
+  esac
+done
+
+printf '200'

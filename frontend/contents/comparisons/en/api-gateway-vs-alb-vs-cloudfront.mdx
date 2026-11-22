@@ -1,6 +1,6 @@
 # Differences between API Gateway, ALB, and CloudFront
 
-## Summary
+## Selection at a glance
 
 Amazon API Gateway, Application Load Balancer (ALB), and Amazon CloudFront can all act as the entry point for incoming requests.
 
@@ -20,12 +20,12 @@ In this project, CloudFront is used for static site delivery and API Gateway is 
 | Main use case | Publishing REST API / HTTP API / WebSocket API | Load balancing web applications | High-speed delivery of static and dynamic content |
 | Typical backends | AWS Lambda, HTTP endpoints, AWS services | Amazon EC2, Amazon ECS, AWS Lambda | Amazon S3, ALB, API Gateway, HTTP origins |
 | Authentication and authorization | AWS IAM, Lambda Authorizer, Amazon Cognito | OIDC authentication and similar | Signed URLs, AWS WAF integration |
-| Caching | Built-in API cache | Not the primary purpose | Core strength |
+| Caching | Built-in cache for REST APIs; not for HTTP APIs | Not the primary purpose | Core strength |
 | Fit with serverless | High | Medium | High |
 | WebSocket | Supported | Not the primary purpose | Not the primary purpose |
 | Exam keywords | serverless API, REST, HTTP API, Lambda | load balancing, HTTP routing | CDN, edge, cache, static content |
 
-## Beginner-friendly explanation
+## Beginner context
 
 API Gateway is the entry point for APIs.
 
@@ -63,7 +63,7 @@ S3
 
 It is widely used for static sites and image delivery.
 
-## Points that come up on the exam
+## Exam guide and decision cues
 
 ### When API Gateway tends to be the correct answer
 
@@ -88,7 +88,7 @@ It is widely used for static sites and image delivery.
 - You want to reduce the number of requests hitting the origin.
 - You want to combine HTTPS delivery with caching.
 
-## How to choose them in practice
+## How to choose in practice
 
 ### Serverless contact API
 
@@ -150,7 +150,7 @@ Lambda
 
 That said, the MVP avoids this added complexity. Serving the static site through CloudFront and the API through the API Gateway URL is enough for the initial release.
 
-## Common mistakes
+## Common misconceptions
 
 ### Mistake 1: Treating API Gateway and ALB as the same kind of API entry point
 
@@ -170,6 +170,21 @@ Static site delivery is built on Amazon S3 and CloudFront.
 
 API Gateway is the entry point for APIs.
 
+## Summary
+
+Separating API Gateway, ALB, and CloudFront by purpose makes them easier to remember.
+
+- API Gateway: the entry point for APIs.
+- ALB: load balancing for web applications.
+- CloudFront: high-speed content delivery.
+
+This project uses both CloudFront and API Gateway, so this comparison also matters when explaining the portfolio.
+
+## Official AWS references
+
+- Service behavior and design: [API Gateway REST and HTTP API feature comparison](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html) · [ALB HTTP routing and listener rules](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-rules.html) · [CloudFront cache-key behavior](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html)
+- [CLF-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## Related terms
 
 - [Amazon API Gateway](/terms/api-gateway)
@@ -182,12 +197,10 @@ API Gateway is the entry point for APIs.
 
 - [CLF practice questions](/questions/clf)
 
-## Wrap-up
+## Corrections
 
-Separating API Gateway, ALB, and CloudFront by purpose makes them easier to remember.
+### 2026-11-09
 
-- API Gateway: the entry point for APIs.
-- ALB: load balancing for web applications.
-- CloudFront: high-speed content delivery.
+- Corrected the blanket claim about API Gateway caching: REST APIs support built-in caching; HTTP APIs do not.
 
-This project uses both CloudFront and API Gateway, so this comparison also matters when explaining the portfolio.
+References：[API Gateway REST / HTTP APIs](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html).

@@ -20,12 +20,12 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-06-07"
+updatedAt: "2026-06-21"
 ---
 
 # Security Group・Network ACLの違い
 
-## 結論
+## 選択のポイント
 
 Security GroupとNetwork ACLは、どちらもVPC内の通信制御に使います。
 
@@ -72,7 +72,7 @@ Subnet
 
 サブネットに出入りする通信を制御します。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
 ### Security Groupが正解になりやすいケース
 
@@ -126,7 +126,7 @@ LambdaはVPC接続しない前提なので、Security GroupやNetwork ACLを直�
 
 ただし、SAA対策ではVPC設計の基礎として必須です。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：Security Groupで拒否ルールを書けると思う
 
@@ -146,6 +146,20 @@ Security Groupはリソース単位、Network ACLはサブネット単位です�
 
 ここを間違えると、試験問題で選択肢を誤ります。
 
+## まとめ
+
+Security GroupとNetwork ACLは、次のように覚えます。
+
+- Security Group：リソース単位、ステートフル、許可のみ
+- Network ACL：サブネット単位、ステートレス、許可と拒否
+
+SAA-C03の学習では、リソース単位のステートフルな制御とサブネット単位のステートレスな制御を表で整理します。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [セキュリティグループのルールとステートフル動作](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html) · [ネットワーク ACL のルール順とステートレス動作](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html) · [ネットワーク ACL とエフェメラルポート](https://docs.aws.amazon.com/vpc/latest/userguide/custom-network-acl.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon VPC](/terms/vpc)
@@ -156,12 +170,3 @@ Security Groupはリソース単位、Network ACLはサブネット単位です�
 ## 関連問題
 
 - [CLF模擬問題一覧](/questions/clf)
-
-## まとめ
-
-Security GroupとNetwork ACLは、次のように覚えます。
-
-- Security Group：リソース単位、ステートフル、許可のみ
-- Network ACL：サブネット単位、ステートレス、許可と拒否
-
-SAAでは頻出なので、表で即答できるレベルまで整理しておく必要があります。

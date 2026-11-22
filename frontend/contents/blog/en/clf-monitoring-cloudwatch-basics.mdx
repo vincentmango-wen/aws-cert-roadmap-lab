@@ -15,9 +15,8 @@ targetKeywords:
   - "Cloud Practitioner CloudWatch"
 author: "AWS Cert Roadmap Lab"
 published: true
-noIndex: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-02"
+updatedAt: "2026-11-21"
 ---
 
 # CloudWatch Basics for Cloud Practitioner Candidates
@@ -33,6 +32,8 @@ CloudWatch is a monitoring service that handles metrics, logs, and alarms for AW
 Metrics are numeric data. You can check Lambda invocation counts, error counts, execution time, API Gateway 4xx/5xx responses, CloudFront request counts, and more.
 
 When an incident occurs, start by using Metrics to see which service is showing increased errors.
+
+Amazon EC2 basic monitoring has no additional charge. Status check metrics are available every 1 minute, and other default metrics every 5 minutes. Paid detailed monitoring provides default instance metrics every 1 minute; an opt-in metric category can add a 10-second CPU utilization metric. This does not change the default intervals and is separate from EC2 performance status checks, which are available at no additional charge on supported accelerated computing instances.
 
 ## CloudWatch Logs
 
@@ -72,3 +73,11 @@ On this site, the targets for monitoring are the Lambda logs of the contact API,
 
 - [Differences Between CloudWatch, CloudTrail, and AWS Config](/comparisons/cloudwatch-vs-cloudtrail-vs-config)
 - [How to Check Lambda Logs in CloudWatch](/blog/lambda-cloudwatch-logs-check)
+
+## Corrections
+
+### 2026-11-21
+
+- Clarified EC2 basic and detailed monitoring intervals, the basic-monitoring exception for status checks, and the opt-in 10-second CPU metric. Default intervals did not change.
+
+References: [EC2 detailed monitoring guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-detailed-monitoring.html) / [AWS launch announcement](https://aws.amazon.com/about-aws/whats-new/2026/11/ec2-performance-status-checks/).

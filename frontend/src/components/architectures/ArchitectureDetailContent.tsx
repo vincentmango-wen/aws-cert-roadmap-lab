@@ -1,8 +1,6 @@
 /**
- * ArchitectureDetailContent.tsx
- *
- * locale 別の構成図記事詳細ページ本体. ja/en/zh いずれの route からも薄いラッパーで呼ばれる.
- * comparisons の ComparisonDetailContent と同型構造.
+ * Localized architecture-detail page body, called through thin wrappers from ja/en/zh routes. Mirrors
+ * ComparisonDetailContent.
  */
 import Link from "next/link";
 import {
@@ -14,7 +12,7 @@ import {
   levelLabelsByLocale,
   resolveDiagramPath,
 } from "@/app/(site)/architectures/architecture-detail-data";
-import { MarkdownContent } from "@/components/comparisons/MarkdownContent";
+import { ArchitectureArticleBody } from "./ArchitectureArticleBody";
 import {
   isExistingArchitectureForLocale,
   isExistingTerm,
@@ -30,6 +28,21 @@ type ArchitectureDetailContentProps = {
   architecture: ArchitectureArticle;
 };
 
+// Only reviewed horizontal diagrams opt in; all other articles retain responsive images.
+const horizontalDiagramWidths: Readonly<Record<string, number>> = {
+  "sns-sqs-fanout": 774,
+  "sqs-lambda-async-processing": 1040,
+  "cloudwatch-monitoring-basic": 1000,
+  "high-availability-web-app": 1000,
+  "eventbridge-lambda-batch": 1000,
+  "static-site-s3-cloudfront": 1000,
+  "serverless-api-basic": 1000,
+  "ecs-fargate-web-app": 1000,
+  "private-subnet-vpc-endpoint": 1000,
+  "three-tier-vpc": 1000,
+  "aws-backup-cross-account-ebs-restore": 1200,
+};
+
 function formatServiceName(service: string): string {
   return awsServiceLabels[service] ?? service;
 }
@@ -42,6 +55,7 @@ export function ArchitectureDetailContent({
   const levelLabels = levelLabelsByLocale[locale];
 
   const diagramPath = resolveDiagramPath(locale, architecture);
+  const diagramWidth = horizontalDiagramWidths[architecture.slug];
 
   const relatedArchitectures = getPublishedArchitectures(locale)
     .filter((item) => item.slug !== architecture.slug)
@@ -143,12 +157,32 @@ export function ArchitectureDetailContent({
             <h2 className="mb-4 text-xl font-bold text-slate-950">
               {labels.diagramTitle}
             </h2>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={diagramPath}
-              alt={`${architecture.title}${labels.diagramAltSuffix}`}
-              className="w-full rounded-2xl border border-slate-200 bg-white"
-            />
+            {diagramWidth ? (
+              <>
+                <p className="mb-2 text-sm text-slate-600">↔ {labels.diagramScrollHint}</p>
+                <div
+                  role="region"
+                  aria-label={`${architecture.title}: ${labels.diagramScrollHint}`}
+                  tabIndex={0}
+                  className="max-w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={diagramPath}
+                    alt={`${architecture.title}${labels.diagramAltSuffix}`}
+                    style={{ width: diagramWidth, maxWidth: "none", height: "auto" }}
+                    className="block"
+                  />
+                </div>
+              </>
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={diagramPath}
+                alt={`${architecture.title}${labels.diagramAltSuffix}`}
+                className="w-full rounded-2xl border border-slate-200 bg-white"
+              />
+            )}
           </section>
         ) : null}
 
@@ -186,7 +220,7 @@ export function ArchitectureDetailContent({
 
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           {architecture.content ? (
-            <MarkdownContent content={architecture.content} locale={locale} />
+            <ArchitectureArticleBody content={architecture.content} locale={locale} />
           ) : architecture.sections && architecture.sections.length > 0 ? (
             <div className="space-y-8">
               {architecture.sections.map((section) => (

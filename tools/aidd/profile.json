@@ -1,0 +1,36 @@
+{
+  "node": "22.13.0",
+  "npm": "10.9.2",
+  "protected": [
+    ".gitignore",
+    ".github/",
+    "tools/aidd/",
+    "docs/aidd/task.json",
+    "frontend/package.json",
+    "frontend/package-lock.json",
+    "frontend/pnpm-lock.yaml",
+    "frontend/vitest.config.ts",
+    "frontend/tsconfig.json",
+    "frontend/eslint.config.mjs",
+    "frontend/next.config.ts",
+    "frontend/scripts/"
+  ],
+  "generated": [
+    "frontend/node_modules/",
+    "frontend/.next/",
+    "frontend/out/",
+    "frontend/coverage/",
+    "frontend/next-env.d.ts",
+    "frontend/tsconfig.tsbuildinfo",
+    "tmp/"
+  ],
+  "checks": [
+    { "id": "install", "cwd": "frontend", "args": ["{npm}", "ci", "--no-audit", "--no-fund"], "timeoutMs": 600000 },
+    { "id": "harness", "cwd": ".", "args": ["--test", "tools/aidd/pilot.test.mjs"], "timeoutMs": 180000 },
+    { "id": "lint", "cwd": "frontend", "args": ["{npm}", "run", "lint"], "timeoutMs": 300000 },
+    { "id": "typecheck", "cwd": "frontend", "args": ["{npm}", "run", "typecheck"], "timeoutMs": 300000 },
+    { "id": "vitest", "cwd": "frontend", "args": ["{npm}", "test", "--", "--reporter=json", "--outputFile={report}"], "report": "vitest", "timeoutMs": 300000 },
+    { "id": "build", "cwd": "frontend", "args": ["{npm}", "run", "build"], "timeoutMs": 600000 },
+    { "id": "html-lang", "cwd": "frontend", "args": ["{npm}", "run", "check:html-lang"], "timeoutMs": 60000 }
+  ]
+}

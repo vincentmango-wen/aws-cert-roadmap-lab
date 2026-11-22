@@ -1,0 +1,54 @@
+---
+postId: "blog-027"
+slug: "agentcore-guardrails-vs-tool-authorization"
+title: "AgentCore tool authorization and Guardrails: deciding what can run and what can be shown"
+description: "Two fictional order lookups show the difference between authorizing a tool and filtering a response."
+category: "AI & Machine Learning"
+tags:
+  - "Amazon Bedrock"
+  - "AgentCore"
+  - "AIF-C01"
+targetKeywords:
+  - "AgentCore Policy"
+  - "Amazon Bedrock Guardrails"
+author: "AWS Cert Roadmap Lab"
+published: true
+publishedAt: "2026-11-20"
+updatedAt: "2026-11-20"
+---
+
+# AgentCore tool authorization and Guardrails: deciding what can run and what can be shown
+
+## One support assistant, two checks
+
+Imagine a signed-in shopper at a fictional store in the Tokyo Region (`ap-northeast-1`) using a support assistant with only a read-only `getOrderStatus(orderId)` tool. The assistant cannot edit orders, issue refunds, or send email. The model can propose an order lookup, but a proposal is not authorization. The service gets the customer ID from verified authentication and checks ownership against the authoritative order system. It does not trust a model-supplied `customerId` or treat a shared Gateway IAM service identity as proof of who the shopper is.
+
+| Check | Question | What denial means |
+| --- | --- | --- |
+| Before the call: tool authorization | May this customer look up this order? | Do not execute the lookup tool |
+| Before the response: content filtering | Which parts of the result may be shown? | Withhold the entire tool response in this example |
+
+## Case 1: Someone else's order is denied
+
+Customer A asks about Customer B's order. This design verifies identity and ownership before the lookup runs and denies the call if they do not match. It does not fetch the record and then try to hide it. AgentCore Policy can evaluate rules before an AgentCore Gateway allows its tool requests. When ownership requires information beyond tool arguments, get it from a trusted service or enforce the check in the backend. Do not trust the model's claim about the owner.
+
+## Case 2: The customer's own order is allowed, but the email is not shown
+
+Customer A asks about their own order. Authorization passes, and the read-only tool runs, but its result mistakenly includes an email address. If the AgentCore Gateway policy detects the email through a guardrail and its `suppressOutput` condition matches, the Gateway withholds the entire tool response from the caller. It does not send the shipping status with only the email masked. The assistant says it cannot display the result. The tool already ran and is not rolled back.
+
+An application can separately use Amazon Bedrock Guardrails to mask personal information in a reply. That is not the same as Gateway suppression. Detection is not a guarantee and does not replace least privilege, removing unnecessary fields at the source, or keeping raw results out of logs.
+
+## AIF-C01 takeaway
+
+“May this tool run?” is an authorization question. “May this content be shown?” is an output protection question. This scenario connects responsible AI and security governance; it is not a claim that AgentCore product details are guaranteed exam topics.
+
+The official AIF-C01 guide lists Policy in AgentCore and Amazon Bedrock Guardrails in task 5.1; this example does not mean `suppressOutput` syntax will be tested.
+
+## Official references
+
+- [Policy in Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html)
+- [Policy conditions in AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-conditions.html)
+- [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)
+- [AWS Certified AI Practitioner (AIF-C01)](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html)
+- [Guardrails in AgentCore policies](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-guardrails-in-policies.html)
+- [AIF-C01 Task Statement 5.1](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01-domain5.html#ai-practitioner-01-domain5-task5-1)

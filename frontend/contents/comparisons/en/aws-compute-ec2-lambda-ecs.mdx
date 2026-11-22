@@ -1,0 +1,54 @@
+# How to choose between EC2, Lambda, and ECS
+
+## Selection at a glance
+
+- **Need control over the operating system? Start with Amazon EC2.** A legacy internal system might need a host agent installed or system settings adjusted. EC2 provides virtual machines: you choose the operating system and instance type, and you are responsible for updating and maintaining the guest OS.
+- **Run a short piece of code only when an event occurs? Start with the default AWS Lambda mode.** For example, you might generate a thumbnail each time an image is uploaded to S3. The event triggers the work, which ends when processing is complete. You don't need to keep a virtual machine running while waiting for the next image.
+- **Already containerized and need to serve traffic continuously? Start with Amazon ECS.** Consider a containerized API that needs to accept orders at any time. An ECS service maintains the configured number of tasks. Choose AWS Fargate if you don't want to manage the underlying hosts. If your containers require host-level control, consider ECS on self-managed EC2 instead.
+
+## Comparison table
+
+| Requirement | Starting point | What you manage and how it scales | Main billing dimensions |
+| --- | --- | --- | --- |
+| A legacy system needs a host agent | EC2 | Manage the operating system and application. EC2 Auto Scaling can add instances when you need more capacity. | Instance runtime, plus resources used such as storage and networking. |
+| Images arrive occasionally and take seconds to process | On-demand Lambda Event Functions | Manage function code and settings, not hosts. Concurrency grows with event demand, subject to the scaling rate and concurrency quota. | Mainly requests and execution duration. The duration charge also depends on configured memory. |
+| An API needs to stay available continuously | ECS on Fargate | Manage container images and task settings, not hosts. ECS Service Auto Scaling can adjust task count as load changes. | Provisioned task vCPU, memory, billable ephemeral storage and usage time. With ECS on EC2, you pay for the underlying resources instead. |
+
+## Exam guide and decision cues
+
+These cues follow the official CLF-C02 and SAA-C03 exam guides:
+
+- **CLF-C02: Identify the compute model first.** For a custom guest OS or an installed host agent, look to EC2. For a short event-driven function without host management, start with Lambda. To deploy and manage a group of containers, pick ECS rather than treating Fargate as the orchestrator.
+- **SAA-C03: Find the requirement that rules out an option.** If the workload is containerized, must maintain multiple tasks and should not require host maintenance, start with ECS on Fargate. If it needs host-level control, look at ECS on self-managed EC2. For scaling questions, identify whether you need more EC2 instances, more ECS tasks, or higher Lambda concurrency.
+
+## How to choose in practice
+
+- **Moving a legacy system to the cloud:** If it needs a custom guest OS and a host agent but does not need containerization, start with EC2. Include patching, capacity planning and incident handling in your operating costs.
+- **Creating thumbnails after e-commerce image uploads:** If images arrive occasionally and each takes seconds to process, start with on-demand Lambda Event Functions. In addition to request volume and duration per execution, estimate peak concurrency. You don't need to leave an EC2 instance running between images.
+- **Keeping a containerized order API ready to take orders:** Start with ECS on Fargate to maintain the required task count, then set up auto scaling as needed for the load. Include the tasks you must keep running off peak when estimating costs. If the container needs host-level control, evaluate ECS on self-managed EC2 instead.
+
+## Common misconceptions
+
+### ECS and EC2 are mutually exclusive
+
+ECS orchestrates container tasks; EC2 or Fargate supplies the compute that runs them. You can use ECS and EC2 together. Choosing Fargate does not eliminate application management: you still specify resources for each task and the task count your service should maintain.
+
+### A container image always means you need ECS
+
+You can also deploy Lambda Event Functions using container images. An image is a packaging format; it does not make a function an always-on service. Consider Lambda if the work is event-driven and can finish within its applicable timeout. Consider ECS if you need to listen continuously for connections and maintain multiple container replicas.
+
+### The two Managed Instances offerings are the same
+
+**ECS Managed Instances** runs ECS container tasks on AWS-managed EC2. Pricing includes EC2 and an ECS Managed Instances management fee. **Lambda Managed Instances** retains Lambda's function and event model and runs it on EC2 in your account that Lambda manages. Pricing includes requests, EC2 and a management fee, rather than the per-invocation duration-based compute charge of on-demand Event Functions. To evaluate runtime, distinguish the function mode from the invocation method. If another service invokes the function synchronously, check how long that caller can wait.
+
+## Summary
+
+Start with **EC2** when you need control over the guest operating system, **on-demand Lambda Event Functions** when a short task should run only in response to an event, and **ECS** when you need an always-on container service. With ECS, choose who manages the underlying compute. Before comparing costs, ask how often the work runs, how much capacity must remain available at idle, and how many hosts your team is prepared to maintain.
+
+## Official AWS references
+
+- Exam guides: [CLF-C02 Cloud Technology and Services](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02-domain3.html) · [SAA-C03 High-Performing Architectures](https://docs.aws.amazon.com/pdfs/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.pdf)
+- [Amazon EC2 concepts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html) · [EC2 On-Demand pricing](https://aws.amazon.com/ec2/pricing/on-demand/)
+- [Lambda function scaling](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html) · [Deploy container images](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html) · [Event Functions runtime and invocation methods](https://aws.amazon.com/blogs/compute/announcing-30-minute-timeout-for-on-demand-aws-lambda-event-functions/) · [Lambda pricing](https://aws.amazon.com/lambda/pricing/)
+- [Lambda Managed Instances execution environment](https://docs.aws.amazon.com/lambda/latest/dg/lambda-managed-instances-execution-environment.html)
+- [ECS compute options](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-configuration.html#capacity) · [ECS Service Auto Scaling](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html) · [ECS pricing](https://aws.amazon.com/ecs/pricing/)

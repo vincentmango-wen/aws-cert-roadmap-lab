@@ -1,65 +1,84 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
-  <title id="title">CloudWatch monitoring architecture</title>
-  <desc id="desc">CloudFront, API Gateway, Lambda and DynamoDB publish logs and metrics to CloudWatch, while Budgets notifies developer about cost alerts.</desc>
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
-      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
-    </marker>
-    <style>
-      .bg{fill:#f8fafc}
-      .box{fill:#ffffff;stroke:#cbd5e1;stroke-width:2}
-      .aws{fill:#eff6ff;stroke:#60a5fa;stroke-width:2}
-      .mon{fill:#f0fdf4;stroke:#22c55e;stroke-width:2}
-      .cost{fill:#fff7ed;stroke:#fb923c;stroke-width:2}
-      .title{font:700 26px sans-serif;fill:#0f172a}
-      .label{font:700 18px sans-serif;fill:#0f172a}
-      .small{font:500 14px sans-serif;fill:#475569}
-      .line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
-      .dash{stroke:#64748b;stroke-width:2;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}
-    </style>
-  </defs>
-  <rect class="bg" width="1200" height="680" rx="28"/>
-  <text class="title" x="60" y="58">CloudWatch Serverless Monitoring Architecture</text>
-
-  <rect class="box" x="70" y="125" width="190" height="80" rx="16"/>
-  <text class="label" x="128" y="172">User</text>
-
-  <rect class="aws" x="340" y="105" width="210" height="80" rx="16"/>
-  <text class="label" x="387" y="152">CloudFront</text>
-
-  <rect class="aws" x="625" y="105" width="210" height="80" rx="16"/>
-  <text class="label" x="710" y="152">S3</text>
-
-  <rect class="aws" x="340" y="285" width="210" height="80" rx="16"/>
-  <text class="label" x="390" y="332">API Gateway</text>
-
-  <rect class="aws" x="625" y="285" width="210" height="80" rx="16"/>
-  <text class="label" x="680" y="332">Lambda</text>
-
-  <rect class="aws" x="900" y="285" width="210" height="80" rx="16"/>
-  <text class="label" x="948" y="332">DynamoDB</text>
-
-  <rect class="mon" x="625" y="475" width="210" height="80" rx="16"/>
-  <text class="label" x="666" y="522">CloudWatch</text>
-  <text class="small" x="668" y="546">Logs / Metrics</text>
-
-  <rect class="cost" x="900" y="475" width="210" height="80" rx="16"/>
-  <text class="label" x="950" y="522">Budgets</text>
-  <text class="small" x="947" y="546">Cost Alerts</text>
-
-  <rect class="box" x="70" y="475" width="190" height="80" rx="16"/>
-  <text class="label" x="116" y="522">Developer</text>
-
-  <path class="line" d="M260 165 H340"/>
-  <path class="line" d="M550 145 H625"/>
-  <path class="line" d="M260 325 H340"/>
-  <path class="line" d="M550 325 H625"/>
-  <path class="line" d="M835 325 H900"/>
-  <path class="dash" d="M445 185 C500 260 555 430 625 500"/>
-  <path class="dash" d="M445 365 C520 430 555 500 625 515"/>
-  <path class="dash" d="M730 365 V475"/>
-  <path class="dash" d="M1005 365 V475"/>
-  <path class="dash" d="M900 515 H835"/>
-  <path class="dash" d="M625 515 H260"/>
-  <text class="small" x="92" y="610">Point: Separate Logs, Metrics, and Budgets to monitor MVP operations at low cost</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="820" viewBox="0 0 1000 820" role="img" aria-labelledby="title desc" xml:lang="en">
+<title id="title">CloudWatch monitoring</title>
+<desc id="desc">The diagram above separates requests, monitoring signals, and notifications. Read each path as follows.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#334155"/></marker></defs>
+<rect width="1000" height="820" rx="20" fill="#f8fafc"/>
+<g font-family="Arial, 'Yu Gothic', 'Microsoft JhengHei', sans-serif" fill="#0f172a" font-size="15">
+<text x="500" y="35" text-anchor="middle" font-size="22" font-weight="400">CloudWatch monitoring</text>
+<rect x="13.3333" y="60" width="973.333" height="235" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="500" y="85" text-anchor="middle" font-size="17" font-weight="400">Requests and data</text>
+<g id="user">
+<rect x="29.1667" y="160" width="116.667" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="87.5" y="198.0" text-anchor="middle" font-size="15" font-weight="600">User</text>
+</g>
+<g id="cloudfront">
+<rect x="241.667" y="105" width="158.333" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="320.833" y="143.0" text-anchor="middle" font-size="15" font-weight="600">CloudFront</text>
+</g>
+<g id="s3">
+<rect x="483.333" y="105" width="158.333" height="66" rx="12" fill="#ecfdf5" stroke="#34d399"/>
+<text x="562.5" y="143.0" text-anchor="middle" font-size="15" font-weight="600">S3</text>
+</g>
+<g id="api-gateway">
+<rect x="241.667" y="210" width="158.333" height="66" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="320.833" y="248.0" text-anchor="middle" font-size="15" font-weight="600">API Gateway</text>
+</g>
+<g id="lambda">
+<rect x="483.333" y="210" width="158.333" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="562.5" y="248.0" text-anchor="middle" font-size="15" font-weight="600">Lambda</text>
+</g>
+<g id="dynamodb">
+<rect x="750" y="210" width="158.333" height="66" rx="12" fill="#ecfdf5" stroke="#34d399"/>
+<text x="829.167" y="248.0" text-anchor="middle" font-size="15" font-weight="600">DynamoDB</text>
+</g>
+<path data-from="user" data-to="cloudfront" d="M145.833 193 H191.667 V138 H241.667" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<path data-from="user" data-to="api-gateway" d="M191.667 193 V243 H241.667" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<path data-from="cloudfront" data-to="s3" d="M400 138 H483.333" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<path data-from="api-gateway" data-to="lambda" d="M400 243 H483.333" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<path data-from="lambda" data-to="dynamodb" d="M641.667 243 H750" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<rect x="13.3333" y="310" width="973.333" height="220" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="500" y="335" text-anchor="middle" font-size="17" font-weight="400">Logs and metrics</text>
+<g id="metric-sources">
+<rect x="29.1667" y="350" width="266.667" height="72" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="162.5" y="381.0" text-anchor="middle" font-size="15" font-weight="600">CloudFront / API Gateway</text>
+<text x="162.5" y="401.0" text-anchor="middle" font-size="15" font-weight="400">Lambda / DynamoDB</text>
+</g>
+<g id="metrics">
+<rect x="583.333" y="350" width="225" height="72" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="695.833" y="391.0" text-anchor="middle" font-size="15" font-weight="600">CloudWatch Metrics</text>
+</g>
+<path data-from="metric-sources" data-to="metrics" d="M295.833 386 H583.333" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<text x="437.5" y="374" text-anchor="middle" font-size="15" font-weight="400">Service metrics</text>
+<g id="log-source">
+<rect x="29.1667" y="445" width="266.667" height="60" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="162.5" y="480.0" text-anchor="middle" font-size="15" font-weight="600">Lambda</text>
+</g>
+<g id="logs">
+<rect x="583.333" y="445" width="225" height="60" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="695.833" y="480.0" text-anchor="middle" font-size="15" font-weight="600">CloudWatch Logs</text>
+</g>
+<path data-from="log-source" data-to="logs" d="M295.833 475 H583.333" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<text x="437.5" y="463" text-anchor="middle" font-size="15" font-weight="400">Log output</text>
+<rect x="13.3333" y="545" width="973.333" height="200" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="500" y="570" text-anchor="middle" font-size="17" font-weight="400">Cost and CI/CD notifications</text>
+<g id="budgets">
+<rect x="29.1667" y="590" width="191.667" height="60" rx="12" fill="#fef3c7" stroke="#f59e0b"/>
+<text x="125" y="625.0" text-anchor="middle" font-size="15" font-weight="600">AWS Budgets</text>
+</g>
+<g id="github">
+<rect x="29.1667" y="670" width="191.667" height="60" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="125" y="705.0" text-anchor="middle" font-size="15" font-weight="600">GitHub Actions</text>
+</g>
+<g id="developer">
+<rect x="750" y="630" width="191.667" height="60" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="845.833" y="665.0" text-anchor="middle" font-size="15" font-weight="600">Developer</text>
+</g>
+<path data-from="budgets" data-to="developer" d="M220.833 620 H666.667 V650 H750" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<path data-from="github" data-to="developer" d="M220.833 700 H683.333 V670 H750" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<text x="416.667" y="607" text-anchor="middle" font-size="15" font-weight="400">Email</text>
+<text x="395.833" y="680" text-anchor="middle" font-size="15" font-weight="400">CI/CD</text>
+<text x="462.5" y="680" text-anchor="middle" font-size="15" font-weight="400">results</text>
+<text x="500" y="775" text-anchor="middle" font-size="15" font-weight="400">Developer views Logs / Metrics</text>
+<text x="500" y="800" text-anchor="middle" font-size="15" font-weight="400">Notifications are separate from requests</text>
+</g>
 </svg>

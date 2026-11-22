@@ -20,12 +20,12 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-01"
+updatedAt: "2026-06-21"
 ---
 
 # S3・EBS・EFSの違い
 
-## 結論
+## 選択のポイント
 
 S3、EBS、EFSはすべてAWSのストレージサービスですが、使う場面はかなり違います。
 
@@ -84,9 +84,9 @@ EFSは、複数のEC2から同じファイルを共有したいときに使い�
 
 S3と違い、ファイルシステムとしてマウントして使える点が特徴です。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
-### CLF-C02で問われやすいポイント
+### CLF-C02 の学習ポイント
 
 - S3はオブジェクトストレージである
 - EBSはEC2に接続するブロックストレージである
@@ -95,7 +95,7 @@ S3と違い、ファイルシステムとしてマウントして使える点が
 - EBSはスナップショットでバックアップできる
 - EFSはLinux系のファイル共有で使われる
 
-### SAA-C03で問われやすいポイント
+### SAA-C03 の学習ポイント
 
 - 静的コンテンツ配信はS3 + CloudFrontが基本構成
 - EC2の永続的なディスクにはEBSを使う
@@ -133,7 +133,7 @@ S3と違い、ファイルシステムとしてマウントして使える点が
 
 このプロジェクトのMVPでは複数EC2構成を使わないため、EFSも使いません。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：S3をEC2のディスクとして使えると思う
 
@@ -163,6 +163,19 @@ EFSはファイル共有用途であり、静的Web配信の第一候補では�
 
 この3語で整理してください。
 
+## まとめ
+
+S3、EBS、EFSは、AWSストレージの基本です。
+
+まずは次の一文で覚えてください。
+
+S3はファイル保存、EBSはEC2のディスク、EFSは複数EC2の共有ファイルシステムです。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [S3 のオブジェクト、バケット、ストレージクラス](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html) · [EBS ボリュームとアタッチ範囲](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volumes.html) · [EFS のマウントターゲットと共有ファイルシステム](https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon S3](/terms/s3)
@@ -174,11 +187,3 @@ EFSはファイル共有用途であり、静的Web配信の第一候補では�
 ## 関連問題
 
 - [CLF模擬問題一覧](/questions/clf)
-
-## まとめ
-
-S3、EBS、EFSは、AWSストレージの基本です。
-
-まずは次の一文で覚えてください。
-
-S3はファイル保存、EBSはEC2のディスク、EFSは複数EC2の共有ファイルシステムです。

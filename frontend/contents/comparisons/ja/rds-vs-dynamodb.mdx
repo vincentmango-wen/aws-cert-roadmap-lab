@@ -19,12 +19,12 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-01"
+updatedAt: "2026-06-21"
 ---
 
 # RDS・DynamoDBの違い
 
-## 結論
+## 選択のポイント
 
 RDSとDynamoDBは、どちらもAWSのデータベースサービスです。
 
@@ -78,9 +78,9 @@ DynamoDBは、AWSのサーバーレスNoSQLデータベースです。
 
 問い合わせデータは複雑なJOINが不要で、1件ずつ保存・確認できればよいため、DynamoDBと相性が良いです。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
-### CLF-C02で問われやすいポイント
+### CLF-C02 の学習ポイント
 
 - RDSはリレーショナルデータベースのマネージドサービス
 - DynamoDBはNoSQLデータベース
@@ -89,7 +89,7 @@ DynamoDBは、AWSのサーバーレスNoSQLデータベースです。
 - DynamoDBはキーによる高速アクセスに向いている
 - RDSはMulti-AZで可用性を高められる
 
-### SAA-C03で問われやすいポイント
+### SAA-C03 の学習ポイント
 
 - 複雑なSQLやJOINが必要ならRDSを選ぶ
 - 高スケールでシンプルなキーアクセスならDynamoDBを選ぶ
@@ -136,7 +136,7 @@ DynamoDBは、AWSのサーバーレスNoSQLデータベースです。
 - イベントログ保存
 - 通知設定保存
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：DynamoDBをRDSの完全な代替だと思う
 
@@ -162,6 +162,19 @@ RDSは強力ですが、固定費が発生しやすいです。
 
 このプロジェクトではコストを抑えるため、MVPでは問い合わせ保存にDynamoDBを使う方針です。
 
+## まとめ
+
+RDSとDynamoDBの違いは、SQL中心か、キーアクセス中心かで考えると整理しやすいです。
+
+RDSはリレーショナルDB、DynamoDBはサーバーレスNoSQLです。
+
+このプロジェクトでは、問い合わせ保存のようなシンプルな動的データにはDynamoDBを使います。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [RDS のエンジンと運用](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) · [DynamoDB のプライマリキーとテーブル](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html) · [DynamoDB のキャパシティモード](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/capacity-mode.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon RDS](/terms/rds)
@@ -173,11 +186,3 @@ RDSは強力ですが、固定費が発生しやすいです。
 ## 関連問題
 
 - [CLF模擬問題一覧](/questions/clf)
-
-## まとめ
-
-RDSとDynamoDBの違いは、SQL中心か、キーアクセス中心かで考えると整理しやすいです。
-
-RDSはリレーショナルDB、DynamoDBはサーバーレスNoSQLです。
-
-このプロジェクトでは、問い合わせ保存のようなシンプルな動的データにはDynamoDBを使います。

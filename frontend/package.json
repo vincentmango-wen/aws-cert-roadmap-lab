@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/set-html-lang.mjs && node scripts/verify-locale-seal.mjs",
+    "build": "node scripts/build-with-updates-date.mjs && node scripts/set-html-lang.mjs && node scripts/verify-locale-seal.mjs",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
@@ -20,7 +20,11 @@
     "next-mdx-remote": "^6.0.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+
+    "remark-parse": "11.0.0",
+
+    "unified": "11.0.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

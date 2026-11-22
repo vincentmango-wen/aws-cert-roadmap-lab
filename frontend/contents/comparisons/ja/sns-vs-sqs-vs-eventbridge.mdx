@@ -21,12 +21,12 @@ tags:
 priority: "high"
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-01"
+updatedAt: "2026-11-09"
 ---
 
 # SNS・SQS・EventBridgeの違い
 
-## 結論
+## 選択のポイント
 
 SNS、SQS、EventBridgeは、AWSでシステム同士を連携させるサービスです。
 
@@ -41,7 +41,7 @@ SNS、SQS、EventBridgeは、AWSでシステム同士を連携させるサービ
 迷ったら、まずはこう判断します。
 
 - 通知を複数の宛先へ配りたい：SNS
-- 処理を待たせて順番に処理したい：SQS
+- 仕事をためて非同期に処理したい：SQS
 - イベント条件で処理を振り分けたい：EventBridge
 - 定期実行したい：EventBridge
 
@@ -56,7 +56,7 @@ SNS、SQS、EventBridgeは、AWSでシステム同士を連携させるサービ
 | メッセージ保持 | 通知中心 | キューに保持 | イベントルーティング中心 |
 | 処理方式 | Push型 | Pull型 | ルールベース |
 | 代表的な用途 | メール通知、複数Lambda起動 | 非同期ジョブ、処理待ち | 定期実行、イベント連携 |
-| 順序制御 | FIFOトピックで対応可能 | FIFOキューで対応可能 | 順序保証目的では使わない |
+| 順序制御 | Standardは保証なし。FIFO + SQS FIFOはグループ単位 | Standardはベストエフォート。FIFOはMessageGroupId単位 | default/Classicは保証なし。新Custom busはFIFO購読のイベントグループ単位 |
 | このプロジェクトでの用途 | 将来の通知候補 | 将来の非同期処理候補 | 将来の毎日1問配信候補 |
 
 ## 初学者向け説明
@@ -73,7 +73,7 @@ SNSは、メッセージを複数の宛先へ配る通知サービスです。
 
 SQSは、メッセージを一時的にためるキューです。
 
-処理する側はキューからメッセージを取り出して、順番に処理します。
+処理する側はキューからメッセージを取り出します。順序の保証はキューの種類によって異なります。
 
 「今すぐ処理できない仕事を、後で安全に処理したい」ときに使います。
 
@@ -87,9 +87,9 @@ AWSサービスのイベント、アプリケーションイベント、SaaSイ�
 
 このプロジェクトでは、将来的な「毎日1問配信」でEventBridgeを使う候補があります。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
-### CLF-C02で問われやすいポイント
+### CLF-C02 の学習ポイント
 
 - SNSは通知配信サービス
 - SQSはメッセージキュー
@@ -98,7 +98,7 @@ AWSサービスのイベント、アプリケーションイベント、SaaSイ�
 - SNSは複数の購読者へ通知できる
 - EventBridgeはスケジュール実行にも使える
 
-### SAA-C03で問われやすいポイント
+### SAA-C03 の学習ポイント
 
 - 非同期処理で処理待ちを作るならSQS
 - 1つのイベントを複数の処理へ配信するならSNS
@@ -150,7 +150,7 @@ AWSサービスのイベント、アプリケーションイベント、SaaSイ�
 - 外部SaaSイベントをLambdaへ連携
 - 学習サイトで毎日1問を通知
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：SNSとSQSをどちらも通知サービスとして覚える
 
@@ -178,6 +178,23 @@ EventBridgeはスケジュール実行にも使えますが、本質はイベン
 
 ただし、処理が増えると、SQSやSNSやEventBridgeで疎結合にした方が障害に強くなります。
 
+## まとめ
+
+SNS、SQS、EventBridgeは、システム連携でよく出る重要サービスです。
+
+SNSは通知、SQSはキュー、EventBridgeはイベントルーティングです。
+
+この3つを区別できると、AWSのサーバーレス構成がかなり理解しやすくなります。
+
+SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
+
+SNS Standardは順序を保証しません。順序付きファンアウトではSNS FIFOトピックとSQS FIFO購読を組み合わせ、MessageGroupIdをそろえます。SQS Standard購読ではエンドツーエンドの順序は保証されません。本記事のルールとターゲットの例は順序保証のないEventBridge default/Classicバスを対象とします。2026-09-24公開の新しいCustom Event BusはFIFO購読を提供し、発行元アカウント内のイベントグループごとに順序を維持します。バス全体の順序保証ではありません。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [SNS から SQS キューへのファンアウト](https://docs.aws.amazon.com/sns/latest/dg/sns-sqs-as-subscriber.html) · [SQS 標準キューの配信と順序](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) · [EventBridge のイベントパターンとフィルタリング](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon SNS](/terms/sns)
@@ -190,10 +207,11 @@ EventBridgeはスケジュール実行にも使えますが、本質はイベン
 
 - [CLF模擬問題一覧](/questions/clf)
 
-## まとめ
+## 訂正内容
 
-SNS、SQS、EventBridgeは、システム連携でよく出る重要サービスです。
+### 2026-11-09
 
-SNSは通知、SQSはキュー、EventBridgeはイベントルーティングです。
+- SQS が常に順番どおりに処理するかのような説明を訂正しました。Standard では重複や順序の入れ替わりがあり、FIFO の順序保証はメッセージグループ単位です。重複排除は業務上の副作用が一度だけ起きる保証ではなく、コンシューマーにも冪等性が必要であることを追記しました。
+- SNS FIFO と SQS FIFO を組み合わせた場合の順序保証の条件を追記し、EventBridge の default／Classic バスと新しい Custom Event Bus の FIFO サブスクリプションを区別しました。順序を保証しないという説明をすべての種類に適用しないための補足です。
 
-この3つを区別できると、AWSのサーバーレス構成がかなり理解しやすくなります。
+参照資料：[SQS Standard](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) / [SQS FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html) / [SNS FIFO ordering](https://docs.aws.amazon.com/sns/latest/dg/fifo-topic-message-ordering.html) / [EventBridge default / Classic](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-bus.html) / [EventBridge Custom bus ordering](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-ordering.html).

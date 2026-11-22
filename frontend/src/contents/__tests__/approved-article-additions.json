@@ -1,0 +1,33 @@
+{
+  "taskId": "aws-weekly-2026-11-09",
+  "blog": [
+    {
+      "id": "blog-026",
+      "slug": "lambda-sqs-safe-retries-idempotency"
+    },
+    {
+      "id": "blog-027",
+      "slug": "agentcore-guardrails-vs-tool-authorization"
+    }
+  ],
+  "architectures": [
+    {
+      "id": "arc-011",
+      "slug": "step-functions-human-approval"
+    },
+    {
+      "id": "arc-012",
+      "slug": "aws-backup-cross-account-ebs-restore"
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "cmp-014",
+      "slug": "step-functions-standard-vs-express"
+    },
+    {
+      "id": "cmp-015",
+      "slug": "aws-compute-ec2-lambda-ecs"
+    }
+  ]
+}

@@ -19,10 +19,10 @@ tags:
   - "auto-scaling"
   - "multi-az"
   - "saa"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-08"
+updatedAt: "2026-11-17"
 ---
 
 # ALB + Auto Scaling + RDS Multi-AZ 高可用性構成
@@ -33,41 +33,22 @@ updatedAt: "2026-06-08"
 
 本格的なWebアプリケーションの基本形であり、SAAで頻出する構成です。
 
-本プロジェクトのMVPでは低コストを優先するため採用しませんが、面接でAWS設計力を説明するときに重要な構成です。
-
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー]
-    R53[Route 53]
-    ACM[ACM]
-    ALB[Application Load Balancer]
-    ASG[Auto Scaling Group]
-    EC2A[EC2 App AZ-a]
-    EC2C[EC2 App AZ-c]
-    RDSA[(RDS Primary AZ-a)]
-    RDSC[(RDS Standby AZ-c)]
-    CW[CloudWatch]
-    SNS[SNS 任意]
-    IAM[IAM Role]
+上図の AZ-A / AZ-B は異なる可用性ゾーンを表す例示名です。データベースは単一 Standby を持つ Multi-AZ DB instance であり、Multi-AZ DB cluster ではありません。
 
-    User -->|DNS名前解決| R53
-    R53 --> ALB
-    ACM -.TLS証明書.-> ALB
-    User -->|HTTPS| ALB
-    ALB --> EC2A
-    ALB --> EC2C
-    ASG -.台数維持と増減.-> EC2A
-    ASG -.台数維持と増減.-> EC2C
-    EC2A -->|DB接続| RDSA
-    EC2C -->|DB接続| RDSA
-    RDSA -.同期レプリケーション.-> RDSC
-    CW -.メトリクス監視.-> ASG
-    CW -.アラーム通知.-> SNS
-    IAM -.EC2権限制御.-> EC2A
-    IAM -.EC2権限制御.-> EC2C
-```
+| 関係 | 経路と意味 |
+|---|---|
+| DNS | ユーザーが Route 53 で ALB の名前を解決。HTTP の中継ではない |
+| TLS | ACM の証明書を ALB の HTTPS リスナーに関連付ける |
+| リクエスト | ユーザー → ALB → AZ-A / AZ-B の EC2。ALB のヘルスチェックを設定する |
+| 台数管理 | 1 つの ASG が両 AZ の EC2 を維持・増減する |
+| DB 接続 | 両方の EC2 → RDS Primary。Standby に読み取り要求を送らない |
+| 複製と復旧 | Primary → 別 AZ の Standby に同期複製。DB 障害時は自動フェイルオーバー |
+| 監視 | CloudWatch のメトリクスに基づくスケーリング設定 → ASG。必要に応じてアラーム → SNS 通知 |
+| 権限 | IAM ロールで両 EC2 の AWS サービスへのアクセス権限を制御 |
+
+ALB と両 AZ の EC2 / RDS は同一 VPC に配置します。ALB はパブリックサブネット、EC2 と RDS はプライベートサブネットに置き、Security Group で ALB → EC2 → RDS の必要ポートを許可します。図は設計例であり、本プロジェクトの MVP に導入済みという意味ではありません。
 
 ## この構成で実現できること
 
@@ -169,10 +150,23 @@ CloudWatchでALB 5xx、EC2 CPU、Auto Scalingイベント、RDS CPU、DB接続�
 
 - [Multi-AZ / Read Replica の違い](/comparisons/multi-az-vs-read-replica)
 - [ALB / NLB / CloudFront の違い](/comparisons/alb-vs-nlb-vs-cloudfront)
-- [EC2 / Lambda / ECS の違い](/comparisons/ec2-vs-lambda-vs-ecs)
 
 ## まとめ
 
 ALB + Auto Scaling + RDS Multi-AZは、可用性を重視するWebアプリの代表的な構成です。
 
 このプロジェクトでは本番MVPには使いませんが、SAA対策とAWS設計力の説明では必須級の構成です。
+
+## 訂正内容
+
+### 2026-11-19
+
+Route 53 の名前解決と ACM 証明書の関連付けをメインの構成図に統合しました。DNS は ALB の IP アドレスを返し、ユーザーは ALB に直接 HTTPS 接続します。証明書は ALB の HTTPS リスナーの設定であり、リクエストが ACM を経由するわけではありません。
+
+根拠：[Route 53 のエイリアスレコード](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html)、[ALB の TLS 証明書](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html)。
+
+### 2026-11-17
+
+図の右側 EC2 から Standby へ接続するように見える線を修正し、両 EC2 の接続先を Primary に統一しました。両 AZ をまたぐ 1 つの ASG、DNS と HTTPS の違い、TLS 証明書の関連付け、同期複製とフェイルオーバーを明示しました。Standby の読み取り不可という説明は、単一 Standby の Multi-AZ DB instance が対象です。
+
+根拠：[RDS Multi-AZ DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html)、[Route 53 から ELB への名前解決](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html)。

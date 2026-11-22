@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an event-driven architecture that receives a single event through Amazon SNS and delivers it to multiple Amazon SQS queues simultaneously.
+This is an event-driven architecture that receives a single event through Amazon SNS and delivers it to multiple Amazon SQS queues independently.
 
 For example, when an order is created, you may want to trigger multiple processes at the same time, such as "send email notification," "update inventory," and "store analytics logs."
 
@@ -10,40 +10,24 @@ With the SNS + SQS fan-out architecture, the event publisher only needs to send 
 
 ## Diagram
 
-```mermaid
-flowchart TD
-    App[Application]
-    Topic[Amazon SNS Topic]
-    QueueA[(SQS Queue A<br/>Notification)]
-    QueueB[(SQS Queue B<br/>Inventory Update)]
-    QueueC[(SQS Queue C<br/>Analytics Log)]
-    LambdaA[Lambda A]
-    LambdaB[Lambda B]
-    LambdaC[Lambda C]
-    CW[CloudWatch Logs]
-    IAM[IAM Policy]
+### Flow and permissions
 
-    App -->|Publish Event| Topic
-    Topic --> QueueA
-    Topic --> QueueB
-    Topic --> QueueC
-    QueueA --> LambdaA
-    QueueB --> LambdaB
-    QueueC --> LambdaC
-    LambdaA --> CW
-    LambdaB --> CW
-    LambdaC --> CW
-    IAM -.-> Topic
-    IAM -.-> QueueA
-    IAM -.-> QueueB
-    IAM -.-> QueueC
-```
+Lambda event source mapping polls SQS and invokes the worker synchronously. The business workflow is asynchronous; this is not Lambda asynchronous invocation.
+
+| Step / principal | Behavior / permission |
+|---|---|
+| Publisher → SNS | Allow `sns:Publish` on the target topic. |
+| SNS → each queue | Create each subscription and a queue resource policy allowing the SNS service `sqs:SendMessage`, restricted to the topic ARN with `aws:SourceArn`. |
+| Independent consumers | Notification, inventory, and analytics each have a queue, mapping, and worker. Delivery does not guarantee simultaneous execution. Configure each queue’s DLQ separately; these are not SNS subscription DLQs. |
+| Consumer execution role | Allow `sqs:ReceiveMessage`, `sqs:DeleteMessage`, and `sqs:GetQueueAttributes` on its queue. |
+| Logs and results | Each worker writes CloudWatch Logs with logging permissions. Grant application-specific storage permissions separately; SQS permissions do not grant DynamoDB writes. |
+| Queue → DLQ | Configure a source-queue redrive policy and DLQ. `maxReceiveCount` counts message receptions, not application failure events. |
 
 ## What This Architecture Enables
 
 | Item | Description |
 |---|---|
-| Simultaneous delivery to multiple consumers | One event can branch out to multiple processes |
+| Delivery to multiple consumers | One event can branch out to multiple processes |
 | Loose coupling | The publisher does not need to know the details of each consumer |
 | Independent scaling | Each process has its own SQS queue and Lambda function |
 | Fault isolation | A failure in one process is unlikely to affect the others |
@@ -64,7 +48,7 @@ flowchart TD
 1. The application publishes an event to the SNS Topic.
 2. SNS delivers the message to multiple SQS queues based on the subscription configuration.
 3. Each SQS queue holds pending messages.
-4. Each Lambda function receives messages from its assigned queue.
+4. Each Lambda event source mapping polls its assigned queue and synchronously invokes its worker.
 5. Each Lambda performs its task such as notification, inventory update, or analytics log storage.
 6. Each process writes its logs to CloudWatch Logs.
 
@@ -127,3 +111,11 @@ Even when notification processing is lightweight and analytics processing is hea
 The SNS + SQS fan-out architecture is a representative pattern for safely branching a single event into multiple processes.
 
 In the SAA exam, when requirements include "deliver the same event to multiple systems" or "isolate failures per process," consider this architecture as a candidate.
+
+## Corrections
+
+### 2026-11-18
+
+- Clarified independent fan-out delivery, SQS polling, and separate publisher, queue-policy, and consumer permissions. The static diagram and table retain all three consumers, logs, and per-queue DLQ configuration.
+
+References: [Lambda + SQS](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) / [SQS execution role](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaSQSQueueExecutionRole.html) / [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) / [SNS → SQS](https://docs.aws.amazon.com/sns/latest/dg/subscribe-sqs-queue-to-sns-topic.html).

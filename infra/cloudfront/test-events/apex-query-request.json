@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "context": {
+    "distributionDomainName": "d25a018o7xkwid.cloudfront.net",
+    "distributionId": "EHIV14NX361T7",
+    "eventType": "viewer-request",
+    "functionName": "aws-cert-url-rewrite",
+    "requestId": "search-console-query-preservation"
+  },
+  "viewer": {
+    "ip": "203.0.113.10"
+  },
+  "request": {
+    "method": "GET",
+    "uri": "/blog/example",
+    "querystring": {
+      "flag": {
+        "value": ""
+      },
+      "encoded": {
+        "value": "%2F"
+      },
+      "plus": {
+        "value": "a+b"
+      },
+      "dup": {
+        "value": "1",
+        "multiValue": [
+          {
+            "value": "1"
+          },
+          {
+            "value": "2"
+          }
+        ]
+      }
+    },
+    "headers": {
+      "host": {
+        "value": "aws-cert-roadmap-lab.com"
+      }
+    },
+    "cookies": {}
+  }
+}

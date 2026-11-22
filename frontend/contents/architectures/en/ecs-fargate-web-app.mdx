@@ -10,32 +10,15 @@ It is well suited for cases like "I want to run my Dockerized web app on AWS, bu
 
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User]
-    DNS[Route 53]
-    ACM[AWS Certificate Manager]
-    ALB[Application Load Balancer]
-    VPC[VPC]
-    PublicSubnet[Public Subnets]
-    PrivateSubnet[Private Subnets]
-    ECS[Amazon ECS Service]
-    Task[Fargate Tasks]
-    ECR[(Amazon ECR)]
-    CW[CloudWatch Logs]
-    IAM[IAM Task Role]
+The solid path is the viewer request. DNS lookup, TLS certificate association, scheduling, image pulls and logging are separate from that path.
 
-    User -->|HTTPS| DNS
-    DNS --> ALB
-    ACM -.-> ALB
-    ALB --> PublicSubnet
-    PublicSubnet --> PrivateSubnet
-    PrivateSubnet --> ECS
-    ECS --> Task
-    Task -->|Pull Image| ECR
-    Task -->|Logs| CW
-    IAM -.-> Task
-```
+| Area | How it works |
+|---|---|
+| DNS and TLS | Route 53 resolves the custom domain to the public ALB via an alias record. The browser connects directly to the ALB’s HTTPS listener, where the ACM certificate is associated. Neither Route 53 nor ACM forwards HTTPS requests. |
+| Request routing | One internet-facing ALB spans two public subnets, one per AZ. A target group with target type `ip` routes requests to healthy Fargate task IPs in the two private subnets. The task security group allows the application port from the ALB security group. |
+| Placement and health | The ECS service maintains the desired task count and manages placement and registration. The ALB checks the target health; the ECS service is not a forwarding hop. |
+| Startup and logs | Fargate uses the task execution role to pull images from private ECR and send logs with the `awslogs` driver. Private tasks need a network path such as NAT, or the required VPC endpoints for ECR and S3 plus a CloudWatch Logs endpoint when using `awslogs` without internet access. |
+| Application permissions | The separate task role grants the application only the AWS API permissions it needs. |
 
 ## What This Architecture Provides
 
@@ -65,10 +48,10 @@ flowchart TD
 1. The user accesses your custom domain over HTTPS.
 2. Route 53 resolves the name to the ALB.
 3. The ALB receives the request.
-4. The ALB forwards the request to ECS Fargate tasks via the target group.
+4. The ALB forwards the request to ECS Fargate tasks via an IP target group.
 5. The container on the Fargate task processes the request.
 6. Container logs are written to CloudWatch Logs.
-7. On deployment, container images are pulled from ECR.
+7. On task startup, Fargate pulls container images from ECR using the task execution role.
 
 ## Design Considerations
 
@@ -129,7 +112,6 @@ Tasks that fail the ALB health check are detached, so make sure the application 
 
 ## Related Comparisons
 
-- [EC2 vs. Lambda vs. ECS](/en/comparisons/ec2-vs-lambda-vs-ecs)
 - [ALB vs. NLB vs. CloudFront](/en/comparisons/alb-vs-nlb-vs-cloudfront)
 
 ## Role in this Project
@@ -137,3 +119,11 @@ Tasks that fail the ALB health check are detached, so make sure the application 
 ECS Fargate is a strong option for running containerized web apps without managing servers.
 
 However, for an individual MVP centered on a static site, fixed costs tend to grow, so this project treats this architecture as a study reference and prioritizes S3 + CloudFront for the main site.
+
+## Corrections
+
+### 2026-11-19
+
+Separated DNS resolution, certificate association and ECS scheduling from the viewer HTTPS path. The ALB uses an IP target group for Fargate tasks across two private subnets. Clarified that image pulls and container log delivery use the task execution role rather than the application task role.
+
+References: [Amazon ECS Fargate networking](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-networking.html) · [IAM roles for ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-iam-role-overview.html) · [ECR endpoints](https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html) · [Route 53 alias for an ELB load balancer](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html) · [ALB certificates](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/https-listener-certificates.html)

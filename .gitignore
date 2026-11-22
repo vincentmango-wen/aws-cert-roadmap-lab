@@ -126,3 +126,4 @@ temp/
 *.swo
 
 # Local temporary scripts should be placed under tmp/ instead of scripts/.
+.worktrees/

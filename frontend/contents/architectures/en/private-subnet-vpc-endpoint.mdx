@@ -4,34 +4,20 @@
 
 This architecture lets applications in a private subnet inside a VPC access AWS services such as Amazon S3 and Amazon DynamoDB without going through the internet.
 
-Normally, a private subnet needs a NAT Gateway to reach AWS services on the public internet. However, for certain AWS services like Amazon S3 and Amazon DynamoDB, you can use a VPC Endpoint to keep the traffic inside the AWS network.
+For public IPv4 internet access, a private subnet commonly uses a NAT Gateway. These regional S3 and DynamoDB paths instead use service-specific gateway endpoints without a NAT device or internet gateway.
 
 This pattern is frequently tested on SAA because it balances security and cost in a network design.
 
 ## Architecture Diagram
 
-```mermaid
-flowchart TD
-    User[User]
-    ALB[Application Load Balancer]
-    VPC[VPC]
-    PublicSubnet[Public Subnet]
-    PrivateSubnet[Private Subnet]
-    App[EC2 / Lambda / Container App]
-    Endpoint[VPC Endpoint]
-    S3[(Amazon S3)]
-    DDB[(Amazon DynamoDB)]
-    IAM[IAM Policy]
+Optional user ingress and private AWS service calls are separate flows. The subnet route table configures routing; it is not a physical hop.
 
-    User -->|HTTPS| ALB
-    ALB --> PublicSubnet
-    PublicSubnet --> PrivateSubnet
-    PrivateSubnet --> App
-    App -->|Private Access| Endpoint
-    Endpoint --> S3
-    Endpoint --> DDB
-    IAM -.-> Endpoint
-```
+| Area | How it works |
+|---|---|
+| Optional HTTPS ingress | A public ALB can forward user requests to the app in a private subnet. The gateway endpoints do not handle inbound user traffic. |
+| Private routing | The private subnet’s route table has separate routes for the regional S3 and DynamoDB prefix lists. Each route points to that service’s own gateway endpoint. Requests to these regional services use the corresponding endpoint without NAT or an internet gateway. |
+| Policy evaluation | An endpoint policy limits use of that endpoint. It is separate from identity permissions and applicable resource policies, such as an S3 bucket policy; it does not grant permissions in their place. |
+| Interface endpoint alternative | Interface endpoints place network interfaces in selected subnets. Availability Zone placement, supported services, and hourly and processing charges differ from those of gateway endpoints. |
 
 ## What This Architecture Achieves
 
@@ -58,8 +44,8 @@ flowchart TD
 1. A user sends an HTTPS request to the Application Load Balancer.
 2. The ALB forwards the request to the application in the private subnet.
 3. The application accesses Amazon S3 or Amazon DynamoDB.
-4. The traffic flows through the VPC Endpoint.
-5. AWS evaluates both the IAM Policy and the Endpoint Policy.
+4. The service’s prefix-list route sends the traffic through its own gateway endpoint.
+5. The request is subject to the endpoint policy and other applicable authorization policies.
 6. Only the allowed operations are executed.
 
 ## Design Considerations
@@ -123,3 +109,11 @@ Even so, you still need to design retry logic and timeout settings on the applic
 VPC Endpoint is a key building block for secure access from private subnets to AWS services.
 
 On the SAA exam, when you see conditions like "do not go through the internet", "do not use a NAT Gateway", or "needs to access Amazon S3 or Amazon DynamoDB", consider VPC Endpoint as a candidate answer.
+
+## Corrections
+
+### 2026-11-19
+
+Replaced the shared endpoint illustration with two service-specific gateway endpoints and the corresponding prefix-list routes. Clarified that the optional ALB is for app ingress, not a hop on private endpoint requests, and that an endpoint policy does not replace IAM or resource permissions.
+
+References: [VPC gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) · [Endpoint policies](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html)

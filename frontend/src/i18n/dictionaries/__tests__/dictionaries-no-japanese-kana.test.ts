@@ -1,31 +1,21 @@
 /**
- * dictionaries-no-japanese-kana.test.ts
+ * ACR-008 regression invariants. QuestionListClient once hardcoded Japanese rather than using
+ * dictionaries, leaving Japanese UI on /en and /zh question lists. Check dictionary values mechanically
+ * because visual review can miss contamination.
  *
- * ACR-008 の再発防止 invariant。
+ * Invariants:
+ * 1. No hiragana or katakana in en/zh string values.
+ * 2. No CJK unified ideographs in English values.
+ * 3. The detector catches Japanese dictionary content as a positive control.
  *
- * 背景:
- *  `QuestionListClient` が辞書を使わず日本語をハードコードしていたため、
- *  `/en` `/zh` の模擬問題一覧に日本語 UI が出たまま公開され続けていた。
- *  「非 ja ロケールに日本語が混ざる」という欠陥は目視では見落とされるので、
- *  辞書の値そのものを機械的に検査する。
+ * Chinese legitimately uses ideographs, so only hiragana U+3040-U+309F and katakana U+30A0-U+30FF are
+ * forbidden there. U+30FB and U+30FC belong to the katakana block; use the Traditional Chinese
+ * ideographic comma or U+2027 instead of those middle-dot/long-vowel characters. No exception list is
+ * intentional.
  *
- * 検証 invariant:
- *  (1) en / zh 辞書のすべての文字列値に、ひらがな・カタカナが含まれない
- *  (2) en 辞書のすべての文字列値に、CJK 統合漢字が含まれない
- *  (3) 検出器そのものが機能していること（ja 辞書は必ず検出される = positive control）
- *
- * 判定基準について:
- *  zh は漢字を使うため「CJK があれば NG」では誤検出になる。そのため zh には
- *  かな（U+3040–U+309F ひらがな / U+30A0–U+30FF カタカナ）だけを適用する。
- *  なお U+30FB「・」/ U+30FC「ー」はカタカナブロックに含まれるため、zh 側で
- *  中黒を使いたい場合はこのテストが落ちる。その場合は繁体中文で一般的な
- *  「、」または U+2027「‧」に置き換えること（例外リストは意図的に持たない）。
- *
- * 辞書 3 言語のキー集合一致はこのテストでは見ない:
- *  `enDictionary` / `zhDictionary` はオブジェクトリテラルに `: UiDictionary`
- *  を注釈しているため、キーの欠落（missing property）も余分なキー（excess
- *  property check）も `tsc --noEmit` でコンパイルエラーになる。型で完全に
- *  担保されている以上、実行時テストで二重に見る価値はないと判断した。
+ * Key-set parity is already enforced by the UiDictionary annotations on enDictionary/zhDictionary: tsc
+ * --noEmit catches missing and excess properties. Do not duplicate that compile-time guarantee with
+ * runtime tests.
  */
 
 import { describe, expect, it } from "vitest";
@@ -38,10 +28,14 @@ import { zhDictionary } from "../zh";
 // detectors
 // ──────────────────────────────────────────────────────────────────────────
 
-/** ひらがな (U+3040–U+309F) / カタカナ (U+30A0–U+30FF) */
+/**
+ * Hiragana (U+3040-U+309F) / katakana (U+30A0-U+30FF).
+ */
 const KANA_PATTERN = /[぀-ゟ゠-ヿ]/u;
 
-/** CJK 統合漢字 (U+4E00–U+9FFF) */
+/**
+ * CJK unified ideographs (U+4E00-U+9FFF).
+ */
 const HAN_PATTERN = /[一-鿿]/u;
 
 type StringEntry = {
@@ -49,7 +43,9 @@ type StringEntry = {
   value: string;
 };
 
-/** 辞書を再帰的に走査し、文字列リーフを `path` 付きで列挙する */
+/**
+ * Recursively enumerate dictionary string leaves together with their paths.
+ */
 function collectStringEntries(node: unknown, path = ""): StringEntry[] {
   if (typeof node === "string") {
     return [{ path, value: node }];
@@ -130,11 +126,11 @@ describe("dictionaries must not leak Japanese into non-ja locales", () => {
   });
 
   it("(3) positive control: the kana detector actually fires on the ja dictionary", () => {
-    // 検出器が壊れた（常に pass する）状態で (1) が緑になるのを防ぐ。
+    // Prevent invariant (1) from passing when a broken detector always returns false.
     expect(findMatches(jaEntries, KANA_PATTERN).length).toBeGreaterThan(0);
     expect(KANA_PATTERN.test("カテゴリ")).toBe(true);
     expect(KANA_PATTERN.test("すべての難易度")).toBe(true);
-    // zh / en の正当な値で誤検出しないこと
+    // Valid zh/en values must not produce false positives.
     expect(KANA_PATTERN.test("設計安全架構")).toBe(false);
     expect(KANA_PATTERN.test("All categories")).toBe(false);
   });

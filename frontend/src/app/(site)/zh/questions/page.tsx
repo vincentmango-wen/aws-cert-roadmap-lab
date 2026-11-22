@@ -1,3 +1,4 @@
+import { AifQuestionCard } from "../../questions/aif-page-data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -11,12 +12,13 @@ const LOCALE = "zh" as const;
 export const metadata: Metadata = createPageMetadata({
   title: "AWS 模擬題",
   description:
-    "AWS Cloud Practitioner（CLF-C02）與 Solutions Architect Associate（SAA-C03）的模擬題練習，包含解析與相關 AWS 服務。",
+    "練習 AWS Cloud Practitioner（CLF-C02）、Solutions Architect Associate（SAA-C03）與 AI Practitioner（AIF-C01）模擬題，附解題解析。",
   path: "/zh/questions",
   keywords: [
     "AWS 模擬題",
     "CLF-C02",
     "SAA-C03",
+    "AIF-C01",
     "Cloud Practitioner",
     "Solutions Architect Associate",
   ],
@@ -36,8 +38,8 @@ export default function ChineseQuestionsPage() {
           AWS 模擬題
         </h1>
         <p className="mt-5 max-w-3xl text-base leading-8 text-slate-200 md:text-lg">
-          練習 AWS Cloud Practitioner（CLF-C02）與 Solutions Architect
-          Associate（SAA-C03）的選擇題。
+          練習 AWS Cloud Practitioner（CLF-C02）、Solutions Architect
+          Associate（SAA-C03）與 AI Practitioner（AIF-C01）的選擇題。
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -62,7 +64,7 @@ export default function ChineseQuestionsPage() {
         </div>
       </section>
 
-      <section className="mt-10 grid gap-5 md:grid-cols-2">
+      <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -116,6 +118,7 @@ export default function ChineseQuestionsPage() {
             前往 SAA 模擬題
           </Link>
         </article>
+        <AifQuestionCard locale="zh" />
       </section>
 
       {clfQuestions.length === 0 && saaQuestions.length === 0 ? (

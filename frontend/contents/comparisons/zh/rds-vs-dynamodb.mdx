@@ -1,6 +1,6 @@
 # RDS、DynamoDB 的差異
 
-## 結論
+## 選擇重點
 
 Amazon RDS 與 Amazon DynamoDB 都是 AWS 的資料庫服務。
 
@@ -34,7 +34,7 @@ Amazon RDS 與 Amazon DynamoDB 都是 AWS 的資料庫服務。
 | 固定成本 | 因執行個體持續運作，容易產生固定費用 | 規模較小時，容易維持低成本 |
 | 在本專案的用途 | MVP 階段不採用 | 預計用於儲存使用者諮詢資料 |
 
-## 初學者導向說明
+## 入門說明
 
 ### Amazon RDS
 
@@ -54,9 +54,9 @@ DynamoDB 是 AWS 的無伺服器 NoSQL 資料庫。
 
 諮詢資料不需要複雜的 JOIN，只要能逐筆儲存與檢視即可，因此非常適合 DynamoDB。
 
-## 考試常考重點
+## 考綱與判斷重點
 
-### CLF-C02 常考內容
+### CLF-C02 學習重點
 
 - RDS 是關聯式資料庫的受管服務
 - DynamoDB 是 NoSQL 資料庫
@@ -65,7 +65,7 @@ DynamoDB 是 AWS 的無伺服器 NoSQL 資料庫。
 - DynamoDB 適合鍵值的高速存取
 - RDS 可透過 Multi-AZ 提升可用性
 
-### SAA-C03 常考內容
+### SAA-C03 學習重點
 
 - 需要複雜 SQL 或 JOIN 時選 RDS
 - 需要高規模且簡單鍵值存取時選 DynamoDB
@@ -75,7 +75,7 @@ DynamoDB 是 AWS 的無伺服器 NoSQL 資料庫。
 - DynamoDB 應避免過度使用 Scan，改以 Query 為主進行設計
 - 無伺服器架構通常會優先選擇 DynamoDB
 
-## 實務上的使用判斷
+## 實務選型
 
 ### 適合採用 RDS 的情境
 
@@ -138,6 +138,19 @@ RDS 功能完整，但容易產生固定費用。
 
 本專案為了控制成本，MVP 階段的諮詢資料儲存採用 DynamoDB。
 
+## 總結
+
+判斷 RDS 與 DynamoDB 的差異時，可以從「以 SQL 為核心」或「以鍵值存取為核心」這兩個角度切入。
+
+RDS 是關聯式資料庫，DynamoDB 則是無伺服器架構的 NoSQL 資料庫。
+
+在本專案中，像諮詢資料這類結構單純的動態資料會儲存在 DynamoDB。
+
+## AWS 官方參考
+
+- 服務行為與設計: [RDS 關聯式引擎支援與維運](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) · [DynamoDB 主索引鍵與資料表](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html) · [DynamoDB 容量模式](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/capacity-mode.html)
+- [CLF-C02 考試指南](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 相關用語
 
 - [Amazon RDS](/terms/rds)
@@ -146,14 +159,6 @@ RDS 功能完整，但容易產生固定費用。
 - [Amazon API Gateway](/terms/api-gateway)
 - [Amazon CloudWatch](/terms/cloudwatch)
 
-## 相關問題
+## 相關題目
 
 - [CLF 模擬試題清單](/questions/clf)
-
-## 總結
-
-判斷 RDS 與 DynamoDB 的差異時，可以從「以 SQL 為核心」或「以鍵值存取為核心」這兩個角度切入。
-
-RDS 是關聯式資料庫，DynamoDB 則是無伺服器架構的 NoSQL 資料庫。
-
-在本專案中，像諮詢資料這類結構單純的動態資料會儲存在 DynamoDB。

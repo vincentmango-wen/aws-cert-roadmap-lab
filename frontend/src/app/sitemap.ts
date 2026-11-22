@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { blogPosts } from "../contents/blog/blogPosts";
 import {
   createLocalizedSitemapItems,
   getSitemapSiteUrl,
@@ -9,8 +8,11 @@ import {
   type LocalizedSitemapRouteInput,
   type SitemapItem,
 } from "../i18n/seo/sitemap";
-import { locales } from "../i18n/locales";
-import { isSealedPathname } from "../i18n/release-gate";
+import { isPublishedLocale, isSealedPathname } from "../i18n/release-gate";
+import { blogPosts } from "@/contents/blog/blogPosts";
+import { getPublishedBlogPosts } from "./(site)/blog/blog-detail-data";
+import { loadBlogContent } from "./(site)/blog/blog-content-loader";
+import { locales, getAvailableLocalesForPathname } from "../i18n/locales";
 
 export const dynamic = "force-static";
 
@@ -34,13 +36,6 @@ type LocalizedContent = {
   published?: unknown;
 };
 
-type MdxContentMeta = {
-  slug: string;
-  updatedAt?: string;
-  published: boolean;
-  noIndex: boolean;
-};
-
 const CONTENT_ROOT = path.join(process.cwd(), "contents");
 
 function isNonEmptyString(value: unknown): value is string {
@@ -62,67 +57,6 @@ function readRequiredJsonArray<T>(relativeFilePath: string): T[] {
   }
 
   return parsedContent as T[];
-}
-
-function extractFrontmatter(content: string): string {
-  if (!content.startsWith("---")) {
-    return "";
-  }
-
-  const closingMarkerIndex = content.indexOf("\n---", 3);
-
-  if (closingMarkerIndex === -1) {
-    return "";
-  }
-
-  return content.slice(3, closingMarkerIndex);
-}
-
-function readFrontmatterValue(frontmatter: string, key: string): string | undefined {
-  const pattern = new RegExp(`^${key}:\\s*["']?([^"'\\n]+)["']?\\s*$`, "m");
-  const match = frontmatter.match(pattern);
-
-  return match?.[1]?.trim();
-}
-
-function readMdxContentMetas(
-  directoryName: string,
-  includeHidden = false,
-): MdxContentMeta[] {
-  const directoryPath = path.join(CONTENT_ROOT, directoryName);
-
-  if (!existsSync(directoryPath)) {
-    return [];
-  }
-
-  return readdirSync(directoryPath, { withFileTypes: true })
-    .filter((entry) => entry.isFile())
-    .filter((entry) => entry.name.endsWith(".mdx"))
-    .map((entry) => {
-      const slug = entry.name.replace(/\.mdx$/, "");
-      const filePath = path.join(directoryPath, entry.name);
-      const fileContent = readFileSync(filePath, "utf8");
-      const frontmatter = extractFrontmatter(fileContent);
-
-      const publishedValue = readFrontmatterValue(frontmatter, "published");
-      const noIndexValue = readFrontmatterValue(frontmatter, "noIndex");
-      const updatedAt =
-        readFrontmatterValue(frontmatter, "updatedAt") ??
-        readFrontmatterValue(frontmatter, "publishedAt");
-
-      return {
-        slug,
-        updatedAt,
-        published: publishedValue !== "false",
-        noIndex: noIndexValue === "true",
-      };
-    })
-    .filter(
-      (meta) =>
-        meta.slug.length > 0 &&
-        (includeHidden || (meta.published && !meta.noIndex)),
-    )
-    .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 function getStaticRoutes(): SitemapRouteInput[] {
@@ -153,6 +87,11 @@ function getStaticRoutes(): SitemapRouteInput[] {
       changeFrequency: "weekly",
     },
     {
+      pathname: "/questions/aif",
+      priority: 0.8,
+      changeFrequency: "weekly",
+    },
+    {
       pathname: "/questions/saa",
       priority: 0.8,
       changeFrequency: "weekly",
@@ -170,6 +109,11 @@ function getStaticRoutes(): SitemapRouteInput[] {
     {
       pathname: "/blog",
       priority: 0.8,
+      changeFrequency: "weekly",
+    },
+    {
+      pathname: "/updates",
+      priority: 0.6,
       changeFrequency: "weekly",
     },
     {
@@ -193,12 +137,12 @@ function getStaticRoutes(): SitemapRouteInput[] {
       changeFrequency: "yearly",
     },
     {
-      // 利用規約は ja のみ提供する。/en /zh の利用規約ページは存在しないため
-      // availableLocales を ja に絞り、sitemap に 404 URL を載せない（#305 の 200 ゲート対策）。
+      // Terms of service are Japanese-only; corresponding /en and /zh pages do not exist.
+      // Limit availableLocales to ja to avoid sitemap URLs returning 404 (#305's HTTP 200 gate).
       pathname: "/terms-of-service",
       priority: 0.3,
       changeFrequency: "yearly",
-      availableLocales: ["ja"],
+      availableLocales: getAvailableLocalesForPathname("/terms-of-service"),
     },
   ];
 }
@@ -218,18 +162,16 @@ function getTermRoutes(): SitemapRouteInput[] {
 }
 
 /**
- * CLF (50問) + SAA (30問) を ja JSON SSoT から読み、3 言語 × 80 問 = 240 URL を
- * 生成するための入力を返す。
- *
- * en/zh の専用 JSON が未生成でも `createLocalizedSitemapItems` が自動で locale prefix
- * を付与した URL を出力するため、stub JSON を待たずに sitemap に並べられる
- * (P5-E6 / .en.json / .zh.json 空配列 stub 戦略と整合)。
+ * Read the exam registries from the Japanese source of truth. Locale parity tests guard
+ * matching published detail IDs in Japanese, English and Traditional Chinese.
  */
 function getQuestionRoutes(): SitemapRouteInput[] {
   const clfQuestions = readRequiredJsonArray<QuestionContent>("questions/clf-c02.ja.json");
   const saaQuestions = readRequiredJsonArray<QuestionContent>("questions/saa-c03.ja.json");
 
-  return [...clfQuestions, ...saaQuestions]
+  const aifQuestions = readRequiredJsonArray<QuestionContent>("questions/aif-c01.ja.json");
+
+  return [...clfQuestions, ...saaQuestions, ...aifQuestions]
     .filter((question) => question.published !== false)
     .filter((question) => isNonEmptyString(question.questionId))
     .map((question) => ({
@@ -243,15 +185,11 @@ function getQuestionRoutes(): SitemapRouteInput[] {
 }
 
 /**
- * locale 別 JSON SSoT を起点に detail URL を生成する。
- *
- * P5-034 (comparisons) / P5-042 (architectures) で MDX を locale サブディレクトリ
- * 配下に移したため、旧 `readMdxContentMetas` は contents/<directoryName> 直下を
- * 非再帰走査する設計上、空配列を返してしまい detail URL が sitemap から脱落する
- * regression が発生していた (CR1-H2 共造)。
- *
- * 本関数は ja JSON の slug 集合を「公開されている全 slug 集合」として扱い、
- * createLocalizedSitemapItems が 3 言語の URL を一度に生成する。
+ * Generate detail URLs from the localized JSON source of truth. P5-034 (comparisons) and P5-042
+ * (architectures) moved MDX into locale subdirectories; the old nonrecursive readMdxContentMetas scan of
+ * contents/<directoryName> returned empty arrays and dropped detail URLs from the sitemap (CR1-H2).
+ * Treat Japanese JSON slugs as the complete published set and let createLocalizedSitemapItems generate
+ * all three locales together.
  */
 function getLocalizedDetailRoutesFromJson(
   jaJsonRelativePath: string,
@@ -292,50 +230,26 @@ export function getComparisonSitemapRoutes(): SitemapRouteInput[] {
   );
 }
 
-/**
- * blog detail URL を locale ごとの公開状態に合わせて生成する。
- *
- * P5-050 で MDX を locale サブディレクトリ配下 (ja/en/zh) に移したため、旧
- * `getPublishedBlogPosts` と同じ判定を sitemap にも使い、各 locale で非公開の記事の
- * URL と hreflang alternate が生成されないようにする。翻訳 MDX が未作成の場合は
- * 記事詳細ページと同じく registry の公開状態に従う。
- */
+/** Blog sitemap eligibility uses the same localized metadata as article routes. */
 export function getBlogSitemapRoutes(): SitemapRouteInput[] {
-  const metasByLocale = new Map(
-    locales.map((locale) => [
-      locale,
-      new Map(
-        readMdxContentMetas(path.join("blog", locale), true).map((meta) => [
-          meta.slug,
-          meta,
-        ]),
-      ),
-    ] as const),
-  );
-
-  return blogPosts
-    .filter((post) => post.published)
-    .flatMap((post) => {
-      const availableLocales = locales.filter((locale) => {
-        const localizedMeta = metasByLocale.get(locale)?.get(post.slug);
-        return !localizedMeta || (localizedMeta.published && !localizedMeta.noIndex);
-      });
-
-      if (availableLocales.length === 0) {
-        return [];
-      }
-
-      return [{
-        pathname: `/blog/${post.slug}`,
-        priority: 0.7,
-        changeFrequency: "weekly",
-        lastModified:
-          metasByLocale.get("ja")?.get(post.slug)?.updatedAt ??
-          post.updatedAt ??
-          post.publishedAt,
-        availableLocales,
-      }];
-    });
+  const indexableSlugs = Object.fromEntries(locales.map((locale) => [locale,
+    new Set(getPublishedBlogPosts(locale).filter((post) => !post.noIndex).map((post) => post.slug)),
+  ]));
+  return blogPosts.flatMap((post): SitemapRouteInput[] => {
+    const availableLocales = locales.filter((locale) =>
+      isPublishedLocale(locale) && indexableSlugs[locale].has(post.slug),
+    );
+    // The generic sitemap helper falls back on empty lists; never pass one for Blog.
+    if (availableLocales.length === 0) return [];
+    const japanese = loadBlogContent("ja", post.slug)?.frontmatter;
+    return [{
+      pathname: `/blog/${post.slug}`,
+      priority: 0.7,
+      changeFrequency: "weekly",
+      lastModified: japanese?.updatedAt || japanese?.publishedAt || post.updatedAt || post.publishedAt,
+      availableLocales,
+    }];
+  });
 }
 
 function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
@@ -349,11 +263,10 @@ function deduplicateByUrl(items: SitemapItem[]): SitemapItem[] {
 }
 
 /**
- * sitemap 封印の第 2 層（保険フィルタ / ACR-012 / #322）。
- *
- * 第 1 層は `i18n/seo/sitemap.ts` の `resolveAvailableLocales()`。
- * sitemap は 2026-06-28 の落選（宣言 URL がほぼ全件 404）の直接原因なので、
- * 生成経路が増えても封印が漏れないよう出口でもう一度落とす。
+ * Sitemap sealing layer 2: defensive output filter (ACR-012 / #322). Layer 1 is
+ * resolveAvailableLocales() in i18n/seo/sitemap.ts. The sitemap directly caused the 2026-06-28 rejection
+ * when almost every declared URL returned 404. Filter again at the output boundary so additional
+ * generation paths cannot bypass sealing.
  */
 export function filterSealedLocaleUrls(items: SitemapItem[]): SitemapItem[] {
   const siteUrl = getSitemapSiteUrl();
@@ -375,7 +288,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getBlogSitemapRoutes(),
   ];
 
-  const sitemapItems = routes.flatMap(createLocalizedSitemapItems);
+  const sitemapItems = routes.flatMap((route) => {
+    const items = createLocalizedSitemapItems(route);
+    if (route.pathname.startsWith("/blog/") && !route.availableLocales?.includes("ja")) {
+      // A hidden Japanese article must not remain the Blog cluster's default destination.
+      for (const item of items) {
+        if (item.alternates?.languages) delete item.alternates.languages["x-default"];
+      }
+    }
+    if (route.pathname === "/updates") {
+      // This index has no recorded modification date; do not substitute build time.
+      for (const item of items) delete item.lastModified;
+    }
+    return items;
+  });
 
   return filterSealedLocaleUrls(deduplicateByUrl(sitemapItems)).sort((a, b) =>
     a.url.localeCompare(b.url),

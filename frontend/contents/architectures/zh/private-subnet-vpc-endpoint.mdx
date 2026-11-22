@@ -4,34 +4,20 @@
 
 此架構讓位於 VPC 內私有子網路的應用程式,可以不經由網際網路存取 Amazon S3 與 Amazon DynamoDB 等 AWS 服務。
 
-一般情況下,私有子網路若要連線到網際網路上的 AWS 服務,需要 NAT Gateway。但對於 Amazon S3、Amazon DynamoDB 等部分 AWS 服務,可以透過 VPC Endpoint,讓通訊全程在 AWS 網路內完成。
+若需透過公開 IPv4 連上網際網路，私有子網常使用 NAT Gateway。本例存取同區域的 S3 與 DynamoDB 時，兩條路徑各用對應的 Gateway Endpoint，不需要 NAT 或網際網路閘道。
 
 此架構兼顧安全性與成本,是 SAA 考試中常被詢問的網路設計題型。
 
 ## 架構圖
 
-```mermaid
-flowchart TD
-    User[使用者]
-    ALB[Application Load Balancer]
-    VPC[VPC]
-    PublicSubnet[Public Subnet]
-    PrivateSubnet[Private Subnet]
-    App[EC2 / Lambda / Container App]
-    Endpoint[VPC Endpoint]
-    S3[(Amazon S3)]
-    DDB[(Amazon DynamoDB)]
-    IAM[IAM Policy]
+選用的使用者進站和私有 AWS 服務呼叫是兩條不同的路徑。子網路由表是路由設定，不是封包經過的實體節點。
 
-    User -->|HTTPS| ALB
-    ALB --> PublicSubnet
-    PublicSubnet --> PrivateSubnet
-    PrivateSubnet --> App
-    App -->|Private Access| Endpoint
-    Endpoint --> S3
-    Endpoint --> DDB
-    IAM -.-> Endpoint
-```
+| 項目 | 運作方式 |
+|---|---|
+| 選用的 HTTPS 進站 | 公開 ALB 可將使用者請求轉送至私有子網的應用程式。Gateway Endpoint 不處理使用者的進站流量。 |
+| 私有路由 | 私有子網的路由表分別以同區域的 S3 和 DynamoDB 字首清單為目的地，指向各自的 Gateway Endpoint。這兩條服務路徑不經 NAT 或網際網路閘道。 |
+| 權限評估 | 端點政策限制誰可以透過該端點做哪些操作，不會取代 IAM 身分政策或適用的資源政策，例如 S3 儲存貯體政策。 |
+| Interface Endpoint 的差異 | Interface Endpoint 會在選定的子網內放置網路介面。可用區配置、支援的服務、每小時與資料處理費用都與 Gateway Endpoint 不同。 |
 
 ## 此架構可以實現的事項
 
@@ -58,8 +44,8 @@ flowchart TD
 1. 使用者透過 HTTPS 連線到 Application Load Balancer
 2. ALB 將請求轉送到私有子網路中的應用程式
 3. 應用程式對 Amazon S3 或 Amazon DynamoDB 進行存取
-4. 通訊經由 VPC Endpoint 傳遞
-5. AWS 服務端會評估 IAM Policy 與 Endpoint Policy
+4. 各服務的字首清單路由將流量導向對應的 Gateway Endpoint
+5. 請求受端點政策與其他適用的授權政策約束
 6. 只有被允許的操作會被執行
 
 ## 設計重點
@@ -123,3 +109,11 @@ VPC Endpoint 本身是受管理的服務。使用 Interface Endpoint 時,可以�
 VPC Endpoint 是從私有子網路安全地存取 AWS 服務的重要架構。
 
 在 SAA 考試中,當題目出現「不經由網際網路」「不使用 NAT Gateway」「想存取 Amazon S3 或 Amazon DynamoDB」等條件時,VPC Endpoint 就是候選答案。
+
+## 更正說明
+
+### 2026-11-19
+
+將共用端點改為兩個各自對應服務與字首清單路由的 Gateway Endpoint。選用的 ALB 不在私有端點的請求路徑上，端點政策也不會取代 IAM 或資源權限。
+
+依據：[VPC gateway endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) · [Endpoint policies](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html)

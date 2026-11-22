@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type { ChoiceId, Question } from "../../types/question";
 import { filterValidOfficialDocs } from "@/lib/official-doc";
 import { formatSlugLabel } from "@/lib/format-slug-label";
+import { splitQuestionStem } from "./question-stem";
 import {
   questionPlayerLabelsByLocale,
   type QuestionPlayerLabels,
@@ -14,11 +15,9 @@ import {
 export type { QuestionPlayerLabels, QuestionPlayerLocale } from "./question-player-labels";
 
 /**
- * サーバー側で解決済みの関連リンク情報。
- * server component (`questions/[questionId]/page.tsx`) が存在チェックを行い、
- * この型で QuestionPlayer に渡す。
- * これにより "use client" な QuestionPlayer が termGuards (terms.json 85KB) を
- * client bundle に引き込まない。
+ * Related-link data resolved on the server. The questions/[questionId]/page.tsx server component checks
+ * existence and passes this type to QuestionPlayer, keeping termGuards (terms.json, 85KB) out of the
+ * use-client bundle.
  */
 export type ResolvedLink = {
   id: string;
@@ -26,19 +25,26 @@ export type ResolvedLink = {
 };
 
 type QuestionPlayerProps = {
-  /** UI 文言ローカライズ用 locale。未指定なら 'ja'（既存呼び出し互換性維持）。 */
+  /**
+   * Locale for UI labels; defaults to ja for compatibility with existing callers.
+   */
   locale?: QuestionPlayerLocale;
-  /** UI 文言辞書。未指定なら locale に対応する既定辞書（questionPlayerLabelsByLocale[locale]）を使う。 */
+  /**
+   * UI dictionary; defaults to questionPlayerLabelsByLocale[locale] when omitted.
+   */
   labels?: QuestionPlayerLabels;
   question: Question;
+  categoryLabel?: string;
   previousQuestionId?: string;
   nextQuestionId?: string;
-  // resolved* は server component (`questions/[questionId]/page.tsx`) で必ず解決して渡される。
-  // 「存在しない関連 ID にはリンクを張らない」不変条件を server 側で守るため、型レベルで required にしている。
+  // The questions/[questionId]/page.tsx server component must resolve and pass every resolved* property.
+  // These properties are required at the type level so the server enforces the invariant against linking to nonexistent related IDs.
   resolvedServices: ResolvedLink[];
   resolvedTerms: ResolvedLink[];
   resolvedComparisons: ResolvedLink[];
 };
+
+const questionBodyTypography = "text-sm leading-7 sm:text-base";
 
 const LOCALE_PREFIX: Record<QuestionPlayerLocale, "" | "/en" | "/zh"> = {
   ja: "",
@@ -55,14 +61,14 @@ function localizePath(
 }
 
 /**
- * question.exam に応じて exam list path を返す。
- * P5 R1 Critical-2 対策: 旧版は常に '/questions/clf' を hardcode していたため
- * SAA 問題 (saa-001..saa-030) の breadcrumb / 戻り link が誤 CLF を指していた。
+ * Return the exam-list path for question.exam. Fixes P5 R1 Critical-2: the previous hardcoded
+ * /questions/clf sent SAA question breadcrumbs/back links (saa-001..saa-030) to the wrong exam.
  */
 function getExamListPath(
   exam: Question["exam"],
   locale: QuestionPlayerLocale,
 ): string {
+  if (exam === "AIF-C01") return localizePath(locale, "/questions/aif");
   if (exam === "SAA-C03") {
     return localizePath(locale, "/questions/saa");
   }
@@ -73,6 +79,7 @@ function getExamLabel(
   exam: Question["exam"],
   labels: QuestionPlayerLabels,
 ): string {
+  if (exam === "AIF-C01") return labels.aifLabel;
   return exam === "SAA-C03" ? labels.saaLabel : labels.clfLabel;
 }
 
@@ -80,6 +87,7 @@ export function QuestionPlayer({
   locale = "ja",
   labels,
   question,
+  categoryLabel,
   previousQuestionId,
   nextQuestionId,
   resolvedServices,
@@ -90,9 +98,9 @@ export function QuestionPlayer({
 
   const [selectedChoiceId, setSelectedChoiceId] = useState<ChoiceId | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  // 解説セクションは isSubmitted と独立させる（ACR-010）。
-  // 初期値 false = SSG 出力の <details> に open 属性が付かない。
-  // 子要素は静的 HTML に常時含まれるが、ブラウザ初期表示では閉じている。
+  // Keep explanations independent of isSubmitted (ACR-010).
+  // Initially false: SSG output has no open attribute on details.
+  // Children always exist in static HTML, but the section initially appears collapsed in the browser.
   const [isExplanationOpen, setIsExplanationOpen] = useState<boolean>(false);
 
   const selectedChoice = useMemo(() => {
@@ -108,6 +116,7 @@ export function QuestionPlayer({
   const isCorrect = selectedChoiceId === question.correctChoiceId;
 
   const difficultyLabel = resolvedLabels.difficulty[question.difficulty];
+  const stemParagraphs = splitQuestionStem(question.questionId, locale, question.question);
 
   const examListPath = getExamListPath(question.exam, locale);
   const examLabel = getExamLabel(question.exam, resolvedLabels);
@@ -129,7 +138,7 @@ export function QuestionPlayer({
     setIsExplanationOpen(true);
   };
 
-  // retry では isExplanationOpen に触れない（開いたまま維持する）。
+  // Retry does not change isExplanationOpen; preserve an open explanation.
   const handleRetry = () => {
     setSelectedChoiceId(null);
     setIsSubmitted(false);
@@ -187,13 +196,20 @@ export function QuestionPlayer({
         </ol>
       </nav>
 
+      <p
+        role="note"
+        className="mb-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700"
+      >
+        {resolvedLabels.questionDisclaimer}
+      </p>
+
       <header className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex flex-wrap gap-2">
           <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
             {question.exam}
           </span>
           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-            {question.category}
+            {categoryLabel ?? question.category}
           </span>
           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
             {resolvedLabels.difficultyLabel}：{difficultyLabel}
@@ -203,8 +219,10 @@ export function QuestionPlayer({
         <p className="mb-2 text-sm font-semibold text-slate-500">
           {question.questionId.toUpperCase()}
         </p>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-          {question.question}
+        <h1 className={`space-y-4 font-bold wrap-anywhere text-slate-950 ${questionBodyTypography}`}>
+          {stemParagraphs.length === 1 ? stemParagraphs[0] : stemParagraphs.map((paragraph, index) => (
+            <span className="block" key={index}>{paragraph}</span>
+          ))}
         </h1>
       </header>
 
@@ -228,7 +246,7 @@ export function QuestionPlayer({
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-300 text-sm font-bold">
                     {choice.choiceId}
                   </span>
-                  <span className="text-sm leading-7 text-slate-900 sm:text-base">
+                  <span className={`text-slate-900 ${questionBodyTypography}`}>
                     {choice.text}
                   </span>
                 </span>
@@ -286,9 +304,7 @@ export function QuestionPlayer({
         </section>
       ) : null}
 
-      {/* 解説セクション: isSubmitted に一切依存させず常時レンダーする（ACR-010）。
-          回答前のネタバレ回避は <details> の閉じ状態と summary の明示文言で担保する。
-          静的 HTML には open 属性なしで出力されるため、クローラは本文を読める。 */}
+      {/* Always render explanations independently of isSubmitted (ACR-010). Initially collapsed details and explicit summary wording prevent pre-answer spoilers. Static HTML has no open attribute, but crawlers can read the body. */}
       <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-bold text-slate-950">
           {resolvedLabels.explanationSectionTitle}
@@ -349,8 +365,7 @@ export function QuestionPlayer({
               </div>
             ) : null}
 
-            {/* 実務での使いどころ: 客観的な実務文脈・よくある誤解の枠（体験談・一人称感想は入れない）。
-                practicalNote が存在する設問のみ表示。存在しない場合はセクションごと非表示。 */}
+            {/* Practical context and common misconceptions: objective information only, without personal anecdotes or first-person opinions. Show this section only when practicalNote exists. */}
             {question.practicalNote ? (
               <div className="mb-6">
                 <h3 className="mb-2 text-base font-bold text-slate-950">
@@ -360,7 +375,7 @@ export function QuestionPlayer({
               </div>
             ) : null}
 
-            {/* 公式ドキュメント: officialDocs が存在かつ allowlist を通過した件が1件以上の場合のみ表示。 */}
+            {/* Official documentation: show only when officialDocs contains at least one allowlisted entry. */}
             {(() => {
               const validDocs = filterValidOfficialDocs(question.officialDocs);
               return validDocs.length > 0 ? (
@@ -396,7 +411,7 @@ export function QuestionPlayer({
         </h2>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {/* 関連サービス: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {/* Related services: show only existing entries; hide the entire section when empty. */}
           {resolvedServices.some(({ exists }) => exists) ? (
             <div>
               <h3 className="mb-3 text-sm font-bold text-slate-700">
@@ -419,7 +434,7 @@ export function QuestionPlayer({
             </div>
           ) : null}
 
-          {/* 関連用語: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {/* Related terms: show only existing entries; hide the entire section when empty. */}
           {resolvedTerms.some(({ exists }) => exists) ? (
             <div>
               <h3 className="mb-3 text-sm font-bold text-slate-700">
@@ -442,7 +457,7 @@ export function QuestionPlayer({
             </div>
           ) : null}
 
-          {/* 関連比較記事: 実在するもののみ表示。1件もなければセクションごと非表示 */}
+          {/* Related comparisons: show only existing entries; hide the entire section when empty. */}
           {resolvedComparisons.some(({ exists }) => exists) ? (
             <div>
               <h3 className="mb-3 text-sm font-bold text-slate-700">

@@ -16,7 +16,7 @@ targetKeywords:
 author: "AWS Cert Roadmap Lab"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-02"
+updatedAt: "2026-11-09"
 ---
 
 # AWS料金の基本をCloud Practitioner向けに整理する
@@ -96,6 +96,10 @@ Lambdaには月間 100万リクエストと 400,000 GB秒の無料利用枠が�
 
 ## 無料枠
 
+無料で構築できるかを見積もる前に、アカウント作成日とプランを確認します。2025-07-15より前に作成したアカウントは旧制度の対象で、12か月無料の特典には期限がありました。対象となる新規顧客は100米ドルのクレジットを受け取り、活動により最大100米ドルを追加獲得できます。Freeプランは最大6か月またはクレジット消費までの短い方で、Paidへのアップグレード前は課金されません。Paidでは適用クレジットを超える利用や対象外の利用に料金が発生します。Always Freeにも使用量の上限があります。
+
+2026-11-09確認時点のFAQでは、General Q6がクレジット期限を6か月、Free Plan Q8がアップグレード後の期限をアカウント作成から12か月と説明しており、記述が一致しません。一方を全アカウントに適用せず、Settings PortalまたはBillingのCreditsページで自分の期限を確認し、この構成を作成する前に対象サービスを確認してください。AWS Budgetsの通知は費用の監視に役立ちますが、予算到達時に全リソースが停止する保証ではありません。
+
 AWSには無料利用枠があります。ただし、無料枠は永続的にすべて無料という意味ではありません。期間、使用量、対象サービスに条件があります。枠の内容や適用条件は改定されるため、学習中に見た記事の数値をそのまま信じるのは危険です。
 
 個人開発では、無料枠に頼り切るよりも、AWS Budgets を設定して想定外の課金に気づける状態を作ることが重要です。
@@ -140,3 +144,11 @@ AWS Budgets は予算アラート、Cost Explorer はサービス別の費用分
 
 - [AWS無料枠でポートフォリオを作る方法](/blog/aws-free-tier-portfolio)
 - [AWS Budgetsで個人開発の課金事故を防ぐ](/blog/aws-budgets-cost-guardrail)
+
+## 訂正内容
+
+### 2026-11-09
+
+- アカウント作成日に応じた無料利用枠の資格、Free／Paid プラン、クレジットと使用量の制限を追記し、料金が発生する条件の適用範囲を明確にしました。公式 FAQ のクレジット有効期限の説明には矛盾が残るため、確認時点とアカウントごとの期限の確認方法を残し、一つの期限をすべてのアカウントに当てはめていません。
+
+参照資料：[AWS Free Tier FAQ](https://aws.amazon.com/free/free-tier-faqs/) / [AWS Free Tier documentation](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html) / [AWS legacy Free Tier](https://docs.aws.amazon.com/hands-on/latest/control-your-costs-free-tier-budgets/control-your-costs-free-tier-budgets.html).

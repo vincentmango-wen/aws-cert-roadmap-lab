@@ -1,85 +1,85 @@
-# 技術スタック決定メモ
+# Technology Stack Decision Memo
 
-## 1. 文書情報
+## 1. Document Information
 
-| 項目 | 内容 |
+| Item | Details |
 |---|---|
-| 文書名 | 技術スタック決定メモ |
-| 対象プロダクト | AWS Cert Roadmap Lab |
-| 対象タスク | P0-006 技術スタック確定 |
-| 作成日 | 2026-05-30 |
-| 目的 | MVP開発で使用する技術スタックを確定する |
+| Document name | Technology Stack Decision Memo |
+| Target product | AWS Cert Roadmap Lab |
+| Target task | P0-006 Finalize the technology stack |
+| Created | 2026-05-30 |
+| Purpose | Finalize the technology stack for MVP development |
 
 ---
 
-## 2. 結論
+## 2. Conclusion
 
-AWS Cert Roadmap Lab のMVPでは、以下の技術スタックを採用する。
+The MVP of AWS Cert Roadmap Lab will use the following technology stack.
 
-| 領域 | 採用技術 |
+| Area | Selected technology |
 |---|---|
-| フロントエンド | Next.js |
-| 言語 | TypeScript |
-| ルーティング | App Router |
-| スタイリング | Tailwind CSS |
-| コンテンツ管理 | JSON / Markdown / MDX |
-| バックエンド | AWS Lambda |
-| Lambda実装言語 | Python 3.11以上 |
+| Frontend | Next.js |
+| Language | TypeScript |
+| Routing | App Router |
+| Styling | Tailwind CSS |
+| Content management | JSON / Markdown / MDX |
+| Backend | AWS Lambda |
+| Lambda implementation language | Python 3.11 or later |
 | API | Amazon API Gateway HTTP API |
-| データベース | Amazon DynamoDB |
-| 静的サイト配信 | Amazon S3 + Amazon CloudFront |
-| S3アクセス制御 | CloudFront Origin Access Control |
-| ログ | Amazon CloudWatch Logs |
-| 課金監視 | AWS Budgets |
-| 権限管理 | IAM |
+| Database | Amazon DynamoDB |
+| Static site delivery | Amazon S3 + Amazon CloudFront |
+| S3 access control | CloudFront Origin Access Control |
+| Logging | Amazon CloudWatch Logs |
+| Billing monitoring | AWS Budgets |
+| Permission management | IAM |
 | CI/CD | GitHub Actions |
-| AWS認証 | GitHub OIDC |
-| パッケージ管理 | npm |
-| ローカルNode.js | Node.js LTS |
-| ローカルPython | Python 3.11以上 |
+| AWS authentication | GitHub OIDC |
+| Package management | npm |
+| Local Node.js | Node.js LTS |
+| Local Python | Python 3.11 or later |
 
 ---
 
-## 3. フロントエンド
+## 3. Frontend
 
-### 3.1 採用技術
+### 3.1 Selected Technologies
 
-| 技術 | 用途 |
+| Technology | Purpose |
 |---|---|
-| Next.js | Webアプリケーションフレームワーク |
-| TypeScript | 型安全な開発 |
-| App Router | 画面ルーティング |
-| Tailwind CSS | UIスタイリング |
-| JSON | AWS用語・模擬問題データ管理 |
-| Markdown / MDX | ブログ・比較記事・構成図解説の管理 |
+| Next.js | Web application framework |
+| TypeScript | Type-safe development |
+| App Router | Page routing |
+| Tailwind CSS | UI styling |
+| JSON | Managing AWS terminology and practice-question data |
+| Markdown / MDX | Managing blog posts, comparison articles, and architecture explanations |
 
-### 3.2 採用理由
+### 3.2 Reasons for Selection
 
-Next.jsを採用する理由は以下である。
+Next.js is selected for the following reasons.
 
-- 静的サイトとして出力できる
-- S3 + CloudFrontで配信しやすい
-- SEOページを作りやすい
-- ReactベースでUIを作りやすい
-- ポートフォリオとして説明しやすい
+- Can export a static site
+- Easy to serve with S3 + CloudFront
+- Easy to create SEO pages
+- Easy to build UI with React
+- Easy to explain as a portfolio project
 
-TypeScriptを採用する理由は以下である。
+TypeScript is selected for the following reasons.
 
-- 用語データ、問題データ、記事メタデータの型を定義できる
-- 実装ミスを事前に検出しやすい
-- APIレスポンス形式を型で管理できる
-- 実務での利用頻度が高い
+- Can define types for terminology data, question data, and article metadata
+- Makes implementation errors easier to detect in advance
+- Can manage API response formats through types
+- Widely used in professional development
 
-Tailwind CSSを採用する理由は以下である。
+Tailwind CSS is selected for the following reasons.
 
-- 小規模MVPでUIをすばやく作れる
-- CSSファイルを増やしすぎずに済む
-- レスポンシブ対応がしやすい
-- デザインの一貫性を保ちやすい
+- Enables fast UI development for a small MVP
+- Avoids creating too many CSS files
+- Makes responsive design straightforward
+- Helps maintain design consistency
 
-### 3.3 Next.js設定方針
+### 3.3 Next.js Configuration Policy
 
-S3 + CloudFrontで配信するため、静的exportを前提にする。
+Static export is the baseline for delivery through S3 + CloudFront.
 
 ```js
 const nextConfig = {
@@ -92,63 +92,63 @@ const nextConfig = {
 export default nextConfig;
 ```
 
-## 4. コンテンツ管理
-### 4.1 採用方針
+## 4. Content Management
+### 4.1 Selected Approach
 
-MVPでは、問い合わせ以外の学習コンテンツは静的ファイルで管理する。
-| データ    | 保存形式        | 保存場所                                       |
+In the MVP, learning content other than contact submissions is managed as static files.
+| Data | Storage format | Storage location |
 | ------ | ----------- | ------------------------------------------ |
-| AWS用語  | JSON        | `frontend/contents/terms/terms.json`       |
-| 模擬問題   | JSON        | `frontend/contents/questions/clf-c02.json` |
-| サービス比較 | MDX         | `frontend/contents/comparisons/`           |
-| 構成図解説  | MDX         | `frontend/contents/architectures/`         |
-| ブログ記事  | MDX         | `frontend/contents/blog/`                  |
-| 運営者情報  | MDX または TSX | `frontend/contents/site/`                  |
+| AWS terminology | JSON | `frontend/contents/terms/terms.json` |
+| Practice questions | JSON | `frontend/contents/questions/clf-c02.json` |
+| Service comparisons | MDX | `frontend/contents/comparisons/` |
+| Architecture explanations | MDX | `frontend/contents/architectures/` |
+| Blog posts | MDX | `frontend/contents/blog/` |
+| Site operator information | MDX or TSX | `frontend/contents/site/` |
 
 
-### 4.2 採用理由
-- AWS利用料を抑えられる
-- SEOに強い静的ページを生成できる
-- CloudFrontキャッシュを活用しやすい
-- MVPの開発速度を上げられる
-- DynamoDB設計で詰まりにくい
+### 4.2 Reasons for Selection
+- Keeps AWS costs low
+- Can generate SEO-friendly static pages
+- Makes CloudFront caching easy to use
+- Speeds up MVP development
+- Reduces the likelihood of getting stuck on DynamoDB design
 
-## 5. バックエンド
-### 5.1 採用技術
-| 技術                   | 用途                  |
+## 5. Backend
+### 5.1 Selected Technologies
+| Technology | Purpose |
 | -------------------- | ------------------- |
-| AWS Lambda           | 問い合わせ保存処理           |
-| Python 3.11以上        | Lambda実装言語          |
-| API Gateway HTTP API | `POST /contact` の公開 |
-| DynamoDB             | 問い合わせデータ保存          |
-| CloudWatch Logs      | Lambdaログ確認          |
+| AWS Lambda | Saving contact submissions |
+| Python 3.11 or later | Lambda implementation language |
+| API Gateway HTTP API | Exposing `POST /contact` |
+| DynamoDB | Storing contact data |
+| CloudWatch Logs | Inspecting Lambda logs |
 
-### 5.2 採用理由
+### 5.2 Reasons for Selection
 
-Lambda + API Gateway + DynamoDB を採用する理由は以下である。
+Lambda + API Gateway + DynamoDB are selected for the following reasons.
 
-- 常時起動サーバーが不要
-- 個人開発MVPで低コストにしやすい
-- AWS資格試験の学習内容と直結する
-- サーバーレスAPI構成として説明しやすい
-- SAAの設計パターン学習になる
+- No always-on server is required
+- Makes it easy to keep a solo-developed MVP inexpensive
+- Directly relates to AWS certification study topics
+- Easy to explain as a serverless API architecture
+- Provides practice with SAA design patterns
 
-Pythonを採用する理由は以下である。
+Python is selected for the following reasons.
 
-- Lambdaと相性がよい
-- 実装が読みやすい
-- 将来のAI解説機能と接続しやすい
-- 既存のPython学習経験を活かせる
+- Works well with Lambda
+- Readable implementation
+- Easy to connect to future AI explanation features
+- Builds on existing Python learning experience
 
-### 5.3 MVPで実装するAPI
-| メソッド | パス         | 用途      |
+### 5.3 API Implemented in the MVP
+| Method | Path | Purpose |
 | ---- | ---------- | ------- |
-| POST | `/contact` | 問い合わせ送信 |
+| POST | `/contact` | Submit a contact inquiry |
 
-MVPでは、AWS用語、模擬問題、ブログ、比較記事、構成図はAPI化しない。
+The MVP does not expose AWS terminology, practice questions, blogs, comparison articles, or architecture diagrams through APIs.
 
-## 6. AWS構成
-### 6.1 MVP構成
+## 6. AWS Architecture
+### 6.1 MVP Architecture
 ```
 User
   ↓ HTTPS
@@ -167,53 +167,53 @@ DynamoDB ContactsTableProd
 CloudWatch Logs
 ```
 
-### 6.2 採用AWSサービス
-| サービス                   | 用途            |
+### 6.2 Selected AWS Services
+| Service | Purpose |
 | ---------------------- | ------------- |
-| Amazon S3              | 静的ファイル配置      |
-| Amazon CloudFront      | CDN配信・HTTPS配信 |
-| CloudFront OAC         | S3直接公開の防止     |
-| Amazon API Gateway     | 問い合わせAPI公開    |
-| AWS Lambda             | 問い合わせ保存処理     |
-| Amazon DynamoDB        | 問い合わせデータ保存    |
-| Amazon CloudWatch Logs | Lambdaログ確認    |
-| AWS Budgets            | 課金監視          |
-| IAM                    | 最小権限管理        |
+| Amazon S3 | Storing static files |
+| Amazon CloudFront | CDN delivery and HTTPS delivery |
+| CloudFront OAC | Preventing direct public access to S3 |
+| Amazon API Gateway | Exposing the contact API |
+| AWS Lambda | Saving contact submissions |
+| Amazon DynamoDB | Storing contact data |
+| Amazon CloudWatch Logs | Inspecting Lambda logs |
+| AWS Budgets | Billing monitoring |
+| IAM | Least-privilege permission management |
 
-### 6.3 MVPでは使わないAWSサービス
-| サービス        | 使わない理由               |
+### 6.3 AWS Services Not Used in the MVP
+| Service | Reason for not using it |
 | ----------- | -------------------- |
-| EC2         | 常時起動コストを避けるため        |
-| RDS         | MVPではリレーショナルDBが不要なため |
-| NAT Gateway | 固定費が発生しやすいため         |
-| ALB         | 常時課金が発生しやすいため        |
-| ECS / EKS   | 個人開発MVPには構成が重いため     |
-| OpenSearch  | 検索機能には初期段階では過剰なため    |
-| SageMaker   | AI機能はMVP対象外のため       |
-| WAF         | MVPではコスト増になるため       |
-| Cognito     | ログイン機能はMVP対象外のため     |
-| SES         | メール通知はMVP対象外のため      |
+| EC2 | Avoid always-on running costs |
+| RDS | The MVP does not need a relational database |
+| NAT Gateway | Prone to fixed costs |
+| ALB | Prone to ongoing charges |
+| ECS / EKS | Too much architectural overhead for a solo-developed MVP |
+| OpenSearch | Excessive for search functionality at the initial stage |
+| SageMaker | AI features are outside MVP scope |
+| WAF | Adds cost to the MVP |
+| Cognito | Login functionality is outside MVP scope |
+| SES | Email notifications are outside MVP scope |
 
 ## 7. CI/CD
-### 7.1 採用技術
-| 技術             | 用途                                |
+### 7.1 Selected Technologies
+| Technology | Purpose |
 | -------------- | --------------------------------- |
-| GitHub Actions | CI/CD                             |
-| GitHub OIDC    | AWSへの一時認証                         |
-| AWS CLI        | S3 sync / CloudFront Invalidation |
+| GitHub Actions | CI/CD |
+| GitHub OIDC | Temporary authentication to AWS |
+| AWS CLI | S3 sync / CloudFront Invalidation |
 
 
-### 7.2 CI方針
+### 7.2 CI Policy
 
-Pull Requestまたはpush時に以下を実行する。
+Run the following on a pull request or push.
 
 - lint
 - typecheck
 - build
 
-### 7.3 CD方針
+### 7.3 CD Policy
 
-mainブランチへ反映されたら、以下を実行する。
+After changes reach the main branch, run the following.
 ```
 GitHub Actions
   ↓
@@ -223,89 +223,89 @@ S3 sync
   ↓
 CloudFront Invalidation
   ↓
-本番反映
+Production deployment
 ```
 
-### 7.4 AWS認証方針
+### 7.4 AWS Authentication Policy
 
-原則としてGitHub OIDCを採用する。
+Use GitHub OIDC as the default approach.
 
-理由：
+Reasons:
 
-- 長期AWSアクセスキーをGitHub Secretsに保存しなくてよい
-- 権限をIAM Roleで管理できる
-- 特定リポジトリ・mainブランチに制限できる
-- ポートフォリオとしてセキュリティ意識を説明できる
+- No need to store long-term AWS access keys in GitHub Secrets
+- Permissions can be managed through an IAM Role
+- Access can be restricted to a specific repository and the main branch
+- Demonstrates security awareness in the portfolio
 
-## 8. パッケージ管理
-### 8.1 採用
+## 8. Package Management
+### 8.1 Selection
 
-MVPでは npm を採用する。
+Use npm for the MVP.
 
-### 8.2 採用理由
-- Node.jsに標準で付属している
-- 初期セットアップが簡単
-- GitHub Actionsの設定が分かりやすい
-- 個人開発MVPでは十分
-- pnpm workspacesは、frontend / backend の分離が固まってから検討できる
-### 8.3 将来検討
+### 8.2 Reasons for Selection
+- Included with Node.js by default
+- Simple initial setup
+- Straightforward GitHub Actions configuration
+- Sufficient for a solo-developed MVP
+- pnpm workspaces can be considered once the frontend / backend separation is established
+### 8.3 Future Consideration
 
-Phase 1以降でモノレポ管理が重くなった場合は、pnpm workspacesを検討する。
+Consider pnpm workspaces if monorepo management becomes cumbersome in Phase 1 or later.
 
-ただし、MVP初期ではnpm単独で進める。
+However, use npm alone during the initial MVP stage.
 
-## 9. ローカル開発環境
-### 9.1 必須
-| ツール     | バージョン方針    |
+## 9. Local Development Environment
+### 9.1 Required
+| Tool | Version policy |
 | ------- | ---------- |
-| Node.js | LTS版       |
-| npm     | Node.js同梱版 |
-| Python  | 3.11以上     |
-| Git     | 最新安定版      |
-| VS Code | 推奨         |
+| Node.js | LTS release |
+| npm | Version bundled with Node.js |
+| Python | 3.11 or later |
+| Git | Latest stable release |
+| VS Code | Recommended |
 
-### 9.2 任意
-| ツール     | 用途                     |
+### 9.2 Optional
+| Tool | Purpose |
 | ------- | ---------------------- |
-| AWS CLI | S3 sync / AWS確認        |
-| SAM CLI | Phase 2以降のLambda/IaC管理 |
-| pnpm    | 将来のパッケージ管理候補           |
+| AWS CLI | S3 sync / AWS inspection |
+| SAM CLI | Lambda/IaC management from Phase 2 onward |
+| pnpm | Future package-management candidate |
 
 
-## 10. 採用しない技術
-| 技術               | 採用しない理由                                     |
+## 10. Technologies Not Selected
+| Technology | Reason for not selecting it |
 | ---------------- | ------------------------------------------- |
-| Astro            | Next.jsの方が今後の学習アプリ化に拡張しやすいため                |
-| Nuxt             | VueではなくReact / Next.jsで統一するため               |
-| Express          | Lambda + API Gatewayで十分なため                  |
-| FastAPI          | 常時稼働APIサーバー構成を避けるため                         |
-| RDS / PostgreSQL | MVPでは問い合わせ保存のみでRDB不要のため                     |
-| Prisma           | MVPではRDBを使わないため                             |
-| Docker           | MVP初期では構成を増やさないため                           |
-| Terraform        | 初期はAWSコンソール理解を優先し、IaCはPhase 2以降でSAMから検討するため |
-| Amplify Hosting  | S3 + CloudFrontを自分で構築する方がAWS学習効果が高いため       |
+| Astro | Next.js is easier to extend into a learning application later |
+| Nuxt | Standardize on React / Next.js rather than Vue |
+| Express | Lambda + API Gateway are sufficient |
+| FastAPI | Avoid an always-running API server architecture |
+| RDS / PostgreSQL | The MVP only stores contact submissions and does not need an RDB |
+| Prisma | The MVP does not use an RDB |
+| Docker | Avoid adding architectural components in the initial MVP |
+| Terraform | Prioritize understanding the AWS console initially; consider IaC starting with SAM in Phase 2 or later |
+| Amplify Hosting | Building S3 + CloudFront directly provides more AWS learning value |
 
-## 11. 後続タスクへの影響
-| 後続タスク  | 影響                                                    |
+## 11. Impact on Subsequent Tasks
+| Subsequent task | Impact |
 | ------ | ----------------------------------------------------- |
-| P0-007 | Node.js LTS、npm、Python 3.11以上を確認する                    |
-| P1-001 | Next.js + TypeScript + App Router + Tailwind CSSで作成する |
-| P1-004 | `output: 'export'` を設定する                              |
-| P1-010 | AWS用語データをJSONで作成する                                    |
-| P1-013 | CLF-C02問題データをJSONで作成する                                |
-| P2-014 | LambdaはPythonで実装する                                    |
-| P3-001 | npm scriptでlint / typecheck / buildを実行する              |
-| P3-009 | `frontend/out` をS3へデプロイする                             |
+| P0-007 | Verify Node.js LTS, npm, and Python 3.11 or later |
+| P1-001 | Create the project with Next.js + TypeScript + App Router + Tailwind CSS |
+| P1-004 | Configure `output: 'export'` |
+| P1-010 | Create AWS terminology data in JSON |
+| P1-013 | Create CLF-C02 question data in JSON |
+| P2-014 | Implement Lambda in Python |
+| P3-001 | Run lint / typecheck / build through npm scripts |
+| P3-009 | Deploy `frontend/out` to S3 |
 
-12. 完了条件
+12. Completion Criteria
 
-P0-006は以下を満たしたら完了とする。
+P0-006 is complete when all of the following are satisfied.
 
-- Next.jsを採用技術として確定している
-- TypeScriptを採用技術として確定している
-- Tailwind CSSを採用技術として確定している
-- App Routerを使う方針が確定している
-- Static Exportを使う方針が確定している
-- LambdaはPython 3.11以上で実装する方針が確定している
-- AWS構成が S3 + CloudFront + OAC + API Gateway + Lambda + DynamoDB + CloudWatch Logs + AWS Budgets + IAM で確定している
-- npmを初期パッケージ管理として採用している
+- Next.js is confirmed as a selected technology
+- TypeScript is confirmed as a selected technology
+- Tailwind CSS is confirmed as a selected technology
+- The decision to use App Router is finalized
+- The decision to use Static Export is finalized
+- The decision to implement Lambda in Python 3.11 or later is finalized
+- The AWS architecture is finalized as S3 + CloudFront + OAC + API Gateway + Lambda + DynamoDB + CloudWatch Logs + AWS Budgets + IAM
+- npm is selected as the initial package manager

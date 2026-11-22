@@ -1,34 +1,34 @@
-# AWS 用語表記ルール (P5-032)
+# AWS Terminology Rules (P5-032)
 
-このドキュメントは AWS Cert Roadmap Lab における AWS サービス名・用語の表記ルールを定義する。
-日本語・英語・中国語 (繁体字) の各言語ページで用語表記を統一するためのリファレンス。
+This document defines how to write AWS service names and terminology in AWS Cert Roadmap Lab.
+It is a reference for consistent terminology across Japanese, English, and Traditional Chinese pages.
 
-## 1. 基本方針
+## 1. Basic Policy
 
-### 1-1. AWS サービス名は原文の英語表記を維持
-- 各言語ページで AWS サービス名を訳出しない (e.g. "Lambda" を「ラムダ」「拉姆達」に訳さない)
-- "Amazon" / "AWS" プレフィックスは原文通り保持
-- カタカナ訳 / 中文音訳 / 中文意訳は全面禁止
+### 1-1. Keep AWS service names in their original English form
+- Do not translate AWS service names on any language page (e.g., do not translate "Lambda" into the Japanese "ラムダ" or Chinese "拉姆達").
+- Keep the "Amazon" / "AWS" prefixes exactly as in the original.
+- Katakana translations, Chinese transliterations, and Chinese semantic translations are all prohibited.
 
-### 1-2. 略称の扱い
-- 本文初出時は正式名称を併記 (e.g. "Amazon Elastic Compute Cloud (EC2)")
-- 2 回目以降は略称のみ使用可
-- 見出し (h2 / h3) は略称優先で簡潔に (e.g. "## ACM の主な用途")
+### 1-2. Abbreviations
+- Include the official name on the first occurrence in the body (e.g., "Amazon Elastic Compute Cloud (EC2)").
+- From the second occurrence onward, the abbreviation alone may be used.
+- Prefer abbreviations in headings (h2 / h3) to keep them concise (Japanese heading example: "## ACM の主な用途").
 
-### 1-3. 言語別の補足表現
-- ja: 動詞・助詞・接続詞は日本語、サービス名は英語維持
-- en: All English
-- zh: 動詞・助詞・接続詞は繁体字中文、サービス名は英語維持
+### 1-3. Language-specific surrounding text
+- ja: Use Japanese verbs, particles, and conjunctions; keep service names in English.
+- en: All English.
+- zh: Use Traditional Chinese verbs, particles, and conjunctions; keep service names in English.
 
-### 1-4. 括弧・記号
-- 括弧は半角 `( )` を全言語で統一 (検索性確保のため zh の全角括弧 `( )` は使わない)
-- 半角コロン・スラッシュは原則そのまま (e.g. `TLS/SSL`)
+### 1-4. Parentheses and symbols
+- Use half-width parentheses `( )` consistently in all languages (for searchability, do not use the zh full-width parentheses shown in the original as `( )`).
+- In principle, retain half-width colons and slashes (e.g., `TLS/SSL`).
 
-## 2. 主要 AWS サービス 表記 matrix
+## 2. Naming Matrix for Major AWS Services
 
-下記 53 件は `frontend/contents/terms/terms.ja.json` の全 termId と一致する。新規追加は §7 のフローに従う。
+The following 53 entries match all termId values in `frontend/contents/terms/terms.ja.json`. Follow the workflow in §7 for new additions.
 
-| 略称 | 正式名称 (公式英語) | ja 表記 | en 表記 | zh 表記 |
+| Abbreviation | Official name (official English) | ja notation | en notation | zh notation |
 |---|---|---|---|---|
 | ACM | AWS Certificate Manager | AWS Certificate Manager | AWS Certificate Manager | AWS Certificate Manager |
 | API Gateway | Amazon API Gateway | Amazon API Gateway | Amazon API Gateway | Amazon API Gateway |
@@ -84,17 +84,17 @@
 | WAF | AWS WAF | AWS WAF | AWS WAF | AWS WAF |
 | X-Ray | AWS X-Ray | AWS X-Ray | AWS X-Ray | AWS X-Ray |
 
-## 3. 試験区分の表記
+## 3. Exam Designations
 
 - CLF-C02 (Cloud Practitioner)
 - SAA-C03 (Solutions Architect Associate)
 - SAP-C02 (Solutions Architect Professional)
 
-各言語ページで上記表記を変えない。試験コードは半角ハイフン区切りで `SAA-C03` のように記述する。
+Do not change these designations on any language page. Write exam codes with a half-width hyphen, as in `SAA-C03`.
 
-## 4. カテゴリ・難易度の表記
+## 4. Category and Difficulty Notation
 
-### 4-1. カテゴリ (英語固定値 / 表示用ラベルは locale 別 categoryLabels で変換)
+### 4-1. Categories (fixed English values / display labels converted through locale-specific categoryLabels)
 
 - Compute
 - Storage
@@ -106,33 +106,33 @@
 - Analytics
 - Management
 
-### 4-2. 難易度 (英語固定値 / 表示用ラベルは locale 別 levelLabels で変換)
+### 4-2. Difficulty (fixed English values / display labels converted through locale-specific levelLabels)
 
 - beginner
 - intermediate
 - advanced
 
-JSON データ上のカテゴリ・難易度フィールドは英語キーで統一する。表示用の日本語・中国語ラベルは UI 側のラベル変換層 (`categoryLabels` / `levelLabels`) で行う。
+Use English keys consistently for category and difficulty fields in JSON data. Convert Japanese and Chinese display labels in the UI label conversion layer (`categoryLabels` / `levelLabels`).
 
-## 5. 単語の単複・冠詞 (英語ページ)
+## 5. Singular/Plural Forms and Articles (English Pages)
 
-- サービス名は単数形 (e.g. "an S3 bucket", "a Lambda function")
-- 一般用語の冠詞は文脈による (e.g. "the IAM role", "an IAM policy")
-- 抽象概念としてのサービスを指すときは無冠詞 (e.g. "Lambda invokes the function asynchronously")
+- Use singular service names (e.g., "an S3 bucket", "a Lambda function").
+- Articles for general terms depend on context (e.g., "the IAM role", "an IAM policy").
+- Do not use an article when referring to a service as an abstract concept (e.g., "Lambda invokes the function asynchronously").
 
-## 6. 句読点と空白
+## 6. Punctuation and Spacing
 
-- ja: 句読点は `、` と `。` を使用 / 半角数字と日本語の間に半角スペースを入れない / 括弧は半角 `( )`
-- en: 標準英語句読点 / Oxford comma 推奨 / 略称の括弧書きは半角スペース `Amazon Elastic Compute Cloud (EC2)`
-- zh (zh-TW): 全角句読点 `,` `。` `;` を使用 / 半角数字と中文の間に半角スペースを挿入 (e.g. `每月 USD 400`) / 括弧は半角 `( )`
+- ja: Use `、` and `。` for punctuation / do not insert a half-width space between half-width numbers and Japanese text / use half-width parentheses `( )`.
+- en: Use standard English punctuation / the Oxford comma is recommended / insert a half-width space before parenthesized abbreviations: `Amazon Elastic Compute Cloud (EC2)`.
+- zh (zh-TW): Use full-width punctuation (specimens retained as written in the original: `,` `。` `;`) / insert a half-width space between half-width numbers and Chinese text (localized example: `每月 USD 400`) / use half-width parentheses `( )`.
 
-## 7. リファレンス更新ルール
+## 7. Reference Update Rules
 
-新規 AWS サービスを用語集に追加する場合:
+When adding a new AWS service to the glossary:
 
-1. 公式英語名と略称を AWS 公式ドキュメントで確認
-2. 本ファイル §2 matrix に 1 行追加 (略称 / 正式名称 / ja / en / zh 表記の 5 列を埋める)
-3. `frontend/contents/terms/terms.ja.json` / `terms.en.json` / `terms.zh.json` の各々に同 `termId` / `shortName` で追加
-4. 略称 (例: `S3`, `EC2`) は `shortName` フィールドに、正式名 (例: `Amazon Simple Storage Service`) は `name` フィールドに格納
-5. `name` / `shortName` は全言語で同一の英語表記とする (locale を跨いで翻訳しない)
-6. レビュアーは matrix への追記が無いままサービス名が本文に出現していないかをチェックする
+1. Verify the official English name and abbreviation in the official AWS documentation.
+2. Add one row to the matrix in §2 of this file (fill in all five columns: abbreviation / official name / ja / en / zh notation).
+3. Add an entry with the same `termId` / `shortName` to each of `frontend/contents/terms/terms.ja.json` / `terms.en.json` / `terms.zh.json`.
+4. Store the abbreviation (e.g., `S3`, `EC2`) in the `shortName` field and the official name (e.g., `Amazon Simple Storage Service`) in the `name` field.
+5. Use identical English notation for `name` / `shortName` in every language (do not translate them across locales).
+6. Reviewers check that service names do not appear in the body without a corresponding addition to the matrix.

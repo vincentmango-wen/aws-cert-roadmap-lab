@@ -11,6 +11,7 @@ import {
   getAdjacentQuestionIds,
   getPublishedQuestionByIdLocale,
   getQuestionStaticParams,
+  getQuestionCategoryDisplayLabel,
 } from "../question-detail-data";
 
 type QuestionDetailPageProps = {
@@ -51,9 +52,9 @@ export default async function QuestionDetailPage({
     questionId,
   );
 
-  // server 側で存在チェックを済ませ、解決済み構造を client に渡す。
-  // QuestionPlayer ("use client") から termGuards (terms.json 85KB) の
-  // import を排除し client bundle 汚染を解消する。
+  // Check existence on the server and pass resolved structures to the client.
+  // Keep the termGuards import (terms.json, 85KB) out of the use-client QuestionPlayer
+  // to avoid including the large data file in the client bundle.
   const resolvedServices: ResolvedLink[] = (question.relatedServices ?? []).map(
     (id) => ({ id, exists: isExistingTerm(id) }),
   );
@@ -64,8 +65,8 @@ export default async function QuestionDetailPage({
     question.relatedComparisons ?? []
   ).map((id) => ({ id, exists: isExistingComparison(id) }));
 
-  // Quiz 構造化データ（ja のみ）。sd-policies 準拠のため、ここで出力する
-  // テキストは QuestionPlayer が静的 HTML に常時描画しているものに限る。
+  // Quiz structured data (Japanese only). To comply with structured-data policies, output only
+  // text that QuestionPlayer always renders in static HTML.
   const quizJsonLd = buildQuestionQuizJsonLd(question, LOCALE);
 
   return (
@@ -80,6 +81,7 @@ export default async function QuestionDetailPage({
         locale={LOCALE}
         labels={questionPlayerLabelsByLocale[LOCALE]}
         question={question}
+        categoryLabel={getQuestionCategoryDisplayLabel(LOCALE, question)}
         previousQuestionId={previousQuestionId ?? undefined}
         nextQuestionId={nextQuestionId ?? undefined}
         resolvedServices={resolvedServices}

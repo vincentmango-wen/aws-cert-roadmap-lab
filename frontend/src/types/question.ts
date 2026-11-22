@@ -1,4 +1,4 @@
-export type ExamCode = "CLF-C02" | "SAA-C03";
+export type ExamCode = "CLF-C02" | "SAA-C03" | "AIF-C01";
 
 export type QuestionDifficulty = "easy" | "normal" | "hard";
 
@@ -10,7 +10,12 @@ export type QuestionCategory =
   | "Secure Architectures"
   | "Resilient Architectures"
   | "High-Performing Architectures"
-  | "Cost-Optimized Architectures";
+  | "Cost-Optimized Architectures"
+  | "Fundamentals of AI and ML"
+  | "Fundamentals of GenAI"
+  | "Applications of Foundation Models"
+  | "Guidelines for Responsible AI"
+  | "Security, Compliance, and Governance for AI Solutions";
 
 export type ChoiceId = "A" | "B" | "C" | "D";
 
@@ -33,9 +38,14 @@ export type Question = {
   correctChoiceId: ChoiceId;
   explanation: string;
   choiceExplanations?: Partial<Record<ChoiceId, string>>;
-  /** 客観的な実務での使いどころ・よくある誤解を記述する枠（体験談・一人称感想は入れない）。\n\n 区切りで複数段落。 */
+  /**
+   * Objective practical uses and common misconceptions; no personal anecdotes or first-person opinions.
+   * Separate multiple paragraphs with double newlines (\n\n).
+   */
   practicalNote?: string;
-  /** 公式ドキュメントへの外部リンク配列。空または未定義の場合はセクション非表示。 */
+  /**
+   * External official-document links. Hide the section when undefined or empty.
+   */
   officialDocs?: OfficialDoc[];
   relatedServices?: string[];
   relatedTerms?: string[];

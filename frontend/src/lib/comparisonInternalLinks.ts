@@ -1,18 +1,9 @@
 /**
- * comparisonInternalLinks.ts
- *
- * 比較記事 MDX 本文中の内部リンク href を、表示中の locale に合わせて書き換える
- * pure function 群 (P5-041).
- *
- * 設計指針:
- * - MDX 本文中の `[label](/terms/xxx)` などの href は **agent 翻訳時点では原文 ja パス**で固定
- *   (設計書 §6-7: "リンク `[text](url)` の url は触らない")。
- * - renderer 側 (MarkdownContent) でこの helper を通すことで、同じ MDX を
- *   3 言語ページから共通利用しつつ、リンク先だけ locale 対応に書き換える。
- * - 同一言語に該当ページが存在しない場合は **ja パスへフォールバック**して
- *   404 を避ける ("リンク先がそのロケールで未公開の場合のフォールバック方針").
- *
- * pure function に倒し、テスト容易性 + server / client いずれからも import 可能.
+ * Pure functions resolving comparison MDX internal links for the displayed locale (P5-041). During
+ * translation, MDX href values such as /terms/xxx remain the original Japanese paths (design section
+ * 6-7: do not alter link URLs). MarkdownContent applies this helper at render time to localize
+ * destinations while sharing content. Fall back to Japanese when the same-language destination is
+ * unpublished to avoid 404s. Pure functions improve testability and permit server/client imports.
  */
 import {
   isExistingArchitectureForLocale,
@@ -23,22 +14,23 @@ import { createLocalizedPath } from "../i18n/locales";
 import type { Locale } from "../i18n/locales";
 
 export type ResolvedInternalLink = {
-  /** 最終的に <Link href> / <a href> に渡す URL */
+  /**
+   * Final URL passed to Link href or a href.
+   */
   href: string;
   /**
-   * external (http(s)://, mailto:, tel:, anchor) かどうか.
-   * true なら <a target=_blank> 系で開く判定に使える.
+   * Whether the destination is external (http(s), mailto, tel or anchor). Callers may use true to select
+   * an external-link treatment such as target=_blank.
    */
   isExternal: boolean;
   /**
-   * 内部リンクで、かつ表示中の locale に該当ページが存在するか.
-   * false の場合は ja へフォールバック済み (= href は ja 用パス) または
-   * そもそも未知の内部 href (= href は原文のまま) であることを示す.
+   * Whether an internal destination exists in the displayed locale. False indicates a Japanese fallback
+   * or an unknown internal href preserved unchanged.
    */
   available: boolean;
   /**
-   * 「同言語にページが無いため ja パスへフォールバックした」フラグ.
-   * 呼び出し元が "準備中" chip 表示などの UX 切替に使う.
+   * Whether a missing same-language page caused a Japanese fallback. Callers can use this for UI such as
+   * a coming-soon chip.
    */
   fellBackToJa: boolean;
 };
@@ -49,26 +41,18 @@ const QUESTIONS_PREFIX = "/questions/";
 const ARCHITECTURES_PREFIX = "/architectures/";
 
 /**
- * 比較記事 MDX 本文中の href を locale に合わせて解決する.
- *
- * 解決ルール:
- * - `http(s)://`, `mailto:`, `tel:`, `#anchor` → external 扱い、href はそのまま
- * - `/terms/{id}`:
- *    - termId が terms.ja.json に存在 → `/{locale}/terms/{id}` (terms は全 3 言語公開)
- *    - 存在しない → ja パスのまま (404 を呼ぶが既存 ja 挙動と同じ / 不正リンクの責任は MDX 側)
- * - `/comparisons/{slug}`:
- *    - 該当 locale で公開 → `/{locale}/comparisons/{slug}`
- *    - 未公開 → ja パス (`/comparisons/{slug}`) へフォールバック (fellBackToJa: true)
- *    - そもそも slug が存在しない → ja パスのまま (404)
- * - `/questions/...`:
- *    - 該当 locale ページが現状未整備 (P5-040 系・別 issue) のため、
- *      ja パスへフォールバック (fellBackToJa: true) して 404 を回避.
- * - `/architectures/{slug}`:
- *    - 該当 locale で公開 → `/{locale}/architectures/{slug}` (P5-042 で ja/en/zh 公開済)
- *    - 未公開 → ja パス (`/architectures/{slug}`) へフォールバック (fellBackToJa: true)
- *    - そもそも slug が存在しない → ja パスのまま (404)
- * - その他のサイト内ルート (`/`, `/about`, `/comparisons` 一覧, 等):
- *    - en/zh にも対応ルートが存在する前提で createLocalizedPath を適用.
+ * Resolve a comparison MDX href for the locale.
+ * - http(s), mailto, tel and anchors: treat as external and preserve href.
+ * - /terms/{id}: localize IDs present in terms.ja.json (published in all locales); preserve unknown IDs,
+ * retaining the existing Japanese 404 behavior. Invalid source links must be fixed in MDX.
+ * - /comparisons/{slug}: localize published destinations; fall back to Japanese with fellBackToJa:true
+ * for untranslated pages; preserve unknown slugs.
+ * - /questions/...: use a Japanese fallback while localized routes remain pending under P5-040/separate
+ * work.
+ * - /architectures/{slug}: localize published destinations (all three locales added in P5-042), fall
+ * back to Japanese when untranslated, and preserve unknown slugs.
+ * - Other site routes such as /, /about and list pages: apply createLocalizedPath, assuming
+ * corresponding en/zh routes exist.
  */
 export function resolveInternalLink(
   locale: Locale,
@@ -78,7 +62,7 @@ export function resolveInternalLink(
     return { href, isExternal: false, available: false, fellBackToJa: false };
   }
 
-  // external / anchor / mailto / tel はそのまま
+  // Preserve external URLs, anchors, mailto and tel links.
   if (
     href.startsWith("http://") ||
     href.startsWith("https://") ||
@@ -89,7 +73,7 @@ export function resolveInternalLink(
     return { href, isExternal: true, available: true, fellBackToJa: false };
   }
 
-  // 相対 path や protocol-relative はサポート外として external 扱い
+  // Treat unsupported relative and protocol-relative paths as external.
   if (!href.startsWith("/")) {
     return { href, isExternal: true, available: true, fellBackToJa: false };
   }
@@ -107,7 +91,7 @@ export function resolveInternalLink(
       };
     }
 
-    // 不存在 termId は ja でも 404 になるため、原文のまま返す.
+    // Unknown term IDs also return 404 in Japanese, so preserve the original href.
     return { href, isExternal: false, available: false, fellBackToJa: false };
   }
 
@@ -127,8 +111,8 @@ export function resolveInternalLink(
       };
     }
 
-    // ja には存在するが en/zh で未公開のケース → ja パスへフォールバック.
-    // ja でも存在しない slug は ja パスのまま 404 (= 不正リンクの責任は MDX 側).
+    // If Japanese exists but en/zh is unpublished, fall back to the Japanese path.
+    // Unknown Japanese slugs remain unchanged (404); invalid source links must be fixed in MDX.
     return {
       href,
       isExternal: false,
@@ -137,8 +121,8 @@ export function resolveInternalLink(
     };
   }
 
-  // /questions/... — locale 別ルートが現状未整備 (P5-040 系 / 別 issue) のため
-  // ja パスへフォールバック.
+  // Localized /questions/... routes are pending under P5-040/separate work,
+  // so fall back to Japanese.
   if (href.startsWith(QUESTIONS_PREFIX) || href === "/questions") {
     if (locale === "ja") {
       return { href, isExternal: false, available: true, fellBackToJa: false };
@@ -151,9 +135,9 @@ export function resolveInternalLink(
     };
   }
 
-  // /architectures/{slug} — P5-042 で ja/en/zh 全 locale で公開済。
-  // 同言語に存在すれば `/{locale}/architectures/{slug}`、未公開なら ja パス
-  // へフォールバック (fellBackToJa: true) して 404 を避ける。
+  // /architectures/{slug}: P5-042 published all three locales.
+  // Use /{locale}/architectures/{slug} when published in that locale; otherwise
+  // fall back to Japanese with fellBackToJa:true to avoid 404s.
   if (
     href.startsWith(ARCHITECTURES_PREFIX) &&
     href.length > ARCHITECTURES_PREFIX.length
@@ -169,8 +153,8 @@ export function resolveInternalLink(
       };
     }
 
-    // ja には存在するが en/zh で未公開のケース → ja パスへフォールバック.
-    // ja でも存在しない slug は ja パスのまま 404 (= 不正リンクの責任は MDX 側).
+    // If Japanese exists but en/zh is unpublished, fall back to the Japanese path.
+    // Unknown Japanese slugs remain unchanged (404); invalid source links must be fixed in MDX.
     return {
       href,
       isExternal: false,
@@ -179,8 +163,8 @@ export function resolveInternalLink(
     };
   }
 
-  // /architectures 一覧 (slug なし) は en/zh にも対応ルートが存在するため
-  // createLocalizedPath で 3 言語対応する。
+  // The /architectures list (without a slug) exists in en/zh too,
+  // so use createLocalizedPath for all three locales.
   if (href === "/architectures") {
     return {
       href: createLocalizedPath(locale, href),
@@ -190,9 +174,9 @@ export function resolveInternalLink(
     };
   }
 
-  // それ以外の内部ルート (`/`, `/about`, `/contact`, `/privacy`, `/disclaimer`,
-  // `/comparisons`, `/terms`, 等) は en/zh にも対応ルートが存在する前提で
-  // createLocalizedPath を適用する.
+  // For other internal routes (/, /about, /contact, /privacy, /disclaimer,
+  // /comparisons, /terms, etc.), assume corresponding en/zh routes exist
+  // and apply createLocalizedPath.
   return {
     href: createLocalizedPath(locale, href),
     isExternal: false,
@@ -202,8 +186,8 @@ export function resolveInternalLink(
 }
 
 /**
- * MarkdownContent / 他 renderer 用の便利関数:
- * 解決結果から `<Link href>` に渡す URL だけを抜き出す.
+ * Convenience helper for MarkdownContent and other renderers: extract only the resolved URL for Link
+ * href.
  */
 export function resolveInternalHref(locale: Locale, href: string): string {
   return resolveInternalLink(locale, href).href;

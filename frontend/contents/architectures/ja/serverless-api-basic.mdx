@@ -19,10 +19,10 @@ tags:
   - "api"
   - "lambda"
   - "dynamodb"
-mermaid: true
+mermaid: false
 published: true
 publishedAt: "2026-06-01"
-updatedAt: "2026-06-08"
+updatedAt: "2026-11-19"
 ---
 
 # API Gateway + Lambda + DynamoDB サーバーレスAPI構成
@@ -37,28 +37,15 @@ API GatewayをAPIの入口にし、Lambdaで処理を実行し、DynamoDBにデ�
 
 ## 構成図
 
-```mermaid
-flowchart TD
-    User[ユーザー]
-    Frontend[Frontend S3 + CloudFront]
-    APIGW[API Gateway HTTP API]
-    Lambda[AWS Lambda contact-submit]
-    DDB[(DynamoDB ContactsTable)]
-    CW[CloudWatch Logs]
-    IAM[IAM Role]
-    Budget[AWS Budgets]
+ブラウザーは先にフォームを読み込み、別のリクエストで送信します。CloudFront と S3 はページを配信するだけで、フォームの API リクエストは送信しません。
 
-    User -->|フォーム入力| Frontend
-    Frontend -->|POST /contact| APIGW
-    APIGW -->|Lambda Proxy Integration| Lambda
-    Lambda -->|PutItem| DDB
-    Lambda -->|ログ出力| CW
-    IAM -.実行権限.-> Lambda
-    IAM -.PutItemのみ許可.-> DDB
-    Budget -.課金監視.-> APIGW
-    Budget -.課金監視.-> Lambda
-    Budget -.課金監視.-> DDB
-```
+| フロー・役割 | 処理内容 |
+|---|---|
+| フォームを読み込む | ブラウザーは CloudFront から静的フォームを読み込みます。S3 は静的ファイルのオリジンです。 |
+| フォームを送信する | ブラウザー上で入力を確認した後、JavaScript が API Gateway HTTP API に `POST /contact` を送ります。 |
+| 検証・保存・応答 | HTTP API は Lambda プロキシ統合で `contact-submit` を呼び出します。Lambda は入力を検証し、有効なら `ContactsTable` に `PutItem` を実行し、API Gateway 経由でブラウザーに結果を返します。 |
+| 権限 | API Gateway には関数の呼び出し権限が必要です。Lambda の実行ロールは別で、対象テーブルの `dynamodb:PutItem` と必要なログ書き込みだけを許可します。 |
+| ログ・コスト監視 | Lambda は運用ログを CloudWatch Logs に出力します。AWS Budgets は API Gateway、Lambda、DynamoDB などのコスト増加を通知できます。どちらもリクエストの中継先ではありません。 |
 
 ## この構成で実現できること
 
@@ -86,7 +73,7 @@ flowchart TD
 
 1. ユーザーが問い合わせフォームへ入力する
 2. フロントエンドで必須項目や文字数を検証する
-3. フロントエンドがAPI Gatewayの `POST /contact` を呼び出す
+3. ブラウザー上の JavaScript が API Gateway に `POST /contact` を送る
 4. API GatewayがLambdaをLambda Proxy Integrationで呼び出す
 5. LambdaがJSONをパースする
 6. Lambdaがhoneypotを確認する
@@ -161,3 +148,9 @@ CloudWatch Logsでは、requestId、処理結果、エラー種別を出力し�
 API Gateway + Lambda + DynamoDBは、個人開発MVPで動的処理を最小限追加するための基本構成です。
 
 このプロジェクトでは、問い合わせフォームだけをAPI化し、用語・問題・記事・構成図は静的ファイルとして配信することで、コストと実装範囲を抑えます。
+
+## 訂正内容
+
+### 2026-11-19
+
+送信元を訂正しました。フォームを HTTP API に送信するのは S3 や CloudFront ではなくブラウザーです。構成図では静的ページの読み込みと送信を分けています。[HTTP API の Lambda プロキシ統合](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)と [API Gateway による呼び出し権限](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html)を参照してください。

@@ -1,84 +1,82 @@
-<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="720" rx="32" fill="#F8FAFC"/>
-
-  <text x="600" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#0F172A">
-    EventBridge + Lambda 批次處理架構
-  </text>
-
-  <text x="600" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#475569">
-    依排程自動執行 Lambda,作為定期處理、彙總、通知的基礎架構
-  </text>
-
-  <rect x="80" y="260" width="230" height="140" rx="24" fill="#FFFFFF" stroke="#7C3AED" stroke-width="3"/>
-  <rect x="120" y="292" width="150" height="52" rx="14" fill="#EDE9FE"/>
-  <text x="195" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#6D28D9">
-    EventBridge
-  </text>
-  <text x="195" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
-    Schedule Rule
-  </text>
-  <text x="195" y="392" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
-    cron / rate
-  </text>
-
-  <rect x="475" y="260" width="230" height="140" rx="24" fill="#FFFFFF" stroke="#F97316" stroke-width="3"/>
-  <rect x="525" y="292" width="130" height="52" rx="14" fill="#FFEDD5"/>
-  <text x="590" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#C2410C">
-    Lambda
-  </text>
-  <text x="590" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
-    Batch Logic
-  </text>
-  <text x="590" y="392" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#475569">
-    定期執行處理
-  </text>
-
-  <rect x="880" y="210" width="230" height="110" rx="22" fill="#FFFFFF" stroke="#22C55E" stroke-width="3"/>
-  <rect x="930" y="240" width="130" height="42" rx="12" fill="#DCFCE7"/>
-  <text x="995" y="267" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#15803D">
-    DynamoDB
-  </text>
-  <text x="995" y="299" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#475569">
-    Read / Write
-  </text>
-
-  <rect x="880" y="380" width="230" height="110" rx="22" fill="#FFFFFF" stroke="#0EA5E9" stroke-width="3"/>
-  <rect x="920" y="410" width="150" height="42" rx="12" fill="#E0F2FE"/>
-  <text x="995" y="437" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0369A1">
-    CloudWatch Logs
-  </text>
-  <text x="995" y="469" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#475569">
-    Logs / Metrics
-  </text>
-
-  <path d="M310 330H456" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
-  <path d="M446 318L466 330L446 342" stroke="#7C3AED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="388" y="306" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#6D28D9">
-    Trigger
-  </text>
-
-  <path d="M705 310H861" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
-  <path d="M851 298L871 310L851 322" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="788" y="286" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#15803D">
-    Data Access
-  </text>
-
-  <path d="M705 365H861" stroke="#0EA5E9" stroke-width="4" stroke-linecap="round"/>
-  <path d="M851 353L871 365L851 377" stroke="#0EA5E9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="788" y="397" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0369A1">
-    Log Output
-  </text>
-
-  <rect x="260" y="510" width="680" height="92" rx="22" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
-  <text x="600" y="548" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">
-    應用範例
-  </text>
-  <text x="600" y="580" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#475569">
-    每日一題派送 / 定期彙總 / 舊資料整理 / 報告產生 / 通知處理
-  </text>
-
-  <rect x="125" y="650" width="950" height="42" rx="21" fill="#E2E8F0"/>
-  <text x="600" y="677" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
-    重點:不需常駐伺服器,僅在指定時間執行 Lambda
-  </text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="890" viewBox="0 0 1000 890" role="img" aria-labelledby="title desc" xml:lang="zh-Hant">
+<title id="title">EventBridge + Lambda</title>
+<desc id="desc">上圖以 EventBridge Scheduler 執行以讀取為主的定期工作。虛線是選用功能，使用時須個別設定。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#334155"/></marker></defs>
+<rect width="1000" height="890" rx="20" fill="#f8fafc"/>
+<g font-family="Arial, 'Yu Gothic', 'Microsoft JhengHei', sans-serif" fill="#0f172a" font-size="15">
+<text x="500" y="35" text-anchor="middle" font-size="22" font-weight="400">EventBridge + Lambda</text>
+<rect x="13.3333" y="60" width="973.333" height="275" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="500" y="86" text-anchor="middle" font-size="17" font-weight="400">定期批次處理</text>
+<g id="scheduler">
+<rect x="29.1667" y="105" width="183.333" height="88" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="120.833" y="134.0" text-anchor="middle" font-size="15" font-weight="600">EventBridge</text>
+<text x="120.833" y="154.0" text-anchor="middle" font-size="15" font-weight="400">Scheduler</text>
+<text x="120.833" y="174.0" text-anchor="middle" font-size="15" font-weight="400">cron / rate</text>
+</g>
+<g id="rule">
+<rect x="29.1667" y="235" width="183.333" height="72" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="120.833" y="266.0" text-anchor="middle" font-size="15" font-weight="600">EventBridge Rule</text>
+<text x="120.833" y="286.0" text-anchor="middle" font-size="15" font-weight="400">選用</text>
+</g>
+<g id="lambda">
+<rect x="400" y="170" width="183.333" height="76" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="491.667" y="203.0" text-anchor="middle" font-size="15" font-weight="600">Lambda</text>
+<text x="491.667" y="223.0" text-anchor="middle" font-size="15" font-weight="400">批次函式</text>
+</g>
+<g id="dynamodb">
+<rect x="775" y="170" width="191.667" height="76" rx="12" fill="#ecfdf5" stroke="#34d399"/>
+<text x="870.833" y="213.0" text-anchor="middle" font-size="15" font-weight="600">DynamoDB</text>
+</g>
+<path data-from="scheduler" data-to="lambda" d="M212.5 149 H308.333 V190 H400" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<path data-from="rule" data-to="lambda" d="M212.5 271 H325 V226 H400" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<text x="275" y="135" text-anchor="middle" font-size="15" font-weight="400">定期執行</text>
+<text x="275" y="294" text-anchor="middle" font-size="15" font-weight="400">事件符合</text>
+<path data-from="lambda" data-to="dynamodb" d="M583.333 208 H775" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<text x="679.167" y="195" text-anchor="middle" font-size="15" font-weight="400">僅讀取</text>
+<rect x="13.3333" y="350" width="973.333" height="300" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="125" y="377" text-anchor="middle" font-size="17" font-weight="400">日誌輸出</text>
+<g id="logging-lambda">
+<rect x="29.1667" y="400" width="150" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="104.167" y="438.0" text-anchor="middle" font-size="15" font-weight="600">Lambda</text>
+</g>
+<g id="logs">
+<rect x="250" y="400" width="158.333" height="66" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="329.167" y="428.0" text-anchor="middle" font-size="15" font-weight="600">CloudWatch</text>
+<text x="329.167" y="448.0" text-anchor="middle" font-size="15" font-weight="400">Logs</text>
+</g>
+<g id="log-metrics">
+<rect x="483.333" y="400" width="200" height="76" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="583.333" y="433.0" text-anchor="middle" font-size="15" font-weight="600">Logs → metric filter</text>
+<text x="583.333" y="453.0" text-anchor="middle" font-size="15" font-weight="400">產生指標（選用）</text>
+</g>
+<g id="lambda-metrics">
+<rect x="483.333" y="550" width="200" height="76" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="583.333" y="583.0" text-anchor="middle" font-size="15" font-weight="600">Lambda</text>
+<text x="583.333" y="603.0" text-anchor="middle" font-size="15" font-weight="400">Metrics</text>
+</g>
+<g id="alarm">
+<rect x="775" y="470" width="200" height="86" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="875" y="508.0" text-anchor="middle" font-size="15" font-weight="600">CloudWatch Alarm</text>
+<text x="875" y="528.0" text-anchor="middle" font-size="15" font-weight="400">選用，須設定</text>
+</g>
+<path data-from="logging-lambda" data-to="logs" d="M179.167 433 H250" fill="none" stroke="#334155" stroke-width="1.66667" marker-end="url(#arrow)"/>
+<path data-from="logs" data-to="log-metrics" d="M408.333 433 H483.333" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<path data-from="log-metrics" data-to="alarm" d="M683.333 438 H729.167 V490 H775" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<path data-from="lambda-metrics" data-to="alarm" d="M683.333 588 H729.167 V536 H775" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<rect x="13.3333" y="665" width="973.333" height="135" rx="12" fill="#fff" stroke="#cbd5e1"/>
+<text x="500" y="692" text-anchor="middle" font-size="17" font-weight="400">通知／電子郵件（選用）</text>
+<g id="notifying-lambda">
+<rect x="141.667" y="715" width="183.333" height="66" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+<text x="233.333" y="753.0" text-anchor="middle" font-size="15" font-weight="600">Lambda</text>
+</g>
+<g id="destinations">
+<rect x="616.667" y="715" width="208.333" height="66" rx="12" fill="#ede9fe" stroke="#8b5cf6"/>
+<text x="720.833" y="743.0" text-anchor="middle" font-size="15" font-weight="600">SNS / SES</text>
+<text x="720.833" y="763.0" text-anchor="middle" font-size="15" font-weight="400">選用</text>
+</g>
+<path data-from="notifying-lambda" data-to="destinations" d="M325 748 H616.667" fill="none" stroke="#334155" stroke-width="1.66667" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<text x="500" y="825" text-anchor="middle" font-size="15" font-weight="400">IAM：Lambda 執行角色權限</text>
+<text x="500" y="850" text-anchor="middle" font-size="15" font-weight="400">Budgets：監控費用與用量</text>
+<text x="500" y="875" text-anchor="middle" font-size="15" font-weight="400">未來設計範例，尚未部署</text>
+</g>
 </svg>

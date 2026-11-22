@@ -1,22 +1,13 @@
 import type { BlogPostMeta } from "../../types/blog";
 
 /**
- * blogPosts.ts (registry SSoT)
- *
- * 25 件のブログ記事の共通メタ (postId / slug / publishedAt / updatedAt /
- * published / author / category / tags / targetKeywords / title / description).
- *
- * - locale 共通フィールド (postId / slug / publishedAt / updatedAt / published /
- *   category) は本ファイルが正本.
- * - locale 別の表示用 title / description / tags / targetKeywords は、
- *   本フェーズ (P5-050) では ja の値を初期値として保持する。後続フェーズで
- *   `contents/blog/{en,zh}/<slug>.mdx` の frontmatter を読んで locale 別に
- *   差し替える `blog-content-loader.ts` 経由で取得する。
- * - title / description / tags 等が翻訳されるとき、各 locale MDX frontmatter を
- *   優先 (registry はフォールバック).
- *
- * locale-parity test (`__tests__/blog-locale-parity.test.ts`) で
- * 「registry の slug 集合 = ja MDX の slug 集合」を不変条件として検証する.
+ * Blog-post registry source of truth. Shared metadata for registered posts includes postId, slug, publishedAt,
+ * updatedAt, published, author, category, tags, targetKeywords, title and description. This file defines
+ * shared identity and publication fields. In P5-050, display fields initially retain Japanese defaults;
+ * blog-content-loader.ts reads localized frontmatter from contents/blog/{en,zh}/<slug>.mdx in subsequent
+ * phases. Localized MDX frontmatter takes precedence for translated title, description, tags and other
+ * display fields; the registry remains a fallback. __tests__/blog-locale-parity.test.ts enforces
+ * registry-slug equality with Japanese MDX slugs.
  */
 export const blogPosts: BlogPostMeta[] = [
   {
@@ -53,7 +44,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-01",
-    updatedAt: "2026-06-01",
+    updatedAt: "2026-11-09",
   },
   {
     postId: "blog-003",
@@ -142,9 +133,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-008",
@@ -162,7 +152,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-11-09",
   },
   {
     postId: "blog-009",
@@ -179,9 +169,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-11-21",
   },
   {
     postId: "blog-010",
@@ -199,7 +188,7 @@ export const blogPosts: BlogPostMeta[] = [
     author: "AWS Cert Roadmap Lab",
     published: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-11-21",
   },
   {
     postId: "blog-011",
@@ -216,9 +205,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-012",
@@ -253,9 +241,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-014",
@@ -290,9 +277,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-11-09",
   },
   {
     postId: "blog-016",
@@ -309,9 +295,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-017",
@@ -328,9 +313,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-018",
@@ -347,9 +331,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-019",
@@ -366,9 +349,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-020",
@@ -385,9 +367,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-021",
@@ -404,9 +385,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-022",
@@ -459,9 +439,8 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
   },
   {
     postId: "blog-025",
@@ -478,8 +457,40 @@ export const blogPosts: BlogPostMeta[] = [
     ],
     author: "AWS Cert Roadmap Lab",
     published: true,
-    noIndex: true,
     publishedAt: "2026-06-07",
-    updatedAt: "2026-06-07",
+    updatedAt: "2026-08-20",
+  },
+{
+  "postId": "blog-026",
+  "slug": "lambda-sqs-safe-retries-idempotency",
+  "title": "LambdaとSQS：安全な再試行と業務の冪等性",
+  "description": "注文イベントの重複を例に、業務の冪等性キー、条件付き書き込み、部分バッチ応答、追跡できるDLQ再送を設計します。",
+  "category": "SAA",
+  "tags": [
+    "Lambda",
+    "SQS",
+    "Idempotency"
+  ],
+  "targetKeywords": [
+    "Lambda SQS 冪等性",
+    "partial batch failure"
+  ],
+  "author": "AWS Cert Roadmap Lab",
+  "published": true,
+  "publishedAt": "2026-11-09",
+  "updatedAt": "2026-11-09"
+},
+  {
+    postId: "blog-027",
+    slug: "agentcore-guardrails-vs-tool-authorization",
+    title: "AgentCore のツール認可と Guardrails：照会の可否と表示の可否は別",
+    description: "架空の注文照会を通じて、ツール認可と応答フィルタリングの役割を区別します。",
+    category: "AI・機械学習",
+    tags: ["Amazon Bedrock", "AgentCore", "AIF-C01"],
+    targetKeywords: ["AgentCore Policy", "Amazon Bedrock Guardrails"],
+    author: "AWS Cert Roadmap Lab",
+    published: true,
+    publishedAt: "2026-11-20",
+    updatedAt: "2026-11-20",
   },
 ];
