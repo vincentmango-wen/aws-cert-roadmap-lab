@@ -103,3 +103,25 @@ it.each([
     expect(notices[0]).toContain(`href="${createLocalizedPath(locale, `/questions/${exam}`)}"`);
   }
 });
+
+it.each([
+  ["ja", JaUpdates, "問題集と用語集の Lambda タイムアウトの説明を訂正"],
+  ["en", EnUpdates, "Lambda timeout correction in practice questions and the glossary"],
+  ["zh", ZhUpdates, "更正題庫與用語集的 Lambda 逾時說明"],
+] as const)("shows the Lambda learning content update in %s", (locale, Page, title) => {
+  vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-22");
+  const html = renderToStaticMarkup(createElement(Page));
+  const cards = html.match(/<article id="announcement:lambda-event-functions-timeout-correction"[\s\S]*?<\/article>/g) ?? [];
+  expect(cards).toHaveLength(1);
+  expect(cards[0]).toContain(title);
+  expect(cards[0]).toContain('data-event-kind="update"');
+  expect(cards[0]).toContain('<time dateTime="2026-11-22">2026-11-22</time>');
+  expect(cards[0]).toContain("2026-11-21");
+  expect(cards[0]).toContain("2026-11-19");
+  expect(cards[0]).toContain("saa-043");
+  expect(cards[0]).toContain("Event Functions");
+  for (const destination of ["/questions/clf", "/questions/saa", "/terms"]) {
+    expect(cards[0]).toContain(`href="${createLocalizedPath(locale, destination)}"`);
+  }
+  expect(ids(html)).toContain("announcement:aif-c01-001-030");
+});
