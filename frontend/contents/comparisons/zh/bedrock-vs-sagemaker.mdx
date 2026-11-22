@@ -1,6 +1,6 @@
 # Bedrock、SageMaker 的差異
 
-## 結論
+## 選擇重點
 
 Amazon Bedrock 與 Amazon SageMaker 都是 AWS 的生成式 AI 與機器學習服務。
 
@@ -33,7 +33,7 @@ Amazon Bedrock 與 Amazon SageMaker 都是 AWS 的生成式 AI 與機器學習�
 | 代表性功能 | Knowledge Bases (RAG)、Guardrails、Agents | JumpStart、Studio、Pipelines、Model Registry |
 | 在本專案的用途 | AI 章節內容的 dogfooding 對象 | MVP 階段不直接使用 |
 
-## 初學者導向說明
+## 入門說明
 
 ### Amazon Bedrock
 
@@ -51,9 +51,9 @@ SageMaker 是用於從零開始建置、訓練、部署機器學習模型的完�
 
 當你需要用自有資料從零開始訓練模型,或需要處理現有基礎模型無法應對的特殊任務時,適合使用 SageMaker。
 
-## 考試常考重點
+## 考綱與判斷重點
 
-### AIF-C01 常考內容
+### AIF-C01 學習重點
 
 - Bedrock 以透過受管 API 呼叫模型為核心，SageMaker 則是建置、訓練、部署模型的平台
 - Bedrock 採無伺服器架構，無須管理基礎架構
@@ -64,7 +64,7 @@ SageMaker 是用於從零開始建置、訓練、部署機器學習模型的完�
 - 考試會測驗如何評估基礎模型的觀點 (準確度、成本、延遲、模態)
 - 基本判斷原則:想立即使用現有基礎模型時選 Bedrock，想用自有資料從零建置模型時選 SageMaker
 
-## 實務上的使用判斷
+## 實務選型
 
 ### 適合採用 Bedrock 的情境
 
@@ -121,17 +121,6 @@ SageMaker 屬於受管服務，但仍需自行選擇訓練 / 推論用的執行�
 
 如果需要以自有資料進行大規模預訓練，或想嘗試自訂架構，透過 SageMaker 自行開發有時會更為合適。
 
-## 相關用語
-
-- [AWS IAM](/terms/iam)
-- [Amazon S3](/terms/s3)
-- [AWS Lambda](/terms/lambda)
-- [Amazon CloudWatch](/terms/cloudwatch)
-
-## 相關問題
-
-- [查看模擬題列表](/questions)
-
 ## 總結
 
 判斷 Bedrock 與 SageMaker 的差異時，可以從「透過 API 使用基礎模型」或「從零開始建置並訓練模型」這兩個角度切入。
@@ -139,3 +128,19 @@ SageMaker 屬於受管服務，但仍需自行選擇訓練 / 推論用的執行�
 Bedrock 是受管生成式 AI 基礎模型 API，SageMaker 則是機器學習的完全受管開發平台。
 
 AIF-C01 會測驗你對這兩項服務角色差異的理解，以及負責任的 AI、RAG 等相關概念。
+
+## AWS 官方參考
+
+- 服務行為與設計: [Bedrock 基礎模型推論 API](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-invoke.html) · [Bedrock Guardrails 設定](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) · [SageMaker 模型訓練](https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html) · [SageMaker 部署與推論](https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html)
+- [AIF-C01 考試指南](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html)
+
+## 相關用語
+
+- [AWS IAM](/terms/iam)
+- [Amazon S3](/terms/s3)
+- [AWS Lambda](/terms/lambda)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 相關題目
+
+- [查看模擬題列表](/questions)

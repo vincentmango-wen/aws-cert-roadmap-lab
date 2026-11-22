@@ -1,6 +1,6 @@
 # Differences between RDS and DynamoDB
 
-## Bottom line
+## Selection at a glance
 
 Amazon RDS and Amazon DynamoDB are both AWS database services.
 
@@ -34,7 +34,7 @@ When in doubt, use this quick test:
 | Fixed cost | Easy to incur because instances run continuously | Low cost is easy to achieve at small scale |
 | Use in this project | Not used in the MVP | Planned for inquiry data storage |
 
-## Beginner-friendly explanation
+## Beginner context
 
 ### Amazon RDS
 
@@ -54,7 +54,7 @@ In this project, DynamoDB is the planned storage backend for the inquiry form.
 
 Inquiry data does not need complex joins, and saving and reading single records is enough, which matches DynamoDB well.
 
-## Exam points to remember
+## Exam guide and decision cues
 
 ### Points that often show up in CLF-C02
 
@@ -112,7 +112,7 @@ Examples:
 - Event log storage
 - Notification settings storage
 
-## Common misunderstandings
+## Common misconceptions
 
 ### Misunderstanding 1: DynamoDB is a full replacement for RDS
 
@@ -138,6 +138,19 @@ RDS is feature-rich, but its fixed cost adds up quickly.
 
 To keep costs down, this project uses DynamoDB for inquiry storage in the MVP.
 
+## Summary
+
+The difference between RDS and DynamoDB becomes easier to sort out when framed as "SQL-centric" versus "key-access-centric."
+
+RDS is a relational database, and DynamoDB is a serverless NoSQL database.
+
+In this project, simple dynamic data such as inquiry records is stored in DynamoDB.
+
+## Official AWS references
+
+- Service behavior and design: [RDS relational engine support and operations](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) · [DynamoDB primary keys and tables](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html) · [DynamoDB capacity modes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/capacity-mode.html)
+- [CLF-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## Related terms
 
 - [Amazon RDS](/terms/rds)
@@ -149,11 +162,3 @@ To keep costs down, this project uses DynamoDB for inquiry storage in the MVP.
 ## Related questions
 
 - [CLF practice questions](/questions/clf)
-
-## Summary
-
-The difference between RDS and DynamoDB becomes easier to sort out when framed as "SQL-centric" versus "key-access-centric."
-
-RDS is a relational database, and DynamoDB is a serverless NoSQL database.
-
-In this project, simple dynamic data such as inquiry records is stored in DynamoDB.

@@ -11,7 +11,7 @@
  * 3. Exactly one explanation starts with its locale's correct-answer marker, and its slot matches
  * correctChoiceId. Reordered translations break this relationship.
  *
- * Coverage: contents/questions/clf-c02.{ja,en,zh}.json and saa-c03.{ja,en,zh}.json.
+ * Coverage: all locale files for CLF-C02, SAA-C03 and AIF-C01.
  * Answer-letter distribution is intentionally separate. At creation, the 80-question dataset was biased
  * toward A (CLF 90%, SAA 77% at 30 questions); a distribution test would immediately fail. ACR-004 owns
  * that correction.
@@ -26,6 +26,9 @@ import clfZh from "../../../../contents/questions/clf-c02.zh.json";
 import saaEn from "../../../../contents/questions/saa-c03.en.json";
 import saaJa from "../../../../contents/questions/saa-c03.ja.json";
 import saaZh from "../../../../contents/questions/saa-c03.zh.json";
+import aifEn from "../../../../contents/questions/aif-c01.en.json";
+import aifJa from "../../../../contents/questions/aif-c01.ja.json";
+import aifZh from "../../../../contents/questions/aif-c01.zh.json";
 
 type Locale = "ja" | "en" | "zh";
 type FileEntry = { name: string; locale: Locale; questions: Question[] };
@@ -37,6 +40,9 @@ const FILES: FileEntry[] = [
   { name: "saa-c03.ja", locale: "ja", questions: saaJa as Question[] },
   { name: "saa-c03.en", locale: "en", questions: saaEn as Question[] },
   { name: "saa-c03.zh", locale: "zh", questions: saaZh as Question[] },
+  { name: "aif-c01.ja", locale: "ja", questions: aifJa as Question[] },
+  { name: "aif-c01.en", locale: "en", questions: aifEn as Question[] },
+  { name: "aif-c01.zh", locale: "zh", questions: aifZh as Question[] },
 ];
 
 const CHOICE_IDS: ChoiceId[] = ["A", "B", "C", "D"];

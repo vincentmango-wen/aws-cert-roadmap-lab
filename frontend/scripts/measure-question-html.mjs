@@ -25,7 +25,7 @@ const REPORT_MODE = process.argv.includes("--report");
 /**
  * Japanese question source of truth, used for verbatim inclusion checks in check mode.
  */
-const JA_QUESTION_SOURCES = ["clf-c02.ja.json", "saa-c03.ja.json"];
+const JA_QUESTION_SOURCES = ["clf-c02.ja.json", "saa-c03.ja.json", "aif-c01.ja.json"];
 
 /**
  * Acceptance criterion B: minimum visible text on every Japanese page.
@@ -168,7 +168,7 @@ async function collectHtmlFiles(directoryPath) {
 function toQuestionPage(filePath) {
   const relativePath = toPosixPath(path.relative(OUT_DIR, filePath));
   const match = relativePath.match(
-    /^(?:(en|zh)\/)?questions\/((?:clf|saa)-\d+)\.html$/,
+    /^(?:(en|zh)\/)?questions\/((?:clf|saa|aif-c01)-\d+)\.html$/,
   );
 
   if (!match) return null;

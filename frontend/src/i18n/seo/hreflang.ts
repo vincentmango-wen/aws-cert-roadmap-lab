@@ -82,7 +82,7 @@ export function createXDefaultUrl(): string {
 
 /**
  * Generate ja/en/zh-Hant/x-default hreflang URLs for any path. The path-agnostic design supports terms,
- * comparisons, blog, architectures and question paths (/questions, /questions/clf, /questions/saa,
+ * comparisons, blog, architectures and question paths (/questions, /questions/clf, /questions/saa, /questions/aif,
  * /questions/<questionId>) without extra code. For /questions/clf-001, ja and x-default point to that
  * path while en/zh-Hant use /en and /zh prefixes.
  *

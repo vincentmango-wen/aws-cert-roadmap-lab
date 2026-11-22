@@ -8,7 +8,7 @@ import { announcements } from "./announcements";
 import { getUpdatesBuildDate } from "./dates";
 import type { ArticleCandidate, Locale, UpdateItem } from "./types";
 
-const staticPublicPaths = new Set(["/", "/roadmap", "/questions", "/questions/saa", "/questions/clf", "/blog", "/architectures", "/comparisons", "/terms", "/about", "/updates"]);
+const staticPublicPaths = new Set(["/", "/roadmap", "/questions", "/questions/saa", "/questions/aif", "/questions/clf", "/blog", "/architectures", "/comparisons", "/terms", "/about", "/updates"]);
 
 export function isPublicUpdatesPath(target: string, locale: Locale, articles?: ArticleCandidate[]): boolean {
   if (!isPublishedLocale(locale)) return false;

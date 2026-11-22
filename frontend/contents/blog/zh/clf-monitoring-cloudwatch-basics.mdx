@@ -16,7 +16,7 @@ targetKeywords:
 author: "AWS 認證學習路線實驗室"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-02"
+updatedAt: "2026-11-21"
 ---
 
 # 為 Cloud Practitioner 解說 CloudWatch 的基礎
@@ -32,6 +32,8 @@ CloudWatch 是處理 AWS 資源指標、日誌與告警的監控服務。即使�
 Metrics 指的是數值型資料。可以查看 Lambda 的執行次數、錯誤數、執行時間,API Gateway 的 4xx/5xx,以及 CloudFront 的請求次數等等。
 
 發生故障時,先用 Metrics 確認「哪個服務的錯誤正在增加」。
+
+Amazon EC2 的基本監控不另收費：狀態檢查指標每 1 分鐘提供，其餘預設指標每 5 分鐘提供。付費的詳細監控會每 1 分鐘提供預設的執行個體指標；若另外選用指標類別，可新增每 10 秒提供的 CPU 使用率指標。這不會改變預設間隔，也不同於適用於支援的加速運算執行個體、且不另收費的 EC2 效能狀態檢查。
 
 ## CloudWatch Logs
 
@@ -71,3 +73,11 @@ CloudWatch 擅長監控與日誌,CloudTrail 擅長記錄 API 操作歷史,AWS Co
 
 - [CloudWatch、CloudTrail、AWS Config 的差異](/comparisons/cloudwatch-vs-cloudtrail-vs-config)
 - [用 CloudWatch 檢視 Lambda 日誌的方法](/blog/lambda-cloudwatch-logs-check)
+
+## 更正說明
+
+### 2026-11-21
+
+- 釐清 EC2 基本與詳細監控的預設指標間隔、基本監控中狀態檢查的例外，以及需另外選用的 10 秒 CPU 指標；預設間隔未變。
+
+參考: [EC2 詳細監控指南](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-detailed-monitoring.html) / [AWS 發布公告](https://aws.amazon.com/about-aws/whats-new/2026/11/ec2-performance-status-checks/)。

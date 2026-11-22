@@ -156,6 +156,7 @@ function expectInternalLinkExists(slug: string, href: string): void {
       "/questions",
       "/questions/clf",
       "/questions/saa",
+      "/questions/aif",
       "/roadmap",
     ].includes(href),
     `${slug} links to unsupported internal path ${href}`,

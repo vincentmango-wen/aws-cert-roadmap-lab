@@ -1,6 +1,6 @@
 # S3、EBS、EFS 的差異
 
-## 結論
+## 選擇重點
 
 Amazon S3、Amazon EBS、Amazon EFS 都是 AWS 的儲存服務，但使用情境其實差異相當大。
 
@@ -33,7 +33,7 @@ Amazon S3、Amazon EBS、Amazon EFS 都是 AWS 的儲存服務，但使用情境
 | 代表性考試關鍵字 | 物件、儲存貯體、耐久性、儲存類別 | EC2、區塊、磁碟區、快照 | NFS、共用檔案、多 EC2 |
 | 本專案中的用途 | 保存靜態網站檔案 | MVP 階段不使用 | MVP 階段不使用 |
 
-## 初學者導向說明
+## 入門說明
 
 ### Amazon S3
 
@@ -59,9 +59,9 @@ EFS 用於多台 EC2 想共用相同檔案的情境。
 
 與 S3 不同的地方在於，EFS 可作為檔案系統掛載使用，這是其特色。
 
-## 考試常考重點
+## 考綱與判斷重點
 
-### CLF-C02 容易出題的重點
+### CLF-C02 學習重點
 
 - S3 是物件儲存
 - EBS 是連接到 EC2 的區塊儲存
@@ -70,7 +70,7 @@ EFS 用於多台 EC2 想共用相同檔案的情境。
 - EBS 可透過快照進行備份
 - EFS 多用於 Linux 系統的檔案共用
 
-### SAA-C03 容易出題的重點
+### SAA-C03 學習重點
 
 - 靜態內容分發的基本架構是 S3 + CloudFront
 - EC2 的持續性磁碟使用 EBS
@@ -79,7 +79,7 @@ EFS 用於多台 EC2 想共用相同檔案的情境。
 - EBS 綁定於 AZ，因此無法直接連接到不同 AZ 的 EC2
 - EFS 可從多個 AZ 存取，適合共用用途
 
-## 實務上的使用區分
+## 實務選型
 
 ### 選擇 S3 的情境
 
@@ -108,7 +108,7 @@ EFS 用於多台 EC2 想共用相同檔案的情境。
 
 本專案的 MVP 不採用多 EC2 架構，因此也不使用 EFS。
 
-## 常見錯誤
+## 常見誤解
 
 ### 錯誤 1：以為 S3 可作為 EC2 的磁碟使用
 
@@ -138,6 +138,19 @@ EFS 屬於檔案共用用途，並非靜態網站分發的首選。
 
 請以這三個詞整理區分。
 
+## 總結
+
+S3、EBS、EFS 是 AWS 儲存的基本。
+
+首先用以下一句話來記憶。
+
+S3 是檔案保存，EBS 是 EC2 的磁碟，EFS 是多台 EC2 的共用檔案系統。
+
+## AWS 官方參考
+
+- 服務行為與設計: [S3 物件、儲存貯體與儲存類別](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html) · [EBS 磁碟區與掛接範圍](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volumes.html) · [EFS 掛載目標與共享檔案系統](https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html)
+- [CLF-C02 考試指南](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 相關用語
 
 - [Amazon S3](/terms/s3)
@@ -149,11 +162,3 @@ EFS 屬於檔案共用用途，並非靜態網站分發的首選。
 ## 相關題目
 
 - [CLF 模擬題一覽](/questions/clf)
-
-## 總結
-
-S3、EBS、EFS 是 AWS 儲存的基本。
-
-首先用以下一句話來記憶。
-
-S3 是檔案保存，EBS 是 EC2 的磁碟，EFS 是多台 EC2 的共用檔案系統。

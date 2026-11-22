@@ -1,4 +1,4 @@
-export type ExamCode = "CLF-C02" | "SAA-C03";
+export type ExamCode = "CLF-C02" | "SAA-C03" | "AIF-C01";
 
 export type QuestionDifficulty = "easy" | "normal" | "hard";
 
@@ -10,7 +10,12 @@ export type QuestionCategory =
   | "Secure Architectures"
   | "Resilient Architectures"
   | "High-Performing Architectures"
-  | "Cost-Optimized Architectures";
+  | "Cost-Optimized Architectures"
+  | "Fundamentals of AI and ML"
+  | "Fundamentals of GenAI"
+  | "Applications of Foundation Models"
+  | "Guidelines for Responsible AI"
+  | "Security, Compliance, and Governance for AI Solutions";
 
 export type ChoiceId = "A" | "B" | "C" | "D";
 

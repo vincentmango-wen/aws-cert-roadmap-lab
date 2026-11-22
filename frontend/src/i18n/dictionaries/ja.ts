@@ -46,7 +46,12 @@ export type QuestionCategoryKey =
   | "Secure Architectures"
   | "Resilient Architectures"
   | "High-Performing Architectures"
-  | "Cost-Optimized Architectures";
+  | "Cost-Optimized Architectures"
+  | "Fundamentals of AI and ML"
+  | "Fundamentals of GenAI"
+  | "Applications of Foundation Models"
+  | "Guidelines for Responsible AI"
+  | "Security, Compliance, and Governance for AI Solutions";
 
 export type QuestionsDictionary = {
   breadcrumbHome: string;
@@ -421,6 +426,11 @@ export const jaDictionary: UiDictionary = {
       "Resilient Architectures": "耐障害性のあるアーキテクチャ",
       "High-Performing Architectures": "高性能なアーキテクチャ",
       "Cost-Optimized Architectures": "コスト最適化されたアーキテクチャ",
+      "Fundamentals of AI and ML": "AIと機械学習の基礎",
+      "Fundamentals of GenAI": "生成AIの基礎",
+      "Applications of Foundation Models": "基盤モデルの活用",
+      "Guidelines for Responsible AI": "責任あるAIの指針",
+      "Security, Compliance, and Governance for AI Solutions": "AIソリューションのセキュリティ、コンプライアンス、ガバナンス",
     },
     allCategoriesLabel: "すべてのカテゴリ",
     allDifficultiesLabel: "すべての難易度",

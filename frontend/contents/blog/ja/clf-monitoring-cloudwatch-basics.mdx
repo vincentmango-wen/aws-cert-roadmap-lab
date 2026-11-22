@@ -16,7 +16,7 @@ targetKeywords:
 author: "AWS Cert Roadmap Lab"
 published: true
 publishedAt: "2026-06-07"
-updatedAt: "2026-08-02"
+updatedAt: "2026-11-21"
 ---
 
 # CloudWatchの基本をCloud Practitioner向けに解説
@@ -61,7 +61,7 @@ Metricsは数値データです。Lambdaの実行回数、エラー数、実行�
 
 「先月の1分刻みのグラフを見たい」といった要望は、この仕様上かなえられません。長期分析が必要なら、メトリクスをエクスポートして別に保管する設計が必要になります。
 
-なお、Amazon EC2 の基本モニタリングは5分間隔で、追加料金はかかりません。1分間隔で取得する詳細モニタリングは有料オプションです。この対比は試験で問われやすい箇所です。
+Amazon EC2の基本モニタリングは追加料金なしで、ステータスチェックのメトリクスは1分間隔、それ以外のデフォルトのメトリクスは5分間隔です。有料の詳細モニタリングでは、デフォルトのインスタンスメトリクスは1分間隔です。メトリクスカテゴリを追加で選択すると、10秒間隔のCPU使用率メトリクスも取得できます。これはデフォルトの間隔を変えるものではなく、対応する高速コンピューティングインスタンスで追加料金なしに使えるEC2のパフォーマンスステータスチェックとは別の機能です。
 
 ## CloudWatch Logs
 
@@ -152,7 +152,7 @@ CloudWatchは監視とログ、CloudTrailはAPI操作履歴、AWS Configはリ�
 - CloudWatch Logsはログ確認に使う
 - CloudWatch Metricsは数値監視に使い、標準メトリクスとカスタムメトリクスがある
 - CloudWatch Alarmは条件付き通知に使い、通知先にはSNSを指定する
-- EC2の基本モニタリングは5分間隔、詳細モニタリングは1分間隔で有料
+- EC2のデフォルトのメトリクスは、基本モニタリングでは通常5分間隔（ステータスチェックは1分）、有料の詳細モニタリングでは1分間隔
 - CloudTrailはAPI操作履歴に使う
 - AWS Configは設定変更の追跡に使う
 
@@ -166,3 +166,11 @@ CloudWatchは監視とログ、CloudTrailはAPI操作履歴、AWS Configはリ�
 
 - [CloudWatch・CloudTrail・AWS Configの違い](/comparisons/cloudwatch-vs-cloudtrail-vs-config)
 - [LambdaのログをCloudWatchで確認する方法](/blog/lambda-cloudwatch-logs-check)
+
+## 訂正内容
+
+### 2026-11-21
+
+- EC2の基本・詳細モニタリングの間隔、基本モニタリングにおけるステータスチェックの例外、および追加で選択する10秒間隔のCPUメトリクスを明確にしました。デフォルトの間隔は変更されていません。
+
+参考: [EC2 詳細モニタリングのガイド](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-detailed-monitoring.html) / [AWS の発表](https://aws.amazon.com/about-aws/whats-new/2026/11/ec2-performance-status-checks/)。
