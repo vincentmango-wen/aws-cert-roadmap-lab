@@ -11,6 +11,7 @@ import {
   getAdjacentQuestionIds,
   getPublishedQuestionByIdLocale,
   getQuestionStaticParams,
+  getQuestionCategoryDisplayLabel,
 } from "../question-detail-data";
 
 type QuestionDetailPageProps = {
@@ -80,6 +81,7 @@ export default async function QuestionDetailPage({
         locale={LOCALE}
         labels={questionPlayerLabelsByLocale[LOCALE]}
         question={question}
+        categoryLabel={getQuestionCategoryDisplayLabel(LOCALE, question)}
         previousQuestionId={previousQuestionId ?? undefined}
         nextQuestionId={nextQuestionId ?? undefined}
         resolvedServices={resolvedServices}

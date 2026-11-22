@@ -1,3 +1,4 @@
+import { beforeIssue365Corrections } from "./fixtures/blog-dates-before-issue-365";
 import * as articleSources from "../article-sources";
 import { beforeIssue348Corrections } from "./fixtures/architecture-dates-before-issue-348";
 import { createElement } from "react";
@@ -57,7 +58,7 @@ it.each([
   ["zh", ZhUpdates, ZhHome, "/zh", "/zh/updates", "新增「最新文章」與「最新內容與公告」"],
 ] as const)("renders the complete feature announcement on home and full updates in %s", (locale, Page, Home, homePath, updatesPath, title) => {
   vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-13");
-  const historical = beforeIssue348Corrections(articleSources.readArticleCandidates());
+  const historical = beforeIssue348Corrections(beforeIssue365Corrections(articleSources.readArticleCandidates()));
   vi.spyOn(articleSources, "readArticleCandidates").mockReturnValue(historical);
   const feature = announcements.find((value) => value.id === "latest-articles-and-updates");
   expect(feature).toBeDefined();

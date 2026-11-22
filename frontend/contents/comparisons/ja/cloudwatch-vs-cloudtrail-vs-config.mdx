@@ -27,7 +27,7 @@ updatedAt: "2026-06-21"
 
 # CloudWatch・CloudTrail・AWS Configの違い
 
-## 結論
+## 選択のポイント
 
 CloudWatch、CloudTrail、AWS Configは、AWS運用でよく混同されるサービスです。
 
@@ -83,9 +83,9 @@ AWS Configは、AWSリソースの設定状態と変更履歴を記録し、ル�
 
 MVPでは必須ではありませんが、将来のセキュリティ強化で検討できます。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
-### CLF-C02で問われやすいポイント
+### CLF-C02 の学習ポイント
 
 - CloudWatchは監視、メトリクス、ログ、アラーム
 - CloudTrailはAPI操作履歴
@@ -94,7 +94,7 @@ MVPでは必須ではありませんが、将来のセキュリティ強化で�
 - 監査証跡にはCloudTrail
 - 設定準拠確認にはAWS Config
 
-### SAA-C03で問われやすいポイント
+### SAA-C03 の学習ポイント
 
 - LambdaやAPI Gatewayのエラー調査にはCloudWatch Logsを使う
 - 誰がリソースを変更したか調べる場合はCloudTrailを使う
@@ -135,7 +135,7 @@ MVPでは必須ではありませんが、将来のセキュリティ強化で�
 
 MVPではコストと管理負荷を抑えるため、必須にはしません。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：CloudWatchで「誰が操作したか」まで全部分かると思う
 
@@ -161,6 +161,19 @@ CloudWatch LogsはMVPでも必要です。
 
 ただし、AWS Configや細かい監視機能は、コストと管理負荷を見ながら段階的に導入します。
 
+## まとめ
+
+CloudWatch、CloudTrail、AWS Configは、AWS運用で役割が違います。
+
+CloudWatchは状態監視、CloudTrailは操作履歴、AWS Configは設定管理です。
+
+この違いを説明できると、AWSの運用・監視・セキュリティ設計をかなり説明しやすくなります。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [CloudWatch のメトリクスとデータ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html) · [CloudTrail の管理イベントとデータイベント](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-concepts.html) · [AWS Config のリソース評価](https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
 ## 関連用語
 
 - [Amazon CloudWatch](/terms/cloudwatch)
@@ -172,11 +185,3 @@ CloudWatch LogsはMVPでも必要です。
 ## 関連問題
 
 - [CLF模擬問題一覧](/questions/clf)
-
-## まとめ
-
-CloudWatch、CloudTrail、AWS Configは、AWS運用で役割が違います。
-
-CloudWatchは状態監視、CloudTrailは操作履歴、AWS Configは設定管理です。
-
-この違いを説明できると、AWSの運用・監視・セキュリティ設計をかなり説明しやすくなります。

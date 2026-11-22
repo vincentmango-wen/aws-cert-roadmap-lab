@@ -1,3 +1,4 @@
+import { beforeIssue365Corrections } from "@/contents/updates/__tests__/fixtures/blog-dates-before-issue-365";
 import fs from "node:fs";
 import path from "node:path";
 import { createElement } from "react";
@@ -52,7 +53,7 @@ describe("batch 1 architecture diagrams", () => {
 
 it.each(["ja", "en", "zh"] as const)("%s publishes the three dated corrections without changing Blog recommendations", (locale) => {
   vi.stubEnv("UPDATES_BUILD_DATE", "2026-11-17");
-  const historical = beforeIssue348Batch2Corrections(beforeIssue348Batch3Corrections(articleSources.readArticleCandidates()));
+  const historical = beforeIssue348Batch2Corrections(beforeIssue348Batch3Corrections(beforeIssue365Corrections(articleSources.readArticleCandidates())));
   vi.spyOn(articleSources, "readArticleCandidates").mockReturnValue(historical);
   const inventory = getUpdatesInventory();
   const values = inventory.itemsByLocale[locale];

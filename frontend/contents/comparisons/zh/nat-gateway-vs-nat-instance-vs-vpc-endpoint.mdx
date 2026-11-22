@@ -1,6 +1,6 @@
 # NAT Gateway、NAT 執行個體、VPC 端點的差異
 
-## 結論
+## 選擇重點
 
 這三者都會出現在同一個情境:位於私有子網路的資源需要與外部通訊。
 
@@ -40,7 +40,7 @@
 | 專屬陷阱 | 未在每個 AZ 各建一個時會產生跨 AZ 傳輸費用，且會被單一 AZ 故障拖累 | **必須停用來源/目的地檢查** | 支援 Gateway 型的只有 S3 與 DynamoDB 兩項服務 |
 | 考試關鍵字 | managed NAT, per-AZ, outbound only | source/destination check, EC2-based NAT | gateway endpoint, interface endpoint, PrivateLink |
 
-## 初學者導向說明
+## 入門說明
 
 ### NAT Gateway
 
@@ -105,9 +105,9 @@ EC2 ──▶ Gateway Endpoint ──▶ Amazon S3      (經由路由表 / 無�
 EC2 ──▶ Interface Endpoint (ENI) ──▶ AWS Systems Manager  (PrivateLink / 時數計費)
 ```
 
-## 考試常考重點
+## 考綱與判斷重點
 
-### SAA-C03 常考內容
+### SAA-C03 學習重點
 
 - 私有子網路的 EC2 需要從網際網路上的儲存庫取得修補程式 → NAT Gateway
 - 若要求高可用性，應**在每個 AZ 各配置一個 NAT Gateway**，並讓各 AZ 私有子網路的路由表指向同一 AZ 的 NAT Gateway
@@ -122,7 +122,7 @@ EC2 ──▶ Interface Endpoint (ENI) ──▶ AWS Systems Manager  (PrivateLi
 - NAT Gateway 分為連往網際網路的公有型，以及用於 VPC 之間或地端通訊的私有型。單講「NAT Gateway」時通常指公有型
 - 除了上述連線類型之外，還有可用性模式之分:在單一 AZ 運作的 zonal 模式，以及會自動擴充至有工作負載的 AZ、且不需要公有子網路的 regional 模式。**SAA-C03 所考的是傳統的 zonal 模式 (即每個 AZ 各配置一個)**
 
-## 實務上的使用判斷
+## 實務選型
 
 ### 適合採用 NAT Gateway 的情境
 
@@ -206,18 +206,6 @@ NAT Gateway 無法指派安全群組。
 
 若要控管流量，需使用 NAT Gateway 所在子網路的 Network ACL，或私有子網路內資源的安全群組。
 
-## 相關用語
-
-- [Amazon VPC](/terms/vpc)
-- [Amazon EC2](/terms/ec2)
-- [Amazon S3](/terms/s3)
-- [Amazon DynamoDB](/terms/dynamodb)
-- [AWS Systems Manager](/terms/systems-manager)
-
-## 相關問題
-
-- [SAA 模擬題列表](/questions/saa)
-
 ## 總結
 
 判斷這三者的差異時，只要從「會不會連往網際網路」切入就不會混淆。
@@ -226,4 +214,22 @@ NAT Gateway 無法指派安全群組。
 - NAT 執行個體:以 EC2 自行建置。成本低但全部自行負責。必須停用來源/目的地檢查
 - VPC 端點:不連往網際網路。Gateway 型只支援 S3 與 DynamoDB 且無額外費用，Interface 型透過 PrivateLink 支援眾多服務並採時數計費
 
-SAA-C03 會反覆測驗如何組合這三者，打造「既能降低成本、又能讓流量不流向網際網路」的架構。
+準備 SAA-C03 時，可比較這三個選項的費用，以及工作負載的流量是否需要經過網際網路。
+
+## AWS 官方參考
+
+- 服務行為與設計: [NAT 閘道與 NAT 執行個體取捨](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-comparison.html) · [S3 與 DynamoDB 的閘道端點](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html) · [介面端點與安全群組](https://docs.aws.amazon.com/vpc/latest/privatelink/interface-endpoints.html)
+- 費用與容量估算: [NAT 閘道費用項目](https://aws.amazon.com/vpc/pricing/) · [介面端點費用項目](https://aws.amazon.com/privatelink/pricing/)
+- [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
+## 相關用語
+
+- [Amazon VPC](/terms/vpc)
+- [Amazon EC2](/terms/ec2)
+- [Amazon S3](/terms/s3)
+- [Amazon DynamoDB](/terms/dynamodb)
+- [AWS Systems Manager](/terms/systems-manager)
+
+## 相關題目
+
+- [SAA 模擬題列表](/questions/saa)

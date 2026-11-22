@@ -258,9 +258,9 @@ export const pageSeo = {
   questions: {
     title: "AWS模擬問題",
     description:
-      "AWS Cloud Practitioner向けの模擬問題を解きながら、正解理由と関連AWSサービスを確認できます。",
+      "CLF-C02、SAA-C03、AIF-C01のAWS認定模擬問題で、正解の理由と関連するAWSサービスを確認できます。",
     path: "/questions",
-    keywords: ["AWS 模擬問題", "CLF-C02", "Cloud Practitioner 問題"],
+    keywords: ["AWS 模擬問題", "CLF-C02", "SAA-C03", "AIF-C01"],
   },
   clfQuestions: {
     title: "CLF-C02模擬問題一覧",

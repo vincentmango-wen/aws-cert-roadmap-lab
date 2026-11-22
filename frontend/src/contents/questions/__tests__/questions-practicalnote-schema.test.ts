@@ -1,7 +1,7 @@
 /**
  * Ensure practicalNote meets the depth gate: at least two paragraphs separated by double newlines and at
- * least 200 characters. Covers all six CLF-C02/SAA-C03 ja/en/zh JSON files. Fail and list every
- * violating questionId. Also count Japanese notes containing CLF-C02 or SAA-C03 and report via
+ * least 200 characters. Covers all CLF-C02/SAA-C03/AIF-C01 ja/en/zh JSON files. Fail and list every
+ * violating questionId. Also count Japanese notes containing CLF-C02, SAA-C03 or AIF-C01 and report via
  * console.warn only; exam keywords do not cause failure.
  */
 import { describe, expect, it } from "vitest";
@@ -14,6 +14,9 @@ import clfZh from "../../../../contents/questions/clf-c02.zh.json";
 import saaEn from "../../../../contents/questions/saa-c03.en.json";
 import saaJa from "../../../../contents/questions/saa-c03.ja.json";
 import saaZh from "../../../../contents/questions/saa-c03.zh.json";
+import aifEn from "../../../../contents/questions/aif-c01.en.json";
+import aifJa from "../../../../contents/questions/aif-c01.ja.json";
+import aifZh from "../../../../contents/questions/aif-c01.zh.json";
 
 type FileEntry = { name: string; questions: Question[] };
 
@@ -24,6 +27,9 @@ const FILES: FileEntry[] = [
   { name: "saa-c03.ja", questions: saaJa as Question[] },
   { name: "saa-c03.en", questions: saaEn as Question[] },
   { name: "saa-c03.zh", questions: saaZh as Question[] },
+  { name: "aif-c01.ja", questions: aifJa as Question[] },
+  { name: "aif-c01.en", questions: aifEn as Question[] },
+  { name: "aif-c01.zh", questions: aifZh as Question[] },
 ];
 
 const MIN_CHARS = 200;
@@ -74,7 +80,7 @@ describe("questions practicalNote schema", () => {
     for (const { name, questions } of jaFiles) {
       for (const q of questions) {
         const note = q.practicalNote ?? "";
-        if (note.includes("CLF-C02") || note.includes("SAA-C03")) {
+        if (["CLF-C02", "SAA-C03", "AIF-C01"].some((exam) => note.includes(exam))) {
           withKeyword.push(`[${name}] questionId=${q.questionId}`);
         }
       }
@@ -82,7 +88,7 @@ describe("questions practicalNote schema", () => {
 
     if (withKeyword.length > 0) {
       console.warn(
-        `[warn] practicalNote contains exam keyword (CLF-C02 or SAA-C03) in ${withKeyword.length} question(s):\n` +
+        `[warn] practicalNote contains exam keyword (CLF-C02, SAA-C03 or AIF-C01) in ${withKeyword.length} question(s):\n` +
           withKeyword.join("\n"),
       );
     }

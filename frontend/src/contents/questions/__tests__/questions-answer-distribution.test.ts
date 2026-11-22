@@ -25,6 +25,9 @@ import clfZh from "../../../../contents/questions/clf-c02.zh.json";
 import saaEn from "../../../../contents/questions/saa-c03.en.json";
 import saaJa from "../../../../contents/questions/saa-c03.ja.json";
 import saaZh from "../../../../contents/questions/saa-c03.zh.json";
+import aifEn from "../../../../contents/questions/aif-c01.en.json";
+import aifJa from "../../../../contents/questions/aif-c01.ja.json";
+import aifZh from "../../../../contents/questions/aif-c01.zh.json";
 
 const CHOICE_IDS: ChoiceId[] = ["A", "B", "C", "D"];
 
@@ -43,6 +46,9 @@ const FILES: FileEntry[] = [
   { name: "saa-c03.ja", questions: saaJa as Question[] },
   { name: "saa-c03.en", questions: saaEn as Question[] },
   { name: "saa-c03.zh", questions: saaZh as Question[] },
+  { name: "aif-c01.ja", questions: aifJa as Question[] },
+  { name: "aif-c01.en", questions: aifEn as Question[] },
+  { name: "aif-c01.zh", questions: aifZh as Question[] },
 ];
 
 const countByChoiceId = (questions: Question[]): Record<ChoiceId, number> => {

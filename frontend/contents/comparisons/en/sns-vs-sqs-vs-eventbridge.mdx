@@ -1,6 +1,6 @@
 # Differences between SNS, SQS, and EventBridge
 
-## Bottom line
+## Selection at a glance
 
 Amazon SNS, Amazon SQS, and Amazon EventBridge are AWS services that connect systems together.
 
@@ -33,7 +33,7 @@ When in doubt, decide like this:
 | Ordering | Standard: no guarantee; FIFO + SQS FIFO: per message group | Standard: best effort; FIFO: per MessageGroupId | Default/Classic: no guarantee; enhanced Custom bus: FIFO subscriber per event group |
 | Use in this project | Future candidate for notifications | Future candidate for asynchronous processing | Future candidate for the daily one-question delivery |
 
-## Beginner-friendly explanation
+## Beginner context
 
 ### Amazon SNS
 
@@ -61,7 +61,7 @@ It can also handle scheduled execution.
 
 In this project, EventBridge is a candidate for the future "daily one question" delivery.
 
-## What the exam asks
+## Exam guide and decision cues
 
 ### Points that often appear on CLF-C02
 
@@ -81,7 +81,7 @@ In this project, EventBridge is a candidate for the future "daily one question" 
 - Combining SNS and SQS produces a fan-out pattern
 - EventBridge can route based on event patterns
 
-## When to use which in practice
+## How to choose in practice
 
 ### Choose SNS when
 
@@ -124,7 +124,7 @@ Examples:
 - Forward external SaaS events to Lambda
 - Notify the daily one question on a learning site
 
-## Common mistakes
+## Common misconceptions
 
 ### Mistake 1: Treating SNS and SQS as both being notification services
 
@@ -152,18 +152,6 @@ In small systems, calling Lambda directly works.
 
 As the workload grows, however, decoupling with SQS, SNS, or EventBridge makes the system more resilient to failures.
 
-## Related terms
-
-- [Amazon SNS](/terms/sns)
-- [Amazon SQS](/terms/sqs)
-- [Amazon EventBridge](/terms/eventbridge)
-- [AWS Lambda](/terms/lambda)
-- [Amazon CloudWatch](/terms/cloudwatch)
-
-## Related practice questions
-
-- [CLF practice question list](/questions/clf)
-
 ## Summary
 
 SNS, SQS, and EventBridge are important services that appear often in system integration.
@@ -175,6 +163,23 @@ Once these three are clearly distinguished, serverless architectures on AWS beco
 SQS Standard provides at-least-once delivery with best-effort ordering; duplicates and out-of-order messages are possible. SQS FIFO preserves order within each MessageGroupId and deduplicates sends within its deduplication window. This does not make application side effects exactly once: consumers must remain idempotent when processing is retried.
 
 SNS Standard does not guarantee order. For ordered fan-out, use an SNS FIFO topic with SQS FIFO subscriptions and align MessageGroupId; an SQS Standard subscription does not preserve end-to-end order. The rule-and-target examples here use EventBridge default/Classic buses, which do not guarantee ordering. The enhanced Custom Event Bus launched on 2026-09-24 supports FIFO subscribers: order is scoped to an event group within the publishing account, not globally across the bus.
+
+## Official AWS references
+
+- Service behavior and design: [SNS fan-out to SQS queues](https://docs.aws.amazon.com/sns/latest/dg/sns-sqs-as-subscriber.html) · [SQS standard queue delivery and ordering](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) · [EventBridge event patterns and filtering](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html)
+- [CLF-C02 exam guide](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
+## Related terms
+
+- [Amazon SNS](/terms/sns)
+- [Amazon SQS](/terms/sqs)
+- [Amazon EventBridge](/terms/eventbridge)
+- [AWS Lambda](/terms/lambda)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## Related questions
+
+- [CLF practice question list](/questions/clf)
 
 ## Corrections
 

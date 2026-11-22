@@ -26,7 +26,7 @@ updatedAt: "2026-11-09"
 
 # SNS・SQS・EventBridgeの違い
 
-## 結論
+## 選択のポイント
 
 SNS、SQS、EventBridgeは、AWSでシステム同士を連携させるサービスです。
 
@@ -87,9 +87,9 @@ AWSサービスのイベント、アプリケーションイベント、SaaSイ�
 
 このプロジェクトでは、将来的な「毎日1問配信」でEventBridgeを使う候補があります。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
-### CLF-C02で問われやすいポイント
+### CLF-C02 の学習ポイント
 
 - SNSは通知配信サービス
 - SQSはメッセージキュー
@@ -98,7 +98,7 @@ AWSサービスのイベント、アプリケーションイベント、SaaSイ�
 - SNSは複数の購読者へ通知できる
 - EventBridgeはスケジュール実行にも使える
 
-### SAA-C03で問われやすいポイント
+### SAA-C03 の学習ポイント
 
 - 非同期処理で処理待ちを作るならSQS
 - 1つのイベントを複数の処理へ配信するならSNS
@@ -150,7 +150,7 @@ AWSサービスのイベント、アプリケーションイベント、SaaSイ�
 - 外部SaaSイベントをLambdaへ連携
 - 学習サイトで毎日1問を通知
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：SNSとSQSをどちらも通知サービスとして覚える
 
@@ -178,18 +178,6 @@ EventBridgeはスケジュール実行にも使えますが、本質はイベン
 
 ただし、処理が増えると、SQSやSNSやEventBridgeで疎結合にした方が障害に強くなります。
 
-## 関連用語
-
-- [Amazon SNS](/terms/sns)
-- [Amazon SQS](/terms/sqs)
-- [Amazon EventBridge](/terms/eventbridge)
-- [AWS Lambda](/terms/lambda)
-- [Amazon CloudWatch](/terms/cloudwatch)
-
-## 関連問題
-
-- [CLF模擬問題一覧](/questions/clf)
-
 ## まとめ
 
 SNS、SQS、EventBridgeは、システム連携でよく出る重要サービスです。
@@ -201,6 +189,23 @@ SNSは通知、SQSはキュー、EventBridgeはイベントルーティングで
 SQS Standardは少なくとも1回の配信とベストエフォートの順序を提供し、重複や順序の入れ替わりが起こり得ます。SQS FIFOはMessageGroupIdごとに順序を維持し、重複排除期間内の送信を重複排除します。ただし業務上の副作用が必ず1回だけになるわけではなく、再処理に備えてコンシューマーの冪等性が必要です。
 
 SNS Standardは順序を保証しません。順序付きファンアウトではSNS FIFOトピックとSQS FIFO購読を組み合わせ、MessageGroupIdをそろえます。SQS Standard購読ではエンドツーエンドの順序は保証されません。本記事のルールとターゲットの例は順序保証のないEventBridge default/Classicバスを対象とします。2026-09-24公開の新しいCustom Event BusはFIFO購読を提供し、発行元アカウント内のイベントグループごとに順序を維持します。バス全体の順序保証ではありません。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [SNS から SQS キューへのファンアウト](https://docs.aws.amazon.com/sns/latest/dg/sns-sqs-as-subscriber.html) · [SQS 標準キューの配信と順序](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html) · [EventBridge のイベントパターンとフィルタリング](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
+## 関連用語
+
+- [Amazon SNS](/terms/sns)
+- [Amazon SQS](/terms/sqs)
+- [Amazon EventBridge](/terms/eventbridge)
+- [AWS Lambda](/terms/lambda)
+- [Amazon CloudWatch](/terms/cloudwatch)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
 
 ## 訂正内容
 

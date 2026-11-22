@@ -9,7 +9,11 @@ description: "比較執行時間、重試與重複語意、callback、歷程及�
 
 適用範圍：AWS Step Functions 的 Standard、非同步 Express 與同步 Express。實際費率與配額需依區域及帳戶重查。
 
-## 先排除不符合需求的類型
+## 選擇重點
+
+需要等待超過五分鐘、使用回呼，或保留 Step Functions 執行歷程時，選 Standard。短時間且具冪等性的事件處理可評估非同步 Express；需要立即回傳結果的短請求則評估同步 Express。
+
+## 比較表
 
 | 比較項目 | Standard | Express |
 |---|---|---|
@@ -21,20 +25,14 @@ description: "比較執行時間、重試與重複語意、callback、歷程及�
 
 這張表的執行語意是 workflow 層次，不是跨系統交易的副作用保證。Standard 的 Retry、人工 redrive 或呼叫端重送仍要求你設計適當冪等。同步 Express 的 at-most-once 也不表示一定成功；網路中斷時呼叫端可能不知道結果。[類型比較](https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html)
 
-## 先分清楚三種「重試」
+## 實務選型
 
-第一種是 ASL Retry：針對指定錯誤，按退避與次數上限重試 Task；Catch 則轉往替代路徑。第二種是啟動 workflow 的 API 呼叫重試：它不等於重試同一個 Task。第三種是業務補償或人工 redrive：必須核對先前已發生的副作用。[錯誤處理](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
-
-不要用「Standard exactly-once」省略付款端的冪等鍵，也不要把「同步 Express 不重複執行」當作客戶端可無條件重送的理由。若呼叫端重送建立了另一個 execution，仍可能重複業務操作。
-
-## 等 48 小時的核准流程
-
+### 等 48 小時的核准流程
 訂單要等兩天人工決定，選 Standard。它符合時間要求，也支援 callback；Express 的五分鐘上限與不支援 callback 是硬限制，不能靠減少步驟解決。把 token 保存在受控後端，經驗證的 broker 回傳結果；不讓 Lambda 空等兩天。[整合模式](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html)
 
 若某個短小子流程適合 Express，可由整體架構另外拆分；但要重新檢查子流程的重複語意、狀態傳遞及錯誤責任，不能只因吞吐量高就把整個審批流程改為 Express。
 
-## 大量短流程如何估價
-
+### 大量短流程如何估價
 以下是自行構造的算式例，不是 AWS 報價或實測帳單。假設每月 N=1,000,000 次，Standard 每次 6 個計費 transitions；Express 每次已取整計費時間 0.2 秒、計費記憶體 64 MB：
 
 - Standard：6,000,000 transitions × 當地每 transition 費率。
@@ -44,12 +42,29 @@ description: "比較執行時間、重試與重複語意、callback、歷程及�
 
 正式比較要納入重試後的實際 transitions、執行時間分布、計費記憶體／取整、區域價格與階梯，以及 Lambda、資料服務、日誌等額外成本；上式未扣免費額度。用同一組代表性輸入量測，再代入當期價目。[Step Functions 計價](https://aws.amazon.com/step-functions/pricing/)
 
-## 歷程與同步回應的操作差異
-
+### 歷程與同步回應的操作差異
 Express 的 CloudWatch Logs 是 best-effort，不能把「開了 logging」等同完整稽核帳本。需要確定保留的業務證據，應另外持久化，或評估 Standard；也要計入日誌費與保存政策。[執行日誌](https://docs.aws.amazon.com/step-functions/latest/dg/cw-logs.html)
 
 同步 Express 使用 StartSyncExecution；HTTP 200 不代表 workflow 成功，必須讀取回應的 status、error 與 cause。呼叫端 timeout 也不自動證明後端未執行。[同步執行 API](https://docs.aws.amazon.com/step-functions/latest/apireference/API_StartSyncExecution.html)
 
-## 選型檢核
-
+### 選型檢核
 人工核准、長流程、需要內建歷程：先看 Standard。五分鐘內、可冪等的大量事件處理：評估非同步 Express。需要立即回傳短流程結果：評估同步 Express，並處理回應狀態和不確定結果。最後查 payload、歷程與帳戶配額；大資料用 S3 參照，不能把 256 KiB 限制當成選 Express 就消失。[配額](https://docs.aws.amazon.com/step-functions/latest/dg/service-quotas.html)
+
+## 常見誤解
+
+執行語意不是應用程式副作用的保證。即使工作流程類型提供較強的執行保證，呼叫端重新送出請求仍可能重複業務操作。
+
+### 先分清楚三種「重試」
+第一種是 ASL Retry：針對指定錯誤，按退避與次數上限重試 Task；Catch 則轉往替代路徑。第二種是啟動 workflow 的 API 呼叫重試：它不等於重試同一個 Task。第三種是業務補償或人工 redrive：必須核對先前已發生的副作用。[錯誤處理](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
+
+不要用「Standard exactly-once」省略付款端的冪等鍵，也不要把「同步 Express 不重複執行」當作客戶端可無條件重送的理由。若呼叫端重送建立了另一個 execution，仍可能重複業務操作。
+
+## 總結
+
+先確認執行時間、整合模式和歷程需求，再用自己的工作負載比較執行語意與計費項目。
+
+## AWS 官方參考
+
+- 服務行為與設計: [工作流程類型限制與執行語意](https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html) · [回呼與同步工作整合模式](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html) · [任務重試與錯誤處理](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html) · [執行日誌投遞與歷程](https://docs.aws.amazon.com/step-functions/latest/dg/cw-logs.html) · [同步執行回應狀態欄位](https://docs.aws.amazon.com/step-functions/latest/apireference/API_StartSyncExecution.html) · [承載資料與執行配額](https://docs.aws.amazon.com/step-functions/latest/dg/service-quotas.html)
+- 費用與容量估算: [狀態轉換與 Express 定價](https://aws.amazon.com/step-functions/pricing/)
+- [SAA-C03 考試指南](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)

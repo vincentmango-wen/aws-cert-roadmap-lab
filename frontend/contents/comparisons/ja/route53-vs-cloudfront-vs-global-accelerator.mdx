@@ -27,7 +27,7 @@ updatedAt: "2026-11-09"
 
 # Route 53・CloudFront・Global Acceleratorの違い
 
-## 結論
+## 選択のポイント
 
 Route 53、CloudFront、Global Acceleratorは、AWSマネジメントコンソールの「リージョン」欄に「Global」と表示される、リージョンに縛られないサービスです。
 
@@ -82,7 +82,7 @@ Global AcceleratorはHTTP/HTTPS以外のTCP/UDPにも対応し、静的IPを提�
 
 固定IPが必要なゲームやVoIP、IPホワイトリストを要求される金融系などで候補になります。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
 ### Route 53が正解になりやすいケース
 
@@ -107,7 +107,7 @@ Global AcceleratorはHTTP/HTTPS以外のTCP/UDPにも対応し、静的IPを提�
 - ゲームやVoIPなどリアルタイム性が重要
 - リージョン障害時のフェイルオーバーを数秒以内で行いたい
 
-### Route 53のルーティングポリシー（CLF-C02頻出）
+### Route 53のルーティングポリシー（CLF-C02 の学習ポイント）
 
 | 問題文のキーワード | 正解 |
 |---|---|
@@ -153,7 +153,7 @@ HTTPでは扱えないプロトコルや、固定IPをクライアントへ配�
 
 HTTP/HTTPSのコンテンツ配信・キャッシュはCloudFront、TCP/UDPのネットワーク高速化はGlobal Acceleratorです。CloudFrontにも追加機能のAnycast Static IPsがあるため、静的IPの有無だけでは選べません。
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：3つとも「グローバルだから同じ」と覚える
 
@@ -171,17 +171,6 @@ Global Acceleratorはコンテンツをキャッシュしません。パケッ�
 
 CloudFrontやRoute 53が従量課金中心なのに対し、Global Acceleratorはアクセラレータを作成しただけで固定費が発生します。「コスト最適化で停止候補はどれか」を問われたときに見落としやすいポイントです。
 
-## 関連用語
-
-- [Amazon Route 53](/terms/route53)
-- [Amazon CloudFront](/terms/cloudfront)
-- [Amazon S3](/terms/s3)
-- [Elastic Load Balancing](/terms/elb)
-
-## 関連問題
-
-- [CLF模擬問題一覧](/questions/clf)
-
 ## まとめ
 
 Route 53、CloudFront、Global Acceleratorは、どれも「グローバル」と表示されるため混同しがちですが、役割の階層はきれいに分かれています。
@@ -193,6 +182,22 @@ Route 53、CloudFront、Global Acceleratorは、どれも「グローバル」�
 - 静的IP・TCP/UDPの経路最適化：Global Accelerator
 
 「グローバル」という単語に引っ張られず、「必要なプロトコルと静的IPの選択肢は何か」「キャッシュするか」「DNSを解決するか」で切り分けると、3サービスの取り違えを防げます。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [Route 53 DNS のルーティングポリシー](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html) · [CloudFront のキャッシュキー](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html) · [Global Accelerator の Anycast IP とエンドポイント](https://docs.aws.amazon.com/global-accelerator/latest/dg/introduction-components.html)
+- [CLF-C02 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html) · [SAA-C03 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
+
+## 関連用語
+
+- [Amazon Route 53](/terms/route53)
+- [Amazon CloudFront](/terms/cloudfront)
+- [Amazon S3](/terms/s3)
+- [Elastic Load Balancing](/terms/elb)
+
+## 関連問題
+
+- [CLF模擬問題一覧](/questions/clf)
 
 ## 訂正内容
 

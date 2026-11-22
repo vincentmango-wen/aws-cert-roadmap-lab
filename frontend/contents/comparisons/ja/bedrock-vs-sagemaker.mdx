@@ -25,7 +25,7 @@ updatedAt: "2026-07-25"
 
 # Bedrock・SageMakerの違い
 
-## 結論
+## 選択のポイント
 
 Amazon BedrockとAmazon SageMakerは、どちらもAWSの生成AI・機械学習サービスです。
 
@@ -76,9 +76,9 @@ Jupyterベースのノートブック環境（SageMaker Studio）、大規模デ
 
 独自データを使ってゼロからモデルを学習したい、既存の基盤モデルでは対応できない特殊なタスクに取り組みたい、といった場合にSageMakerを使います。
 
-## 試験で問われるポイント
+## 試験ガイドと判断のポイント
 
-### AIF-C01で問われやすいポイント
+### AIF-C01 の学習ポイント
 
 - BedrockはマネージドサービスでAPI経由の呼び出しが中心、SageMakerはモデル構築・学習・デプロイのプラットフォーム
 - Bedrockはサーバーレスでインフラ管理が不要
@@ -120,7 +120,7 @@ Jupyterベースのノートブック環境（SageMaker Studio）、大規模デ
 - 独自の画像分類モデルの開発
 - レコメンデーションエンジンの構築
 
-## よくある間違い
+## よくある誤解
 
 ### 間違い1：BedrockとSageMakerを完全に別物だと思う
 
@@ -146,6 +146,19 @@ SageMakerはマネージドサービスですが、学習・推論に使うイ�
 
 自社データで大規模に事前学習したい、独自アーキテクチャを試したいといった場合は、SageMakerでの独自開発が適切なこともあります。
 
+## まとめ
+
+BedrockとSageMakerの違いは、「基盤モデルをAPI経由で使うか、モデルを一から構築・学習するか」で考えると整理しやすいです。
+
+Bedrockはマネージド生成AI基盤モデルAPI、SageMakerは機械学習のフルマネージド開発プラットフォームです。
+
+AIF-C01では、この2つのサービスの役割の違いと、責任あるAIやRAGといった関連機能の理解が問われます。
+
+## AWS公式リファレンス
+
+- サービスの動作と設計: [Bedrock の基盤モデル推論 API](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-invoke.html) · [Bedrock Guardrails の設定](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) · [SageMaker のモデルトレーニング](https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html) · [SageMaker のデプロイと推論](https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html)
+- [AIF-C01 試験ガイド](https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html)
+
 ## 関連用語
 
 - [AWS IAM](/terms/iam)
@@ -156,11 +169,3 @@ SageMakerはマネージドサービスですが、学習・推論に使うイ�
 ## 関連問題
 
 - [模擬問題一覧を見る](/questions)
-
-## まとめ
-
-BedrockとSageMakerの違いは、「基盤モデルをAPI経由で使うか、モデルを一から構築・学習するか」で考えると整理しやすいです。
-
-Bedrockはマネージド生成AI基盤モデルAPI、SageMakerは機械学習のフルマネージド開発プラットフォームです。
-
-AIF-C01では、この2つのサービスの役割の違いと、責任あるAIやRAGといった関連機能の理解が問われます。
