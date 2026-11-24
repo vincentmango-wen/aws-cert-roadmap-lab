@@ -1,0 +1,26 @@
+name: Frontend benchmark synthetic safety check
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master' && github.repository == 'vincentmango-wen/aws-cert-roadmap-lab'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the reviewed workflow revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Select Node 20 for stage-one checks
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.20.2'
+      - name: Run synthetic canary only
+        run: node scripts/release/benchmark-canary.mjs
+      - name: Verify success, failure, timeout, and rejected mode
+        run: node --test scripts/release/__tests__/benchmark-canary.test.mjs
