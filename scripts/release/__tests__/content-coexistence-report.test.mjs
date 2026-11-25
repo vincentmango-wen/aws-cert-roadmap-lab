@@ -1,0 +1,20 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {writeFile,mkdtemp,rm,symlink} from 'node:fs/promises';
+import {join} from 'node:path';
+import {tmpdir} from 'node:os';
+import {fixture} from './fixtures/content-coexistence/evidence.mjs';
+import {reportFromFiles} from '../content-coexistence-report.mjs';
+test('hasNoWriteTransport: regular-file boundary, no raw trust fields',async t=>{
+ const root=await mkdtemp(join(tmpdir(),'coexistence-'));t.after(()=>rm(root,{force:true,recursive:true}));
+ const f=fixture();const e=join(root,'e.json'),p=join(root,'t.json'), link=join(root,'link');
+ await writeFile(e,JSON.stringify(f.evidence));await writeFile(p,JSON.stringify(f.pins()));
+ const r=await reportFromFiles(e,p);
+ assert.equal(r.decision,'SHADOW_ELIGIBLE');assert.equal(r.executable,false);
+ assert.doesNotMatch(JSON.stringify(r),/synthetic-target|equalityDigest|archive-|inv-|observation-/);
+ await symlink(e,link);assert.equal((await reportFromFiles(link,p)).decision,'HOLD');
+ assert.equal((await reportFromFiles(root,p)).decision,'HOLD');
+ await writeFile(e,'not-json');
+ assert.equal((await reportFromFiles(e,p)).decision,'HOLD');
+ assert.equal((await reportFromFiles('https://example.invalid/e',p)).decision,'HOLD');
+});
