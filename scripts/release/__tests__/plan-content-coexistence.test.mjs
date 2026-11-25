@@ -75,3 +75,23 @@ test('reverse mismatch is blocked even when independently pinned and on a forwar
  assert.equal(good.counts.retainsStatic,2);
  assert.deepEqual(good.changed.filter(x=>x.direction==='rollback'),[{key:article,reason:'body',bytes:6,direction:'rollback'}]);
 });
+
+test('a separately pinned same-source sitemap-only replay reports a nonzero scope',()=>{
+ const f=fixture(),p=f.evidence.policy;
+ f.b.commit=f.a.commit;f.b.tree=f.a.tree;
+ p.approvedCommit=f.a.commit;p.approvedTree=f.a.tree;
+ p.bodyAfterDigest=p.bodyBeforeDigest;
+ f.b.export=structuredClone(f.a.export);
+ f.b.export.at(-1).sha256=hash('timestamp-only replay');
+ p.allowedPaths=[{key:'sitemap.xml',role:'sitemap'}];
+ p.sitemap={beforeSHA:f.a.export.at(-1).sha256,afterSHA:f.b.export.at(-1).sha256,
+  expectedLastmodChanges:46,observedLastmodChanges:46,otherXMLChanges:0,routeSetDigest:hash('route set'),timeDerivedKeysDigest:hash('46 keys')};
+ const r=call(f);
+ assert.equal(r.decision,'SITEMAP_ONLY');
+ assert.equal(r.executable,false);
+ assert.equal(r.counts.forward.objects,1);
+ assert.equal(r.counts.forward.bytes,f.b.export.at(-1).bytes);
+ assert.equal(r.counts.rollback.bytes,f.a.export.at(-1).bytes);
+ p.allowedPaths.push({key:article,role:'document'});
+ held(f);
+});

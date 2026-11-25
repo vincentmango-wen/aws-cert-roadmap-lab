@@ -25,10 +25,11 @@ function result(decision,reasons=[],changed=[],extra={}){
 const held = (...reasons) => result('HOLD',reasons);
 function policyMap(p,v) {
  const {active:a,proposed:b,approvedSource:x}=v;
+ const sameSource=a.commit===b.commit&&a.tree===b.tree;
  if(!exact(p,policyFields)||p.version!==1||p.caseId!=='iam-zh-body-v1'||p.sourcePath!==IAM_PATH
    ||p.approvedCommit!==b.commit||p.approvedTree!==b.tree||p.baseTree!==a.tree
-   ||x.candidateCommit!==b.commit||x.candidateTree!==b.tree||x.baseTree!==a.tree||a.tree===b.tree||a.commit===b.commit
-   ||!proofFields.every(k=>digest(p[k])&&p[k]===x[k])||p.bodyBeforeDigest===p.bodyAfterDigest
+   ||x.candidateCommit!==b.commit||x.candidateTree!==b.tree||x.baseTree!==a.tree||!sameSource&&(a.tree===b.tree||a.commit===b.commit)
+   ||!proofFields.every(k=>digest(p[k])&&p[k]===x[k])||(p.bodyBeforeDigest===p.bodyAfterDigest)!==sameSource
    ||!exact(p.control,['objects','bytes'])||![p.control.objects,p.control.bytes].every(v=>Number.isSafeInteger(v)&&v>0)
    ||!Array.isArray(p.allowedPaths)||!p.allowedPaths.length)return null;
  const allowed=new Map();
@@ -42,7 +43,8 @@ function policyMap(p,v) {
     ||s.expectedLastmodChanges!==46||s.observedLastmodChanges!==s.expectedLastmodChanges||s.otherXMLChanges!==0
     ||!allowed.has('sitemap.xml')))return null;
  if(s===null&&allowed.has('sitemap.xml'))return null;
- return allowed;
+ if(sameSource&&(s===null||allowed.size!==1||!allowed.has('sitemap.xml')))return null;
+ return {allowed,sameSource};
 }
 function measureDelta(from,to,allowed,sitemap,direction){
  const f=[...from].filter(([,e])=>e.role!=='static'), t=[...to].filter(([,e])=>e.role!=='static');
@@ -72,17 +74,18 @@ export function planContentCoexistence(bundle,trustedContext){
   const retained=inventory.protectedKeys.length;
   if(v.identical)return result('NOOP',[],[],{retainsStatic:retained});
   if(v.active.artifactDigest===v.proposed.artifactDigest)return held('INCONSISTENT_ARTIFACT_IDENTITY');
-  const allowed=policyMap(v.policy,v);
-  if(!allowed)return held('UNKNOWN_OR_UNREVIEWED_POLICY');
+  const policy=policyMap(v.policy,v);
+  if(!policy)return held('UNKNOWN_OR_UNREVIEWED_POLICY');
+  const {allowed,sameSource}=policy;
   const forward=measureDelta(inventory.active,inventory.proposed,allowed,v.policy.sitemap,'forward');
   const rollback=measureDelta(inventory.proposed,inventory.rollback,allowed,v.policy.sitemap,'rollback');
-  if(!forward||!rollback)return held('UNEXPLAINED_MUTABLE_CHANGE_OR_MISSING_KEY');
+  if(!forward||!rollback||sameSource&&(forward.length!==1||rollback.length!==1))return held('UNEXPLAINED_MUTABLE_CHANGE_OR_MISSING_KEY');
   const totals=count(forward);
   if(!Number.isSafeInteger(totals.bytes)||!Number.isSafeInteger(count(rollback).bytes))return held('INVALID_BYTE_TOTAL');
   const control=v.policy.control;
   // Integer arithmetic, so threshold boundaries are not rounded into a pass.
   const meetsBudget=BigInt(totals.objects)*20n<=BigInt(control.objects)&&BigInt(totals.bytes)*20n<=BigInt(control.bytes);
-  return result('SHADOW_ELIGIBLE',[],[...forward,...rollback],{retainsStatic:retained,control,meetsBudget});
+  return result(sameSource?'SITEMAP_ONLY':'SHADOW_ELIGIBLE',[],[...forward,...rollback],{retainsStatic:retained,control,meetsBudget});
  }catch{return held('INVALID_EVIDENCE');}
 }
 export function invalidLocalReport(){return held('INVALID_LOCAL_EVIDENCE_FILE');}

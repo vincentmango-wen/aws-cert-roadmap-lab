@@ -1,0 +1,46 @@
+name: Content coexistence shadow (PR fixture, read-only)
+
+on:
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    # The bounded fixture belongs to #382 on the owner's same-repository topic only.
+    if: >-
+      github.repository == 'vincentmango-wen/aws-cert-roadmap-lab' &&
+      github.event.pull_request.number == 382 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'feat/376-origin-readonly-preflight'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the exact PR head, with no retained credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Set up pinned Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.13.0
+      - name: Verify read-only release contracts
+        run: node --test scripts/release/__tests__/*.test.mjs
+      - name: Build and compare synthetic export bodies only
+        shell: bash
+        run: |
+          report="$RUNNER_TEMP/content-shadow-summary.json"
+          status=0
+          node scripts/release/run-content-shadow-build.mjs > "$report" || status=$?
+          {
+            echo '### #376 synthetic body-only comparison (never executable)'
+            echo 'This is not a verified live-baseline or serving-metadata comparison.'
+            echo '```json'
+            cat "$report"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
