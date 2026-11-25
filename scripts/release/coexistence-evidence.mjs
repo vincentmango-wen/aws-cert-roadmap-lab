@@ -1,6 +1,8 @@
 import {createHash} from 'node:crypto';
 
 const verified = new WeakSet();
+// Preserve the source of the checksum while requiring complete object bytes.
+const fullObjectChecksumTypes = new Set(['full-object','locally-computed-full-object']);
 const effectiveValues = ['NEXT_PUBLIC_API_BASE_URL','NEXT_PUBLIC_SITE_URL','NEXT_PUBLIC_GA_MEASUREMENT_ID','NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID'];
 export const IAM_PATH = 'frontend/contents/blog/zh/clf-iam-basics.mdx';
 const record = (v) => v!==null && typeof v==='object' && [Object.prototype,null].includes(Object.getPrototypeOf(v));
@@ -134,7 +136,7 @@ export function reconcileInventories(evidence){
   const observed=new Map();
   for(const e of evidence.snapshot.objects){
    if(!exact(e,['key','state','sha256','bytes','metadata','checksumType','representation','version'])
-     ||e.state!=='present'||e.checksumType!=='full-object'||e.representation!=='origin'||!text(e.version)
+     ||e.state!=='present'||!fullObjectChecksumTypes.has(e.checksumType)||e.representation!=='origin'||!text(e.version)
      ||!siteKey(e.key)||!validBytes(e)||observed.has(e.key))return fail('AMBIGUOUS_TARGET_OBSERVATION');
    observed.set(e.key,e);
   }

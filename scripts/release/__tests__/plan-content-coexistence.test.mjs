@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {fixture,hash,article} from './fixtures/content-coexistence/evidence.mjs';
 import {planContentCoexistence} from '../plan-content-coexistence.mjs';
+import {classifyGet} from '../s3-origin-observation.mjs';
 const call=(f)=>planContentCoexistence(f.evidence,f.pins());
 const held=(f)=>{const r=call(f);assert.equal(r.decision,'HOLD');assert.deepEqual(r.changed,[]);assert.equal(r.executable,false);assert.equal(r.counts.forward.objects,0);assert.equal(r.counts.meetsBudget,null);};
 test('needsExactArtifactForNoop and positive report returns exact forward and rollback body counts',()=>{
@@ -94,4 +95,38 @@ test('a separately pinned same-source sitemap-only replay reports a nonzero scop
  assert.equal(r.counts.rollback.bytes,f.a.export.at(-1).bytes);
  p.allowedPaths.push({key:article,role:'document'});
  held(f);
+});
+
+
+function replaceArticleObservation(f, body, response = {}) {
+ const index=f.evidence.snapshot.objects.findIndex(e=>e.key===article);
+ const {key,version,representation}=f.evidence.snapshot.objects[index];
+ const observation=classifyGet({status:200,directFullResponse:true,body:Buffer.from(body),
+  get:{ContentLength:6,ContentType:'text/plain',CacheControl:'no-store',MissingMeta:0,...response}});
+ f.evidence.snapshot.objects[index]={key,version,representation,...observation};
+ return observation;
+}
+
+test('plans identical scope with independently pinned full GET origin evidence',()=>{
+ const f=fixture(),head=call(f);
+ assert.equal(head.decision,'SHADOW_ELIGIBLE');
+ const observation=replaceArticleObservation(f,'before');
+ assert.equal(observation.checksumType,'locally-computed-full-object');
+ const result=call(f);
+ assert.equal(result.decision,head.decision);
+ assert.equal(result.executable,false);
+ assert.deepEqual(result.changed,head.changed);
+ assert.deepEqual(result.counts,head.counts);
+});
+
+test('blocks partial GETs, unknown checksum types and valid GETs with different bytes',()=>{
+ let f=fixture();
+ assert.equal(replaceArticleObservation(f,'before',{ContentRange:'bytes 0-5/12'}).state,'unknown');
+ assert.deepEqual(call(f).reasons,['AMBIGUOUS_TARGET_OBSERVATION']);
+ f=fixture();
+ f.evidence.snapshot.objects.find(e=>e.key===article).checksumType='composite';
+ assert.deepEqual(call(f).reasons,['AMBIGUOUS_TARGET_OBSERVATION']);
+ f=fixture();
+ assert.equal(replaceArticleObservation(f,'differ').state,'present');
+ assert.deepEqual(call(f).reasons,['UNRECONCILED_TARGET']);
 });
