@@ -6,6 +6,7 @@ const OUT_DIR = path.resolve(process.cwd(), "out");
 const CHECK_MODE = process.argv.includes("--check");
 
 const htmlLangByLocale = {
+  "zh-Hant": "zh-Hant",
   ja: "ja",
   en: "en",
   zh: "zh",
@@ -51,6 +52,11 @@ function toPosixPath(filePath) {
 
 function detectLocaleFromOutPath(filePath) {
   const relativePath = toPosixPath(path.relative(OUT_DIR, filePath));
+
+  // This standalone error artifact supplies its language before any JavaScript.
+  if (relativePath === "zh/404.html") {
+    return "zh-Hant";
+  }
 
   if (relativePath === "en.html" || relativePath.startsWith("en/")) {
     return "en";
