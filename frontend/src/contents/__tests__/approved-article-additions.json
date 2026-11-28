@@ -28,6 +28,10 @@
     {
       "id": "cmp-015",
       "slug": "aws-compute-ec2-lambda-ecs"
+    },
+    {
+      "id": "cmp-016",
+      "slug": "sqs-standard-vs-fifo"
     }
   ]
 }

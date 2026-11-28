@@ -420,5 +420,29 @@
     "published": true,
     "publishedAt": "2026-11-20",
     "locale": "en"
+  },
+  {
+    "comparisonId": "cmp-016",
+    "slug": "sqs-standard-vs-fifo",
+    "title": "SQS Standard vs. FIFO: choose by message ordering needs",
+    "description": "Compare independent notifications with updates to the same order, distinguishing FIFO group ordering, batch receives, producer deduplication, and Standard fair queues.",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "sqs"
+    ],
+    "tags": [
+      "sqs",
+      "messaging",
+      "comparison",
+      "saa"
+    ],
+    "priority": "medium",
+    "published": false,
+    "publishedAt": "",
+    "locale": "en"
   }
 ]

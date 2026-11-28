@@ -420,5 +420,29 @@
     "published": true,
     "publishedAt": "2026-11-20",
     "locale": "zh"
+  },
+  {
+    "comparisonId": "cmp-016",
+    "slug": "sqs-standard-vs-fifo",
+    "title": "SQS Standard 與 FIFO：依訊息順序需求選型",
+    "description": "比較獨立通知與同筆訂單的狀態更新，釐清 FIFO 群組保序、批次接收、傳送去重及 Standard fair queues 的界線。",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "sqs"
+    ],
+    "tags": [
+      "sqs",
+      "messaging",
+      "comparison",
+      "saa"
+    ],
+    "priority": "medium",
+    "published": false,
+    "publishedAt": "",
+    "locale": "zh"
   }
 ]
