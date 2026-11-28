@@ -97,8 +97,21 @@ const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer
 const report = line => appendFileSync(process.env.GITHUB_STEP_SUMMARY, line + '\n');
 const output = line => appendFileSync(process.env.GITHUB_OUTPUT, line + '\n');
 
+export function syncWithinWindow(claimed, now, launch) {
+  if (!claimed || releaseWindow(now()) !== claimed) throw new Error('Claimed release window closed or missing; no S3 sync');
+  return launch();
+}
+
 async function run(mode) {
-  if (process.env.GITHUB_REPOSITORY !== REPO || !process.env.GH_TOKEN) throw new Error('Untrusted repository or unavailable token');
+  if (process.env.GITHUB_REPOSITORY !== REPO) throw new Error('Untrusted repository');
+  if (mode === 'sync') {
+    const { GITHUB_EVENT_NAME, CLAIMED_RELEASE_WINDOW, RUNNER_TEMP, S3_BUCKET } = process.env;
+    if (GITHUB_EVENT_NAME !== 'pull_request' || !RUNNER_TEMP || !S3_BUCKET) throw new Error('Sync inputs missing; no S3 sync');
+    const args = ['s3', 'sync', RUNNER_TEMP + '/weekly-frontend/out/', 's3://' + S3_BUCKET, '--delete'];
+    return syncWithinWindow(CLAIMED_RELEASE_WINDOW, () => new Date().toISOString(),
+      () => execFileSync('aws', args, { stdio: 'inherit' }));
+  }
+  if (!process.env.GH_TOKEN) throw new Error('Unavailable GitHub token');
   if (mode === 'prepare') {
     if (process.env.GITHUB_EVENT_NAME !== 'schedule' || process.env.GITHUB_REF !== 'refs/heads/master' ||
         !releaseWindow(new Date().toISOString())) return report('Outside the Sunday release window; no action.');
@@ -157,6 +170,7 @@ async function run(mode) {
   // Recheck after claiming. A changed head or a closed window burns the slot, rather than publishing stale output.
   if ((await api('/git/ref/heads/master')).object?.sha !== c.sha || releaseWindow(new Date().toISOString()) !== c.window)
     throw new Error('Master or release window changed after claim; no deployment');
+  output('window=' + c.window);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

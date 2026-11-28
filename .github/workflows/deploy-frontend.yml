@@ -116,7 +116,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/weekly-frontend/out"
           tar -xf "$RUNNER_TEMP/weekly-frontend/frontend.tar" -C "$RUNNER_TEMP/weekly-frontend/out"
           test -s "$RUNNER_TEMP/weekly-frontend/out/index.html"
-      - name: Recheck eligibility and atomically claim the weekly slot
+      - id: claim
+        name: Recheck eligibility and atomically claim the weekly slot
         env:
           GH_TOKEN: ${{ github.token }}
           WEEKLY_RELEASE_ENABLED: ${{ vars.AWS_WEEKLY_RELEASE_ENABLED }}
@@ -129,10 +130,10 @@ jobs:
       - name: Deploy to S3
         env:
           S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+          CLAIMED_RELEASE_WINDOW: ${{ steps.claim.outputs.window }}
         run: |
           set -o pipefail
-          test -n "$S3_BUCKET"
-          aws s3 sync "$RUNNER_TEMP/weekly-frontend/out/" "s3://$S3_BUCKET" --delete | tee "$RUNNER_TEMP/s3-sync.log"
+          node scripts/release/weekly-production.mjs sync | tee "$RUNNER_TEMP/s3-sync.log"
       - name: Invalidate CloudFront
         env:
           DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}

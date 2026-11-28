@@ -80,7 +80,9 @@ test('workflow has no manual/push deployment path; schedule has no write credent
   assert.match(writer, /environment:[\s\S]*aws-production/);
   assert.match(writer, /AWS_WEEKLY_RELEASE_ENABLED/);
   assert.ok(writer.indexOf('weekly-production.mjs claim') < writer.indexOf('configure-aws-credentials'));
-  assert.ok(writer.indexOf('configure-aws-credentials') < writer.indexOf('aws s3 sync'));
+  assert.ok(writer.indexOf('configure-aws-credentials') < writer.indexOf('weekly-production.mjs sync'));
+  assert.match(writer, /CLAIMED_RELEASE_WINDOW: \$\{\{ steps\.claim\.outputs\.window \}\}/);
+  assert.doesNotMatch(writer, /aws s3 sync/);
 });
 
 test('scheduled compare accepts commit pagination on its first page and reports capped evidence conservatively', async () => {
@@ -97,4 +99,18 @@ test('scheduled compare accepts commit pagination on its first page and reports 
   assert.equal(await inspectCandidate(mock({ files: Array(300).fill({ filename: 'docs/README.md' }) })), 'inconclusive');
   assert.equal(await inspectCandidate(mock({})), 'inconclusive');
   await assert.rejects(inspectCandidate(mock({}, 503)), /HTTP 503/);
+});
+
+test('the post-credential upload gate starts sync only inside the claimed window', async () => {
+  const { syncWithinWindow } = await import('../weekly-production.mjs');
+  const calls = [];
+  const launch = () => calls.push('fake aws s3 sync');
+  assert.equal(releaseWindow('2026-11-29T14:29:30Z'), '2026-11-29');
+  syncWithinWindow('2026-11-29', () => '2026-11-29T14:29:59Z', launch);
+  for (const [claimed, now] of [
+    ['2026-11-29', '2026-11-29T14:30:00Z'],
+    ['2026-11-29', '2026-12-06T14:00:00Z'],
+    ['', date],
+  ]) assert.throws(() => syncWithinWindow(claimed, () => now, launch), /no S3 sync/);
+  assert.deepEqual(calls, ['fake aws s3 sync']);
 });
