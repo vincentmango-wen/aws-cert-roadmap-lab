@@ -1,7 +1,7 @@
 import type { Locale } from "@/i18n/locales";
 export type { Locale } from "@/i18n/locales";
 export type ArticleKind = "blog" | "architecture" | "comparison";
-export type AnnouncementKind = "question-bank" | "feature";
+export type AnnouncementKind = "question-bank" | "glossary" | "feature";
 export type DateLabel = "published" | "updated" | "announced";
 export type NoteInline =
   | { type: "text" | "code"; value: string }

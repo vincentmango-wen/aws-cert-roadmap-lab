@@ -66,7 +66,7 @@ export function aggregateUpdates(input: AggregateInput): UpdateInventory {
     if (value.eventKind !== "new" && value.eventKind !== "update") { reject("invalid-event-kind"); continue; }
     if (value.corrects && value.eventKind !== "update") { reject("invalid-correction-event"); continue; }
     if (value.eventKind === "update" && locales.some((locale) => !isSafeNoteBlocks(value.translations[locale].updateNotes))) { reject("invalid-update-notes"); continue; }
-    if (value.category === "question-bank" && value.links.length === 0) { reject("missing-question-link"); continue; }
+    if ((value.category === "question-bank" || value.category === "glossary") && value.links.length === 0) { reject("missing-question-link"); continue; }
     if (value.links.some((link) => !/^\/(?:[a-z0-9-]+\/?)*$/.test(link.path) || /^\/(en|zh)(\/|$)/.test(link.path) || locales.some((locale) => !link.labels[locale]?.trim() || !input.isPublicPath(link.path, locale)))) { reject("invalid-public-link"); continue; }
     visible.set(value.id, value);
   }

@@ -63,7 +63,7 @@ test("missing exported destinations stop the build before replacing the fallback
   const cwd = prepare(t);
   rmSync(path.join(cwd, "out", "en", "questions.html"));
   assert.throws(() => invoke(generate, cwd), (error) => {
-    assert.match(String(error.stderr), /en\/questions\.html/);
+    assert.match(String(error.stderr), /en[\\/]+questions\.html/);
     return true;
   });
   assert.match(readFileSync(path.join(cwd, "out", "404.html"), "utf8"), /Next export fixture/);

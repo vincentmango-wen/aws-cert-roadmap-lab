@@ -108,7 +108,7 @@ export type UiDictionary = {
   updates: {
     title: string; introduction: string; empty: string; viewAll: string;
     original: string; correction: string;
-    categories: Record<"blog" | "architecture" | "comparison" | "question-bank" | "feature", string>;
+    categories: Record<"blog" | "architecture" | "comparison" | "question-bank" | "glossary" | "feature", string>;
     dates: Record<"published" | "updated" | "announced", string>;
     events: Record<"new" | "update", string>;
     eventDescriptions: Record<"new" | "update", string>;
@@ -225,7 +225,7 @@ export const jaDictionary: UiDictionary = {
     introduction: "記事の公開日・更新日とお知らせの日付から、最近の学習コンテンツ、問題集、サイト機能の情報を確認できます。記事一覧には現在の版を表示しており、すべての改訂履歴ではありません。",
     empty: "現在表示できるコンテンツやお知らせはありません", viewAll: "すべてのコンテンツとお知らせを見る",
     original: "元のお知らせ", correction: "訂正のお知らせ",
-    categories: { blog: "ブログ", architecture: "構成図", comparison: "サービス比較", "question-bank": "問題集のお知らせ", feature: "機能のお知らせ" },
+    categories: { blog: "ブログ", architecture: "構成図", comparison: "サービス比較", "question-bank": "問題集のお知らせ", glossary: "用語集のお知らせ", feature: "機能のお知らせ" },
     dates: { published: "公開", updated: "更新", announced: "お知らせ" },
     events: { new: "New", update: "Update" },
     eventDescriptions: { new: "初回公開", update: "内容の更新" },
