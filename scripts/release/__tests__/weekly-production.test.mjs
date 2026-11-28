@@ -82,3 +82,19 @@ test('workflow has no manual/push deployment path; schedule has no write credent
   assert.ok(writer.indexOf('weekly-production.mjs claim') < writer.indexOf('configure-aws-credentials'));
   assert.ok(writer.indexOf('configure-aws-credentials') < writer.indexOf('aws s3 sync'));
 });
+
+test('scheduled compare accepts commit pagination on its first page and reports capped evidence conservatively', async () => {
+  const { inspectCandidate } = await import('../weekly-production.mjs');
+  const mock = (body, status = 200) => async (url, options) => {
+    assert.match(url, /\/compare\/master\.\.\.dev\?page=1&per_page=1$/);
+    assert.equal(options.method, 'GET');
+    return new Response(JSON.stringify(body), { status, headers: {
+      link: '<https://api.github.com/next>; rel="next"',
+    } });
+  };
+  assert.equal(await inspectCandidate(mock({ files: [{ filename: 'frontend/src/a.ts' }] })), 'pending');
+  assert.equal(await inspectCandidate(mock({ files: [{ filename: 'docs/README.md' }] })), 'none-observed');
+  assert.equal(await inspectCandidate(mock({ files: Array(300).fill({ filename: 'docs/README.md' }) })), 'inconclusive');
+  assert.equal(await inspectCandidate(mock({})), 'inconclusive');
+  await assert.rejects(inspectCandidate(mock({}, 503)), /HTTP 503/);
+});

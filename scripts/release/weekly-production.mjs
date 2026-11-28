@@ -68,8 +68,10 @@ export async function claimWindow(create, window, sha) {
   return await create('refs/tags/aws-weekly-release/' + window, sha) === 201;
 }
 
-async function api(path, json) {
-  const r = await fetch('https://api.github.com/repos/' + REPO + path, {
+const COMPARE_FIRST_PAGE = '/compare/master...dev?page=1&per_page=1';
+
+async function api(path, json, request = fetch) {
+  const r = await request('https://api.github.com/repos/' + REPO + path, {
     method: json ? 'POST' : 'GET',
     headers: { authorization: 'Bearer ' + process.env.GH_TOKEN,
       accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
@@ -77,8 +79,18 @@ async function api(path, json) {
     signal: AbortSignal.timeout(15_000),
   });
   if (json) return r.status;
-  if (!r.ok || r.headers.get('link')?.includes('rel="next"')) throw new Error('GitHub evidence incomplete: HTTP ' + r.status);
+  // GitHub's compare file inventory is on page one (max 300); Link paginates commits only.
+  // Other evidence (reviews/checks) still stops on incomplete pagination.
+  if (!r.ok || (path !== COMPARE_FIRST_PAGE && r.headers.get('link')?.includes('rel="next"')))
+    throw new Error('GitHub evidence incomplete: HTTP ' + r.status);
   return r.json();
+}
+
+export async function inspectCandidate(request = fetch) {
+  const { files } = await api(COMPARE_FIRST_PAGE, undefined, request);
+  if (!Array.isArray(files) || files.some(file => typeof file?.filename !== 'string')) return 'inconclusive';
+  if (files.some(file => file.filename.startsWith('frontend/'))) return 'pending';
+  return files.length >= 300 ? 'inconclusive' : 'none-observed';
 }
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
@@ -90,10 +102,13 @@ async function run(mode) {
   if (mode === 'prepare') {
     if (process.env.GITHUB_EVENT_NAME !== 'schedule' || process.env.GITHUB_REF !== 'refs/heads/master' ||
         !releaseWindow(new Date().toISOString())) return report('Outside the Sunday release window; no action.');
-    const evidence = await api('/compare/master...dev?per_page=1');
-    const pending = evidence.files?.some(f => f.filename.startsWith('frontend/'));
-    await report(pending ? 'Frontend changes observed. A maintainer must open/review the dev → master release PR; no deployment started.'
-      : 'No frontend changes observed in this preview. Verify the release PR before merging; no deployment started.');
+    report('Source preview only. This does not verify the served version; reconcile the last successful production evidence before skipping.');
+    const candidate = await inspectCandidate();
+    report({
+      pending: 'Frontend changes observed. A maintainer must open/review the dev → master release PR; no deployment started.',
+      'none-observed': 'No frontend changes observed in this preview; no deployment started.',
+      inconclusive: 'Changed-file evidence is missing or at the GitHub cap. Check the exact Git revisions separately; no deployment started.',
+    }[candidate]);
     return;
   }
   if (!['gate', 'claim'].includes(mode) || process.env.GITHUB_EVENT_NAME !== 'pull_request') throw new Error('Unexpected release entry point');

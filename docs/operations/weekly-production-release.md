@@ -10,6 +10,13 @@ Routine releases start Sunday at **22:00 Asia/Taipei**. The approved dev-to-mast
 4. Rehearse without writes: flags unset/false, no AWS authentication. Validate the empty, red, stale, outside-window and duplicate cases. Before release, pause unrelated merges to master while the artifact is publishing. Require a single active writer and recheck the protected environment, flag, exact master and last known artifact before opening the write gate.
 5. When the owner explicitly authorizes a real release in the next eligible window, observe exactly one deploy run and one weekly claim tag, record S3 sync counts/bytes where available, then verify the homepage and representative routes in all three locales. No-change weeks are skip evidence, not live release acceptance. The successful static export archive is retained 14 days; retain the confirmed baseline separately before it expires.
 
+## If a merge reaches master without a verified deployment
+
+The Sunday report compares source only. An empty dev-to-master diff can coexist with a stale production site. Compare the merged SHA with the last confirmed deployed SHA, the workflow result and any weekly claim tag. Inspect the expected production paths only if needed to reconcile the outcome. Mark the release **unconfirmed** until the served version is verified; do not close #376 based on the source preview.
+
+- **No AWS writes:** Keep the previous site serving. Record the missed release and retain the reviewed merge SHA. A new push, repeat merge, or deletion of the weekly marker is not a recovery plan. Escalate to the owner for an explicit decision: defer to the next legitimate release (which includes the already-merged source) or approve a one-off, independently reviewed recovery of the exact tested artifact. Do not fabricate a frontend change to trigger the writer.
+- **Any AWS writes or uncertain write state:** Apply the rollback sequence below first. Treat republishing the merged revision as a separate approval after the previous known-good site is confirmed. Neither case uses a workflow rerun or bypasses normal permissions.
+
 ## Stop / rollback
 
 - Before any S3 write: disable the writer, turn off the release flag and keep or reinstate the S3 write guard. Inspect running/queued jobs, verify no live writes, and do not re-enable the old workflow in parallel.
