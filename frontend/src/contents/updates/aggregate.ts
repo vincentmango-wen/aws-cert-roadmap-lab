@@ -59,7 +59,7 @@ export function aggregateUpdates(input: AggregateInput): UpdateInventory {
     const reject = (code: string) => result.diagnostics.push({ code, id: `announcement:${value.id}` });
     if (announcementCounts.get(value.id)! > 1) { reject("duplicate-id"); continue; }
     if (!/^[a-z0-9-]+$/.test(value.id)) { reject("invalid-identity"); continue; }
-    if (!value.published) { reject("unpublished"); continue; }
+    if (value.published !== true) { reject("unpublished"); continue; }
     if (!isCalendarDate(value.date)) { reject("invalid-date"); continue; }
     if (value.date > input.today) { reject("future-date"); continue; }
     if (locales.some((locale) => !value.translations[locale]?.title.trim() || !value.translations[locale]?.summary.trim())) { reject("missing-translation"); continue; }

@@ -22,11 +22,19 @@ it("allows one mixed release and a standalone glossary notice without duplicates
   const files = source("new"); files.set(termFile, JSON.stringify([{ termId: "term", summary: "new" }]));
   const mixed = snapshotSources(files);
   const value = input(); value.after = mixed; value.records[0].changes = changedRecords(before, mixed);
+  value.announcements[0].links.push({ ...value.announcements[0].links[0], path: "/terms" });
   expect(validatePublications(value)).toEqual({ changed: 2, announcements: 1 });
+  for (const path of ["/questions", "/terms"]) {
+    const incomplete = notice(); incomplete.links[0].path = path;
+    expect(() => validatePublications({ ...value, announcements: [incomplete] })).toThrow(/destination/);
+  }
   const glossary = notice(); glossary.category = "glossary"; glossary.links[0].path = "/terms";
-  expect(validatePublications({ ...value, announcements: [glossary] }).announcements).toBe(1);
+  const termsOnly = snapshotSources(new Map([[termFile, files.get(termFile)!]]));
+  const termValue = { ...value, before: new Map<string, string>(), after: termsOnly, records: [{ ...record(), changes: changedRecords(new Map(), termsOnly) }], announcements: [glossary] };
+  expect(validatePublications(termValue).announcements).toBe(1);
+  expect(() => validatePublications({ ...termValue, announcements: [{ ...glossary, links: [{ ...glossary.links[0], path: "/questions" }] }] })).toThrow(/destination/);
   glossary.links = [];
-  expect(() => validatePublications({ ...value, announcements: [glossary] })).toThrow();
+  expect(() => validatePublications(termValue)).toThrow();
 });
 it("does not replay an old decision or an old announcement for a later edit", () => {
   const next = snapshotSources(source("third revision"));
@@ -47,16 +55,27 @@ it("requires an exact reasoned exclusion, including on later re-edits", () => {
   expect(() => validatePublications({ ...input(), records: [{ ...exclusion, reason: " " }], announcements: [] })).toThrow();
   expect(() => validatePublications({ ...input(), before: after, after: snapshotSources(source("fourth")), records: [exclusion], baseRecords: [exclusion], announcements: [] })).toThrow(/uncovered/);
 });
-it.each(["blank-title", "missing-locale", "future", "unpublished", "bad-link", "missing-notes", "duplicate-notice"])("fails closed for %s", kind => {
+it.each(["blank-title", "missing-locale", "future", "unpublished", "string-published", "bad-link", "missing-notes", "duplicate-notice"])("fails closed for %s", kind => {
   const a = notice(); const value = input(); value.announcements = [a];
   if (kind === "blank-title") a.translations.zh.title = " ";
   if (kind === "missing-locale") delete (a.translations as Partial<Announcement["translations"]>).ja;
   if (kind === "future") a.date = "2026-11-29";
   if (kind === "unpublished") a.published = false;
+  if (kind === "string-published") (a as unknown as { published: unknown }).published = "false";
   if (kind === "bad-link") a.links[0].path = "/private";
   if (kind === "missing-notes") a.eventKind = "update";
   if (kind === "duplicate-notice") value.announcements.push(a);
   expect(() => validatePublications(value)).toThrow();
+});
+it.each(["removed", "unpublished", "missing-locale"])("retains historical release visibility when %s", kind => {
+  const a = notice();
+  if (kind === "unpublished") a.published = false;
+  if (kind === "missing-locale") delete (a.translations as Partial<Announcement["translations"]>).zh;
+  expect(() => validatePublications({ ...input(), before: after, baseRecords: [record()], baseAnnouncements: [notice()], announcements: kind === "removed" ? [] : [a] })).toThrow();
+});
+it("requires the original ledger as an immutable prefix", () => {
+  const a = record(), b = { ...record(), id: "two" };
+  expect(() => validatePublications({ ...input(), before: after, baseRecords: [a, b], records: [b, a], baseAnnouncements: [notice()] })).toThrow(/history/);
 });
 it("rejects a fresh content announcement without a release decision", () => {
   expect(() => validatePublications({ ...input(), before: after, records: [] })).toThrow(/unclaimed/);

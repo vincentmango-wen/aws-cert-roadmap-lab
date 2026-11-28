@@ -77,8 +77,8 @@ export function validatePublications(input: {
 }): { changed: number; announcements: number } {
   const oldRecords = parsePublicationRecords(input.baseRecords);
   const records = parsePublicationRecords(input.records);
-  for (const old of oldRecords) {
-    const current = records.find(r => r.id === old.id);
+  for (const [index, old] of oldRecords.entries()) {
+    const current = records[index];
     if (!current || canonical(current) !== canonical(old)) throw new Error(`Publication history changed: ${old.id}`);
   }
   const oldIds = new Set(oldRecords.map(r => r.id));
@@ -89,6 +89,23 @@ export function validatePublications(input: {
   const claimed = new Set<string>();
   const oldNotices = new Set(input.baseAnnouncements.map(a => a.id));
   const inventory = aggregateUpdates({ articles: [], announcements: input.announcements, today: input.today, isPublicPath: input.isPublicPath });
+  // Recorded releases remain visible and reachable even when no source changes this time.
+  const allClaims = new Set<string>();
+  for (const r of records) {
+    if (r.disposition !== "announce") continue;
+    const id = r.announcementId;
+    if (allClaims.has(id)) throw new Error(`duplicate announcement claim: ${id}`);
+    allClaims.add(id);
+    const announcement = input.announcements.find(a => a.id === id);
+    if (!announcement || !["question-bank", "glossary"].includes(announcement.category)) throw new Error(`Invalid content announcement: ${id}`);
+    if (inventory.diagnostics.some(d => d.id === `announcement:${id}`) || locales.some(locale => inventory.itemsByLocale[locale].filter(item => item.id === `announcement:${id}`).length !== 1)) {
+      throw new Error(`Announcement must be visible exactly once per locale: ${id}`);
+    }
+    const needsQuestions = r.changes.some(c => c.key.startsWith("frontend/contents/questions/"));
+    const needsTerms = r.changes.some(c => c.key.startsWith("frontend/contents/terms/"));
+    if ((needsQuestions && !announcement.links.some(l => /^\/questions(?:\/(?:clf|saa|aif))?$/.test(l.path))) ||
+        (needsTerms && !announcement.links.some(l => l.path === "/terms"))) throw new Error(`Missing content destination: ${id}`);
+  }
   for (const r of fresh) {
     for (const c of r.changes) {
       if (covered.has(c.key)) throw new Error(`duplicate coverage: ${c.key}`);
@@ -100,11 +117,6 @@ export function validatePublications(input: {
       const id = r.announcementId;
       if (oldNotices.has(id)) throw new Error(`historical announcement cannot cover new changes: ${id}`);
       if (claimed.has(id)) throw new Error(`duplicate announcement claim: ${id}`);
-      const announcement = input.announcements.find(a => a.id === id);
-      if (!announcement || !["question-bank", "glossary"].includes(announcement.category)) throw new Error(`Invalid content announcement: ${id}`);
-      if (inventory.diagnostics.some(d => d.id === `announcement:${id}`) || locales.some(locale => inventory.itemsByLocale[locale].filter(item => item.id === `announcement:${id}`).length !== 1)) {
-        throw new Error(`Announcement must be visible exactly once per locale: ${id}`);
-      }
       claimed.add(id);
     }
   }

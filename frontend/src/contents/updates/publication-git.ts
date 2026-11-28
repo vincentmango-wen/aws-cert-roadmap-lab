@@ -6,6 +6,7 @@ import type { Announcement } from "./types";
 
 const ledgerPath = "frontend/src/contents/updates/publication-records.json";
 const announcementsPath = "frontend/src/contents/updates/announcements.ts";
+const gatePath = "frontend/src/i18n/release-gate.ts";
 const isSource = (p: string) => /^frontend\/contents\/(questions|terms)\//.test(p);
 
 /** Interpret a deliberately narrow literal grammar; never import code from a Git revision. */
@@ -13,6 +14,15 @@ export function readLiteralAnnouncements(text: string): Announcement[] {
   const syntax = ts.transpileModule(text, { reportDiagnostics: true, compilerOptions: { target: ts.ScriptTarget.ESNext } });
   if (syntax.diagnostics?.some(d => d.category === ts.DiagnosticCategory.Error)) throw new Error("Invalid announcement syntax");
   const file = ts.createSourceFile("announcements.ts", text, ts.ScriptTarget.Latest, true);
+  for (const statement of file.statements) {
+    if (ts.isImportDeclaration(statement) && statement.importClause?.isTypeOnly) continue;
+    if (ts.isVariableStatement(statement) && statement.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)
+      && (statement.declarationList.flags & ts.NodeFlags.Const) !== 0 && statement.declarationList.declarations.length === 1) {
+      const name = statement.declarationList.declarations[0].name;
+      if (ts.isIdentifier(name) && name.text === "announcements") continue;
+    }
+    throw new Error("Announcement module must contain only type imports and one literal const export");
+  }
   function literal(node: ts.Expression): unknown {
     if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
     if (ts.isNumericLiteral(node)) return Number(node.text);
@@ -49,7 +59,7 @@ function readRevision(root: string, revision: string) {
     if (!match) throw new Error("Invalid Git tree entry");
     return { mode: match[1], type: match[2], sha: match[3], path: match[4] };
   });
-  const selected = entries.filter(e => isSource(e.path) || [ledgerPath, announcementsPath].includes(e.path));
+  const selected = entries.filter(e => isSource(e.path) || [ledgerPath, announcementsPath, gatePath].includes(e.path));
   if (selected.some(e => e.type !== "blob" || !["100644", "100755"].includes(e.mode))) throw new Error("Content sources must be regular Git blobs");
   const files = new Map<string, string>();
   if (selected.length) {
@@ -83,9 +93,19 @@ export function checkGitPublications(root: string, baseRef: string, candidateRef
   catch { throw new Error("Known base must be an ancestor of candidate"); }
   const before = readRevision(root, base), after = readRevision(root, candidate);
   if (!after.files.has(ledgerPath)) throw new Error("Candidate is missing publication ledger");
+  const gateText = after.files.get(gatePath);
+  if (!gateText || gateText !== before.files.get(gatePath)) throw new Error("Changed or missing locale publication gate requires separate review");
+  const gate = ts.createSourceFile("release-gate.ts", gateText, ts.ScriptTarget.Latest, true);
+  const flags = gate.statements.filter(ts.isVariableStatement)
+    .filter(s => s.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword) && (s.declarationList.flags & ts.NodeFlags.Const) !== 0)
+    .flatMap(s => [...s.declarationList.declarations])
+    .filter(d => ts.isIdentifier(d.name) && d.name.text === "LOCALIZED_ROUTES_PUBLISHED");
+  const flag = flags.length === 1 ? flags[0].initializer?.kind : undefined;
+  if (flag !== ts.SyntaxKind.TrueKeyword && flag !== ts.SyntaxKind.FalseKeyword) throw new Error("Unsupported locale publication gate");
   const report = validatePublications({ before: before.sources, after: after.sources, baseRecords: before.records, records: after.records,
     baseAnnouncements: before.announcements, announcements: after.announcements, today,
     isPublicPath: (p, locale) => {
+      if (locale !== "ja" && flag !== ts.SyntaxKind.TrueKeyword) return false;
       if (!["/questions", "/questions/clf", "/questions/saa", "/questions/aif", "/terms", "/", "/updates", "/blog"].includes(p)) return false;
       const route = createLocalizedPath(locale, p).replace(/\/$/, "");
       return after.paths.has(`frontend/src/app/(site)${route}/page.tsx`);
