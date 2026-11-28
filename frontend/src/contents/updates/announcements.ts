@@ -88,4 +88,206 @@ export const announcements: Announcement[] = [{
     { path: "/questions/saa", labels: { zh: "查看 SAA-C03 題庫", ja: "SAA-C03の問題を見る", en: "View SAA-C03 questions" } },
     { path: "/terms", labels: { zh: "查看 AWS 用語集", ja: "AWS用語集を見る", en: "View the AWS glossary" } },
   ],
+},
+// Formal announcement date awaits approval; the correction date is recorded in the notes.
+{
+  "id": "waf-pricing-correction",
+  "eventKind": "update",
+  "category": "question-bank",
+  "date": "",
+  "published": false,
+  "translations": {
+    "zh": {
+      "title": "更正 WAF 用語集與 SAA-031 的計費說明",
+      "summary": "區分 WAF 現行計費與 2027-02-01 起的新制，補充基本費與進階費的關係。SAA-031 的題幹、選項及正解 B 不變。",
+      "updateNotes": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "value": "更正說明（2026-11-28）：補充 WAF 計費的適用期間，並更正將所有託管規則概括為另收費的說明。AWS 於 2026-11-23 公告新制，2026-11-25 的官方文章澄清計費轉換日期：截至 2027-01-31（含當日）的用量沿用現制，2027-02-01 起適用新制；公告日不是新客戶另行開始計費的日期。此為教材更正，不代表本站帳單變動。依據見下方 AWS 定價頁與官方說明。"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/waf/pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF 定價與生效日期"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-waf-introduces-simplified-pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF 簡化計費公告"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/blogs/security/introducing-aws-waf-simplified-pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF 計費轉換日期澄清"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "title": "WAF 用語集と SAA-031 の料金説明を訂正",
+      "summary": "現行料金と 2027-02-01 以降の新料金を区別し、基本料金とプレミアム料金の関係を補足しました。SAA-031 の問題文、選択肢、正解 B は変更していません。",
+      "updateNotes": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "value": "訂正内容（2026-11-28）：WAF 料金の適用期間を追記し、すべてのマネージドルールに追加料金がかかるという一括した説明を訂正した。AWS は 2026-11-23 に新料金を発表し、2026-11-25 の公式記事で切り替え日を明確化した。2027-01-31 までの利用は現行料金、2027-02-01 以降は新料金となる。発表日を新規顧客だけの課金開始日とは扱わない。これは教材の訂正であり、当サイトの請求額の変更を示すものではない。根拠は以下の AWS 料金ページと公式説明を参照。"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/waf/pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF の料金と適用日"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-waf-introduces-simplified-pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF 簡素化料金の発表"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/blogs/security/introducing-aws-waf-simplified-pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF 料金切り替え日の説明"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "en": {
+      "title": "WAF pricing correction in the glossary and SAA-031",
+      "summary": "Distinguished current pricing from the model applying from 2027-02-01 and clarified how premium fees supplement base fees. SAA-031 retains its question, choices, and correct answer B.",
+      "updateNotes": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "value": "Correction (2026-11-28): Added the applicable WAF pricing periods and corrected the blanket claim that all managed rules incur extra charges. AWS announced the model on 2026-11-23 and clarified the billing transition in its official post on 2026-11-25: usage through 2027-01-31 retains current pricing, and usage from 2027-02-01 uses the new model. The announcement date is not a separate billing start for new customers. This corrects teaching material, not this site's bill. See the AWS pricing page and official explanation below."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/waf/pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF pricing and effective date"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-waf-introduces-simplified-pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF simplified pricing announcement"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "link",
+              "href": "https://aws.amazon.com/blogs/security/introducing-aws-waf-simplified-pricing/",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "AWS WAF billing transition clarification"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": [
+    {
+      "path": "/questions/saa",
+      "labels": {
+        "zh": "查看 SAA-C03 題庫",
+        "ja": "SAA-C03の問題を見る",
+        "en": "View SAA-C03 questions"
+      }
+    },
+    {
+      "path": "/terms",
+      "labels": {
+        "zh": "查看 AWS 用語集",
+        "ja": "AWS用語集を見る",
+        "en": "View the AWS glossary"
+      }
+    }
+  ]
 }];

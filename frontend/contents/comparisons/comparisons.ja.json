@@ -420,5 +420,29 @@
     "published": true,
     "publishedAt": "2026-11-20",
     "locale": "ja"
+  },
+  {
+    "comparisonId": "cmp-016",
+    "slug": "sqs-standard-vs-fifo",
+    "title": "SQS Standard と FIFO：メッセージの順序要件で選ぶ",
+    "description": "独立した通知と同じ注文の状態更新を比較し、FIFO のグループ内順序、バッチ受信、送信側重複排除、Standard の fair queues を整理します。",
+    "category": "Integration",
+    "level": "intermediate",
+    "examScopes": [
+      "SAA-C03"
+    ],
+    "services": [
+      "sqs"
+    ],
+    "tags": [
+      "sqs",
+      "messaging",
+      "comparison",
+      "saa"
+    ],
+    "priority": "medium",
+    "published": false,
+    "publishedAt": "",
+    "locale": "ja"
   }
 ]

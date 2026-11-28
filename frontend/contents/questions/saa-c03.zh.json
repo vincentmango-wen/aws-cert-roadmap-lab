@@ -2034,7 +2034,7 @@
     "published": true,
     "createdAt": "2026-07-31",
     "updatedAt": "2026-07-31",
-    "practicalNote": "AWS WAF 為於第 7 層檢查 HTTP / HTTPS 請求的 Web 應用程式防火牆,以 Web ACL 為單位彙整規則,並關聯至 CloudFront 分發、Application Load Balancer、API Gateway、AppSync、Cognito 使用者集區等加以運用。規則包含來源 IP 集合、速率型(依一定時間內的請求數封鎖)、字串比對與正規表示式比對,以及由 AWS 或 Marketplace 供應商提供的受管規則群組。受管規則群組由 AWS 端持續更新,因此不再需要自行維護特徵碼的營運作業。\n\n設計時的注意事項為,首先「關聯於何處」會改變防禦位置。若關聯至 CloudFront,可於邊緣站點攔下攻擊;若關聯至 ALB,則請求會抵達區域後才進行評估。此外,將受管規則套用至正式環境時,若一開始就採用 Block 動作,可能連正常請求也一併攔下,因此慣例做法是先以 Count 模式運作一段期間,透過 CloudWatch 指標與取樣請求確認誤判後再切換為 Block。WAF 的計費由 Web ACL 單位與規則單位的月費,以及依請求數的用量計費構成。\n\nSAA-C03 中,若出現「SQL 注入」「跨站腳本攻擊」「OWASP Top 10」「來自特定 IP 的大量請求」等字眼,AWS WAF 即為正解。誤答則排列出安全群組(第 3/4 層、無拒絕規則)、網路 ACL(無狀態的 IP / 連接埠篩選)、AWS Shield(DDoS 緩解)等。Shield 與 WAF 的職責分工,以及要將 WAF 掛在 CloudFront 或 ALB 的判斷,也很容易出題。",
+    "practicalNote": "AWS WAF 為於第 7 層檢查 HTTP / HTTPS 請求的 Web 應用程式防火牆,以 Web ACL 為單位彙整規則,並關聯至 CloudFront 分發、Application Load Balancer、API Gateway、AppSync、Cognito 使用者集區等加以運用。規則包含來源 IP 集合、速率型(依一定時間內的請求數封鎖)、字串比對與正規表示式比對,以及由 AWS 或 Marketplace 供應商提供的受管規則群組。受管規則群組由 AWS 端持續更新,因此不再需要自行維護特徵碼的營運作業。\n\n設計時的注意事項為,首先「關聯於何處」會改變防禦位置。若關聯至 CloudFront,可於邊緣站點攔下攻擊;若關聯至 ALB,則請求會抵達區域後才進行評估。此外,將受管規則套用至正式環境時,若一開始就採用 Block 動作,可能連正常請求也一併攔下,因此慣例做法是先以 Count 模式運作一段期間,透過 CloudWatch 指標與取樣請求確認誤判後再切換為 Block。截至 2027-01-31 的用量仍適用現行 Web ACL、規則與請求計費。自 2027-02-01 的用量起，簡化計費改由受保護資源費、基本請求費及進階請求費構成。資源費依資源與 Web ACL 關聯的時間計算；基本請求費適用於 WAF 檢查的請求，AWS WAF DDoS 防護受管規則群組阻擋的請求不計費。進階請求費只針對進階防護實際檢查的請求，加在基本請求費上；同一請求即使經過多個進階防護，也只收一次進階費。較前面的規則已允許或阻擋、或由 scope-down statement 排除的請求，不會產生該進階費。新制不再另收 Web ACL、規則或規則群組費；AWS Marketplace 賣方的規則群組仍可能另有賣方費用。CloudFront 固定費率方案不受此次變更影響。\n\nSAA-C03 中,若出現「SQL 注入」「跨站腳本攻擊」「OWASP Top 10」「來自特定 IP 的大量請求」等字眼,AWS WAF 即為正解。誤答則排列出安全群組(第 3/4 層、無拒絕規則)、網路 ACL(無狀態的 IP / 連接埠篩選)、AWS Shield(DDoS 緩解)等。Shield 與 WAF 的職責分工,以及要將 WAF 掛在 CloudFront 或 ALB 的判斷,也很容易出題。\n\n更正說明（2026-11-28）：補充 WAF 計費的適用期間，並更正將所有託管規則概括為另收費的說明。AWS 於 2026-11-23 公告新制，2026-11-25 的官方文章澄清計費轉換日期：截至 2027-01-31（含當日）的用量沿用現制，2027-02-01 起適用新制；公告日不是新客戶另行開始計費的日期。此為教材更正，不代表本站帳單變動。依據見下方 AWS 定價頁與官方說明。",
     "officialDocs": [
       {
         "label": "AWS WAF(AWS 官方)",
@@ -2047,6 +2047,18 @@
       {
         "label": "AWS Managed Rules rule groups list(AWS WAF Developer Guide / English)",
         "url": "https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list.html"
+      },
+      {
+        "label": "AWS WAF 定價與生效日期",
+        "url": "https://aws.amazon.com/waf/pricing/"
+      },
+      {
+        "label": "AWS WAF 簡化計費公告",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-waf-introduces-simplified-pricing/"
+      },
+      {
+        "label": "AWS WAF 計費轉換日期澄清",
+        "url": "https://aws.amazon.com/blogs/security/introducing-aws-waf-simplified-pricing/"
       }
     ]
   },

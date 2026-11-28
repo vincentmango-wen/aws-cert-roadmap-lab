@@ -3385,7 +3385,7 @@
       "web-firewall"
     ],
     "costNotes": [
-      "依 Web ACL、規則與請求次數計費",
+      "截至 2027-01-31 的用量仍依現行 Web ACL、規則與請求計費；2027-02-01 起改依受保護資源、基本請求及進階請求計費",
       "MVP 階段待存取量增加後再判斷是否導入"
     ],
     "securityNotes": [
@@ -3394,7 +3394,7 @@
     ],
     "updatedAt": "2026-06-01",
     "locale": "zh",
-    "practicalNote": "AWS WAF(Web Application Firewall)是基於規則偵測、阻擋對 Web 應用程式惡意請求的託管防火牆服務。會依規則評估 SQL 注入、跨網站指令碼(XSS)、來自特定 IP 位址的大量請求、來自特定地區的存取等。WAF 並非單獨運作,而是綁定至 CloudFront、Application Load Balancer(ALB)、API Gateway、AWS AppSync 等「保護對象的資源」進行部署。\n\n規則有 3 種。託管規則(AWS 或 AWS Marketplace 合作夥伴提供的規則集)、自訂規則(自行記述條件)、速率型規則(基於一定期間內請求數的阻擋)。託管規則包含 OWASP Top 10 對策、Bot 管理、已知惡意 IP 對策等常用規則集,僅需啟用即可開始基本保護。將這些以規則群組綁定至 Web ACL(Access Control List),並將 Web ACL 關聯至保護對象資源的構成。\n\n費用為依 Web ACL 數、規則數、處理請求數的從量計費,託管規則會另外加算各規則群組的費用。也需整理與 AWS Shield Standard 的關係,Shield Standard 為所有 AWS 使用者免費提供 L3/L4 的 DDoS 對策,WAF 則負責 L7(HTTP/HTTPS)層的規則式防禦。兩者守備範圍不同,Web 應用程式的保護以 WAF 與 Shield Standard 並用為基本。CLF-C02 中,「WAF = L7 的 Web 應用程式保護」「與 CloudFront / ALB 連動」「以託管規則可防範 SQL 注入或 XSS」的整理為常見論點。",
+    "practicalNote": "AWS WAF(Web Application Firewall)是基於規則偵測、阻擋對 Web 應用程式惡意請求的託管防火牆服務。會依規則評估 SQL 注入、跨網站指令碼(XSS)、來自特定 IP 位址的大量請求、來自特定地區的存取等。WAF 並非單獨運作,而是綁定至 CloudFront、Application Load Balancer(ALB)、API Gateway、AWS AppSync 等「保護對象的資源」進行部署。\n\n規則有 3 種。託管規則(AWS 或 AWS Marketplace 合作夥伴提供的規則集)、自訂規則(自行記述條件)、速率型規則(基於一定期間內請求數的阻擋)。託管規則包含 OWASP Top 10 對策、Bot 管理、已知惡意 IP 對策等常用規則集,僅需啟用即可開始基本保護。將這些以規則群組綁定至 Web ACL(Access Control List),並將 Web ACL 關聯至保護對象資源的構成。\n\n截至 2027-01-31 的用量仍適用現行 Web ACL、規則與請求計費。自 2027-02-01 的用量起，簡化計費改由受保護資源費、基本請求費及進階請求費構成。資源費依資源與 Web ACL 關聯的時間計算；基本請求費適用於 WAF 檢查的請求，AWS WAF DDoS 防護受管規則群組阻擋的請求不計費。進階請求費只針對進階防護實際檢查的請求，加在基本請求費上；同一請求即使經過多個進階防護，也只收一次進階費。較前面的規則已允許或阻擋、或由 scope-down statement 排除的請求，不會產生該進階費。新制不再另收 Web ACL、規則或規則群組費；AWS Marketplace 賣方的規則群組仍可能另有賣方費用。CloudFront 固定費率方案不受此次變更影響。\n\n也需整理與 AWS Shield Standard 的關係,Shield Standard 為所有 AWS 使用者免費提供 L3/L4 的 DDoS 對策,WAF 則負責 L7(HTTP/HTTPS)層的規則式防禦。兩者守備範圍不同,Web 應用程式的保護以 WAF 與 Shield Standard 並用為基本。CLF-C02 中,「WAF = L7 的 Web 應用程式保護」「與 CloudFront / ALB 連動」「以託管規則可防範 SQL 注入或 XSS」的整理為常見論點。\n\n更正說明（2026-11-28）：補充 WAF 計費的適用期間，並更正將所有託管規則概括為另收費的說明。AWS 於 2026-11-23 公告新制，2026-11-25 的官方文章澄清計費轉換日期：截至 2027-01-31（含當日）的用量沿用現制，2027-02-01 起適用新制；公告日不是新客戶另行開始計費的日期。此為教材更正，不代表本站帳單變動。依據見下方 AWS 定價頁與官方說明。",
     "officialDocs": [
       {
         "label": "什麼是 AWS WAF (AWS 官方文件)",
@@ -3403,6 +3403,18 @@
       {
         "label": "AWS WAF (AWS 官方)",
         "url": "https://aws.amazon.com/jp/waf/"
+      },
+      {
+        "label": "AWS WAF 定價與生效日期",
+        "url": "https://aws.amazon.com/waf/pricing/"
+      },
+      {
+        "label": "AWS WAF 簡化計費公告",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-waf-introduces-simplified-pricing/"
+      },
+      {
+        "label": "AWS WAF 計費轉換日期澄清",
+        "url": "https://aws.amazon.com/blogs/security/introducing-aws-waf-simplified-pricing/"
       }
     ]
   },

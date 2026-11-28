@@ -1,0 +1,60 @@
+# SQS Standard vs. FIFO: choose by message ordering needs
+
+## Selection at a glance
+
+Once you have chosen Amazon SQS to buffer work, ask whether updates to the same business entity can be processed out of order. This guide focuses on queue selection rather than repeating a general introduction to SQS.
+
+- Independent notification jobs that do not require order and can handle duplicates: choose Standard.
+- An order must be created before its payment is confirmed: choose FIFO, with the order ID as the `MessageGroupId`.
+- FIFO ordering applies within a message group, not globally across all orders.
+
+## Comparison table
+
+| Decision | Standard | FIFO |
+|---|---|---|
+| Delivery and order | At-least-once delivery and best-effort ordering; duplicates and reordering are possible | Ordering within a MessageGroupId; different groups can run concurrently |
+| Producer deduplication | The application handles duplicates | MessageDeduplicationId or content-based deduplication prevents duplicate sends within a 5-minute deduplication interval |
+| MessageGroupId | Can enable fair queues to reduce noisy-neighbor effects on other tenants' dwell time; does not provide FIFO ordering | Required for every message; identifies independently ordered groups |
+| Throughput tradeoff | Suits large volumes of independent jobs | Concurrency depends on group distribution; check quotas for the Region, batching, and high-throughput settings |
+| Consumer responsibility | Handle duplicates and reordering | Process each group in order and still prevent duplicate business effects |
+
+## Exam guide and decision cues
+
+In an SAA-C03 scenario, decoupling and buffering a traffic spike alone do not imply FIFO. Look for an ordering requirement such as preventing state transitions for the same order from being reversed, then choose the group key.
+
+FIFO producer deduplication does not guarantee that a charge or database update happens only once. A consumer might charge a payment and fail before deleting the message; a retry must still recognize the completed business operation. Deduplication and idempotency address different layers.
+
+## How to choose in practice
+
+The first scenario is independent notification work. Notifications for different orders need not be sent in global time order, and the consumer can use an event ID to avoid sending duplicates. Standard meets that requirement.
+
+The second scenario updates order state: A1 creates order A and A2 confirms its payment; B1 and B2 perform the same steps for order B. The diagram shows **processing order within each group**, not two `ReceiveMessage` calls.
+
+```text
+FIFO: processing order within each group
+MessageGroupId=order-A    A1 → A2    Create order → Confirm payment
+MessageGroupId=order-B    B1 → B2    Create order → Confirm payment
+Different groups can run concurrently; there is no global order between A and B.
+```
+
+AWS can return multiple messages from the same group in one `ReceiveMessage` batch, preserving their order within the group. The consumer must still process that group in order: do not arbitrarily parallelize its batch and let A2's effects finish before A1's. Different groups can be processed independently.
+
+For retry, visibility-timeout, and idempotency background, continue with the [SNS, SQS, and EventBridge comparison](/comparisons/sns-vs-sqs-vs-eventbridge).
+
+## Common misconceptions
+
+- "Setting MessageGroupId makes Standard ordered": it enables fair queues for tenant fairness. Messages in the same group can still be processed concurrently; the queue does not become FIFO.
+- "FIFO never processes a business event again": five-minute producer deduplication is different from consumer business idempotency. Resends outside the interval and retries after consumer failures still need application safeguards.
+- "One group for everything is safest": it serializes orders that could otherwise run independently. Group by the business entity that actually requires shared ordering.
+- "A group can return only one message at a time": same-group messages can be returned in a batch. Ordering does not require one receive call per message.
+
+## Summary
+
+Consider Standard for independent work that tolerates reordering. Use FIFO with an explicit group key when updates to the same business entity require strict order. Both require idempotent consumer behavior, and fair queues do not replace FIFO group ordering.
+
+## Official AWS references
+
+- [Amazon SQS queue types](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html)
+- [FIFO group ordering and batch receive logic](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html)
+- [FIFO producer deduplication and the five-minute interval](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html)
+- [SendMessage MessageGroupId and fair queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html#SQS-SendMessage-request-MessageGroupId)

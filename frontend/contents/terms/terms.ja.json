@@ -3385,7 +3385,7 @@
       "web-firewall"
     ],
     "costNotes": [
-      "Web ACL、ルール、リクエスト数に課金される",
+      "2027-01-31 までの利用は現行の Web ACL・ルール・リクエスト課金、2027-02-01 以降は保護対象リソース・基本リクエスト・プレミアムリクエスト課金",
       "MVPではアクセス増加後に導入判断する"
     ],
     "securityNotes": [
@@ -3394,7 +3394,7 @@
     ],
     "updatedAt": "2026-06-01",
     "locale": "ja",
-    "practicalNote": "AWS WAF（Web Application Firewall）は、Web アプリケーションに対する悪意あるリクエストを\nルールベースで検知・ブロックするマネージドファイアウォールサービスである。SQL\nインジェクション・クロスサイトスクリプティング（XSS）・特定 IP アドレスからの大量\nリクエスト・特定地域からのアクセスなどを、ルールに従って評価する。WAF はそれ単体で\n動作するのではなく、CloudFront・Application Load Balancer（ALB）・API Gateway・\nAWS AppSync など「保護対象のリソース」に紐づけて配備する。\n\nルールには 3 種類ある。マネージドルール（AWS や AWS Marketplace パートナーが提供する\nルールセット）、カスタムルール（自分で条件を記述）、レートベースルール（一定期間内の\nリクエスト数に基づくブロック）である。マネージドルールには OWASP Top 10 対策・Bot\n管理・既知の悪意ある IP 対策など、よく使うルールセットが含まれており、有効化するだけで\n基本的な保護を開始できる。これらをルールグループとして Web ACL（Access Control List）\nに束ね、Web ACL を保護対象リソースに関連付ける構成となる。\n\n料金は Web ACL 数・ルール数・処理リクエスト数による従量課金で、マネージドルールには\n別途ルールグループごとの料金が加算される。AWS Shield Standard との関係も整理して\nおく必要があり、Shield Standard は L3/L4 の DDoS 対策を全 AWS ユーザーに無料で提供する\nのに対し、WAF は L7（HTTP/HTTPS）層のルールベース防御を担う。両者は守備範囲が異なる\nため、Web アプリの保護には WAF と Shield Standard を併用するのが基本である。CLF-C02\nでは「WAF = L7 の Web アプリ保護」「CloudFront / ALB と連携」「マネージドルールで\nSQL インジェクションや XSS を防げる」という整理が頻出論点となる。",
+    "practicalNote": "AWS WAF（Web Application Firewall）は、Web アプリケーションに対する悪意あるリクエストを\nルールベースで検知・ブロックするマネージドファイアウォールサービスである。SQL\nインジェクション・クロスサイトスクリプティング（XSS）・特定 IP アドレスからの大量\nリクエスト・特定地域からのアクセスなどを、ルールに従って評価する。WAF はそれ単体で\n動作するのではなく、CloudFront・Application Load Balancer（ALB）・API Gateway・\nAWS AppSync など「保護対象のリソース」に紐づけて配備する。\n\nルールには 3 種類ある。マネージドルール（AWS や AWS Marketplace パートナーが提供する\nルールセット）、カスタムルール（自分で条件を記述）、レートベースルール（一定期間内の\nリクエスト数に基づくブロック）である。マネージドルールには OWASP Top 10 対策・Bot\n管理・既知の悪意ある IP 対策など、よく使うルールセットが含まれており、有効化するだけで\n基本的な保護を開始できる。これらをルールグループとして Web ACL（Access Control List）\nに束ね、Web ACL を保護対象リソースに関連付ける構成となる。\n\n2027-01-31 までの利用には、現行の Web ACL・ルール・リクエスト課金が適用される。2027-02-01 以降の利用では、保護対象リソース料金、基本リクエスト料金、プレミアムリクエスト料金に移行する。リソース料金はリソースと Web ACL の関連付け時間に基づく。基本リクエスト料金は WAF が検査したリクエストに適用されるが、AWS WAF の DDoS 保護マネージドルールグループがブロックしたリクエストは課金されない。プレミアム料金は高度な保護が実際に検査したリクエストだけに基本料金へ加算され、複数の高度な保護で検査されても同じリクエストには一度だけ課金される。先行ルールで許可・ブロックされたリクエストや scope-down statement で除外されたリクエストには、この追加料金はかからない。新料金では Web ACL・ルール・ルールグループの個別料金はなくなるが、AWS Marketplace の販売者によるルールグループには別途販売者の料金が発生する場合がある。CloudFront の定額料金プランは今回の変更の影響を受けない。\n\nAWS Shield Standard との関係も整理して\nおく必要があり、Shield Standard は L3/L4 の DDoS 対策を全 AWS ユーザーに無料で提供する\nのに対し、WAF は L7（HTTP/HTTPS）層のルールベース防御を担う。両者は守備範囲が異なる\nため、Web アプリの保護には WAF と Shield Standard を併用するのが基本である。CLF-C02\nでは「WAF = L7 の Web アプリ保護」「CloudFront / ALB と連携」「マネージドルールで\nSQL インジェクションや XSS を防げる」という整理が頻出論点となる。\n\n訂正内容（2026-11-28）：WAF 料金の適用期間を追記し、すべてのマネージドルールに追加料金がかかるという一括した説明を訂正した。AWS は 2026-11-23 に新料金を発表し、2026-11-25 の公式記事で切り替え日を明確化した。2027-01-31 までの利用は現行料金、2027-02-01 以降は新料金となる。発表日を新規顧客だけの課金開始日とは扱わない。これは教材の訂正であり、当サイトの請求額の変更を示すものではない。根拠は以下の AWS 料金ページと公式説明を参照。",
     "officialDocs": [
       {
         "label": "AWS WAF とは（AWS公式ドキュメント）",
@@ -3403,6 +3403,18 @@
       {
         "label": "AWS WAF（AWS公式）",
         "url": "https://aws.amazon.com/jp/waf/"
+      },
+      {
+        "label": "AWS WAF の料金と適用日",
+        "url": "https://aws.amazon.com/waf/pricing/"
+      },
+      {
+        "label": "AWS WAF 簡素化料金の発表",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-waf-introduces-simplified-pricing/"
+      },
+      {
+        "label": "AWS WAF 料金切り替え日の説明",
+        "url": "https://aws.amazon.com/blogs/security/introducing-aws-waf-simplified-pricing/"
       }
     ]
   },

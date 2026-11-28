@@ -1,0 +1,60 @@
+# SQS Standard 與 FIFO：依訊息順序需求選型
+
+## 選擇重點
+
+已決定用 Amazon SQS 緩衝工作後，下一個問題是：同一個業務對象的更新能否交換順序？本篇聚焦佇列類型，不重複介紹 SQS 的基本用途。
+
+- 獨立通知工作不要求順序，且可處理重複訊息：選 Standard。
+- 同一筆訂單必須先建立再確認付款：選 FIFO，以訂單 ID 作為 `MessageGroupId`。
+- FIFO 的保序範圍是同一訊息群組，不是所有訂單的全域順序。
+
+## 比較表
+
+| 判斷項目 | Standard | FIFO |
+|---|---|---|
+| 傳遞與順序 | 至少一次傳遞，盡力維持順序；可能重複或亂序 | 同一 MessageGroupId 內保序；不同群組可並行 |
+| 傳送端去重 | 應用程式處理重複 | 以 MessageDeduplicationId 或內容去重，在 5 分鐘去重期間內排除重複傳送 |
+| MessageGroupId | 可啟用 fair queues，降低吵雜鄰居對其他租戶等待時間的影響；不提供 FIFO 順序 | 每則訊息必須提供，用來區分各自保序的群組 |
+| 吞吐量取捨 | 適合大量互相獨立的工作 | 並行度受群組分布影響；依區域、批次與高吞吐量設定核對配額 |
+| 消費端責任 | 處理重複與亂序 | 依群組順序處理，仍須防止重複業務副作用 |
+
+## 考綱與判斷重點
+
+SAA-C03 情境若只要求解耦、緩衝突增流量，不應直接推論需要 FIFO。先找「同一筆訂單的狀態不可顛倒」等順序要求，再判斷群組鍵。
+
+FIFO 的傳送去重不代表扣款或資料庫更新只會發生一次。例如消費端已完成扣款，但尚未刪除訊息就失敗，後續重試仍需辨識已完成的業務操作。去重與冪等性解決不同層次的問題。
+
+## 實務選型
+
+情境一是獨立的通知工作：不同訂單的通知不必按照全域時間順序寄送，消費端也能用事件 ID 避免重複寄送，Standard 即可滿足此需求。
+
+情境二是訂單狀態更新：A1 表示建立訂單 A，A2 表示確認訂單 A 已付款；B1、B2 是訂單 B 的相同步驟。以下是同群組內的**處理順序**示意，不是兩次 `ReceiveMessage` 呼叫。
+
+```text
+FIFO：同群組內的處理順序
+MessageGroupId=order-A    A1 → A2    建立訂單 → 確認付款
+MessageGroupId=order-B    B1 → B2    建立訂單 → 確認付款
+不同群組可並行；A 與 B 之間沒有全域先後保證。
+```
+
+AWS 允許同一群組的多則訊息在同一次 `ReceiveMessage` 批次回傳，並保留群組內的順序。消費端仍須依序處理該群組的訊息；不要把同群組批次任意並行，導致 A2 的副作用先於 A1 完成。不同群組則可獨立處理。
+
+重試、可見性逾時與冪等性的背景請接著閱讀 [SNS、SQS、EventBridge 比較](/comparisons/sns-vs-sqs-vs-eventbridge)。
+
+## 常見誤解
+
+- 「Standard 只要指定 MessageGroupId 就能保序」：它啟用的是 fair queues 的租戶公平性；同群組仍可並行處理，不會變成 FIFO。
+- 「FIFO 永遠不會再次處理相同業務事件」：5 分鐘傳送去重與消費端業務冪等性不同。超出去重期間的重新傳送，以及消費端失敗後的重試，仍需應用程式防護。
+- 「所有訊息用同一群組最安全」：這會把原本可獨立處理的訂單串行化。以真正需要共同順序的業務對象分組。
+- 「一個群組一次只能收到一則訊息」：同群組可以批次回傳；保序要求不等於一則一收。
+
+## 總結
+
+獨立且可容忍亂序的工作優先考慮 Standard；同一業務對象有嚴格順序需求時，用 FIFO 與明確的群組鍵。兩者都必須設計消費端的冪等處理，fair queues 也不能取代 FIFO 的群組保序。
+
+## AWS 官方參考
+
+- [Amazon SQS 佇列類型](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html)
+- [FIFO 群組順序與批次接收邏輯](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html)
+- [FIFO 傳送去重與 5 分鐘期間](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html)
+- [SendMessage 的 MessageGroupId 與 fair queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html#SQS-SendMessage-request-MessageGroupId)
