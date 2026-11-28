@@ -1,65 +1,141 @@
 name: Deploy Frontend
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "frontend/**"
-      - ".github/workflows/deploy-frontend.yml"
-  workflow_dispatch:
+  pull_request:
+    types: [closed]
+    branches: [master]
+  schedule:
+    # 22:00 Sunday Asia/Taipei; this job cannot merge or deploy.
+    - cron: '0 14 * * 0'
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
-  deploy-frontend:
+  prepare:
+    if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Report candidate, without opening or merging PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/weekly-production.mjs prepare
 
+  gate:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.ref == 'dev' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    outputs:
+      eligible: ${{ steps.gate.outputs.eligible }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - id: gate
+        name: Check release eligibility
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/weekly-production.mjs gate
+
+  build:
+    needs: gate
+    if: needs.gate.outputs.eligible == 'true' && vars.AWS_WEEKLY_RELEASE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: frontend
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Type check
-        run: npm run typecheck
-
-      - name: Build
-        run: npm run build
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
         env:
           NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL }}
           NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
           NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID }}
+      - name: Preserve the exact built files, including dotfiles and timestamps
+        run: tar -C out -cf "$RUNNER_TEMP/frontend.tar" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: weekly-frontend-${{ github.sha }}
+          path: ${{ runner.temp }}/frontend.tar
+          retention-days: 14
+          if-no-files-found: error
 
+  deploy-frontend:
+    needs: [gate, build]
+    if: needs.gate.outputs.eligible == 'true' && vars.AWS_WEEKLY_RELEASE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: aws-production
+    concurrency:
+      group: aws-production-frontend
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: weekly-frontend-${{ github.sha }}
+          path: ${{ runner.temp }}/weekly-frontend
+      - name: Validate and unpack build
+        run: |
+          mkdir -p "$RUNNER_TEMP/weekly-frontend/out"
+          tar -xf "$RUNNER_TEMP/weekly-frontend/frontend.tar" -C "$RUNNER_TEMP/weekly-frontend/out"
+          test -s "$RUNNER_TEMP/weekly-frontend/out/index.html"
+      - name: Recheck eligibility and atomically claim the weekly slot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WEEKLY_RELEASE_ENABLED: ${{ vars.AWS_WEEKLY_RELEASE_ENABLED }}
+        run: node scripts/release/weekly-production.mjs claim
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
-
       - name: Deploy to S3
-        run: aws s3 sync ./out s3://${{ secrets.S3_BUCKET_NAME }} --delete
-
-      - name: Invalidate CloudFront
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
         run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/*"
+          set -o pipefail
+          test -n "$S3_BUCKET"
+          aws s3 sync "$RUNNER_TEMP/weekly-frontend/out/" "s3://$S3_BUCKET" --delete | tee "$RUNNER_TEMP/s3-sync.log"
+      - name: Invalidate CloudFront
+        env:
+          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          test -n "$DISTRIBUTION"
+          aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" --paths '/*'
