@@ -59,14 +59,14 @@ export function aggregateUpdates(input: AggregateInput): UpdateInventory {
     const reject = (code: string) => result.diagnostics.push({ code, id: `announcement:${value.id}` });
     if (announcementCounts.get(value.id)! > 1) { reject("duplicate-id"); continue; }
     if (!/^[a-z0-9-]+$/.test(value.id)) { reject("invalid-identity"); continue; }
-    if (!value.published) { reject("unpublished"); continue; }
+    if (value.published !== true) { reject("unpublished"); continue; }
     if (!isCalendarDate(value.date)) { reject("invalid-date"); continue; }
     if (value.date > input.today) { reject("future-date"); continue; }
     if (locales.some((locale) => !value.translations[locale]?.title.trim() || !value.translations[locale]?.summary.trim())) { reject("missing-translation"); continue; }
     if (value.eventKind !== "new" && value.eventKind !== "update") { reject("invalid-event-kind"); continue; }
     if (value.corrects && value.eventKind !== "update") { reject("invalid-correction-event"); continue; }
     if (value.eventKind === "update" && locales.some((locale) => !isSafeNoteBlocks(value.translations[locale].updateNotes))) { reject("invalid-update-notes"); continue; }
-    if (value.category === "question-bank" && value.links.length === 0) { reject("missing-question-link"); continue; }
+    if ((value.category === "question-bank" || value.category === "glossary") && value.links.length === 0) { reject("missing-question-link"); continue; }
     if (value.links.some((link) => !/^\/(?:[a-z0-9-]+\/?)*$/.test(link.path) || /^\/(en|zh)(\/|$)/.test(link.path) || locales.some((locale) => !link.labels[locale]?.trim() || !input.isPublicPath(link.path, locale)))) { reject("invalid-public-link"); continue; }
     visible.set(value.id, value);
   }

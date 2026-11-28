@@ -140,7 +140,7 @@ describe("EC2, Lambda and ECS comparison", () => {
 
     const input = fs.readFileSync(path.join(contentRoot, "comparisons", locale, computeSlug + ".mdx"), "utf8");
     const source = matter(input);
-    expect(source.content.trimStart().split("\n")[0]).toBe(`# ${article?.title}`);
+    expect(source.content.trimStart().split(/\r?\n/)[0]).toBe(`# ${article?.title}`);
     if (locale === "ja") {
       expect(source.data).toMatchObject({
         comparisonId: "cmp-015", slug: computeSlug, title: article?.title, description: article?.description,

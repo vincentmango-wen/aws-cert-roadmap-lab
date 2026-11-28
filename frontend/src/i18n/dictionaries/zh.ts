@@ -6,7 +6,7 @@ export const zhDictionary: UiDictionary = {
     introduction: "依文章發布或更新日期與公告日期，查看最近的學習內容、題庫與網站功能消息。文章清單顯示目前版本，並非完整修訂歷史。",
     empty: "目前尚無可顯示的內容或公告", viewAll: "查看所有內容與公告",
     original: "原始公告", correction: "更正公告",
-    categories: { blog: "部落格", architecture: "架構圖", comparison: "服務比較", "question-bank": "題庫公告", feature: "功能公告" },
+    categories: { blog: "部落格", architecture: "架構圖", comparison: "服務比較", "question-bank": "題庫公告", glossary: "術語公告", feature: "功能公告" },
     dates: { published: "發布", updated: "更新", announced: "公告" },
     events: { new: "New", update: "Update" },
     eventDescriptions: { new: "首次發布", update: "內容更新" },

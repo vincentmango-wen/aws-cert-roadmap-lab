@@ -6,7 +6,7 @@ export const enDictionary: UiDictionary = {
     introduction: "Explore recent learning content, practice questions, and site features by article publication or update date and announcement date. Articles show their current version, not a complete revision history.",
     empty: "No content or announcements are currently available", viewAll: "View all content and announcements",
     original: "Original announcement", correction: "Correction announcement",
-    categories: { blog: "Blog", architecture: "Architecture", comparison: "Comparison", "question-bank": "Question-bank announcement", feature: "Feature announcement" },
+    categories: { blog: "Blog", architecture: "Architecture", comparison: "Comparison", "question-bank": "Question-bank announcement", glossary: "Glossary announcement", feature: "Feature announcement" },
     dates: { published: "Published", updated: "Updated", announced: "Announced" },
     events: { new: "New", update: "Update" },
     eventDescriptions: { new: "First publication", update: "Content update" },
