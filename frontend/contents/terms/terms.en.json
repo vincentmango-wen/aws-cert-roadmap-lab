@@ -3385,7 +3385,7 @@
       "web-firewall"
     ],
     "costNotes": [
-      "Billed by Web ACLs, rules, and request count",
+      "Usage through 2027-01-31 follows current web ACL, rule, and request pricing; from 2027-02-01, pricing uses protected resources, base requests, and premium requests",
       "Decide on adoption after traffic grows beyond the MVP"
     ],
     "securityNotes": [
@@ -3394,7 +3394,7 @@
     ],
     "updatedAt": "2026-06-01",
     "locale": "en",
-    "practicalNote": "AWS WAF (Web Application Firewall) is a managed firewall service that detects and blocks malicious requests against web applications based on rules. It evaluates requests such as SQL injection, cross-site scripting (XSS), large volumes of requests from specific IP addresses, and access from specific geographic regions according to the configured rules. WAF does not operate on its own; instead, it is deployed by being associated with a protected resource such as CloudFront, Application Load Balancer (ALB), API Gateway, or AWS AppSync.\n\nThree types of rules are available: managed rules (rule sets provided by AWS or AWS Marketplace partners), custom rules (where conditions are written by the user), and rate-based rules (which block based on request counts within a given time window). Managed rules include frequently used rule sets such as OWASP Top 10 protection, bot management, and protection against known malicious IPs, and basic protection can be initiated simply by enabling them. These are bundled as rule groups within a Web ACL (Access Control List), and the Web ACL is then associated with the protected resource.\n\nPricing is based on a combination of the number of Web ACLs, the number of rules, and the number of processed requests, with additional charges per managed rule group. The relationship with AWS Shield Standard should also be kept in mind: Shield Standard provides L3/L4 DDoS protection to all AWS users at no cost, while WAF handles rule-based defense at L7 (HTTP/HTTPS). Because the two cover different domains, using WAF together with Shield Standard is the baseline approach for protecting web applications. In CLF-C02, framings such as WAF as L7 web application protection, integration with CloudFront and ALB, and the ability to defend against SQL injection and XSS through managed rules are frequent topics.",
+    "practicalNote": "AWS WAF (Web Application Firewall) is a managed firewall service that detects and blocks malicious requests against web applications based on rules. It evaluates requests such as SQL injection, cross-site scripting (XSS), large volumes of requests from specific IP addresses, and access from specific geographic regions according to the configured rules. WAF does not operate on its own; instead, it is deployed by being associated with a protected resource such as CloudFront, Application Load Balancer (ALB), API Gateway, or AWS AppSync.\n\nThree types of rules are available: managed rules (rule sets provided by AWS or AWS Marketplace partners), custom rules (where conditions are written by the user), and rate-based rules (which block based on request counts within a given time window). Managed rules include frequently used rule sets such as OWASP Top 10 protection, bot management, and protection against known malicious IPs, and basic protection can be initiated simply by enabling them. These are bundled as rule groups within a Web ACL (Access Control List), and the Web ACL is then associated with the protected resource.\n\nUsage through 2027-01-31 remains on current web ACL, rule, and request pricing. For usage starting 2027-02-01, simplified pricing consists of protected-resource, base-request, and premium-request fees. Resource charges depend on the time a resource is associated with a web ACL. The base request fee applies to requests inspected by WAF, except that requests blocked by the AWS WAF DDoS protection managed rule group are not charged. The premium fee is added to the base fee only for requests actually inspected by advanced protections. An eligible request incurs the premium fee once, even when multiple advanced protections inspect it. Requests allowed or blocked by an earlier rule, or excluded by a scope-down statement, do not incur that premium fee. The new model removes separate web ACL, rule, and rule-group charges; AWS Marketplace seller rule groups may still have separate seller fees. CloudFront flat-rate plans are unaffected by this change.\n\n The relationship with AWS Shield Standard should also be kept in mind: Shield Standard provides L3/L4 DDoS protection to all AWS users at no cost, while WAF handles rule-based defense at L7 (HTTP/HTTPS). Because the two cover different domains, using WAF together with Shield Standard is the baseline approach for protecting web applications. In CLF-C02, framings such as WAF as L7 web application protection, integration with CloudFront and ALB, and the ability to defend against SQL injection and XSS through managed rules are frequent topics.\n\nCorrection (2026-11-28): Added the applicable WAF pricing periods and corrected the blanket claim that all managed rules incur extra charges. AWS announced the model on 2026-11-23 and clarified the billing transition in its official post on 2026-11-25: usage through 2027-01-31 retains current pricing, and usage from 2027-02-01 uses the new model. The announcement date is not a separate billing start for new customers. This corrects teaching material, not this site's bill. See the AWS pricing page and official explanation below.",
     "officialDocs": [
       {
         "label": "What is AWS WAF (AWS Official Documentation)",
@@ -3403,6 +3403,18 @@
       {
         "label": "AWS WAF (AWS Official)",
         "url": "https://aws.amazon.com/jp/waf/"
+      },
+      {
+        "label": "AWS WAF pricing and effective date",
+        "url": "https://aws.amazon.com/waf/pricing/"
+      },
+      {
+        "label": "AWS WAF simplified pricing announcement",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/aws-waf-introduces-simplified-pricing/"
+      },
+      {
+        "label": "AWS WAF billing transition clarification",
+        "url": "https://aws.amazon.com/blogs/security/introducing-aws-waf-simplified-pricing/"
       }
     ]
   },
