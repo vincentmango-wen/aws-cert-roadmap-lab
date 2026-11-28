@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/build-with-updates-date.mjs && node scripts/set-html-lang.mjs && node scripts/verify-locale-seal.mjs",
+    "build": "node scripts/build-with-updates-date.mjs && node scripts/write-not-found-artifacts.mjs && node scripts/set-html-lang.mjs && node scripts/verify-locale-seal.mjs",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "check:html-lang": "node scripts/set-html-lang.mjs --check",
     "check:question-html": "node scripts/measure-question-html.mjs",
     "check:locale-seal": "node scripts/verify-locale-seal.mjs",
-    "test": "vitest run"
+    "test": "node --test scripts/__tests__/not-found-artifacts-check.mjs && vitest run"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.7",
